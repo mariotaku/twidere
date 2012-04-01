@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="4dip">
+
+	<ImageView
+		android:id="@+id/profile_image"
+		android:layout_width="64dip"
+		android:layout_height="64dip"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:scaleType="center"
+		android:src="@drawable/ic_profile_image_default"/>
+
+	<TextView
+		android:id="@+id/user_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_toRightOf="@+id/profile_image"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textStyle="bold"/>
+
+	<TextView
+		android:id="@+id/screen_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_toRightOf="@+id/profile_image"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="?android:attr/textColorSecondary"/>
+
+	<TextView
+		android:id="@+id/tweet_content"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/screen_name"
+		android:layout_below="@+id/screen_name"/>
+
+	<TextView
+		android:id="@+id/tweet_time"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
+		android:alpha="127"
+		android:text="just now"
+		android:textSize="11sp"/>
+
+</RelativeLayout>

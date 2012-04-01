@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Theme.Twidere" parent="@style/Theme.Holo.Light.DarkActionBar">
+		<item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
+		<item name="vpiVerticalTabPageIndicatorStyle">@style/Widget.TabPageIndicator.Vertical</item>
+		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
+		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
+	</style>
+
+</resources>

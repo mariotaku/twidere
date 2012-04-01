@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="hello">Hello World, HomeActivity!</string>
+	<string name="app_name">Twidere</string>
+	<string name="pull_down_to_update">Pull down to update</string>
+	<string name="release_to_update">Release to update</string>
+	<string name="loading">Loading…</string>
+	<string name="compose">Compose</string>
+	<string name="settings">Settings</string>
+	<string name="send">Send</string>
+	<string name="add_location">Add location</string>
+	<string name="add_image">Add image</string>
+	<string name="take_photo">Take photo</string>
+	<string name="save_to_draft">Save to draft</string>
+	<string name="test_screenname">\@username</string>
+
+</resources>
