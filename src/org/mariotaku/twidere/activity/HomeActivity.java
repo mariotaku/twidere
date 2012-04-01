@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.activity;
 
 import java.util.ArrayList;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ConnectTabFragment;
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.viewpagerindicator.TabPageIndicator;
@@ -64,23 +66,6 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 
 		private final ArrayList<TabInfo> mTabsInfo = new ArrayList<TabInfo>();
 
-		private class TabInfo {
-
-			String name;
-			Integer icon;
-			Fragment fragment;
-
-			public TabInfo(String name, Integer icon, Fragment fragment) {
-				if (name == null && icon == null)
-					throw new IllegalArgumentException(
-							"You must specify a name or icon for this tab!");
-				this.name = name;
-				this.icon = icon;
-				this.fragment = fragment;
-
-			}
-		}
-
 		public TabsAdapter(FragmentManager fm) {
 			super(fm);
 		}
@@ -100,6 +85,11 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		}
 
 		@Override
+		public Integer getIcon(int position) {
+			return mTabsInfo.get(position).icon;
+		}
+
+		@Override
 		public Fragment getItem(int position) {
 			return mTabsInfo.get(position).fragment;
 		}
@@ -109,9 +99,21 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 			return mTabsInfo.get(position).name;
 		}
 
-		@Override
-		public Integer getIcon(int position) {
-			return mTabsInfo.get(position).icon;
+		private class TabInfo {
+
+			String name;
+			Integer icon;
+			Fragment fragment;
+
+			public TabInfo(String name, Integer icon, Fragment fragment) {
+				if (name == null && icon == null)
+					throw new IllegalArgumentException(
+							"You must specify a name or icon for this tab!");
+				this.name = name;
+				this.icon = icon;
+				this.fragment = fragment;
+
+			}
 		}
 	}
 }

@@ -14,5 +14,6 @@
 	<string name="take_photo">Take photo</string>
 	<string name="save_to_draft">Save to draft</string>
 	<string name="test_screenname">\@username</string>
+	<string name="tweet_hint">What\'s happening ?</string>
 
 </resources>

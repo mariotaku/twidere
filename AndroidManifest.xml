@@ -8,6 +8,13 @@
 		android:minSdkVersion="8"
 		android:targetSdkVersion="15"/>
 
+	<permission
+		android:name="org.mariotaku.twidere.READ_DATABASES"
+		android:protectionLevel="normal"/>
+	<permission
+		android:name="org.mariotaku.twidere.WRITE_DATABASES"
+		android:protectionLevel="normal"/>
+
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -32,6 +39,13 @@
 			android:label="@string/compose"
 			android:uiOptions="splitActionBarWhenNarrow">
 		</activity>
+
+		<provider
+			android:name=".provider.TweetStoreProvider"
+			android:authorities="org.mariotaku.twidere.provider.TweetStore"
+			android:readPermission="org.mariotaku.twidere.READ_DATABASES"
+			android:writePermission="org.mariotaku.twidere.WRITE_DATABASES">
+		</provider>
 	</application>
 
 </manifest>

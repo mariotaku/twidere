@@ -12,6 +12,8 @@
 		android:layout_alignParentTop="true"
 		android:layout_toLeftOf="@+id/send"
 		android:ems="10"
+		android:gravity="top"
+		android:hint="@string/tweet_hint"
 		android:inputType="textMultiLine">
 
 		<requestFocus/>
