@@ -1,5 +1,8 @@
 package org.mariotaku.twidere.provider;
 
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
+
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,45 +21,36 @@ public class TweetStoreProvider extends ContentProvider {
 
 	private static final int URI_ACCOUNTS = 1;
 
-	private static final int URI_ACCOUNT = 2;
-
-	private static final int URI_STATUSES_FOR_ALL_ACCOUNTS = 3;
-
-	private static final int URI_STATUSES = 4;
-
-	private static final int URI_ALLENTRIES = 5;
-
-	private static final int URI_ALLENTRIES_ENTRY = 6;
-
-	private static final int URI_FAVORITES = 7;
-
-	private static final int URI_FAVORITES_ENTRY = 8;
+	private static final int URI_STATUSES = 2;
 
 	static {
 		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TweetStore.Statuses.CONTENT_PATH,
-				URI_STATUSES_FOR_ALL_ACCOUNTS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, "statuses/#", URI_STATUSES);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, Statuses.CONTENT_PATH, URI_STATUSES);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, Accounts.CONTENT_PATH, URI_ACCOUNTS);
 	}
 
 	private SQLiteDatabase database;
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		// TODO Auto-generated method stub
+		String table = getTableName(uri);
+		if (table == null) return 0;
+		database.delete(table, selection, selectionArgs);
 		return 0;
 	}
 
 	@Override
 	public String getType(Uri uri) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		// TODO Auto-generated method stub
-		return null;
+		String table = getTableName(uri);
+		if (table == null) return null;
+		long row_id = database.insert(table, null, values);
+
+		return Uri.withAppendedPath(uri, String.valueOf(row_id));
 	}
 
 	@Override
@@ -69,24 +63,28 @@ public class TweetStoreProvider extends ContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
 			String sortOrder) {
 
-		String table = null;
-
-		switch (URI_MATCHER.match(uri)) {
-			case URI_STATUSES_FOR_ALL_ACCOUNTS:
-			case URI_STATUSES:
-				table = TABLE_STATUSES;
-				break;
-			default:
-				return null;
-		}
+		String table = getTableName(uri);
+		if (table == null) return null;
 
 		return database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
 	}
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-		// TODO Auto-generated method stub
-		return 0;
+		String table = getTableName(uri);
+		if (table == null) return 0;
+		return database.update(table, values, selection, selectionArgs);
+	}
+
+	private String getTableName(Uri uri) {
+		switch (URI_MATCHER.match(uri)) {
+			case URI_STATUSES:
+				return TABLE_STATUSES;
+			case URI_ACCOUNTS:
+				return TABLE_ACCOUNTS;
+			default:
+				return null;
+		}
 	}
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
@@ -100,6 +98,8 @@ public class TweetStoreProvider extends ContentProvider {
 			database.beginTransaction();
 			database.execSQL(createTable(TABLE_STATUSES, TweetStore.Statuses.COLUMNS,
 					TweetStore.Statuses.TYPES));
+			database.execSQL(createTable(TABLE_ACCOUNTS, TweetStore.Accounts.COLUMNS,
+					TweetStore.Accounts.TYPES));
 			database.setTransactionSuccessful();
 			database.endTransaction();
 		}

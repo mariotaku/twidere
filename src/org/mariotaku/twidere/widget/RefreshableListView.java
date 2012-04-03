@@ -124,7 +124,7 @@ public class RefreshableListView extends ListView {
 			if (direction > 0) {
 				// Refresh bar is extended if top pixel of the first item is
 				// visible
-				if (getChildAt(0).getTop() == 0) {
+				if (getChildAt(0) != null && getChildAt(0).getTop() == 0) {
 					if (mHistoricalTop < 0) {
 						mY = ev.getY();
 						mHistoricalTop = 0;
@@ -142,7 +142,7 @@ public class RefreshableListView extends ListView {
 
 				// Refresh bar is shortened if top pixel of the first item is
 				// visible
-				if (getChildAt(0).getTop() == 0) {
+				if (getChildAt(0) != null && getChildAt(0).getTop() == 0) {
 					setHeaderHeight(height);
 
 					// If scroll reaches top of the list, list scroll is enabled
@@ -171,7 +171,7 @@ public class RefreshableListView extends ListView {
 				}
 				break;
 			case MotionEvent.ACTION_MOVE:
-				mHistoricalTop = getChildAt(0).getTop();
+				mHistoricalTop = getChildAt(0) != null ? getChildAt(0).getTop() : 0;
 				break;
 			case MotionEvent.ACTION_UP:
 				if (!mIsRefreshing) {
@@ -180,7 +180,7 @@ public class RefreshableListView extends ListView {
 						mHandler.sendMessage(mHandler.obtainMessage(REFRESH, (int) (ev.getY() - mY)
 								/ 2 + mInitialHeight, 0));
 					} else {
-						if (getChildAt(0).getTop() == 0) {
+						if (getChildAt(0) != null && getChildAt(0).getTop() == 0) {
 							mHandler.sendMessage(mHandler.obtainMessage(NORMAL,
 									(int) (ev.getY() - mY) / 2 + mInitialHeight, 0));
 						}

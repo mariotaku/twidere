@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="hello">Hello World, HomeActivity!</string>
 	<string name="app_name">Twidere</string>
 	<string name="pull_down_to_update">Pull down to update</string>
 	<string name="release_to_update">Release to update</string>
@@ -13,7 +12,20 @@
 	<string name="add_image">Add image</string>
 	<string name="take_photo">Take photo</string>
 	<string name="save_to_draft">Save to draft</string>
-	<string name="test_screenname">\@username</string>
 	<string name="tweet_hint">What\'s happening ?</string>
+	<string name="sign_up">Sign up</string>
+	<string name="sign_in">Sign in</string>
+	<string name="rest_api_base">REST API Base</string>
+	<string name="search_api_base">Search API Base</string>
+	<string name="auth_type">Auth type</string>
+	<string name="oauth">OAuth</string>
+	<string name="xauth">xAuth</string>
+	<string name="basic">Basic</string>
+	<string name="save">Save</string>
+	<string name="test">Test</string>
+	<string name="login_to_twitter">Login to Twitter</string>
+	<string name="api_settings">API Settings</string>
+	<string name="home">Home</string>
+	<string name="error_occurred">An error occurred, please try again.</string>
 
 </resources>

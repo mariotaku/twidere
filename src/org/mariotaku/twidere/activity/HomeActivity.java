@@ -8,7 +8,10 @@ import org.mariotaku.twidere.fragment.ConnectTabFragment;
 import org.mariotaku.twidere.fragment.DiscoverTabFragment;
 import org.mariotaku.twidere.fragment.HomeTabFragment;
 import org.mariotaku.twidere.fragment.MeTabFragment;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,6 +34,15 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {}, null, null,
+				null);
+		int accounts_count = cur.getCount();
+		if (accounts_count <= 0) {
+			startActivity(new Intent(this, LoginActivity.class));
+			finish();
+			return;
+		}
 		setContentView(R.layout.main);
 		mActionBar = getSupportActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);

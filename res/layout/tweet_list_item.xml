@@ -5,10 +5,10 @@
 
 	<ImageView
 		android:id="@+id/profile_image"
-		android:layout_width="64dip"
-		android:layout_height="64dip"
-		android:padding="2dip"
-		android:scaleType="center"
+		android:layout_width="@dimen/profile_image_size"
+		android:layout_height="@dimen/profile_image_size"
+		android:padding="4dip"
+		android:scaleType="fitCenter"
 		android:src="@drawable/ic_profile_image_default"/>
 
 	<TextView
@@ -19,9 +19,8 @@
 		android:layout_toRightOf="@+id/profile_image"
 		android:paddingLeft="4dip"
 		android:paddingRight="4dip"
-		android:paddingTop="2dip"
+		android:paddingTop="4dip"
 		android:singleLine="true"
-		android:text="user_name"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="#000"
 		android:textStyle="bold"/>
@@ -33,9 +32,8 @@
 		android:layout_alignBaseline="@+id/user_name"
 		android:layout_toRightOf="@+id/user_name"
 		android:singleLine="true"
-		android:text="screen_name"
 		android:textColor="#aaa"
-		android:textSize="11sp"/>
+		android:textSize="12sp"/>
 
 	<TextView
 		android:id="@+id/tweet_content"
@@ -44,9 +42,9 @@
 		android:layout_alignParentRight="true"
 		android:layout_below="@+id/user_name"
 		android:layout_toRightOf="@+id/profile_image"
+		android:paddingBottom="4dip"
 		android:paddingLeft="4dip"
 		android:paddingRight="4dip"
-		android:text="A quick brown fox jumps over a lazy dog."
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="#000"/>
 
@@ -62,9 +60,13 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignBaseline="@+id/user_name"
-		android:layout_toLeftOf="@+id/retweet_fav_indicator"
-		android:text="just now"
+		android:layout_alignParentRight="true"
+		android:padding="4dip"
+		android:shadowColor="#fff"
+		android:shadowDx="0"
+		android:shadowDy="0"
+		android:shadowRadius="2"
 		android:textColor="#aaa"
-		android:textSize="10sp"/>
+		android:textSize="11sp"/>
 
 </RelativeLayout>
