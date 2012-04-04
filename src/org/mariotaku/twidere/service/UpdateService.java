@@ -7,6 +7,7 @@ import java.util.List;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.IUpdateService;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
 import twitter4j.ResponseList;
@@ -28,6 +29,7 @@ public class UpdateService extends Service implements Constants {
 
 	private final ServiceStub mBinder = new ServiceStub(this);
 	private RefreshHomeTimelineTask mRefreshHomeTimelineTask;
+	private RefreshMentionsTask mRefreshMentionsTask;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -43,6 +45,11 @@ public class UpdateService extends Service implements Constants {
 	}
 
 	public void refreshMentions(long[] account_ids, int count) {
+		if (mRefreshMentionsTask != null) {
+			mRefreshMentionsTask.cancel(true);
+		}
+		mRefreshMentionsTask = new RefreshMentionsTask(account_ids, count);
+		mRefreshMentionsTask.execute();
 	}
 
 	public void refreshMessages(long[] account_ids, int count) {
@@ -71,13 +78,22 @@ public class UpdateService extends Service implements Constants {
 					if (cur.getCount() == 1) {
 						cur.moveToFirst();
 						ConfigurationBuilder cb = new ConfigurationBuilder();
-						cb.setRestBaseURL(cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.REST_API_BASE)));
-						cb.setSearchBaseURL(cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.SEARCH_API_BASE)));
+						String rest_api_base = cur.getString(cur
+								.getColumnIndexOrThrow(Accounts.REST_API_BASE));
+						String search_api_base = cur.getString(cur
+								.getColumnIndexOrThrow(Accounts.SEARCH_API_BASE));
+						if (rest_api_base == null || "".equals(rest_api_base)) {
+							rest_api_base = DEFAULT_REST_API_BASE;
+						}
+						if (search_api_base == null || "".equals(search_api_base)) {
+							search_api_base = DEFAULT_SEARCH_API_BASE;
+						}
+						cb.setRestBaseURL(rest_api_base);
+						cb.setSearchBaseURL(search_api_base);
 						Twitter twitter = null;
 						switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 							case Accounts.AUTH_TYPE_OAUTH:
+							case Accounts.AUTH_TYPE_XAUTH:
 								cb.setOAuthConsumerKey(CONSUMER_KEY);
 								cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 								twitter = new TwitterFactory(cb.build())
@@ -142,7 +158,123 @@ public class UpdateService extends Service implements Constants {
 			mRefreshHomeTimelineTask = null;
 		}
 
-		public class AccountResponce {
+		private class AccountResponce {
+
+			public long account_id;
+			public ResponseList<twitter4j.Status> responselist;
+
+			public AccountResponce(long account_id, ResponseList<twitter4j.Status> responselist) {
+				this.account_id = account_id;
+				this.responselist = responselist;
+
+			}
+		}
+
+	}
+
+	private class RefreshMentionsTask extends
+			AsyncTask<Void, Void, List<RefreshMentionsTask.AccountResponce>> {
+
+		private long[] account_ids;
+
+		public RefreshMentionsTask(long[] account_ids, int count) {
+			this.account_ids = account_ids;
+		}
+
+		@Override
+		protected List<AccountResponce> doInBackground(Void... params) {
+
+			List<AccountResponce> result = new ArrayList<AccountResponce>();
+
+			for (long account_id : account_ids) {
+				StringBuilder where = new StringBuilder();
+				where.append(Accounts.USER_ID + "='" + account_id + "'");
+				Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS,
+						where.toString(), null, null);
+				if (cur != null) {
+					if (cur.getCount() == 1) {
+						cur.moveToFirst();
+						ConfigurationBuilder cb = new ConfigurationBuilder();
+						String rest_api_base = cur.getString(cur
+								.getColumnIndexOrThrow(Accounts.REST_API_BASE));
+						String search_api_base = cur.getString(cur
+								.getColumnIndexOrThrow(Accounts.SEARCH_API_BASE));
+						if (rest_api_base == null || "".equals(rest_api_base)) {
+							rest_api_base = DEFAULT_REST_API_BASE;
+						}
+						if (search_api_base == null || "".equals(search_api_base)) {
+							search_api_base = DEFAULT_SEARCH_API_BASE;
+						}
+						cb.setRestBaseURL(rest_api_base);
+						cb.setSearchBaseURL(search_api_base);
+						Twitter twitter = null;
+						switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
+							case Accounts.AUTH_TYPE_OAUTH:
+							case Accounts.AUTH_TYPE_XAUTH:
+								cb.setOAuthConsumerKey(CONSUMER_KEY);
+								cb.setOAuthConsumerSecret(CONSUMER_SECRET);
+								twitter = new TwitterFactory(cb.build())
+										.getInstance(new AccessToken(
+												cur.getString(cur
+														.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN)),
+												cur.getString(cur
+														.getColumnIndexOrThrow(Accounts.TOKEN_SECRET))));
+								break;
+							case Accounts.AUTH_TYPE_BASIC:
+								twitter = new TwitterFactory(cb.build())
+										.getInstance(new BasicAuthorization(
+												cur.getString(cur
+														.getColumnIndexOrThrow(Accounts.USERNAME)),
+												cur.getString(cur
+														.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD))));
+								break;
+							default:
+						}
+						if (twitter != null) {
+							try {
+								result.add(new AccountResponce(account_id, twitter.getMentions()));
+							} catch (TwitterException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+					cur.close();
+				}
+			}
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(List<AccountResponce> responces) {
+			for (AccountResponce responce : responces) {
+				ResponseList<twitter4j.Status> mentions = responce.responselist;
+				long account_id = responce.account_id;
+				if (mentions == null) return;
+				ContentValues[] values_array = new ContentValues[mentions.size()];
+				int idx = 0;
+				for (twitter4j.Status mention : mentions) {
+					User user = mention.getUser();
+					ContentValues values = new ContentValues();
+					values.put(Mentions.ACCOUNT_ID, account_id);
+					values.put(Mentions.STATUS_ID, mention.getId());
+					values.put(Mentions.USER_ID, user.getId());
+					values.put(Mentions.STATUS_TIMESTAMP, mention.getCreatedAt().getTime());
+					values.put(Mentions.TEXT, mention.getText());
+					values.put(Mentions.NAME, user.getName());
+					values.put(Mentions.SCREEN_NAME, user.getScreenName());
+					values.put(Mentions.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
+					values.put(Mentions.IS_RETWEET, mention.isRetweet() ? 1 : 0);
+					values.put(Mentions.IS_FAVORITE, mention.isFavorited() ? 1 : 0);
+					values_array[idx] = values;
+					idx++;
+				}
+				getContentResolver().bulkInsert(Mentions.CONTENT_URI, values_array);
+			}
+			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED));
+			mRefreshHomeTimelineTask = null;
+		}
+
+		private class AccountResponce {
 
 			public long account_id;
 			public ResponseList<twitter4j.Status> responselist;

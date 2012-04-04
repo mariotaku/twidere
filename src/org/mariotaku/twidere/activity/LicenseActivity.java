@@ -17,59 +17,34 @@
 package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.ViewGroup.LayoutParams;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Window;
 
-public class AuthorizationActivity extends SherlockFragmentActivity implements Constants {
+public class LicenseActivity extends SherlockFragmentActivity implements Constants {
 
-	private Uri authUrl;
+	private Uri mUri = Uri.parse("file:///android_asset/gpl-3.0-standalone.html");
 
 	private WebView mWebView;
-	private WebSettings mWebSettings;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		authUrl = getIntent().getData();
-		if (authUrl == null) {
-			Toast.makeText(AuthorizationActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT);
-			finish();
-			return;
-		}
 
 		mWebView = new WebView(this);
 		setContentView(mWebView, new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT));
-		mWebView.loadUrl(authUrl.toString());
+		mWebView.loadUrl(mUri.toString());
 		mWebView.setWebViewClient(new AuthorizationWebViewClient());
-		mWebView.setVerticalScrollBarEnabled(false);
-		mWebSettings = mWebView.getSettings();
-		mWebSettings.setLoadsImagesAutomatically(true);
-		mWebSettings.setJavaScriptEnabled(true);
-		mWebSettings.setBlockNetworkImage(false);
-		mWebSettings.setSaveFormData(true);
-		mWebSettings.setSavePassword(true);
-		mWebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+		mWebView.getSettings().setBuiltInZoomControls(true);
 
-	}
-
-	@Override
-	public void onDestroy() {
-		mWebView.clearCache(true);
-		super.onDestroy();
 	}
 
 	private class AuthorizationWebViewClient extends WebViewClient {
@@ -77,41 +52,21 @@ public class AuthorizationActivity extends SherlockFragmentActivity implements C
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
-			setSupportProgressBarIndeterminateVisibility(false);
+			setTitle(view.getTitle());
 		}
 
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
-			setSupportProgressBarIndeterminateVisibility(true);
-		}
-
-		@Override
-		public void onReceivedError(WebView view, int errorCode, String description,
-				String failingUrl) {
-			super.onReceivedError(view, errorCode, description, failingUrl);
-			Toast.makeText(AuthorizationActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT);
-			finish();
 		}
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Uri uri = Uri.parse(url);
-			if (uri.getHost().equals(authUrl.getHost()))
-				return false;
-			else if (url.startsWith(DEFAULT_OAUTH_CALLBACK)) {
-				String oauth_verifier = uri.getQueryParameter(OAUTH_VERIFIER);
-				if (oauth_verifier != null) {
-					Bundle bundle = new Bundle();
-					bundle.putString(OAUTH_VERIFIER, oauth_verifier);
-					setResult(RESULT_OK, new Intent().putExtras(bundle));
-					finish();
-				}
-				return true;
-			}
+			if (uri.getScheme().equals(mUri.getScheme())) return false;
+
 			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 			startActivity(intent);
-			finish();
 			return true;
 		}
 	}

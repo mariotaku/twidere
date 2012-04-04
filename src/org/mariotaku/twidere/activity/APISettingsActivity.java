@@ -17,8 +17,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-public class APISettingsActivity extends SherlockFragmentActivity implements
-		Constants, OnCheckedChangeListener, OnClickListener {
+public class APISettingsActivity extends SherlockFragmentActivity implements Constants,
+		OnCheckedChangeListener, OnClickListener {
 
 	private EditText mEditRestAPIBase, mEditSearchAPIBase;
 	private RadioGroup mEditAuthType;
@@ -68,8 +68,7 @@ public class APISettingsActivity extends SherlockFragmentActivity implements
 		mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
 		mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
 		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
-		mEditRestAPIBase
-				.setText(mRestAPIBase != null ? mRestAPIBase : DEFAULT_REST_API_BASE);
+		mEditRestAPIBase.setText(mRestAPIBase != null ? mRestAPIBase : DEFAULT_REST_API_BASE);
 		mEditSearchAPIBase.setText(mSearchAPIBase != null ? mSearchAPIBase
 				: DEFAULT_SEARCH_API_BASE);
 		mButtonOAuth.setChecked(mAuthType == Accounts.AUTH_TYPE_OAUTH);

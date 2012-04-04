@@ -7,14 +7,14 @@
 		android:id="@+id/refreshable_list_header"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingBottom="10dp"
-		android:paddingTop="10dp">
+		android:paddingBottom="12dp"
+		android:paddingTop="12dp">
 
 		<ImageView
 			android:id="@+id/refreshable_list_arrow"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginLeft="25dp"
+			android:layout_marginLeft="24dp"
 			android:src="@drawable/refreshable_listview_arrow"/>
 
 		<ProgressBar
@@ -22,7 +22,7 @@
 			android:layout_width="20dp"
 			android:layout_height="20dp"
 			android:layout_centerVertical="true"
-			android:layout_marginLeft="25dp"
+			android:layout_marginLeft="24dp"
 			android:visibility="invisible"/>
 
 		<TextView
@@ -30,7 +30,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_centerInParent="true"
-			android:layout_marginLeft="15dp"
+			android:layout_marginLeft="16dp"
 			android:text="@string/pull_down_to_update"/>
 	</RelativeLayout>
 

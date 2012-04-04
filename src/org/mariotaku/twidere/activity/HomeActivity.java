@@ -15,9 +15,10 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.AbsListView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -38,6 +39,7 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {}, null, null,
 				null);
 		int accounts_count = cur.getCount();
+		cur.close();
 		if (accounts_count <= 0) {
 			startActivity(new Intent(this, LoginActivity.class));
 			finish();
@@ -58,28 +60,20 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		mAdapter.addTab(new MeTabFragment(), null, R.drawable.ic_tab_me);
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mAdapter);
-		TabPageIndicator indicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		indicator.setViewPager(mViewPager);
+		TabPageIndicator mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
+		mIndicator.setViewPager(mViewPager);
+
+		mViewPager.getChildCount();
 
 	}
 
-	/**
-	 * This is a helper class that implements the management of tabs and all
-	 * details of connecting a ViewPager with associated TabHost. It relies on a
-	 * trick. Normally a tab host has a simple API for supplying a View or
-	 * Intent that each tab will show. This is not sufficient for switching
-	 * between pages. So instead we make the content part of the tab host 0dp
-	 * high (it is not shown) and the TabsAdapter supplies its own dummy view to
-	 * show as the tab content. It listens to changes in tabs, and takes care of
-	 * switch to the correct paged in the ViewPager whenever the selected tab
-	 * changes.
-	 */
-	private class TabsAdapter extends FragmentPagerAdapter implements TitleProvider {
+	private class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider {
 
-		private final ArrayList<TabInfo> mTabsInfo = new ArrayList<TabInfo>();
+		private ArrayList<TabInfo> mTabsInfo = new ArrayList<TabInfo>();
 
 		public TabsAdapter(FragmentManager fm) {
 			super(fm);
+			mTabsInfo.clear();
 		}
 
 		public void addTab(Fragment fragment, String name, Integer icon) {
@@ -111,11 +105,22 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 			return mTabsInfo.get(position).name;
 		}
 
+		@Override
+		public void onPageReselected(int position) {
+			View fragmentview = mViewPager.getChildAt(position);
+			if (fragmentview != null) {
+				View view = fragmentview.findViewById(android.R.id.list);
+				if (view != null && view instanceof AbsListView) {
+					((AbsListView) view).smoothScrollToPosition(0);
+				}
+			}
+		}
+
 		private class TabInfo {
 
-			String name;
-			Integer icon;
-			Fragment fragment;
+			private String name;
+			private Integer icon;
+			private Fragment fragment;
 
 			public TabInfo(String name, Integer icon, Fragment fragment) {
 				if (name == null && icon == null)
@@ -127,5 +132,6 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 
 			}
 		}
+
 	}
 }

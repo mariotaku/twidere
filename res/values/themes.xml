@@ -8,4 +8,9 @@
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
 	</style>
 
+	<style name="Theme.Holo.Light.Dialog.NoSherlock" parent="@style/Theme.Holo.Light.Dialog">
+		<item name="windowActionBar">false</item>
+		<item name="android:windowNoTitle">false</item>
+	</style>
+
 </resources>

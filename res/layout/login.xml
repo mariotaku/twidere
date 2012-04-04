@@ -41,7 +41,7 @@
 
 		<Button
 			android:id="@+id/sign_in"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:minHeight="48dip"
@@ -49,7 +49,7 @@
 
 		<Button
 			android:id="@+id/sign_up"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:minHeight="48dip"

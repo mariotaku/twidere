@@ -27,5 +27,8 @@
 	<string name="api_settings">API Settings</string>
 	<string name="home">Home</string>
 	<string name="error_occurred">An error occurred, please try again.</string>
+	<string name="already_logged_in">You are already logged in.</string>
+	<string name="license">License</string>
+	<string name="select_accounts">Select accounts</string>
 
 </resources>

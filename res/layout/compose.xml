@@ -1,39 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-	<EditText
-		android:id="@+id/edit_text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignBottom="@+id/save_to_draft"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentTop="true"
-		android:layout_toLeftOf="@+id/send"
-		android:ems="10"
-		android:gravity="top"
-		android:hint="@string/tweet_hint"
-		android:inputType="textMultiLine">
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
 
-		<requestFocus/>
-	</EditText>
+		<EditText
+			android:id="@+id/edit_text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@+id/select_accounts"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:layout_toLeftOf="@+id/send"
+			android:ems="10"
+			android:gravity="top"
+			android:hint="@string/tweet_hint"
+			android:inputType="textLongMessage|textMultiLine">
 
-	<ImageButton
-		android:id="@+id/send"
-		android:layout_width="64dip"
-		android:layout_height="64dip"
-		android:layout_alignParentRight="true"
-		android:contentDescription="@string/send"
-		android:src="@drawable/ic_menu_send"/>
+			<requestFocus/>
+		</EditText>
 
-	<ImageButton
-		android:id="@+id/save_to_draft"
-		android:layout_width="64dip"
-		android:layout_height="64dip"
-		android:layout_alignParentRight="true"
-		android:layout_below="@+id/send"
-		android:contentDescription="@string/save_to_draft"
-		android:src="@drawable/ic_menu_save"/>
+		<ImageButton
+			android:id="@+id/send"
+			android:layout_width="64dip"
+			android:layout_height="64dip"
+			android:layout_alignParentRight="true"
+			android:contentDescription="@string/send"
+			android:src="@drawable/ic_menu_send"/>
 
-</RelativeLayout>
+		<ImageButton
+			android:id="@+id/select_accounts"
+			android:layout_width="64dip"
+			android:layout_height="64dip"
+			android:layout_alignParentRight="true"
+			android:layout_below="@+id/send"
+			android:contentDescription="@string/select_accounts"
+			android:src="@drawable/ic_menu_accounts"/>
+	</RelativeLayout>
+
+</ScrollView>

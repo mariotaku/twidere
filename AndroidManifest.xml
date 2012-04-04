@@ -23,9 +23,18 @@
 
 	<application
 		android:name=".app.TwidereApplication"
-		android:icon="@drawable/ic_launcher"
+		android:icon="@drawable/ic_launcher_twidere"
 		android:label="@string/app_name"
 		android:theme="@style/Theme.Holo.Light.DarkActionBar">
+		<activity
+			android:name=".activity.LoginActivity"
+			android:label="@string/login_to_twitter">
+		</activity>
+		<activity
+			android:name=".activity.LicenseActivity"
+			android:label="@string/license"
+			android:theme="@style/Theme.Holo.Light.Dialog">
+		</activity>
 		<activity
 			android:name=".activity.HomeActivity"
 			android:label="@string/app_name"
@@ -39,7 +48,19 @@
 		<activity
 			android:name=".activity.ComposeActivity"
 			android:label="@string/compose"
-			android:uiOptions="splitActionBarWhenNarrow">
+			android:uiOptions="splitActionBarWhenNarrow"
+			android:windowSoftInputMode="adjustResize">
+		</activity>
+		<activity android:name=".activity.GeneralSettingsActivity">
+		</activity>
+		<activity
+			android:name=".activity.AuthorizationActivity"
+			android:label="@string/login_to_twitter">
+		</activity>
+		<activity
+			android:name=".activity.APISettingsActivity"
+			android:label="@string/api_settings"
+			android:theme="@style/Theme.Holo.Light.Dialog">
 		</activity>
 
 		<provider
@@ -52,18 +73,10 @@
 		<service android:name=".service.UpdateService">
 		</service>
 
-		<activity android:name=".activity.GeneralSettingsActivity">
-		</activity>
 		<activity
-			android:name=".activity.LoginActivity"
-			android:label="@string/login_to_twitter">
-		</activity>
-		<activity
-			android:name=".activity.APISettingsActivity"
-			android:label="@string/api_settings"
-			android:theme="@style/Theme.Holo.Light.Dialog">
-		</activity>
-		<activity android:name=".activity.AuthorizationActivity">
+			android:name=".activity.SelectAccountsActivity"
+			android:label="@string/select_accounts"
+			android:theme="@style/Theme.Holo.Light.Dialog.NoSherlock">
 		</activity>
 	</application>
 

@@ -29,7 +29,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AnimationUtils;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -252,14 +253,17 @@ public class RefreshableListView extends ListView {
 		mHeaderView.setLayoutParams(headerLp);
 
 		if (!mIsRefreshing) {
+			RotateAnimation animation = new RotateAnimation(180.0f, 0.0f,
+					Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+			animation.setDuration(200L);
 			// If scroll reaches the trigger line, start refreshing
 			if (height > mHeaderHeight && !mArrowUp) {
-				mArrow.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotate));
+				mArrow.startAnimation(animation);
 				mText.setText(R.string.release_to_update);
 				rotateArrow();
 				mArrowUp = true;
 			} else if (height < mHeaderHeight && mArrowUp) {
-				mArrow.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotate));
+				mArrow.startAnimation(animation);
 				mText.setText(R.string.pull_down_to_update);
 				rotateArrow();
 				mArrowUp = false;

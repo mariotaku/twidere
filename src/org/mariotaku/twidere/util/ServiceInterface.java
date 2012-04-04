@@ -32,6 +32,12 @@ public class ServiceInterface implements Constants {
 						listener.onHomeTimelineRefreshed();
 					}
 				}
+			} else if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
+				for (StateListener listener : mStateListeners) {
+					if (listener != null) {
+						listener.onMentionsRefreshed();
+					}
+				}
 			}
 		}
 
@@ -48,6 +54,7 @@ public class ServiceInterface implements Constants {
 
 				{
 					addAction(BROADCAST_HOME_TIMELINE_REFRESHED);
+					addAction(BROADCAST_MENTIONS_REFRESHED);
 				}
 			};
 			mContext.registerReceiver(mMediaStatusReceiver, filter);
@@ -110,6 +117,8 @@ public class ServiceInterface implements Constants {
 	public interface StateListener {
 
 		void onHomeTimelineRefreshed();
+
+		void onMentionsRefreshed();
 
 	}
 }

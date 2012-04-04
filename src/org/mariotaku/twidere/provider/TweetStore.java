@@ -90,6 +90,15 @@ public class TweetStore {
 
 	}
 
+	public static class Mentions extends Statuses {
+
+		public final static String CONTENT_PATH = "mentions";
+
+		public final static Uri CONTENT_URI = Uri.withAppendedPath(
+				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+
+	}
+
 	public static class Statuses implements BaseColumns {
 
 		public final static String CONTENT_PATH = "statuses";
@@ -115,43 +124,51 @@ public class TweetStore {
 		public final static String NAME = "name";
 
 		/**
-		 * 推文发送者的用户名（@username 格式） <br>
+		 * User's screen name of the status. <br>
 		 * Type: TEXT
 		 */
 		public final static String SCREEN_NAME = "screen_name";
 
 		/**
-		 * 推文的唯一ID <br>
+		 * Unique id of the status. <br>
 		 * Type: INTEGER UNIQUE(long)
 		 */
 		public final static String STATUS_ID = "status_id";
 
 		/**
-		 * 如果这条推文是转发则数值不为0 <br>
+		 * Set to non-zero integer if the status was a retweet. <br>
 		 * Type: INTEGER (boolean)
 		 */
 		public final static String IS_RETWEET = "is_retweet";
 
 		/**
-		 * 如果这条推文是收藏则数值不为0 <br>
+		 * Set to non-zero integer if the status was a favorite. <br>
 		 * Type: INTEGER (boolean)
 		 */
 		public final static String IS_FAVORITE = "is_favorite";
 
 		/**
-		 * 推文发送者的头像的URL <br>
+		 * Set to non-zero integer if the status was a send by your self. <br>
+		 * Type: INTEGER (boolean)
+		 */
+		public final static String IS_TWEET_BY_ME = "is_tweet_by_me";
+
+		/**
+		 * User's profile image URL of the status. <br>
 		 * Type: TEXT NOT NULL
 		 */
 		public final static String PROFILE_IMAGE_URL = "profile_image_url";
 
 		/**
-		 * 推文发送者的ID <br>
+		 * User's ID of the status. <br>
 		 * Type: INTEGER (long)
 		 */
 		public final static String USER_ID = "user_id";
 
+		public final static String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
+
 		/**
-		 * 推文的时间戳 <br>
+		 * Timestamp of the status. <br>
 		 * Type: INTEGER
 		 */
 		public final static String STATUS_TIMESTAMP = "status_timestamp";
@@ -159,12 +176,13 @@ public class TweetStore {
 		public final static String DEFAULT_SORT_ORDER = STATUS_TIMESTAMP + " DESC";
 
 		public final static String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID,
-				STATUS_TIMESTAMP, TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IS_RETWEET,
-				IS_FAVORITE };
+				STATUS_TIMESTAMP, TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL,
+				IN_REPLY_TO_STATUS_ID, IS_RETWEET, IS_FAVORITE, IS_TWEET_BY_ME };
 
 		public final static String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT,
 				TYPE_INT_UNIQUE, TYPE_INT, TYPE_INT, TYPE_TEXT_NOT_NULL, TYPE_TEXT_NOT_NULL,
-				TYPE_TEXT_NOT_NULL, TYPE_TEXT_NOT_NULL, TYPE_BOOLEAN, TYPE_BOOLEAN };
+				TYPE_TEXT_NOT_NULL, TYPE_TEXT_NOT_NULL, TYPE_INT, TYPE_BOOLEAN, TYPE_BOOLEAN,
+				TYPE_BOOLEAN };
 
 	}
 }

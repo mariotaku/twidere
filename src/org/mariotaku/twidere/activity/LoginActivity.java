@@ -12,7 +12,6 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.ConfigurationBuilder;
-
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -25,6 +24,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -36,7 +36,7 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 
 	private final static int API_SETTINGS = 1;
 	private final static int GOTO_AUTHORIZATION = 2;
-	
+
 	private final static String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 
 	private String mRestAPIBase, mSearchAPIBase, mUsername, mPassword;
@@ -59,6 +59,11 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 						mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
 						mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
 						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
+						findViewById(R.id.username_password).setVisibility(
+								mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
+						((LinearLayout) findViewById(R.id.sign_in_sign_up))
+								.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
+										: LinearLayout.HORIZONTAL);
 					}
 				}
 				break;
@@ -71,7 +76,9 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 					if (bundle != null) {
 						String oauth_verifier = bundle.getString(OAUTH_VERIFIER);
 						if (oauth_verifier != null && mRequestToken != null) {
-							if (mTask != null) mTask.cancel(true);
+							if (mTask != null) {
+								mTask.cancel(true);
+							}
 							mTask = new CallbackAuthTask(mRequestToken, oauth_verifier);
 							mTask.execute();
 						}
@@ -90,7 +97,9 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 				break;
 			case R.id.sign_in:
 				saveEditedText();
-				if (mTask != null) mTask.cancel(true);
+				if (mTask != null) {
+					mTask.cancel(true);
+				}
 				mTask = new LoginTask();
 				mTask.execute();
 				break;
@@ -111,30 +120,40 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 		}
 		mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
 		mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
+
+		if (mRestAPIBase == null) {
+			mRestAPIBase = DEFAULT_REST_API_BASE;
+		}
+		if (mSearchAPIBase == null) {
+			mSearchAPIBase = DEFAULT_SEARCH_API_BASE;
+		}
+
 		mUsername = bundle.getString(Accounts.USERNAME);
 		mPassword = bundle.getString(Accounts.PASSWORD);
 		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
+		findViewById(R.id.username_password).setVisibility(
+				mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
+		((LinearLayout) findViewById(R.id.sign_in_sign_up))
+				.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
+						: LinearLayout.HORIZONTAL);
 
 		mEditUsername.setText(mUsername);
 		mEditPassword.setText(mPassword);
 
 	}
 
-	private void saveEditedText() {
-		Editable ed = mEditUsername.getText();
-		if (ed != null) {
-			mUsername = ed.toString();
-		}
-		ed = mEditPassword.getText();
-		if (ed != null) {
-			mPassword = ed.toString();
-		}
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.login, menu);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public void onDestroy() {
+		if (mTask != null) {
+			mTask.cancel(true);
+		}
+		super.onDestroy();
 	}
 
 	@Override
@@ -173,10 +192,20 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 		mSignInButton.setOnClickListener(this);
 		mSignUpButton.setOnClickListener(this);
 	}
-	
+
+	private void saveEditedText() {
+		Editable ed = mEditUsername.getText();
+		if (ed != null) {
+			mUsername = ed.toString();
+		}
+		ed = mEditPassword.getText();
+		if (ed != null) {
+			mPassword = ed.toString();
+		}
+	}
+
 	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {
 
-		
 		protected final static int RESULT_UNKNOWN_ERROR = -1;
 		protected final static int RESULT_SUCCESS = 0;
 		protected final static int RESULT_ALREADY_LOGGED_IN = 1;
@@ -185,59 +214,44 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 		protected final static int RESULT_BAD_ADDRESS = 4;
 		protected final static int RESULT_NO_PERMISSION = 5;
 		protected final static int RESULT_OPEN_BROWSER = 6;
-		
+
 		protected int getErrorCode(TwitterException e) {
 			if (e == null) return RESULT_UNKNOWN_ERROR;
 			int status_code = e.getStatusCode();
-			if (status_code == -1) {
+			if (status_code == -1)
 				return RESULT_CONNECTIVITY_ERROR;
-			} else if (status_code >= 401 && status_code < 404) {
+			else if (status_code >= 401 && status_code < 404)
 				return RESULT_NO_PERMISSION;
-			} else if (status_code >= 404 && status_code < 500) {
+			else if (status_code >= 404 && status_code < 500)
 				return RESULT_BAD_ADDRESS;
-			} else if (status_code >= 500 && status_code < 600) {
+			else if (status_code >= 500 && status_code < 600)
 				return RESULT_SERVER_ERROR;
-			} else {
+			else
 				return RESULT_UNKNOWN_ERROR;
-			}
 		}
-		
-		@Override
-		protected void onPreExecute() {
-			setSupportProgressBarIndeterminateVisibility(true);
-		}
-		
+
 		@Override
 		protected void onPostExecute(Object result_obj) {
 			setSupportProgressBarIndeterminateVisibility(false);
 			mTask = null;
 		}
+
+		@Override
+		protected void onPreExecute() {
+			setSupportProgressBarIndeterminateVisibility(true);
+		}
 	}
-	
+
 	private class CallbackAuthTask extends AbstractTask {
 
 		private RequestToken requestToken;
 		private String oauthVerifier;
-		
+
 		public CallbackAuthTask(RequestToken requestToken, String oauthVerifier) {
 			this.requestToken = requestToken;
 			this.oauthVerifier = oauthVerifier;
 		}
-		
-		@Override
-		protected void onPostExecute(Object result_obj) {
-			Integer result = (Integer) result_obj;
-			switch (result) {
-				case RESULT_SUCCESS:
-					finish();
-					break;
-				case RESULT_ALREADY_LOGGED_IN:
-					Toast.makeText(getApplicationContext(), "User already logged in", Toast.LENGTH_SHORT).show();
-					break;
-			}
-			super.onPostExecute(result_obj);
-		}
-		
+
 		@Override
 		protected Integer doInBackground(Void... params) {
 			ContentResolver resolver = getContentResolver();
@@ -266,7 +280,7 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 						return RESULT_ALREADY_LOGGED_IN;
 					} else {
 						ContentValues values = new ContentValues();
-						values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_XAUTH);
+						values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
 						values.put(Accounts.USER_ID, userid);
 						values.put(Accounts.REST_API_BASE, mRestAPIBase);
 						values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
@@ -281,55 +295,25 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 			}
 			return RESULT_UNKNOWN_ERROR;
 		}
-		
-	}
-	
-	private class LoginTask extends AbstractTask {
 
-		private class Result {
-			public int result_code;
-			public int auth_type;
-			public RequestToken request_token;
-			
-			public Result(int result_code, int auth_type, RequestToken request_token) {
-				this.result_code = result_code;
-				this.auth_type = auth_type;
-				switch (auth_type) {
-					case Accounts.AUTH_TYPE_OAUTH:
-						if (result_code == RESULT_OPEN_BROWSER && request_token == null) throw new IllegalArgumentException("Request Token cannot be null in oauth mode!");
-						this.request_token = request_token;
-						break;
-					case Accounts.AUTH_TYPE_XAUTH:
-					case Accounts.AUTH_TYPE_BASIC:
-						if (request_token != null) throw new IllegalArgumentException("Request Token must be null in xauth/basic mode!");
-						break;
-				}
-			}
-		}
-
-		
-		@Override
-		protected Result doInBackground(Void... params) {
-			return doAuth();
-		}
-		
 		@Override
 		protected void onPostExecute(Object result_obj) {
-			Result result = (Result) result_obj;
-			switch (result.result_code) {
+			Integer result = (Integer) result_obj;
+			switch (result) {
 				case RESULT_SUCCESS:
 					finish();
-				case RESULT_ALREADY_LOGGED_IN:
-					Toast.makeText(getApplicationContext(), "User already logged in", Toast.LENGTH_SHORT).show();
 					break;
-				case RESULT_OPEN_BROWSER:
-					mRequestToken = result.request_token;
-					Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
-					startActivity(new Intent(Intent.ACTION_DEFAULT, uri, getApplicationContext(), AuthorizationActivity.class));
+				case RESULT_ALREADY_LOGGED_IN:
+					Toast.makeText(getApplicationContext(), R.string.already_logged_in,
+							Toast.LENGTH_SHORT).show();
 					break;
 			}
 			super.onPostExecute(result_obj);
 		}
+
+	}
+
+	private class LoginTask extends AbstractTask {
 
 		private Result authBasic() {
 			ContentResolver resolver = getContentResolver();
@@ -373,7 +357,7 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 			}
 			return new Result(RESULT_UNKNOWN_ERROR, Accounts.AUTH_TYPE_BASIC, null);
 		}
-		
+
 		private Result authOAuth() {
 			ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestAPIBase);
@@ -385,15 +369,13 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 			try {
 				requestToken = twitter.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
 			} catch (TwitterException e) {
-				e.printStackTrace();
 				return new Result(getErrorCode(e), Accounts.AUTH_TYPE_OAUTH, null);
 			}
-			if (requestToken != null) {
+			if (requestToken != null)
 				return new Result(RESULT_OPEN_BROWSER, Accounts.AUTH_TYPE_OAUTH, requestToken);
-			}
 			return new Result(RESULT_UNKNOWN_ERROR, Accounts.AUTH_TYPE_OAUTH, null);
 		}
-		
+
 		private Result authxAuth() {
 			ContentResolver resolver = getContentResolver();
 			ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -436,7 +418,7 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 			}
 			return new Result(RESULT_UNKNOWN_ERROR, Accounts.AUTH_TYPE_XAUTH, null);
 		}
-		
+
 		private Result doAuth() {
 			switch (mAuthType) {
 				case Accounts.AUTH_TYPE_OAUTH:
@@ -450,6 +432,57 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 			}
 			mAuthType = Accounts.AUTH_TYPE_OAUTH;
 			return authOAuth();
+		}
+
+		@Override
+		protected Result doInBackground(Void... params) {
+			return doAuth();
+		}
+
+		@Override
+		protected void onPostExecute(Object result_obj) {
+			Result result = (Result) result_obj;
+			switch (result.result_code) {
+				case RESULT_SUCCESS:
+					finish();
+					break;
+				case RESULT_ALREADY_LOGGED_IN:
+					Toast.makeText(getApplicationContext(), R.string.already_logged_in,
+							Toast.LENGTH_SHORT).show();
+					break;
+				case RESULT_OPEN_BROWSER:
+					mRequestToken = result.request_token;
+					Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
+					startActivityForResult(new Intent(Intent.ACTION_DEFAULT, uri,
+							getApplicationContext(), AuthorizationActivity.class),
+							GOTO_AUTHORIZATION);
+					break;
+			}
+			super.onPostExecute(result_obj);
+		}
+
+		private class Result {
+
+			public int result_code;
+			public RequestToken request_token;
+
+			public Result(int result_code, int auth_type, RequestToken request_token) {
+				this.result_code = result_code;
+				switch (auth_type) {
+					case Accounts.AUTH_TYPE_OAUTH:
+						if (result_code == RESULT_OPEN_BROWSER && request_token == null)
+							throw new IllegalArgumentException(
+									"Request Token cannot be null in oauth mode!");
+						this.request_token = request_token;
+						break;
+					case Accounts.AUTH_TYPE_XAUTH:
+					case Accounts.AUTH_TYPE_BASIC:
+						if (request_token != null)
+							throw new IllegalArgumentException(
+									"Request Token must be null in xauth/basic mode!");
+						break;
+				}
+			}
 		}
 	}
 

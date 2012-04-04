@@ -13,6 +13,7 @@ import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.ServiceInterface.StateListener;
+import org.mariotaku.twidere.util.TopScrollable;
 import org.mariotaku.twidere.widget.RefreshableListView;
 import org.mariotaku.twidere.widget.RefreshableListView.OnRefreshListener;
 
@@ -25,6 +26,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +38,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class HomeTabFragment extends SherlockListFragment implements Constants, OnRefreshListener,
-		LoaderCallbacks<Cursor>, StateListener {
+public class HomeTabFragment extends SherlockListFragment implements Constants, TopScrollable,
+		OnRefreshListener, LoaderCallbacks<Cursor>, StateListener {
 
 	private StatusesAdapter mAdapter;
 	private LazyImageLoader mListProfileImageLoader;
@@ -49,6 +51,7 @@ public class HomeTabFragment extends SherlockListFragment implements Constants, 
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+		Log.d("debug", "onActivityCreated, value = " + toString());
 		super.onActivityCreated(savedInstanceState);
 		mListProfileImageLoader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
@@ -81,7 +84,7 @@ public class HomeTabFragment extends SherlockListFragment implements Constants, 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.timeline, null, false);
+		return inflater.inflate(R.layout.timeline, container, false);
 	}
 
 	@Override
@@ -109,6 +112,11 @@ public class HomeTabFragment extends SherlockListFragment implements Constants, 
 		mProfileImageUrlIdx = data.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
 		mIsRetweetIdx = data.getColumnIndexOrThrow(Statuses.IS_RETWEET);
 		mIsFavoriteIdx = data.getColumnIndexOrThrow(Statuses.IS_FAVORITE);
+
+	}
+
+	@Override
+	public void onMentionsRefreshed() {
 
 	}
 
@@ -141,6 +149,14 @@ public class HomeTabFragment extends SherlockListFragment implements Constants, 
 
 	}
 
+	@Override
+	public void scrolltoTop() {
+		if (getView() != null) {
+			getListView().smoothScrollToPosition(0);
+		}
+
+	}
+
 	private class StatusesAdapter extends SimpleCursorAdapter {
 
 		public StatusesAdapter(Context context, int layout) {
@@ -162,7 +178,7 @@ public class HomeTabFragment extends SherlockListFragment implements Constants, 
 			boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
 
 			viewholder.user_name.setText(user_name);
-			viewholder.screen_name.setText(screen_name);
+			viewholder.screen_name.setText("@" + screen_name);
 			viewholder.tweet_content.setText(text);
 			viewholder.tweet_time.setText(mCommonUtils.formatTimeStampString(cursor
 					.getLong(mStatusTimestampIdx)));

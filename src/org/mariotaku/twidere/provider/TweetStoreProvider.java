@@ -1,6 +1,8 @@
 package org.mariotaku.twidere.provider;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
 import android.content.ContentProvider;
@@ -12,21 +14,23 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
-public class TweetStoreProvider extends ContentProvider {
+public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	private static UriMatcher URI_MATCHER;
 
 	private static final String TABLE_ACCOUNTS = "accounts";
 	private static final String TABLE_STATUSES = "statuses";
+	private static final String TABLE_MENTIONS = "mentions";
 
 	private static final int URI_ACCOUNTS = 1;
-
 	private static final int URI_STATUSES = 2;
+	private static final int URI_MENTIONS = 3;
 
 	static {
 		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 		URI_MATCHER.addURI(TweetStore.AUTHORITY, Statuses.CONTENT_PATH, URI_STATUSES);
 		URI_MATCHER.addURI(TweetStore.AUTHORITY, Accounts.CONTENT_PATH, URI_ACCOUNTS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, Mentions.CONTENT_PATH, URI_MENTIONS);
 	}
 
 	private SQLiteDatabase database;
@@ -49,13 +53,13 @@ public class TweetStoreProvider extends ContentProvider {
 		String table = getTableName(uri);
 		if (table == null) return null;
 		long row_id = database.insert(table, null, values);
-
 		return Uri.withAppendedPath(uri, String.valueOf(row_id));
 	}
 
 	@Override
 	public boolean onCreate() {
-		database = new DatabaseHelper(getContext(), "databases.sqlite", 1).getWritableDatabase();
+		database = new DatabaseHelper(getContext(), DATABASES_NAME, DATABASES_VERSION)
+				.getWritableDatabase();
 		return database != null;
 	}
 
@@ -82,12 +86,14 @@ public class TweetStoreProvider extends ContentProvider {
 				return TABLE_STATUSES;
 			case URI_ACCOUNTS:
 				return TABLE_ACCOUNTS;
+			case URI_MENTIONS:
+				return TABLE_MENTIONS;
 			default:
 				return null;
 		}
 	}
 
-	private static class DatabaseHelper extends SQLiteOpenHelper {
+	private class DatabaseHelper extends SQLiteOpenHelper {
 
 		public DatabaseHelper(Context context, String name, int version) {
 			super(context, name, null, version);
@@ -96,10 +102,9 @@ public class TweetStoreProvider extends ContentProvider {
 		@Override
 		public void onCreate(SQLiteDatabase database) {
 			database.beginTransaction();
-			database.execSQL(createTable(TABLE_STATUSES, TweetStore.Statuses.COLUMNS,
-					TweetStore.Statuses.TYPES));
-			database.execSQL(createTable(TABLE_ACCOUNTS, TweetStore.Accounts.COLUMNS,
-					TweetStore.Accounts.TYPES));
+			database.execSQL(createTable(TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES));
+			database.execSQL(createTable(TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES));
+			database.execSQL(createTable(TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES));
 			database.setTransactionSuccessful();
 			database.endTransaction();
 		}
