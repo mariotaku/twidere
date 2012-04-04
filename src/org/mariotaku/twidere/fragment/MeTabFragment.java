@@ -12,7 +12,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 
-public class MeTabFragment extends SherlockFragment implements Constants{
+public class MeTabFragment extends SherlockFragment implements Constants {
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

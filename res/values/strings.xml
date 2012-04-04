@@ -27,8 +27,14 @@
 	<string name="api_settings">API Settings</string>
 	<string name="home">Home</string>
 	<string name="error_occurred">An error occurred, please try again.</string>
-	<string name="already_logged_in">You are already logged in.</string>
 	<string name="license">License</string>
+	<string name="error_already_logged_in">You are already logged in.</string>
+	<string name="no_account_selected">You must select one account or more.</string>
+	<string name="error_connectivity_error">Error: Connectivity error, please check your network state.</string>
+	<string name="error_server_error">Error: Server error occurred, the server may down.</string>
+	<string name="error_bad_address">Error: Bad address, you may entered an invalid API address.</string>
+	<string name="error_no_permission">Error: You have no permission to access twitter, the application key may invalid.</string>
+	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
 	<string name="select_accounts">Select accounts</string>
 
 </resources>

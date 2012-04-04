@@ -215,6 +215,36 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 		protected final static int RESULT_NO_PERMISSION = 5;
 		protected final static int RESULT_OPEN_BROWSER = 6;
 
+
+		protected void showErrorMessage(int error_code) {
+			switch (error_code) {
+				case RESULT_ALREADY_LOGGED_IN:
+					Toast.makeText(getApplicationContext(), R.string.error_already_logged_in,
+							Toast.LENGTH_SHORT).show();
+					break;
+				case RESULT_CONNECTIVITY_ERROR:
+					Toast.makeText(getApplicationContext(), R.string.error_connectivity_error,
+							Toast.LENGTH_SHORT).show();
+					break;
+				case RESULT_SERVER_ERROR:
+					Toast.makeText(getApplicationContext(), R.string.error_server_error,
+							Toast.LENGTH_SHORT).show();
+					break;
+				case RESULT_BAD_ADDRESS:
+					Toast.makeText(getApplicationContext(), R.string.error_bad_address,
+							Toast.LENGTH_SHORT).show();
+					break;
+				case RESULT_NO_PERMISSION:
+					Toast.makeText(getApplicationContext(), R.string.error_no_permission,
+							Toast.LENGTH_SHORT).show();
+					break;
+				case RESULT_UNKNOWN_ERROR:
+					Toast.makeText(getApplicationContext(), R.string.error_unknown_error,
+							Toast.LENGTH_SHORT).show();
+					break;
+			}
+		}
+		
 		protected int getErrorCode(TwitterException e) {
 			if (e == null) return RESULT_UNKNOWN_ERROR;
 			int status_code = e.getStatusCode();
@@ -287,6 +317,7 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 						values.put(Accounts.USERNAME, accessToken.getScreenName());
 						values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
 						values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
+						values.put(Accounts.IS_ACTIVATED, 1);
 						resolver.insert(Accounts.CONTENT_URI, values);
 					}
 					cur.close();
@@ -303,15 +334,15 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 				case RESULT_SUCCESS:
 					finish();
 					break;
-				case RESULT_ALREADY_LOGGED_IN:
-					Toast.makeText(getApplicationContext(), R.string.already_logged_in,
-							Toast.LENGTH_SHORT).show();
+				default:
+					showErrorMessage(result);
 					break;
 			}
 			super.onPostExecute(result_obj);
 		}
 
 	}
+	
 
 	private class LoginTask extends AbstractTask {
 
@@ -349,6 +380,7 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 						values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
 						values.put(Accounts.USERNAME, user.getScreenName());
 						values.put(Accounts.BASIC_AUTH_PASSWORD, mPassword);
+						values.put(Accounts.IS_ACTIVATED, 1);
 						resolver.insert(Accounts.CONTENT_URI, values);
 					}
 					cur.close();
@@ -410,6 +442,7 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 						values.put(Accounts.USERNAME, accesstoken.getScreenName());
 						values.put(Accounts.OAUTH_TOKEN, accesstoken.getToken());
 						values.put(Accounts.TOKEN_SECRET, accesstoken.getTokenSecret());
+						values.put(Accounts.IS_ACTIVATED, 1);
 						resolver.insert(Accounts.CONTENT_URI, values);
 					}
 					cur.close();
@@ -444,18 +477,18 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 			Result result = (Result) result_obj;
 			switch (result.result_code) {
 				case RESULT_SUCCESS:
+					startActivity(new Intent(getApplicationContext(), HomeActivity.class));
 					finish();
 					break;
-				case RESULT_ALREADY_LOGGED_IN:
-					Toast.makeText(getApplicationContext(), R.string.already_logged_in,
-							Toast.LENGTH_SHORT).show();
-					break;
 				case RESULT_OPEN_BROWSER:
-					mRequestToken = result.request_token;
-					Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
-					startActivityForResult(new Intent(Intent.ACTION_DEFAULT, uri,
-							getApplicationContext(), AuthorizationActivity.class),
-							GOTO_AUTHORIZATION);
+						mRequestToken = result.request_token;
+						Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
+						startActivityForResult(new Intent(Intent.ACTION_DEFAULT, uri,
+								getApplicationContext(), AuthorizationActivity.class),
+								GOTO_AUTHORIZATION);
+						break;
+				default:
+					showErrorMessage(result.result_code);
 					break;
 			}
 			super.onPostExecute(result_obj);

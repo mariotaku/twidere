@@ -4,17 +4,17 @@ import java.io.File;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.Scroller;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -25,6 +25,7 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 
 	private final static int TAKE_PICTURE = 1;
 	private final static int PICK_IMAGE = 2;
+	private final static int SELECT_ACCOUNTS = 3;
 
 	private ActionBar mActionBar;
 	private Uri mImageCaptureUri;
@@ -43,6 +44,31 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 					}
 				}
 				break;
+			case SELECT_ACCOUNTS:
+				if (resultCode == RESULT_OK) {
+					Bundle bundle = intent.getExtras();
+					if (bundle == null) {
+						break;
+					}
+					long[] user_ids = bundle.getLongArray(Accounts.USER_IDS);
+					if (user_ids == null) {
+						break;
+					}
+					Log.d(LOGTAG, "user_ids.length = " + user_ids.length);
+
+				}
+				break;
+		}
+
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.select_accounts:
+				startActivityForResult(new Intent(this, SelectAccountsActivity.class),
+						SELECT_ACCOUNTS);
+				break;
 		}
 
 	}
@@ -53,6 +79,7 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 		setContentView(R.layout.compose);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
+		findViewById(R.id.select_accounts).setOnClickListener(this);
 	}
 
 	@Override
@@ -105,14 +132,5 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 		intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
 		startActivityForResult(intent, TAKE_PICTURE);
 
-	}
-
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.select_accounts:
-				break;
-		}
-		
 	}
 }

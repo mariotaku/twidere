@@ -44,6 +44,12 @@ public class TweetStore {
 		public final static String USER_ID = "user_id";
 
 		/**
+		 * 账户ID的列表，仅用作Intent中使用的key，不会出现在数据库中。 <br>
+		 * Type: INTEGER (long)
+		 */
+		public final static String USER_IDS = "user_ids";
+
+		/**
 		 * 帐户的认证模式 Type: INTEGER
 		 */
 		public final static String AUTH_TYPE = "auth_type";
@@ -82,11 +88,19 @@ public class TweetStore {
 		 */
 		public final static String SEARCH_API_BASE = "search_api_base";
 
+		/**
+		 * Set to a non-zero integer if the account is activated. <br>
+		 * Type: INTEGER (boolean)
+		 */
+		public final static String IS_ACTIVATED = "is_activated";
+
 		public final static String[] COLUMNS = new String[] { _ID, USERNAME, USER_ID, AUTH_TYPE,
-				BASIC_AUTH_PASSWORD, OAUTH_TOKEN, TOKEN_SECRET, REST_API_BASE, SEARCH_API_BASE };
+				BASIC_AUTH_PASSWORD, OAUTH_TOKEN, TOKEN_SECRET, REST_API_BASE, SEARCH_API_BASE,
+				IS_ACTIVATED };
 
 		public final static String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL,
-				TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
+				TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
+				TYPE_BOOLEAN };
 
 	}
 
@@ -136,19 +150,19 @@ public class TweetStore {
 		public final static String STATUS_ID = "status_id";
 
 		/**
-		 * Set to non-zero integer if the status was a retweet. <br>
+		 * Set to a non-zero integer if the status was a retweet. <br>
 		 * Type: INTEGER (boolean)
 		 */
 		public final static String IS_RETWEET = "is_retweet";
 
 		/**
-		 * Set to non-zero integer if the status was a favorite. <br>
+		 * Set to a non-zero integer if the status was a favorite. <br>
 		 * Type: INTEGER (boolean)
 		 */
 		public final static String IS_FAVORITE = "is_favorite";
 
 		/**
-		 * Set to non-zero integer if the status was a send by your self. <br>
+		 * Set to a non-zero integer if the status was a send by your self. <br>
 		 * Type: INTEGER (boolean)
 		 */
 		public final static String IS_TWEET_BY_ME = "is_tweet_by_me";
