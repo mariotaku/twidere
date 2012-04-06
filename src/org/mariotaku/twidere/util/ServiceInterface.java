@@ -16,7 +16,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-public class ServiceInterface implements Constants {
+public class ServiceInterface implements Constants, IUpdateService {
 
 	private IUpdateService mService;
 	private Context mContext;
@@ -73,13 +73,20 @@ public class ServiceInterface implements Constants {
 
 	}
 
-	public void addMediaStateListener(StateListener listener) {
+	public void addStateListener(StateListener listener) {
 		if (listener != null) {
 			mStateListeners.add(listener);
 		}
 
 	}
 
+	@Override
+	public IBinder asBinder() {
+		// Useless here
+		return null;
+	}
+
+	@Override
 	public void refreshHomeTimeline(long[] account_ids, int count) {
 		if (mService == null) return;
 		try {
@@ -90,6 +97,7 @@ public class ServiceInterface implements Constants {
 
 	}
 
+	@Override
 	public void refreshMentions(long[] account_ids, int count) {
 		if (mService == null) return;
 		try {
@@ -99,6 +107,7 @@ public class ServiceInterface implements Constants {
 		}
 	}
 
+	@Override
 	public void refreshMessages(long[] account_ids, int count) {
 		if (mService == null) return;
 		try {

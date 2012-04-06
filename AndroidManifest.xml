@@ -8,18 +8,30 @@
 		android:minSdkVersion="8"
 		android:targetSdkVersion="15"/>
 
+	<permission-group
+		android:name="org.mariotaku.twidere.ACCESS_APPLICATION"
+		android:label="@string/label_permission_group_access_twidere"/>
+
 	<permission
 		android:name="org.mariotaku.twidere.READ_DATABASES"
-		android:protectionLevel="normal"/>
+		android:description="@string/description_permission_read_databases"
+		android:label="@string/label_permission_read_databases"
+		android:permissionGroup="org.mariotaku.twidere.ACCESS_APPLICATION"
+		android:protectionLevel="dangerous"/>
 	<permission
 		android:name="org.mariotaku.twidere.WRITE_DATABASES"
-		android:protectionLevel="normal"/>
+		android:description="@string/description_permission_write_databases"
+		android:label="@string/label_permission_write_databases"
+		android:permissionGroup="org.mariotaku.twidere.ACCESS_APPLICATION"
+		android:protectionLevel="dangerous"/>
 
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="org.mariotaku.twidere.READ_DATABASES"/>
+	<uses-permission android:name="org.mariotaku.twidere.WRITE_DATABASES"/>
 
 	<application
 		android:name=".app.TwidereApplication"
@@ -66,11 +78,14 @@
 		<provider
 			android:name=".provider.TweetStoreProvider"
 			android:authorities="org.mariotaku.twidere.provider.TweetStore"
+			android:label="@string/label_tweetstore_provider"
 			android:readPermission="org.mariotaku.twidere.READ_DATABASES"
 			android:writePermission="org.mariotaku.twidere.WRITE_DATABASES">
 		</provider>
 
-		<service android:name=".service.UpdateService">
+		<service
+			android:name=".service.UpdateService"
+			android:label="@string/label_update_service">
 		</service>
 
 		<activity

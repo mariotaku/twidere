@@ -57,7 +57,7 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 				.getCommonUtils();
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getServiceInterface();
-		mServiceInterface.addMediaStateListener(this);
+		mServiceInterface.addStateListener(this);
 		setHasOptionsMenu(true);
 		mAdapter = new MentionsAdapter(getSherlockActivity(), R.layout.tweet_list_item);
 		setListAdapter(mAdapter);

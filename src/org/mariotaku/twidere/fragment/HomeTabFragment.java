@@ -59,7 +59,7 @@ public class HomeTabFragment extends SherlockListFragment implements Constants, 
 				.getCommonUtils();
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getServiceInterface();
-		mServiceInterface.addMediaStateListener(this);
+		mServiceInterface.addStateListener(this);
 		setHasOptionsMenu(true);
 		mAdapter = new StatusesAdapter(getSherlockActivity(), R.layout.tweet_list_item);
 		setListAdapter(mAdapter);

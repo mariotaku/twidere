@@ -215,6 +215,31 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 		protected final static int RESULT_NO_PERMISSION = 5;
 		protected final static int RESULT_OPEN_BROWSER = 6;
 
+		protected int getErrorCode(TwitterException e) {
+			if (e == null) return RESULT_UNKNOWN_ERROR;
+			int status_code = e.getStatusCode();
+			if (status_code == -1)
+				return RESULT_CONNECTIVITY_ERROR;
+			else if (status_code >= 401 && status_code < 404)
+				return RESULT_NO_PERMISSION;
+			else if (status_code >= 404 && status_code < 500)
+				return RESULT_BAD_ADDRESS;
+			else if (status_code >= 500 && status_code < 600)
+				return RESULT_SERVER_ERROR;
+			else
+				return RESULT_UNKNOWN_ERROR;
+		}
+
+		@Override
+		protected void onPostExecute(Object result_obj) {
+			setSupportProgressBarIndeterminateVisibility(false);
+			mTask = null;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			setSupportProgressBarIndeterminateVisibility(true);
+		}
 
 		protected void showErrorMessage(int error_code) {
 			switch (error_code) {
@@ -243,32 +268,6 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 							Toast.LENGTH_SHORT).show();
 					break;
 			}
-		}
-		
-		protected int getErrorCode(TwitterException e) {
-			if (e == null) return RESULT_UNKNOWN_ERROR;
-			int status_code = e.getStatusCode();
-			if (status_code == -1)
-				return RESULT_CONNECTIVITY_ERROR;
-			else if (status_code >= 401 && status_code < 404)
-				return RESULT_NO_PERMISSION;
-			else if (status_code >= 404 && status_code < 500)
-				return RESULT_BAD_ADDRESS;
-			else if (status_code >= 500 && status_code < 600)
-				return RESULT_SERVER_ERROR;
-			else
-				return RESULT_UNKNOWN_ERROR;
-		}
-
-		@Override
-		protected void onPostExecute(Object result_obj) {
-			setSupportProgressBarIndeterminateVisibility(false);
-			mTask = null;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			setSupportProgressBarIndeterminateVisibility(true);
 		}
 	}
 
@@ -342,7 +341,6 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 		}
 
 	}
-	
 
 	private class LoginTask extends AbstractTask {
 
@@ -481,12 +479,12 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 					finish();
 					break;
 				case RESULT_OPEN_BROWSER:
-						mRequestToken = result.request_token;
-						Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
-						startActivityForResult(new Intent(Intent.ACTION_DEFAULT, uri,
-								getApplicationContext(), AuthorizationActivity.class),
-								GOTO_AUTHORIZATION);
-						break;
+					mRequestToken = result.request_token;
+					Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
+					startActivityForResult(new Intent(Intent.ACTION_DEFAULT, uri,
+							getApplicationContext(), AuthorizationActivity.class),
+							GOTO_AUTHORIZATION);
+					break;
 				default:
 					showErrorMessage(result.result_code);
 					break;

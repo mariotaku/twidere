@@ -17,6 +17,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:ems="10"
+			android:hint="@string/username"
 			android:inputType="textPersonName"
 			android:singleLine="true"/>
 
@@ -26,6 +27,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="8dip"
 			android:ems="10"
+			android:hint="@string/password"
 			android:inputType="textPassword"
 			android:singleLine="true"/>
 	</LinearLayout>

@@ -264,7 +264,7 @@ public class LazyImageLoader {
 		 */
 		public File getFile(Object tag) {
 			if (cacheDir == null) return null;
-			String filename = String.valueOf(tag.hashCode());
+			String filename = Integer.toHexString(tag.hashCode());
 			File f = new File(cacheDir, filename);
 			return f;
 		}

@@ -18,5 +18,24 @@
 	<string name="login_to_twitter">登录到 Twitter</string>
 	<string name="api_settings">API 设定</string>
 	<string name="home">主页</string>
+	<string name="error_occurred">发生错误，请重试。</string>
+	<string name="license">证书</string>
+	<string name="error_already_logged_in">你已经登录。</string>
+	<string name="no_account_selected">你必须至少选择一个账户。</string>
+	<string name="error_connectivity_error">错误：连接性错误，请检查你的网络状态。</string>
+	<string name="error_server_error">错误：服务器发生错误，它可能宕机了。</string>
+	<string name="error_bad_address">错误：错误的地址，你可能输入了无效的API地址。</string>
+	<string name="error_no_permission">错误：你没有权限访问twitter，应用程序的密钥可能是无效的。</string>
+	<string name="error_unknown_error">错误：未知错误，这很可能是个bug。</string>
+	<string name="select_accounts">选择账户</string>
+	<string name="username">用户名</string>
+	<string name="password">密码</string>
+	<string name="label_tweetstore_provider">Twidere 数据库提供商</string>
+	<string name="label_update_service">时间线更新服务</string>
+	<string name="label_permission_group_access_twidere">访问 Twidere 应用</string>
+	<string name="label_permission_read_databases">读取 Twidere 的数据库</string>
+	<string name="label_permission_write_databases">写入 Twidere 的数据库</string>
+	<string name="description_permission_read_databases">从数据库读取推文、草稿箱、账户信息、私信等。</string>
+	<string name="description_permission_write_databases">向数据库写入推文、草稿箱、账户信息、私信等。</string>
 
 </resources>

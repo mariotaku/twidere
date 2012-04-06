@@ -5,7 +5,7 @@ public interface Constants {
 	public final static String LOGTAG = "Twidere";
 
 	public final static String DATABASES_NAME = "twidere.sqlite";
-	public final static int DATABASES_VERSION = 1;
+	public final static int DATABASES_VERSION = 2;
 
 	public final static String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public final static String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";

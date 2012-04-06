@@ -1,5 +1,8 @@
 package org.mariotaku.twidere.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
@@ -13,6 +16,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.provider.BaseColumns;
 
 public class TweetStoreProvider extends ContentProvider implements Constants {
 
@@ -95,23 +99,38 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	private class DatabaseHelper extends SQLiteOpenHelper {
 
+		private static final int FIELD_TYPE_NULL = 0;
+
+		private static final int FIELD_TYPE_INTEGER = 1;
+
+		private static final int FIELD_TYPE_FLOAT = 2;
+
+		private static final int FIELD_TYPE_STRING = 3;
+
+		private static final int FIELD_TYPE_BLOB = 4;
+
 		public DatabaseHelper(Context context, String name, int version) {
 			super(context, name, null, version);
 		}
 
 		@Override
-		public void onCreate(SQLiteDatabase database) {
-			database.beginTransaction();
-			database.execSQL(createTable(TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES));
-			database.execSQL(createTable(TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES));
-			database.execSQL(createTable(TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES));
-			database.setTransactionSuccessful();
-			database.endTransaction();
+		public void onCreate(SQLiteDatabase db) {
+			db.beginTransaction();
+			db.execSQL(createTable(TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES));
+			db.execSQL(createTable(TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES));
+			db.execSQL(createTable(TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES));
+			db.setTransactionSuccessful();
+			db.endTransaction();
 		}
 
 		@Override
-		public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			handleVersionChange(db);
+		}
 
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			handleVersionChange(db);
 		}
 
 		private String createTable(String tableName, String[] columns, String[] types) {
@@ -131,6 +150,123 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 					stringBuilder.append(columns[n]).append(' ').append(types[n]);
 				}
 				return stringBuilder.append(");").toString();
+			}
+		}
+
+		private int getTypeInt(String type) {
+			int idx = type.contains(")") ? type.indexOf(")") : type.indexOf(" ");
+			String type_main = idx > -1 ? type.substring(0, idx) : type;
+			if ("NULL".equalsIgnoreCase(type_main))
+				return FIELD_TYPE_NULL;
+			else if ("INTEGER".equalsIgnoreCase(type_main))
+				return FIELD_TYPE_INTEGER;
+			else if ("FLOAT".equalsIgnoreCase(type_main))
+				return FIELD_TYPE_FLOAT;
+			else if ("TEXT".equalsIgnoreCase(type_main))
+				return FIELD_TYPE_STRING;
+			else if ("BLOB".equalsIgnoreCase(type_main)) return FIELD_TYPE_BLOB;
+			throw new IllegalStateException("Unknown field type " + type + " !");
+		}
+
+		private String getTypeString(SQLiteDatabase db, String table, String column) {
+
+			String sql = "SELECT typeof(" + column + ") FROM " + table;
+			Cursor cur = db.rawQuery(sql, null);
+			if (cur == null) return null;
+
+			cur.moveToFirst();
+			String type = cur.getString(0);
+			cur.close();
+			return type;
+
+		}
+
+		private void handleVersionChange(SQLiteDatabase db) {
+			safeVersionChange(db, TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES);
+			safeVersionChange(db, TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES);
+			safeVersionChange(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES);
+		}
+
+		private boolean isColumnContained(String[] cols, String col) {
+			for (String tmp_col : cols) {
+				if (col.equals(tmp_col)) return true;
+			}
+			return false;
+		}
+
+		private boolean isTypeCompatible(String old_type, String new_type) {
+			if (old_type != null && new_type != null) {
+				int old_idx = old_type.contains(")") ? old_type.indexOf(")") : old_type
+						.indexOf(" ");
+				int new_idx = new_type.contains(")") ? new_type.indexOf(")") : new_type
+						.indexOf(" ");
+				String old_type_main = old_idx > -1 ? old_type.substring(0, old_idx) : old_type;
+				String new_type_main = new_idx > -1 ? new_type.substring(0, new_idx) : new_type;
+				return old_type_main.equalsIgnoreCase(new_type_main);
+			}
+			return false;
+		}
+
+		private void safeVersionChange(SQLiteDatabase db, String table, String[] new_cols,
+				String[] new_types) {
+
+			if (new_cols == null || new_types == null || new_cols.length != new_types.length)
+				throw new IllegalArgumentException(
+						"Invalid parameters, length of columns and types not match.");
+
+			// First we need to get all data from old table.
+			Cursor cur = db.query(table, null, null, null, null, null, null);
+			cur.moveToFirst();
+			String[] old_cols = cur.getColumnNames();
+
+			List<ContentValues> values_list = new ArrayList<ContentValues>();
+
+			while (!cur.isAfterLast()) {
+				ContentValues values = new ContentValues();
+				for (int i = 0; i < new_cols.length; i++) {
+					String new_col = new_cols[i];
+					String new_type = new_types[i];
+					if (BaseColumns._ID.equals(new_col)) {
+						continue;
+					}
+
+					if (isColumnContained(old_cols, new_col)) {
+						String old_type = getTypeString(db, table, new_col);
+						boolean compatible = isTypeCompatible(old_type, new_type);
+						if (compatible) {
+							switch (getTypeInt(new_type)) {
+								case FIELD_TYPE_INTEGER:
+									values.put(new_col, cur.getLong(i));
+									break;
+								case FIELD_TYPE_FLOAT:
+									values.put(new_col, cur.getFloat(i));
+									break;
+								case FIELD_TYPE_STRING:
+									values.put(new_col, cur.getString(i));
+									break;
+								case FIELD_TYPE_BLOB:
+									values.put(new_col, cur.getBlob(i));
+									break;
+								case FIELD_TYPE_NULL:
+								default:
+									break;
+							}
+						}
+					}
+
+				}
+				values_list.add(values);
+				cur.moveToNext();
+			}
+			cur.close();
+			// OK, now we got all data can be moved from old table, so we will
+			// delete the old table and create a new one.
+			db.execSQL("DROP TABLE IF EXISTS " + table);
+			db.execSQL(createTable(table, new_cols, new_types));
+
+			// Now, insert all data backuped into new table.
+			for (ContentValues values : values_list) {
+				db.insert(table, null, values);
 			}
 		}
 

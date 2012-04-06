@@ -49,15 +49,14 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		mActionBar = getSupportActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
 		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setDisplayShowHomeEnabled(false);
 		mActionBar.setDisplayShowTitleEnabled(false);
 		View view = mActionBar.getCustomView();
 
 		mAdapter = new TabsAdapter(getSupportFragmentManager());
-		mAdapter.addTab(new HomeTabFragment(), null, R.drawable.ic_tab_home);
-		mAdapter.addTab(new ConnectTabFragment(), null, R.drawable.ic_tab_connect);
-		mAdapter.addTab(new DiscoverTabFragment(), null, R.drawable.ic_tab_discover);
-		mAdapter.addTab(new MeTabFragment(), null, R.drawable.ic_tab_me);
+		mAdapter.addTab(HomeTabFragment.class, null, R.drawable.ic_tab_home);
+		mAdapter.addTab(ConnectTabFragment.class, null, R.drawable.ic_tab_connect);
+		mAdapter.addTab(DiscoverTabFragment.class, null, R.drawable.ic_tab_discover);
+		mAdapter.addTab(MeTabFragment.class, null, R.drawable.ic_tab_me);
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mAdapter);
 		TabPageIndicator mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
@@ -76,12 +75,12 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 			mTabsInfo.clear();
 		}
 
-		public void addTab(Fragment fragment, String name, Integer icon) {
+		public void addTab(Class<? extends Fragment> cls, String name, Integer icon) {
 
-			if (fragment == null) throw new IllegalArgumentException("Fragment cannot be null!");
+			if (cls == null) throw new IllegalArgumentException("Fragment cannot be null!");
 			if (name == null && icon == null)
 				throw new IllegalArgumentException("You must specify a name or icon for this tab!");
-			mTabsInfo.add(new TabInfo(name, icon, fragment));
+			mTabsInfo.add(new TabInfo(name, icon, cls));
 			notifyDataSetChanged();
 		}
 
@@ -97,7 +96,8 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 
 		@Override
 		public Fragment getItem(int position) {
-			return mTabsInfo.get(position).fragment;
+			return Fragment.instantiate(getApplicationContext(),
+					mTabsInfo.get(position).cls.getName());
 		}
 
 		@Override
@@ -120,15 +120,15 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 
 			private String name;
 			private Integer icon;
-			private Fragment fragment;
+			private Class<? extends Fragment> cls;
 
-			public TabInfo(String name, Integer icon, Fragment fragment) {
+			public TabInfo(String name, Integer icon, Class<? extends Fragment> cls) {
 				if (name == null && icon == null)
 					throw new IllegalArgumentException(
 							"You must specify a name or icon for this tab!");
 				this.name = name;
 				this.icon = icon;
-				this.fragment = fragment;
+				this.cls = cls;
 
 			}
 		}

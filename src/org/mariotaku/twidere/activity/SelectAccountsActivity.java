@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
-import android.R;
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class SelectAccountsActivity extends ListActivity implements Constants, OnItemClickListener {
 
@@ -39,10 +40,10 @@ public class SelectAccountsActivity extends ListActivity implements Constants, O
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		int layoutRes = isMultipleAccountsEnabled ? R.layout.select_dialog_multichoice
-				: R.layout.select_dialog_singlechoice;
+		int layoutRes = isMultipleAccountsEnabled ? android.R.layout.select_dialog_multichoice
+				: android.R.layout.select_dialog_singlechoice;
 		String[] cols = new String[] { Accounts.USERNAME };
-		int[] ids = new int[] { R.id.text1 };
+		int[] ids = new int[] { android.R.id.text1 };
 		mCursor = getAccountsCursor();
 		if (mCursor == null) {
 			finish();
@@ -117,10 +118,10 @@ public class SelectAccountsActivity extends ListActivity implements Constants, O
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_BACK:
-				if (mActivatedUsersId.size() <= 0)
-					// No users selected, so you can't quit.
+				if (mActivatedUsersId.size() <= 0) {
+					Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
 					return false;
-				else {
+				} else {
 					Bundle bundle = new Bundle();
 					long[] ids = new long[mActivatedUsersId.size()];
 					int i = 0;

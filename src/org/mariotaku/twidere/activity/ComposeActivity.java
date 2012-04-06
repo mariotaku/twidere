@@ -11,17 +11,21 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class ComposeActivity extends SherlockFragmentActivity implements Constants, OnClickListener {
+public class ComposeActivity extends SherlockFragmentActivity implements Constants,
+		OnClickListener, TextWatcher {
 
 	private final static int TAKE_PICTURE = 1;
 	private final static int PICK_IMAGE = 2;
@@ -30,6 +34,19 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 	private ActionBar mActionBar;
 	private Uri mImageCaptureUri;
 	private EditText mEditText;
+	private TextView mTextCount;
+
+	@Override
+	public void afterTextChanged(Editable s) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		// TODO Auto-generated method stub
+
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -80,6 +97,9 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		findViewById(R.id.select_accounts).setOnClickListener(this);
+		mEditText = (EditText) findViewById(R.id.edit_text);
+		mEditText.addTextChangedListener(this);
+		mTextCount = (TextView) findViewById(R.id.text_count);
 	}
 
 	@Override
@@ -102,6 +122,14 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		if (s != null) {
+			mTextCount.setText(String.valueOf(s.length()));
+		}
+
 	}
 
 	private String getRealPathFromURI(Uri contentUri) {
