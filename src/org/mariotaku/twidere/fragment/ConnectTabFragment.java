@@ -8,10 +8,10 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.util.ServiceInterface.StateListener;
 import org.mariotaku.twidere.util.StatusItemHolder;
 import org.mariotaku.twidere.util.TopScrollable;
 import org.mariotaku.twidere.widget.RefreshableListView;
@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
@@ -45,7 +46,25 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 	private ServiceInterface mServiceInterface;
 	private RefreshableListView mListView;
 	private int mAccountIdIdx, mStatusIdIdx, mUserIdIdx, mStatusTimestampIdx, mTextIdx, mNameIdx,
-			mScreenNameIdx, mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx;
+			mScreenNameIdx, mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx;
+
+	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
+				mListView.completeRefreshing();
+				getLoaderManager().restartLoader(0, null, ConnectTabFragment.this);
+			} else if ((ConnectTabFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
+					.equals(action)) {
+				if (mListView != null) {
+					mListView.smoothScrollToPosition(0);
+				}
+			}
+		}
+
+	};
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -56,7 +75,7 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 				.getCommonUtils();
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getServiceInterface();
-		mAdapter = new MentionsAdapter(getSherlockActivity(), R.layout.tweet_list_item);
+		mAdapter = new MentionsAdapter(getSherlockActivity());
 		setListAdapter(mAdapter);
 		mListView = (RefreshableListView) getListView();
 		mListView.setOnRefreshListener(this);
@@ -73,41 +92,24 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
-		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
-		if (getSherlockActivity() != null)
-			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
-	}
-
-	@Override
-	public void onStop() {
-		if (getSherlockActivity() != null)
-			getSherlockActivity().unregisterReceiver(mStatusReceiver);
-		super.onStop();
-	}
-
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
-			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
-				mListView.completeRefreshing();
-				getLoaderManager().restartLoader(0, null, ConnectTabFragment.this);
-			} else if ((ConnectTabFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action)) {
-				if (mListView != null) {
-					mListView.smoothScrollToPosition(0);
-				}
-			}
-		}
-
-	};
-
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.timeline, container, false);
+	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Object tag = v.getTag();
+		if (tag instanceof StatusItemHolder) {
+			StatusItemHolder holder = (StatusItemHolder) tag;
+			long status_id = holder.status_id;
+			long account_id = holder.account_id;
+			if (holder.isGap()) {
+				mServiceInterface.refreshMentions(new long[] { account_id },
+						new long[] { status_id });
+			} else {
+
+			}
+		}
 	}
 
 	@Override
@@ -128,6 +130,7 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 		mProfileImageUrlIdx = data.getColumnIndexOrThrow(Mentions.PROFILE_IMAGE_URL);
 		mIsRetweetIdx = data.getColumnIndexOrThrow(Mentions.IS_RETWEET);
 		mIsFavoriteIdx = data.getColumnIndexOrThrow(Mentions.IS_FAVORITE);
+		mIsGapIdx = data.getColumnIndexOrThrow(Statuses.IS_GAP);
 
 	}
 
@@ -144,7 +147,7 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 				cur.moveToPosition(i);
 				ids[i] = cur.getLong(idx);
 			}
-			mServiceInterface.refreshMentions(ids, 20);
+			mServiceInterface.refreshMentions(ids, null);
 			cur.close();
 		}
 
@@ -169,6 +172,24 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 	}
 
 	@Override
+	public void onStart() {
+		super.onStart();
+		IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
+		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
+		}
+	}
+
+	@Override
+	public void onStop() {
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		}
+		super.onStop();
+	}
+
+	@Override
 	public void scrolltoTop() {
 		if (getView() != null) {
 			getListView().smoothScrollToPosition(0);
@@ -178,48 +199,57 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 
 	private class MentionsAdapter extends SimpleCursorAdapter {
 
-		public MentionsAdapter(Context context, int layout) {
-			super(context, layout, null, new String[] {}, new int[] {}, 0);
+		public MentionsAdapter(Context context) {
+			super(context, R.layout.tweet_list_item, null, new String[] { Mentions.NAME,
+					Mentions.TEXT }, new int[] { R.id.user_name, R.id.tweet_content }, 0);
 		}
 
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 
-			StatusItemHolder viewholder = (StatusItemHolder) view.getTag();
+			StatusItemHolder holder = (StatusItemHolder) view.getTag();
 
-			if (viewholder == null) return;
+			if (holder == null) return;
 
-			String user_name = cursor.getString(mNameIdx);
-			String screen_name = cursor.getString(mScreenNameIdx);
-			String text = cursor.getString(mTextIdx);
-			String profile_image_url = cursor.getString(mProfileImageUrlIdx);
-			boolean is_retweet = cursor.getInt(mIsRetweetIdx) == 1;
-			boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
+			boolean is_gap = cursor.getInt(mIsGapIdx) == 1;
 
-			viewholder.user_name.setText(user_name);
-			viewholder.screen_name.setText("@" + screen_name);
-			viewholder.tweet_content.setText(text);
-			viewholder.tweet_time.setText(mCommonUtils.formatToShortTimeString(cursor
-					.getLong(mStatusTimestampIdx)));
-			// if (is_retweet && is_favorite) {
-			// viewholder.retweet_fav_indicator
-			// .setImageResource(R.drawable.ic_indicator_retweet_fav);
-			// } else if (is_retweet && !is_favorite) {
-			// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_retweet);
-			// } else if (!is_retweet && is_favorite) {
-			// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_fav);
-			// } else {
-			// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_none);
-			// }
-			URL url = null;
-			try {
-				url = new URL(profile_image_url);
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
+			holder.setIsGap(is_gap);
+			holder.status_id = cursor.getLong(mStatusIdIdx);
+			holder.account_id = cursor.getLong(mAccountIdIdx);
+
+			if (!is_gap) {
+
+				String screen_name = cursor.getString(mScreenNameIdx);
+				String profile_image_url = cursor.getString(mProfileImageUrlIdx);
+				boolean is_retweet = cursor.getInt(mIsRetweetIdx) == 1;
+				boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
+
+				// viewholder.user_name.setText(user_name);
+				holder.screen_name.setText("@" + screen_name);
+				// viewholder.tweet_content.setText(text);
+				holder.tweet_time.setText(mCommonUtils.formatToShortTimeString(cursor
+						.getLong(mStatusTimestampIdx)));
+				// if (is_retweet && is_favorite) {
+				// viewholder.retweet_fav_indicator
+				// .setImageResource(R.drawable.ic_indicator_retweet_fav);
+				// } else if (is_retweet && !is_favorite) {
+				// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_retweet);
+				// } else if (!is_retweet && is_favorite) {
+				// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_fav);
+				// } else {
+				// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_none);
+				// }
+				URL url = null;
+				try {
+					url = new URL(profile_image_url);
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+				if (url != null) {
+					mListProfileImageLoader.displayImage(url, holder.profile_image);
+				}
 			}
-			if (url != null) {
-				mListProfileImageLoader.displayImage(url, viewholder.profile_image);
-			}
+			super.bindView(view, context, cursor);
 
 		}
 

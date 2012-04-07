@@ -87,10 +87,32 @@ public class ServiceInterface implements Constants, IUpdateService {
 	}
 
 	@Override
-	public void refreshHomeTimeline(long[] account_ids, int count) {
+	public boolean isHomeTimelineRefreshing() {
+		if (mService == null) return false;
+		try {
+			return mService.isHomeTimelineRefreshing();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isMentionsRefreshing() {
+		if (mService == null) return false;
+		try {
+			return mService.isMentionsRefreshing();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public void refreshHomeTimeline(long[] account_ids, long[] max_ids) {
 		if (mService == null) return;
 		try {
-			mService.refreshHomeTimeline(account_ids, count);
+			mService.refreshHomeTimeline(account_ids, max_ids);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -98,20 +120,20 @@ public class ServiceInterface implements Constants, IUpdateService {
 	}
 
 	@Override
-	public void refreshMentions(long[] account_ids, int count) {
+	public void refreshMentions(long[] account_ids, long[] max_ids) {
 		if (mService == null) return;
 		try {
-			mService.refreshMentions(account_ids, count);
+			mService.refreshMentions(account_ids, max_ids);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void refreshMessages(long[] account_ids, int count) {
+	public void refreshMessages(long[] account_ids, long[] max_ids) {
 		if (mService == null) return;
 		try {
-			mService.refreshMessages(account_ids, count);
+			mService.refreshMessages(account_ids, max_ids);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

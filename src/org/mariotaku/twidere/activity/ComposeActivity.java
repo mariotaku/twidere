@@ -157,8 +157,7 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 				R.string.pick_from_gallery);
 		imageSubMenu.add(MENU_ADD_IMAGE, MENU_TAKE_PHOTO, Menu.NONE, R.string.take_photo);
 		if (mIsImageAttached || mIsPhotoAttached) {
-			menu.findItem(MENU_IMAGE).getIcon()
-					.setColorFilter(Color.CYAN, PorterDuff.Mode.LIGHTEN);
+			menu.findItem(MENU_IMAGE).getIcon().setColorFilter(Color.CYAN, PorterDuff.Mode.LIGHTEN);
 			imageSubMenu.add(MENU_ADD_IMAGE, MENU_VIEW, Menu.NONE, R.string.view);
 			imageSubMenu.add(MENU_ADD_IMAGE, MENU_DELETE, Menu.NONE, R.string.delete);
 		} else {

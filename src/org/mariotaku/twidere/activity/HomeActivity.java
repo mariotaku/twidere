@@ -4,13 +4,18 @@ import java.util.ArrayList;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ConnectTabFragment;
 import org.mariotaku.twidere.fragment.DiscoverTabFragment;
 import org.mariotaku.twidere.fragment.HomeTabFragment;
 import org.mariotaku.twidere.fragment.MeTabFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.ServiceInterface;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +23,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.ProgressBar;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -30,12 +37,26 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 	private ActionBar mActionBar;
 	private TabsAdapter mAdapter;
 	private ViewPager mViewPager;
+	private ProgressBar mProgress;
+	private ServiceInterface mInterface;
+
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+				setRefreshState();
+			}
+		}
+
+	};
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {}, null, null,
 				null);
 		int accounts_count = cur.getCount();
@@ -50,6 +71,7 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		mActionBar.setCustomView(R.layout.home_tabs);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		mActionBar.setDisplayShowTitleEnabled(false);
+		mActionBar.setDisplayShowHomeEnabled(false);
 		View view = mActionBar.getCustomView();
 
 		mAdapter = new TabsAdapter(getSupportFragmentManager());
@@ -59,6 +81,7 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		mAdapter.addTab(MeTabFragment.class, null, R.drawable.ic_tab_me);
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mAdapter);
+		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		TabPageIndicator mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mIndicator.setViewPager(mViewPager);
 
@@ -83,6 +106,29 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		setRefreshState();
+		IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		;
+		registerReceiver(mStateReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
+	}
+
+	private void setRefreshState() {
+		boolean is_refresh = false;
+		if (mInterface != null) {
+			is_refresh = mInterface.isHomeTimelineRefreshing() || mInterface.isMentionsRefreshing();
+		}
+		mProgress.setVisibility(is_refresh ? View.VISIBLE : View.INVISIBLE);
 	}
 
 	private class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider {

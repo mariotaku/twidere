@@ -10,6 +10,8 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
+import twitter4j.MediaEntity;
+import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -32,37 +34,61 @@ public class UpdateService extends Service implements Constants {
 	private RefreshHomeTimelineTask mRefreshHomeTimelineTask;
 	private RefreshMentionsTask mRefreshMentionsTask;
 
+	public boolean isHomeTimelineRefreshing() {
+		return mRefreshHomeTimelineTask != null && !mRefreshHomeTimelineTask.isCancelled();
+	}
+
+	public boolean isMentionsRefreshing() {
+		return mRefreshMentionsTask != null && !mRefreshMentionsTask.isCancelled();
+	}
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
 	}
 
-	public void refreshHomeTimeline(long[] account_ids, int count) {
+	public void refreshHomeTimeline(long[] account_ids, long[] max_ids) {
 		if (mRefreshHomeTimelineTask != null) {
 			mRefreshHomeTimelineTask.cancel(true);
 		}
-		mRefreshHomeTimelineTask = new RefreshHomeTimelineTask(account_ids, count);
+		mRefreshHomeTimelineTask = new RefreshHomeTimelineTask(account_ids, max_ids);
 		mRefreshHomeTimelineTask.execute();
 	}
 
-	public void refreshMentions(long[] account_ids, int count) {
+	public void refreshMentions(long[] account_ids, long[] max_ids) {
 		if (mRefreshMentionsTask != null) {
 			mRefreshMentionsTask.cancel(true);
 		}
-		mRefreshMentionsTask = new RefreshMentionsTask(account_ids, count);
+		mRefreshMentionsTask = new RefreshMentionsTask(account_ids, max_ids);
 		mRefreshMentionsTask.execute();
 	}
 
-	public void refreshMessages(long[] account_ids, int count) {
+	public void refreshMessages(long[] account_ids, long[] max_ids) {
 	}
 
-	private class RefreshHomeTimelineTask extends
-			AsyncTask<Void, Void, List<RefreshHomeTimelineTask.AccountResponce>> {
+	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {
 
-		private long[] account_ids;
+		@Override
+		protected void onPostExecute(Object result_obj) {
+			sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED));
+			super.onPostExecute(result_obj);
+		}
 
-		public RefreshHomeTimelineTask(long[] account_ids, int count) {
+		@Override
+		protected void onPreExecute() {
+			sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED));
+			super.onPreExecute();
+		}
+	}
+
+	private class RefreshHomeTimelineTask extends AbstractTask {
+
+		private long[] account_ids, max_ids;
+
+		public RefreshHomeTimelineTask(long[] account_ids, long[] max_ids) {
+
 			this.account_ids = account_ids;
+			this.max_ids = max_ids;
 		}
 
 		@Override
@@ -70,6 +96,11 @@ public class UpdateService extends Service implements Constants {
 
 			List<AccountResponce> result = new ArrayList<AccountResponce>();
 
+			if (account_ids == null) return result;
+
+			boolean since_valid = max_ids != null && max_ids.length == account_ids.length;
+
+			int idx = 0;
 			for (long account_id : account_ids) {
 				StringBuilder where = new StringBuilder();
 				where.append(Accounts.USER_ID + "='" + account_id + "'");
@@ -116,8 +147,12 @@ public class UpdateService extends Service implements Constants {
 						}
 						if (twitter != null) {
 							try {
+								Paging paging = new Paging();
+								if (since_valid) {
+									paging.setMaxId(max_ids[idx]);
+								}
 								result.add(new AccountResponce(account_id, twitter
-										.getHomeTimeline()));
+										.getHomeTimeline(paging)));
 							} catch (TwitterException e) {
 								e.printStackTrace();
 							}
@@ -125,12 +160,15 @@ public class UpdateService extends Service implements Constants {
 					}
 					cur.close();
 				}
+				idx++;
 			}
 			return result;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
-		protected void onPostExecute(List<AccountResponce> responces) {
+		protected void onPostExecute(Object result_obj) {
+			List<AccountResponce> responces = (List<AccountResponce>) result_obj;
 			ContentResolver resolver = getContentResolver();
 
 			for (AccountResponce responce : responces) {
@@ -142,6 +180,7 @@ public class UpdateService extends Service implements Constants {
 				for (twitter4j.Status status : statuses) {
 					ContentValues values = new ContentValues();
 					User user = status.getUser();
+					MediaEntity[] medias = status.getMediaEntities();
 					values.put(Statuses.STATUS_ID, status.getId());
 					values.put(Statuses.ACCOUNT_ID, account_id);
 					values.put(Statuses.USER_ID, user.getId());
@@ -152,35 +191,33 @@ public class UpdateService extends Service implements Constants {
 					values.put(Statuses.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 					values.put(Statuses.IS_RETWEET, status.isRetweet() ? 1 : 0);
 					values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
+					values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
+					values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
+					values.put(Statuses.IN_REPLY_TO_USER_ID, status.getInReplyToUserId());
+					values.put(Statuses.HAS_MEDIA, (medias != null && medias.length > 0) ? 1 : 0);
+					values.put(Statuses.HAS_LOCATION, status.getGeoLocation() != null ? 1 : 0);
+					values.put(Statuses.IS_TWEET_BY_ME, user.getId() == account_id ? 1 : 0);
 
 					StringBuilder where = new StringBuilder();
 					where.append(Statuses.STATUS_ID + "='" + status.getId() + "'");
 					where.append(" AND " + Statuses.ACCOUNT_ID + "='" + account_id + "'");
-					Cursor cur = resolver.query(Statuses.CONTENT_URI, new String[] {},
-							where.toString(), null, null);
 
-					if (cur != null) {
-						if (idx == statuses.size() - 1) {
-							if (cur.getCount() > 0) {
-								resolver.delete(Statuses.CONTENT_URI, where.toString(), null);
-							} else {
-								values.put(Statuses.IS_GAP, 1);
-							}
-							values_list.add(values);
-						} else if (cur.getCount() <= 0) {
-							values_list.add(values);
-						}
-						cur.close();
-					} else {
-						values_list.add(values);
+					int rows_deleted = resolver
+							.delete(Statuses.CONTENT_URI, where.toString(), null);
+
+					if (idx == statuses.size() - 1) {
+						values.put(Statuses.IS_GAP, rows_deleted > 0 ? 0 : 1);
 					}
+					values_list.add(values);
 					idx++;
 				}
 				resolver.bulkInsert(Statuses.CONTENT_URI,
 						values_list.toArray(new ContentValues[values_list.size()]));
 			}
 			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED));
+			sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED));
 			mRefreshHomeTimelineTask = null;
+			super.onPostExecute(result_obj);
 		}
 
 		private class AccountResponce {
@@ -197,19 +234,25 @@ public class UpdateService extends Service implements Constants {
 
 	}
 
-	private class RefreshMentionsTask extends
-			AsyncTask<Void, Void, List<RefreshMentionsTask.AccountResponce>> {
+	private class RefreshMentionsTask extends AbstractTask {
 
-		private long[] account_ids;
+		private long[] account_ids, max_ids;
 
-		public RefreshMentionsTask(long[] account_ids, int count) {
+		public RefreshMentionsTask(long[] account_ids, long[] max_ids) {
 			this.account_ids = account_ids;
+			this.max_ids = max_ids;
 		}
 
 		@Override
 		protected List<AccountResponce> doInBackground(Void... params) {
 
 			List<AccountResponce> result = new ArrayList<AccountResponce>();
+
+			if (account_ids == null) return result;
+
+			boolean since_valid = max_ids != null && max_ids.length == account_ids.length;
+
+			int idx = 0;
 
 			for (long account_id : account_ids) {
 				StringBuilder where = new StringBuilder();
@@ -257,7 +300,12 @@ public class UpdateService extends Service implements Constants {
 						}
 						if (twitter != null) {
 							try {
-								result.add(new AccountResponce(account_id, twitter.getMentions()));
+								Paging paging = new Paging();
+								if (since_valid) {
+									paging.setMaxId(max_ids[idx]);
+								}
+								result.add(new AccountResponce(account_id, twitter
+										.getMentions(paging)));
 							} catch (TwitterException e) {
 								e.printStackTrace();
 							}
@@ -265,12 +313,15 @@ public class UpdateService extends Service implements Constants {
 					}
 					cur.close();
 				}
+				idx++;
 			}
 			return result;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
-		protected void onPostExecute(List<AccountResponce> responces) {
+		protected void onPostExecute(Object result_obj) {
+			List<AccountResponce> responces = (List<AccountResponce>) result_obj;
 			ContentResolver resolver = getContentResolver();
 			for (AccountResponce responce : responces) {
 				ResponseList<twitter4j.Status> mentions = responce.responselist;
@@ -280,6 +331,7 @@ public class UpdateService extends Service implements Constants {
 				int idx = 0;
 				for (twitter4j.Status mention : mentions) {
 					ContentValues values = new ContentValues();
+					MediaEntity[] medias = mention.getMediaEntities();
 					User user = mention.getUser();
 					values.put(Mentions.ACCOUNT_ID, account_id);
 					values.put(Mentions.STATUS_ID, mention.getId());
@@ -291,35 +343,32 @@ public class UpdateService extends Service implements Constants {
 					values.put(Mentions.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 					values.put(Mentions.IS_RETWEET, mention.isRetweet() ? 1 : 0);
 					values.put(Mentions.IS_FAVORITE, mention.isFavorited() ? 1 : 0);
+					values.put(Mentions.IN_REPLY_TO_SCREEN_NAME, mention.getInReplyToScreenName());
+					values.put(Mentions.IN_REPLY_TO_STATUS_ID, mention.getInReplyToStatusId());
+					values.put(Mentions.IN_REPLY_TO_USER_ID, mention.getInReplyToUserId());
+					values.put(Mentions.HAS_MEDIA, (medias != null && medias.length > 0) ? 1 : 0);
+					values.put(Mentions.HAS_LOCATION, mention.getGeoLocation() != null ? 1 : 0);
+					values.put(Mentions.IS_TWEET_BY_ME, user.getId() == account_id ? 1 : 0);
 
 					StringBuilder where = new StringBuilder();
 					where.append(Mentions.STATUS_ID + "='" + mention.getId() + "'");
 					where.append(" AND " + Mentions.ACCOUNT_ID + "='" + account_id + "'");
-					Cursor cur = resolver.query(Mentions.CONTENT_URI, new String[] {},
-							where.toString(), null, null);
 
-					if (cur != null) {
-						if (idx == mentions.size() - 1) {
-							if (cur.getCount() > 0) {
-								resolver.delete(Mentions.CONTENT_URI, where.toString(), null);
-							} else {
-								values.put(Mentions.IS_GAP, 1);
-							}
-							values_list.add(values);
-						} else if (cur.getCount() <= 0) {
-							values_list.add(values);
-						}
-						cur.close();
-					} else {
-						values_list.add(values);
+					int rows_deleted = resolver
+							.delete(Mentions.CONTENT_URI, where.toString(), null);
+
+					if (idx == mentions.size() - 1) {
+						values.put(Mentions.IS_GAP, rows_deleted > 0 ? 0 : 1);
 					}
+					values_list.add(values);
 					idx++;
 				}
 				resolver.bulkInsert(Mentions.CONTENT_URI,
 						values_list.toArray(new ContentValues[values_list.size()]));
 			}
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED));
-			mRefreshHomeTimelineTask = null;
+			mRefreshMentionsTask = null;
+			super.onPostExecute(result_obj);
 		}
 
 		private class AccountResponce {
@@ -351,18 +400,28 @@ public class UpdateService extends Service implements Constants {
 		}
 
 		@Override
-		public void refreshHomeTimeline(long[] account_ids, int count) {
-			mService.get().refreshHomeTimeline(account_ids, count);
+		public boolean isHomeTimelineRefreshing() {
+			return mService.get().isHomeTimelineRefreshing();
 		}
 
 		@Override
-		public void refreshMentions(long[] account_ids, int count) {
-			mService.get().refreshMentions(account_ids, count);
+		public boolean isMentionsRefreshing() {
+			return mService.get().isMentionsRefreshing();
 		}
 
 		@Override
-		public void refreshMessages(long[] account_ids, int count) {
-			mService.get().refreshMessages(account_ids, count);
+		public void refreshHomeTimeline(long[] account_ids, long[] max_ids) {
+			mService.get().refreshHomeTimeline(account_ids, max_ids);
+		}
+
+		@Override
+		public void refreshMentions(long[] account_ids, long[] max_ids) {
+			mService.get().refreshMentions(account_ids, max_ids);
+		}
+
+		@Override
+		public void refreshMessages(long[] account_ids, long[] max_ids) {
+			mService.get().refreshMessages(account_ids, max_ids);
 		}
 
 	}

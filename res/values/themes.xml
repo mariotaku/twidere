@@ -2,6 +2,8 @@
 <resources>
 
 	<style name="Theme.Holo.Light.DarkActionBar.ViewPagerIndicator">
+		<item name="vpiCirclePageIndicatorStyle">@style/Widget.CirclePageIndicator</item>
+		<item name="vpiTitlePageIndicatorStyle">@style/Widget.TitlePageIndicator</item>
 		<item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
 		<item name="vpiVerticalTabPageIndicatorStyle">@style/Widget.TabPageIndicator.Vertical</item>
 		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.Text</item>

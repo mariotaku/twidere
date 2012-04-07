@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -32,7 +33,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
-public class LoginActivity extends SherlockFragmentActivity implements Constants, OnClickListener {
+public class LoginActivity extends SherlockFragmentActivity implements Constants, OnClickListener,
+		TextWatcher {
 
 	private final static int API_SETTINGS = 1;
 	private final static int GOTO_AUTHORIZATION = 2;
@@ -45,6 +47,16 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 	private Button mSignInButton, mSignUpButton;
 	private AbstractTask mTask;
 	private RequestToken mRequestToken;
+
+	@Override
+	public void afterTextChanged(Editable s) {
+
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -86,6 +98,7 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 				}
 				break;
 		}
+		setSignInButton();
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
@@ -138,7 +151,10 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 						: LinearLayout.HORIZONTAL);
 
 		mEditUsername.setText(mUsername);
+		mEditUsername.addTextChangedListener(this);
 		mEditPassword.setText(mPassword);
+		mEditPassword.addTextChangedListener(this);
+		setSignInButton();
 
 	}
 
@@ -183,6 +199,11 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 		super.onSaveInstanceState(outState);
 	}
 
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		setSignInButton();
+	}
+
 	private void configureActivity() {
 		setContentView(R.layout.login);
 		mSignInButton = (Button) findViewById(R.id.sign_in);
@@ -202,6 +223,11 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 		if (ed != null) {
 			mPassword = ed.toString();
 		}
+	}
+
+	private void setSignInButton() {
+		mSignInButton.setEnabled(mEditPassword.getText().length() > 0
+				&& mEditUsername.getText().length() > 0 || mAuthType == Accounts.AUTH_TYPE_OAUTH);
 	}
 
 	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {

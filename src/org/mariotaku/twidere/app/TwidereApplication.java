@@ -6,6 +6,7 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Application;
+import android.content.ContentResolver;
 
 public class TwidereApplication extends Application {
 
@@ -32,6 +33,12 @@ public class TwidereApplication extends Application {
 				getResources().getDimensionPixelSize(R.dimen.profile_image_size));
 		mCommonUtils = new CommonUtils(this);
 		mServiceInterface = new ServiceInterface(this);
+	}
+	
+	@Override
+	public void onTerminate() {
+		ContentResolver resolver = getContentResolver();
+		super.onTerminate();
 	}
 
 }
