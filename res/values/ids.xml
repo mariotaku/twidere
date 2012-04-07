@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<item name="add_location" type="id"/>
+	<item name="take_photo" type="id"/>
+	<item name="add_image" type="id"/>
+	<item name="location" type="id"/>
+	<item name="image" type="id"/>
+	<item name="view" type="id"/>
+	<item name="delete" type="id"/>
+	<item name="pick_from_gallery" type="id"/>
+	<item name="pick_from_map" type="id"/>
+
+</resources>

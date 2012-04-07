@@ -8,6 +8,8 @@
 		android:minSdkVersion="8"
 		android:targetSdkVersion="15"/>
 
+	<uses-library android:name="com.google.android.maps"/>
+
 	<permission-group
 		android:name="org.mariotaku.twidere.ACCESS_APPLICATION"
 		android:label="@string/label_permission_group_access_twidere"/>
@@ -92,6 +94,10 @@
 			android:name=".activity.SelectAccountsActivity"
 			android:label="@string/select_accounts"
 			android:theme="@style/Theme.Holo.Light.Dialog.NoSherlock">
+		</activity>
+		<activity android:name=".activity.ViewImageActivity">
+		</activity>
+		<activity android:name=".activity.ViewMapActivity">
 		</activity>
 	</application>
 

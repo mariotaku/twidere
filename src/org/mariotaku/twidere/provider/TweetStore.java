@@ -168,6 +168,12 @@ public class TweetStore {
 		public final static String IS_TWEET_BY_ME = "is_tweet_by_me";
 
 		/**
+		 * 如果数值非0，则这是一个间隔 <br>
+		 * Type: INTEGER (boolean)
+		 */
+		public final static String IS_GAP = "is_gap";
+
+		/**
 		 * User's profile image URL of the status. <br>
 		 * Type: TEXT NOT NULL
 		 */
@@ -191,12 +197,11 @@ public class TweetStore {
 
 		public final static String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID,
 				STATUS_TIMESTAMP, TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL,
-				IN_REPLY_TO_STATUS_ID, IS_RETWEET, IS_FAVORITE, IS_TWEET_BY_ME };
+				IN_REPLY_TO_STATUS_ID, IS_RETWEET, IS_FAVORITE, IS_TWEET_BY_ME, IS_GAP };
 
 		public final static String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT,
-				TYPE_INT_UNIQUE, TYPE_INT, TYPE_INT, TYPE_TEXT_NOT_NULL, TYPE_TEXT_NOT_NULL,
-				TYPE_TEXT_NOT_NULL, TYPE_TEXT_NOT_NULL, TYPE_INT, TYPE_BOOLEAN, TYPE_BOOLEAN,
-				TYPE_BOOLEAN };
+				TYPE_INT_UNIQUE, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
+				TYPE_INT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
 
 	}
 }

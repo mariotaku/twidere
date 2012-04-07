@@ -5,7 +5,6 @@ import java.net.URL;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.ComposeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
@@ -13,12 +12,15 @@ import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.ServiceInterface.StateListener;
+import org.mariotaku.twidere.util.StatusItemHolder;
 import org.mariotaku.twidere.util.TopScrollable;
 import org.mariotaku.twidere.widget.RefreshableListView;
 import org.mariotaku.twidere.widget.RefreshableListView.OnRefreshListener;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,16 +31,13 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 
 import com.actionbarsherlock.app.SherlockListFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 
 public class ConnectTabFragment extends SherlockListFragment implements Constants, TopScrollable,
-		OnRefreshListener, LoaderCallbacks<Cursor>, StateListener {
+		OnRefreshListener, LoaderCallbacks<Cursor>, OnScrollListener {
 
 	private MentionsAdapter mAdapter;
 	private LazyImageLoader mListProfileImageLoader;
@@ -57,12 +56,11 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 				.getCommonUtils();
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getServiceInterface();
-		mServiceInterface.addStateListener(this);
-		setHasOptionsMenu(true);
 		mAdapter = new MentionsAdapter(getSherlockActivity(), R.layout.tweet_list_item);
 		setListAdapter(mAdapter);
 		mListView = (RefreshableListView) getListView();
 		mListView.setOnRefreshListener(this);
+		mListView.setOnScrollListener(this);
 		getLoaderManager().initLoader(0, null, this);
 	}
 
@@ -75,19 +73,41 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.connect, menu);
-		super.onCreateOptionsMenu(menu, inflater);
+	public void onStart() {
+		super.onStart();
+		IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
+		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
+		if (getSherlockActivity() != null)
+			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
 	}
+
+	@Override
+	public void onStop() {
+		if (getSherlockActivity() != null)
+			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		super.onStop();
+	}
+
+	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
+				mListView.completeRefreshing();
+				getLoaderManager().restartLoader(0, null, ConnectTabFragment.this);
+			} else if ((ConnectTabFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action)) {
+				if (mListView != null) {
+					mListView.smoothScrollToPosition(0);
+				}
+			}
+		}
+
+	};
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.timeline, container, false);
-	}
-
-	@Override
-	public void onHomeTimelineRefreshed() {
-
 	}
 
 	@Override
@@ -112,22 +132,6 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 	}
 
 	@Override
-	public void onMentionsRefreshed() {
-		mListView.completeRefreshing();
-		mAdapter.notifyDataSetChanged();
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.compose:
-				startActivity(new Intent(getSherlockActivity(), ComposeActivity.class));
-				break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
 	public void onRefresh() {
 		String[] cols = new String[] { Accounts.USER_ID };
 		Cursor cur = getSherlockActivity().getContentResolver().query(Accounts.CONTENT_URI, cols,
@@ -142,6 +146,24 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 			}
 			mServiceInterface.refreshMentions(ids, 20);
 			cur.close();
+		}
+
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+			int totalItemCount) {
+
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		switch (scrollState) {
+			case SCROLL_STATE_FLING:
+			case SCROLL_STATE_IDLE:
+			case SCROLL_STATE_TOUCH_SCROLL:
+				view.invalidateViews();
+				break;
 		}
 
 	}
@@ -163,7 +185,7 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 
-			ViewHolder viewholder = (ViewHolder) view.getTag();
+			StatusItemHolder viewholder = (StatusItemHolder) view.getTag();
 
 			if (viewholder == null) return;
 
@@ -177,18 +199,18 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 			viewholder.user_name.setText(user_name);
 			viewholder.screen_name.setText("@" + screen_name);
 			viewholder.tweet_content.setText(text);
-			viewholder.tweet_time.setText(mCommonUtils.formatTimeStampString(cursor
+			viewholder.tweet_time.setText(mCommonUtils.formatToShortTimeString(cursor
 					.getLong(mStatusTimestampIdx)));
-			if (is_retweet && is_favorite) {
-				viewholder.retweet_fav_indicator
-						.setImageResource(R.drawable.ic_indicator_retweet_fav);
-			} else if (is_retweet && !is_favorite) {
-				viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_retweet);
-			} else if (!is_retweet && is_favorite) {
-				viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_fav);
-			} else {
-				viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_none);
-			}
+			// if (is_retweet && is_favorite) {
+			// viewholder.retweet_fav_indicator
+			// .setImageResource(R.drawable.ic_indicator_retweet_fav);
+			// } else if (is_retweet && !is_favorite) {
+			// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_retweet);
+			// } else if (!is_retweet && is_favorite) {
+			// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_fav);
+			// } else {
+			// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_none);
+			// }
 			URL url = null;
 			try {
 				url = new URL(profile_image_url);
@@ -205,29 +227,9 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
 			View view = super.newView(context, cursor, parent);
-			ViewHolder viewholder = new ViewHolder(view);
+			StatusItemHolder viewholder = new StatusItemHolder(view);
 			view.setTag(viewholder);
 			return view;
-		}
-
-		private class ViewHolder {
-
-			TextView user_name;
-			TextView screen_name;
-			TextView tweet_content;
-			TextView tweet_time;
-			ImageView profile_image;
-			ImageView retweet_fav_indicator;
-
-			public ViewHolder(View view) {
-				user_name = (TextView) view.findViewById(R.id.user_name);
-				screen_name = (TextView) view.findViewById(R.id.screen_name);
-				tweet_content = (TextView) view.findViewById(R.id.tweet_content);
-				tweet_time = (TextView) view.findViewById(R.id.tweet_time);
-				profile_image = (ImageView) view.findViewById(R.id.profile_image);
-				retweet_fav_indicator = (ImageView) view.findViewById(R.id.retweet_fav_indicator);
-			}
-
 		}
 
 	}

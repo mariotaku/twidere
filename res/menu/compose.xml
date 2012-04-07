@@ -2,22 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@+id/add_location"
+		android:id="@id/location"
 		android:icon="@drawable/ic_menu_mylocation"
-		android:showAsAction="ifRoom"
+		android:showAsAction="always"
 		android:title="@string/add_location">
+		<menu>
+		</menu>
 	</item>
 	<item
-		android:id="@+id/take_photo"
-		android:icon="@drawable/ic_menu_camera"
-		android:showAsAction="ifRoom"
-		android:title="@string/take_photo">
-	</item>
-	<item
-		android:id="@+id/add_image"
+		android:id="@id/image"
 		android:icon="@drawable/ic_menu_gallery"
-		android:showAsAction="ifRoom"
+		android:showAsAction="always"
 		android:title="@string/add_image">
+		<menu>
+		</menu>
 	</item>
 
 </menu>

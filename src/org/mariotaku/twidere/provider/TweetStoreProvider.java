@@ -154,7 +154,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		}
 
 		private int getTypeInt(String type) {
-			int idx = type.contains(")") ? type.indexOf(")") : type.indexOf(" ");
+			int idx = type.contains("(") ? type.indexOf("(") : type.indexOf(" ");
 			String type_main = idx > -1 ? type.substring(0, idx) : type;
 			if ("NULL".equalsIgnoreCase(type_main))
 				return FIELD_TYPE_NULL;
@@ -196,9 +196,9 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 		private boolean isTypeCompatible(String old_type, String new_type) {
 			if (old_type != null && new_type != null) {
-				int old_idx = old_type.contains(")") ? old_type.indexOf(")") : old_type
+				int old_idx = old_type.contains("(") ? old_type.indexOf("(") : old_type
 						.indexOf(" ");
-				int new_idx = new_type.contains(")") ? new_type.indexOf(")") : new_type
+				int new_idx = new_type.contains("(") ? new_type.indexOf("(") : new_type
 						.indexOf(" ");
 				String old_type_main = old_idx > -1 ? old_type.substring(0, old_idx) : old_type;
 				String new_type_main = new_idx > -1 ? new_type.substring(0, new_idx) : new_type;

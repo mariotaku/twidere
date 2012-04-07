@@ -8,12 +8,14 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -23,6 +25,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 
 public class ComposeActivity extends SherlockFragmentActivity implements Constants,
 		OnClickListener, TextWatcher {
@@ -32,9 +35,10 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 	private final static int SELECT_ACCOUNTS = 3;
 
 	private ActionBar mActionBar;
-	private Uri mImageCaptureUri;
+	private Uri mImageUri;
 	private EditText mEditText;
 	private TextView mTextCount;
+	private boolean mIsImageAttached, mIsPhotoAttached, mIsLocationAttached;
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -53,12 +57,29 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 
 		switch (requestCode) {
 			case TAKE_PICTURE:
+				if (resultCode == RESULT_OK) {
+					File file = new File(mImageUri.getPath());
+					if (file.exists()) {
+						mIsImageAttached = false;
+						mIsPhotoAttached = true;
+					} else {
+						mIsPhotoAttached = false;
+					}
+					invalidateOptionsMenu();
+				}
 				break;
 			case PICK_IMAGE:
 				if (resultCode == RESULT_OK) {
-					String path = getRealPathFromURI(intent.getData());
-					if (path != null) {
+					Uri uri = intent.getData();
+					File file = new File(getRealPathFromURI(uri));
+					if (file.exists()) {
+						mImageUri = uri;
+						mIsPhotoAttached = false;
+						mIsImageAttached = true;
+					} else {
+						mIsImageAttached = false;
 					}
+					invalidateOptionsMenu();
 				}
 				break;
 			case SELECT_ACCOUNTS:
@@ -71,7 +92,6 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 					if (user_ids == null) {
 						break;
 					}
-					Log.d(LOGTAG, "user_ids.length = " + user_ids.length);
 
 				}
 				break;
@@ -100,6 +120,7 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 		mEditText = (EditText) findViewById(R.id.edit_text);
 		mEditText.addTextChangedListener(this);
 		mTextCount = (TextView) findViewById(R.id.text_count);
+		mTextCount.setText(String.valueOf(mEditText.getText().toString().length()));
 	}
 
 	@Override
@@ -111,17 +132,51 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case android.R.id.home:
+			case MENU_HOME:
 				finish();
 				break;
-			case R.id.take_photo:
+			case MENU_PICK_FROM_GALLERY:
+				pickImage();
+				break;
+			case MENU_TAKE_PHOTO:
 				takePhoto();
 				break;
-			case R.id.add_image:
-				pickImage();
+			case MENU_PICK_FROM_MAP:
+				break;
+			case MENU_ADD_LOCATION:
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		SubMenu imageSubMenu = menu.findItem(MENU_IMAGE).getSubMenu();
+		imageSubMenu.clear();
+		imageSubMenu.add(MENU_ADD_IMAGE, MENU_PICK_FROM_GALLERY, Menu.NONE,
+				R.string.pick_from_gallery);
+		imageSubMenu.add(MENU_ADD_IMAGE, MENU_TAKE_PHOTO, Menu.NONE, R.string.take_photo);
+		if (mIsImageAttached || mIsPhotoAttached) {
+			menu.findItem(MENU_IMAGE).getIcon()
+					.setColorFilter(Color.CYAN, PorterDuff.Mode.LIGHTEN);
+			imageSubMenu.add(MENU_ADD_IMAGE, MENU_VIEW, Menu.NONE, R.string.view);
+			imageSubMenu.add(MENU_ADD_IMAGE, MENU_DELETE, Menu.NONE, R.string.delete);
+		} else {
+			menu.findItem(MENU_IMAGE).getIcon().clearColorFilter();
+		}
+
+		SubMenu locationSubMenu = menu.findItem(MENU_LOCATION).getSubMenu();
+		locationSubMenu.clear();
+		locationSubMenu.add(MENU_ADD_IMAGE, MENU_ADD_LOCATION, Menu.NONE, R.string.add_location);
+		locationSubMenu.add(MENU_ADD_IMAGE, MENU_PICK_FROM_MAP, Menu.NONE, R.string.pick_from_map);
+		if (mIsLocationAttached) {
+			menu.findItem(MENU_LOCATION).getIcon().setColorFilter(Color.CYAN, Mode.MULTIPLY);
+			locationSubMenu.add(MENU_ADD_LOCATION, MENU_VIEW, Menu.NONE, R.string.view);
+			locationSubMenu.add(MENU_ADD_LOCATION, MENU_DELETE, Menu.NONE, R.string.delete);
+		} else {
+			menu.findItem(MENU_LOCATION).getIcon().clearColorFilter();
+		}
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -156,8 +211,8 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		File file = new File(getExternalCacheDir(), "tmp_photo_" + System.currentTimeMillis()
 				+ ".jpg");
-		mImageCaptureUri = Uri.fromFile(file);
-		intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+		mImageUri = Uri.fromFile(file);
+		intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
 		startActivityForResult(intent, TAKE_PICTURE);
 
 	}

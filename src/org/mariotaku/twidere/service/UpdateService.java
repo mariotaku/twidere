@@ -19,6 +19,7 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.conf.ConfigurationBuilder;
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -130,17 +131,19 @@ public class UpdateService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(List<AccountResponce> responces) {
+			ContentResolver resolver = getContentResolver();
+
 			for (AccountResponce responce : responces) {
 				ResponseList<twitter4j.Status> statuses = responce.responselist;
 				long account_id = responce.account_id;
-				if (statuses == null) return;
-				ContentValues[] values_array = new ContentValues[statuses.size()];
+				if (statuses == null || statuses.size() <= 0) return;
+				List<ContentValues> values_list = new ArrayList<ContentValues>();
 				int idx = 0;
 				for (twitter4j.Status status : statuses) {
-					User user = status.getUser();
 					ContentValues values = new ContentValues();
-					values.put(Statuses.ACCOUNT_ID, account_id);
+					User user = status.getUser();
 					values.put(Statuses.STATUS_ID, status.getId());
+					values.put(Statuses.ACCOUNT_ID, account_id);
 					values.put(Statuses.USER_ID, user.getId());
 					values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
 					values.put(Statuses.TEXT, status.getText());
@@ -149,10 +152,32 @@ public class UpdateService extends Service implements Constants {
 					values.put(Statuses.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 					values.put(Statuses.IS_RETWEET, status.isRetweet() ? 1 : 0);
 					values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
-					values_array[idx] = values;
+
+					StringBuilder where = new StringBuilder();
+					where.append(Statuses.STATUS_ID + "='" + status.getId() + "'");
+					where.append(" AND " + Statuses.ACCOUNT_ID + "='" + account_id + "'");
+					Cursor cur = resolver.query(Statuses.CONTENT_URI, new String[] {},
+							where.toString(), null, null);
+
+					if (cur != null) {
+						if (idx == statuses.size() - 1) {
+							if (cur.getCount() > 0) {
+								resolver.delete(Statuses.CONTENT_URI, where.toString(), null);
+							} else {
+								values.put(Statuses.IS_GAP, 1);
+							}
+							values_list.add(values);
+						} else if (cur.getCount() <= 0) {
+							values_list.add(values);
+						}
+						cur.close();
+					} else {
+						values_list.add(values);
+					}
 					idx++;
 				}
-				getContentResolver().bulkInsert(Statuses.CONTENT_URI, values_array);
+				resolver.bulkInsert(Statuses.CONTENT_URI,
+						values_list.toArray(new ContentValues[values_list.size()]));
 			}
 			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED));
 			mRefreshHomeTimelineTask = null;
@@ -246,15 +271,16 @@ public class UpdateService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(List<AccountResponce> responces) {
+			ContentResolver resolver = getContentResolver();
 			for (AccountResponce responce : responces) {
 				ResponseList<twitter4j.Status> mentions = responce.responselist;
 				long account_id = responce.account_id;
 				if (mentions == null) return;
-				ContentValues[] values_array = new ContentValues[mentions.size()];
+				List<ContentValues> values_list = new ArrayList<ContentValues>();
 				int idx = 0;
 				for (twitter4j.Status mention : mentions) {
-					User user = mention.getUser();
 					ContentValues values = new ContentValues();
+					User user = mention.getUser();
 					values.put(Mentions.ACCOUNT_ID, account_id);
 					values.put(Mentions.STATUS_ID, mention.getId());
 					values.put(Mentions.USER_ID, user.getId());
@@ -265,10 +291,32 @@ public class UpdateService extends Service implements Constants {
 					values.put(Mentions.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 					values.put(Mentions.IS_RETWEET, mention.isRetweet() ? 1 : 0);
 					values.put(Mentions.IS_FAVORITE, mention.isFavorited() ? 1 : 0);
-					values_array[idx] = values;
+
+					StringBuilder where = new StringBuilder();
+					where.append(Mentions.STATUS_ID + "='" + mention.getId() + "'");
+					where.append(" AND " + Mentions.ACCOUNT_ID + "='" + account_id + "'");
+					Cursor cur = resolver.query(Mentions.CONTENT_URI, new String[] {},
+							where.toString(), null, null);
+
+					if (cur != null) {
+						if (idx == mentions.size() - 1) {
+							if (cur.getCount() > 0) {
+								resolver.delete(Mentions.CONTENT_URI, where.toString(), null);
+							} else {
+								values.put(Mentions.IS_GAP, 1);
+							}
+							values_list.add(values);
+						} else if (cur.getCount() <= 0) {
+							values_list.add(values);
+						}
+						cur.close();
+					} else {
+						values_list.add(values);
+					}
 					idx++;
 				}
-				getContentResolver().bulkInsert(Mentions.CONTENT_URI, values_array);
+				resolver.bulkInsert(Mentions.CONTENT_URI,
+						values_list.toArray(new ContentValues[values_list.size()]));
 			}
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED));
 			mRefreshHomeTimelineTask = null;

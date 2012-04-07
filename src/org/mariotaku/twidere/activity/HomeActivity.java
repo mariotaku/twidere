@@ -18,10 +18,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.AbsListView;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TabPageIndicator;
 import com.viewpagerindicator.TitleProvider;
 
@@ -66,6 +66,25 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.home, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				finish();
+				break;
+			case R.id.compose:
+				startActivity(new Intent(this, ComposeActivity.class));
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	private class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider {
 
 		private ArrayList<TabInfo> mTabsInfo = new ArrayList<TabInfo>();
@@ -107,13 +126,8 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 
 		@Override
 		public void onPageReselected(int position) {
-			View fragmentview = mViewPager.getChildAt(position);
-			if (fragmentview != null) {
-				View view = fragmentview.findViewById(android.R.id.list);
-				if (view != null && view instanceof AbsListView) {
-					((AbsListView) view).smoothScrollToPosition(0);
-				}
-			}
+			String action = mTabsInfo.get(position).cls.getName() + SHUFFIX_SCROLL_TO_TOP;
+			sendBroadcast(new Intent(action));
 		}
 
 		private class TabInfo {

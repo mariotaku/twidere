@@ -21,7 +21,7 @@ public class ServiceInterface implements Constants, IUpdateService {
 	private IUpdateService mService;
 	private Context mContext;
 
-	private BroadcastReceiver mMediaStatusReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -57,7 +57,7 @@ public class ServiceInterface implements Constants, IUpdateService {
 					addAction(BROADCAST_MENTIONS_REFRESHED);
 				}
 			};
-			mContext.registerReceiver(mMediaStatusReceiver, filter);
+			mContext.registerReceiver(mStatusReceiver, filter);
 		}
 
 		@Override

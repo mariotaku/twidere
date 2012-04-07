@@ -45,7 +45,7 @@ public class AuthorizationActivity extends SherlockFragmentActivity implements C
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		authUrl = getIntent().getData();
 		if (authUrl == null) {
-			Toast.makeText(AuthorizationActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT);
+			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT);
 			finish();
 			return;
 		}
@@ -60,9 +60,9 @@ public class AuthorizationActivity extends SherlockFragmentActivity implements C
 		mWebSettings.setLoadsImagesAutomatically(true);
 		mWebSettings.setJavaScriptEnabled(true);
 		mWebSettings.setBlockNetworkImage(false);
+		mWebSettings.setBlockNetworkLoads(false);
 		mWebSettings.setSaveFormData(true);
 		mWebSettings.setSavePassword(true);
-		mWebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
 	}
 

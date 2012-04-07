@@ -17,33 +17,51 @@
 package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.Window;
 
-public class LicenseActivity extends SherlockFragmentActivity implements Constants {
+public class ViewImageActivity extends SherlockFragmentActivity implements Constants {
 
-	private Uri mUri = Uri.parse("file:///android_asset/gpl-3.0-standalone.html");
+	private Uri mUri = Uri.parse("about:blank");
 
 	private WebView mWebView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		mUri = getIntent().getData();
+		if (mUri == null) {
+			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT);
+			finish();
+			return;
+		}
 
 		mWebView = new WebView(this);
 		setContentView(mWebView, new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT));
 		mWebView.loadUrl(mUri.toString());
-		mWebView.setWebViewClient(new LicenseWebViewClient());
+		mWebView.setWebViewClient(new ViewerWebViewClient());
 		mWebView.getSettings().setBuiltInZoomControls(true);
 
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.image_view, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -52,12 +70,18 @@ public class LicenseActivity extends SherlockFragmentActivity implements Constan
 		super.onDestroy();
 	}
 
-	private class LicenseWebViewClient extends WebViewClient {
+	private class ViewerWebViewClient extends WebViewClient {
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
-			setTitle(view.getTitle());
+			setSupportProgressBarIndeterminateVisibility(false);
+		}
+
+		@Override
+		public void onPageStarted(WebView view, String url, Bitmap favicon) {
+			super.onPageStarted(view, url, favicon);
+			setSupportProgressBarIndeterminateVisibility(true);
 		}
 
 		@Override

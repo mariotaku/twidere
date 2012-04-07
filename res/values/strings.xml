@@ -45,5 +45,12 @@
 	<string name="label_permission_write_databases">Write Twidere databases</string>
 	<string name="description_permission_read_databases">Read tweets, drafts, accounts, direct messages etc from databases.</string>
 	<string name="description_permission_write_databases">Write tweets, drafts, accounts, direct messages etc to databases.</string>
+	<string name="open_in_browser">Open in browser</string>
+	<string name="just_now">Just now</string>
+	<string name="tap_to_load_more">Tap to load more</string>
+	<string name="delete">Delete</string>
+	<string name="view">View</string>
+	<string name="pick_from_gallery">Pick from gallery</string>
+	<string name="pick_from_map">Pick from map</string>
 
 </resources>

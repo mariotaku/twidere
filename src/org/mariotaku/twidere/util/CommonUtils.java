@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.service.UpdateService;
 
 import android.content.ComponentName;
@@ -65,6 +66,31 @@ public class CommonUtils implements Constants {
 	@SuppressWarnings("deprecation")
 	public String formatTimeStampString(String date_time) {
 		return formatTimeStampString(Date.parse(date_time));
+	}
+
+	public String formatToShortTimeString(long timestamp) {
+		Time then = new Time();
+		then.set(timestamp);
+		Time now = new Time();
+		now.setToNow();
+
+		if (then.year < now.year) {
+			int diff = now.year - then.year;
+			return mContext.getResources().getQuantityString(R.plurals.Nyears, diff, diff);
+		} else if (then.month < now.month) {
+			int diff = now.month - then.month;
+			return mContext.getResources().getQuantityString(R.plurals.Nmonths, diff, diff);
+		} else if (then.yearDay < now.yearDay) {
+			int diff = now.yearDay - then.yearDay;
+			return mContext.getResources().getQuantityString(R.plurals.Ndays, diff, diff);
+		} else if (then.hour < now.hour) {
+			int diff = now.hour - then.hour;
+			return mContext.getResources().getQuantityString(R.plurals.Nhours, diff, diff);
+		} else if (then.minute < now.minute) {
+			int diff = now.minute - then.minute;
+			return mContext.getResources().getQuantityString(R.plurals.Nminutes, diff, diff);
+		} else if (then.minute == now.minute) return mContext.getString(R.string.just_now);
+		return then.format3339(true);
 	}
 
 	public void unbindFromService(ServiceToken token) {

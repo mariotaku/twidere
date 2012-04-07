@@ -37,5 +37,7 @@
 	<string name="label_permission_write_databases">写入 Twidere 的数据库</string>
 	<string name="description_permission_read_databases">从数据库读取推文、草稿箱、账户信息、私信等。</string>
 	<string name="description_permission_write_databases">向数据库写入推文、草稿箱、账户信息、私信等。</string>
+	<string name="just_now">刚刚</string>
+	<string name="tap_to_load_more">轻按以加载更多</string>
 
 </resources>

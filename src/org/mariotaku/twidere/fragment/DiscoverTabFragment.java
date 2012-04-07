@@ -15,8 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.actionbarsherlock.app.SherlockListFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 
 public class DiscoverTabFragment extends SherlockListFragment implements Constants,
 		OnRefreshListener {
@@ -27,7 +25,6 @@ public class DiscoverTabFragment extends SherlockListFragment implements Constan
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
 		mItems = new ArrayList<String>();
 		mItems.add("Diary of a Wimpy Kid 6: Cabin Fever");
 		mItems.add("Steve Jobs");
@@ -44,12 +41,6 @@ public class DiscoverTabFragment extends SherlockListFragment implements Constan
 		mListView = (RefreshableListView) getListView();
 		mListView.setAdapter(adapter);
 		mListView.setOnRefreshListener(this);
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.discover, menu);
-		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
