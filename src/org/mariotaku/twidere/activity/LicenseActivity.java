@@ -18,7 +18,9 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.Constants;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.webkit.WebView;
 
 public class LicenseActivity extends WebViewActivity implements Constants {
 
@@ -26,6 +28,19 @@ public class LicenseActivity extends WebViewActivity implements Constants {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		loadUrl("file:///android_asset/gpl-3.0-standalone.html");
+		setWebViewClient(new LicenseWebViewClient());
 
+	}
+	
+	private class LicenseWebViewClient extends DefaultWebViewClient {
+		
+		@Override
+		public void onPageFinished(WebView view, String url) {
+			setTitle(view.getTitle());
+		}
+
+		@Override
+		public void onPageStarted(WebView view, String url, Bitmap favicon) {
+		}
 	}
 }

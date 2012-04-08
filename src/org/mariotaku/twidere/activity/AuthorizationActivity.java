@@ -20,12 +20,10 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Window;
@@ -62,19 +60,7 @@ public class AuthorizationActivity extends WebViewActivity implements Constants 
 
 	}
 
-	private class AuthorizationWebViewClient extends WebViewClient {
-
-		@Override
-		public void onPageFinished(WebView view, String url) {
-			super.onPageFinished(view, url);
-			setSupportProgressBarIndeterminateVisibility(false);
-		}
-
-		@Override
-		public void onPageStarted(WebView view, String url, Bitmap favicon) {
-			super.onPageStarted(view, url, favicon);
-			setSupportProgressBarIndeterminateVisibility(true);
-		}
+	private class AuthorizationWebViewClient extends DefaultWebViewClient {
 
 		@Override
 		public void onReceivedError(WebView view, int errorCode, String description,

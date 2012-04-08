@@ -77,5 +77,12 @@
 	<string name="warn_expert_only">Be attention! Wrong consumer key/secret will make connection errors!</string>
 	<string name="gzip_compressing">GZip compressing</string>
 	<string name="gzip_compressing_summary">Compress all API request, it can reduce traffic usage, but may not work on all API servers.</string>
+	<string name="storage">Storage</string>
+	<string name="item_limit">Item limit</string>
+	<string name="item_limit_summary">Upper limit of item stored in databases for each account, set to a smaller value to save space and increace loading speed.</string>
+	<string name="clear_cache">Clear cache</string>
+	<string name="clear_cache_summary">Clear stored profile image cache.</string>
+	<string name="clear_databases">Clear databases</string>
+	<string name="clear_databases_summary">Clear all tweets, user profiles, messages in databases. Don\'t worry, your accounts credentials won\'t loss.</string>
 
 </resources>

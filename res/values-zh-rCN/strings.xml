@@ -40,6 +40,7 @@
 	<string name="label_permission_write_databases">写入 Twidere 的数据库</string>
 	<string name="description_permission_read_databases">从数据库读取推文、草稿箱、帐号信息、私信等。</string>
 	<string name="description_permission_write_databases">向数据库写入推文、草稿箱、帐号信息、私信等。</string>
+	<string name="open_in_browser">在浏览器中打开</string>
 	<string name="just_now">刚刚</string>
 	<string name="tap_to_load_more">轻按以加载更多</string>
 	<string name="go_to_my_profile_page">查看我的个人资料页面</string>
@@ -66,5 +67,12 @@
 	<string name="warn_expert_only">请小心！错误的 Consumer key/secret 将导致连接错误！</string>
 	<string name="gzip_compressing">GZip 压缩</string>
 	<string name="gzip_compressing_summary">压缩所有的 API 请求，这将减少数据流量，但并不是所有的API服务器都支持这个功能。</string>
+	<string name="storage">存储</string>
+	<string name="item_limit">条目上限</string>
+	<string name="item_limit_summary">每个帐号在数据库中保存的推文/信息条目上限，降低数值可以节省更多存储空间以及加快载入的速度。</string>
+	<string name="clear_cache">清除缓存</string>
+	<string name="clear_cache_summary">清除储存的个人资料图片缓存。</string>
+	<string name="clear_databases">清除数据库</string>
+	<string name="clear_databases_summary">清除数据库中的所有推文，个人资料和信息等。请不用担心，你的帐号登录信息不会丢失。</string>
 
 </resources>

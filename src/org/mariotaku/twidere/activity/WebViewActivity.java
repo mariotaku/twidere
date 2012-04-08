@@ -51,7 +51,7 @@ public class WebViewActivity extends SherlockFragmentActivity implements Constan
 		webview = new WebView(this);
 		setContentView(webview, new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT));
-		webview.setWebViewClient(new ViewerWebViewClient());
+		webview.setWebViewClient(new DefaultWebViewClient());
 		webview.getSettings().setBuiltInZoomControls(true);
 
 	}
@@ -66,7 +66,7 @@ public class WebViewActivity extends SherlockFragmentActivity implements Constan
 		webview.setWebViewClient(client);
 	}
 
-	private class ViewerWebViewClient extends WebViewClient {
+	public class DefaultWebViewClient extends WebViewClient {
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
