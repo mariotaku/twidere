@@ -15,14 +15,11 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 
-public class ViewMapActivity extends SherlockFragmentActivity implements Constants,
-		LocationListener {
+public class ViewMapActivity extends WebViewActivity implements Constants, LocationListener {
 
 	private Uri mUri = Uri.parse("file:///android_asset/mapview.html");
-	private WebView mWebView;
 	private Location mostRecentLocation;
 
 	@Override
@@ -30,17 +27,9 @@ public class ViewMapActivity extends SherlockFragmentActivity implements Constan
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		mWebView = new WebView(this);
-		setContentView(mWebView);
 		getLocation();
 		setupWebView();
 
-	}
-
-	@Override
-	public void onDestroy() {
-		mWebView.clearCache(true);
-		super.onDestroy();
 	}
 
 	/** Sets the mostRecentLocation object to the current location of the device **/
@@ -85,13 +74,14 @@ public class ViewMapActivity extends SherlockFragmentActivity implements Constan
 	/** Sets up the WebView object and loads the URL of the page **/
 	private void setupWebView() {
 
-		mWebView.getSettings().setJavaScriptEnabled(true);
-		mWebView.setWebViewClient(new MapWebViewClient());
-		mWebView.setVerticalScrollBarEnabled(false);
-		mWebView.loadUrl(mUri.toString());
+		WebView webview = getWebView();
+		webview.getSettings().setJavaScriptEnabled(true);
+		webview.setVerticalScrollBarEnabled(false);
+		setWebViewClient(new MapWebViewClient());
+		loadUrl(mUri.toString());
 
 		/** Allows JavaScript calls to access application resources **/
-		mWebView.addJavascriptInterface(new JavaScriptInterface(), "android");
+		webview.addJavascriptInterface(new JavaScriptInterface(), "android");
 
 	}
 

@@ -34,7 +34,7 @@ public class TwidereApplication extends Application {
 		mCommonUtils = new CommonUtils(this);
 		mServiceInterface = new ServiceInterface(this);
 	}
-	
+
 	@Override
 	public void onTerminate() {
 		ContentResolver resolver = getContentResolver();

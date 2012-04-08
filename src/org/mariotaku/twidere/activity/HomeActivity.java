@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.fragment.ConnectTabFragment;
-import org.mariotaku.twidere.fragment.DiscoverTabFragment;
-import org.mariotaku.twidere.fragment.HomeTabFragment;
-import org.mariotaku.twidere.fragment.MeTabFragment;
+import org.mariotaku.twidere.fragment.ConnectFragment;
+import org.mariotaku.twidere.fragment.DashboardFragment;
+import org.mariotaku.twidere.fragment.DiscoverFragment;
+import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ServiceInterface;
 
@@ -57,16 +57,39 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
-		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {}, null, null,
-				null);
-		int accounts_count = cur.getCount();
+		StringBuilder where = new StringBuilder();
+		where.append(Accounts.IS_ACTIVATED + "='1'");
+		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[0],
+				where.toString(), null, null);
+		int accounts_count = cur == null ? 0 : cur.getCount();
 		cur.close();
+
 		if (accounts_count <= 0) {
 			startActivity(new Intent(this, LoginActivity.class));
 			finish();
 			return;
 		}
 		setContentView(R.layout.main);
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null && bundle.getBoolean(INTENT_KEY_REFRESH_ALL)) {
+			Cursor refresh_cur = getContentResolver().query(Accounts.CONTENT_URI,
+					new String[] { Accounts.USER_ID }, where.toString(), null, null);
+			if (refresh_cur != null) {
+				long[] account_ids = new long[refresh_cur.getCount()];
+				refresh_cur.moveToFirst();
+				int idx = 0;
+				while (!refresh_cur.isAfterLast()) {
+					account_ids[idx] = refresh_cur.getLong(refresh_cur
+							.getColumnIndexOrThrow(Accounts.USER_ID));
+					refresh_cur.moveToNext();
+					idx++;
+				}
+				mInterface.refreshHomeTimeline(account_ids, null);
+				mInterface.refreshMentions(account_ids, null);
+				mInterface.refreshMessages(account_ids, null);
+				refresh_cur.close();
+			}
+		}
 		mActionBar = getSupportActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
 		mActionBar.setDisplayShowCustomEnabled(true);
@@ -75,10 +98,10 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		View view = mActionBar.getCustomView();
 
 		mAdapter = new TabsAdapter(getSupportFragmentManager());
-		mAdapter.addTab(HomeTabFragment.class, null, R.drawable.ic_tab_home);
-		mAdapter.addTab(ConnectTabFragment.class, null, R.drawable.ic_tab_connect);
-		mAdapter.addTab(DiscoverTabFragment.class, null, R.drawable.ic_tab_discover);
-		mAdapter.addTab(MeTabFragment.class, null, R.drawable.ic_tab_me);
+		mAdapter.addTab(HomeTimelineFragment.class, null, R.drawable.ic_tab_home);
+		mAdapter.addTab(ConnectFragment.class, null, R.drawable.ic_tab_connect);
+		mAdapter.addTab(DiscoverFragment.class, null, R.drawable.ic_tab_discover);
+		mAdapter.addTab(DashboardFragment.class, null, R.drawable.ic_tab_me);
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mAdapter);
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
@@ -113,7 +136,6 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		super.onStart();
 		setRefreshState();
 		IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
-		;
 		registerReceiver(mStateReceiver, filter);
 	}
 

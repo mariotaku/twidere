@@ -126,6 +126,12 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		configureActivity();
 		setSupportProgressBarIndeterminateVisibility(false);
+		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {}, null, null,
+				null);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(cur != null && cur.getCount() > 0);
+		if (cur != null) {
+			cur.close();
+		}
 
 		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
 		if (bundle == null) {
@@ -175,14 +181,27 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.settings:
-				Intent intent = new Intent(this, APISettingsActivity.class);
+			case MENU_HOME:
+				Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {},
+						null, null, null);
+				if (cur != null && cur.getCount() > 0) {
+					finish();
+				}
+				if (cur != null) {
+					cur.close();
+				}
+				break;
+			case R.id.edit_api:
+				Intent intent = new Intent(this, EditAPIActivity.class);
 				Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_API_BASE, mRestAPIBase);
 				bundle.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
 				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, API_SETTINGS);
+				break;
+			case MENU_SETTINGS:
+				startActivity(new Intent(this, GlobalSettingsActivity.class));
 				break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -357,6 +376,11 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 			Integer result = (Integer) result_obj;
 			switch (result) {
 				case RESULT_SUCCESS:
+					Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+					Bundle bundle = new Bundle();
+					bundle.putBoolean(INTENT_KEY_REFRESH_ALL, true);
+					intent.putExtras(bundle);
+					startActivity(intent);
 					finish();
 					break;
 				default:
@@ -501,7 +525,11 @@ public class LoginActivity extends SherlockFragmentActivity implements Constants
 			Result result = (Result) result_obj;
 			switch (result.result_code) {
 				case RESULT_SUCCESS:
-					startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+					Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+					Bundle bundle = new Bundle();
+					bundle.putBoolean(INTENT_KEY_REFRESH_ALL, true);
+					intent.putExtras(bundle);
+					startActivity(intent);
 					finish();
 					break;
 				case RESULT_OPEN_BROWSER:

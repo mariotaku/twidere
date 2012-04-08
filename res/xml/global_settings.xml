@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:key="global_settings"
+	android:title="@string/global_settings">
+
+	<PreferenceCategory
+		android:key="cat_api"
+		android:title="@string/api">
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="gzip_compressing"
+			android:summary="@string/gzip_compressing_summary"
+			android:title="@string/gzip_compressing"/>
+
+		<EditTextPreference
+			android:dialogMessage="@string/warn_expert_only"
+			android:dialogTitle="@string/consumer_key"
+			android:key="consumer_key"
+			android:summary="@string/consumer_key_summary"
+			android:title="@string/consumer_key"/>
+		<EditTextPreference
+			android:dialogMessage="@string/warn_expert_only"
+			android:dialogTitle="@string/consumer_secret"
+			android:key="consumer_secret"
+			android:summary="@string/consumer_secret_summary"
+			android:title="@string/consumer_secret"/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="cat_proxy"
+		android:title="@string/proxy">
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="enable_proxy"
+			android:summary="@string/proxy_summary"
+			android:title="@string/proxy"/>
+
+		<EditTextPreference
+			android:dependency="enable_proxy"
+			android:dialogTitle="@string/http_proxy"
+			android:key="http_proxy"
+			android:title="@string/http_proxy"/>
+		<EditTextPreference
+			android:dependency="enable_proxy"
+			android:dialogTitle="@string/http_proxy_username"
+			android:key="http_proxy_username"
+			android:title="@string/http_proxy_username"/>
+		<EditTextPreference
+			android:dependency="enable_proxy"
+			android:dialogTitle="@string/http_proxy_password"
+			android:key="http_proxy_password"
+			android:title="@string/http_proxy_password"/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="cat_about"
+		android:title="@string/about">
+		<PreferenceScreen
+			android:summary="@string/about_summary"
+			android:title="@string/about">
+			<intent
+				android:action="android.​intent.action.MAIN"
+				android:targetClass="org.mariotaku.twidere.activity.AboutActivity"
+				android:targetPackage="org.mariotaku.twidere"/>
+		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="@string/license_summary"
+			android:title="@string/license">
+			<intent
+				android:action="android.​intent.action.MAIN"
+				android:targetClass="org.mariotaku.twidere.activity.LicenseActivity"
+				android:targetPackage="org.mariotaku.twidere"/>
+		</PreferenceScreen>
+	</PreferenceCategory>
+
+</PreferenceScreen>

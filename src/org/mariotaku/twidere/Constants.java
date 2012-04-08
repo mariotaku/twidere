@@ -4,6 +4,8 @@ public interface Constants {
 
 	public static final String LOGTAG = "Twidere";
 
+	public static final boolean MULTIPLE_ACCOUNTS_ENABLED = true;
+
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 2;
 
@@ -30,6 +32,8 @@ public interface Constants {
 
 	public static final String OAUTH_VERIFIER = "oauth_verifier";
 
+	public static final String INTENT_KEY_REFRESH_ALL = "refresh_all";
+
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_ADD_LOCATION = R.id.add_location;
 	public static final int MENU_LOCATION = R.id.location;
@@ -40,5 +44,6 @@ public interface Constants {
 	public static final int MENU_DELETE = R.id.delete;
 	public static final int MENU_PICK_FROM_GALLERY = R.id.pick_from_gallery;
 	public static final int MENU_PICK_FROM_MAP = R.id.pick_from_map;
+	public static final int MENU_SETTINGS = R.id.settings;
 
 }

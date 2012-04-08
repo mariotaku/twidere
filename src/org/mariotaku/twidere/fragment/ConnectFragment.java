@@ -13,7 +13,6 @@ import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusItemHolder;
-import org.mariotaku.twidere.util.TopScrollable;
 import org.mariotaku.twidere.widget.RefreshableListView;
 import org.mariotaku.twidere.widget.RefreshableListView.OnRefreshListener;
 
@@ -37,8 +36,8 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
-public class ConnectTabFragment extends SherlockListFragment implements Constants, TopScrollable,
-		OnRefreshListener, LoaderCallbacks<Cursor>, OnScrollListener {
+public class ConnectFragment extends SherlockListFragment implements Constants, OnRefreshListener,
+		LoaderCallbacks<Cursor>, OnScrollListener {
 
 	private MentionsAdapter mAdapter;
 	private LazyImageLoader mListProfileImageLoader;
@@ -47,6 +46,7 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 	private RefreshableListView mListView;
 	private int mAccountIdIdx, mStatusIdIdx, mUserIdIdx, mStatusTimestampIdx, mTextIdx, mNameIdx,
 			mScreenNameIdx, mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx;
+	private boolean mIsUserRefresh = false;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -54,9 +54,12 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
-				mListView.completeRefreshing();
-				getLoaderManager().restartLoader(0, null, ConnectTabFragment.this);
-			} else if ((ConnectTabFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
+				if (mIsUserRefresh) {
+					mListView.completeRefreshing();
+					mIsUserRefresh = false;
+				}
+				getLoaderManager().restartLoader(0, null, ConnectFragment.this);
+			} else if ((ConnectFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
 					.equals(action)) {
 				if (mListView != null) {
 					mListView.smoothScrollToPosition(0);
@@ -136,6 +139,7 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 
 	@Override
 	public void onRefresh() {
+		mIsUserRefresh = true;
 		String[] cols = new String[] { Accounts.USER_ID };
 		Cursor cur = getSherlockActivity().getContentResolver().query(Accounts.CONTENT_URI, cols,
 				null, null, null);
@@ -187,14 +191,6 @@ public class ConnectTabFragment extends SherlockListFragment implements Constant
 			getSherlockActivity().unregisterReceiver(mStatusReceiver);
 		}
 		super.onStop();
-	}
-
-	@Override
-	public void scrolltoTop() {
-		if (getView() != null) {
-			getListView().smoothScrollToPosition(0);
-		}
-
 	}
 
 	private class MentionsAdapter extends SimpleCursorAdapter {

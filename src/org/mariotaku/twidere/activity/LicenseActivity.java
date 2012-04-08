@@ -18,56 +18,14 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.Constants;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.ViewGroup.LayoutParams;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
-public class LicenseActivity extends SherlockFragmentActivity implements Constants {
-
-	private Uri mUri = Uri.parse("file:///android_asset/gpl-3.0-standalone.html");
-
-	private WebView mWebView;
+public class LicenseActivity extends WebViewActivity implements Constants {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		loadUrl("file:///android_asset/gpl-3.0-standalone.html");
 
-		mWebView = new WebView(this);
-		setContentView(mWebView, new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT));
-		mWebView.loadUrl(mUri.toString());
-		mWebView.setWebViewClient(new LicenseWebViewClient());
-		mWebView.getSettings().setBuiltInZoomControls(true);
-
-	}
-
-	@Override
-	public void onDestroy() {
-		mWebView.clearCache(true);
-		super.onDestroy();
-	}
-
-	private class LicenseWebViewClient extends WebViewClient {
-
-		@Override
-		public void onPageFinished(WebView view, String url) {
-			super.onPageFinished(view, url);
-			setTitle(view.getTitle());
-		}
-
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			Uri uri = Uri.parse(url);
-			if (uri.getScheme().equals(mUri.getScheme())) return false;
-
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-			startActivity(intent);
-			return true;
-		}
 	}
 }

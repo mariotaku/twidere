@@ -95,15 +95,13 @@ public class CommonUtils implements Constants {
 
 	public int getTypeIcon(boolean is_retweet, boolean is_fav, boolean has_location,
 			boolean has_media) {
-		if (is_fav) {
+		if (is_fav)
 			return R.drawable.ic_tweet_stat_starred;
-		} else if (is_retweet) {
+		else if (is_retweet)
 			return R.drawable.ic_tweet_stat_retweet;
-		} else if (has_media) {
+		else if (has_media)
 			return R.drawable.ic_tweet_stat_has_media;
-		} else if (has_location) {
-			return R.drawable.ic_tweet_stat_has_location;
-		}
+		else if (has_location) return R.drawable.ic_tweet_stat_has_location;
 		return 0;
 	}
 

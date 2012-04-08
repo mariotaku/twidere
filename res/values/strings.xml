@@ -6,6 +6,8 @@
 	<string name="release_to_update">Release to update</string>
 	<string name="loading">Loading…</string>
 	<string name="compose">Compose</string>
+	<string name="add_account">Add account</string>
+	<string name="global_settings">Global settings</string>
 	<string name="settings">Settings</string>
 	<string name="send">Send</string>
 	<string name="add_location">Add location</string>
@@ -25,9 +27,9 @@
 	<string name="test">Test</string>
 	<string name="login_to_twitter">Login to Twitter</string>
 	<string name="api_settings">API Settings</string>
+	<string name="edit_api">Edit API</string>
 	<string name="home">Home</string>
 	<string name="error_occurred">An error occurred, please try again.</string>
-	<string name="license">License</string>
 	<string name="error_already_logged_in">You are already logged in.</string>
 	<string name="no_account_selected">You must select one account or more.</string>
 	<string name="error_connectivity_error">Error: Connectivity error, please check your network state.</string>
@@ -50,7 +52,30 @@
 	<string name="tap_to_load_more">Tap to load more</string>
 	<string name="delete">Delete</string>
 	<string name="view">View</string>
+	<string name="view_image">View image</string>
+	<string name="view_map">View map</string>
 	<string name="pick_from_gallery">Pick from gallery</string>
 	<string name="pick_from_map">Pick from map</string>
+	<string name="go_to_my_profile_page">Go to my profile page</string>
+	<string name="tweets">Tweets</string>
+	<string name="followers">Followers</string>
+	<string name="following">Following</string>
+	<string name="about">About</string>
+	<string name="about_summary">About Twidere</string>
+	<string name="license">Open source license</string>
+	<string name="license_summary">Twidere is licensed under GPLv3.</string>
+	<string name="proxy">Proxy</string>
+	<string name="proxy_summary">Enable proxy for API, maps/image viewer, etc.</string>
+	<string name="http_proxy">HTTP Proxy</string>
+	<string name="http_proxy_username">HTTP Proxy username</string>
+	<string name="http_proxy_password">HTTP Proxy password</string>
+	<string name="api">API</string>
+	<string name="consumer_key">Consumer key</string>
+	<string name="consumer_key_summary">Consumer key for OAuth/xAuth, leave blank for default.</string>
+	<string name="consumer_secret">Consumer secret</string>
+	<string name="consumer_secret_summary">Consumer secret for OAuth/xAuth, leave blank for default.</string>
+	<string name="warn_expert_only">Be attention! Wrong consumer key/secret will make connection errors!</string>
+	<string name="gzip_compressing">GZip compressing</string>
+	<string name="gzip_compressing_summary">Compress all API request, it can reduce traffic usage, but may not work on all API servers.</string>
 
 </resources>

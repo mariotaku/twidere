@@ -26,7 +26,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,16 +35,18 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
-public class HomeTabFragment extends SherlockListFragment implements Constants, OnRefreshListener,
-		LoaderCallbacks<Cursor>, OnScrollListener {
+public class HomeTimelineFragment extends SherlockListFragment implements Constants,
+		OnRefreshListener, LoaderCallbacks<Cursor>, OnScrollListener {
 
 	private StatusesAdapter mAdapter;
 	private LazyImageLoader mListProfileImageLoader;
 	private CommonUtils mCommonUtils;
 	private ServiceInterface mServiceInterface;
 	private RefreshableListView mListView;
-	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx,
-			mScreenNameIdx, mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mHasLocationIdx, mHasMediaIdx;
+	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx,
+			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mHasLocationIdx,
+			mHasMediaIdx;
+	private boolean mIsUserRefresh = false;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -53,9 +54,12 @@ public class HomeTabFragment extends SherlockListFragment implements Constants, 
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
-				mListView.completeRefreshing();
-				getLoaderManager().restartLoader(0, null, HomeTabFragment.this);
-			} else if ((HomeTabFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
+				if (mIsUserRefresh) {
+					mListView.completeRefreshing();
+					mIsUserRefresh = false;
+				}
+				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
+			} else if ((HomeTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
 					.equals(action)) {
 				if (mListView != null) {
 					mListView.smoothScrollToPosition(0);
@@ -66,7 +70,6 @@ public class HomeTabFragment extends SherlockListFragment implements Constants, 
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		Log.d("debug", "onActivityCreated, value = " + toString());
 		super.onActivityCreated(savedInstanceState);
 		mListProfileImageLoader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
@@ -134,6 +137,7 @@ public class HomeTabFragment extends SherlockListFragment implements Constants, 
 
 	@Override
 	public void onRefresh() {
+		mIsUserRefresh = true;
 		String[] cols = new String[] { Accounts.USER_ID };
 		Cursor cur = getSherlockActivity().getContentResolver().query(Accounts.CONTENT_URI, cols,
 				null, null, null);
@@ -219,7 +223,9 @@ public class HomeTabFragment extends SherlockListFragment implements Constants, 
 				holder.screen_name.setText("@" + screen_name);
 				holder.tweet_time.setText(mCommonUtils.formatToShortTimeString(cursor
 						.getLong(mStatusTimestampIdx)));
-				holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0, mCommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media), 0);
+				holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+						mCommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media),
+						0);
 				URL url = null;
 				try {
 					url = new URL(profile_image_url);

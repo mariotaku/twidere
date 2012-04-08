@@ -16,8 +16,7 @@ import android.widget.ArrayAdapter;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
-public class DiscoverTabFragment extends SherlockListFragment implements Constants,
-		OnRefreshListener {
+public class DiscoverFragment extends SherlockListFragment implements Constants, OnRefreshListener {
 
 	private ArrayList<String> mItems;
 	private RefreshableListView mListView;

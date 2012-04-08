@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal">
+
+	<Button
+		android:id="@+id/add_account"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:minHeight="48dip"
+		android:singleLine="true"
+		android:text="@string/add_account"/>
+
+	<Button
+		android:id="@+id/global_settings"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:minHeight="48dip"
+		android:singleLine="true"
+		android:text="@string/global_settings"/>
+
+</LinearLayout>

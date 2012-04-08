@@ -25,7 +25,6 @@ import android.widget.Toast;
 public class SelectAccountsActivity extends ListActivity implements Constants, OnItemClickListener {
 
 	private SimpleCursorAdapter mAdapter;
-	private boolean isMultipleAccountsEnabled = true;
 	private Cursor mCursor;
 	private ListView mListView;
 	private List<Long> mActivatedUsersId = new ArrayList<Long>();
@@ -40,7 +39,7 @@ public class SelectAccountsActivity extends ListActivity implements Constants, O
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		int layoutRes = isMultipleAccountsEnabled ? android.R.layout.select_dialog_multichoice
+		int layoutRes = MULTIPLE_ACCOUNTS_ENABLED ? android.R.layout.select_dialog_multichoice
 				: android.R.layout.select_dialog_singlechoice;
 		String[] cols = new String[] { Accounts.USERNAME };
 		int[] ids = new int[] { android.R.id.text1 };
@@ -52,7 +51,7 @@ public class SelectAccountsActivity extends ListActivity implements Constants, O
 		mAdapter = new SimpleCursorAdapter(this, layoutRes, mCursor, cols, ids, 0);
 		setListAdapter(mAdapter);
 		mListView = getListView();
-		mListView.setChoiceMode(isMultipleAccountsEnabled ? ListView.CHOICE_MODE_MULTIPLE
+		mListView.setChoiceMode(MULTIPLE_ACCOUNTS_ENABLED ? ListView.CHOICE_MODE_MULTIPLE
 				: ListView.CHOICE_MODE_SINGLE);
 		mListView.setOnItemClickListener(this);
 

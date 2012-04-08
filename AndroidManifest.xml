@@ -42,7 +42,8 @@
 		android:theme="@style/Theme.Holo.Light.DarkActionBar">
 		<activity
 			android:name=".activity.LoginActivity"
-			android:label="@string/login_to_twitter">
+			android:label="@string/login_to_twitter"
+			android:windowSoftInputMode="adjustResize">
 		</activity>
 		<activity
 			android:name=".activity.LicenseActivity"
@@ -65,15 +66,18 @@
 			android:uiOptions="splitActionBarWhenNarrow"
 			android:windowSoftInputMode="adjustResize">
 		</activity>
-		<activity android:name=".activity.GeneralSettingsActivity">
+		<activity
+			android:name=".activity.GlobalSettingsActivity"
+			android:label="@string/global_settings"
+			android:theme="@style/Theme.Sherlock.Light.DarkActionBar">
 		</activity>
 		<activity
 			android:name=".activity.AuthorizationActivity"
 			android:label="@string/login_to_twitter">
 		</activity>
 		<activity
-			android:name=".activity.APISettingsActivity"
-			android:label="@string/api_settings"
+			android:name=".activity.EditAPIActivity"
+			android:label="@string/edit_api"
 			android:theme="@style/Theme.Holo.Light.Dialog">
 		</activity>
 
@@ -95,9 +99,17 @@
 			android:label="@string/select_accounts"
 			android:theme="@style/Theme.Holo.Light.Dialog.NoSherlock">
 		</activity>
-		<activity android:name=".activity.ViewImageActivity">
+		<activity
+			android:name=".activity.ViewImageActivity"
+			android:label="@string/view_image">
 		</activity>
-		<activity android:name=".activity.ViewMapActivity">
+		<activity
+			android:name=".activity.ViewMapActivity"
+			android:label="@string/view_map">
+		</activity>
+		<activity
+			android:name=".activity.AboutActivity"
+			android:label="@string/about">
 		</activity>
 	</application>
 

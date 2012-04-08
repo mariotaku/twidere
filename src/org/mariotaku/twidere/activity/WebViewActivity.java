@@ -17,52 +17,56 @@
 package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.webkit.WebSettings;
+import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 
-public class AuthorizationActivity extends WebViewActivity implements Constants {
+public class WebViewActivity extends SherlockFragmentActivity implements Constants {
 
-	private Uri authUrl;
+	private Uri mUri = Uri.parse("about:blank");
 
-	private WebView mWebView;
-	private WebSettings mWebSettings;
+	private WebView webview;
+
+	public final WebView getWebView() {
+		return webview;
+	}
+
+	public final void loadUrl(String url) {
+		mUri = Uri.parse(url);
+		webview.loadUrl(url);
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		authUrl = getIntent().getData();
-		if (authUrl == null) {
-			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT);
-			finish();
-			return;
-		}
-
-		mWebView = getWebView();
-		loadUrl(authUrl.toString());
-		setWebViewClient(new AuthorizationWebViewClient());
-		mWebView.setVerticalScrollBarEnabled(false);
-		mWebSettings = mWebView.getSettings();
-		mWebSettings.setLoadsImagesAutomatically(true);
-		mWebSettings.setJavaScriptEnabled(true);
-		mWebSettings.setBlockNetworkImage(false);
-		mWebSettings.setBlockNetworkLoads(false);
-		mWebSettings.setSaveFormData(true);
-		mWebSettings.setSavePassword(true);
+		webview = new WebView(this);
+		setContentView(webview, new LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT));
+		webview.setWebViewClient(new ViewerWebViewClient());
+		webview.getSettings().setBuiltInZoomControls(true);
 
 	}
 
-	private class AuthorizationWebViewClient extends WebViewClient {
+	@Override
+	public void onDestroy() {
+		webview.clearCache(true);
+		super.onDestroy();
+	}
+
+	public final void setWebViewClient(WebViewClient client) {
+		webview.setWebViewClient(client);
+	}
+
+	private class ViewerWebViewClient extends WebViewClient {
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
@@ -77,31 +81,12 @@ public class AuthorizationActivity extends WebViewActivity implements Constants 
 		}
 
 		@Override
-		public void onReceivedError(WebView view, int errorCode, String description,
-				String failingUrl) {
-			super.onReceivedError(view, errorCode, description, failingUrl);
-			Toast.makeText(AuthorizationActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT);
-			finish();
-		}
-
-		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Uri uri = Uri.parse(url);
-			if (uri.getHost().equals(authUrl.getHost()))
+			if (uri.getScheme().equals(mUri.getScheme()) && uri.getHost().equals(mUri.getHost()))
 				return false;
-			else if (url.startsWith(DEFAULT_OAUTH_CALLBACK)) {
-				String oauth_verifier = uri.getQueryParameter(OAUTH_VERIFIER);
-				if (oauth_verifier != null) {
-					Bundle bundle = new Bundle();
-					bundle.putString(OAUTH_VERIFIER, oauth_verifier);
-					setResult(RESULT_OK, new Intent().putExtras(bundle));
-					finish();
-				}
-				return true;
-			}
 			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 			startActivity(intent);
-			finish();
 			return true;
 		}
 	}

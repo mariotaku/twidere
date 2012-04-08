@@ -160,7 +160,7 @@ public class TweetStore {
 		 * Type: INTEGER (boolean)
 		 */
 		public final static String IS_FAVORITE = "is_favorite";
-		
+
 		public final static String HAS_MEDIA = "has_media";
 		public final static String HAS_LOCATION = "has_location";
 
@@ -189,9 +189,9 @@ public class TweetStore {
 		public final static String USER_ID = "user_id";
 
 		public final static String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
-		
+
 		public final static String IN_REPLY_TO_USER_ID = "in_reply_to_user_id";
-		
+
 		public final static String IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
 
 		/**
@@ -204,11 +204,13 @@ public class TweetStore {
 
 		public final static String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID,
 				STATUS_TIMESTAMP, TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL,
-				IN_REPLY_TO_STATUS_ID,IN_REPLY_TO_USER_ID,IN_REPLY_TO_SCREEN_NAME, IS_RETWEET, IS_FAVORITE,HAS_MEDIA,HAS_LOCATION, IS_TWEET_BY_ME, IS_GAP };
+				IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID, IN_REPLY_TO_SCREEN_NAME, IS_RETWEET,
+				IS_FAVORITE, HAS_MEDIA, HAS_LOCATION, IS_TWEET_BY_ME, IS_GAP };
 
 		public final static String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT,
 				TYPE_INT_UNIQUE, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_INT,TYPE_INT, TYPE_TEXT,TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
+				TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN,
+				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
 
 	}
 }

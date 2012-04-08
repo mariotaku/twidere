@@ -194,7 +194,7 @@ public class UpdateService extends Service implements Constants {
 					values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 					values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
 					values.put(Statuses.IN_REPLY_TO_USER_ID, status.getInReplyToUserId());
-					values.put(Statuses.HAS_MEDIA, (medias != null && medias.length > 0) ? 1 : 0);
+					values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
 					values.put(Statuses.HAS_LOCATION, status.getGeoLocation() != null ? 1 : 0);
 					values.put(Statuses.IS_TWEET_BY_ME, user.getId() == account_id ? 1 : 0);
 
@@ -346,7 +346,7 @@ public class UpdateService extends Service implements Constants {
 					values.put(Mentions.IN_REPLY_TO_SCREEN_NAME, mention.getInReplyToScreenName());
 					values.put(Mentions.IN_REPLY_TO_STATUS_ID, mention.getInReplyToStatusId());
 					values.put(Mentions.IN_REPLY_TO_USER_ID, mention.getInReplyToUserId());
-					values.put(Mentions.HAS_MEDIA, (medias != null && medias.length > 0) ? 1 : 0);
+					values.put(Mentions.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
 					values.put(Mentions.HAS_LOCATION, mention.getGeoLocation() != null ? 1 : 0);
 					values.put(Mentions.IS_TWEET_BY_ME, user.getId() == account_id ? 1 : 0);
 

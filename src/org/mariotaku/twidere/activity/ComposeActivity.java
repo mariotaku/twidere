@@ -71,9 +71,9 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 			case PICK_IMAGE:
 				if (resultCode == RESULT_OK) {
 					Uri uri = intent.getData();
-					File file = new File(getRealPathFromURI(uri));
-					if (file.exists()) {
-						mImageUri = uri;
+					File file = uri == null ? null : new File(getRealPathFromURI(uri));
+					if (file != null && file.exists()) {
+						mImageUri = Uri.fromFile(file);
 						mIsPhotoAttached = false;
 						mIsImageAttached = true;
 					} else {
@@ -145,6 +145,25 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 				break;
 			case MENU_ADD_LOCATION:
 				break;
+			case MENU_VIEW:
+				switch (item.getGroupId()) {
+					case MENU_IMAGE:
+						Intent intent = new Intent(this, ViewImageActivity.class);
+						intent.setData(mImageUri);
+						startActivity(intent);
+						break;
+					case MENU_LOCATION:
+						break;
+				}
+				break;
+			case MENU_DELETE:
+				switch (item.getGroupId()) {
+					case MENU_IMAGE:
+						break;
+					case MENU_LOCATION:
+						break;
+				}
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -153,25 +172,25 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		SubMenu imageSubMenu = menu.findItem(MENU_IMAGE).getSubMenu();
 		imageSubMenu.clear();
-		imageSubMenu.add(MENU_ADD_IMAGE, MENU_PICK_FROM_GALLERY, Menu.NONE,
-				R.string.pick_from_gallery);
-		imageSubMenu.add(MENU_ADD_IMAGE, MENU_TAKE_PHOTO, Menu.NONE, R.string.take_photo);
+		imageSubMenu.add(MENU_IMAGE, MENU_PICK_FROM_GALLERY, Menu.NONE, R.string.pick_from_gallery);
+		imageSubMenu.add(MENU_IMAGE, MENU_TAKE_PHOTO, Menu.NONE, R.string.take_photo);
 		if (mIsImageAttached || mIsPhotoAttached) {
-			menu.findItem(MENU_IMAGE).getIcon().setColorFilter(Color.CYAN, PorterDuff.Mode.LIGHTEN);
-			imageSubMenu.add(MENU_ADD_IMAGE, MENU_VIEW, Menu.NONE, R.string.view);
-			imageSubMenu.add(MENU_ADD_IMAGE, MENU_DELETE, Menu.NONE, R.string.delete);
+			menu.findItem(MENU_IMAGE).getIcon()
+					.setColorFilter(Color.CYAN, PorterDuff.Mode.MULTIPLY);
+			imageSubMenu.add(MENU_IMAGE, MENU_VIEW, Menu.NONE, R.string.view);
+			imageSubMenu.add(MENU_IMAGE, MENU_DELETE, Menu.NONE, R.string.delete);
 		} else {
 			menu.findItem(MENU_IMAGE).getIcon().clearColorFilter();
 		}
 
 		SubMenu locationSubMenu = menu.findItem(MENU_LOCATION).getSubMenu();
 		locationSubMenu.clear();
-		locationSubMenu.add(MENU_ADD_IMAGE, MENU_ADD_LOCATION, Menu.NONE, R.string.add_location);
-		locationSubMenu.add(MENU_ADD_IMAGE, MENU_PICK_FROM_MAP, Menu.NONE, R.string.pick_from_map);
+		locationSubMenu.add(MENU_LOCATION, MENU_ADD_LOCATION, Menu.NONE, R.string.add_location);
+		locationSubMenu.add(MENU_LOCATION, MENU_PICK_FROM_MAP, Menu.NONE, R.string.pick_from_map);
 		if (mIsLocationAttached) {
 			menu.findItem(MENU_LOCATION).getIcon().setColorFilter(Color.CYAN, Mode.MULTIPLY);
-			locationSubMenu.add(MENU_ADD_LOCATION, MENU_VIEW, Menu.NONE, R.string.view);
-			locationSubMenu.add(MENU_ADD_LOCATION, MENU_DELETE, Menu.NONE, R.string.delete);
+			locationSubMenu.add(MENU_LOCATION, MENU_VIEW, Menu.NONE, R.string.view);
+			locationSubMenu.add(MENU_LOCATION, MENU_DELETE, Menu.NONE, R.string.delete);
 		} else {
 			menu.findItem(MENU_LOCATION).getIcon().clearColorFilter();
 		}
