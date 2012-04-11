@@ -2,10 +2,11 @@ package org.mariotaku.twidere.activity;
 
 import java.io.File;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -19,16 +20,16 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
-public class ComposeActivity extends SherlockFragmentActivity implements Constants,
-		OnClickListener, TextWatcher {
+@ContentView(R.layout.compose)
+public class ComposeActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
 	private final static int TAKE_PICTURE = 1;
 	private final static int PICK_IMAGE = 2;
@@ -36,8 +37,12 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 
 	private ActionBar mActionBar;
 	private Uri mImageUri;
+	@InjectView(R.id.edit_text)
 	private EditText mEditText;
+	@InjectView(R.id.text_count)
 	private TextView mTextCount;
+	@InjectView(R.id.select_account)
+	private ImageButton mSelectAccount;
 	private boolean mIsImageAttached, mIsPhotoAttached, mIsLocationAttached;
 
 	@Override
@@ -102,8 +107,8 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.select_accounts:
-				startActivityForResult(new Intent(this, SelectAccountsActivity.class),
+			case R.id.select_account:
+				startActivityForResult(new Intent(this, SelectAccountActivity.class),
 						SELECT_ACCOUNTS);
 				break;
 		}
@@ -113,14 +118,11 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.compose);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
-		findViewById(R.id.select_accounts).setOnClickListener(this);
-		mEditText = (EditText) findViewById(R.id.edit_text);
+		mSelectAccount.setOnClickListener(this);
 		mEditText.addTextChangedListener(this);
-		mTextCount = (TextView) findViewById(R.id.text_count);
-		mTextCount.setText(String.valueOf(mEditText.getText().toString().length()));
+		mTextCount.setText(String.valueOf(mEditText.length()));
 	}
 
 	@Override
@@ -148,7 +150,7 @@ public class ComposeActivity extends SherlockFragmentActivity implements Constan
 			case MENU_VIEW:
 				switch (item.getGroupId()) {
 					case MENU_IMAGE:
-						Intent intent = new Intent(this, ViewImageActivity.class);
+						Intent intent = new Intent(this, ViewerActivity.class);
 						intent.setData(mImageUri);
 						startActivity(intent);
 						break;

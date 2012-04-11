@@ -9,8 +9,8 @@ import android.widget.ImageView;
 
 public class RoundCorneredImageView extends ImageView {
 
-	private Path mPath= new Path();
-	
+	private Path mPath = new Path();
+
 	public RoundCorneredImageView(Context context) {
 		super(context);
 		createPath();
@@ -25,23 +25,23 @@ public class RoundCorneredImageView extends ImageView {
 		super(context, attrs, defStyle);
 		createPath();
 	}
-	
-	private void createPath() {
-		float density = getResources().getDisplayMetrics().density;
-		mPath.reset();
-		mPath.addRoundRect(new RectF(0, 0, getWidth(), getHeight()), 4 * density, 4 * density,
-				Path.Direction.CW);
-	}
 
 	@Override
 	public void onDraw(Canvas canvas) {
 		canvas.clipPath(mPath);
 		super.onDraw(canvas);
 	}
-	
+
 	@Override
 	public void onSizeChanged(int w, int h, int oldw, int oldh) {
 		createPath();
 		super.onSizeChanged(w, h, oldw, oldh);
+	}
+
+	private void createPath() {
+		float density = getResources().getDisplayMetrics().density;
+		mPath.reset();
+		mPath.addRoundRect(new RectF(0, 0, getWidth(), getHeight()), 4 * density, 4 * density,
+				Path.Direction.CW);
 	}
 }

@@ -16,7 +16,6 @@
 
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
 import android.content.Intent;
@@ -28,7 +27,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.view.Window;
 
-public class AuthorizationActivity extends WebViewActivity implements Constants {
+public class AuthorizationActivity extends WebViewActivity {
 
 	private Uri authUrl;
 

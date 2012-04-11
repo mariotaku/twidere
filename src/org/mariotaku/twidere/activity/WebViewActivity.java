@@ -16,8 +16,6 @@
 
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.twidere.Constants;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -26,10 +24,9 @@ import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 
-public class WebViewActivity extends SherlockFragmentActivity implements Constants {
+public class WebViewActivity extends BaseActivity {
 
 	private Uri mUri = Uri.parse("about:blank");
 
@@ -46,7 +43,6 @@ public class WebViewActivity extends SherlockFragmentActivity implements Constan
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		webview = new WebView(this);
 		setContentView(webview, new LayoutParams(LayoutParams.MATCH_PARENT,

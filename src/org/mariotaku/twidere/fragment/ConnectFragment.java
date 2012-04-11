@@ -8,7 +8,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -23,6 +22,8 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -45,8 +46,14 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 	private ServiceInterface mServiceInterface;
 	private RefreshableListView mListView;
 	private int mAccountIdIdx, mStatusIdIdx, mUserIdIdx, mStatusTimestampIdx, mTextIdx, mNameIdx,
-			mScreenNameIdx, mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx;
+			mScreenNameIdx, mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx,
+			mHasLocationIdx, mHasMediaIdx;
 	private boolean mIsUserRefresh = false;
+
+	private Handler mHandler;
+	private Runnable mTicker;
+
+	private boolean mBusy = false, mTickerStopped = false;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -133,7 +140,9 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 		mProfileImageUrlIdx = data.getColumnIndexOrThrow(Mentions.PROFILE_IMAGE_URL);
 		mIsRetweetIdx = data.getColumnIndexOrThrow(Mentions.IS_RETWEET);
 		mIsFavoriteIdx = data.getColumnIndexOrThrow(Mentions.IS_FAVORITE);
-		mIsGapIdx = data.getColumnIndexOrThrow(Statuses.IS_GAP);
+		mIsGapIdx = data.getColumnIndexOrThrow(Mentions.IS_GAP);
+		mHasLocationIdx = data.getColumnIndexOrThrow(Mentions.HAS_LOCATION);
+		mHasMediaIdx = data.getColumnIndexOrThrow(Mentions.HAS_MEDIA);
 
 	}
 
@@ -167,9 +176,11 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
-			case SCROLL_STATE_IDLE:
 			case SCROLL_STATE_TOUCH_SCROLL:
-				view.invalidateViews();
+				mBusy = true;
+				break;
+			case SCROLL_STATE_IDLE:
+				mBusy = false;
 				break;
 		}
 
@@ -178,15 +189,33 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 	@Override
 	public void onStart() {
 		super.onStart();
+		mTickerStopped = false;
 		IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
 		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		if (getSherlockActivity() != null) {
 			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
 		}
+		mHandler = new Handler();
+
+		mTicker = new Runnable() {
+
+			@Override
+			public void run() {
+				if (mBusy || mTickerStopped) return;
+				if (mListView != null) {
+					mListView.invalidateViews();
+				}
+				final long now = SystemClock.uptimeMillis();
+				final long next = now + 1000 - now % 1000;
+				mHandler.postAtTime(mTicker, next);
+			}
+		};
+		mTicker.run();
 	}
 
 	@Override
 	public void onStop() {
+		mTickerStopped = true;
 		if (getSherlockActivity() != null) {
 			getSherlockActivity().unregisterReceiver(mStatusReceiver);
 		}
@@ -219,12 +248,17 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 				String profile_image_url = cursor.getString(mProfileImageUrlIdx);
 				boolean is_retweet = cursor.getInt(mIsRetweetIdx) == 1;
 				boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
+				boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
+				boolean has_location = cursor.getInt(mHasLocationIdx) == 1;
 
 				// viewholder.user_name.setText(user_name);
 				holder.screen_name.setText("@" + screen_name);
 				// viewholder.tweet_content.setText(text);
 				holder.tweet_time.setText(mCommonUtils.formatToShortTimeString(cursor
 						.getLong(mStatusTimestampIdx)));
+				holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+						mCommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media),
+						0);
 				// if (is_retweet && is_favorite) {
 				// viewholder.retweet_fav_indicator
 				// .setImageResource(R.drawable.ic_indicator_retweet_fav);

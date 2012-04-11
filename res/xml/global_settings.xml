@@ -4,6 +4,15 @@
 	android:title="@string/global_settings">
 
 	<PreferenceCategory
+		android:key="cat_lookNfeel"
+		android:title="@string/look_and_feel">
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="dark_theme"
+			android:summary="@string/dark_theme_summary"
+			android:title="@string/dark_theme"/>
+	</PreferenceCategory>
+	<PreferenceCategory
 		android:key="cat_storage"
 		android:title="@string/storage">
 		<org.mariotaku.preferences.SeekBarPreference
@@ -27,7 +36,7 @@
 		android:key="cat_api"
 		android:title="@string/api">
 		<CheckBoxPreference
-			android:defaultValue="true"
+			android:defaultValue="false"
 			android:key="gzip_compressing"
 			android:summary="@string/gzip_compressing_summary"
 			android:title="@string/gzip_compressing"/>

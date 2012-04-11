@@ -32,21 +32,21 @@
 			android:src="@drawable/ic_menu_send"/>
 
 		<ImageButton
-			android:id="@+id/select_accounts"
+			android:id="@+id/select_account"
 			android:layout_width="64dip"
 			android:layout_height="64dip"
 			android:layout_alignParentRight="true"
 			android:layout_below="@+id/send"
-			android:contentDescription="@string/select_accounts"
+			android:contentDescription="@string/select_account"
 			android:src="@drawable/ic_menu_accounts"/>
 
 		<TextView
 			android:id="@+id/text_count"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignLeft="@+id/select_accounts"
+			android:layout_alignLeft="@+id/select_account"
 			android:layout_alignParentRight="true"
-			android:layout_below="@+id/select_accounts"
+			android:layout_below="@+id/select_account"
 			android:gravity="center"
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>

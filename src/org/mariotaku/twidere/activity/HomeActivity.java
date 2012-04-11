@@ -2,7 +2,6 @@ package org.mariotaku.twidere.activity;
 
 import java.util.ArrayList;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ConnectFragment;
@@ -12,6 +11,8 @@ import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ServiceInterface;
 
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,18 +27,20 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TabPageIndicator;
 import com.viewpagerindicator.TitleProvider;
 
-public class HomeActivity extends SherlockFragmentActivity implements Constants {
+@ContentView(R.layout.main)
+public class HomeActivity extends BaseActivity {
+
+	@InjectView(R.id.pager)
+	ViewPager mViewPager;
 
 	private ActionBar mActionBar;
-	private TabsAdapter mAdapter;
-	private ViewPager mViewPager;
 	private ProgressBar mProgress;
+	private TabsAdapter mAdapter;
 	private ServiceInterface mInterface;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
@@ -51,6 +54,7 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		}
 
 	};
+	private TabPageIndicator mIndicator;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -58,7 +62,7 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		super.onCreate(savedInstanceState);
 		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		StringBuilder where = new StringBuilder();
-		where.append(Accounts.IS_ACTIVATED + "='1'");
+		where.append(Accounts.IS_ACTIVATED + "=1");
 		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[0],
 				where.toString(), null, null);
 		int accounts_count = cur == null ? 0 : cur.getCount();
@@ -69,7 +73,7 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 			finish();
 			return;
 		}
-		setContentView(R.layout.main);
+
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null && bundle.getBoolean(INTENT_KEY_REFRESH_ALL)) {
 			Cursor refresh_cur = getContentResolver().query(Accounts.CONTENT_URI,
@@ -96,16 +100,14 @@ public class HomeActivity extends SherlockFragmentActivity implements Constants 
 		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayShowHomeEnabled(false);
 		View view = mActionBar.getCustomView();
-
+		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
+		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mAdapter = new TabsAdapter(getSupportFragmentManager());
 		mAdapter.addTab(HomeTimelineFragment.class, null, R.drawable.ic_tab_home);
 		mAdapter.addTab(ConnectFragment.class, null, R.drawable.ic_tab_connect);
 		mAdapter.addTab(DiscoverFragment.class, null, R.drawable.ic_tab_discover);
 		mAdapter.addTab(DashboardFragment.class, null, R.drawable.ic_tab_me);
-		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mAdapter);
-		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
-		TabPageIndicator mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mIndicator.setViewPager(mViewPager);
 
 		mViewPager.getChildCount();

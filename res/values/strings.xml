@@ -37,7 +37,7 @@
 	<string name="error_bad_address">Error: Bad address, you may entered an invalid API address.</string>
 	<string name="error_no_permission">Error: You have no permission to access twitter, the application key may invalid.</string>
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
-	<string name="select_accounts">Select accounts</string>
+	<string name="select_account">Select account</string>
 	<string name="username">Username</string>
 	<string name="password">Password</string>
 	<string name="label_tweetstore_provider">Twidere database provider</string>
@@ -84,5 +84,8 @@
 	<string name="clear_cache_summary">Clear stored profile image cache.</string>
 	<string name="clear_databases">Clear databases</string>
 	<string name="clear_databases_summary">Clear all tweets, user profiles, messages in databases. Don\'t worry, your accounts credentials won\'t loss.</string>
+	<string name="look_and_feel">Look and feel</string>
+	<string name="dark_theme">Use dark theme</string>
+	<string name="dark_theme_summary">Use dark theme, restart Twidere to take effect.</string>
 
 </resources>

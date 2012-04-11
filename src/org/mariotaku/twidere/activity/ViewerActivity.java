@@ -16,7 +16,6 @@
 
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
 import android.net.Uri;
@@ -25,7 +24,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 
-public class ViewImageActivity extends WebViewActivity implements Constants {
+public class ViewerActivity extends WebViewActivity {
 
 	private Uri mUri = Uri.parse("about:blank");
 

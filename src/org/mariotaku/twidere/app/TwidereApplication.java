@@ -1,14 +1,14 @@
 package org.mariotaku.twidere.app;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Application;
-import android.content.ContentResolver;
 
-public class TwidereApplication extends Application {
+public class TwidereApplication extends Application implements Constants {
 
 	private LazyImageLoader mListProfileImageLoader;
 	private CommonUtils mCommonUtils;
@@ -37,7 +37,6 @@ public class TwidereApplication extends Application {
 
 	@Override
 	public void onTerminate() {
-		ContentResolver resolver = getContentResolver();
 		super.onTerminate();
 	}
 

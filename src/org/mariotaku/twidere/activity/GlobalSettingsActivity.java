@@ -5,16 +5,16 @@ import org.mariotaku.twidere.R;
 
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 
-public class GlobalSettingsActivity extends SherlockPreferenceActivity implements Constants {
+@SuppressWarnings("deprecation")
+public class GlobalSettingsActivity extends BasePreferenceActivity implements Constants {
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getPreferenceManager().setSharedPreferencesName(PREFERENCE_NAME);
 		addPreferencesFromResource(R.xml.global_settings);
 	}
 

@@ -9,7 +9,9 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
 import android.app.ListActivity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,12 +19,10 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class SelectAccountsActivity extends ListActivity implements Constants, OnItemClickListener {
+public class SelectAccountActivity extends ListActivity implements Constants {
 
 	private SimpleCursorAdapter mAdapter;
 	private Cursor mCursor;
@@ -38,9 +38,10 @@ public class SelectAccountsActivity extends ListActivity implements Constants, O
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		setTheme();
 		super.onCreate(savedInstanceState);
-		int layoutRes = MULTIPLE_ACCOUNTS_ENABLED ? android.R.layout.select_dialog_multichoice
-				: android.R.layout.select_dialog_singlechoice;
+		int layoutRes = MULTIPLE_ACCOUNTS_ENABLED ? android.R.layout.simple_list_item_multiple_choice
+				: android.R.layout.simple_list_item_single_choice;
 		String[] cols = new String[] { Accounts.USERNAME };
 		int[] ids = new int[] { android.R.id.text1 };
 		mCursor = getAccountsCursor();
@@ -53,7 +54,6 @@ public class SelectAccountsActivity extends ListActivity implements Constants, O
 		mListView = getListView();
 		mListView.setChoiceMode(MULTIPLE_ACCOUNTS_ENABLED ? ListView.CHOICE_MODE_MULTIPLE
 				: ListView.CHOICE_MODE_SINGLE);
-		mListView.setOnItemClickListener(this);
 
 		mCursor.moveToFirst();
 		mActivatedUsersId.clear();
@@ -78,7 +78,30 @@ public class SelectAccountsActivity extends ListActivity implements Constants, O
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_BACK:
+				if (mActivatedUsersId.size() <= 0) {
+					Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
+					return false;
+				} else {
+					Bundle bundle = new Bundle();
+					long[] ids = new long[mActivatedUsersId.size()];
+					int i = 0;
+					for (Long id_long : mActivatedUsersId) {
+						ids[i] = id_long;
+						i++;
+					}
+					bundle.putLongArray(Accounts.USER_IDS, ids);
+					setResult(RESULT_OK, new Intent().putExtras(bundle));
+					finish();
+				}
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
 		int choise_mode = mListView.getChoiceMode();
 		if (choise_mode == ListView.CHOICE_MODE_NONE) return;
 
@@ -113,27 +136,10 @@ public class SelectAccountsActivity extends ListActivity implements Constants, O
 		getContentResolver().update(uri, values, where, null);
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-			case KeyEvent.KEYCODE_BACK:
-				if (mActivatedUsersId.size() <= 0) {
-					Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
-					return false;
-				} else {
-					Bundle bundle = new Bundle();
-					long[] ids = new long[mActivatedUsersId.size()];
-					int i = 0;
-					for (Long id_long : mActivatedUsersId) {
-						ids[i] = id_long;
-						i++;
-					}
-					bundle.putLongArray(Accounts.USER_IDS, ids);
-					setResult(RESULT_OK, new Intent().putExtras(bundle));
-					finish();
-				}
-		}
-		return super.onKeyDown(keyCode, event);
+	private void setTheme() {
+		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		setTheme(preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere_Dialog
+				: R.style.Theme_Twidere_Light_Dialog);
 	}
 
 }

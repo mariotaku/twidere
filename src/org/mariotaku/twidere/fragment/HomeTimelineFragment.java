@@ -22,6 +22,8 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -33,9 +35,9 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
-import com.actionbarsherlock.app.SherlockListFragment;
+import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
 
-public class HomeTimelineFragment extends SherlockListFragment implements Constants,
+public class HomeTimelineFragment extends RoboSherlockListFragment implements Constants,
 		OnRefreshListener, LoaderCallbacks<Cursor>, OnScrollListener {
 
 	private StatusesAdapter mAdapter;
@@ -47,6 +49,10 @@ public class HomeTimelineFragment extends SherlockListFragment implements Consta
 			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mHasLocationIdx,
 			mHasMediaIdx;
 	private boolean mIsUserRefresh = false;
+
+	private Handler mHandler;
+	private Runnable mTicker;
+	private boolean mBusy, mTickerStopped = false;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -165,9 +171,11 @@ public class HomeTimelineFragment extends SherlockListFragment implements Consta
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
-			case SCROLL_STATE_IDLE:
 			case SCROLL_STATE_TOUCH_SCROLL:
-				view.invalidateViews();
+				mBusy = true;
+				break;
+			case SCROLL_STATE_IDLE:
+				mBusy = false;
 				break;
 		}
 
@@ -176,15 +184,33 @@ public class HomeTimelineFragment extends SherlockListFragment implements Consta
 	@Override
 	public void onStart() {
 		super.onStart();
+		mTickerStopped = false;
 		IntentFilter filter = new IntentFilter(BROADCAST_HOME_TIMELINE_REFRESHED);
 		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		if (getSherlockActivity() != null) {
 			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
 		}
+		mHandler = new Handler();
+
+		mTicker = new Runnable() {
+
+			@Override
+			public void run() {
+				if (mBusy || mTickerStopped) return;
+				if (mListView != null) {
+					mListView.invalidateViews();
+				}
+				final long now = SystemClock.uptimeMillis();
+				final long next = now + 1000 - now % 1000;
+				mHandler.postAtTime(mTicker, next);
+			}
+		};
+		mTicker.run();
 	}
 
 	@Override
 	public void onStop() {
+		mTickerStopped = true;
 		if (getSherlockActivity() != null) {
 			getSherlockActivity().unregisterReceiver(mStatusReceiver);
 		}

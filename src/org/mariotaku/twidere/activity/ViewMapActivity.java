@@ -1,7 +1,5 @@
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.twidere.Constants;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,13 +15,12 @@ import android.webkit.WebViewClient;
 
 import com.actionbarsherlock.view.Window;
 
-public class ViewMapActivity extends WebViewActivity implements Constants, LocationListener {
+public class ViewMapActivity extends WebViewActivity implements LocationListener {
 
 	private Uri mUri = Uri.parse("file:///android_asset/mapview.html");
 	private Location mostRecentLocation;
 
 	@Override
-	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);

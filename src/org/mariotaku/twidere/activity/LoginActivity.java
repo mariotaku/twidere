@@ -1,6 +1,5 @@
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
@@ -28,13 +27,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
-public class LoginActivity extends SherlockFragmentActivity implements Constants, OnClickListener,
-		TextWatcher {
+public class LoginActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
 	private final static int API_SETTINGS = 1;
 	private final static int GOTO_AUTHORIZATION = 2;

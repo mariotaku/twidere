@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="Theme.Holo.Light.DarkActionBar.ViewPagerIndicator">
+	<style name="Theme.Twidere" parent="Theme.Holo">
 		<item name="vpiCirclePageIndicatorStyle">@style/Widget.CirclePageIndicator</item>
 		<item name="vpiTitlePageIndicatorStyle">@style/Widget.TitlePageIndicator</item>
 		<item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
@@ -10,7 +10,21 @@
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
 	</style>
 
-	<style name="Theme.Holo.Light.Dialog.NoSherlock" parent="@style/Theme.Holo.Light.Dialog">
+	<style name="Theme.Twidere.Light" parent="Theme.Holo.Light.DarkActionBar">
+		<item name="vpiCirclePageIndicatorStyle">@style/Widget.CirclePageIndicator</item>
+		<item name="vpiTitlePageIndicatorStyle">@style/Widget.TitlePageIndicator</item>
+		<item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
+		<item name="vpiVerticalTabPageIndicatorStyle">@style/Widget.TabPageIndicator.Vertical</item>
+		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
+		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
+	</style>
+
+	<style name="Theme.Twidere.Dialog" parent="Theme.Holo.Dialog">
+		<item name="windowActionBar">false</item>
+		<item name="android:windowNoTitle">false</item>
+	</style>
+
+	<style name="Theme.Twidere.Light.Dialog" parent="Theme.Holo.Light.Dialog">
 		<item name="windowActionBar">false</item>
 		<item name="android:windowNoTitle">false</item>
 	</style>

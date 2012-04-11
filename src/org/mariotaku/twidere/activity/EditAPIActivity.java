@@ -1,6 +1,5 @@
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
@@ -15,10 +14,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
-public class EditAPIActivity extends SherlockFragmentActivity implements Constants,
-		OnCheckedChangeListener, OnClickListener {
+public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener,
+		OnClickListener {
 
 	private EditText mEditRestAPIBase, mEditSearchAPIBase;
 	private RadioGroup mEditAuthType;
