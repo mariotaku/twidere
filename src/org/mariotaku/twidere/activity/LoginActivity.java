@@ -3,6 +3,8 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -31,6 +33,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
+@ContentView(R.layout.login)
 public class LoginActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
 	private final static int API_SETTINGS = 1;
@@ -40,8 +43,18 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 
 	private String mRestAPIBase, mSearchAPIBase, mUsername, mPassword;
 	private int mAuthType;
-	private EditText mEditUsername, mEditPassword;
-	private Button mSignInButton, mSignUpButton;
+	@InjectView(R.id.username)
+	private EditText mEditUsername;
+	@InjectView(R.id.password)
+	private EditText mEditPassword;
+	@InjectView(R.id.sign_in)
+	private Button mSignInButton;
+	@InjectView(R.id.sign_up)
+	private Button mSignUpButton;
+	@InjectView(R.id.sign_in_sign_up)
+	private LinearLayout mSigninSignup;
+	@InjectView(R.id.username_password)
+	private LinearLayout mUsernamePassword;
 	private AbstractTask mTask;
 	private RequestToken mRequestToken;
 
@@ -119,9 +132,10 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		configureActivity();
+		super.onCreate(savedInstanceState);
+		
+
 		setSupportProgressBarIndeterminateVisibility(false);
 		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {}, null, null,
 				null);
@@ -147,11 +161,12 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 		mUsername = bundle.getString(Accounts.USERNAME);
 		mPassword = bundle.getString(Accounts.PASSWORD);
 		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
-		findViewById(R.id.username_password).setVisibility(
-				mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
-		((LinearLayout) findViewById(R.id.sign_in_sign_up))
-				.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
-						: LinearLayout.HORIZONTAL);
+		mSignInButton.setOnClickListener(this);
+		mSignUpButton.setOnClickListener(this);
+		mUsernamePassword.setVisibility(mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE
+				: View.VISIBLE);
+		mSigninSignup.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
+				: LinearLayout.HORIZONTAL);
 
 		mEditUsername.setText(mUsername);
 		mEditUsername.addTextChangedListener(this);
@@ -218,16 +233,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		setSignInButton();
-	}
-
-	private void configureActivity() {
-		setContentView(R.layout.login);
-		mSignInButton = (Button) findViewById(R.id.sign_in);
-		mSignUpButton = (Button) findViewById(R.id.sign_up);
-		mEditUsername = (EditText) findViewById(R.id.username);
-		mEditPassword = (EditText) findViewById(R.id.password);
-		mSignInButton.setOnClickListener(this);
-		mSignUpButton.setOnClickListener(this);
 	}
 
 	private void saveEditedText() {

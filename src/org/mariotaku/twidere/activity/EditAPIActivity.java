@@ -3,6 +3,8 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,12 +16,23 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
+@ContentView(R.layout.edit_api)
 public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener,
 		OnClickListener {
 
-	private EditText mEditRestAPIBase, mEditSearchAPIBase;
+	@InjectView(R.id.rest_api_base)
+	private EditText mEditRestAPIBase;
+	@InjectView(R.id.search_api_base)
+	private EditText mEditSearchAPIBase;
+	@InjectView(R.id.auth_type)
 	private RadioGroup mEditAuthType;
-	private RadioButton mButtonOAuth, mButtonxAuth, mButtonBasic;
+	@InjectView(R.id.oauth)
+	private RadioButton mButtonOAuth;
+	@InjectView(R.id.xauth)
+	private RadioButton mButtonxAuth;
+	@InjectView(R.id.basic)
+	private RadioButton mButtonBasic;
+	@InjectView(R.id.save)
 	private Button mSaveButton;
 	private String mRestAPIBase, mSearchAPIBase;
 	private int mAuthType;
@@ -57,7 +70,6 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		configureActivity();
 		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
 		if (bundle == null) {
 			bundle = new Bundle();
@@ -65,6 +77,8 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
 		mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
 		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
+		mEditAuthType.setOnCheckedChangeListener(this);
+		mSaveButton.setOnClickListener(this);
 		mEditRestAPIBase.setText(mRestAPIBase != null ? mRestAPIBase : DEFAULT_REST_API_BASE);
 		mEditSearchAPIBase.setText(mSearchAPIBase != null ? mSearchAPIBase
 				: DEFAULT_SEARCH_API_BASE);
@@ -80,19 +94,6 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		outState.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
 		super.onSaveInstanceState(outState);
-	}
-
-	private void configureActivity() {
-		setContentView(R.layout.edit_api);
-		mEditRestAPIBase = (EditText) findViewById(R.id.rest_api_base);
-		mEditSearchAPIBase = (EditText) findViewById(R.id.search_api_base);
-		mEditAuthType = (RadioGroup) findViewById(R.id.auth_type);
-		mButtonOAuth = (RadioButton) findViewById(R.id.oauth);
-		mButtonxAuth = (RadioButton) findViewById(R.id.xauth);
-		mButtonBasic = (RadioButton) findViewById(R.id.basic);
-		mSaveButton = (Button) findViewById(R.id.save);
-		mEditAuthType.setOnCheckedChangeListener(this);
-		mSaveButton.setOnClickListener(this);
 	}
 
 	private void saveEditedText() {
