@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 
-public class ViewerActivity extends WebViewActivity {
+public class BrowserActivity extends WebViewActivity {
 
 	private Uri mUri = Uri.parse("about:blank");
 

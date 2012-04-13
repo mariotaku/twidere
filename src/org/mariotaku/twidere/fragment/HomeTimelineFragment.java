@@ -7,6 +7,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -47,7 +48,7 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 	private RefreshableListView mListView;
 	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx,
 			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mHasLocationIdx,
-			mHasMediaIdx;
+			mHasMediaIdx, mInReplyToStatusIdIdx, mInReplyToScreennameIdx;;
 	private boolean mIsUserRefresh = false;
 
 	private Handler mHandler;
@@ -73,6 +74,7 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 			}
 		}
 	};
+	private boolean mBottomReached;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -138,6 +140,8 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 		mIsGapIdx = data.getColumnIndexOrThrow(Statuses.IS_GAP);
 		mHasLocationIdx = data.getColumnIndexOrThrow(Statuses.HAS_LOCATION);
 		mHasMediaIdx = data.getColumnIndexOrThrow(Statuses.HAS_MEDIA);
+		mInReplyToStatusIdIdx = data.getColumnIndexOrThrow(Mentions.IN_REPLY_TO_STATUS_ID);
+		mInReplyToScreennameIdx = data.getColumnIndexOrThrow(Mentions.IN_REPLY_TO_SCREEN_NAME);
 
 	}
 
@@ -164,6 +168,14 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
 			int totalItemCount) {
+		boolean reached = firstVisibleItem + visibleItemCount == totalItemCount;
+		
+		if (mBottomReached != reached){
+			mBottomReached = reached;
+			if (mBottomReached){
+				
+			}
+		}
 
 	}
 
@@ -196,8 +208,8 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 
 			@Override
 			public void run() {
-				if (mBusy || mTickerStopped) return;
-				if (mListView != null) {
+				if (mTickerStopped) return;
+				if (mListView != null && !mBusy) {
 					mListView.invalidateViews();
 				}
 				final long now = SystemClock.uptimeMillis();
@@ -231,7 +243,8 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 
 			if (holder == null) return;
 
-			boolean is_gap = cursor.getInt(mIsGapIdx) == 1;
+			boolean is_gap = cursor.getInt(mIsGapIdx) == 1
+					&& cursor.getPosition() != cursor.getCount() - 1;
 
 			holder.setIsGap(is_gap);
 			holder.status_id = cursor.getLong(mStatusIdIdx);
@@ -245,6 +258,7 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 				boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
 				boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
 				boolean has_location = cursor.getInt(mHasLocationIdx) == 1;
+				boolean is_reply = cursor.getInt(mInReplyToStatusIdIdx) != -1;
 
 				holder.screen_name.setText("@" + screen_name);
 				holder.tweet_time.setText(mCommonUtils.formatToShortTimeString(cursor
@@ -252,6 +266,11 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 				holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 						mCommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media),
 						0);
+				holder.in_reply_to.setVisibility(is_reply ? View.VISIBLE : View.GONE);
+				if (is_reply) {
+					holder.in_reply_to.setText(getString(R.string.in_reply_to,
+							cursor.getString(mInReplyToScreennameIdx)));
+				}
 				URL url = null;
 				try {
 					url = new URL(profile_image_url);

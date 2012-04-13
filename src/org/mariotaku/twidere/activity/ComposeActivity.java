@@ -26,7 +26,6 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 
 @ContentView(R.layout.compose)
 public class ComposeActivity extends BaseActivity implements OnClickListener, TextWatcher {
@@ -37,12 +36,9 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 
 	private ActionBar mActionBar;
 	private Uri mImageUri;
-	@InjectView(R.id.edit_text)
-	private EditText mEditText;
-	@InjectView(R.id.text_count)
-	private TextView mTextCount;
-	@InjectView(R.id.select_account)
-	private ImageButton mSelectAccount;
+	@InjectView(R.id.edit_text) private EditText mEditText;
+	@InjectView(R.id.text_count) private TextView mTextCount;
+	@InjectView(R.id.select_account) private ImageButton mSelectAccount;
 	private boolean mIsImageAttached, mIsPhotoAttached, mIsLocationAttached;
 
 	@Override
@@ -137,34 +133,13 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 			case MENU_HOME:
 				finish();
 				break;
-			case MENU_PICK_FROM_GALLERY:
-				pickImage();
-				break;
 			case MENU_TAKE_PHOTO:
 				takePhoto();
 				break;
-			case MENU_PICK_FROM_MAP:
+			case MENU_ADD_IMAGE:
+				pickImage();
 				break;
 			case MENU_ADD_LOCATION:
-				break;
-			case MENU_VIEW:
-				switch (item.getGroupId()) {
-					case MENU_IMAGE:
-						Intent intent = new Intent(this, ViewerActivity.class);
-						intent.setData(mImageUri);
-						startActivity(intent);
-						break;
-					case MENU_LOCATION:
-						break;
-				}
-				break;
-			case MENU_DELETE:
-				switch (item.getGroupId()) {
-					case MENU_IMAGE:
-						break;
-					case MENU_LOCATION:
-						break;
-				}
 				break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -172,29 +147,23 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		SubMenu imageSubMenu = menu.findItem(MENU_IMAGE).getSubMenu();
-		imageSubMenu.clear();
-		imageSubMenu.add(MENU_IMAGE, MENU_PICK_FROM_GALLERY, Menu.NONE, R.string.pick_from_gallery);
-		imageSubMenu.add(MENU_IMAGE, MENU_TAKE_PHOTO, Menu.NONE, R.string.take_photo);
-		if (mIsImageAttached || mIsPhotoAttached) {
-			menu.findItem(MENU_IMAGE).getIcon()
+		if (mIsImageAttached && !mIsPhotoAttached) {
+			menu.findItem(MENU_ADD_IMAGE).getIcon()
 					.setColorFilter(Color.CYAN, PorterDuff.Mode.MULTIPLY);
-			imageSubMenu.add(MENU_IMAGE, MENU_VIEW, Menu.NONE, R.string.view);
-			imageSubMenu.add(MENU_IMAGE, MENU_DELETE, Menu.NONE, R.string.delete);
 		} else {
-			menu.findItem(MENU_IMAGE).getIcon().clearColorFilter();
+			menu.findItem(MENU_ADD_IMAGE).getIcon().clearColorFilter();
+		}
+		if (!mIsImageAttached && mIsPhotoAttached) {
+			menu.findItem(MENU_TAKE_PHOTO).getIcon()
+					.setColorFilter(Color.CYAN, PorterDuff.Mode.MULTIPLY);
+		} else {
+			menu.findItem(MENU_TAKE_PHOTO).getIcon().clearColorFilter();
 		}
 
-		SubMenu locationSubMenu = menu.findItem(MENU_LOCATION).getSubMenu();
-		locationSubMenu.clear();
-		locationSubMenu.add(MENU_LOCATION, MENU_ADD_LOCATION, Menu.NONE, R.string.add_location);
-		locationSubMenu.add(MENU_LOCATION, MENU_PICK_FROM_MAP, Menu.NONE, R.string.pick_from_map);
 		if (mIsLocationAttached) {
-			menu.findItem(MENU_LOCATION).getIcon().setColorFilter(Color.CYAN, Mode.MULTIPLY);
-			locationSubMenu.add(MENU_LOCATION, MENU_VIEW, Menu.NONE, R.string.view);
-			locationSubMenu.add(MENU_LOCATION, MENU_DELETE, Menu.NONE, R.string.delete);
+			menu.findItem(MENU_ADD_LOCATION).getIcon().setColorFilter(Color.CYAN, Mode.MULTIPLY);
 		} else {
-			menu.findItem(MENU_LOCATION).getIcon().clearColorFilter();
+			menu.findItem(MENU_ADD_LOCATION).getIcon().clearColorFilter();
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}

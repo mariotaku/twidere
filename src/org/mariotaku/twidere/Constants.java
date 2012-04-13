@@ -39,16 +39,24 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_ITEM_LIMIT = "item_limit";
 	public static final String PREFERENCE_KEY_DARK_THEME = "dark_theme";
 
+	public static final String INTENT_ACTION_PREFIX = "org.mariotaku.twidere.";
+
+	public static final String INTENT_ACTION_COMPOSE = INTENT_ACTION_PREFIX + "COMPOSE";
+	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_ACTION_PREFIX
+			+ "GLOBAL_SETTINGS";
+
 	public static final int MENU_HOME = android.R.id.home;
+	public static final int MENU_COMPOSE = R.id.compose;
+	public static final int MENU_SELECT_ACCOUNT = R.id.select_account;
+	public static final int MENU_SETTINGS = R.id.settings;
 	public static final int MENU_ADD_LOCATION = R.id.add_location;
-	public static final int MENU_LOCATION = R.id.location;
 	public static final int MENU_TAKE_PHOTO = R.id.take_photo;
 	public static final int MENU_ADD_IMAGE = R.id.add_image;
+	public static final int MENU_LOCATION = R.id.location;
 	public static final int MENU_IMAGE = R.id.image;
 	public static final int MENU_VIEW = R.id.view;
 	public static final int MENU_DELETE = R.id.delete;
 	public static final int MENU_PICK_FROM_GALLERY = R.id.pick_from_gallery;
 	public static final int MENU_PICK_FROM_MAP = R.id.pick_from_map;
-	public static final int MENU_SETTINGS = R.id.settings;
 
 }

@@ -43,18 +43,12 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 
 	private String mRestAPIBase, mSearchAPIBase, mUsername, mPassword;
 	private int mAuthType;
-	@InjectView(R.id.username)
-	private EditText mEditUsername;
-	@InjectView(R.id.password)
-	private EditText mEditPassword;
-	@InjectView(R.id.sign_in)
-	private Button mSignInButton;
-	@InjectView(R.id.sign_up)
-	private Button mSignUpButton;
-	@InjectView(R.id.sign_in_sign_up)
-	private LinearLayout mSigninSignup;
-	@InjectView(R.id.username_password)
-	private LinearLayout mUsernamePassword;
+	@InjectView(R.id.username) private EditText mEditUsername;
+	@InjectView(R.id.password) private EditText mEditPassword;
+	@InjectView(R.id.sign_in) private Button mSignInButton;
+	@InjectView(R.id.sign_up) private Button mSignUpButton;
+	@InjectView(R.id.sign_in_sign_up) private LinearLayout mSigninSignup;
+	@InjectView(R.id.username_password) private LinearLayout mUsernamePassword;
 	private AbstractTask mTask;
 	private RequestToken mRequestToken;
 
@@ -134,7 +128,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		
 
 		setSupportProgressBarIndeterminateVisibility(false);
 		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {}, null, null,

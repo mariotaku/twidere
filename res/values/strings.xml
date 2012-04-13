@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<string name="app_name">Twidere</string>
 	<string name="pull_down_to_update">Pull down to update</string>
@@ -54,6 +54,7 @@
 	<string name="view">View</string>
 	<string name="view_image">View image</string>
 	<string name="view_map">View map</string>
+	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Pick from gallery</string>
 	<string name="pick_from_map">Pick from map</string>
 	<string name="go_to_my_profile_page">Go to my profile page</string>
@@ -86,6 +87,7 @@
 	<string name="clear_databases_summary">Clear all tweets, user profiles, messages in databases. Don\'t worry, your accounts credentials won\'t loss.</string>
 	<string name="look_and_feel">Look and feel</string>
 	<string name="dark_theme">Use dark theme</string>
-	<string name="dark_theme_summary">Use dark theme, restart Twidere to take effect.</string>
+	<string name="dark_theme_summary">Use dark theme for Twidere.</string>
+	<string name="in_reply_to">In reply to <xliff:g id="user_name">%s</xliff:g></string>
 
 </resources>

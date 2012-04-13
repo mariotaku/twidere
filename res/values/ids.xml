@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<item name="compose" type="id"/>
+	<item name="settings" type="id"/>
+	<item name="select_account" type="id"/>
 	<item name="add_location" type="id"/>
 	<item name="take_photo" type="id"/>
 	<item name="add_image" type="id"/>

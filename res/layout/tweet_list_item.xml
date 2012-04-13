@@ -15,6 +15,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignTop="@+id/profile_image"
+		android:layout_alignWithParentIfMissing="true"
 		android:layout_toRightOf="@+id/profile_image"
 		android:paddingLeft="4dip"
 		android:paddingRight="4dip"
@@ -28,6 +29,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignBaseline="@+id/user_name"
+		android:layout_alignWithParentIfMissing="true"
 		android:layout_toLeftOf="@+id/tweet_time"
 		android:layout_toRightOf="@+id/user_name"
 		android:singleLine="true"
@@ -39,6 +41,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentRight="true"
+		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/user_name"
 		android:layout_toRightOf="@+id/profile_image"
 		android:paddingLeft="4dip"
@@ -52,6 +55,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignBaseline="@+id/user_name"
 		android:layout_alignParentRight="true"
+		android:layout_alignWithParentIfMissing="true"
 		android:drawablePadding="2dip"
 		android:gravity="center_vertical"
 		android:padding="4dip"
@@ -67,6 +71,20 @@
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="?android:attr/textColorSecondary"
 		android:textStyle="bold"
+		android:visibility="gone"/>
+
+	<TextView
+		android:id="@+id/in_reply_to"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_below="@+id/tweet_content"
+		android:layout_toRightOf="@+id/profile_image"
+		android:drawableLeft="@drawable/ic_tweet_stat_reply"
+		android:drawablePadding="2dip"
+		android:paddingLeft="4dip"
+		android:textColor="?android:attr/textColorSecondary"
+		android:textSize="10sp"
 		android:visibility="gone"/>
 
 </RelativeLayout>

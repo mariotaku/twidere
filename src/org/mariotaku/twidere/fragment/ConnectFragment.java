@@ -45,9 +45,9 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 	private CommonUtils mCommonUtils;
 	private ServiceInterface mServiceInterface;
 	private RefreshableListView mListView;
-	private int mAccountIdIdx, mStatusIdIdx, mUserIdIdx, mStatusTimestampIdx, mTextIdx, mNameIdx,
-			mScreenNameIdx, mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx,
-			mHasLocationIdx, mHasMediaIdx;
+	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx,
+			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mInReplyToStatusIdIdx,
+			mInReplyToScreennameIdx, mIsGapIdx, mHasLocationIdx, mHasMediaIdx;
 	private boolean mIsUserRefresh = false;
 
 	private Handler mHandler;
@@ -132,10 +132,7 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 		mAdapter.changeCursor(data);
 		mAccountIdIdx = data.getColumnIndexOrThrow(Mentions.ACCOUNT_ID);
 		mStatusIdIdx = data.getColumnIndexOrThrow(Mentions.STATUS_ID);
-		mUserIdIdx = data.getColumnIndexOrThrow(Mentions.USER_ID);
 		mStatusTimestampIdx = data.getColumnIndexOrThrow(Mentions.STATUS_TIMESTAMP);
-		mTextIdx = data.getColumnIndexOrThrow(Mentions.TEXT);
-		mNameIdx = data.getColumnIndexOrThrow(Mentions.NAME);
 		mScreenNameIdx = data.getColumnIndexOrThrow(Mentions.SCREEN_NAME);
 		mProfileImageUrlIdx = data.getColumnIndexOrThrow(Mentions.PROFILE_IMAGE_URL);
 		mIsRetweetIdx = data.getColumnIndexOrThrow(Mentions.IS_RETWEET);
@@ -143,6 +140,8 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 		mIsGapIdx = data.getColumnIndexOrThrow(Mentions.IS_GAP);
 		mHasLocationIdx = data.getColumnIndexOrThrow(Mentions.HAS_LOCATION);
 		mHasMediaIdx = data.getColumnIndexOrThrow(Mentions.HAS_MEDIA);
+		mInReplyToStatusIdIdx = data.getColumnIndexOrThrow(Mentions.IN_REPLY_TO_STATUS_ID);
+		mInReplyToScreennameIdx = data.getColumnIndexOrThrow(Mentions.IN_REPLY_TO_SCREEN_NAME);
 
 	}
 
@@ -201,8 +200,8 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 
 			@Override
 			public void run() {
-				if (mBusy || mTickerStopped) return;
-				if (mListView != null) {
+				if (mTickerStopped) return;
+				if (mListView != null && !mBusy) {
 					mListView.invalidateViews();
 				}
 				final long now = SystemClock.uptimeMillis();
@@ -250,25 +249,19 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 				boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
 				boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
 				boolean has_location = cursor.getInt(mHasLocationIdx) == 1;
+				boolean is_reply = cursor.getInt(mInReplyToStatusIdIdx) != -1;
 
-				// viewholder.user_name.setText(user_name);
 				holder.screen_name.setText("@" + screen_name);
-				// viewholder.tweet_content.setText(text);
 				holder.tweet_time.setText(mCommonUtils.formatToShortTimeString(cursor
 						.getLong(mStatusTimestampIdx)));
 				holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 						mCommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media),
 						0);
-				// if (is_retweet && is_favorite) {
-				// viewholder.retweet_fav_indicator
-				// .setImageResource(R.drawable.ic_indicator_retweet_fav);
-				// } else if (is_retweet && !is_favorite) {
-				// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_retweet);
-				// } else if (!is_retweet && is_favorite) {
-				// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_fav);
-				// } else {
-				// viewholder.retweet_fav_indicator.setImageResource(R.drawable.ic_indicator_none);
-				// }
+				holder.in_reply_to.setVisibility(is_reply ? View.VISIBLE : View.GONE);
+				if (is_reply) {
+					holder.in_reply_to.setText(getString(R.string.in_reply_to,
+							cursor.getString(mInReplyToScreennameIdx)));
+				}
 				URL url = null;
 				try {
 					url = new URL(profile_image_url);

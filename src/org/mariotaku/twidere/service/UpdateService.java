@@ -223,7 +223,7 @@ public class UpdateService extends RoboService implements Constants {
 					values_list.add(values);
 				}
 				// Delete all rows conflicting before new data inserted.
-				int rows_deleted = 0;
+				int rows_deleted = -1;
 				if (min_id != -1 && max_id != -1) {
 					StringBuilder where = new StringBuilder();
 					where.append(Statuses.STATUS_ID + ">=" + min_id);
@@ -237,7 +237,7 @@ public class UpdateService extends RoboService implements Constants {
 						values_list.toArray(new ContentValues[values_list.size()]));
 
 				// No row deleted, so I will insert a gap.
-				if (rows_deleted <= 0) {
+				if (rows_deleted == 0) {
 					ContentValues values = new ContentValues();
 					values.put(Statuses.IS_GAP, 1);
 					StringBuilder where = new StringBuilder();
@@ -401,7 +401,7 @@ public class UpdateService extends RoboService implements Constants {
 				}
 
 				// Delete all rows conflicting before new data inserted.
-				int rows_deleted = 0;
+				int rows_deleted = -1;
 				if (min_id != -1 && max_id != -1) {
 					StringBuilder where = new StringBuilder();
 					where.append(Mentions.STATUS_ID + ">=" + min_id);
@@ -414,7 +414,7 @@ public class UpdateService extends RoboService implements Constants {
 						values_list.toArray(new ContentValues[values_list.size()]));
 
 				// No row deleted, so I will insert a gap.
-				if (rows_deleted <= 0) {
+				if (rows_deleted == 0) {
 					ContentValues values = new ContentValues();
 					values.put(Mentions.IS_GAP, 1);
 					StringBuilder where = new StringBuilder();

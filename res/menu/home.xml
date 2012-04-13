@@ -2,10 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@+id/compose"
+		android:id="@id/compose"
 		android:icon="@drawable/ic_menu_compose"
 		android:showAsAction="always"
-		android:title="@string/compose">
-	</item>
+		android:title="@string/compose"/>
+	<item
+		android:id="@id/select_account"
+		android:icon="@drawable/ic_menu_accounts"
+		android:showAsAction="never"
+		android:title="@string/select_account"/>
+	<item
+		android:id="@id/settings"
+		android:icon="@drawable/ic_menu_preferences"
+		android:showAsAction="never"
+		android:title="@string/global_settings"/>
 
 </menu>

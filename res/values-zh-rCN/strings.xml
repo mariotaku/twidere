@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<string name="pull_down_to_update">下拉并释放以刷新…</string>
 	<string name="release_to_update">释放以刷新</string>
@@ -48,6 +48,7 @@
 	<string name="view">查看</string>
 	<string name="view_image">查看图像</string>
 	<string name="view_map">查看地图</string>
+	<string name="browser">浏览器</string>
 	<string name="pick_from_gallery">从图库中选取</string>
 	<string name="pick_from_map">从地图上选取</string>
 	<string name="tweets">推文</string>
@@ -76,6 +77,7 @@
 	<string name="clear_databases_summary">清除数据库中的所有推文，个人资料和信息等。请不用担心，你的帐号登录信息不会丢失。</string>
 	<string name="look_and_feel">观感</string>
 	<string name="dark_theme">使用暗色主题</string>
-	<string name="dark_theme_summary">使用暗色主题，重启 Twidere 以完全生效。</string>
+	<string name="dark_theme_summary">为 Twidere 使用暗色主题。</string>
+	<string name="in_reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
 
 </resources>

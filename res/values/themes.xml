@@ -8,6 +8,7 @@
 		<item name="vpiVerticalTabPageIndicatorStyle">@style/Widget.TabPageIndicator.Vertical</item>
 		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
+		<item name="absForceOverflow">true</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="Theme.Holo.Light.DarkActionBar">
@@ -17,6 +18,7 @@
 		<item name="vpiVerticalTabPageIndicatorStyle">@style/Widget.TabPageIndicator.Vertical</item>
 		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
+		<item name="absForceOverflow">true</item>
 	</style>
 
 	<style name="Theme.Twidere.Dialog" parent="Theme.Holo.Dialog">

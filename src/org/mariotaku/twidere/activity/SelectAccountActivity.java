@@ -28,6 +28,7 @@ public class SelectAccountActivity extends ListActivity implements Constants {
 	private Cursor mCursor;
 	private ListView mListView;
 	private List<Long> mActivatedUsersId = new ArrayList<Long>();
+	private int mThemeId;
 
 	public Cursor getAccountsCursor() {
 		Uri uri = Accounts.CONTENT_URI;
@@ -132,14 +133,38 @@ public class SelectAccountActivity extends ListActivity implements Constants {
 		Uri uri = Accounts.CONTENT_URI;
 		ContentValues values = new ContentValues();
 		values.put(Accounts.IS_ACTIVATED, checked ? 1 : 0);
-		String where = Accounts._ID + "='" + id + "'";
+		String where = Accounts._ID + "=" + id;
 		getContentResolver().update(uri, values, where, null);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (isThemeChanged()) {
+			restartActivity();
+		}
+	}
+
+	private boolean isThemeChanged() {
+		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere_Dialog
+				: R.style.Theme_Twidere_Light_Dialog;
+		return new_theme_id != mThemeId;
+	}
+
+	private void restartActivity() {
+		overridePendingTransition(0, 0);
+		finish();
+		overridePendingTransition(0, 0);
+		startActivity(getIntent());
 	}
 
 	private void setTheme() {
 		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		setTheme(preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere_Dialog
-				: R.style.Theme_Twidere_Light_Dialog);
+		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere_Dialog
+				: R.style.Theme_Twidere_Light_Dialog;
+		setTheme(mThemeId);
+
 	}
 
 }

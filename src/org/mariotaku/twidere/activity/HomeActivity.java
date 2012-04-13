@@ -35,8 +35,7 @@ import com.viewpagerindicator.TitleProvider;
 @ContentView(R.layout.main)
 public class HomeActivity extends BaseActivity {
 
-	@InjectView(R.id.pager)
-	ViewPager mViewPager;
+	@InjectView(R.id.pager) ViewPager mViewPager;
 
 	private ActionBar mActionBar;
 	private ProgressBar mProgress;
@@ -123,11 +122,13 @@ public class HomeActivity extends BaseActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case android.R.id.home:
-				finish();
+			case MENU_COMPOSE:
+				startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				break;
-			case R.id.compose:
-				startActivity(new Intent(this, ComposeActivity.class));
+			case MENU_SELECT_ACCOUNT:
+				break;
+			case MENU_SETTINGS:
+				startActivity(new Intent(INTENT_ACTION_GLOBAL_SETTINGS));
 				break;
 		}
 		return super.onOptionsItemSelected(item);

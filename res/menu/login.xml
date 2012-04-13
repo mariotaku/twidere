@@ -10,7 +10,7 @@
 	<item
 		android:id="@+id/settings"
 		android:icon="@drawable/ic_menu_preferences"
-		android:showAsAction="always"
+		android:showAsAction="ifRoom"
 		android:title="@string/global_settings"/>
 
 </menu>

@@ -11,15 +11,40 @@ import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmen
 
 public class BaseActivity extends RoboSherlockFragmentActivity implements Constants {
 
+	private int mThemeId;
+
+	public boolean isThemeChanged() {
+		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere
+				: R.style.Theme_Twidere_Light;
+		return new_theme_id != mThemeId;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		setTheme();
 		super.onCreate(savedInstanceState);
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (isThemeChanged()) {
+			restartActivity();
+		}
+	}
+
+	public final void restartActivity() {
+		overridePendingTransition(0, 0);
+		finish();
+		overridePendingTransition(0, 0);
+		startActivity(getIntent());
+	}
+
 	public void setTheme() {
 		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		setTheme(preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere
-				: R.style.Theme_Twidere_Light);
+		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere
+				: R.style.Theme_Twidere_Light;
+		setTheme(mThemeId);
 	}
 }

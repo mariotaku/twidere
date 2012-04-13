@@ -2,7 +2,6 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.GlobalSettingsActivity;
 import org.mariotaku.twidere.activity.LoginActivity;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
@@ -25,7 +24,7 @@ public class AccountsFragment extends SherlockListFragment implements Constants,
 		LoaderCallbacks<Cursor>, OnClickListener {
 
 	private AccountsAdapter mAdapter;
-	private Button mAddAccountButton, mGlobalSettingsButton;
+	private Button mAddAccountButton;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -35,8 +34,6 @@ public class AccountsFragment extends SherlockListFragment implements Constants,
 		View view = getLayoutInflater(null).inflate(R.layout.accounts_list_header, null, false);
 		mAddAccountButton = (Button) view.findViewById(R.id.add_account);
 		mAddAccountButton.setOnClickListener(this);
-		mGlobalSettingsButton = (Button) view.findViewById(R.id.global_settings);
-		mGlobalSettingsButton.setOnClickListener(this);
 		getListView().addHeaderView(view);
 		setListAdapter(mAdapter);
 	}
@@ -46,9 +43,6 @@ public class AccountsFragment extends SherlockListFragment implements Constants,
 		switch (v.getId()) {
 			case R.id.add_account:
 				startActivity(new Intent(getSherlockActivity(), LoginActivity.class));
-				break;
-			case R.id.global_settings:
-				startActivity(new Intent(getSherlockActivity(), GlobalSettingsActivity.class));
 				break;
 		}
 

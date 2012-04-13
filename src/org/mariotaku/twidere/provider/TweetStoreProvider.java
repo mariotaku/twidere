@@ -43,8 +43,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		String table = getTableName(uri);
 		if (table == null) return 0;
-		database.delete(table, selection, selectionArgs);
-		return 0;
+		return database.delete(table, selection, selectionArgs);
 	}
 
 	@Override

@@ -15,7 +15,7 @@ import android.webkit.WebViewClient;
 
 import com.actionbarsherlock.view.Window;
 
-public class ViewMapActivity extends WebViewActivity implements LocationListener {
+public class MapActivity extends WebViewActivity implements LocationListener {
 
 	private Uri mUri = Uri.parse("file:///android_asset/mapview.html");
 	private Location mostRecentLocation;

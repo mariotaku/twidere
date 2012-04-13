@@ -30,36 +30,38 @@ public class WebViewActivity extends BaseActivity {
 
 	private Uri mUri = Uri.parse("about:blank");
 
-	private WebView webview;
+	private WebView mWebview;
 
 	public final WebView getWebView() {
-		return webview;
+		return mWebview;
 	}
 
 	public final void loadUrl(String url) {
 		mUri = Uri.parse(url);
-		webview.loadUrl(url);
+		mWebview.loadUrl(url);
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		webview = new WebView(this);
-		setContentView(webview, new LayoutParams(LayoutParams.MATCH_PARENT,
+		setTheme();
+		super.onCreate(savedInstanceState);
+		mWebview = new WebView(this);
+		setContentView(mWebview, new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT));
-		webview.setWebViewClient(new DefaultWebViewClient());
-		webview.getSettings().setBuiltInZoomControls(true);
+		mWebview.setWebViewClient(new DefaultWebViewClient());
+		mWebview.getSettings().setBuiltInZoomControls(true);
 
 	}
 
 	@Override
 	public void onDestroy() {
-		webview.clearCache(true);
+		mWebview.clearCache(true);
 		super.onDestroy();
 	}
 
 	public final void setWebViewClient(WebViewClient client) {
-		webview.setWebViewClient(client);
+		mWebview.setWebViewClient(client);
 	}
 
 	public class DefaultWebViewClient extends WebViewClient {

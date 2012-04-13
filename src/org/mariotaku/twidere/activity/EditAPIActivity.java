@@ -20,20 +20,13 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener,
 		OnClickListener {
 
-	@InjectView(R.id.rest_api_base)
-	private EditText mEditRestAPIBase;
-	@InjectView(R.id.search_api_base)
-	private EditText mEditSearchAPIBase;
-	@InjectView(R.id.auth_type)
-	private RadioGroup mEditAuthType;
-	@InjectView(R.id.oauth)
-	private RadioButton mButtonOAuth;
-	@InjectView(R.id.xauth)
-	private RadioButton mButtonxAuth;
-	@InjectView(R.id.basic)
-	private RadioButton mButtonBasic;
-	@InjectView(R.id.save)
-	private Button mSaveButton;
+	@InjectView(R.id.rest_api_base) private EditText mEditRestAPIBase;
+	@InjectView(R.id.search_api_base) private EditText mEditSearchAPIBase;
+	@InjectView(R.id.auth_type) private RadioGroup mEditAuthType;
+	@InjectView(R.id.oauth) private RadioButton mButtonOAuth;
+	@InjectView(R.id.xauth) private RadioButton mButtonxAuth;
+	@InjectView(R.id.basic) private RadioButton mButtonBasic;
+	@InjectView(R.id.save) private Button mSaveButton;
 	private String mRestAPIBase, mSearchAPIBase;
 	private int mAuthType;
 
