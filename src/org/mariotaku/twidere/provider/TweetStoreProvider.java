@@ -123,11 +123,6 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		}
 
 		@Override
-		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			handleVersionChange(db);
-		}
-
-		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			handleVersionChange(db);
 		}

@@ -1,25 +1,23 @@
 package org.mariotaku.twidere.fragment;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusItemHolder;
 import org.mariotaku.twidere.widget.RefreshableListView;
 import org.mariotaku.twidere.widget.RefreshableListView.OnRefreshListener;
+import org.mariotaku.twidere.widget.StatusesAdapter;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,7 +26,6 @@ import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,18 +39,13 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 		OnRefreshListener, LoaderCallbacks<Cursor>, OnScrollListener {
 
 	private StatusesAdapter mAdapter;
-	private LazyImageLoader mListProfileImageLoader;
-	private CommonUtils mCommonUtils;
 	private ServiceInterface mServiceInterface;
 	private RefreshableListView mListView;
-	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx,
-			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mHasLocationIdx,
-			mHasMediaIdx, mInReplyToStatusIdIdx, mInReplyToScreennameIdx;;
-	private boolean mIsUserRefresh = false;
+	private boolean mIsUserRefresh, mBusy, mTickerStopped;
+	private View mFooterView;
 
 	private Handler mHandler;
 	private Runnable mTicker;
-	private boolean mBusy, mTickerStopped = false;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -74,22 +66,26 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 			}
 		}
 	};
-	private boolean mBottomReached;
+	private boolean mBottomReached, mDisplayProfileImage;
+	private SharedPreferences mPreferences;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mListProfileImageLoader = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getListProfileImageLoader();
-		mCommonUtils = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getCommonUtils();
+		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME,
+				Context.MODE_PRIVATE);
+		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getServiceInterface();
-		mAdapter = new StatusesAdapter(getSherlockActivity());
-		setListAdapter(mAdapter);
+		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
+				.getListProfileImageLoader();
+		mAdapter = new StatusesAdapter(getSherlockActivity(), imageloader);
 		mListView = (RefreshableListView) getListView();
+		mFooterView = getLayoutInflater(null).inflate(R.layout.statuses_list_footer, null, false);
 		mListView.setOnRefreshListener(this);
 		mListView.setOnScrollListener(this);
+		mListView.addFooterView(mFooterView);
+		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, null, this);
 	}
 
@@ -117,7 +113,12 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 				mServiceInterface.refreshHomeTimeline(new long[] { account_id },
 						new long[] { status_id });
 			} else {
-
+				Bundle bundle = new Bundle();
+				bundle.putLong(Statuses.ACCOUNT_ID, account_id);
+				bundle.putLong(Statuses.STATUS_ID, status_id);
+				bundle.putInt(TweetStore.KEY_TYPE, TweetStore.VALUE_TYPE_STATUS);
+				Intent intent = new Intent(INTENT_ACTION_VIEW_STATUS).putExtras(bundle);
+				startActivity(intent);
 			}
 		}
 	}
@@ -130,19 +131,6 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.changeCursor(data);
-		mAccountIdIdx = data.getColumnIndexOrThrow(Statuses.ACCOUNT_ID);
-		mStatusIdIdx = data.getColumnIndexOrThrow(Statuses.STATUS_ID);
-		mStatusTimestampIdx = data.getColumnIndexOrThrow(Statuses.STATUS_TIMESTAMP);
-		mScreenNameIdx = data.getColumnIndexOrThrow(Statuses.SCREEN_NAME);
-		mProfileImageUrlIdx = data.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
-		mIsRetweetIdx = data.getColumnIndexOrThrow(Statuses.IS_RETWEET);
-		mIsFavoriteIdx = data.getColumnIndexOrThrow(Statuses.IS_FAVORITE);
-		mIsGapIdx = data.getColumnIndexOrThrow(Statuses.IS_GAP);
-		mHasLocationIdx = data.getColumnIndexOrThrow(Statuses.HAS_LOCATION);
-		mHasMediaIdx = data.getColumnIndexOrThrow(Statuses.HAS_MEDIA);
-		mInReplyToStatusIdIdx = data.getColumnIndexOrThrow(Mentions.IN_REPLY_TO_STATUS_ID);
-		mInReplyToScreennameIdx = data.getColumnIndexOrThrow(Mentions.IN_REPLY_TO_SCREEN_NAME);
-
 	}
 
 	@Override
@@ -166,14 +154,26 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		boolean display_profile_image = mPreferences.getBoolean(
+				PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mAdapter.setDisplayProfileImage(display_profile_image);
+		if (mDisplayProfileImage != display_profile_image) {
+			mDisplayProfileImage = display_profile_image;
+			mListView.invalidateViews();
+		}
+	}
+
+	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
 			int totalItemCount) {
 		boolean reached = firstVisibleItem + visibleItemCount == totalItemCount;
-		
-		if (mBottomReached != reached){
+
+		if (mBottomReached != reached) {
 			mBottomReached = reached;
-			if (mBottomReached){
-				
+			if (mBottomReached) {
+				mFooterView.setVisibility(View.VISIBLE);
 			}
 		}
 
@@ -227,72 +227,5 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 			getSherlockActivity().unregisterReceiver(mStatusReceiver);
 		}
 		super.onStop();
-	}
-
-	private class StatusesAdapter extends SimpleCursorAdapter {
-
-		public StatusesAdapter(Context context) {
-			super(context, R.layout.tweet_list_item, null, new String[] { Statuses.NAME,
-					Statuses.TEXT }, new int[] { R.id.user_name, R.id.tweet_content }, 0);
-		}
-
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-
-			StatusItemHolder holder = (StatusItemHolder) view.getTag();
-
-			if (holder == null) return;
-
-			boolean is_gap = cursor.getInt(mIsGapIdx) == 1
-					&& cursor.getPosition() != cursor.getCount() - 1;
-
-			holder.setIsGap(is_gap);
-			holder.status_id = cursor.getLong(mStatusIdIdx);
-			holder.account_id = cursor.getLong(mAccountIdIdx);
-
-			if (!is_gap) {
-
-				String screen_name = cursor.getString(mScreenNameIdx);
-				String profile_image_url = cursor.getString(mProfileImageUrlIdx);
-				boolean is_retweet = cursor.getInt(mIsRetweetIdx) == 1;
-				boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
-				boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
-				boolean has_location = cursor.getInt(mHasLocationIdx) == 1;
-				boolean is_reply = cursor.getInt(mInReplyToStatusIdIdx) != -1;
-
-				holder.screen_name.setText("@" + screen_name);
-				holder.tweet_time.setText(mCommonUtils.formatToShortTimeString(cursor
-						.getLong(mStatusTimestampIdx)));
-				holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-						mCommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media),
-						0);
-				holder.in_reply_to.setVisibility(is_reply ? View.VISIBLE : View.GONE);
-				if (is_reply) {
-					holder.in_reply_to.setText(getString(R.string.in_reply_to,
-							cursor.getString(mInReplyToScreennameIdx)));
-				}
-				URL url = null;
-				try {
-					url = new URL(profile_image_url);
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-				if (url != null) {
-					mListProfileImageLoader.displayImage(url, holder.profile_image);
-				}
-			}
-			super.bindView(view, context, cursor);
-
-		}
-
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-
-			View view = super.newView(context, cursor, parent);
-			StatusItemHolder viewholder = new StatusItemHolder(view);
-			view.setTag(viewholder);
-			return view;
-		}
-
 	}
 }

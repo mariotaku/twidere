@@ -38,15 +38,21 @@ public interface Constants {
 
 	public static final String PREFERENCE_KEY_ITEM_LIMIT = "item_limit";
 	public static final String PREFERENCE_KEY_DARK_THEME = "dark_theme";
+	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
+	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
 
 	public static final String INTENT_ACTION_PREFIX = "org.mariotaku.twidere.";
 
 	public static final String INTENT_ACTION_COMPOSE = INTENT_ACTION_PREFIX + "COMPOSE";
 	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_ACTION_PREFIX
 			+ "GLOBAL_SETTINGS";
+	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_ACTION_PREFIX
+			+ "SELECT_ACCOUNT";
+	public static final String INTENT_ACTION_VIEW_STATUS = INTENT_ACTION_PREFIX + "VIEW_STATUS";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;
+	public static final int MENU_SEND = R.id.send;
 	public static final int MENU_SELECT_ACCOUNT = R.id.select_account;
 	public static final int MENU_SETTINGS = R.id.settings;
 	public static final int MENU_ADD_LOCATION = R.id.add_location;
@@ -58,5 +64,9 @@ public interface Constants {
 	public static final int MENU_DELETE = R.id.delete;
 	public static final int MENU_PICK_FROM_GALLERY = R.id.pick_from_gallery;
 	public static final int MENU_PICK_FROM_MAP = R.id.pick_from_map;
+
+	public final static int REQUEST_TAKE_PHOTO = 1;
+	public final static int REQUEST_ADD_IMAGE = 2;
+	public final static int REQUEST_SELECT_ACCOUNT = 3;
 
 }

@@ -235,14 +235,16 @@ public class LazyImageLoader {
 
 	private class FileCache {
 
+		private static final String CACHE_DIR_NAME = "profile_images";
+
 		private File cacheDir;
 
 		public FileCache(Context context) {
 			/* Find the dir to save cached images. */
 			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-				cacheDir = context.getExternalCacheDir();
+				cacheDir = new File(context.getExternalCacheDir(), CACHE_DIR_NAME);
 			} else {
-				cacheDir = context.getCacheDir();
+				cacheDir = new File(context.getCacheDir(), CACHE_DIR_NAME);
 			}
 			if (cacheDir != null && !cacheDir.exists()) {
 				cacheDir.mkdirs();

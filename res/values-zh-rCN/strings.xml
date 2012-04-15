@@ -12,7 +12,6 @@
 	<string name="add_location">添加位置</string>
 	<string name="add_image">添加图片</string>
 	<string name="take_photo">拍照</string>
-	<string name="save_to_draft">保存到草稿箱</string>
 	<string name="tweet_hint">你在做什么？</string>
 	<string name="sign_up">注册</string>
 	<string name="sign_in">登录</string>
@@ -45,9 +44,14 @@
 	<string name="tap_to_load_more">轻按以加载更多</string>
 	<string name="go_to_my_profile_page">查看我的个人资料页面</string>
 	<string name="delete">删除</string>
+	<string name="retweet">转推</string>
+	<string name="fav">收藏</string>
+	<string name="reply">回复</string>
+	<string name="share">分享</string>
 	<string name="view">查看</string>
 	<string name="view_image">查看图像</string>
 	<string name="view_map">查看地图</string>
+	<string name="view_status">查看推文</string>
 	<string name="browser">浏览器</string>
 	<string name="pick_from_gallery">从图库中选取</string>
 	<string name="pick_from_map">从地图上选取</string>
@@ -78,6 +82,8 @@
 	<string name="look_and_feel">观感</string>
 	<string name="dark_theme">使用暗色主题</string>
 	<string name="dark_theme_summary">为 Twidere 使用暗色主题。</string>
+	<string name="display_profile_image">显示个人资料图片</string>
+	<string name="display_profile_image_summary">显示个人资料图片，关闭可以加快列表的滚动速度，以及减少数据流量。</string>
 	<string name="in_reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
 
 </resources>

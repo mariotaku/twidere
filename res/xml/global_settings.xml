@@ -11,6 +11,11 @@
 			android:key="dark_theme"
 			android:summary="@string/dark_theme_summary"
 			android:title="@string/dark_theme"/>
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="display_profile_image"
+			android:summary="@string/display_profile_image_summary"
+			android:title="@string/display_profile_image"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="cat_storage"

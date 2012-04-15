@@ -25,8 +25,10 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.os.RemoteException;
 
 public class UpdateService extends RoboService implements Constants {
 
@@ -64,6 +66,10 @@ public class UpdateService extends RoboService implements Constants {
 	}
 
 	public void refreshMessages(long[] account_ids, long[] max_ids) {
+	}
+
+	public void updateStatus(long[] account_ids, String content, Uri image_uri) {
+
 	}
 
 	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {
@@ -457,28 +463,35 @@ public class UpdateService extends RoboService implements Constants {
 		}
 
 		@Override
-		public boolean isHomeTimelineRefreshing() {
+		public boolean isHomeTimelineRefreshing() throws RemoteException {
 			return mService.get().isHomeTimelineRefreshing();
 		}
 
 		@Override
-		public boolean isMentionsRefreshing() {
+		public boolean isMentionsRefreshing() throws RemoteException {
 			return mService.get().isMentionsRefreshing();
 		}
 
 		@Override
-		public void refreshHomeTimeline(long[] account_ids, long[] max_ids) {
+		public void refreshHomeTimeline(long[] account_ids, long[] max_ids) throws RemoteException {
 			mService.get().refreshHomeTimeline(account_ids, max_ids);
 		}
 
 		@Override
-		public void refreshMentions(long[] account_ids, long[] max_ids) {
+		public void refreshMentions(long[] account_ids, long[] max_ids) throws RemoteException {
 			mService.get().refreshMentions(account_ids, max_ids);
 		}
 
 		@Override
-		public void refreshMessages(long[] account_ids, long[] max_ids) {
+		public void refreshMessages(long[] account_ids, long[] max_ids) throws RemoteException {
 			mService.get().refreshMessages(account_ids, max_ids);
+		}
+
+		@Override
+		public void updateStatus(long[] account_ids, String content, Uri image_uri)
+				throws RemoteException {
+			mService.get().updateStatus(account_ids, content, image_uri);
+
 		}
 
 	}

@@ -3,14 +3,15 @@ package org.mariotaku.twidere.activity;
 import java.io.File;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.ServiceInterface;
 
 import roboguice.inject.ContentView;
+import roboguice.inject.InjectResource;
 import roboguice.inject.InjectView;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,16 +31,15 @@ import com.actionbarsherlock.view.MenuItem;
 @ContentView(R.layout.compose)
 public class ComposeActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
-	private final static int TAKE_PICTURE = 1;
-	private final static int PICK_IMAGE = 2;
-	private final static int SELECT_ACCOUNTS = 3;
-
 	private ActionBar mActionBar;
 	private Uri mImageUri;
 	@InjectView(R.id.edit_text) private EditText mEditText;
 	@InjectView(R.id.text_count) private TextView mTextCount;
 	@InjectView(R.id.select_account) private ImageButton mSelectAccount;
+	@InjectResource(R.color.holo_blue_bright) private int mActivedMenuColor;
 	private boolean mIsImageAttached, mIsPhotoAttached, mIsLocationAttached;
+	private long[] mAccountIds;
+	private ServiceInterface mInterface;
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -57,7 +57,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
 		switch (requestCode) {
-			case TAKE_PICTURE:
+			case REQUEST_TAKE_PHOTO:
 				if (resultCode == RESULT_OK) {
 					File file = new File(mImageUri.getPath());
 					if (file.exists()) {
@@ -69,7 +69,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 					invalidateOptionsMenu();
 				}
 				break;
-			case PICK_IMAGE:
+			case REQUEST_ADD_IMAGE:
 				if (resultCode == RESULT_OK) {
 					Uri uri = intent.getData();
 					File file = uri == null ? null : new File(getRealPathFromURI(uri));
@@ -83,7 +83,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 					invalidateOptionsMenu();
 				}
 				break;
-			case SELECT_ACCOUNTS:
+			case REQUEST_SELECT_ACCOUNT:
 				if (resultCode == RESULT_OK) {
 					Bundle bundle = intent.getExtras();
 					if (bundle == null) {
@@ -91,9 +91,8 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 					}
 					long[] user_ids = bundle.getLongArray(Accounts.USER_IDS);
 					if (user_ids == null) {
-						break;
+						mAccountIds = user_ids;
 					}
-
 				}
 				break;
 		}
@@ -103,9 +102,13 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+			case R.id.send:
+				String content = mEditText != null ? mEditText.getText().toString() : null;
+				mInterface.updateStatus(mAccountIds, content, mImageUri);
+				break;
 			case R.id.select_account:
-				startActivityForResult(new Intent(this, SelectAccountActivity.class),
-						SELECT_ACCOUNTS);
+				startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT),
+						REQUEST_SELECT_ACCOUNT);
 				break;
 		}
 
@@ -114,11 +117,28 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mSelectAccount.setOnClickListener(this);
 		mEditText.addTextChangedListener(this);
 		mTextCount.setText(String.valueOf(mEditText.length()));
+		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI,
+				new String[] { Accounts.USER_ID }, Accounts.IS_ACTIVATED + "=1", null, null);
+		if (cur != null && cur.getCount() > 0) {
+			int userid_idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			mAccountIds = new long[cur.getCount()];
+			cur.moveToFirst();
+			int idx = 0;
+			while (!cur.isAfterLast()) {
+				mAccountIds[idx] = cur.getLong(userid_idx);
+				idx++;
+				cur.moveToNext();
+			}
+		}
+		if (cur != null) {
+			cur.close();
+		}
 	}
 
 	@Override
@@ -149,19 +169,20 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if (mIsImageAttached && !mIsPhotoAttached) {
 			menu.findItem(MENU_ADD_IMAGE).getIcon()
-					.setColorFilter(Color.CYAN, PorterDuff.Mode.MULTIPLY);
+					.setColorFilter(mActivedMenuColor, Mode.MULTIPLY);
 		} else {
 			menu.findItem(MENU_ADD_IMAGE).getIcon().clearColorFilter();
 		}
 		if (!mIsImageAttached && mIsPhotoAttached) {
 			menu.findItem(MENU_TAKE_PHOTO).getIcon()
-					.setColorFilter(Color.CYAN, PorterDuff.Mode.MULTIPLY);
+					.setColorFilter(mActivedMenuColor, Mode.MULTIPLY);
 		} else {
 			menu.findItem(MENU_TAKE_PHOTO).getIcon().clearColorFilter();
 		}
 
 		if (mIsLocationAttached) {
-			menu.findItem(MENU_ADD_LOCATION).getIcon().setColorFilter(Color.CYAN, Mode.MULTIPLY);
+			menu.findItem(MENU_ADD_LOCATION).getIcon()
+					.setColorFilter(mActivedMenuColor, Mode.MULTIPLY);
 		} else {
 			menu.findItem(MENU_ADD_LOCATION).getIcon().clearColorFilter();
 		}
@@ -193,7 +214,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 
 	private void pickImage() {
 		Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-		startActivityForResult(i, PICK_IMAGE);
+		startActivityForResult(i, REQUEST_ADD_IMAGE);
 	}
 
 	private void takePhoto() {
@@ -202,7 +223,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 				+ ".jpg");
 		mImageUri = Uri.fromFile(file);
 		intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
-		startActivityForResult(intent, TAKE_PICTURE);
+		startActivityForResult(intent, REQUEST_TAKE_PHOTO);
 
 	}
 }

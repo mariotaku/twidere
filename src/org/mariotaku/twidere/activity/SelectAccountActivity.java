@@ -7,8 +7,6 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
-import android.app.ListActivity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,7 +20,9 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class SelectAccountActivity extends ListActivity implements Constants {
+import com.actionbarsherlock.app.SherlockListActivity;
+
+public class SelectAccountActivity extends SherlockListActivity implements Constants {
 
 	private SimpleCursorAdapter mAdapter;
 	private Cursor mCursor;
@@ -41,6 +41,7 @@ public class SelectAccountActivity extends ListActivity implements Constants {
 	public void onCreate(Bundle savedInstanceState) {
 		setTheme();
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.basic_list);
 		int layoutRes = MULTIPLE_ACCOUNTS_ENABLED ? android.R.layout.simple_list_item_multiple_choice
 				: android.R.layout.simple_list_item_single_choice;
 		String[] cols = new String[] { Accounts.USERNAME };
@@ -111,10 +112,10 @@ public class SelectAccountActivity extends ListActivity implements Constants {
 			mActivatedUsersId.clear();
 
 			// Set all accounts in databases deactivated.
-			Uri uri = Accounts.CONTENT_URI;
-			ContentValues values = new ContentValues();
-			values.put(Accounts.IS_ACTIVATED, 0);
-			getContentResolver().update(uri, values, null, null);
+			// Uri uri = Accounts.CONTENT_URI;
+			// ContentValues values = new ContentValues();
+			// values.put(Accounts.IS_ACTIVATED, 0);
+			// getContentResolver().update(uri, values, null, null);
 		}
 		SparseBooleanArray checkedpositions = mListView.getCheckedItemPositions();
 		boolean checked = checkedpositions.get(position, false);
@@ -130,11 +131,11 @@ public class SelectAccountActivity extends ListActivity implements Constants {
 			}
 		}
 
-		Uri uri = Accounts.CONTENT_URI;
-		ContentValues values = new ContentValues();
-		values.put(Accounts.IS_ACTIVATED, checked ? 1 : 0);
-		String where = Accounts._ID + "=" + id;
-		getContentResolver().update(uri, values, where, null);
+		// Uri uri = Accounts.CONTENT_URI;
+		// ContentValues values = new ContentValues();
+		// values.put(Accounts.IS_ACTIVATED, checked ? 1 : 0);
+		// String where = Accounts._ID + "=" + id;
+		// getContentResolver().update(uri, values, where, null);
 	}
 
 	@Override
@@ -147,8 +148,8 @@ public class SelectAccountActivity extends ListActivity implements Constants {
 
 	private boolean isThemeChanged() {
 		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere_Dialog
-				: R.style.Theme_Twidere_Light_Dialog;
+		int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Holo_Dialog
+				: R.style.Theme_Holo_Light_Dialog;
 		return new_theme_id != mThemeId;
 	}
 
@@ -161,8 +162,8 @@ public class SelectAccountActivity extends ListActivity implements Constants {
 
 	private void setTheme() {
 		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere_Dialog
-				: R.style.Theme_Twidere_Light_Dialog;
+		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Holo_Dialog
+				: R.style.Theme_Holo_Light_Dialog;
 		setTheme(mThemeId);
 
 	}

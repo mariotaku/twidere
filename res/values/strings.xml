@@ -13,7 +13,6 @@
 	<string name="add_location">Add location</string>
 	<string name="add_image">Add image</string>
 	<string name="take_photo">Take photo</string>
-	<string name="save_to_draft">Save to draft</string>
 	<string name="tweet_hint">What\'s happening ?</string>
 	<string name="sign_up">Sign up</string>
 	<string name="sign_in">Sign in</string>
@@ -26,7 +25,6 @@
 	<string name="save">Save</string>
 	<string name="test">Test</string>
 	<string name="login_to_twitter">Login to Twitter</string>
-	<string name="api_settings">API Settings</string>
 	<string name="edit_api">Edit API</string>
 	<string name="home">Home</string>
 	<string name="error_occurred">An error occurred, please try again.</string>
@@ -51,9 +49,14 @@
 	<string name="just_now">Just now</string>
 	<string name="tap_to_load_more">Tap to load more</string>
 	<string name="delete">Delete</string>
+	<string name="retweet">Retweet</string>
+	<string name="fav">Fav</string>
+	<string name="reply">Reply</string>
+	<string name="share">Share</string>
 	<string name="view">View</string>
 	<string name="view_image">View image</string>
 	<string name="view_map">View map</string>
+	<string name="view_status">View tweet</string>
 	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Pick from gallery</string>
 	<string name="pick_from_map">Pick from map</string>
@@ -80,7 +83,7 @@
 	<string name="gzip_compressing_summary">Compress all API request, it can reduce traffic usage, but may not work on all API servers.</string>
 	<string name="storage">Storage</string>
 	<string name="item_limit">Item limit</string>
-	<string name="item_limit_summary">Upper limit of item stored in databases for each account, set to a smaller value to save space and increace loading speed.</string>
+	<string name="item_limit_summary">Upper limit of item stored in databases for each account, set to a smaller value to save space and increase loading speed.</string>
 	<string name="clear_cache">Clear cache</string>
 	<string name="clear_cache_summary">Clear stored profile image cache.</string>
 	<string name="clear_databases">Clear databases</string>
@@ -88,6 +91,8 @@
 	<string name="look_and_feel">Look and feel</string>
 	<string name="dark_theme">Use dark theme</string>
 	<string name="dark_theme_summary">Use dark theme for Twidere.</string>
+	<string name="display_profile_image">Display profile image</string>
+	<string name="display_profile_image_summary">Display profile image, uncheck this will increase list scroll speed and reduce traffic usage.</string>
 	<string name="in_reply_to">In reply to <xliff:g id="user_name">%s</xliff:g></string>
 
 </resources>

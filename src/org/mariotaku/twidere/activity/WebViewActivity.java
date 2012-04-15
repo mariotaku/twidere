@@ -16,21 +16,25 @@
 
 package org.mariotaku.twidere.activity;
 
+import org.mariotaku.twidere.R;
+
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.actionbarsherlock.view.Window;
 
+@ContentView(R.layout.webview)
 public class WebViewActivity extends BaseActivity {
 
 	private Uri mUri = Uri.parse("about:blank");
 
-	private WebView mWebview;
+	@InjectView(R.id.webview) private WebView mWebview;
 
 	public final WebView getWebView() {
 		return mWebview;
@@ -46,9 +50,6 @@ public class WebViewActivity extends BaseActivity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setTheme();
 		super.onCreate(savedInstanceState);
-		mWebview = new WebView(this);
-		setContentView(mWebview, new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT));
 		mWebview.setWebViewClient(new DefaultWebViewClient());
 		mWebview.getSettings().setBuiltInZoomControls(true);
 

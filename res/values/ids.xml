@@ -2,6 +2,7 @@
 <resources>
 
 	<item name="compose" type="id"/>
+	<item name="send" type="id"/>
 	<item name="settings" type="id"/>
 	<item name="select_account" type="id"/>
 	<item name="add_location" type="id"/>
@@ -13,5 +14,9 @@
 	<item name="delete" type="id"/>
 	<item name="pick_from_gallery" type="id"/>
 	<item name="pick_from_map" type="id"/>
+	<item name="reply" type="id"/>
+	<item name="retweet" type="id"/>
+	<item name="fav" type="id"/>
+	<item name="share" type="id"/>
 
 </resources>

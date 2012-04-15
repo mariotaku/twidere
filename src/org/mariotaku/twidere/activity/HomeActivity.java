@@ -126,6 +126,8 @@ public class HomeActivity extends BaseActivity {
 				startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				break;
 			case MENU_SELECT_ACCOUNT:
+				startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT),
+						REQUEST_SELECT_ACCOUNT);
 				break;
 			case MENU_SETTINGS:
 				startActivity(new Intent(INTENT_ACTION_GLOBAL_SETTINGS));

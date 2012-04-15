@@ -69,40 +69,7 @@ public class CommonUtils implements Constants {
 	}
 
 	public String formatToShortTimeString(long timestamp) {
-		Time then = new Time();
-		then.set(timestamp);
-		Time now = new Time();
-		now.setToNow();
-
-		if (then.year < now.year) {
-			int diff = now.year - then.year;
-			return mContext.getResources().getQuantityString(R.plurals.Nyears, diff, diff);
-		} else if (then.month < now.month) {
-			int diff = now.month - then.month;
-			return mContext.getResources().getQuantityString(R.plurals.Nmonths, diff, diff);
-		} else if (then.yearDay < now.yearDay) {
-			int diff = now.yearDay - then.yearDay;
-			return mContext.getResources().getQuantityString(R.plurals.Ndays, diff, diff);
-		} else if (then.hour < now.hour) {
-			int diff = now.hour - then.hour;
-			return mContext.getResources().getQuantityString(R.plurals.Nhours, diff, diff);
-		} else if (then.minute < now.minute) {
-			int diff = now.minute - then.minute;
-			return mContext.getResources().getQuantityString(R.plurals.Nminutes, diff, diff);
-		} else if (then.minute == now.minute) return mContext.getString(R.string.just_now);
-		return then.format3339(true);
-	}
-
-	public int getTypeIcon(boolean is_retweet, boolean is_fav, boolean has_location,
-			boolean has_media) {
-		if (is_fav)
-			return R.drawable.ic_tweet_stat_starred;
-		else if (is_retweet)
-			return R.drawable.ic_tweet_stat_retweet;
-		else if (has_media)
-			return R.drawable.ic_tweet_stat_has_media;
-		else if (has_location) return R.drawable.ic_tweet_stat_has_location;
-		return 0;
+		return formatToShortTimeString(mContext, timestamp);
 	}
 
 	public void unbindFromService(ServiceToken token) {
@@ -118,6 +85,43 @@ public class CommonUtils implements Constants {
 			return;
 		}
 		wrapper.unbindService(binder);
+	}
+
+	public static String formatToShortTimeString(Context context, long timestamp) {
+		Time then = new Time();
+		then.set(timestamp);
+		Time now = new Time();
+		now.setToNow();
+
+		if (then.year < now.year) {
+			int diff = now.year - then.year;
+			return context.getResources().getQuantityString(R.plurals.Nyears, diff, diff);
+		} else if (then.month < now.month) {
+			int diff = now.month - then.month;
+			return context.getResources().getQuantityString(R.plurals.Nmonths, diff, diff);
+		} else if (then.yearDay < now.yearDay) {
+			int diff = now.yearDay - then.yearDay;
+			return context.getResources().getQuantityString(R.plurals.Ndays, diff, diff);
+		} else if (then.hour < now.hour) {
+			int diff = now.hour - then.hour;
+			return context.getResources().getQuantityString(R.plurals.Nhours, diff, diff);
+		} else if (then.minute < now.minute) {
+			int diff = now.minute - then.minute;
+			return context.getResources().getQuantityString(R.plurals.Nminutes, diff, diff);
+		} else if (then.minute == now.minute) return context.getString(R.string.just_now);
+		return then.format3339(true);
+	}
+
+	public static int getTypeIcon(boolean is_retweet, boolean is_fav, boolean has_location,
+			boolean has_media) {
+		if (is_fav)
+			return R.drawable.ic_tweet_stat_starred;
+		else if (is_retweet)
+			return R.drawable.ic_tweet_stat_retweet;
+		else if (has_media)
+			return R.drawable.ic_tweet_stat_has_media;
+		else if (has_location) return R.drawable.ic_tweet_stat_has_location;
+		return 0;
 	}
 
 	private class ServiceBinder implements ServiceConnection {

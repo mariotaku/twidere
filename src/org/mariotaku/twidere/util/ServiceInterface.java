@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 
@@ -143,6 +144,17 @@ public class ServiceInterface implements Constants, IUpdateService {
 		if (listener != null) {
 			mStateListeners.remove(listener);
 		}
+	}
+
+	@Override
+	public void updateStatus(long[] account_ids, String content, Uri image_uri) {
+		if (mService == null) return;
+		try {
+			mService.updateStatus(account_ids, content, image_uri);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public interface StateListener {

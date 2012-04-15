@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="8dip">
+
+	<org.mariotaku.twidere.widget.RoundCorneredImageView
+		android:id="@+id/profile_image"
+		android:layout_width="@dimen/profile_image_size"
+		android:layout_height="@dimen/profile_image_size"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:layerType="software"
+		android:scaleType="fitCenter"
+		android:src="@drawable/ic_profile_image_default"/>
+
+	<TextView
+		android:id="@+id/name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignTop="@+id/profile_image"
+		android:layout_toRightOf="@+id/profile_image"
+		android:padding="8dip"
+		android:text="Name"
+		android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+	<TextView
+		android:id="@+id/screen_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBottom="@+id/profile_image"
+		android:layout_toRightOf="@+id/profile_image"
+		android:padding="8dip"
+		android:text="screenname"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="?android:attr/textColorSecondary"/>
+
+	<TextView
+		android:id="@+id/text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/profile_image"
+		android:layout_below="@+id/profile_image"
+		android:padding="8dip"
+		android:singleLine="false"
+		android:text="Text"
+		android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+</RelativeLayout>

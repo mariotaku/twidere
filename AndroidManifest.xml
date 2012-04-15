@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
+	android:installLocation="auto"
 	android:versionCode="1"
 	android:versionName="0.0.0-demo">
 
 	<uses-sdk
 		android:minSdkVersion="8"
 		android:targetSdkVersion="15"/>
-
-	<uses-library android:name="com.google.android.maps"/>
 
 	<permission-group
 		android:name="org.mariotaku.twidere.ACCESS_APPLICATION"
@@ -41,16 +40,6 @@
 		android:label="@string/app_name"
 		android:theme="@style/Theme.Twidere.Light">
 		<activity
-			android:name=".activity.LoginActivity"
-			android:label="@string/login_to_twitter"
-			android:windowSoftInputMode="adjustResize">
-		</activity>
-		<activity
-			android:name=".activity.LicenseActivity"
-			android:label="@string/license"
-			android:theme="@style/Theme.Holo.Light.Dialog">
-		</activity>
-		<activity
 			android:name=".activity.HomeActivity"
 			android:label="@string/app_name">
 			<intent-filter>
@@ -67,6 +56,28 @@
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.COMPOSE"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.LoginActivity"
+			android:label="@string/login_to_twitter"
+			android:windowSoftInputMode="adjustResize">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.ViewStatusActivity"
+			android:label="@string/view_status"
+			android:uiOptions="splitActionBarWhenNarrow"
+			android:windowSoftInputMode="adjustResize">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.VIEW_STATUS"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
@@ -97,30 +108,18 @@
 			android:theme="@style/Theme.Holo.Light.Dialog">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.EDIT_API"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
-
-		<provider
-			android:name=".provider.TweetStoreProvider"
-			android:authorities="org.mariotaku.twidere.provider.TweetStore"
-			android:label="@string/label_tweetstore_provider"
-			android:readPermission="org.mariotaku.twidere.READ_DATABASES"
-			android:writePermission="org.mariotaku.twidere.WRITE_DATABASES">
-		</provider>
-
-		<service
-			android:name=".service.UpdateService"
-			android:label="@string/label_update_service">
-		</service>
-
 		<activity
 			android:name=".activity.SelectAccountActivity"
 			android:label="@string/select_account"
-			android:theme="@style/Theme.Twidere.Light.Dialog">
+			android:theme="@style/Theme.Holo.Light.Dialog">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.SELECT_ACCOUNT"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
@@ -148,10 +147,35 @@
 			android:label="@string/about">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.ABOUT"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".activity.LicenseActivity"
+			android:label="@string/license"
+			android:theme="@style/Theme.Holo.Light.Dialog">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.LICENSE"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+
+		<provider
+			android:name=".provider.TweetStoreProvider"
+			android:authorities="org.mariotaku.twidere.provider.TweetStore"
+			android:label="@string/label_tweetstore_provider"
+			android:readPermission="org.mariotaku.twidere.READ_DATABASES"
+			android:writePermission="org.mariotaku.twidere.WRITE_DATABASES">
+		</provider>
+
+		<service
+			android:name=".service.UpdateService"
+			android:label="@string/label_update_service">
+		</service>
 	</application>
 
 </manifest>

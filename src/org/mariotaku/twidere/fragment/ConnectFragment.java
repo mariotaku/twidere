@@ -1,24 +1,23 @@
 package org.mariotaku.twidere.fragment;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusItemHolder;
 import org.mariotaku.twidere.widget.RefreshableListView;
 import org.mariotaku.twidere.widget.RefreshableListView.OnRefreshListener;
+import org.mariotaku.twidere.widget.StatusesAdapter;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,7 +26,6 @@ import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,19 +33,12 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
-import com.actionbarsherlock.app.SherlockListFragment;
-
-public class ConnectFragment extends SherlockListFragment implements Constants, OnRefreshListener,
+public class ConnectFragment extends BaseListFragment implements Constants, OnRefreshListener,
 		LoaderCallbacks<Cursor>, OnScrollListener {
 
-	private MentionsAdapter mAdapter;
-	private LazyImageLoader mListProfileImageLoader;
-	private CommonUtils mCommonUtils;
+	private StatusesAdapter mAdapter;
 	private ServiceInterface mServiceInterface;
 	private RefreshableListView mListView;
-	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx,
-			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mInReplyToStatusIdIdx,
-			mInReplyToScreennameIdx, mIsGapIdx, mHasLocationIdx, mHasMediaIdx;
 	private boolean mIsUserRefresh = false;
 
 	private Handler mHandler;
@@ -75,17 +66,20 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 		}
 
 	};
+	private SharedPreferences mPreferences;
+	private boolean mDisplayProfileImage;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mListProfileImageLoader = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getListProfileImageLoader();
-		mCommonUtils = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getCommonUtils();
+		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME,
+				Context.MODE_PRIVATE);
+		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getServiceInterface();
-		mAdapter = new MentionsAdapter(getSherlockActivity());
+		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
+				.getListProfileImageLoader();
+		mAdapter = new StatusesAdapter(getSherlockActivity(), imageloader);
 		setListAdapter(mAdapter);
 		mListView = (RefreshableListView) getListView();
 		mListView.setOnRefreshListener(this);
@@ -117,7 +111,12 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 				mServiceInterface.refreshMentions(new long[] { account_id },
 						new long[] { status_id });
 			} else {
-
+				Bundle bundle = new Bundle();
+				bundle.putLong(Mentions.ACCOUNT_ID, account_id);
+				bundle.putLong(Mentions.STATUS_ID, status_id);
+				bundle.putInt(TweetStore.KEY_TYPE, TweetStore.VALUE_TYPE_MENTION);
+				Intent intent = new Intent(INTENT_ACTION_VIEW_STATUS).putExtras(bundle);
+				startActivity(intent);
 			}
 		}
 	}
@@ -130,19 +129,6 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.changeCursor(data);
-		mAccountIdIdx = data.getColumnIndexOrThrow(Mentions.ACCOUNT_ID);
-		mStatusIdIdx = data.getColumnIndexOrThrow(Mentions.STATUS_ID);
-		mStatusTimestampIdx = data.getColumnIndexOrThrow(Mentions.STATUS_TIMESTAMP);
-		mScreenNameIdx = data.getColumnIndexOrThrow(Mentions.SCREEN_NAME);
-		mProfileImageUrlIdx = data.getColumnIndexOrThrow(Mentions.PROFILE_IMAGE_URL);
-		mIsRetweetIdx = data.getColumnIndexOrThrow(Mentions.IS_RETWEET);
-		mIsFavoriteIdx = data.getColumnIndexOrThrow(Mentions.IS_FAVORITE);
-		mIsGapIdx = data.getColumnIndexOrThrow(Mentions.IS_GAP);
-		mHasLocationIdx = data.getColumnIndexOrThrow(Mentions.HAS_LOCATION);
-		mHasMediaIdx = data.getColumnIndexOrThrow(Mentions.HAS_MEDIA);
-		mInReplyToStatusIdIdx = data.getColumnIndexOrThrow(Mentions.IN_REPLY_TO_STATUS_ID);
-		mInReplyToScreennameIdx = data.getColumnIndexOrThrow(Mentions.IN_REPLY_TO_SCREEN_NAME);
-
 	}
 
 	@Override
@@ -163,6 +149,18 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 			cur.close();
 		}
 
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		boolean display_profile_image = mPreferences.getBoolean(
+				PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mAdapter.setDisplayProfileImage(display_profile_image);
+		if (mDisplayProfileImage != display_profile_image) {
+			mDisplayProfileImage = display_profile_image;
+			mListView.invalidateViews();
+		}
 	}
 
 	@Override
@@ -221,69 +219,4 @@ public class ConnectFragment extends SherlockListFragment implements Constants, 
 		super.onStop();
 	}
 
-	private class MentionsAdapter extends SimpleCursorAdapter {
-
-		public MentionsAdapter(Context context) {
-			super(context, R.layout.tweet_list_item, null, new String[] { Mentions.NAME,
-					Mentions.TEXT }, new int[] { R.id.user_name, R.id.tweet_content }, 0);
-		}
-
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-
-			StatusItemHolder holder = (StatusItemHolder) view.getTag();
-
-			if (holder == null) return;
-
-			boolean is_gap = cursor.getInt(mIsGapIdx) == 1;
-
-			holder.setIsGap(is_gap);
-			holder.status_id = cursor.getLong(mStatusIdIdx);
-			holder.account_id = cursor.getLong(mAccountIdIdx);
-
-			if (!is_gap) {
-
-				String screen_name = cursor.getString(mScreenNameIdx);
-				String profile_image_url = cursor.getString(mProfileImageUrlIdx);
-				boolean is_retweet = cursor.getInt(mIsRetweetIdx) == 1;
-				boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
-				boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
-				boolean has_location = cursor.getInt(mHasLocationIdx) == 1;
-				boolean is_reply = cursor.getInt(mInReplyToStatusIdIdx) != -1;
-
-				holder.screen_name.setText("@" + screen_name);
-				holder.tweet_time.setText(mCommonUtils.formatToShortTimeString(cursor
-						.getLong(mStatusTimestampIdx)));
-				holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-						mCommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media),
-						0);
-				holder.in_reply_to.setVisibility(is_reply ? View.VISIBLE : View.GONE);
-				if (is_reply) {
-					holder.in_reply_to.setText(getString(R.string.in_reply_to,
-							cursor.getString(mInReplyToScreennameIdx)));
-				}
-				URL url = null;
-				try {
-					url = new URL(profile_image_url);
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-				if (url != null) {
-					mListProfileImageLoader.displayImage(url, holder.profile_image);
-				}
-			}
-			super.bindView(view, context, cursor);
-
-		}
-
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-
-			View view = super.newView(context, cursor, parent);
-			StatusItemHolder viewholder = new StatusItemHolder(view);
-			view.setTag(viewholder);
-			return view;
-		}
-
-	}
 }

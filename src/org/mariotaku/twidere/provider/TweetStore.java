@@ -8,6 +8,11 @@ public class TweetStore {
 	public static final String PROTOCOL_CONTENT = "content://";
 
 	public static final String AUTHORITY = "org.mariotaku.twidere.provider.TweetStore";
+	
+	public static final String KEY_TYPE = "type";
+	
+	public static final int VALUE_TYPE_STATUS = 1;
+	public static final int VALUE_TYPE_MENTION = 2;
 
 	private static final String TYPE_PRIMARY_KEY = "INTEGER PRIMARY KEY AUTOINCREMENT";
 
