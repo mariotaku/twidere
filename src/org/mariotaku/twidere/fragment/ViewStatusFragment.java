@@ -11,7 +11,6 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import roboguice.inject.InjectExtra;
-
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -38,7 +37,7 @@ public class ViewStatusFragment extends BaseFragment {
 		mName = (TextView) view.findViewById(R.id.name);
 		mScreenName = (TextView) view.findViewById(R.id.screen_name);
 		mText = (TextView) view.findViewById(R.id.text);
-		mProfileImage =(ImageView)view.findViewById(R.id.profile_image);
+		mProfileImage = (ImageView) view.findViewById(R.id.profile_image);
 		mResolver = getSherlockActivity().getContentResolver();
 		Uri uri;
 		String[] cols;
@@ -56,7 +55,7 @@ public class ViewStatusFragment extends BaseFragment {
 				where = Statuses.STATUS_ID + "=" + mStatusId;
 				break;
 		}
-		
+
 		Cursor cur = mResolver.query(uri, cols, where, null, null);
 		if (cur != null && cur.getCount() > 0) {
 			cur.moveToFirst();
@@ -66,10 +65,11 @@ public class ViewStatusFragment extends BaseFragment {
 			mScreenName.setText(screen_name != null ? "@" + screen_name : "");
 			String text = cur.getString(cur.getColumnIndexOrThrow(Statuses.TEXT));
 			mText.setText(text != null ? text : "");
-			
-			LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
-					.getListProfileImageLoader();
-			String profile_image_url = cur.getString(cur.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL));
+
+			LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity()
+					.getApplication()).getListProfileImageLoader();
+			String profile_image_url = cur.getString(cur
+					.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL));
 			URL url = null;
 			try {
 				url = new URL(profile_image_url);
@@ -78,7 +78,9 @@ public class ViewStatusFragment extends BaseFragment {
 			}
 			imageloader.displayImage(url, mProfileImage);
 		}
-		if (cur != null) cur.close();
+		if (cur != null) {
+			cur.close();
+		}
 	}
 
 	@Override

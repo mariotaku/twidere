@@ -143,7 +143,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.compose, menu);
+		getSupportMenuInflater().inflate(R.menu.menu_compose, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 

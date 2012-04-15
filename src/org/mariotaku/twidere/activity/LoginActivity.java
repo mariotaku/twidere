@@ -171,7 +171,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.login, menu);
+		getSupportMenuInflater().inflate(R.menu.menu_login, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 

@@ -18,7 +18,6 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 public class ViewStatusActivity extends BaseActivity {
@@ -47,8 +46,18 @@ public class ViewStatusActivity extends BaseActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.view_status, menu);
+		getSupportMenuInflater().inflate(R.menu.menu_status, menu);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				finish();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -82,7 +91,7 @@ public class ViewStatusActivity extends BaseActivity {
 				where = Statuses.STATUS_ID + "=" + mStatusId;
 				break;
 		}
-		
+
 		Cursor cur = mResolver.query(uri, cols, where, null, null);
 		if (cur != null && cur.getCount() > 0) {
 			cur.moveToFirst();
@@ -90,17 +99,10 @@ public class ViewStatusActivity extends BaseActivity {
 			long user_id = cur.getLong(idx);
 			menu.findItem(MENU_DELETE).setVisible(ids.contains(user_id));
 		}
+		if (cur != null) {
+			cur.close();
+		}
 		return super.onPrepareOptionsMenu(menu);
 
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME:
-				finish();
-				break;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 }

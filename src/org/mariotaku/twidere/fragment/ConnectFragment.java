@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
+import java.util.ArrayList;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -14,6 +16,7 @@ import org.mariotaku.twidere.widget.RefreshableListView.OnRefreshListener;
 import org.mariotaku.twidere.widget.StatusesAdapter;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -31,10 +34,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class ConnectFragment extends BaseListFragment implements Constants, OnRefreshListener,
-		LoaderCallbacks<Cursor>, OnScrollListener {
+		LoaderCallbacks<Cursor>, OnScrollListener, OnItemLongClickListener, ActionMode.Callback {
 
 	private StatusesAdapter mAdapter;
 	private ServiceInterface mServiceInterface;
@@ -43,6 +53,7 @@ public class ConnectFragment extends BaseListFragment implements Constants, OnRe
 
 	private Handler mHandler;
 	private Runnable mTicker;
+	private ContentResolver mResolver;
 
 	private boolean mBusy = false, mTickerStopped = false;
 
@@ -60,7 +71,7 @@ public class ConnectFragment extends BaseListFragment implements Constants, OnRe
 			} else if ((ConnectFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
 					.equals(action)) {
 				if (mListView != null) {
-					mListView.smoothScrollToPosition(0);
+					mListView.setSelection(0);
 				}
 			}
 		}
@@ -69,11 +80,36 @@ public class ConnectFragment extends BaseListFragment implements Constants, OnRe
 	private SharedPreferences mPreferences;
 	private boolean mDisplayProfileImage;
 
+	private long mSelectedStatusId;
+
+	@Override
+	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+		Uri uri = Mentions.CONTENT_URI;
+		String[] cols = Mentions.COLUMNS;
+		String where = Mentions.STATUS_ID + "=" + mSelectedStatusId;
+		Cursor cur = mResolver.query(uri, cols, where, null, null);
+		if (cur != null && cur.getCount() > 0) {
+			cur.moveToFirst();
+			int idx = cur.getColumnIndexOrThrow(Mentions.TEXT);
+			String text = cur.getString(idx);
+			Toast.makeText(
+					getSherlockActivity(),
+					"Item " + item.getTitle() + " in fragment " + getClass().getSimpleName()
+							+ " clicked, tweet content: " + text, Toast.LENGTH_LONG).show();
+		}
+		if (cur != null) {
+			cur.close();
+		}
+		mode.finish();
+		return true;
+	}
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME,
 				Context.MODE_PRIVATE);
+		mResolver = getSherlockActivity().getContentResolver();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getServiceInterface();
@@ -84,7 +120,14 @@ public class ConnectFragment extends BaseListFragment implements Constants, OnRe
 		mListView = (RefreshableListView) getListView();
 		mListView.setOnRefreshListener(this);
 		mListView.setOnScrollListener(this);
+		mListView.setOnItemLongClickListener(this);
 		getLoaderManager().initLoader(0, null, this);
+	}
+
+	@Override
+	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.action_status, menu);
+		return true;
 	}
 
 	@Override
@@ -97,7 +140,24 @@ public class ConnectFragment extends BaseListFragment implements Constants, OnRe
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.timeline, container, false);
+		return inflater.inflate(R.layout.refreshable_list, container, false);
+	}
+
+	@Override
+	public void onDestroyActionMode(ActionMode mode) {
+
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+		Object tag = view.getTag();
+		if (tag instanceof StatusItemHolder) {
+			StatusItemHolder holder = (StatusItemHolder) tag;
+			if (holder.isGap()) return false;
+			mSelectedStatusId = holder.status_id;
+			getSherlockActivity().startActionMode(this);
+		}
+		return true;
 	}
 
 	@Override
@@ -129,6 +189,37 @@ public class ConnectFragment extends BaseListFragment implements Constants, OnRe
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.changeCursor(data);
+	}
+
+	@Override
+	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		String[] accounts_cols = new String[] { Accounts.USER_ID };
+		Cursor accounts_cur = mResolver
+				.query(Accounts.CONTENT_URI, accounts_cols, null, null, null);
+		ArrayList<Long> ids = new ArrayList<Long>();
+		if (accounts_cur != null) {
+			accounts_cur.moveToFirst();
+			int idx = accounts_cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			while (!accounts_cur.isAfterLast()) {
+				ids.add(accounts_cur.getLong(idx));
+				accounts_cur.moveToNext();
+			}
+			accounts_cur.close();
+		}
+		Uri uri = Mentions.CONTENT_URI;
+		String[] cols = Mentions.COLUMNS;
+		String where = Mentions.STATUS_ID + "=" + mSelectedStatusId;
+		Cursor cur = mResolver.query(uri, cols, where, null, null);
+		if (cur != null && cur.getCount() > 0) {
+			cur.moveToFirst();
+			int idx = cur.getColumnIndexOrThrow(Mentions.USER_ID);
+			long user_id = cur.getLong(idx);
+			menu.findItem(MENU_DELETE).setVisible(ids.contains(user_id));
+		}
+		if (cur != null) {
+			cur.close();
+		}
+		return true;
 	}
 
 	@Override
@@ -218,5 +309,4 @@ public class ConnectFragment extends BaseListFragment implements Constants, OnRe
 		}
 		super.onStop();
 	}
-
 }

@@ -42,7 +42,7 @@ public class BrowserActivity extends WebViewActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.image_view, menu);
+		getSupportMenuInflater().inflate(R.menu.menu_browser, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 }

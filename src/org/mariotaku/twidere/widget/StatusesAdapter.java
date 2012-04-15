@@ -27,7 +27,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			mHasMediaIdx, mInReplyToStatusIdIdx, mInReplyToScreennameIdx;
 
 	public StatusesAdapter(Context context, LazyImageLoader loader) {
-		super(context, R.layout.tweet_list_item, null, mFrom, mTo, 0);
+		super(context, R.layout.status_list_item, null, mFrom, mTo, 0);
 		mImageLoader = loader;
 	}
 
