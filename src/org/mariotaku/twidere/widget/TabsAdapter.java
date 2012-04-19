@@ -19,6 +19,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	
 	public TabsAdapter(Context context, FragmentManager fm) {
 		super(fm);
+		mContext = context;
 		mTabsInfo.clear();
 	}
 

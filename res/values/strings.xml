@@ -87,15 +87,15 @@
 	<string name="clear_cache">Clear cache</string>
 	<string name="clear_cache_summary">Clear stored profile image cache.</string>
 	<string name="clear_databases">Clear databases</string>
-	<string name="clear_databases_summary">Clear all tweets, user profiles, messages in databases. Don\'t worry, your accounts credentials won\'t loss.</string>
+	<string name="clear_databases_summary">Clear all tweets, profiles, messages. Your accounts credentials won\'t loss.</string>
 	<string name="look_and_feel">Look and feel</string>
 	<string name="dark_theme">Use dark theme</string>
 	<string name="dark_theme_summary">Use dark theme for Twidere.</string>
 	<string name="display_profile_image">Display profile image</string>
 	<string name="display_profile_image_summary">Display profile image, uncheck this will increase list scroll speed and reduce traffic usage.</string>
 	<string name="in_reply_to">In reply to <xliff:g id="user_name">%s</xliff:g></string>
-	<string name="filter">Filter</string>
-	<string name="filter_summary">Hide tweets from unwanted users / sources or contains specified keywords. Filtered tweets will never show in your timeline.</string>
+	<string name="filters">Filters</string>
+	<string name="filters_summary">Hide tweets from unwanted users / sources or contains specified keywords</string>
 	<string name="filters_list">Filters list</string>
 	<string name="users">Users</string>
 	<string name="keywords">Keywords</string>

@@ -34,7 +34,7 @@ public class FilterFragment extends BaseFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.filter, container, false);
+		return inflater.inflate(R.layout.filters_list, container, false);
 	}
 	
 	public static class FilteredUsersFragment extends BaseListFragment {

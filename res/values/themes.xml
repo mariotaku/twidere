@@ -6,9 +6,9 @@
 		<item name="vpiTitlePageIndicatorStyle">@style/Widget.TitlePageIndicator</item>
 		<item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
 		<item name="vpiVerticalTabPageIndicatorStyle">@style/Widget.TabPageIndicator.Vertical</item>
-		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
-		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
-		<!-- <item name="absForceOverflow">true</item> -->
+		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="tabBackground">@null</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="Theme.Holo.Light.DarkActionBar">
@@ -16,9 +16,9 @@
 		<item name="vpiTitlePageIndicatorStyle">@style/Widget.TitlePageIndicator</item>
 		<item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
 		<item name="vpiVerticalTabPageIndicatorStyle">@style/Widget.TabPageIndicator.Vertical</item>
-		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
-		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.Text</item>
-		<!-- <item name="absForceOverflow">true</item> -->
+		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="tabBackground">@drawable/tab_background_dark</item>
 	</style>
 
 </resources>
