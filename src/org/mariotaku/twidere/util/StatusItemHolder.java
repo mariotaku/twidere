@@ -21,7 +21,7 @@ public class StatusItemHolder {
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		user_name = (TextView) view.findViewById(R.id.user_name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
-		tweet_content = (TextView) view.findViewById(R.id.tweet_content);
+		tweet_content = (TextView) view.findViewById(R.id.text);
 		tweet_time = (TextView) view.findViewById(R.id.tweet_time);
 		in_reply_to = (TextView) view.findViewById(R.id.in_reply_to);
 

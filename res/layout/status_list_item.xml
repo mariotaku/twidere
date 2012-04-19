@@ -43,7 +43,7 @@
 			android:textSize="12sp"/>
 
 		<TextView
-			android:id="@+id/tweet_content"
+			android:id="@+id/text"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentRight="true"
@@ -73,7 +73,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignWithParentIfMissing="true"
-			android:layout_below="@+id/tweet_content"
+			android:layout_below="@+id/text"
 			android:layout_toRightOf="@+id/profile_image"
 			android:drawableLeft="@drawable/ic_tweet_stat_reply"
 			android:drawablePadding="2dip"

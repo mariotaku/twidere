@@ -11,8 +11,6 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusItemHolder;
-import org.mariotaku.twidere.widget.RefreshableListView;
-import org.mariotaku.twidere.widget.RefreshableListView.OnRefreshListener;
 import org.mariotaku.twidere.widget.StatusesAdapter;
 
 import android.content.BroadcastReceiver;
@@ -35,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -42,17 +41,17 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public class HomeTimelineFragment extends RoboSherlockListFragment implements Constants,
-		OnRefreshListener, LoaderCallbacks<Cursor>, OnScrollListener, OnItemLongClickListener,
+public class HomeTimelineFragment extends BaseFragment implements Constants, OnRefreshListener,
+		LoaderCallbacks<Cursor>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
 		ActionMode.Callback {
 
 	private StatusesAdapter mAdapter;
 	private ServiceInterface mServiceInterface;
-	private RefreshableListView mListView;
-	private boolean mIsUserRefresh, mBusy, mTickerStopped;
-	private View mFooterView;
+	private PullToRefreshListView mListView;
+	private boolean mBusy, mTickerStopped;
 
 	private Handler mHandler;
 	private Runnable mTicker;
@@ -64,15 +63,12 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
-				if (mIsUserRefresh) {
-					mListView.completeRefreshing();
-					mIsUserRefresh = false;
-				}
+				mListView.onRefreshComplete();
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if ((HomeTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
 					.equals(action)) {
 				if (mListView != null) {
-					mListView.setSelection(0);
+					mListView.getRefreshableView().setSelection(0);
 				}
 			}
 		}
@@ -116,13 +112,13 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
 		mAdapter = new StatusesAdapter(getSherlockActivity(), imageloader);
-		mListView = (RefreshableListView) getListView();
-		mFooterView = getLayoutInflater(null).inflate(R.layout.statuses_list_footer, null, false);
+		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
-		mListView.setOnScrollListener(this);
-		mListView.setOnItemLongClickListener(this);
-		mListView.addFooterView(mFooterView);
-		setListAdapter(mAdapter);
+		ListView list = mListView.getRefreshableView();
+		list.setOnScrollListener(this);
+		list.setOnItemClickListener(this);
+		list.setOnItemLongClickListener(this);
+		list.setAdapter(mAdapter);
 		getLoaderManager().initLoader(0, null, this);
 	}
 
@@ -151,20 +147,8 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		Object tag = view.getTag();
-		if (tag instanceof StatusItemHolder) {
-			StatusItemHolder holder = (StatusItemHolder) tag;
-			if (holder.isGap()) return false;
-			mSelectedStatusId = holder.status_id;
-			getSherlockActivity().startActionMode(this);
-		}
-		return true;
-	}
-
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		Object tag = v.getTag();
 		if (tag instanceof StatusItemHolder) {
 			StatusItemHolder holder = (StatusItemHolder) tag;
 			long status_id = holder.status_id;
@@ -181,6 +165,18 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 				startActivity(intent);
 			}
 		}
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+		Object tag = view.getTag();
+		if (tag instanceof StatusItemHolder) {
+			StatusItemHolder holder = (StatusItemHolder) tag;
+			if (holder.isGap()) return false;
+			mSelectedStatusId = holder.status_id;
+			getSherlockActivity().startActionMode(this);
+		}
+		return true;
 	}
 
 	@Override
@@ -226,7 +222,6 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 
 	@Override
 	public void onRefresh() {
-		mIsUserRefresh = true;
 		String[] cols = new String[] { Accounts.USER_ID };
 		Cursor cur = getSherlockActivity().getContentResolver().query(Accounts.CONTENT_URI, cols,
 				null, null, null);
@@ -252,7 +247,7 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		if (mDisplayProfileImage != display_profile_image) {
 			mDisplayProfileImage = display_profile_image;
-			mListView.invalidateViews();
+			mListView.getRefreshableView().invalidateViews();
 		}
 	}
 
@@ -264,7 +259,6 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 		if (mBottomReached != reached) {
 			mBottomReached = reached;
 			if (mBottomReached) {
-				mFooterView.setVisibility(View.VISIBLE);
 			}
 		}
 
@@ -301,7 +295,7 @@ public class HomeTimelineFragment extends RoboSherlockListFragment implements Co
 			public void run() {
 				if (mTickerStopped) return;
 				if (mListView != null && !mBusy) {
-					mListView.invalidateViews();
+					mListView.getRefreshableView().invalidateViews();
 				}
 				final long now = SystemClock.uptimeMillis();
 				final long next = now + 1000 - now % 1000;

@@ -1,6 +1,5 @@
 package org.mariotaku.twidere.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Criteria;
@@ -14,11 +13,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.actionbarsherlock.view.Window;
+import com.google.inject.Inject;
 
 public class MapActivity extends WebViewActivity implements LocationListener {
 
 	private Uri mUri = Uri.parse("file:///android_asset/mapview.html");
 	private Location mostRecentLocation;
+	@Inject private LocationManager mLocationManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,15 +58,14 @@ public class MapActivity extends WebViewActivity implements LocationListener {
 	 * mechanism) and finds the last known location.
 	 **/
 	private void getLocation() {
-		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		String provider = locationManager.getBestProvider(criteria, true);
+		String provider = mLocationManager.getBestProvider(criteria, true);
 
 		// In order to make sure the device is getting location, request
 		// updates. locationManager.requestLocationUpdates(provider, 1, 0,
 		// this);
-		mostRecentLocation = locationManager.getLastKnownLocation(provider);
+		mostRecentLocation = mLocationManager.getLastKnownLocation(provider);
 	}
 
 	/** Sets up the WebView object and loads the URL of the page **/

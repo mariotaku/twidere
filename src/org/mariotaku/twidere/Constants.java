@@ -49,6 +49,8 @@ public interface Constants {
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_ACTION_PREFIX
 			+ "SELECT_ACCOUNT";
 	public static final String INTENT_ACTION_VIEW_STATUS = INTENT_ACTION_PREFIX + "VIEW_STATUS";
+	public static final String INTENT_ACTION_FILTERS = INTENT_ACTION_PREFIX + "FILTERS";
+	public static final String INTENT_ACTION_ABOUT = INTENT_ACTION_PREFIX + "ABOUT";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;

@@ -176,6 +176,17 @@
 			android:name=".service.UpdateService"
 			android:label="@string/label_update_service">
 		</service>
+
+		<activity
+			android:name=".activity.FilterActivity"
+			android:label="@string/filters_list">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.FILTERS"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
 	</application>
 
 </manifest>

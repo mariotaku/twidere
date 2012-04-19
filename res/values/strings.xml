@@ -94,5 +94,12 @@
 	<string name="display_profile_image">Display profile image</string>
 	<string name="display_profile_image_summary">Display profile image, uncheck this will increase list scroll speed and reduce traffic usage.</string>
 	<string name="in_reply_to">In reply to <xliff:g id="user_name">%s</xliff:g></string>
+	<string name="filter">Filter</string>
+	<string name="filter_summary">Hide tweets from unwanted users / sources or contains specified keywords. Filtered tweets will never show in your timeline.</string>
+	<string name="filters_list">Filters list</string>
+	<string name="users">Users</string>
+	<string name="keywords">Keywords</string>
+	<string name="sources">Sources</string>
+	<string name="content">Content</string>
 
 </resources>

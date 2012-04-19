@@ -25,8 +25,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.Window;
-
 public class AuthorizationActivity extends WebViewActivity {
 
 	private Uri authUrl;
@@ -37,7 +35,6 @@ public class AuthorizationActivity extends WebViewActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		authUrl = getIntent().getData();
 		if (authUrl == null) {
 			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT);

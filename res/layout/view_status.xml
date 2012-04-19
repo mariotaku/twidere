@@ -20,20 +20,8 @@
 		android:layout_height="wrap_content"
 		android:layout_alignTop="@+id/profile_image"
 		android:layout_toRightOf="@+id/profile_image"
-		android:padding="8dip"
 		android:text="Name"
 		android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-	<TextView
-		android:id="@+id/screen_name"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignBottom="@+id/profile_image"
-		android:layout_toRightOf="@+id/profile_image"
-		android:padding="8dip"
-		android:text="screenname"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="?android:attr/textColorSecondary"/>
 
 	<TextView
 		android:id="@+id/text"
@@ -45,5 +33,15 @@
 		android:singleLine="false"
 		android:text="Text"
 		android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+	<TextView
+		android:id="@+id/screen_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/name"
+		android:layout_below="@+id/name"
+		android:text="screenname"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="?android:attr/textColorSecondary"/>
 
 </RelativeLayout>

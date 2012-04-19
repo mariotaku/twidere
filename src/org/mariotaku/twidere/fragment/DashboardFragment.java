@@ -1,6 +1,5 @@
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
 import android.os.Bundle;
@@ -10,16 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.actionbarsherlock.app.SherlockFragment;
-
-public class DashboardFragment extends SherlockFragment implements Constants {
+public class DashboardFragment extends BaseFragment {
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		Fragment fragment = MULTIPLE_ACCOUNTS_ENABLED ? new AccountsFragment() : new MeFragment();
-		ft.replace(R.id.content, fragment);
+		ft.replace(R.id.dashboard, fragment);
 		ft.commit();
 	}
 

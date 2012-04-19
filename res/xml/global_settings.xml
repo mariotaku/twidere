@@ -18,6 +18,17 @@
 			android:title="@string/display_profile_image"/>
 	</PreferenceCategory>
 	<PreferenceCategory
+		android:key="cat_content"
+		android:title="@string/content">
+		<PreferenceScreen
+			android:summary="@string/license_summary"
+			android:title="@string/license">
+			<intent
+				android:action="org.mariotaku.twidere.FILTERS"
+				android:targetPackage="org.mariotaku.twidere"/>
+		</PreferenceScreen>
+	</PreferenceCategory>
+	<PreferenceCategory
 		android:key="cat_storage"
 		android:title="@string/storage">
 		<org.mariotaku.preferences.SeekBarPreference
@@ -91,16 +102,14 @@
 			android:summary="@string/about_summary"
 			android:title="@string/about">
 			<intent
-				android:action="android.​intent.action.MAIN"
-				android:targetClass="org.mariotaku.twidere.activity.AboutActivity"
+				android:action="android.​intent.action.ABOUT"
 				android:targetPackage="org.mariotaku.twidere"/>
 		</PreferenceScreen>
 		<PreferenceScreen
 			android:summary="@string/license_summary"
 			android:title="@string/license">
 			<intent
-				android:action="android.​intent.action.MAIN"
-				android:targetClass="org.mariotaku.twidere.activity.LicenseActivity"
+				android:action="android.​intent.action.LICENSE"
 				android:targetPackage="org.mariotaku.twidere"/>
 		</PreferenceScreen>
 	</PreferenceCategory>

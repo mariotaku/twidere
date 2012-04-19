@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -147,10 +148,11 @@ public class ServiceInterface implements Constants, IUpdateService {
 	}
 
 	@Override
-	public void updateStatus(long[] account_ids, String content, Uri image_uri) {
+	public void updateStatus(long[] account_ids, String content, Location location, Uri image_uri,
+			long in_reply_to) {
 		if (mService == null) return;
 		try {
-			mService.updateStatus(account_ids, content, image_uri);
+			mService.updateStatus(account_ids, content, location, image_uri, in_reply_to);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

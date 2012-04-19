@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 public class StatusesAdapter extends SimpleCursorAdapter {
 
 	private final static String[] mFrom = new String[] { Statuses.NAME, Statuses.TEXT };
-	private final static int[] mTo = new int[] { R.id.user_name, R.id.tweet_content };
+	private final static int[] mTo = new int[] { R.id.user_name, R.id.text };
 	private boolean mDisplayProfileImage;
 	private LazyImageLoader mImageLoader;
 	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx,

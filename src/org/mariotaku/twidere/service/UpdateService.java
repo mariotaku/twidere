@@ -1,30 +1,29 @@
 package org.mariotaku.twidere.service;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.IUpdateService;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.CommonUtils;
 
 import roboguice.service.RoboService;
+import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
+import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
 import twitter4j.User;
-import twitter4j.auth.AccessToken;
-import twitter4j.auth.BasicAuthorization;
-import twitter4j.conf.ConfigurationBuilder;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -35,6 +34,7 @@ public class UpdateService extends RoboService implements Constants {
 	private final ServiceStub mBinder = new ServiceStub(this);
 	private RefreshHomeTimelineTask mRefreshHomeTimelineTask;
 	private RefreshMentionsTask mRefreshMentionsTask;
+	private UpdateStatusTask mUpdateStatusTask;
 
 	public boolean isHomeTimelineRefreshing() {
 		return mRefreshHomeTimelineTask != null && !mRefreshHomeTimelineTask.isCancelled();
@@ -66,10 +66,17 @@ public class UpdateService extends RoboService implements Constants {
 	}
 
 	public void refreshMessages(long[] account_ids, long[] max_ids) {
+
 	}
 
-	public void updateStatus(long[] account_ids, String content, Uri image_uri) {
-
+	public void updateStatus(long[] account_ids, String content, Location location, Uri image_uri,
+			long in_reply_to) {
+		if (mUpdateStatusTask != null) {
+			mUpdateStatusTask.cancel();
+		}
+		mUpdateStatusTask = new UpdateStatusTask(account_ids, content, location, image_uri,
+				in_reply_to);
+		mUpdateStatusTask.execute();
 	}
 
 	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {
@@ -121,63 +128,17 @@ public class UpdateService extends RoboService implements Constants {
 
 			int idx = 0;
 			for (long account_id : account_ids) {
-				StringBuilder where = new StringBuilder();
-				where.append(Accounts.USER_ID + "=" + account_id);
-				Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS,
-						where.toString(), null, null);
-				if (cur != null) {
-					if (cur.getCount() == 1) {
-						cur.moveToFirst();
-						ConfigurationBuilder cb = new ConfigurationBuilder();
-						String rest_api_base = cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.REST_API_BASE));
-						String search_api_base = cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.SEARCH_API_BASE));
-						if (rest_api_base == null || "".equals(rest_api_base)) {
-							rest_api_base = DEFAULT_REST_API_BASE;
+				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				if (twitter != null) {
+					try {
+						Paging paging = new Paging();
+						if (since_valid) {
+							paging.setMaxId(max_ids[idx]);
 						}
-						if (search_api_base == null || "".equals(search_api_base)) {
-							search_api_base = DEFAULT_SEARCH_API_BASE;
-						}
-						cb.setRestBaseURL(rest_api_base);
-						cb.setSearchBaseURL(search_api_base);
-						Twitter twitter = null;
-						switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
-							case Accounts.AUTH_TYPE_OAUTH:
-							case Accounts.AUTH_TYPE_XAUTH:
-								cb.setOAuthConsumerKey(CONSUMER_KEY);
-								cb.setOAuthConsumerSecret(CONSUMER_SECRET);
-								twitter = new TwitterFactory(cb.build())
-										.getInstance(new AccessToken(
-												cur.getString(cur
-														.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN)),
-												cur.getString(cur
-														.getColumnIndexOrThrow(Accounts.TOKEN_SECRET))));
-								break;
-							case Accounts.AUTH_TYPE_BASIC:
-								twitter = new TwitterFactory(cb.build())
-										.getInstance(new BasicAuthorization(
-												cur.getString(cur
-														.getColumnIndexOrThrow(Accounts.USERNAME)),
-												cur.getString(cur
-														.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD))));
-								break;
-							default:
-						}
-						if (twitter != null) {
-							try {
-								Paging paging = new Paging();
-								if (since_valid) {
-									paging.setMaxId(max_ids[idx]);
-								}
-								result.add(new AccountResponce(account_id, twitter
-										.getHomeTimeline(paging)));
-							} catch (TwitterException e) {
-								e.printStackTrace();
-							}
-						}
+						result.add(new AccountResponce(account_id, twitter.getHomeTimeline(paging)));
+					} catch (TwitterException e) {
+						e.printStackTrace();
 					}
-					cur.close();
 				}
 				idx++;
 			}
@@ -298,64 +259,19 @@ public class UpdateService extends RoboService implements Constants {
 			boolean since_valid = max_ids != null && max_ids.length == account_ids.length;
 
 			int idx = 0;
+
 			for (long account_id : account_ids) {
-				StringBuilder where = new StringBuilder();
-				where.append(Accounts.USER_ID + "=" + account_id);
-				Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS,
-						where.toString(), null, null);
-				if (cur != null) {
-					if (cur.getCount() == 1) {
-						cur.moveToFirst();
-						ConfigurationBuilder cb = new ConfigurationBuilder();
-						String rest_api_base = cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.REST_API_BASE));
-						String search_api_base = cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.SEARCH_API_BASE));
-						if (rest_api_base == null || "".equals(rest_api_base)) {
-							rest_api_base = DEFAULT_REST_API_BASE;
+				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				if (twitter != null) {
+					try {
+						Paging paging = new Paging();
+						if (since_valid) {
+							paging.setMaxId(max_ids[idx]);
 						}
-						if (search_api_base == null || "".equals(search_api_base)) {
-							search_api_base = DEFAULT_SEARCH_API_BASE;
-						}
-						cb.setRestBaseURL(rest_api_base);
-						cb.setSearchBaseURL(search_api_base);
-						Twitter twitter = null;
-						switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
-							case Accounts.AUTH_TYPE_OAUTH:
-							case Accounts.AUTH_TYPE_XAUTH:
-								cb.setOAuthConsumerKey(CONSUMER_KEY);
-								cb.setOAuthConsumerSecret(CONSUMER_SECRET);
-								twitter = new TwitterFactory(cb.build())
-										.getInstance(new AccessToken(
-												cur.getString(cur
-														.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN)),
-												cur.getString(cur
-														.getColumnIndexOrThrow(Accounts.TOKEN_SECRET))));
-								break;
-							case Accounts.AUTH_TYPE_BASIC:
-								twitter = new TwitterFactory(cb.build())
-										.getInstance(new BasicAuthorization(
-												cur.getString(cur
-														.getColumnIndexOrThrow(Accounts.USERNAME)),
-												cur.getString(cur
-														.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD))));
-								break;
-							default:
-						}
-						if (twitter != null) {
-							try {
-								Paging paging = new Paging();
-								if (since_valid) {
-									paging.setMaxId(max_ids[idx]);
-								}
-								result.add(new AccountResponce(account_id, twitter
-										.getMentions(paging)));
-							} catch (TwitterException e) {
-								e.printStackTrace();
-							}
-						}
+						result.add(new AccountResponce(account_id, twitter.getMentions(paging)));
+					} catch (TwitterException e) {
+						e.printStackTrace();
 					}
-					cur.close();
 				}
 				idx++;
 			}
@@ -488,10 +404,58 @@ public class UpdateService extends RoboService implements Constants {
 		}
 
 		@Override
-		public void updateStatus(long[] account_ids, String content, Uri image_uri)
-				throws RemoteException {
-			mService.get().updateStatus(account_ids, content, image_uri);
+		public void updateStatus(long[] account_ids, String content, Location location,
+				Uri image_uri, long in_reply_to) throws RemoteException {
+			mService.get().updateStatus(account_ids, content, location, image_uri, in_reply_to);
 
+		}
+
+	}
+
+	private class UpdateStatusTask extends AbstractTask {
+
+		private long[] account_ids;
+		private String content;
+		private Location location;
+		private Uri image_uri;
+		private long in_reply_to;
+
+		public UpdateStatusTask(long[] account_ids, String content, Location location,
+				Uri image_uri, long in_reply_to) {
+			this.account_ids = account_ids;
+			this.content = content;
+			this.location = location;
+			this.image_uri = image_uri;
+			this.in_reply_to = in_reply_to;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+
+			if (account_ids == null) return null;
+
+			for (long account_id : account_ids) {
+				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				if (twitter != null) {
+					try {
+						StatusUpdate status = new StatusUpdate(content);
+						status.setInReplyToStatusId(in_reply_to);
+						if (location != null) {
+							status.setLocation(new GeoLocation(location.getLatitude(), location
+									.getLongitude()));
+						}
+						String image_path = CommonUtils.getImagePathFromUri(UpdateService.this,
+								image_uri);
+						if (image_path != null) {
+							status.setMedia(new File(image_path));
+						}
+						twitter.updateStatus(status);
+					} catch (TwitterException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return null;
 		}
 
 	}
