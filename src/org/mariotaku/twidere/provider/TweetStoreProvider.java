@@ -123,6 +123,11 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		}
 
 		@Override
+		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			handleVersionChange(db);
+		}
+
+		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			handleVersionChange(db);
 		}
@@ -224,22 +229,24 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 						continue;
 					}
 
+					int idx = cur.getColumnIndex(new_col);
+
 					if (isColumnContained(old_cols, new_col)) {
 						String old_type = getTypeString(db, table, new_col);
 						boolean compatible = isTypeCompatible(old_type, new_type);
-						if (compatible) {
+						if (compatible && idx > -1) {
 							switch (getTypeInt(new_type)) {
 								case FIELD_TYPE_INTEGER:
-									values.put(new_col, cur.getLong(i));
+									values.put(new_col, cur.getLong(idx));
 									break;
 								case FIELD_TYPE_FLOAT:
-									values.put(new_col, cur.getFloat(i));
+									values.put(new_col, cur.getFloat(idx));
 									break;
 								case FIELD_TYPE_STRING:
-									values.put(new_col, cur.getString(i));
+									values.put(new_col, cur.getString(idx));
 									break;
 								case FIELD_TYPE_BLOB:
-									values.put(new_col, cur.getBlob(i));
+									values.put(new_col, cur.getBlob(idx));
 									break;
 								case FIELD_TYPE_NULL:
 								default:

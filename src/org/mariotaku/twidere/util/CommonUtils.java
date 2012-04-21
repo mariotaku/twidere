@@ -19,11 +19,19 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
+import android.view.View;
 
 public class CommonUtils implements Constants {
 
@@ -85,6 +93,10 @@ public class CommonUtils implements Constants {
 		return getImagePathFromUri(mContext, uri);
 	}
 
+	public Bitmap getPreviewBitmap(int color) {
+		return getPreviewBitmap(mContext, color);
+	}
+
 	public Twitter getTwitterInstance(long account_id) {
 		return getTwitterInstance(mContext, account_id);
 	}
@@ -129,6 +141,37 @@ public class CommonUtils implements Constants {
 		return then.format3339(true);
 	}
 
+	public static int getAccountColor(Context context, long account_id) {
+		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+				new String[] { Accounts.USER_COLOR }, Accounts.USER_ID + "=" + account_id, null,
+				null);
+		if (cur == null || cur.getCount() <= 0) return Color.TRANSPARENT;
+		cur.moveToFirst();
+		int color = cur.getInt(cur.getColumnIndexOrThrow(Accounts.USER_COLOR));
+		if (cur != null) {
+			cur.close();
+		}
+		return color;
+	}
+
+	public static long[] getActivatedAccounts(Context context) {
+		long[] accounts = new long[] {};
+		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+				new String[] { Accounts.USER_ID }, Accounts.IS_ACTIVATED + "=1", null, null);
+		if (cur != null) {
+			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			cur.moveToFirst();
+			accounts = new long[cur.getCount()];
+			int i = 0;
+			while (!cur.isAfterLast()) {
+				accounts[i] = cur.getLong(idx);
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		return accounts;
+	}
+
 	public static String getImagePathFromUri(Context context, Uri uri) {
 		if (uri == null) return null;
 
@@ -150,6 +193,50 @@ public class CommonUtils implements Constants {
 			return path;
 		} else if (uri.getScheme().equals("file")) return uri.getPath();
 		return null;
+	}
+
+	public static Bitmap getPreviewBitmap(Context context, int color) {
+
+		float density = context.getResources().getDisplayMetrics().density;
+		int width = (int) (32 * density), height = (int) (32 * density);
+
+		Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+		Canvas canvas = new Canvas(bm);
+
+		int rectrangle_size = (int) (density * 5);
+		int numRectanglesHorizontal = (int) Math.ceil(width / rectrangle_size);
+		int numRectanglesVertical = (int) Math.ceil(height / rectrangle_size);
+		Rect r = new Rect();
+		boolean verticalStartWhite = true;
+		for (int i = 0; i <= numRectanglesVertical; i++) {
+
+			boolean isWhite = verticalStartWhite;
+			for (int j = 0; j <= numRectanglesHorizontal; j++) {
+
+				r.top = i * rectrangle_size;
+				r.left = j * rectrangle_size;
+				r.bottom = r.top + rectrangle_size;
+				r.right = r.left + rectrangle_size;
+				Paint paint = new Paint();
+				paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
+
+				canvas.drawRect(r, paint);
+
+				isWhite = !isWhite;
+			}
+
+			verticalStartWhite = !verticalStartWhite;
+
+		}
+		canvas.drawColor(color);
+		Paint paint = new Paint();
+		paint.setColor(Color.WHITE);
+		paint.setStrokeWidth(2.0f);
+		float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0,
+				height, width, height };
+		canvas.drawLines(points, paint);
+
+		return bm;
 	}
 
 	public static Twitter getTwitterInstance(Context context, long account_id) {
@@ -209,6 +296,12 @@ public class CommonUtils implements Constants {
 			return R.drawable.ic_tweet_stat_has_media;
 		else if (has_location) return R.drawable.ic_tweet_stat_has_location;
 		return 0;
+	}
+
+	public static void setLayerType(View view, int layerType, Paint paint) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			new MethodsCompat().setLayerType(view, layerType, paint);
+		}
 	}
 
 	private class ServiceBinder implements ServiceConnection {

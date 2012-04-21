@@ -18,5 +18,9 @@
 	<item name="retweet" type="id"/>
 	<item name="fav" type="id"/>
 	<item name="share" type="id"/>
+	<item name="edit_api" type="id"/>
+	<item name="set_color" type="id"/>
+	<item name="open_in_browser" type="id"/>
+	<item name="add_account" type="id"/>
 
 </resources>

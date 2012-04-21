@@ -29,6 +29,7 @@
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.BROADCAST_STICKY"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 	<uses-permission android:name="org.mariotaku.twidere.READ_DATABASES"/>
@@ -61,11 +62,12 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.LoginActivity"
+			android:name=".activity.TwitterLoginActivity"
 			android:label="@string/login_to_twitter"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.TWITTER_LOGIN"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
@@ -183,6 +185,17 @@
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.FILTERS"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.SetColorActivity"
+			android:label="@string/set_color"
+			android:theme="@style/Theme.Holo.Light.Dialog">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.SET_COLOR"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

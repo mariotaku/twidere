@@ -1,6 +1,5 @@
 package org.mariotaku.twidere.activity;
 
-
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ConnectFragment;
@@ -64,7 +63,7 @@ public class HomeActivity extends BaseActivity {
 		cur.close();
 
 		if (accounts_count <= 0) {
-			startActivity(new Intent(this, LoginActivity.class));
+			startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
 			finish();
 			return;
 		}

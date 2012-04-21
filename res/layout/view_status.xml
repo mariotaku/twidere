@@ -4,44 +4,90 @@
 	android:layout_height="match_parent"
 	android:padding="8dip">
 
-	<org.mariotaku.twidere.widget.RoundCorneredImageView
-		android:id="@+id/profile_image"
-		android:layout_width="@dimen/profile_image_size"
-		android:layout_height="@dimen/profile_image_size"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentTop="true"
-		android:layerType="software"
-		android:scaleType="fitCenter"
-		android:src="@drawable/ic_profile_image_default"/>
+	<RelativeLayout
+		android:id="@+id/profile"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
 
-	<TextView
-		android:id="@+id/name"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignTop="@+id/profile_image"
-		android:layout_toRightOf="@+id/profile_image"
-		android:text="Name"
-		android:textAppearance="?android:attr/textAppearanceMedium"/>
+		<org.mariotaku.twidere.widget.RoundCorneredImageView
+			android:id="@+id/profile_image"
+			android:layout_width="@dimen/profile_image_size"
+			android:layout_height="@dimen/profile_image_size"
+			android:layerType="software"
+			android:scaleType="fitCenter"
+			android:src="@drawable/ic_profile_image_default"/>
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@+id/profile_image"
+			android:layout_alignTop="@+id/profile_image"
+			android:layout_toLeftOf="@+id/follow_indicator"
+			android:layout_toRightOf="@+id/profile_image"
+			android:gravity="center_vertical"
+			android:orientation="vertical"
+			android:paddingLeft="8dip"
+			android:paddingRight="4dip">
+
+			<TextView
+				android:id="@+id/name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:text="Name"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<TextView
+				android:id="@+id/screen_name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:text="screenname"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="?android:attr/textColorSecondary"/>
+		</LinearLayout>
+
+		<FrameLayout
+			android:id="@+id/follow_indicator"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true">
+
+			<Button
+				android:id="@+id/follow"
+				style="?android:attr/buttonStyleSmall"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/follow"/>
+
+			<ProgressBar
+				android:id="@+id/progress"
+				style="?android:attr/progressBarStyleSmall"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"/>
+		</FrameLayout>
+	</RelativeLayout>
 
 	<TextView
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/profile_image"
-		android:layout_below="@+id/profile_image"
+		android:layout_alignLeft="@+id/profile"
+		android:layout_below="@+id/profile"
 		android:padding="8dip"
 		android:singleLine="false"
 		android:text="Text"
 		android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 	<TextView
-		android:id="@+id/screen_name"
+		android:id="@+id/source"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/name"
-		android:layout_below="@+id/name"
-		android:text="screenname"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="?android:attr/textColorSecondary"/>
+		android:layout_alignLeft="@+id/text"
+		android:layout_below="@+id/text"
+		android:text="@string/sent_from"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 </RelativeLayout>

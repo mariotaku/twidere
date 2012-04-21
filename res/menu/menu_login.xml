@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@+id/edit_api"
+		android:id="@id/edit_api"
 		android:icon="@drawable/ic_menu_edit"
 		android:showAsAction="always"
 		android:title="@string/edit_api">
 	</item>
 	<item
-		android:id="@+id/settings"
+		android:id="@id/settings"
 		android:icon="@drawable/ic_menu_preferences"
 		android:showAsAction="ifRoom"
 		android:title="@string/global_settings"/>

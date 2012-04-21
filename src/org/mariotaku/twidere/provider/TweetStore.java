@@ -93,19 +93,27 @@ public class TweetStore {
 		 */
 		public final static String SEARCH_API_BASE = "search_api_base";
 
+		public final static String USER_COLOR = "user_color";
+
 		/**
 		 * Set to a non-zero integer if the account is activated. <br>
 		 * Type: INTEGER (boolean)
 		 */
 		public final static String IS_ACTIVATED = "is_activated";
 
+		/**
+		 * User's profile image URL of the status. <br>
+		 * Type: TEXT NOT NULL
+		 */
+		public final static String PROFILE_IMAGE_URL = "profile_image_url";
+
 		public final static String[] COLUMNS = new String[] { _ID, USERNAME, USER_ID, AUTH_TYPE,
 				BASIC_AUTH_PASSWORD, OAUTH_TOKEN, TOKEN_SECRET, REST_API_BASE, SEARCH_API_BASE,
-				IS_ACTIVATED };
+				PROFILE_IMAGE_URL, USER_COLOR, IS_ACTIVATED };
 
 		public final static String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL,
 				TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_BOOLEAN };
+				TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
 
 	}
 
@@ -170,12 +178,6 @@ public class TweetStore {
 		public final static String HAS_LOCATION = "has_location";
 
 		/**
-		 * Set to a non-zero integer if the status was a send by your self. <br>
-		 * Type: INTEGER (boolean)
-		 */
-		public final static String IS_TWEET_BY_ME = "is_tweet_by_me";
-
-		/**
 		 * 如果数值非0，则这是一个间隔 <br>
 		 * Type: INTEGER (boolean)
 		 */
@@ -199,6 +201,8 @@ public class TweetStore {
 
 		public final static String IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
 
+		public final static String SOURCE = "source";
+
 		/**
 		 * Timestamp of the status. <br>
 		 * Type: INTEGER
@@ -209,13 +213,13 @@ public class TweetStore {
 
 		public final static String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID,
 				STATUS_TIMESTAMP, TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL,
-				IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID, IN_REPLY_TO_SCREEN_NAME, IS_RETWEET,
-				IS_FAVORITE, HAS_MEDIA, HAS_LOCATION, IS_TWEET_BY_ME, IS_GAP };
+				IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID, IN_REPLY_TO_SCREEN_NAME, SOURCE,
+				IS_RETWEET, IS_FAVORITE, HAS_MEDIA, HAS_LOCATION, IS_GAP };
 
 		public final static String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT,
 				TYPE_INT_UNIQUE, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN,
-				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
+				TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN,
+				TYPE_BOOLEAN, TYPE_BOOLEAN };
 
 	}
 }

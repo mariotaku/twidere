@@ -48,7 +48,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 	private boolean mIsImageAttached, mIsPhotoAttached, mIsLocationAttached;
 	private long[] mAccountIds;
 	private ServiceInterface mInterface;
-	private Location mostRecentLocation;
+	private Location mRecentLocation;
 	@Inject private LocationManager mLocationManager;
 
 	@Override
@@ -99,7 +99,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 						break;
 					}
 					long[] user_ids = bundle.getLongArray(Accounts.USER_IDS);
-					if (user_ids == null) {
+					if (user_ids != null) {
 						mAccountIds = user_ids;
 					}
 				}
@@ -113,12 +113,15 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 		switch (v.getId()) {
 			case R.id.send:
 				String content = mEditText != null ? mEditText.getText().toString() : null;
-				mInterface.updateStatus(mAccountIds, content, mostRecentLocation, mImageUri, -1);
+				mInterface.updateStatus(mAccountIds, content, mRecentLocation, mImageUri, -1);
 				finish();
 				break;
 			case R.id.select_account:
-				startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT),
-						REQUEST_SELECT_ACCOUNT);
+				Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
+				Bundle bundle = new Bundle();
+				bundle.putLongArray(Accounts.USER_IDS, mAccountIds);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
 		}
 
@@ -137,21 +140,29 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 		int length = mEditText.length();
 		mTextCount.setText(String.valueOf(length));
 		mSendButton.setEnabled(length > 0 && length <= 140);
-		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.USER_ID }, Accounts.IS_ACTIVATED + "=1", null, null);
-		if (cur != null && cur.getCount() > 0) {
-			int userid_idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
-			mAccountIds = new long[cur.getCount()];
-			cur.moveToFirst();
-			int idx = 0;
-			while (!cur.isAfterLast()) {
-				mAccountIds[idx] = cur.getLong(userid_idx);
-				idx++;
-				cur.moveToNext();
+
+		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
+		long[] activated_ids = bundle != null ? bundle.getLongArray(Accounts.USER_IDS) : null;
+
+		if (activated_ids == null) {
+			Cursor cur = getContentResolver().query(Accounts.CONTENT_URI,
+					new String[] { Accounts.USER_ID }, Accounts.IS_ACTIVATED + "=1", null, null);
+			if (cur != null && cur.getCount() > 0) {
+				int userid_idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
+				mAccountIds = new long[cur.getCount()];
+				cur.moveToFirst();
+				int idx = 0;
+				while (!cur.isAfterLast()) {
+					mAccountIds[idx] = cur.getLong(userid_idx);
+					idx++;
+					cur.moveToNext();
+				}
 			}
-		}
-		if (cur != null) {
-			cur.close();
+			if (cur != null) {
+				cur.close();
+			}
+		} else {
+			mAccountIds = activated_ids;
 		}
 	}
 
@@ -161,10 +172,10 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	/** Sets the mostRecentLocation object to the current location of the device **/
+	/** Sets the mRecentLocation object to the current location of the device **/
 	@Override
 	public void onLocationChanged(Location location) {
-		mostRecentLocation = location;
+		mRecentLocation = location;
 	}
 
 	@Override
@@ -222,8 +233,13 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 	}
 
 	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putLongArray(Accounts.USER_IDS, mAccountIds);
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -250,7 +266,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 		// In order to make sure the device is getting location, request
 		// updates. locationManager.requestLocationUpdates(provider, 1, 0,
 		// this);
-		mostRecentLocation = mLocationManager.getLastKnownLocation(provider);
+		mRecentLocation = mLocationManager.getLastKnownLocation(provider);
 	}
 
 	private void pickImage() {

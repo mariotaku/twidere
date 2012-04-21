@@ -1,5 +1,7 @@
 package org.mariotaku.twidere;
 
+import android.content.Intent;
+
 public interface Constants {
 
 	public static final String LOGTAG = "Twidere";
@@ -7,7 +9,7 @@ public interface Constants {
 	public static final boolean MULTIPLE_ACCOUNTS_ENABLED = true;
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 2;
+	public static final int DATABASES_VERSION = 4;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -51,6 +53,9 @@ public interface Constants {
 	public static final String INTENT_ACTION_VIEW_STATUS = INTENT_ACTION_PREFIX + "VIEW_STATUS";
 	public static final String INTENT_ACTION_FILTERS = INTENT_ACTION_PREFIX + "FILTERS";
 	public static final String INTENT_ACTION_ABOUT = INTENT_ACTION_PREFIX + "ABOUT";
+	public static final String INTENT_ACTION_EDIT_API = INTENT_ACTION_PREFIX + "EDIT_API";
+	public static final String INTENT_ACTION_SET_COLOR = INTENT_ACTION_PREFIX + "SET_COLOR";
+	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_ACTION_PREFIX + "TWITTER_LOGIN";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;
@@ -66,9 +71,16 @@ public interface Constants {
 	public static final int MENU_DELETE = R.id.delete;
 	public static final int MENU_PICK_FROM_GALLERY = R.id.pick_from_gallery;
 	public static final int MENU_PICK_FROM_MAP = R.id.pick_from_map;
+	public static final int MENU_EDIT_API = R.id.edit_api;
+	public static final int MENU_OPEN_IN_BROWSER = R.id.open_in_browser;
+	public static final int MENU_SET_COLOR = R.id.set_color;
+	public static final int MENU_ADD_ACCOUNT = R.id.add_account;
 
-	public final static int REQUEST_TAKE_PHOTO = 1;
-	public final static int REQUEST_ADD_IMAGE = 2;
-	public final static int REQUEST_SELECT_ACCOUNT = 3;
+	public static final int REQUEST_TAKE_PHOTO = 1;
+	public static final int REQUEST_ADD_IMAGE = 2;
+	public static final int REQUEST_SELECT_ACCOUNT = 3;
+	public static final int REQUEST_API_SETTINGS = 4;
+	public static final int REQUEST_GOTO_AUTHORIZATION = 5;
+	public static final int REQUEST_SET_COLOR = 6;
 
 }

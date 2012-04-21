@@ -16,7 +16,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	private ArrayList<TabInfo> mTabsInfo = new ArrayList<TabInfo>();
 	private Context mContext;
-	
+
 	public TabsAdapter(Context context, FragmentManager fm) {
 		super(fm);
 		mContext = context;
@@ -44,8 +44,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	@Override
 	public Fragment getItem(int position) {
-		return Fragment.instantiate(mContext,
-				mTabsInfo.get(position).cls.getName());
+		return Fragment.instantiate(mContext, mTabsInfo.get(position).cls.getName());
 	}
 
 	@Override
@@ -67,8 +66,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 		public TabInfo(String name, Integer icon, Class<? extends Fragment> cls) {
 			if (name == null && icon == null)
-				throw new IllegalArgumentException(
-						"You must specify a name or icon for this tab!");
+				throw new IllegalArgumentException("You must specify a name or icon for this tab!");
 			this.name = name;
 			this.icon = icon;
 			this.cls = cls;

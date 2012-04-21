@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -33,13 +34,10 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
-@ContentView(R.layout.login)
-public class LoginActivity extends BaseActivity implements OnClickListener, TextWatcher {
+@ContentView(R.layout.twitter_login)
+public class TwitterLoginActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
-	private final static int API_SETTINGS = 1;
-	private final static int GOTO_AUTHORIZATION = 2;
-
-	private final static String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
+	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 
 	private String mRestAPIBase, mSearchAPIBase, mUsername, mPassword;
 	private int mAuthType;
@@ -49,6 +47,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 	@InjectView(R.id.sign_up) private Button mSignUpButton;
 	@InjectView(R.id.sign_in_sign_up) private LinearLayout mSigninSignup;
 	@InjectView(R.id.username_password) private LinearLayout mUsernamePassword;
+	@InjectView(R.id.set_color) private ImageButton mSetColorButton;
 	private AbstractTask mTask;
 	private RequestToken mRequestToken;
 
@@ -65,7 +64,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-			case API_SETTINGS:
+			case REQUEST_API_SETTINGS:
 				if (resultCode == RESULT_OK) {
 					Bundle bundle = new Bundle();
 					if (data != null) {
@@ -83,7 +82,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 					}
 				}
 				break;
-			case GOTO_AUTHORIZATION:
+			case REQUEST_GOTO_AUTHORIZATION:
 				if (resultCode == RESULT_OK) {
 					Bundle bundle = new Bundle();
 					if (data != null) {
@@ -108,9 +107,11 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 
 	@Override
 	public void onClick(View v) {
+		Intent intent = new Intent();
 		switch (v.getId()) {
 			case R.id.sign_up:
-				startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(TWITTER_SIGNUP_URL)));
+				intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(TWITTER_SIGNUP_URL));
+				startActivity(intent);
 				break;
 			case R.id.sign_in:
 				saveEditedText();
@@ -120,6 +121,9 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 				mTask = new LoginTask();
 				mTask.execute();
 				break;
+			case R.id.set_color:
+				intent = new Intent(INTENT_ACTION_SET_COLOR);
+				startActivityForResult(intent, REQUEST_SET_COLOR);
 		}
 
 	}
@@ -156,6 +160,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
 		mSignInButton.setOnClickListener(this);
 		mSignUpButton.setOnClickListener(this);
+		mSetColorButton.setOnClickListener(this);
 		mUsernamePassword.setVisibility(mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE
 				: View.VISIBLE);
 		mSigninSignup.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
@@ -185,6 +190,9 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+
+		Intent intent = new Intent();
+
 		switch (item.getItemId()) {
 			case MENU_HOME:
 				Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {},
@@ -196,17 +204,18 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 					cur.close();
 				}
 				break;
+			case MENU_SETTINGS:
+				intent = new Intent(INTENT_ACTION_GLOBAL_SETTINGS);
+				startActivity(intent);
+				break;
 			case R.id.edit_api:
-				Intent intent = new Intent(this, EditAPIActivity.class);
+				intent = new Intent(this, EditAPIActivity.class);
 				Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_API_BASE, mRestAPIBase);
 				bundle.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
 				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
 				intent.putExtras(bundle);
-				startActivityForResult(intent, API_SETTINGS);
-				break;
-			case MENU_SETTINGS:
-				startActivity(new Intent(this, GlobalSettingsActivity.class));
+				startActivityForResult(intent, REQUEST_API_SETTINGS);
 				break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -331,8 +340,11 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			AccessToken accessToken = null;
+			String profile_image_url = null;
 			try {
 				accessToken = twitter.getOAuthAccessToken(requestToken, oauthVerifier);
+				profile_image_url = twitter.showUser(accessToken.getUserId()).getProfileImageURL()
+						.toString();
 			} catch (TwitterException e) {
 				return getErrorCode(e);
 			}
@@ -356,6 +368,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 						values.put(Accounts.USERNAME, accessToken.getScreenName());
 						values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
 						values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
+						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
 						values.put(Accounts.IS_ACTIVATED, 1);
 						resolver.insert(Accounts.CONTENT_URI, values);
 					}
@@ -371,7 +384,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 			Integer result = (Integer) result_obj;
 			switch (result) {
 				case RESULT_SUCCESS:
-					Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+					Intent intent = new Intent(TwitterLoginActivity.this, HomeActivity.class);
 					Bundle bundle = new Bundle();
 					bundle.putBoolean(INTENT_KEY_REFRESH_ALL, true);
 					intent.putExtras(bundle);
@@ -422,6 +435,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 						values.put(Accounts.REST_API_BASE, mRestAPIBase);
 						values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
 						values.put(Accounts.USERNAME, user.getScreenName());
+						values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 						values.put(Accounts.BASIC_AUTH_PASSWORD, mPassword);
 						values.put(Accounts.IS_ACTIVATED, 1);
 						resolver.insert(Accounts.CONTENT_URI, values);
@@ -459,14 +473,17 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-			AccessToken accesstoken = null;
+			AccessToken accessToken = null;
+			String profile_image_url = null;
 			try {
-				accesstoken = twitter.getOAuthAccessToken(mUsername, mPassword);
+				accessToken = twitter.getOAuthAccessToken(mUsername, mPassword);
+				profile_image_url = twitter.showUser(accessToken.getUserId()).getProfileImageURL()
+						.toString();
 			} catch (TwitterException e) {
 				return new Result(getErrorCode(e), Accounts.AUTH_TYPE_XAUTH, null);
 			}
-			if (accesstoken != null) {
-				long userid = accesstoken.getUserId();
+			if (accessToken != null) {
+				long userid = accessToken.getUserId();
 				String[] cols = new String[] {};
 				StringBuilder where = new StringBuilder();
 				where.append(Accounts.USER_ID + "='" + userid + "'");
@@ -482,9 +499,10 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 						values.put(Accounts.USER_ID, userid);
 						values.put(Accounts.REST_API_BASE, mRestAPIBase);
 						values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
-						values.put(Accounts.USERNAME, accesstoken.getScreenName());
-						values.put(Accounts.OAUTH_TOKEN, accesstoken.getToken());
-						values.put(Accounts.TOKEN_SECRET, accesstoken.getTokenSecret());
+						values.put(Accounts.USERNAME, accessToken.getScreenName());
+						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
+						values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
+						values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
 						values.put(Accounts.IS_ACTIVATED, 1);
 						resolver.insert(Accounts.CONTENT_URI, values);
 					}
@@ -520,7 +538,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 			Result result = (Result) result_obj;
 			switch (result.result_code) {
 				case RESULT_SUCCESS:
-					Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+					Intent intent = new Intent(TwitterLoginActivity.this, HomeActivity.class);
 					Bundle bundle = new Bundle();
 					bundle.putBoolean(INTENT_KEY_REFRESH_ALL, true);
 					intent.putExtras(bundle);
@@ -532,7 +550,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener, Text
 					Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
 					startActivityForResult(new Intent(Intent.ACTION_DEFAULT, uri,
 							getApplicationContext(), AuthorizationActivity.class),
-							GOTO_AUTHORIZATION);
+							REQUEST_GOTO_AUTHORIZATION);
 					break;
 				default:
 					showErrorMessage(result.result_code);

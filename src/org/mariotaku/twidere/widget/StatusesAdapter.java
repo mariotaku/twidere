@@ -4,7 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -12,6 +12,7 @@ import org.mariotaku.twidere.util.StatusItemHolder;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +21,18 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 
 	private final static String[] mFrom = new String[] { Statuses.NAME, Statuses.TEXT };
 	private final static int[] mTo = new int[] { R.id.user_name, R.id.text };
-	private boolean mDisplayProfileImage;
+	private boolean mDisplayProfileImage, mMultipleAccountsActivated;
 	private LazyImageLoader mImageLoader;
 	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx,
 			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mHasLocationIdx,
 			mHasMediaIdx, mInReplyToStatusIdIdx, mInReplyToScreennameIdx;
 
+	private Context mContext;
+
 	public StatusesAdapter(Context context, LazyImageLoader loader) {
 		super(context, R.layout.status_list_item, null, mFrom, mTo, 0);
 		mImageLoader = loader;
+		mContext = context;
 	}
 
 	@Override
@@ -44,6 +48,9 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 		holder.setIsGap(is_gap);
 		holder.status_id = cursor.getLong(mStatusIdIdx);
 		holder.account_id = cursor.getLong(mAccountIdIdx);
+
+		holder.setAccountColor(mMultipleAccountsActivated ? CommonUtils.getAccountColor(context,
+				holder.account_id) : Color.TRANSPARENT);
 
 		if (!is_gap) {
 
@@ -83,6 +90,12 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	@Override
 	public void changeCursor(Cursor cursor) {
 		super.changeCursor(cursor);
+		Cursor cur = mContext.getContentResolver().query(Accounts.CONTENT_URI, new String[0], null,
+				null, null);
+		if (cur != null) {
+			mMultipleAccountsActivated = cur.getCount() > 1;
+			cur.close();
+		}
 		if (cursor != null) {
 			mAccountIdIdx = cursor.getColumnIndexOrThrow(Statuses.ACCOUNT_ID);
 			mStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.STATUS_ID);
@@ -94,9 +107,9 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			mIsGapIdx = cursor.getColumnIndexOrThrow(Statuses.IS_GAP);
 			mHasLocationIdx = cursor.getColumnIndexOrThrow(Statuses.HAS_LOCATION);
 			mHasMediaIdx = cursor.getColumnIndexOrThrow(Statuses.HAS_MEDIA);
-			mInReplyToStatusIdIdx = cursor.getColumnIndexOrThrow(Mentions.IN_REPLY_TO_STATUS_ID);
+			mInReplyToStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_STATUS_ID);
 			mInReplyToScreennameIdx = cursor
-					.getColumnIndexOrThrow(Mentions.IN_REPLY_TO_SCREEN_NAME);
+					.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_SCREEN_NAME);
 		}
 	}
 

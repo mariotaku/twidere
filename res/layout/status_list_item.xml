@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:padding="4dip">
+	android:layout_height="wrap_content">
 
 	<RelativeLayout
 		android:id="@+id/content"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:padding="4dip">
 
 		<org.mariotaku.twidere.widget.RoundCorneredImageView
 			android:id="@+id/profile_image"
@@ -85,13 +85,20 @@
 
 	<TextView
 		android:id="@+id/list_gap_text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@drawable/bg_list_gap"
+		android:gravity="center"
 		android:text="@string/tap_to_load_more"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="?android:attr/textColorSecondary"
 		android:textStyle="bold"
 		android:visibility="gone"/>
+
+	<ImageView
+		android:id="@+id/color"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/ic_label_color"/>
 
 </FrameLayout>

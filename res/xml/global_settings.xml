@@ -67,12 +67,14 @@
 			android:dialogMessage="@string/warn_expert_only"
 			android:dialogTitle="@string/consumer_key"
 			android:key="consumer_key"
+			android:singleLine="true"
 			android:summary="@string/consumer_key_summary"
 			android:title="@string/consumer_key"/>
 		<EditTextPreference
 			android:dialogMessage="@string/warn_expert_only"
 			android:dialogTitle="@string/consumer_secret"
 			android:key="consumer_secret"
+			android:singleLine="true"
 			android:summary="@string/consumer_secret_summary"
 			android:title="@string/consumer_secret"/>
 	</PreferenceCategory>
@@ -89,16 +91,19 @@
 			android:dependency="enable_proxy"
 			android:dialogTitle="@string/http_proxy"
 			android:key="http_proxy"
+			android:singleLine="true"
 			android:title="@string/http_proxy"/>
 		<EditTextPreference
 			android:dependency="enable_proxy"
 			android:dialogTitle="@string/http_proxy_username"
 			android:key="http_proxy_username"
+			android:singleLine="true"
 			android:title="@string/http_proxy_username"/>
 		<EditTextPreference
 			android:dependency="enable_proxy"
 			android:dialogTitle="@string/http_proxy_password"
 			android:key="http_proxy_password"
+			android:singleLine="true"
 			android:title="@string/http_proxy_password"/>
 	</PreferenceCategory>
 	<PreferenceCategory

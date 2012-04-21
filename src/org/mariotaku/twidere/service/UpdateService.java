@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.IUpdateService;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.CommonUtils;
@@ -23,6 +24,8 @@ import twitter4j.User;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -77,6 +80,19 @@ public class UpdateService extends RoboService implements Constants {
 		mUpdateStatusTask = new UpdateStatusTask(account_ids, content, location, image_uri,
 				in_reply_to);
 		mUpdateStatusTask.execute();
+	}
+
+	private int getAccountColor(long account_id) {
+		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI,
+				new String[] { Accounts.USER_COLOR }, Accounts.USER_ID + "=" + account_id, null,
+				null);
+		if (cur == null || cur.getCount() <= 0) return Color.TRANSPARENT;
+		cur.moveToFirst();
+		int color = cur.getInt(cur.getColumnIndexOrThrow(Accounts.USER_COLOR));
+		if (cur != null) {
+			cur.close();
+		}
+		return color;
 	}
 
 	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {
@@ -154,6 +170,8 @@ public class UpdateService extends RoboService implements Constants {
 			for (AccountResponce responce : responces) {
 				ResponseList<twitter4j.Status> statuses = responce.responselist;
 				long account_id = responce.account_id;
+				int account_color = getAccountColor(account_id);
+
 				if (statuses == null || statuses.size() <= 0) return;
 				List<ContentValues> values_list = new ArrayList<ContentValues>();
 
@@ -178,7 +196,7 @@ public class UpdateService extends RoboService implements Constants {
 					values.put(Statuses.IN_REPLY_TO_USER_ID, status.getInReplyToUserId());
 					values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
 					values.put(Statuses.HAS_LOCATION, status.getGeoLocation() != null ? 1 : 0);
-					values.put(Statuses.IS_TWEET_BY_ME, user.getId() == account_id ? 1 : 0);
+					values.put(Statuses.SOURCE, status.getSource());
 
 					if (status_id < min_id || min_id == -1) {
 						min_id = status_id;
@@ -310,7 +328,7 @@ public class UpdateService extends RoboService implements Constants {
 					values.put(Mentions.IN_REPLY_TO_USER_ID, mention.getInReplyToUserId());
 					values.put(Mentions.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
 					values.put(Mentions.HAS_LOCATION, mention.getGeoLocation() != null ? 1 : 0);
-					values.put(Mentions.IS_TWEET_BY_ME, user.getId() == account_id ? 1 : 0);
+					values.put(Mentions.SOURCE, mention.getSource());
 
 					if (status_id < min_id || min_id == -1) {
 						min_id = status_id;

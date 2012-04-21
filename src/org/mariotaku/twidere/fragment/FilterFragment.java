@@ -3,21 +3,20 @@ package org.mariotaku.twidere.fragment;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.widget.TabsAdapter;
 
-import com.viewpagerindicator.TabPageIndicator;
-
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.viewpagerindicator.TabPageIndicator;
 
 public class FilterFragment extends BaseFragment {
 
 	private ViewPager mViewPager;
 	private TabsAdapter mAdapter;
 	private TabPageIndicator mIndicator;
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -36,17 +35,17 @@ public class FilterFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.filters_list, container, false);
 	}
-	
-	public static class FilteredUsersFragment extends BaseListFragment {
-		
-	}
-	
+
 	public static class FilteredKeywordsFragment extends BaseListFragment {
-		
+
 	}
 
 	public static class FilteredSourcesFragment extends BaseListFragment {
-	
+
+	}
+
+	public static class FilteredUsersFragment extends BaseListFragment {
+
 	}
 
 }
