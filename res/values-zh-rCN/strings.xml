@@ -97,5 +97,7 @@
 	<string name="set_color">设定颜色</string>
 	<string name="pick_color">选取颜色</string>
 	<string name="follow">关注</string>
+	<string name="delete_account">删除帐号</string>
+	<string name="delete_account_desc">你确定删除帐号 <xliff:g id="user_name">%s</xliff:g> ？</string>
 
 </resources>

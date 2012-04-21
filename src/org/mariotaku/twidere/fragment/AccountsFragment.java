@@ -7,9 +7,9 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.LazyImageLoader;
-
-import com.actionbarsherlock.view.Menu;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -43,36 +43,32 @@ import android.widget.ListView;
 public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor> {
 
 	private ListView mListView;
-	private Cursor mCursor;
 
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		Intent intent;
-		Bundle bundle;
-		switch (item.getItemId()) {
-			case MENU_VIEW:
-				break;
-			case MENU_SET_COLOR:
-				if (mSelectedPosition >= 0) {
-					intent = new Intent(INTENT_ACTION_SET_COLOR);
-					bundle = new Bundle();
-					bundle.putInt(Accounts.USER_COLOR, mSelectedColor);
-					intent.putExtras(bundle);
-					startActivityForResult(intent, REQUEST_SET_COLOR);
-				}
-				break;
-			case MENU_EDIT_API:
-				break;
-			case MENU_DELETE:
-				confirmDelection();
-				break;
-		}
-		return super.onContextItemSelected(item);
-	}
+	private int mSelectedColor;
 
-	private int mSelectedPosition, mSelectedColor;
 	private long mSelectedUserId;
 	private String mSelectedScreenName;
+	private ContentResolver mResolver;
+
+	private static final long INVALID_ID = -1;
+
+	private AccountsAdapter mAdapter;
+
+	private int mUserColorIdx, mUserIdIdx, mProfileImageIdx, mUsernameIdx;
+	private DeleteConfirmFragment mFragment = new DeleteConfirmFragment();
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
+				.getListProfileImageLoader();
+		mResolver = getSherlockActivity().getContentResolver();
+		mAdapter = new AccountsAdapter(getSherlockActivity(), imageloader);
+		getLoaderManager().initLoader(0, null, this);
+		mListView = getListView();
+		mListView.setOnCreateContextMenuListener(this);
+		setListAdapter(mAdapter);
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -93,64 +89,49 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	private ContentResolver mResolver;
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		Intent intent;
+		Bundle bundle;
+		switch (item.getItemId()) {
+			case MENU_VIEW:
+				showDetails(mSelectedUserId);
+				break;
+			case MENU_SET_COLOR:
+				if (mSelectedUserId != INVALID_ID) {
+					intent = new Intent(INTENT_ACTION_SET_COLOR);
+					bundle = new Bundle();
+					bundle.putInt(Accounts.USER_COLOR, mSelectedColor);
+					intent.putExtras(bundle);
+					startActivityForResult(intent, REQUEST_SET_COLOR);
+				}
+				break;
+			case MENU_EDIT_API:
+				break;
+			case MENU_DELETE:
+				confirmDelection();
+				break;
+		}
+		return super.onContextItemSelected(item);
+	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		new MenuInflater(getSherlockActivity()).inflate(R.menu.context_account, menu);
-		if (menuInfo instanceof AdapterContextMenuInfo) {
-			mSelectedPosition = ((AdapterContextMenuInfo) menuInfo).position - 1;
-		}
-		if (mSelectedPosition >= 0 && mCursor != null) {
-			mCursor.moveToPosition(mSelectedPosition);
-			mSelectedColor = mCursor.getInt(mUserColorIdx);
-			mSelectedUserId = mCursor.getLong(mUserIdIdx);
-			mSelectedScreenName = mCursor.getString(mUsernameIdx);
+
+		AdapterContextMenuInfo adapterinfo = (AdapterContextMenuInfo) menuInfo;
+
+		Object tag = adapterinfo.targetView.getTag();
+		if (tag instanceof ViewHolder) {
+			ViewHolder holder = (ViewHolder) tag;
+			mSelectedColor = holder.user_color;
+			mSelectedUserId = holder.user_id;
+			mSelectedScreenName = holder.username;
+			menu.setHeaderTitle(holder.username);
+		} else {
+			mSelectedUserId = INVALID_ID;
 		}
 		super.onCreateContextMenu(menu, v, menuInfo);
-	}
-
-	private AccountsAdapter mAdapter;
-
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		Fragment fragment = new MeFragment();
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.replace(R.id.dashboard, fragment);
-		ft.addToBackStack(null);
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-		ft.commit();
-		super.onListItemClick(l, v, position, id);
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
-		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getListProfileImageLoader();
-		mResolver = getSherlockActivity().getContentResolver();
-		mAdapter = new AccountsAdapter(getSherlockActivity(), imageloader);
-		getLoaderManager().initLoader(0, null, this);
-		mListView = getListView();
-		mListView.setOnCreateContextMenuListener(this);
-		setListAdapter(mAdapter);
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, com.actionbarsherlock.view.MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_accounts, menu);
-		super.onCreateOptionsMenu(menu, inflater);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_ADD_ACCOUNT:
-				startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
-				break;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -163,40 +144,52 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Object tag = v.getTag();
+		if (tag instanceof ViewHolder) {
+			ViewHolder holder = (ViewHolder) tag;
+			showDetails(holder.user_id);
+		}
+		super.onListItemClick(l, v, position, id);
+	}
+	
+	private void showDetails(long user_id) {
+		Fragment fragment = new MeFragment();
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.replace(R.id.dashboard, fragment);
+		ft.addToBackStack(null);
+		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+		ft.commit();
+	}
+
+	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mCursor = null;
 		mAdapter.changeCursor(null);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mCursor = data;
 		mAdapter.changeCursor(data);
 	}
 
-	private int mUserColorIdx, mUserIdIdx, mProfileImageIdx, mUsernameIdx;
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_ADD_ACCOUNT:
+				startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void confirmDelection() {
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		mFragment.show(ft, "delete_confirm");
+	}
 
 	private class AccountsAdapter extends SimpleCursorAdapter {
 
 		private LazyImageLoader mImageLoader;
-
-		private class ViewHolder {
-
-			private ImageView profile_image, color_indicator;
-			private int user_color;
-			private String username;
-			private long user_id;
-
-			public ViewHolder(View view) {
-				profile_image = (ImageView) view.findViewById(R.id.profile_image);
-				color_indicator = (ImageView) view.findViewById(R.id.color);
-			}
-
-			public void setAccountColor(int color) {
-				color_indicator.getDrawable().mutate()
-						.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-			}
-		}
 
 		public AccountsAdapter(Context context, LazyImageLoader loader) {
 			super(context, R.layout.account_list_item, null, new String[] { Accounts.USERNAME },
@@ -205,18 +198,12 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 
 		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-
-			View view = super.newView(context, cursor, parent);
-			ViewHolder viewholder = new ViewHolder(view);
-			view.setTag(viewholder);
-			return view;
-		}
-
-		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			int color = cursor.getInt(mUserColorIdx);
 			ViewHolder holder = (ViewHolder) view.getTag();
+			holder.user_color = color;
+			holder.user_id = cursor.getLong(mUserIdIdx);
+			holder.username = cursor.getString(mUsernameIdx);
 			holder.setAccountColor(color);
 			URL url = null;
 			try {
@@ -238,16 +225,44 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				mUsernameIdx = cursor.getColumnIndexOrThrow(Accounts.USERNAME);
 			}
 		}
-	}
 
-	private void confirmDelection() {
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		mFragment.show(ft, "delete_confirm");
-	}
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
-	DeleteConfirmFragment mFragment = new DeleteConfirmFragment();
+			View view = super.newView(context, cursor, parent);
+			ViewHolder viewholder = new ViewHolder(view);
+			view.setTag(viewholder);
+			return view;
+		}
+	}
 
 	private class DeleteConfirmFragment extends BaseDialogFragment implements OnClickListener {
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					Cursor cur = mResolver.query(Accounts.CONTENT_URI, new String[0], Accounts.IS_ACTIVATED + "=1", null, null);
+					if (cur == null) break;
+					// Have more than one accounts? Then delete the account we selected.
+					if (cur.getCount() > 1) {
+						mResolver.delete(Accounts.CONTENT_URI,
+								Accounts.USER_ID + "=" + mSelectedUserId, null);
+						// Also delete tweets related to the account we previously deleted.
+						mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + "="
+								+ mSelectedUserId, null);
+						mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + "="
+								+ mSelectedUserId, null);
+						AccountsFragment.this.getLoaderManager().restartLoader(0, null,
+								AccountsFragment.this);
+					} else {
+						// Do something else if we only have one account.
+					}
+					cur.close();
+					break;
+			}
+
+		}
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -260,13 +275,22 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			return builder.create();
 		}
 
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			switch (which) {
+	}
 
-			}
+	private class ViewHolder {
 
+		public ImageView profile_image, color_indicator;
+		public int user_color;
+		public String username;
+		public long user_id;
+
+		public ViewHolder(View view) {
+			profile_image = (ImageView) view.findViewById(R.id.profile_image);
+			color_indicator = (ImageView) view.findViewById(R.id.color);
 		}
 
+		public void setAccountColor(int color) {
+			color_indicator.getDrawable().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+		}
 	}
 }

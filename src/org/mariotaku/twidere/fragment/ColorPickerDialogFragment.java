@@ -31,12 +31,20 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		if (savedInstanceState != null)
+		if (savedInstanceState != null) {
 			mInitialColor = savedInstanceState.getInt(Accounts.USER_COLOR, Color.WHITE);
-		if (getSherlockActivity() instanceof OnColorSelectedListener)
+		}
+		if (getSherlockActivity() instanceof OnColorSelectedListener) {
 			mListener = (OnColorSelectedListener) getSherlockActivity();
+		}
 		mDialog = new ColorPickerDialog(getSherlockActivity(), mInitialColor);
 		return mDialog;
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putInt(Accounts.USER_COLOR, mInitialColor);
+		super.onSaveInstanceState(outState);
 	}
 
 	public void setInitialColor(int color) {
@@ -167,12 +175,6 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 
 		}
 
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putInt(Accounts.USER_COLOR, mInitialColor);
-		super.onSaveInstanceState(outState);
 	}
 
 	public interface OnColorSelectedListener {

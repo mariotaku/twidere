@@ -1,7 +1,5 @@
 package org.mariotaku.twidere;
 
-import android.content.Intent;
-
 public interface Constants {
 
 	public static final String LOGTAG = "Twidere";
@@ -79,7 +77,7 @@ public interface Constants {
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_ADD_IMAGE = 2;
 	public static final int REQUEST_SELECT_ACCOUNT = 3;
-	public static final int REQUEST_API_SETTINGS = 4;
+	public static final int REQUEST_EDIT_API = 4;
 	public static final int REQUEST_GOTO_AUTHORIZATION = 5;
 	public static final int REQUEST_SET_COLOR = 6;
 

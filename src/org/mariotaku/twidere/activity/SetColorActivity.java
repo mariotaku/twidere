@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,12 +41,6 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 		mCustomizedColor = color;
 		mColorsGrid.invalidateViews();
 		finishSelecting(color);
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putInt(Accounts.USER_COLOR, mCustomizedColor);
-		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -97,6 +90,12 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		mFragment.setInitialColor(mCustomizedColor);
 		mFragment.show(ft, "dialog");
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putInt(Accounts.USER_COLOR, mCustomizedColor);
+		super.onSaveInstanceState(outState);
 	}
 
 	private class ColorsAdapter extends ArrayAdapter<Integer> {

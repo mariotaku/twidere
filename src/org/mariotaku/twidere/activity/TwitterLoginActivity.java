@@ -64,7 +64,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-			case REQUEST_API_SETTINGS:
+			case REQUEST_EDIT_API:
 				if (resultCode == RESULT_OK) {
 					Bundle bundle = new Bundle();
 					if (data != null) {
@@ -208,14 +208,14 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				intent = new Intent(INTENT_ACTION_GLOBAL_SETTINGS);
 				startActivity(intent);
 				break;
-			case R.id.edit_api:
-				intent = new Intent(this, EditAPIActivity.class);
+			case MENU_EDIT_API:
+				intent = new Intent(INTENT_ACTION_EDIT_API);
 				Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_API_BASE, mRestAPIBase);
 				bundle.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
 				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
 				intent.putExtras(bundle);
-				startActivityForResult(intent, REQUEST_API_SETTINGS);
+				startActivityForResult(intent, REQUEST_EDIT_API);
 				break;
 		}
 		return super.onOptionsItemSelected(item);
