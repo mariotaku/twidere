@@ -28,13 +28,13 @@ public class ServiceInterface implements Constants, IUpdateService {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
+			if (BROADCAST_HOME_TIMELINE_UPDATED.equals(action)) {
 				for (StateListener listener : mStateListeners) {
 					if (listener != null) {
 						listener.onHomeTimelineRefreshed();
 					}
 				}
-			} else if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
+			} else if (BROADCAST_MENTIONS_UPDATED.equals(action)) {
 				for (StateListener listener : mStateListeners) {
 					if (listener != null) {
 						listener.onMentionsRefreshed();
@@ -55,8 +55,8 @@ public class ServiceInterface implements Constants, IUpdateService {
 			IntentFilter filter = new IntentFilter() {
 
 				{
-					addAction(BROADCAST_HOME_TIMELINE_REFRESHED);
-					addAction(BROADCAST_MENTIONS_REFRESHED);
+					addAction(BROADCAST_HOME_TIMELINE_UPDATED);
+					addAction(BROADCAST_MENTIONS_UPDATED);
 				}
 			};
 			mContext.registerReceiver(mStatusReceiver, filter);
@@ -86,6 +86,37 @@ public class ServiceInterface implements Constants, IUpdateService {
 	public IBinder asBinder() {
 		// Useless here
 		return null;
+	}
+
+	@Override
+	public void deleteStatus(long account_id, long status_id) {
+		if (mService == null) return;
+		try {
+			mService.deleteStatus(account_id, status_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void favStatus(long[] account_ids, long status_id) {
+		if (mService == null) return;
+		try {
+			mService.favStatus(account_ids, status_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public boolean hasActivatedTask() {
+		if (mService == null) return false;
+		try {
+			return mService.hasActivatedTask();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	@Override
@@ -144,6 +175,26 @@ public class ServiceInterface implements Constants, IUpdateService {
 	public void removeStateListener(StateListener listener) {
 		if (listener != null) {
 			mStateListeners.remove(listener);
+		}
+	}
+
+	@Override
+	public void retweetStatus(long[] account_ids, long status_id) {
+		if (mService == null) return;
+		try {
+			mService.retweetStatus(account_ids, status_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void unFavStatus(long[] account_ids, long status_id) {
+		if (mService == null) return;
+		try {
+			mService.unFavStatus(account_ids, status_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 	}
 

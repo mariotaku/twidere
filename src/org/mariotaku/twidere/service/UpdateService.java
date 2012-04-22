@@ -7,10 +7,12 @@ import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.IUpdateService;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.CommonUtils;
+import org.mariotaku.twidere.util.ManagedAsyncTask;
 
 import roboguice.service.RoboService;
 import twitter4j.GeoLocation;
@@ -24,27 +26,37 @@ import twitter4j.User;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.RemoteException;
 
 public class UpdateService extends RoboService implements Constants {
 
 	private final ServiceStub mBinder = new ServiceStub(this);
-	private RefreshHomeTimelineTask mRefreshHomeTimelineTask;
-	private RefreshMentionsTask mRefreshMentionsTask;
-	private UpdateStatusTask mUpdateStatusTask;
+	private AsyncTaskManager mAsyncTaskManager;
+
+	private int mRefreshHomeTimelineTaskId, mRefreshMentionsTaskId;
+
+	public void deleteStatus(long account_id, long status_id) {
+
+	}
+
+	public void favStatus(long[] account_ids, long status_id) {
+		FavStatusTask task = new FavStatusTask(account_ids, status_id);
+		mAsyncTaskManager.add(task, true);
+	}
+
+	public boolean hasActivatedTask() {
+		return mAsyncTaskManager.hasActivatedTask();
+	}
 
 	public boolean isHomeTimelineRefreshing() {
-		return mRefreshHomeTimelineTask != null && !mRefreshHomeTimelineTask.isCancelled();
+		return mAsyncTaskManager.isExcuting(mRefreshHomeTimelineTaskId);
 	}
 
 	public boolean isMentionsRefreshing() {
-		return mRefreshMentionsTask != null && !mRefreshMentionsTask.isCancelled();
+		return mAsyncTaskManager.isExcuting(mRefreshMentionsTaskId);
 	}
 
 	@Override
@@ -52,89 +64,119 @@ public class UpdateService extends RoboService implements Constants {
 		return mBinder;
 	}
 
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
+	}
+
 	public void refreshHomeTimeline(long[] account_ids, long[] max_ids) {
-		if (mRefreshHomeTimelineTask != null) {
-			mRefreshHomeTimelineTask.cancel();
-		}
-		mRefreshHomeTimelineTask = new RefreshHomeTimelineTask(account_ids, max_ids);
-		mRefreshHomeTimelineTask.execute();
+		mAsyncTaskManager.cancel(mRefreshHomeTimelineTaskId);
+		RefreshHomeTimelineTask task = new RefreshHomeTimelineTask(account_ids, max_ids);
+		mRefreshHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public void refreshMentions(long[] account_ids, long[] max_ids) {
-		if (mRefreshMentionsTask != null) {
-			mRefreshMentionsTask.cancel();
-		}
-		mRefreshMentionsTask = new RefreshMentionsTask(account_ids, max_ids);
-		mRefreshMentionsTask.execute();
+		mAsyncTaskManager.cancel(mRefreshMentionsTaskId);
+		RefreshMentionsTask task = new RefreshMentionsTask(account_ids, max_ids);
+		mRefreshMentionsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public void refreshMessages(long[] account_ids, long[] max_ids) {
 
 	}
 
+	public void retweetStatus(long[] account_ids, long status_id) {
+		RetweetStatusTask task = new RetweetStatusTask(account_ids, status_id);
+		mAsyncTaskManager.add(task, true);
+	}
+
+	public void unFavStatus(long[] account_ids, long status_id) {
+		UnFavStatusTask task = new UnFavStatusTask(account_ids, status_id);
+		mAsyncTaskManager.add(task, true);
+	}
+
 	public void updateStatus(long[] account_ids, String content, Location location, Uri image_uri,
 			long in_reply_to) {
-		if (mUpdateStatusTask != null) {
-			mUpdateStatusTask.cancel();
-		}
-		mUpdateStatusTask = new UpdateStatusTask(account_ids, content, location, image_uri,
+		UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri,
 				in_reply_to);
-		mUpdateStatusTask.execute();
+		mAsyncTaskManager.add(task, true);
 	}
 
-	private int getAccountColor(long account_id) {
-		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.USER_COLOR }, Accounts.USER_ID + "=" + account_id, null,
-				null);
-		if (cur == null || cur.getCount() <= 0) return Color.TRANSPARENT;
-		cur.moveToFirst();
-		int color = cur.getInt(cur.getColumnIndexOrThrow(Accounts.USER_COLOR));
-		if (cur != null) {
-			cur.close();
-		}
-		return color;
-	}
+	private class FavStatusTask extends
+			ManagedAsyncTask<Object, Void, List<FavStatusTask.AccountResponce>> {
 
-	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {
+		private long[] account_ids;
+		private long status_id;
 
-		protected void cancel() {
-			sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED));
-			cancel(true);
+		public FavStatusTask(long[] account_ids, long status_id) {
+			super(UpdateService.this, mAsyncTaskManager);
+			this.account_ids = account_ids;
+			this.status_id = status_id;
 		}
 
 		@Override
-		protected void onPostExecute(Object result_obj) {
-			sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED));
-			super.onPostExecute(result_obj);
+		protected List<AccountResponce> doInBackground(Object... params) {
+
+			if (account_ids == null) return null;
+
+			List<AccountResponce> result = new ArrayList<AccountResponce>();
+
+			for (long account_id : account_ids) {
+				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				if (twitter != null) {
+					try {
+						twitter4j.Status status = twitter.createFavorite(status_id);
+						result.add(new AccountResponce(account_id, status));
+					} catch (TwitterException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return result;
 		}
 
 		@Override
-		protected void onPreExecute() {
-			sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED));
-			super.onPreExecute();
+		protected void onPostExecute(List<AccountResponce> result) {
+			ContentResolver resolver = getContentResolver();
+
+			for (AccountResponce responce : result) {
+				ContentValues values = new ContentValues();
+				values.put(Mentions.IS_FAVORITE, responce.status.isFavorited() ? 1 : 0);
+				StringBuilder where = new StringBuilder();
+				where.append(Mentions.ACCOUNT_ID + "=" + responce.account_id);
+				where.append(" AND " + Mentions.STATUS_ID + "=" + responce.status.getId());
+				resolver.update(Mentions.CONTENT_URI, values, where.toString(), null);
+			}
+			super.onPostExecute(result);
+		}
+
+		private class AccountResponce {
+
+			public long account_id;
+			public twitter4j.Status status;
+
+			public AccountResponce(long account_id, twitter4j.Status status) {
+				this.account_id = account_id;
+				this.status = status;
+			}
 		}
 
 	}
 
-	private class RefreshHomeTimelineTask extends AbstractTask {
+	private class RefreshHomeTimelineTask extends
+			ManagedAsyncTask<Object, Void, List<RefreshHomeTimelineTask.AccountResponce>> {
 
 		private long[] account_ids, max_ids;
 
 		public RefreshHomeTimelineTask(long[] account_ids, long[] max_ids) {
-
+			super(UpdateService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
 		}
 
 		@Override
-		protected void cancel() {
-			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED));
-			mRefreshHomeTimelineTask = null;
-			super.cancel();
-		}
-
-		@Override
-		protected List<AccountResponce> doInBackground(Void... params) {
+		protected List<AccountResponce> doInBackground(Object... params) {
 
 			List<AccountResponce> result = new ArrayList<AccountResponce>();
 
@@ -161,16 +203,13 @@ public class UpdateService extends RoboService implements Constants {
 			return result;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
-		protected void onPostExecute(Object result_obj) {
-			List<AccountResponce> responces = (List<AccountResponce>) result_obj;
+		protected void onPostExecute(List<AccountResponce> responces) {
 			ContentResolver resolver = getContentResolver();
 
 			for (AccountResponce responce : responces) {
 				ResponseList<twitter4j.Status> statuses = responce.responselist;
 				long account_id = responce.account_id;
-				int account_color = getAccountColor(account_id);
 
 				if (statuses == null || statuses.size() <= 0) return;
 				List<ContentValues> values_list = new ArrayList<ContentValues>();
@@ -232,9 +271,7 @@ public class UpdateService extends RoboService implements Constants {
 				}
 
 			}
-			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED));
-			mRefreshHomeTimelineTask = null;
-			super.onPostExecute(result_obj);
+			super.onPostExecute(responces);
 		}
 
 		private class AccountResponce {
@@ -251,24 +288,19 @@ public class UpdateService extends RoboService implements Constants {
 
 	}
 
-	private class RefreshMentionsTask extends AbstractTask {
+	private class RefreshMentionsTask extends
+			ManagedAsyncTask<Object, Void, List<RefreshMentionsTask.AccountResponce>> {
 
 		private long[] account_ids, max_ids;
 
 		public RefreshMentionsTask(long[] account_ids, long[] max_ids) {
+			super(UpdateService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
 		}
 
 		@Override
-		protected void cancel() {
-			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED));
-			mRefreshMentionsTask = null;
-			super.cancel();
-		}
-
-		@Override
-		protected List<AccountResponce> doInBackground(Void... params) {
+		protected List<AccountResponce> doInBackground(Object... params) {
 
 			List<AccountResponce> result = new ArrayList<AccountResponce>();
 
@@ -296,10 +328,8 @@ public class UpdateService extends RoboService implements Constants {
 			return result;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
-		protected void onPostExecute(Object result_obj) {
-			List<AccountResponce> responces = (List<AccountResponce>) result_obj;
+		protected void onPostExecute(List<AccountResponce> responces) {
 			ContentResolver resolver = getContentResolver();
 			for (AccountResponce responce : responces) {
 				ResponseList<twitter4j.Status> mentions = responce.responselist;
@@ -363,9 +393,7 @@ public class UpdateService extends RoboService implements Constants {
 					resolver.update(Mentions.CONTENT_URI, values, where.toString(), null);
 				}
 			}
-			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED));
-			mRefreshMentionsTask = null;
-			super.onPostExecute(result_obj);
+			super.onPostExecute(responces);
 		}
 
 		private class AccountResponce {
@@ -382,6 +410,37 @@ public class UpdateService extends RoboService implements Constants {
 
 	}
 
+	private class RetweetStatusTask extends ManagedAsyncTask<Object, Void, Void> {
+
+		private long[] account_ids;
+		private long status_id;
+
+		public RetweetStatusTask(long[] account_ids, long status_id) {
+			super(UpdateService.this, mAsyncTaskManager);
+			this.account_ids = account_ids;
+			this.status_id = status_id;
+		}
+
+		@Override
+		protected Void doInBackground(Object... params) {
+
+			if (account_ids == null) return null;
+
+			for (long account_id : account_ids) {
+				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				if (twitter != null) {
+					try {
+						twitter.retweetStatus(status_id);
+					} catch (TwitterException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return null;
+		}
+
+	}
+
 	/*
 	 * By making this a static class with a WeakReference to the Service, we
 	 * ensure that the Service can be GCd even when the system process still has
@@ -394,6 +453,21 @@ public class UpdateService extends RoboService implements Constants {
 		public ServiceStub(UpdateService service) {
 
 			mService = new WeakReference<UpdateService>(service);
+		}
+
+		@Override
+		public void deleteStatus(long account_id, long status_id) throws RemoteException {
+			mService.get().deleteStatus(account_id, status_id);
+		}
+
+		@Override
+		public void favStatus(long[] account_ids, long status_id) throws RemoteException {
+			mService.get().favStatus(account_ids, status_id);
+		}
+
+		@Override
+		public boolean hasActivatedTask() throws RemoteException {
+			return mService.get().hasActivatedTask();
 		}
 
 		@Override
@@ -422,6 +496,16 @@ public class UpdateService extends RoboService implements Constants {
 		}
 
 		@Override
+		public void retweetStatus(long[] account_ids, long status_id) throws RemoteException {
+			mService.get().retweetStatus(account_ids, status_id);
+		}
+
+		@Override
+		public void unFavStatus(long[] account_ids, long status_id) throws RemoteException {
+			mService.get().unFavStatus(account_ids, status_id);
+		}
+
+		@Override
 		public void updateStatus(long[] account_ids, String content, Location location,
 				Uri image_uri, long in_reply_to) throws RemoteException {
 			mService.get().updateStatus(account_ids, content, location, image_uri, in_reply_to);
@@ -430,7 +514,68 @@ public class UpdateService extends RoboService implements Constants {
 
 	}
 
-	private class UpdateStatusTask extends AbstractTask {
+	private class UnFavStatusTask extends
+			ManagedAsyncTask<Object, Void, List<UnFavStatusTask.AccountResponce>> {
+
+		private long[] account_ids;
+		private long status_id;
+
+		public UnFavStatusTask(long[] account_ids, long status_id) {
+			super(UpdateService.this, mAsyncTaskManager);
+			this.account_ids = account_ids;
+			this.status_id = status_id;
+		}
+
+		@Override
+		protected List<AccountResponce> doInBackground(Object... params) {
+
+			if (account_ids == null) return null;
+
+			List<AccountResponce> result = new ArrayList<AccountResponce>();
+
+			for (long account_id : account_ids) {
+				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				if (twitter != null) {
+					try {
+						twitter4j.Status status = twitter.destroyFavorite(status_id);
+						result.add(new AccountResponce(account_id, status));
+					} catch (TwitterException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(List<AccountResponce> result) {
+			ContentResolver resolver = getContentResolver();
+
+			for (AccountResponce responce : result) {
+				ContentValues values = new ContentValues();
+				values.put(Mentions.IS_FAVORITE, responce.status.isFavorited() ? 1 : 0);
+				StringBuilder where = new StringBuilder();
+				where.append(Mentions.ACCOUNT_ID + "=" + responce.account_id);
+				where.append(" AND " + Mentions.STATUS_ID + "=" + responce.status.getId());
+				resolver.update(Mentions.CONTENT_URI, values, where.toString(), null);
+			}
+			super.onPostExecute(result);
+		}
+
+		private class AccountResponce {
+
+			public long account_id;
+			public twitter4j.Status status;
+
+			public AccountResponce(long account_id, twitter4j.Status status) {
+				this.account_id = account_id;
+				this.status = status;
+			}
+		}
+
+	}
+
+	private class UpdateStatusTask extends ManagedAsyncTask<Object, Void, Void> {
 
 		private long[] account_ids;
 		private String content;
@@ -440,6 +585,7 @@ public class UpdateService extends RoboService implements Constants {
 
 		public UpdateStatusTask(long[] account_ids, String content, Location location,
 				Uri image_uri, long in_reply_to) {
+			super(UpdateService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.content = content;
 			this.location = location;
@@ -448,7 +594,7 @@ public class UpdateService extends RoboService implements Constants {
 		}
 
 		@Override
-		protected Void doInBackground(Void... params) {
+		protected Void doInBackground(Object... params) {
 
 			if (account_ids == null) return null;
 

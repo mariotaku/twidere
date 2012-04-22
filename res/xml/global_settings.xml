@@ -16,6 +16,11 @@
 			android:key="display_profile_image"
 			android:summary="@string/display_profile_image_summary"
 			android:title="@string/display_profile_image"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="bottom_actions"
+			android:summary="@string/bottom_actions_summary"
+			android:title="@string/bottom_actions"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="cat_content"

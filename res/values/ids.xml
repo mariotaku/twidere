@@ -22,5 +22,6 @@
 	<item name="set_color" type="id"/>
 	<item name="open_in_browser" type="id"/>
 	<item name="add_account" type="id"/>
+	<item name="quote" type="id"/>
 
 </resources>

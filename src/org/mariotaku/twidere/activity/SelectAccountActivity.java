@@ -3,31 +3,30 @@ package org.mariotaku.twidere.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
-import android.content.Context;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.SparseBooleanArray;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockListActivity;
+@ContentView(R.layout.basic_list)
+public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener {
 
-public class SelectAccountActivity extends SherlockListActivity implements Constants {
-
+	@InjectView(android.R.id.list) private ListView mListView;
 	private SimpleCursorAdapter mAdapter;
 	private Cursor mCursor;
-	private ListView mListView;
 	private List<Long> mActivatedUsersId = new ArrayList<Long>();
-	private int mThemeId;
 
 	public Cursor getAccountsCursor() {
 		Uri uri = Accounts.CONTENT_URI;
@@ -57,7 +56,6 @@ public class SelectAccountActivity extends SherlockListActivity implements Const
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		setTheme();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.basic_list);
 		int layoutRes = MULTIPLE_ACCOUNTS_ENABLED ? android.R.layout.simple_list_item_multiple_choice
@@ -70,8 +68,8 @@ public class SelectAccountActivity extends SherlockListActivity implements Const
 			return;
 		}
 		mAdapter = new SimpleCursorAdapter(this, layoutRes, mCursor, from, to, 0);
-		setListAdapter(mAdapter);
-		mListView = getListView();
+		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(this);
 		mListView.setChoiceMode(MULTIPLE_ACCOUNTS_ENABLED ? ListView.CHOICE_MODE_MULTIPLE
 				: ListView.CHOICE_MODE_SINGLE);
 
@@ -114,7 +112,7 @@ public class SelectAccountActivity extends SherlockListActivity implements Const
 	}
 
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		int choise_mode = mListView.getChoiceMode();
 		if (choise_mode == ListView.CHOICE_MODE_NONE) return;
 
@@ -137,14 +135,6 @@ public class SelectAccountActivity extends SherlockListActivity implements Const
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		if (isThemeChanged()) {
-			restartActivity();
-		}
-	}
-
-	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		long[] ids = new long[mActivatedUsersId.size()];
 		for (int i = 0; i < mActivatedUsersId.size(); i++) {
@@ -152,28 +142,6 @@ public class SelectAccountActivity extends SherlockListActivity implements Const
 		}
 		outState.putLongArray(Accounts.USER_IDS, ids);
 		super.onSaveInstanceState(outState);
-	}
-
-	private boolean isThemeChanged() {
-		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Holo_Dialog
-				: R.style.Theme_Holo_Light_Dialog;
-		return new_theme_id != mThemeId;
-	}
-
-	private void restartActivity() {
-		overridePendingTransition(0, 0);
-		finish();
-		overridePendingTransition(0, 0);
-		startActivity(getIntent());
-	}
-
-	private void setTheme() {
-		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Holo_Dialog
-				: R.style.Theme_Holo_Light_Dialog;
-		setTheme(mThemeId);
-
 	}
 
 }

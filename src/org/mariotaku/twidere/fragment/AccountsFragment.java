@@ -92,7 +92,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		Intent intent;
-		Bundle bundle;
 		switch (item.getItemId()) {
 			case MENU_VIEW:
 				showDetails(mSelectedUserId);
@@ -100,13 +99,11 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			case MENU_SET_COLOR:
 				if (mSelectedUserId != INVALID_ID) {
 					intent = new Intent(INTENT_ACTION_SET_COLOR);
-					bundle = new Bundle();
+					Bundle bundle = new Bundle();
 					bundle.putInt(Accounts.USER_COLOR, mSelectedColor);
 					intent.putExtras(bundle);
 					startActivityForResult(intent, REQUEST_SET_COLOR);
 				}
-				break;
-			case MENU_EDIT_API:
 				break;
 			case MENU_DELETE:
 				confirmDelection();
@@ -152,15 +149,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 		super.onListItemClick(l, v, position, id);
 	}
-	
-	private void showDetails(long user_id) {
-		Fragment fragment = new MeFragment();
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.replace(R.id.dashboard, fragment);
-		ft.addToBackStack(null);
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-		ft.commit();
-	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
@@ -185,6 +173,15 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	private void confirmDelection() {
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		mFragment.show(ft, "delete_confirm");
+	}
+
+	private void showDetails(long user_id) {
+		Fragment fragment = new MeFragment();
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.replace(R.id.dashboard, fragment);
+		ft.addToBackStack(null);
+		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+		ft.commit();
 	}
 
 	private class AccountsAdapter extends SimpleCursorAdapter {
@@ -242,13 +239,18 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		public void onClick(DialogInterface dialog, int which) {
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE:
-					Cursor cur = mResolver.query(Accounts.CONTENT_URI, new String[0], Accounts.IS_ACTIVATED + "=1", null, null);
-					if (cur == null) break;
-					// Have more than one accounts? Then delete the account we selected.
+					Cursor cur = mResolver.query(Accounts.CONTENT_URI, new String[0],
+							Accounts.IS_ACTIVATED + "=1", null, null);
+					if (cur == null) {
+						break;
+					}
+					// Have more than one accounts? Then delete the account we
+					// selected.
 					if (cur.getCount() > 1) {
-						mResolver.delete(Accounts.CONTENT_URI,
-								Accounts.USER_ID + "=" + mSelectedUserId, null);
-						// Also delete tweets related to the account we previously deleted.
+						mResolver.delete(Accounts.CONTENT_URI, Accounts.USER_ID + "="
+								+ mSelectedUserId, null);
+						// Also delete tweets related to the account we
+						// previously deleted.
 						mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + "="
 								+ mSelectedUserId, null);
 						mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + "="

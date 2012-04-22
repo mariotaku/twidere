@@ -23,8 +23,9 @@ public interface Constants {
 	public static final String DEFAULT_REST_API_BASE = DEFAULT_PROTOCOL + "api.twitter.com/1/";
 	public static final String DEFAULT_SEARCH_API_BASE = DEFAULT_PROTOCOL + "search.twitter.com/";
 
-	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = "org.mariotaku.twidere.HOME_TIMELINE_REFRESHED";
-	public static final String BROADCAST_MENTIONS_REFRESHED = "org.mariotaku.twidere.MENTIONS_REFRESHED";
+	public static final String BROADCAST_HOME_TIMELINE_UPDATED = "org.mariotaku.twidere.HOME_TIMELINE_UPDATED";
+	public static final String BROADCAST_MENTIONS_UPDATED = "org.mariotaku.twidere.MENTIONS_UPDATED";
+	public static final String BROADCAST_ACCOUNTS_LIST_UPDATED = "org.mariotaku.twidere.ACCOUNTS_LIST_UPDATED";
 
 	public static final String BROADCAST_REFRESHSTATE_CHANGED = "org.mariotaku.twidere.REFRESHSTATE_CHANGED";
 
@@ -40,9 +41,11 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_DARK_THEME = "dark_theme";
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
+	public static final String PREFERENCE_KEY_BOTTOM_ACTIONS = "bottom_actions";
 
 	public static final String INTENT_ACTION_PREFIX = "org.mariotaku.twidere.";
 
+	public static final String INTENT_ACTION_HOME = INTENT_ACTION_PREFIX + "HOME";
 	public static final String INTENT_ACTION_COMPOSE = INTENT_ACTION_PREFIX + "COMPOSE";
 	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_ACTION_PREFIX
 			+ "GLOBAL_SETTINGS";
@@ -73,6 +76,11 @@ public interface Constants {
 	public static final int MENU_OPEN_IN_BROWSER = R.id.open_in_browser;
 	public static final int MENU_SET_COLOR = R.id.set_color;
 	public static final int MENU_ADD_ACCOUNT = R.id.add_account;
+	public static final int MENU_REPLY = R.id.reply;
+	public static final int MENU_FAV = R.id.fav;
+	public static final int MENU_RETWEET = R.id.retweet;
+	public static final int MENU_QUOTE = R.id.quote;
+	public static final int MENU_SHARE = R.id.share;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_ADD_IMAGE = 2;
@@ -80,5 +88,14 @@ public interface Constants {
 	public static final int REQUEST_EDIT_API = 4;
 	public static final int REQUEST_GOTO_AUTHORIZATION = 5;
 	public static final int REQUEST_SET_COLOR = 6;
+
+	public static final int RESULT_UNKNOWN_ERROR = -1;
+	public static final int RESULT_SUCCESS = 0;
+	public static final int RESULT_ALREADY_LOGGED_IN = 1;
+	public static final int RESULT_CONNECTIVITY_ERROR = 2;
+	public static final int RESULT_SERVER_ERROR = 3;
+	public static final int RESULT_BAD_ADDRESS = 4;
+	public static final int RESULT_NO_PERMISSION = 5;
+	public static final int RESULT_OPEN_BROWSER = 6;
 
 }

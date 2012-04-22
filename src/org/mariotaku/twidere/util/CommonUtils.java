@@ -9,10 +9,12 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.service.UpdateService;
 
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.conf.ConfigurationBuilder;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -32,6 +34,8 @@ import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.widget.Toast;
 
 public class CommonUtils implements Constants {
 
@@ -172,6 +176,21 @@ public class CommonUtils implements Constants {
 		return accounts;
 	}
 
+	public static int getErrorCode(TwitterException e) {
+		if (e == null) return RESULT_UNKNOWN_ERROR;
+		int status_code = e.getStatusCode();
+		if (status_code == -1)
+			return RESULT_CONNECTIVITY_ERROR;
+		else if (status_code >= 401 && status_code < 404)
+			return RESULT_NO_PERMISSION;
+		else if (status_code >= 404 && status_code < 500)
+			return RESULT_BAD_ADDRESS;
+		else if (status_code >= 500 && status_code < 600)
+			return RESULT_SERVER_ERROR;
+		else
+			return RESULT_UNKNOWN_ERROR;
+	}
+
 	public static String getImagePathFromUri(Context context, Uri uri) {
 		if (uri == null) return null;
 
@@ -298,9 +317,49 @@ public class CommonUtils implements Constants {
 		return 0;
 	}
 
+	public static void restartActivity(Activity activity) {
+		int fade_in = android.R.anim.fade_in;
+		int fade_out = android.R.anim.fade_out;
+		activity.overridePendingTransition(fade_in, fade_out);
+		activity.finish();
+		activity.overridePendingTransition(fade_in, fade_out);
+		activity.startActivity(activity.getIntent());
+	}
+
 	public static void setLayerType(View view, int layerType, Paint paint) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			new MethodsCompat().setLayerType(view, layerType, paint);
+		}
+	}
+
+	public static void setUiOptions(Window window, int uiOptions) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			new MethodsCompat().setUiOptions(window, uiOptions);
+		}
+	}
+
+	public static void showErrorMessage(Context context, int error_code) {
+		switch (error_code) {
+			case RESULT_ALREADY_LOGGED_IN:
+				Toast.makeText(context, R.string.error_already_logged_in, Toast.LENGTH_SHORT)
+						.show();
+				break;
+			case RESULT_CONNECTIVITY_ERROR:
+				Toast.makeText(context, R.string.error_connectivity_error, Toast.LENGTH_SHORT)
+						.show();
+				break;
+			case RESULT_SERVER_ERROR:
+				Toast.makeText(context, R.string.error_server_error, Toast.LENGTH_SHORT).show();
+				break;
+			case RESULT_BAD_ADDRESS:
+				Toast.makeText(context, R.string.error_bad_address, Toast.LENGTH_SHORT).show();
+				break;
+			case RESULT_NO_PERMISSION:
+				Toast.makeText(context, R.string.error_no_permission, Toast.LENGTH_SHORT).show();
+				break;
+			case RESULT_UNKNOWN_ERROR:
+				Toast.makeText(context, R.string.error_unknown_error, Toast.LENGTH_SHORT).show();
+				break;
 		}
 	}
 

@@ -7,10 +7,19 @@
 		android:showAsAction="always"
 		android:title="@string/reply"/>
 	<item
-		android:id="@id/retweet"
+		android:id="@+id/retweet_menu"
 		android:icon="@drawable/ic_menu_forward"
 		android:showAsAction="always"
-		android:title="@string/retweet"/>
+		android:title="@string/retweet">
+		<menu>
+			<item
+				android:id="@id/retweet"
+				android:title="@string/retweet"/>
+			<item
+				android:id="@id/quote"
+				android:title="@string/quote"/>
+		</menu>
+	</item>
 	<item
 		android:id="@id/fav"
 		android:icon="@drawable/ic_menu_star"

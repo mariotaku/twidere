@@ -46,6 +46,7 @@
 	<string name="delete">删除</string>
 	<string name="retweet">转推</string>
 	<string name="fav">收藏</string>
+	<string name="unfav">取消收藏</string>
 	<string name="reply">回复</string>
 	<string name="share">分享</string>
 	<string name="view">查看</string>
@@ -99,5 +100,7 @@
 	<string name="follow">关注</string>
 	<string name="delete_account">删除帐号</string>
 	<string name="delete_account_desc">你确定删除帐号 <xliff:g id="user_name">%s</xliff:g> ？</string>
+	<string name="bottom_actions">底部放置的动作菜单</string>
+	<string name="bottom_actions_summary">当使用手机且屏幕方向是纵向时将一些快捷动作放置在屏幕底部，如果你的手机屏幕难以单手操作，可以启用它。</string>
 
 </resources>

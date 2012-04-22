@@ -7,6 +7,7 @@ import org.mariotaku.twidere.fragment.DashboardFragment;
 import org.mariotaku.twidere.fragment.DiscoverFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.widget.TabsAdapter;
 
@@ -16,6 +17,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -36,6 +39,8 @@ public class HomeActivity extends BaseActivity {
 	private ProgressBar mProgress;
 	private TabsAdapter mAdapter;
 	private ServiceInterface mInterface;
+	private TabPageIndicator mIndicator;
+	private boolean mBottomActions;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -48,11 +53,11 @@ public class HomeActivity extends BaseActivity {
 		}
 
 	};
-	private TabPageIndicator mIndicator;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		setUiOptions();
 		super.onCreate(savedInstanceState);
 		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		StringBuilder where = new StringBuilder();
@@ -130,6 +135,15 @@ public class HomeActivity extends BaseActivity {
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		if (isUiOptionsChanged()) {
+			CommonUtils.restartActivity(this);
+			return;
+		}
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
 		setRefreshState();
@@ -143,11 +157,26 @@ public class HomeActivity extends BaseActivity {
 		super.onStop();
 	}
 
+	private boolean isUiOptionsChanged() {
+		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		boolean bottom_actions = preferences.getBoolean(PREFERENCE_KEY_BOTTOM_ACTIONS, false);
+		return bottom_actions != mBottomActions;
+	}
+
 	private void setRefreshState() {
 		boolean is_refresh = false;
 		if (mInterface != null) {
-			is_refresh = mInterface.isHomeTimelineRefreshing() || mInterface.isMentionsRefreshing();
+			is_refresh = mInterface.hasActivatedTask();
 		}
 		mProgress.setVisibility(is_refresh ? View.VISIBLE : View.INVISIBLE);
+	}
+
+	private void setUiOptions() {
+		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		mBottomActions = preferences.getBoolean(PREFERENCE_KEY_BOTTOM_ACTIONS, false);
+		if (mBottomActions) {
+			CommonUtils.setUiOptions(getWindow(),
+					ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
+		}
 	}
 }

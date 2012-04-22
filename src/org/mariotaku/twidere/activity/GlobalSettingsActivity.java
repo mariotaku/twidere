@@ -3,6 +3,7 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.CommonUtils;
 
 import android.content.ContentResolver;
 import android.os.Bundle;
@@ -39,7 +40,7 @@ public class GlobalSettingsActivity extends BasePreferenceActivity implements
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
 		if (PREFERENCE_KEY_DARK_THEME.equals(preference.getKey())) {
-			restartActivity();
+			CommonUtils.restartActivity(this);
 		}
 		return true;
 	}

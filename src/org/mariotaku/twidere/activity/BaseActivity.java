@@ -2,6 +2,7 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.CommonUtils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -30,15 +31,9 @@ public class BaseActivity extends RoboSherlockFragmentActivity implements Consta
 	public void onResume() {
 		super.onResume();
 		if (isThemeChanged()) {
-			restartActivity();
+			CommonUtils.restartActivity(this);
+			return;
 		}
-	}
-
-	public final void restartActivity() {
-		overridePendingTransition(0, 0);
-		finish();
-		overridePendingTransition(0, 0);
-		startActivity(getIntent());
 	}
 
 	public void setTheme() {

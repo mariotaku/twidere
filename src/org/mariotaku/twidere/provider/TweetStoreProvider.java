@@ -11,6 +11,7 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,19 +23,22 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	private static UriMatcher URI_MATCHER;
 
-	private static final String TABLE_ACCOUNTS = "accounts";
-	private static final String TABLE_STATUSES = "statuses";
-	private static final String TABLE_MENTIONS = "mentions";
+	private static final String TABLE_ACCOUNTS = Accounts.CONTENT_PATH;
+	private static final String TABLE_STATUSES = Statuses.CONTENT_PATH;
+	private static final String TABLE_MENTIONS = Mentions.CONTENT_PATH;
 
 	private static final int URI_ACCOUNTS = 1;
 	private static final int URI_STATUSES = 2;
 	private static final int URI_MENTIONS = 3;
+	private static final int URI_USER_TIMELINE = 4;
 
 	static {
 		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 		URI_MATCHER.addURI(TweetStore.AUTHORITY, Statuses.CONTENT_PATH, URI_STATUSES);
 		URI_MATCHER.addURI(TweetStore.AUTHORITY, Accounts.CONTENT_PATH, URI_ACCOUNTS);
 		URI_MATCHER.addURI(TweetStore.AUTHORITY, Mentions.CONTENT_PATH, URI_MENTIONS);
+		// URI_MATCHER.addURI(TweetStore.AUTHORITY, "user/*",
+		// URI_USER_TIMELINE);
 	}
 
 	private SQLiteDatabase database;
@@ -42,8 +46,14 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		String table = getTableName(uri);
-		if (table == null) return 0;
-		return database.delete(table, selection, selectionArgs);
+		int result = 0;
+		if (table != null) {
+			result = database.delete(table, selection, selectionArgs);
+		}
+		if (result > 0) {
+			sendBroadcastForOperatedUri(uri);
+		}
+		return result;
 	}
 
 	@Override
@@ -56,6 +66,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		String table = getTableName(uri);
 		if (table == null) return null;
 		long row_id = database.insert(table, null, values);
+		sendBroadcastForOperatedUri(uri);
 		return Uri.withAppendedPath(uri, String.valueOf(row_id));
 	}
 
@@ -79,8 +90,14 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		String table = getTableName(uri);
-		if (table == null) return 0;
-		return database.update(table, values, selection, selectionArgs);
+		int result = 0;
+		if (table != null) {
+			result = database.update(table, values, selection, selectionArgs);
+		}
+		if (result > 0) {
+			sendBroadcastForOperatedUri(uri);
+		}
+		return result;
 	}
 
 	private String getTableName(Uri uri) {
@@ -93,6 +110,22 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 				return TABLE_MENTIONS;
 			default:
 				return null;
+		}
+	}
+
+	private void sendBroadcastForOperatedUri(Uri uri) {
+		Context context = getContext();
+		switch (URI_MATCHER.match(uri)) {
+			case URI_STATUSES:
+				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_UPDATED));
+				break;
+			case URI_ACCOUNTS:
+				context.sendBroadcast(new Intent(BROADCAST_ACCOUNTS_LIST_UPDATED));
+				break;
+			case URI_MENTIONS:
+				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_UPDATED));
+				break;
+			default:
 		}
 	}
 

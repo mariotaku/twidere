@@ -2,6 +2,7 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.CommonUtils;
 
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
@@ -28,7 +29,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -255,30 +255,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {
 
-		protected final static int RESULT_UNKNOWN_ERROR = -1;
-		protected final static int RESULT_SUCCESS = 0;
-		protected final static int RESULT_ALREADY_LOGGED_IN = 1;
-		protected final static int RESULT_CONNECTIVITY_ERROR = 2;
-		protected final static int RESULT_SERVER_ERROR = 3;
-		protected final static int RESULT_BAD_ADDRESS = 4;
-		protected final static int RESULT_NO_PERMISSION = 5;
-		protected final static int RESULT_OPEN_BROWSER = 6;
-
-		protected int getErrorCode(TwitterException e) {
-			if (e == null) return RESULT_UNKNOWN_ERROR;
-			int status_code = e.getStatusCode();
-			if (status_code == -1)
-				return RESULT_CONNECTIVITY_ERROR;
-			else if (status_code >= 401 && status_code < 404)
-				return RESULT_NO_PERMISSION;
-			else if (status_code >= 404 && status_code < 500)
-				return RESULT_BAD_ADDRESS;
-			else if (status_code >= 500 && status_code < 600)
-				return RESULT_SERVER_ERROR;
-			else
-				return RESULT_UNKNOWN_ERROR;
-		}
-
 		@Override
 		protected void onPostExecute(Object result_obj) {
 			setSupportProgressBarIndeterminateVisibility(false);
@@ -290,34 +266,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			setSupportProgressBarIndeterminateVisibility(true);
 		}
 
-		protected void showErrorMessage(int error_code) {
-			switch (error_code) {
-				case RESULT_ALREADY_LOGGED_IN:
-					Toast.makeText(getApplicationContext(), R.string.error_already_logged_in,
-							Toast.LENGTH_SHORT).show();
-					break;
-				case RESULT_CONNECTIVITY_ERROR:
-					Toast.makeText(getApplicationContext(), R.string.error_connectivity_error,
-							Toast.LENGTH_SHORT).show();
-					break;
-				case RESULT_SERVER_ERROR:
-					Toast.makeText(getApplicationContext(), R.string.error_server_error,
-							Toast.LENGTH_SHORT).show();
-					break;
-				case RESULT_BAD_ADDRESS:
-					Toast.makeText(getApplicationContext(), R.string.error_bad_address,
-							Toast.LENGTH_SHORT).show();
-					break;
-				case RESULT_NO_PERMISSION:
-					Toast.makeText(getApplicationContext(), R.string.error_no_permission,
-							Toast.LENGTH_SHORT).show();
-					break;
-				case RESULT_UNKNOWN_ERROR:
-					Toast.makeText(getApplicationContext(), R.string.error_unknown_error,
-							Toast.LENGTH_SHORT).show();
-					break;
-			}
-		}
 	}
 
 	private class CallbackAuthTask extends AbstractTask {
@@ -346,7 +294,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				profile_image_url = twitter.showUser(accessToken.getUserId()).getProfileImageURL()
 						.toString();
 			} catch (TwitterException e) {
-				return getErrorCode(e);
+				return CommonUtils.getErrorCode(e);
 			}
 			if (accessToken != null) {
 				long userid = accessToken.getUserId();
@@ -384,15 +332,16 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			Integer result = (Integer) result_obj;
 			switch (result) {
 				case RESULT_SUCCESS:
-					Intent intent = new Intent(TwitterLoginActivity.this, HomeActivity.class);
+					Intent intent = new Intent(INTENT_ACTION_HOME);
 					Bundle bundle = new Bundle();
 					bundle.putBoolean(INTENT_KEY_REFRESH_ALL, true);
 					intent.putExtras(bundle);
+					intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 					startActivity(intent);
 					finish();
 					break;
 				default:
-					showErrorMessage(result);
+					CommonUtils.showErrorMessage(TwitterLoginActivity.this, result);
 					break;
 			}
 			super.onPostExecute(result_obj);
@@ -415,7 +364,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				account_valid = twitter.test();
 				user = twitter.verifyCredentials();
 			} catch (TwitterException e) {
-				return new Result(getErrorCode(e), Accounts.AUTH_TYPE_BASIC, null);
+				return new Result(CommonUtils.getErrorCode(e), Accounts.AUTH_TYPE_BASIC, null);
 			}
 
 			if (account_valid && user != null) {
@@ -458,7 +407,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			try {
 				requestToken = twitter.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
 			} catch (TwitterException e) {
-				return new Result(getErrorCode(e), Accounts.AUTH_TYPE_OAUTH, null);
+				return new Result(CommonUtils.getErrorCode(e), Accounts.AUTH_TYPE_OAUTH, null);
 			}
 			if (requestToken != null)
 				return new Result(RESULT_OPEN_BROWSER, Accounts.AUTH_TYPE_OAUTH, requestToken);
@@ -480,7 +429,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				profile_image_url = twitter.showUser(accessToken.getUserId()).getProfileImageURL()
 						.toString();
 			} catch (TwitterException e) {
-				return new Result(getErrorCode(e), Accounts.AUTH_TYPE_XAUTH, null);
+				return new Result(CommonUtils.getErrorCode(e), Accounts.AUTH_TYPE_XAUTH, null);
 			}
 			if (accessToken != null) {
 				long userid = accessToken.getUserId();
@@ -553,7 +502,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 							REQUEST_GOTO_AUTHORIZATION);
 					break;
 				default:
-					showErrorMessage(result.result_code);
+					CommonUtils.showErrorMessage(TwitterLoginActivity.this, result.result_code);
 					break;
 			}
 			super.onPostExecute(result_obj);

@@ -51,6 +51,7 @@
 	<string name="delete">Delete</string>
 	<string name="retweet">Retweet</string>
 	<string name="fav">Fav</string>
+	<string name="unfav">Unfav</string>
 	<string name="reply">Reply</string>
 	<string name="share">Share</string>
 	<string name="view">View</string>
@@ -108,5 +109,8 @@
 	<string name="follow">Follow</string>
 	<string name="delete_account">Delete account</string>
 	<string name="delete_account_desc">Are you sure to delete account <xliff:g id="user_name">%s</xliff:g> ?</string>
+	<string name="bottom_actions">Put action menus in bottom</string>
+	<string name="bottom_actions_summary">Put action menus in bottom, you can enable this when your screen is large.</string>
+	<string name="quote">Quote</string>
 
 </resources>

@@ -2,6 +2,7 @@ package org.mariotaku.twidere.app;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -13,6 +14,11 @@ public class TwidereApplication extends Application implements Constants {
 	private LazyImageLoader mListProfileImageLoader;
 	private CommonUtils mCommonUtils;
 	private ServiceInterface mServiceInterface;
+	private AsyncTaskManager mAsyncTaskManager = new AsyncTaskManager();
+
+	public AsyncTaskManager getAsyncTaskManager() {
+		return mAsyncTaskManager;
+	}
 
 	public CommonUtils getCommonUtils() {
 		return mCommonUtils;
