@@ -89,20 +89,61 @@ public class ServiceInterface implements Constants, IUpdateService {
 	}
 
 	@Override
-	public void deleteStatus(long account_id, long status_id, int type) {
+	public void createFavorite(long[] account_ids, long status_id) {
 		if (mService == null) return;
 		try {
-			mService.deleteStatus(account_id, status_id, type);
+			mService.createFavorite(account_ids, status_id);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void favStatus(long[] account_ids, long status_id, int type) {
+	public void destroyFavorite(long[] account_ids, long status_id) {
 		if (mService == null) return;
 		try {
-			mService.favStatus(account_ids, status_id, type);
+			mService.destroyFavorite(account_ids, status_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void destroyStatus(long account_id, long status_id) {
+		if (mService == null) return;
+		try {
+			mService.destroyStatus(account_id, status_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void getHomeTimeline(long[] account_ids, long[] max_ids) {
+		if (mService == null) return;
+		try {
+			mService.getHomeTimeline(account_ids, max_ids);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void getMentions(long[] account_ids, long[] max_ids) {
+		if (mService == null) return;
+		try {
+			mService.getMentions(account_ids, max_ids);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void getMessages(long[] account_ids, long[] max_ids) {
+		if (mService == null) return;
+		try {
+			mService.getMessages(account_ids, max_ids);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -141,37 +182,6 @@ public class ServiceInterface implements Constants, IUpdateService {
 		return false;
 	}
 
-	@Override
-	public void refreshHomeTimeline(long[] account_ids, long[] max_ids) {
-		if (mService == null) return;
-		try {
-			mService.refreshHomeTimeline(account_ids, max_ids);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	@Override
-	public void refreshMentions(long[] account_ids, long[] max_ids) {
-		if (mService == null) return;
-		try {
-			mService.refreshMentions(account_ids, max_ids);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void refreshMessages(long[] account_ids, long[] max_ids) {
-		if (mService == null) return;
-		try {
-			mService.refreshMessages(account_ids, max_ids);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public void removeStateListener(StateListener listener) {
 		if (listener != null) {
 			mStateListeners.remove(listener);
@@ -179,20 +189,10 @@ public class ServiceInterface implements Constants, IUpdateService {
 	}
 
 	@Override
-	public void retweetStatus(long[] account_ids, long status_id, int type) {
+	public void retweetStatus(long[] account_ids, long status_id) {
 		if (mService == null) return;
 		try {
-			mService.retweetStatus(account_ids, status_id, type);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void unFavStatus(long[] account_ids, long status_id, int type) {
-		if (mService == null) return;
-		try {
-			mService.unFavStatus(account_ids, status_id, type);
+			mService.retweetStatus(account_ids, status_id);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

@@ -91,9 +91,9 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 					boolean is_favorite = cur.getInt(cur
 							.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
 					if (is_favorite) {
-						mServiceInterface.unFavStatus(new long[] { account_id }, status_id, TYPE);
+						mServiceInterface.destroyFavorite(new long[] { account_id }, status_id);
 					} else {
-						mServiceInterface.favStatus(new long[] { account_id }, status_id, TYPE);
+						mServiceInterface.createFavorite(new long[] { account_id }, status_id);
 					}
 					break;
 			}
@@ -320,10 +320,10 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 	private void refresh(long[] account_ids, long[] max_ids) {
 		switch (TYPE) {
 			case TweetStore.VALUE_TYPE_STATUS:
-				mServiceInterface.refreshHomeTimeline(account_ids, max_ids);
+				mServiceInterface.getHomeTimeline(account_ids, max_ids);
 				break;
 			case TweetStore.VALUE_TYPE_MENTION:
-				mServiceInterface.refreshMentions(account_ids, max_ids);
+				mServiceInterface.getMentions(account_ids, max_ids);
 				break;
 		}
 	}

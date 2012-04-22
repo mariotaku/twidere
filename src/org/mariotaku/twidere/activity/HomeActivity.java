@@ -87,9 +87,9 @@ public class HomeActivity extends BaseActivity {
 					refresh_cur.moveToNext();
 					idx++;
 				}
-				mInterface.refreshHomeTimeline(account_ids, null);
-				mInterface.refreshMentions(account_ids, null);
-				mInterface.refreshMessages(account_ids, null);
+				mInterface.getHomeTimeline(account_ids, null);
+				mInterface.getMentions(account_ids, null);
+				mInterface.getMessages(account_ids, null);
 				refresh_cur.close();
 			}
 		}
