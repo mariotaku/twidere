@@ -2,21 +2,30 @@ package org.mariotaku.twidere.fragment;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.ViewStatusActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ServiceInterface;
 
 import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectResource;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,11 +41,17 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
 public class ViewStatusFragment extends BaseFragment implements OnClickListener {
 
+	@InjectResource(R.color.holo_blue_bright) public int mActivedMenuColor;
 	@InjectExtra(Statuses.ACCOUNT_ID) private long mAccountId;
 	@InjectExtra(Statuses.STATUS_ID) private long mStatusId;
-	@InjectExtra(TweetStore.KEY_TYPE) private int mType;
+
+	public ServiceInterface mServiceInterface;
 	private ContentResolver mResolver;
 	private TextView mName, mScreenName, mText, mSource;
 	private ImageView mProfileImage;
@@ -46,17 +61,33 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	private long mTweetUserId;
 
 	private FollowInfoTask mFollowInfoTask;
+	private boolean mIsFavorite;
+
+	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (BROADCAST_DATABASE_UPDATED.equals(action)) {
+				getSherlockActivity().invalidateOptionsMenu();
+			}
+		}
+	};
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+
+		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication())
+				.getServiceInterface();
+		mResolver = getSherlockActivity().getContentResolver();
 		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
 		View view = getView();
 		mName = (TextView) view.findViewById(R.id.name);
 		mScreenName = (TextView) view.findViewById(R.id.screen_name);
 		mText = (TextView) view.findViewById(R.id.text);
 		mProfileImage = (ImageView) view.findViewById(R.id.profile_image);
 		mSource = (TextView) view.findViewById(R.id.source);
-		mResolver = getSherlockActivity().getContentResolver();
 		mFollowButton = (Button) view.findViewById(R.id.follow);
 		mFollowIndicator = (FrameLayout) view.findViewById(R.id.follow_indicator);
 		mProgress = (ProgressBar) view.findViewById(R.id.progress);
@@ -74,6 +105,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	}
 
 	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_status, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.view_status, container, false);
 	}
@@ -86,25 +123,121 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		super.onDestroy();
 	}
 
-	private void displayStatus() {
-		Uri uri;
-		String[] cols;
-		String where;
-		switch (mType) {
-			case TweetStore.VALUE_TYPE_MENTION:
-				uri = Mentions.CONTENT_URI;
-				cols = Mentions.COLUMNS;
-				where = Mentions.STATUS_ID + "=" + mStatusId;
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_REPLY:
 				break;
-			case TweetStore.VALUE_TYPE_STATUS:
+			case MENU_RETWEET:
+				mServiceInterface.retweetStatus(new long[] { mAccountId }, mStatusId);
+				break;
+			case MENU_QUOTE:
+				break;
+			case MENU_FAV:
+				if (mIsFavorite) {
+					mServiceInterface.destroyFavorite(new long[] { mAccountId }, mStatusId);
+				} else {
+					mServiceInterface.createFavorite(new long[] { mAccountId }, mStatusId);
+				}
+				break;
+			case MENU_DELETE:
+				mServiceInterface.destroyStatus(mAccountId, mStatusId);
+				break;
 			default:
-				uri = Statuses.CONTENT_URI;
-				cols = Statuses.COLUMNS;
-				where = Statuses.STATUS_ID + "=" + mStatusId;
+				return false;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		String[] accounts_cols = new String[] { Accounts.USER_ID };
+		Cursor accounts_cur = mResolver
+				.query(Accounts.CONTENT_URI, accounts_cols, null, null, null);
+		ArrayList<Long> ids = new ArrayList<Long>();
+		if (accounts_cur != null) {
+			accounts_cur.moveToFirst();
+			int idx = accounts_cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			while (!accounts_cur.isAfterLast()) {
+				ids.add(accounts_cur.getLong(idx));
+				accounts_cur.moveToNext();
+			}
+			accounts_cur.close();
+		}
+		String[] cols = Statuses.COLUMNS;
+		String where = Statuses.STATUS_ID + "=" + mStatusId;
+
+		Cursor cur = null;
+
+		for (Uri uri : TweetStore.STATUSES_URIS) {
+			cur = mResolver.query(uri, cols, where, null, null);
+			if (cur != null && cur.getCount() > 0) {
 				break;
+			}
+			if (cur != null) {
+				cur.close();
+			}
+			if (getSherlockActivity() instanceof ViewStatusActivity) {
+				getSherlockActivity().finish();
+			} else {
+				getFragmentManager().beginTransaction().remove(this);
+			}
 		}
 
-		Cursor cur = mResolver.query(uri, cols, where, null, null);
+		if (cur != null && cur.getCount() > 0) {
+			cur.moveToFirst();
+			int idx = cur.getColumnIndexOrThrow(Statuses.USER_ID);
+			long user_id = cur.getLong(idx);
+			menu.findItem(MENU_DELETE).setVisible(ids.contains(user_id));
+			MenuItem itemFav = menu.findItem(MENU_FAV);
+			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1) {
+				itemFav.getIcon().setColorFilter(mActivedMenuColor, Mode.MULTIPLY);
+				itemFav.setTitle(R.string.unfav);
+			} else {
+				itemFav.getIcon().clearColorFilter();
+				itemFav.setTitle(R.string.fav);
+			}
+		}
+		if (cur != null) {
+			cur.close();
+		}
+		super.onPrepareOptionsMenu(menu);
+
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		IntentFilter filter = new IntentFilter(BROADCAST_DATABASE_UPDATED);
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
+		}
+	}
+
+	@Override
+	public void onStop() {
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		}
+		super.onStop();
+	}
+
+	private void displayStatus() {
+		String[] cols = Statuses.COLUMNS;
+		String where = Statuses.STATUS_ID + "=" + mStatusId;
+
+		Cursor cur = null;
+
+		for (Uri uri : TweetStore.STATUSES_URIS) {
+			cur = mResolver.query(uri, cols, where, null, null);
+			if (cur != null && cur.getCount() > 0) {
+				break;
+			}
+			if (cur != null) {
+				cur.close();
+			}
+		}
+
 		if (cur != null && cur.getCount() > 0) {
 			cur.moveToFirst();
 			String name = cur.getString(cur.getColumnIndexOrThrow(Statuses.NAME));
@@ -117,6 +250,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			mSource.setText(Html.fromHtml(getString(R.string.sent_from, source)));
 			mSource.setMovementMethod(LinkMovementMethod.getInstance());
 			mTweetUserId = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
+			mIsFavorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
 
 			LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity()
 					.getApplication()).getListProfileImageLoader();

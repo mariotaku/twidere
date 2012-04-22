@@ -8,6 +8,7 @@ import java.util.List;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.IUpdateService;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
@@ -37,8 +38,6 @@ public class UpdateService extends RoboService implements Constants {
 	private AsyncTaskManager mAsyncTaskManager;
 
 	private int mRefreshHomeTimelineTaskId, mRefreshMentionsTaskId;
-	private static final Uri[] mDatabaseUris = new Uri[] { Statuses.CONTENT_URI,
-			Mentions.CONTENT_URI };
 
 	public void createFavorite(long[] account_ids, long status_id) {
 		CreateFavoriteTask task = new CreateFavoriteTask(account_ids, status_id);
@@ -149,7 +148,7 @@ public class UpdateService extends RoboService implements Constants {
 				StringBuilder where = new StringBuilder();
 				where.append(Statuses.ACCOUNT_ID + "=" + responce.account_id);
 				where.append(" AND " + Statuses.STATUS_ID + "=" + responce.status.getId());
-				for (Uri uri : mDatabaseUris) {
+				for (Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.update(uri, values, where.toString(), null);
 				}
 			}
@@ -212,7 +211,7 @@ public class UpdateService extends RoboService implements Constants {
 				StringBuilder where = new StringBuilder();
 				where.append(Statuses.ACCOUNT_ID + "=" + responce.account_id);
 				where.append(" AND " + Statuses.STATUS_ID + "=" + responce.status.getId());
-				for (Uri uri : mDatabaseUris) {
+				for (Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.update(uri, values, where.toString(), null);
 				}
 			}
@@ -265,7 +264,7 @@ public class UpdateService extends RoboService implements Constants {
 			StringBuilder where = new StringBuilder();
 			where.append(Statuses.ACCOUNT_ID + "=" + result.account_id);
 			where.append(" AND " + Statuses.STATUS_ID + "=" + result.status.getId());
-			for (Uri uri : mDatabaseUris) {
+			for (Uri uri : TweetStore.STATUSES_URIS) {
 				resolver.delete(uri, where.toString(), null);
 			}
 			super.onPostExecute(result);
@@ -575,7 +574,7 @@ public class UpdateService extends RoboService implements Constants {
 				StringBuilder where = new StringBuilder();
 				where.append(Statuses.ACCOUNT_ID + "=" + responce.account_id);
 				where.append(" AND " + Statuses.STATUS_ID + "=" + responce.status.getId());
-				for (Uri uri : mDatabaseUris) {
+				for (Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.update(uri, values, where.toString(), null);
 				}
 			}

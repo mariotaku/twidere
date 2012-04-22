@@ -126,7 +126,9 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_UPDATED));
 				break;
 			default:
+				return;
 		}
+		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
 	}
 
 	private class DatabaseHelper extends SQLiteOpenHelper {

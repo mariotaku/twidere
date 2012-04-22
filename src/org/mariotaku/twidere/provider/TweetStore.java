@@ -14,6 +14,9 @@ public class TweetStore {
 	public static final int VALUE_TYPE_STATUS = 1;
 	public static final int VALUE_TYPE_MENTION = 2;
 
+	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI,
+			Mentions.CONTENT_URI };
+
 	private static final String TYPE_PRIMARY_KEY = "INTEGER PRIMARY KEY AUTOINCREMENT";
 
 	private static final String TYPE_TEXT = "TEXT";
@@ -115,6 +118,28 @@ public class TweetStore {
 				TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
 				TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
 
+	}
+
+	public static class Drafts implements BaseColumns {
+
+		public final static String CONTENT_PATH = "drafts";
+
+		public final static Uri CONTENT_URI = Uri.withAppendedPath(
+				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+
+		public final static String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
+
+		/**
+		 * 已保存推文所属的帐户的ID <br>
+		 * Type: TEXT
+		 */
+		public final static String ACCOUNT_IDS = "account_ids";
+
+		/**
+		 * 推文的内容 <br>
+		 * Type: TEXT
+		 */
+		public final static String TEXT = "text";
 	}
 
 	public static class Mentions extends Statuses {

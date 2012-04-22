@@ -101,6 +101,7 @@
 	<string name="delete_account">删除帐号</string>
 	<string name="delete_account_desc">你确定删除帐号 <xliff:g id="user_name">%s</xliff:g> ？</string>
 	<string name="bottom_actions">底部放置的动作菜单</string>
-	<string name="bottom_actions_summary">当使用手机且屏幕方向是纵向时将一些快捷动作放置在屏幕底部，如果你的手机屏幕难以单手操作，可以启用它。</string>
+	<string name="bottom_actions_summary">使用手机且方向是纵向时将一些菜单键放置在底部，如果你的手机屏幕难以单手操作，它会有不少帮助。</string>
+	<string name="quote">引用</string>
 
 </resources>

@@ -7,7 +7,7 @@
 		android:showAsAction="always"
 		android:title="@string/reply"/>
 	<item
-		android:id="@+id/retweet_menu"
+		android:id="@+id/retweet_submenu"
 		android:icon="@drawable/ic_menu_forward"
 		android:showAsAction="always"
 		android:title="@string/retweet">

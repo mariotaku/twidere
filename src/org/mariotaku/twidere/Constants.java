@@ -28,6 +28,7 @@ public interface Constants {
 	public static final String BROADCAST_ACCOUNTS_LIST_UPDATED = "org.mariotaku.twidere.ACCOUNTS_LIST_UPDATED";
 
 	public static final String BROADCAST_REFRESHSTATE_CHANGED = "org.mariotaku.twidere.REFRESHSTATE_CHANGED";
+	public static final String BROADCAST_DATABASE_UPDATED = "org.mariotaku.twidere.DATABASE_UPDATED";
 
 	public static final String SHUFFIX_SCROLL_TO_TOP = ".SCROLL_TO_TOP";
 

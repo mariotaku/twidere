@@ -84,6 +84,7 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 				case MENU_REPLY:
 					break;
 				case MENU_RETWEET:
+					mServiceInterface.retweetStatus(new long[] { account_id }, status_id);
 					break;
 				case MENU_QUOTE:
 					break;
@@ -96,6 +97,12 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 						mServiceInterface.createFavorite(new long[] { account_id }, status_id);
 					}
 					break;
+				case MENU_DELETE:
+					mServiceInterface.destroyStatus(account_id, status_id);
+					break;
+				default:
+					cur.close();
+					return false;
 			}
 		}
 		if (cur != null) {
