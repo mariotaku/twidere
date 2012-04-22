@@ -8,6 +8,7 @@ import java.util.List;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.IUpdateService;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
@@ -38,12 +39,12 @@ public class UpdateService extends RoboService implements Constants {
 
 	private int mRefreshHomeTimelineTaskId, mRefreshMentionsTaskId;
 
-	public void deleteStatus(long account_id, long status_id) {
+	public void deleteStatus(long account_id, long status_id, int type) {
 
 	}
 
-	public void favStatus(long[] account_ids, long status_id) {
-		FavStatusTask task = new FavStatusTask(account_ids, status_id);
+	public void favStatus(long[] account_ids, long status_id, int type) {
+		FavStatusTask task = new FavStatusTask(account_ids, status_id, type);
 		mAsyncTaskManager.add(task, true);
 	}
 
@@ -86,13 +87,13 @@ public class UpdateService extends RoboService implements Constants {
 
 	}
 
-	public void retweetStatus(long[] account_ids, long status_id) {
-		RetweetStatusTask task = new RetweetStatusTask(account_ids, status_id);
+	public void retweetStatus(long[] account_ids, long status_id, int type) {
+		RetweetStatusTask task = new RetweetStatusTask(account_ids, status_id, type);
 		mAsyncTaskManager.add(task, true);
 	}
 
-	public void unFavStatus(long[] account_ids, long status_id) {
-		UnFavStatusTask task = new UnFavStatusTask(account_ids, status_id);
+	public void unFavStatus(long[] account_ids, long status_id, int type) {
+		UnFavStatusTask task = new UnFavStatusTask(account_ids, status_id, type);
 		mAsyncTaskManager.add(task, true);
 	}
 
@@ -108,11 +109,13 @@ public class UpdateService extends RoboService implements Constants {
 
 		private long[] account_ids;
 		private long status_id;
+		private int type;
 
-		public FavStatusTask(long[] account_ids, long status_id) {
+		public FavStatusTask(long[] account_ids, long status_id, int type) {
 			super(UpdateService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.status_id = status_id;
+			this.type = type;
 		}
 
 		@Override
@@ -140,13 +143,24 @@ public class UpdateService extends RoboService implements Constants {
 		protected void onPostExecute(List<AccountResponce> result) {
 			ContentResolver resolver = getContentResolver();
 
+			Uri uri;
+			switch (type) {
+				case TweetStore.VALUE_TYPE_MENTION:
+					uri = Mentions.CONTENT_URI;
+					break;
+				case TweetStore.VALUE_TYPE_STATUS:
+				default:
+					uri = Statuses.CONTENT_URI;
+					break;
+			}
+
 			for (AccountResponce responce : result) {
 				ContentValues values = new ContentValues();
-				values.put(Mentions.IS_FAVORITE, responce.status.isFavorited() ? 1 : 0);
+				values.put(Statuses.IS_FAVORITE, responce.status.isFavorited() ? 1 : 0);
 				StringBuilder where = new StringBuilder();
-				where.append(Mentions.ACCOUNT_ID + "=" + responce.account_id);
-				where.append(" AND " + Mentions.STATUS_ID + "=" + responce.status.getId());
-				resolver.update(Mentions.CONTENT_URI, values, where.toString(), null);
+				where.append(Statuses.ACCOUNT_ID + "=" + responce.account_id);
+				where.append(" AND " + Statuses.STATUS_ID + "=" + responce.status.getId());
+				resolver.update(uri, values, where.toString(), null);
 			}
 			super.onPostExecute(result);
 		}
@@ -410,33 +424,76 @@ public class UpdateService extends RoboService implements Constants {
 
 	}
 
-	private class RetweetStatusTask extends ManagedAsyncTask<Object, Void, Void> {
+	private class RetweetStatusTask extends
+			ManagedAsyncTask<Object, Void, List<RetweetStatusTask.AccountResponce>> {
 
 		private long[] account_ids;
 		private long status_id;
+		private int type;
 
-		public RetweetStatusTask(long[] account_ids, long status_id) {
+		public RetweetStatusTask(long[] account_ids, long status_id, int type) {
 			super(UpdateService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.status_id = status_id;
+			this.type = type;
 		}
 
 		@Override
-		protected Void doInBackground(Object... params) {
+		protected List<AccountResponce> doInBackground(Object... params) {
 
 			if (account_ids == null) return null;
+
+			List<AccountResponce> result = new ArrayList<AccountResponce>();
 
 			for (long account_id : account_ids) {
 				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
 				if (twitter != null) {
 					try {
-						twitter.retweetStatus(status_id);
+						twitter4j.Status status = twitter.retweetStatus(status_id);
+						result.add(new AccountResponce(account_id, status));
 					} catch (TwitterException e) {
 						e.printStackTrace();
 					}
 				}
 			}
-			return null;
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(List<AccountResponce> result) {
+			ContentResolver resolver = getContentResolver();
+
+			Uri uri;
+			switch (type) {
+				case TweetStore.VALUE_TYPE_MENTION:
+					uri = Mentions.CONTENT_URI;
+					break;
+				case TweetStore.VALUE_TYPE_STATUS:
+				default:
+					uri = Statuses.CONTENT_URI;
+					break;
+			}
+
+			for (AccountResponce responce : result) {
+				ContentValues values = new ContentValues();
+				values.put(Statuses.IS_RETWEET, responce.status.isFavorited() ? 1 : 0);
+				StringBuilder where = new StringBuilder();
+				where.append(Statuses.ACCOUNT_ID + "=" + responce.account_id);
+				where.append(" AND " + Statuses.STATUS_ID + "=" + responce.status.getId());
+				resolver.update(uri, values, where.toString(), null);
+			}
+			super.onPostExecute(result);
+		}
+
+		private class AccountResponce {
+
+			public long account_id;
+			public twitter4j.Status status;
+
+			public AccountResponce(long account_id, twitter4j.Status status) {
+				this.account_id = account_id;
+				this.status = status;
+			}
 		}
 
 	}
@@ -456,13 +513,13 @@ public class UpdateService extends RoboService implements Constants {
 		}
 
 		@Override
-		public void deleteStatus(long account_id, long status_id) throws RemoteException {
-			mService.get().deleteStatus(account_id, status_id);
+		public void deleteStatus(long account_id, long status_id, int type) throws RemoteException {
+			mService.get().deleteStatus(account_id, status_id, type);
 		}
 
 		@Override
-		public void favStatus(long[] account_ids, long status_id) throws RemoteException {
-			mService.get().favStatus(account_ids, status_id);
+		public void favStatus(long[] account_ids, long status_id, int type) throws RemoteException {
+			mService.get().favStatus(account_ids, status_id, type);
 		}
 
 		@Override
@@ -496,13 +553,15 @@ public class UpdateService extends RoboService implements Constants {
 		}
 
 		@Override
-		public void retweetStatus(long[] account_ids, long status_id) throws RemoteException {
-			mService.get().retweetStatus(account_ids, status_id);
+		public void retweetStatus(long[] account_ids, long status_id, int type)
+				throws RemoteException {
+			mService.get().retweetStatus(account_ids, status_id, type);
 		}
 
 		@Override
-		public void unFavStatus(long[] account_ids, long status_id) throws RemoteException {
-			mService.get().unFavStatus(account_ids, status_id);
+		public void unFavStatus(long[] account_ids, long status_id, int type)
+				throws RemoteException {
+			mService.get().unFavStatus(account_ids, status_id, type);
 		}
 
 		@Override
@@ -519,11 +578,13 @@ public class UpdateService extends RoboService implements Constants {
 
 		private long[] account_ids;
 		private long status_id;
+		private int type;
 
-		public UnFavStatusTask(long[] account_ids, long status_id) {
+		public UnFavStatusTask(long[] account_ids, long status_id, int type) {
 			super(UpdateService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.status_id = status_id;
+			this.type = type;
 		}
 
 		@Override
@@ -551,13 +612,24 @@ public class UpdateService extends RoboService implements Constants {
 		protected void onPostExecute(List<AccountResponce> result) {
 			ContentResolver resolver = getContentResolver();
 
+			Uri uri;
+			switch (type) {
+				case TweetStore.VALUE_TYPE_MENTION:
+					uri = Mentions.CONTENT_URI;
+					break;
+				case TweetStore.VALUE_TYPE_STATUS:
+				default:
+					uri = Statuses.CONTENT_URI;
+					break;
+			}
+
 			for (AccountResponce responce : result) {
 				ContentValues values = new ContentValues();
-				values.put(Mentions.IS_FAVORITE, responce.status.isFavorited() ? 1 : 0);
+				values.put(Statuses.IS_FAVORITE, responce.status.isFavorited() ? 1 : 0);
 				StringBuilder where = new StringBuilder();
-				where.append(Mentions.ACCOUNT_ID + "=" + responce.account_id);
-				where.append(" AND " + Mentions.STATUS_ID + "=" + responce.status.getId());
-				resolver.update(Mentions.CONTENT_URI, values, where.toString(), null);
+				where.append(Statuses.ACCOUNT_ID + "=" + responce.account_id);
+				where.append(" AND " + Statuses.STATUS_ID + "=" + responce.status.getId());
+				resolver.update(uri, values, where.toString(), null);
 			}
 			super.onPostExecute(result);
 		}

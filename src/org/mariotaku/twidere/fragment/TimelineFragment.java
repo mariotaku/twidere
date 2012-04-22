@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,31 +46,38 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 		LoaderCallbacks<Cursor>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
 		ActionMode.Callback {
 
-	@InjectResource(R.color.holo_blue_bright) private int mActivedMenuColor;
-
-	private StatusesAdapter mAdapter;
+	@InjectResource(R.color.holo_blue_bright) public int mActivedMenuColor;
 	public ServiceInterface mServiceInterface;
 	public PullToRefreshListView mListView;
+	public ContentResolver mResolver;
+	public long mSelectedStatusId;
+
+	private StatusesAdapter mAdapter;
 	private boolean mBusy, mTickerStopped;
 
 	private Handler mHandler;
 	private Runnable mTicker;
-	public ContentResolver mResolver;
 	private boolean mBottomReached, mDisplayProfileImage;
 	private SharedPreferences mPreferences;
 
-	private long mSelectedStatusId;
+	private final Uri CONTENT_URI;
+
+	public final int TYPE;
+
+	public TimelineFragment(Uri uri, int type) {
+		CONTENT_URI = uri;
+		TYPE = type;
+	}
 
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		Uri uri = Statuses.CONTENT_URI;
+		Uri uri = CONTENT_URI;
 		String[] cols = Statuses.COLUMNS;
 		String where = Statuses.STATUS_ID + "=" + mSelectedStatusId;
 		Cursor cur = mResolver.query(uri, cols, where, null, null);
 		if (cur != null && cur.getCount() > 0) {
 			cur.moveToFirst();
-			int textIdx = cur.getColumnIndexOrThrow(Statuses.TEXT);
-			String text = cur.getString(textIdx);
+			String text = cur.getString(cur.getColumnIndexOrThrow(Statuses.TEXT));
 			long status_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_ID));
 			long account_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.ACCOUNT_ID));
 			switch (item.getItemId()) {
@@ -80,7 +88,13 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 				case MENU_QUOTE:
 					break;
 				case MENU_FAV:
-					mServiceInterface.favStatus(new long[] { account_id }, status_id);
+					boolean is_favorite = cur.getInt(cur
+							.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
+					if (is_favorite) {
+						mServiceInterface.unFavStatus(new long[] { account_id }, status_id, TYPE);
+					} else {
+						mServiceInterface.favStatus(new long[] { account_id }, status_id, TYPE);
+					}
 					break;
 			}
 		}
@@ -120,6 +134,14 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		String[] cols = Statuses.COLUMNS;
+		Uri uri = CONTENT_URI;
+		return new CursorLoader(getSherlockActivity(), uri, cols, null, null,
+				Statuses.DEFAULT_SORT_ORDER);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.refreshable_list, container, false);
 	}
@@ -137,13 +159,12 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 			long status_id = holder.status_id;
 			long account_id = holder.account_id;
 			if (holder.isGap()) {
-				mServiceInterface.refreshHomeTimeline(new long[] { account_id },
-						new long[] { status_id });
+				refresh(new long[] { account_id }, new long[] { status_id });
 			} else {
 				Bundle bundle = new Bundle();
 				bundle.putLong(Statuses.ACCOUNT_ID, account_id);
 				bundle.putLong(Statuses.STATUS_ID, status_id);
-				bundle.putInt(TweetStore.KEY_TYPE, TweetStore.VALUE_TYPE_STATUS);
+				bundle.putInt(TweetStore.KEY_TYPE, TYPE);
 				Intent intent = new Intent(INTENT_ACTION_VIEW_STATUS).putExtras(bundle);
 				startActivity(intent);
 			}
@@ -188,7 +209,7 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 			}
 			accounts_cur.close();
 		}
-		Uri uri = Statuses.CONTENT_URI;
+		Uri uri = CONTENT_URI;
 		String[] cols = Statuses.COLUMNS;
 		String where = Statuses.STATUS_ID + "=" + mSelectedStatusId;
 		Cursor cur = mResolver.query(uri, cols, where, null, null);
@@ -209,6 +230,24 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 			cur.close();
 		}
 		return true;
+	}
+
+	@Override
+	public void onRefresh() {
+		String[] cols = new String[] { Accounts.USER_ID };
+		Cursor cur = mResolver.query(Accounts.CONTENT_URI, cols, null, null, null);
+
+		if (cur != null) {
+			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			long[] ids = new long[cur.getCount()];
+			for (int i = 0; i < cur.getCount(); i++) {
+				cur.moveToPosition(i);
+				ids[i] = cur.getLong(idx);
+			}
+			refresh(ids, null);
+			cur.close();
+		}
+
 	}
 
 	@Override
@@ -276,5 +315,16 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 	public void onStop() {
 		mTickerStopped = true;
 		super.onStop();
+	}
+
+	private void refresh(long[] account_ids, long[] max_ids) {
+		switch (TYPE) {
+			case TweetStore.VALUE_TYPE_STATUS:
+				mServiceInterface.refreshHomeTimeline(account_ids, max_ids);
+				break;
+			case TweetStore.VALUE_TYPE_MENTION:
+				mServiceInterface.refreshMentions(account_ids, max_ids);
+				break;
+		}
 	}
 }

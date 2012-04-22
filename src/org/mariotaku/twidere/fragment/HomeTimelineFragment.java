@@ -1,17 +1,12 @@
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 
 public class HomeTimelineFragment extends TimelineFragment {
 
@@ -32,30 +27,8 @@ public class HomeTimelineFragment extends TimelineFragment {
 		}
 	};
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] cols = Statuses.COLUMNS;
-		Uri uri = Statuses.CONTENT_URI;
-		return new CursorLoader(getSherlockActivity(), uri, cols, null, null,
-				Statuses.DEFAULT_SORT_ORDER);
-	}
-
-	@Override
-	public void onRefresh() {
-		String[] cols = new String[] { Accounts.USER_ID };
-		Cursor cur = mResolver.query(Accounts.CONTENT_URI, cols, null, null, null);
-
-		if (cur != null) {
-			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
-			long[] ids = new long[cur.getCount()];
-			for (int i = 0; i < cur.getCount(); i++) {
-				cur.moveToPosition(i);
-				ids[i] = cur.getLong(idx);
-			}
-			mServiceInterface.refreshHomeTimeline(ids, null);
-			cur.close();
-		}
-
+	public HomeTimelineFragment() {
+		super(Statuses.CONTENT_URI, TweetStore.VALUE_TYPE_STATUS);
 	}
 
 	@Override
