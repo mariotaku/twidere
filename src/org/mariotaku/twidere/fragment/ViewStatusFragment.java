@@ -285,10 +285,11 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		private boolean isAllFollowing() {
 			long[] ids = CommonUtils.getActivatedAccounts(getSherlockActivity());
 			for (long id : ids) {
+				if (id == mTweetUserId) continue;
 				Twitter twitter = CommonUtils.getTwitterInstance(getSherlockActivity(), id);
 				try {
 					Relationship result = twitter.showFriendship(id, mTweetUserId);
-					if (!result.isSourceFollowingTarget() && id != mTweetUserId) return false;
+					if (!result.isSourceFollowingTarget()) return false;
 				} catch (TwitterException e) {
 					e.printStackTrace();
 				}
