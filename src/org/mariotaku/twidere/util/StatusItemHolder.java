@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class StatusItemHolder {
 
 	public ImageView profile_image, color_indicator;
-	public TextView user_name, screen_name, tweet_content, tweet_time, in_reply_to;
+	public TextView user_name, screen_name, text, tweet_time, in_reply_to;
 	public long status_id, account_id;
 	private View content, gap_text;
 	private boolean is_gap;
@@ -22,7 +22,7 @@ public class StatusItemHolder {
 		color_indicator = (ImageView) view.findViewById(R.id.color);
 		user_name = (TextView) view.findViewById(R.id.user_name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
-		tweet_content = (TextView) view.findViewById(R.id.text);
+		text = (TextView) view.findViewById(R.id.text);
 		tweet_time = (TextView) view.findViewById(R.id.tweet_time);
 		in_reply_to = (TextView) view.findViewById(R.id.in_reply_to);
 

@@ -1,5 +1,6 @@
 package org.mariotaku.twidere.util;
 
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -8,9 +9,13 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.service.UpdateService;
 
+import twitter4j.HashtagEntity;
+import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.URLEntity;
+import twitter4j.UserMentionEntity;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.conf.ConfigurationBuilder;
@@ -30,8 +35,12 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.format.Time;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -386,6 +395,57 @@ public class CommonUtils implements Constants {
 			if (mCallback != null) {
 				mCallback.onServiceDisconnected(className);
 			}
+		}
+	}
+	
+	public static String formatStatusString(Status status) {
+		final CharSequence TAG_START = "<p>";
+		final CharSequence TAG_END = "</p>";
+		if (status == null) return "";
+		SpannableString text = new SpannableString(status.getText());
+		//Format links.
+		URLEntity[] urls = status.getURLEntities();
+		if (urls != null) {
+			for (URLEntity url : urls) {
+				int start = url.getStart();
+				int end = url.getEnd();
+				URL expanded_url = url.getExpandedURL();
+				if (expanded_url != null) {
+					text.setSpan(new URLSpan(expanded_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+			}
+		}
+		//Format mentioned users.
+		UserMentionEntity[] mentions = status.getUserMentionEntities();
+		if (mentions != null) {
+			for (UserMentionEntity mention : mentions) {
+				int start = mention.getStart();
+				int end = mention.getEnd();
+				String link = "https://twitter.com/#!/" + mention.getScreenName();
+				if (link != null) {
+					text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+			}
+		}
+		//Format hashtags.
+		HashtagEntity[] hashtags = status.getHashtagEntities();
+		if (hashtags != null) {
+			for (HashtagEntity hashtag : hashtags) {
+				int start = hashtag.getStart();
+				int end = hashtag.getEnd();
+				String link = "https://twitter.com/search/#" + hashtag.getText();
+				if (link != null) {
+					text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+			}
+		}
+		String formatted = Html.toHtml(text);
+		if (formatted != null && formatted.contains(TAG_START) && formatted.contains(TAG_END)) {
+			int start = formatted.indexOf(TAG_START.toString()) + TAG_START.length();
+			int end = formatted.lastIndexOf(TAG_END.toString());
+			return formatted.substring(start, end);
+		} else {
+			return formatted;
 		}
 	}
 

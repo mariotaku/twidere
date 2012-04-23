@@ -177,11 +177,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			if (cur != null) {
 				cur.close();
 			}
-			if (getSherlockActivity() instanceof ViewStatusActivity) {
-				getSherlockActivity().finish();
-			} else {
-				getFragmentManager().beginTransaction().remove(this);
-			}
 		}
 
 		if (cur != null && cur.getCount() > 0) {
@@ -196,6 +191,13 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			} else {
 				itemFav.getIcon().clearColorFilter();
 				itemFav.setTitle(R.string.fav);
+			}
+		} else {
+			if (getSherlockActivity() instanceof ViewStatusActivity) {
+				getSherlockActivity().finish();
+			} else {
+				//Do what? I will make a decision after I have a tablet.
+				//getFragmentManager().beginTransaction().remove(this);
 			}
 		}
 		if (cur != null) {
@@ -245,7 +247,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			String screen_name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
 			mScreenName.setText(screen_name != null ? "@" + screen_name : "");
 			String text = cur.getString(cur.getColumnIndexOrThrow(Statuses.TEXT));
-			mText.setText(text != null ? text : "");
+			if (text != null) mText.setText(Html.fromHtml(text));
+			mText.setMovementMethod(LinkMovementMethod.getInstance());
 			String source = cur.getString(cur.getColumnIndexOrThrow(Statuses.SOURCE));
 			mSource.setText(Html.fromHtml(getString(R.string.sent_from, source)));
 			mSource.setMovementMethod(LinkMovementMethod.getInstance());
@@ -285,7 +288,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				Twitter twitter = CommonUtils.getTwitterInstance(getSherlockActivity(), id);
 				try {
 					Relationship result = twitter.showFriendship(id, mTweetUserId);
-					if (!result.isSourceFollowingTarget()) return false;
+					if (!result.isSourceFollowingTarget() && id != mTweetUserId) return false;
 				} catch (TwitterException e) {
 					e.printStackTrace();
 				}

@@ -14,16 +14,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 
 public class StatusesAdapter extends SimpleCursorAdapter {
 
-	private final static String[] mFrom = new String[] { Statuses.NAME, Statuses.TEXT };
-	private final static int[] mTo = new int[] { R.id.user_name, R.id.text };
+	private final static String[] mFrom = new String[] { Statuses.NAME};
+	private final static int[] mTo = new int[] { R.id.user_name};
 	private boolean mDisplayProfileImage, mMultipleAccountsActivated;
 	private LazyImageLoader mImageLoader;
-	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx,
+	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx, mTextIdx,
 			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mHasLocationIdx,
 			mHasMediaIdx, mInReplyToStatusIdIdx, mInReplyToScreennameIdx;
 
@@ -55,6 +56,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 		if (!is_gap) {
 
 			String screen_name = cursor.getString(mScreenNameIdx);
+			String text = cursor.getString(mTextIdx);
 			String profile_image_url = cursor.getString(mProfileImageUrlIdx);
 			boolean is_retweet = cursor.getInt(mIsRetweetIdx) == 1;
 			boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
@@ -63,6 +65,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			boolean is_reply = cursor.getInt(mInReplyToStatusIdIdx) != -1;
 
 			holder.screen_name.setText("@" + screen_name);
+			holder.text.setText(Html.fromHtml(text).toString());
 			holder.tweet_time.setText(CommonUtils.formatToShortTimeString(context,
 					cursor.getLong(mStatusTimestampIdx)));
 			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
@@ -101,6 +104,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			mStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.STATUS_ID);
 			mStatusTimestampIdx = cursor.getColumnIndexOrThrow(Statuses.STATUS_TIMESTAMP);
 			mScreenNameIdx = cursor.getColumnIndexOrThrow(Statuses.SCREEN_NAME);
+			mTextIdx = cursor.getColumnIndexOrThrow(Statuses.TEXT);
 			mProfileImageUrlIdx = cursor.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
 			mIsRetweetIdx = cursor.getColumnIndexOrThrow(Statuses.IS_RETWEET);
 			mIsFavoriteIdx = cursor.getColumnIndexOrThrow(Statuses.IS_FAVORITE);

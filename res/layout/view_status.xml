@@ -34,7 +34,6 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:singleLine="true"
-				android:text="Name"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 			<TextView
@@ -42,7 +41,6 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:singleLine="true"
-				android:text="screenname"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
 		</LinearLayout>
@@ -70,24 +68,34 @@
 		</FrameLayout>
 	</RelativeLayout>
 
-	<TextView
-		android:id="@+id/text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+	<ScrollView
+		android:id="@+id/text_scroll"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
 		android:layout_alignLeft="@+id/profile"
 		android:layout_below="@+id/profile"
-		android:padding="8dip"
-		android:singleLine="false"
-		android:text="Text"
-		android:textAppearance="?android:attr/textAppearanceMedium"/>
+		android:padding="8dip">
 
-	<TextView
-		android:id="@+id/source"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/text"
-		android:layout_below="@+id/text"
-		android:text="@string/sent_from"
-		android:textAppearance="?android:attr/textAppearanceSmall"/>
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+
+			<TextView
+				android:id="@+id/text"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:singleLine="false"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<TextView
+				android:id="@+id/source"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingTop="8dip"
+				android:text="@string/sent_from"
+				android:textAppearance="?android:attr/textAppearanceSmall"/>
+		</LinearLayout>
+	</ScrollView>
 
 </RelativeLayout>
