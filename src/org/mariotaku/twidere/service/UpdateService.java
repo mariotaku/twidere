@@ -20,7 +20,6 @@ import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
-import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -337,7 +336,9 @@ public class UpdateService extends RoboService implements Constants {
 
 				long min_id = -1, max_id = -1;
 				for (twitter4j.Status status : statuses) {
-					if (status == null) continue;
+					if (status == null) {
+						continue;
+					}
 					ContentValues values = new ContentValues();
 					User user = status.getUser();
 					long status_id = status.getId();
@@ -462,7 +463,9 @@ public class UpdateService extends RoboService implements Constants {
 
 				long min_id = -1, max_id = -1;
 				for (twitter4j.Status mention : mentions) {
-					if (mention == null) continue;
+					if (mention == null) {
+						continue;
+					}
 					ContentValues values = new ContentValues();
 					long status_id = mention.getId();
 					MediaEntity[] medias = mention.getMediaEntities();
@@ -713,7 +716,8 @@ public class UpdateService extends RoboService implements Constants {
 		@Override
 		public int updateStatus(long[] account_ids, String content, Location location,
 				Uri image_uri, long in_reply_to) throws RemoteException {
-			return mService.get().updateStatus(account_ids, content, location, image_uri, in_reply_to);
+			return mService.get().updateStatus(account_ids, content, location, image_uri,
+					in_reply_to);
 
 		}
 

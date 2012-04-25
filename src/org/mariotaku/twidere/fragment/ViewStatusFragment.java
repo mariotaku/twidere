@@ -196,8 +196,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			if (getSherlockActivity() instanceof ViewStatusActivity) {
 				getSherlockActivity().finish();
 			} else {
-				//Do what? I will make a decision after I have a tablet.
-				//getFragmentManager().beginTransaction().remove(this);
+				// Do what? I will make a decision after I have a tablet.
+				// getFragmentManager().beginTransaction().remove(this);
 			}
 		}
 		if (cur != null) {
@@ -247,7 +247,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			String screen_name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
 			mScreenName.setText(screen_name != null ? "@" + screen_name : "");
 			String text = cur.getString(cur.getColumnIndexOrThrow(Statuses.TEXT));
-			if (text != null) mText.setText(Html.fromHtml(text));
+			if (text != null) {
+				mText.setText(Html.fromHtml(text));
+			}
 			mText.setMovementMethod(LinkMovementMethod.getInstance());
 			String source = cur.getString(cur.getColumnIndexOrThrow(Statuses.SOURCE));
 			mSource.setText(Html.fromHtml(getString(R.string.sent_from, source)));
@@ -285,7 +287,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		private boolean isAllFollowing() {
 			long[] ids = CommonUtils.getActivatedAccounts(getSherlockActivity());
 			for (long id : ids) {
-				if (id == mTweetUserId) continue;
+				if (id == mTweetUserId) {
+					continue;
+				}
 				Twitter twitter = CommonUtils.getTwitterInstance(getSherlockActivity(), id);
 				try {
 					Relationship result = twitter.showFriendship(id, mTweetUserId);

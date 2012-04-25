@@ -17,11 +17,9 @@
 	<string name="sign_in">登录</string>
 	<string name="auth_type">验证方式</string>
 	<string name="login_to_twitter">登录到 Twitter</string>
-	<string name="api_settings">API 设定</string>
 	<string name="edit_api">编辑 API</string>
 	<string name="home">主页</string>
 	<string name="error_occurred">发生错误，请重试。</string>
-	<string name="license">证书</string>
 	<string name="error_already_logged_in">你已经登录。</string>
 	<string name="no_account_selected">你必须至少选择一个帐号。</string>
 	<string name="error_connectivity_error">错误：连接性错误，请检查你的网络状态。</string>

@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.ArrowKeyMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -136,6 +137,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mSendButton.setOnClickListener(this);
 		mSelectAccount.setOnClickListener(this);
+		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
 		int length = mEditText.length();
 		mTextCount.setText(String.valueOf(length));

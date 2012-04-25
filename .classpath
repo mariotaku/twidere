@@ -7,6 +7,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ActionBarSherlock"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/android-holocompat"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/android-preferences"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/android-pulltorefresh"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/viewpagerindicator"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

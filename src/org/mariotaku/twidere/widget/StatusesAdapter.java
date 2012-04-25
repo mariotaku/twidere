@@ -20,8 +20,8 @@ import android.view.ViewGroup;
 
 public class StatusesAdapter extends SimpleCursorAdapter {
 
-	private final static String[] mFrom = new String[] { Statuses.NAME};
-	private final static int[] mTo = new int[] { R.id.user_name};
+	private final static String[] mFrom = new String[] { Statuses.NAME };
+	private final static int[] mTo = new int[] { R.id.user_name };
 	private boolean mDisplayProfileImage, mMultipleAccountsActivated;
 	private LazyImageLoader mImageLoader;
 	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx, mTextIdx,

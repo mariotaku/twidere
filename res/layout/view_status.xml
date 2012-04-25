@@ -68,34 +68,29 @@
 		</FrameLayout>
 	</RelativeLayout>
 
-	<ScrollView
-		android:id="@+id/text_scroll"
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_alignLeft="@+id/profile"
 		android:layout_below="@+id/profile"
+		android:orientation="vertical"
 		android:padding="8dip">
 
-		<LinearLayout
+		<TextView
+			android:id="@+id/text"
 			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:singleLine="false"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<TextView
+			android:id="@+id/source"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:orientation="vertical">
-
-			<TextView
-				android:id="@+id/text"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:singleLine="false"
-				android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-			<TextView
-				android:id="@+id/source"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:paddingTop="8dip"
-				android:text="@string/sent_from"
-				android:textAppearance="?android:attr/textAppearanceSmall"/>
-		</LinearLayout>
-	</ScrollView>
+			android:paddingTop="8dip"
+			android:text="@string/sent_from"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+	</LinearLayout>
 
 </RelativeLayout>
