@@ -11,8 +11,6 @@ import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.widget.TabsAdapter;
 
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,10 +28,9 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TabPageIndicator;
 
-@ContentView(R.layout.main)
 public class HomeActivity extends BaseActivity {
 
-	@InjectView(R.id.pager) private ViewPager mViewPager;
+	private ViewPager mViewPager;
 
 	private ActionBar mActionBar;
 	private ProgressBar mProgress;
@@ -58,8 +55,10 @@ public class HomeActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		setUiOptions();
-		super.onCreate(savedInstanceState);
 		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		mViewPager = (ViewPager) findViewById(R.id.pager);
 		StringBuilder where = new StringBuilder();
 		where.append(Accounts.IS_ACTIVATED + "=1");
 		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[0],

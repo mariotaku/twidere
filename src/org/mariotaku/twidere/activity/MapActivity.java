@@ -9,22 +9,21 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import com.actionbarsherlock.view.Window;
-import com.google.inject.Inject;
 
 public class MapActivity extends WebViewActivity implements LocationListener {
 
 	private Uri mUri = Uri.parse("file:///android_asset/mapview.html");
 	private Location mostRecentLocation;
-	@Inject private LocationManager mLocationManager;
+	private LocationManager mLocationManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
+		mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		getLocation();
 		setupWebView();
 

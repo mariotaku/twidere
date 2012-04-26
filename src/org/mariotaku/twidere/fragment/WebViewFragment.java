@@ -1,30 +1,15 @@
-/*
- *              Copyright (C) 2011 The MusicMod Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *            http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package org.mariotaku.twidere.activity;
+package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
-
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.Window;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class WebViewActivity extends BaseActivity {
+public class WebViewFragment extends BaseFragment {
 
 	private WebView mWebview;
 
@@ -38,14 +23,16 @@ public class WebViewActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setTheme();
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.webview);
-		mWebview = (WebView) findViewById(R.id.webview);
+		mWebview = (WebView) getView().findViewById(R.id.webview);
 		mWebview.setWebViewClient(new DefaultWebViewClient());
 		mWebview.getSettings().setBuiltInZoomControls(true);
 
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.id.webview, container, false);
 	}
 
 	@Override
@@ -63,13 +50,13 @@ public class WebViewActivity extends BaseActivity {
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
-			setSupportProgressBarIndeterminateVisibility(false);
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
 		}
 
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
-			setSupportProgressBarIndeterminateVisibility(true);
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
 		}
 
 		@Override

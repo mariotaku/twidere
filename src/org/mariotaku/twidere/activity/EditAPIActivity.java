@@ -3,8 +3,6 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,17 +14,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
-@ContentView(R.layout.edit_api)
 public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener,
 		OnClickListener {
 
-	@InjectView(R.id.rest_api_base) private EditText mEditRestAPIBase;
-	@InjectView(R.id.search_api_base) private EditText mEditSearchAPIBase;
-	@InjectView(R.id.auth_type) private RadioGroup mEditAuthType;
-	@InjectView(R.id.oauth) private RadioButton mButtonOAuth;
-	@InjectView(R.id.xauth) private RadioButton mButtonxAuth;
-	@InjectView(R.id.basic) private RadioButton mButtonBasic;
-	@InjectView(R.id.save) private Button mSaveButton;
+	private EditText mEditRestAPIBase, mEditSearchAPIBase;
+	private RadioGroup mEditAuthType;
+	private RadioButton mButtonOAuth, mButtonxAuth, mButtonBasic;
+	private Button mSaveButton;
 	private String mRestAPIBase, mSearchAPIBase;
 	private int mAuthType;
 
@@ -63,6 +57,14 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.edit_api);
+		mEditRestAPIBase = (EditText) findViewById(R.id.rest_api_base);
+		mEditSearchAPIBase = (EditText) findViewById(R.id.search_api_base);
+		mEditAuthType = (RadioGroup) findViewById(R.id.auth_type);
+		mButtonOAuth = (RadioButton) findViewById(R.id.oauth);
+		mButtonxAuth = (RadioButton) findViewById(R.id.xauth);
+		mButtonBasic = (RadioButton) findViewById(R.id.basic);
+		mSaveButton = (Button) findViewById(R.id.save);
 		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
 		if (bundle == null) {
 			bundle = new Bundle();

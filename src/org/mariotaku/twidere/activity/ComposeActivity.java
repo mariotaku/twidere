@@ -8,9 +8,6 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
 
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectResource;
-import roboguice.inject.InjectView;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.PorterDuff.Mode;
@@ -33,24 +30,20 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.inject.Inject;
 
-@ContentView(R.layout.compose)
 public class ComposeActivity extends BaseActivity implements OnClickListener, TextWatcher,
 		LocationListener {
 
 	private ActionBar mActionBar;
 	private Uri mImageUri;
-	@InjectView(R.id.edit_text) private EditText mEditText;
-	@InjectView(R.id.text_count) private TextView mTextCount;
-	@InjectView(R.id.send) private ImageButton mSendButton;
-	@InjectView(R.id.select_account) private ImageButton mSelectAccount;
-	@InjectResource(R.color.holo_blue_bright) private int mActivedMenuColor;
+	private EditText mEditText;
+	private TextView mTextCount;
+	private ImageButton mSendButton, mSelectAccount;
 	private boolean mIsImageAttached, mIsPhotoAttached, mIsLocationAttached;
 	private long[] mAccountIds;
 	private ServiceInterface mInterface;
 	private Location mRecentLocation;
-	@Inject private LocationManager mLocationManager;
+	private LocationManager mLocationManager;
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -131,6 +124,12 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		setContentView(R.layout.compose);
+		mEditText = (EditText) findViewById(R.id.edit_text);
+		mTextCount = (TextView) findViewById(R.id.text_count);
+		mSendButton = (ImageButton) findViewById(R.id.send);
+		mSelectAccount = (ImageButton) findViewById(R.id.select_account);
 		getLocation();
 		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		mActionBar = getSupportActionBar();
@@ -200,22 +199,21 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, Te
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		int activated_color = getResources().getColor(android.R.color.holo_blue_bright);
 		if (mIsImageAttached && !mIsPhotoAttached) {
-			menu.findItem(MENU_ADD_IMAGE).getIcon()
-					.setColorFilter(mActivedMenuColor, Mode.MULTIPLY);
+			menu.findItem(MENU_ADD_IMAGE).getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
 		} else {
 			menu.findItem(MENU_ADD_IMAGE).getIcon().clearColorFilter();
 		}
 		if (!mIsImageAttached && mIsPhotoAttached) {
-			menu.findItem(MENU_TAKE_PHOTO).getIcon()
-					.setColorFilter(mActivedMenuColor, Mode.MULTIPLY);
+			menu.findItem(MENU_TAKE_PHOTO).getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
 		} else {
 			menu.findItem(MENU_TAKE_PHOTO).getIcon().clearColorFilter();
 		}
 
 		if (mIsLocationAttached) {
 			menu.findItem(MENU_ADD_LOCATION).getIcon()
-					.setColorFilter(mActivedMenuColor, Mode.MULTIPLY);
+					.setColorFilter(activated_color, Mode.MULTIPLY);
 		} else {
 			menu.findItem(MENU_ADD_LOCATION).getIcon().clearColorFilter();
 		}

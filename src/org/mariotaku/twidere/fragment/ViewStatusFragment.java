@@ -14,8 +14,6 @@ import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
-import roboguice.inject.InjectExtra;
-import roboguice.inject.InjectResource;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -47,13 +45,12 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class ViewStatusFragment extends BaseFragment implements OnClickListener {
 
-	@InjectResource(R.color.holo_blue_bright) public int mActivedMenuColor;
-	@InjectExtra(Statuses.ACCOUNT_ID) private long mAccountId;
-	@InjectExtra(Statuses.STATUS_ID) private long mStatusId;
+	private long mAccountId;
+	private long mStatusId;
 
 	public ServiceInterface mServiceInterface;
 	private ContentResolver mResolver;
-	private TextView mName, mScreenName, mText, mSource;
+	private TextView mName, mScreenName, mText, mTimeAndSource;
 	private ImageView mProfileImage;
 	private Button mFollowButton;
 	private FrameLayout mFollowIndicator;
@@ -81,13 +78,18 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				.getServiceInterface();
 		mResolver = getSherlockActivity().getContentResolver();
 		super.onActivityCreated(savedInstanceState);
+		Bundle bundle = getArguments();
+		if (bundle != null) {
+			mAccountId = bundle.getLong(Statuses.ACCOUNT_ID);
+			mStatusId = bundle.getLong(Statuses.STATUS_ID);
+		}
 		setHasOptionsMenu(true);
 		View view = getView();
 		mName = (TextView) view.findViewById(R.id.name);
 		mScreenName = (TextView) view.findViewById(R.id.screen_name);
 		mText = (TextView) view.findViewById(R.id.text);
 		mProfileImage = (ImageView) view.findViewById(R.id.profile_image);
-		mSource = (TextView) view.findViewById(R.id.source);
+		mTimeAndSource = (TextView) view.findViewById(R.id.time_source);
 		mFollowButton = (Button) view.findViewById(R.id.follow);
 		mFollowIndicator = (FrameLayout) view.findViewById(R.id.follow_indicator);
 		mProgress = (ProgressBar) view.findViewById(R.id.progress);
@@ -126,6 +128,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case MENU_SHARE:
+				break;
 			case MENU_REPLY:
 				break;
 			case MENU_RETWEET:
@@ -151,6 +155,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
+		int activated_color = getResources().getColor(R.color.holo_blue_light);
 		String[] accounts_cols = new String[] { Accounts.USER_ID };
 		Cursor accounts_cur = mResolver
 				.query(Accounts.CONTENT_URI, accounts_cols, null, null, null);
@@ -183,10 +188,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			cur.moveToFirst();
 			int idx = cur.getColumnIndexOrThrow(Statuses.USER_ID);
 			long user_id = cur.getLong(idx);
-			menu.findItem(MENU_DELETE).setVisible(ids.contains(user_id));
+			menu.findItem(R.id.delete_submenu).setVisible(ids.contains(user_id));
 			MenuItem itemFav = menu.findItem(MENU_FAV);
 			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1) {
-				itemFav.getIcon().setColorFilter(mActivedMenuColor, Mode.MULTIPLY);
+				itemFav.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
 				itemFav.setTitle(R.string.unfav);
 			} else {
 				itemFav.getIcon().clearColorFilter();
@@ -252,8 +257,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			}
 			mText.setMovementMethod(LinkMovementMethod.getInstance());
 			String source = cur.getString(cur.getColumnIndexOrThrow(Statuses.SOURCE));
-			mSource.setText(Html.fromHtml(getString(R.string.sent_from, source)));
-			mSource.setMovementMethod(LinkMovementMethod.getInstance());
+			long timestamp = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_TIMESTAMP));
+			String time = CommonUtils.formatToLongTimeString(getSherlockActivity(), timestamp);
+			mTimeAndSource.setText(Html.fromHtml(getString(R.string.time_source, time, source)));
+			mTimeAndSource.setMovementMethod(LinkMovementMethod.getInstance());
 			mTweetUserId = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
 			mIsFavorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
 

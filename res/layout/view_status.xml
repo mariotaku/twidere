@@ -85,11 +85,11 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 		<TextView
-			android:id="@+id/source"
+			android:id="@+id/time_source"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:paddingTop="8dip"
-			android:text="@string/sent_from"
+			android:text="@string/time_source"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</LinearLayout>
 

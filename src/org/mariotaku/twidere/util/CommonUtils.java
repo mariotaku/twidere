@@ -102,12 +102,12 @@ public class CommonUtils implements Constants {
 		return formatToShortTimeString(mContext, timestamp);
 	}
 
-	public String getImagePathFromUri(Uri uri) {
-		return getImagePathFromUri(mContext, uri);
+	public Bitmap getColorPreviewBitmap(int color) {
+		return getColorPreviewBitmap(mContext, color);
 	}
 
-	public Bitmap getPreviewBitmap(int color) {
-		return getPreviewBitmap(mContext, color);
+	public String getImagePathFromUri(Uri uri) {
+		return getImagePathFromUri(mContext, uri);
 	}
 
 	public Twitter getTwitterInstance(long account_id) {
@@ -132,21 +132,21 @@ public class CommonUtils implements Constants {
 	public static String formatStatusString(Status status) {
 		final CharSequence TAG_START = "<p>";
 		final CharSequence TAG_END = "</p>";
-		if (status == null) return "";
+		if (status == null || status.getText() == null) return "";
 		SpannableString text = new SpannableString(status.getText());
-		if (text == null) return "";
 		// Format links.
 		URLEntity[] urls = status.getURLEntities();
 		if (urls != null) {
 			for (URLEntity url : urls) {
 				int start = url.getStart();
 				int end = url.getEnd();
-				if (start >= 0 && end < text.length()) {
-					URL expanded_url = url.getExpandedURL();
-					if (expanded_url != null) {
-						text.setSpan(new URLSpan(expanded_url.toString()), start, end,
-								Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-					}
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				URL expanded_url = url.getExpandedURL();
+				if (expanded_url != null) {
+					text.setSpan(new URLSpan(expanded_url.toString()), start, end,
+							Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
 			}
 		}
@@ -156,12 +156,12 @@ public class CommonUtils implements Constants {
 			for (UserMentionEntity mention : mentions) {
 				int start = mention.getStart();
 				int end = mention.getEnd();
-				if (start >= 0 && end < text.length()) {
-					String link = "https://twitter.com/#!/" + mention.getScreenName();
-					if (link != null) {
-						text.setSpan(new URLSpan(link), start, end,
-								Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-					}
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				String link = "https://twitter.com/#!/" + mention.getScreenName();
+				if (link != null) {
+					text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
 			}
 		}
@@ -171,12 +171,12 @@ public class CommonUtils implements Constants {
 			for (HashtagEntity hashtag : hashtags) {
 				int start = hashtag.getStart();
 				int end = hashtag.getEnd();
-				if (start >= 0 && end < text.length()) {
-					String link = "https://twitter.com/search/#" + hashtag.getText();
-					if (link != null) {
-						text.setSpan(new URLSpan(link), start, end,
-								Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-					}
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				String link = "https://twitter.com/search/#" + hashtag.getText();
+				if (link != null) {
+					text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
 			}
 		}
@@ -187,6 +187,20 @@ public class CommonUtils implements Constants {
 			return formatted.substring(start, end);
 		} else
 			return formatted;
+	}
+
+	public static String formatToLongTimeString(Context context, long timestamp) {
+		Time then = new Time();
+		then.set(timestamp);
+		Time now = new Time();
+		now.setToNow();
+
+		int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL
+				| DateUtils.FORMAT_CAP_AMPM;
+
+		format_flags |= (DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
+
+		return DateUtils.formatDateTime(context, timestamp, format_flags);
 	}
 
 	public static String formatToShortTimeString(Context context, long timestamp) {
@@ -245,45 +259,7 @@ public class CommonUtils implements Constants {
 		return accounts;
 	}
 
-	public static int getErrorCode(TwitterException e) {
-		if (e == null) return RESULT_UNKNOWN_ERROR;
-		int status_code = e.getStatusCode();
-		if (status_code == -1)
-			return RESULT_CONNECTIVITY_ERROR;
-		else if (status_code >= 401 && status_code < 404)
-			return RESULT_NO_PERMISSION;
-		else if (status_code >= 404 && status_code < 500)
-			return RESULT_BAD_ADDRESS;
-		else if (status_code >= 500 && status_code < 600)
-			return RESULT_SERVER_ERROR;
-		else
-			return RESULT_UNKNOWN_ERROR;
-	}
-
-	public static String getImagePathFromUri(Context context, Uri uri) {
-		if (uri == null) return null;
-
-		String media_uri_start = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString();
-
-		if (uri.toString().startsWith(media_uri_start)) {
-
-			String[] proj = { MediaStore.Images.Media.DATA };
-			Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
-
-			if (cursor == null || cursor.getCount() <= 0) return null;
-
-			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-
-			cursor.moveToFirst();
-
-			String path = cursor.getString(column_index);
-			cursor.close();
-			return path;
-		} else if (uri.getScheme().equals("file")) return uri.getPath();
-		return null;
-	}
-
-	public static Bitmap getPreviewBitmap(Context context, int color) {
+	public static Bitmap getColorPreviewBitmap(Context context, int color) {
 
 		float density = context.getResources().getDisplayMetrics().density;
 		int width = (int) (32 * density), height = (int) (32 * density);
@@ -325,6 +301,44 @@ public class CommonUtils implements Constants {
 		canvas.drawLines(points, paint);
 
 		return bm;
+	}
+
+	public static int getErrorCode(TwitterException e) {
+		if (e == null) return RESULT_UNKNOWN_ERROR;
+		int status_code = e.getStatusCode();
+		if (status_code == -1)
+			return RESULT_CONNECTIVITY_ERROR;
+		else if (status_code >= 401 && status_code < 404)
+			return RESULT_NO_PERMISSION;
+		else if (status_code >= 404 && status_code < 500)
+			return RESULT_BAD_ADDRESS;
+		else if (status_code >= 500 && status_code < 600)
+			return RESULT_SERVER_ERROR;
+		else
+			return RESULT_UNKNOWN_ERROR;
+	}
+
+	public static String getImagePathFromUri(Context context, Uri uri) {
+		if (uri == null) return null;
+
+		String media_uri_start = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString();
+
+		if (uri.toString().startsWith(media_uri_start)) {
+
+			String[] proj = { MediaStore.Images.Media.DATA };
+			Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
+
+			if (cursor == null || cursor.getCount() <= 0) return null;
+
+			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+
+			cursor.moveToFirst();
+
+			String path = cursor.getString(column_index);
+			cursor.close();
+			return path;
+		} else if (uri.getScheme().equals("file")) return uri.getPath();
+		return null;
 	}
 
 	public static Twitter getTwitterInstance(Context context, long account_id) {

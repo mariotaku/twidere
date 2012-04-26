@@ -2,13 +2,11 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.R;
 
-import roboguice.inject.ContentView;
 import android.os.Bundle;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
 
-@ContentView(R.layout.about)
 public class AboutActivity extends BaseActivity {
 
 	private ActionBar mActionBar;
@@ -16,6 +14,7 @@ public class AboutActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.about);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 	}

@@ -12,7 +12,6 @@ import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusItemHolder;
 import org.mariotaku.twidere.widget.StatusesAdapter;
 
-import roboguice.inject.InjectResource;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +45,6 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 		LoaderCallbacks<Cursor>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
 		ActionMode.Callback {
 
-	@InjectResource(R.color.holo_blue_bright) public int mActivedMenuColor;
 	public ServiceInterface mServiceInterface;
 	public PullToRefreshListView mListView;
 	public ContentResolver mResolver;
@@ -203,6 +201,7 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 
 	@Override
 	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		int activated_color = getResources().getColor(R.color.holo_blue_bright);
 		String[] accounts_cols = new String[] { Accounts.USER_ID };
 		Cursor accounts_cur = mResolver
 				.query(Accounts.CONTENT_URI, accounts_cols, null, null, null);
@@ -223,10 +222,10 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 		if (cur != null && cur.getCount() > 0) {
 			cur.moveToFirst();
 			long user_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
-			menu.findItem(MENU_DELETE).setVisible(ids.contains(user_id));
+			menu.findItem(R.id.delete_submenu).setVisible(ids.contains(user_id));
 			MenuItem itemFav = menu.findItem(MENU_FAV);
 			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1) {
-				itemFav.getIcon().setColorFilter(mActivedMenuColor, Mode.MULTIPLY);
+				itemFav.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
 				itemFav.setTitle(R.string.unfav);
 			} else {
 				itemFav.getIcon().clearColorFilter();

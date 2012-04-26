@@ -12,9 +12,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.ListView;
 
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockListFragment;
-
-public class SelectAccountFragment extends RoboSherlockListFragment implements Constants,
+public class SelectAccountFragment extends BaseListFragment implements Constants,
 		LoaderCallbacks<Cursor> {
 
 	private SimpleCursorAdapter mAdapter;

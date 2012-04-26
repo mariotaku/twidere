@@ -1,11 +1,15 @@
 package org.mariotaku.twidere.activity;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.ColorAnalyser;
 import org.mariotaku.twidere.util.CommonUtils;
 
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -18,6 +22,9 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +32,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -32,22 +40,18 @@ import android.widget.LinearLayout;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 
-@ContentView(R.layout.twitter_login)
 public class TwitterLoginActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 
 	private String mRestAPIBase, mSearchAPIBase, mUsername, mPassword;
-	private int mAuthType;
-	@InjectView(R.id.username) private EditText mEditUsername;
-	@InjectView(R.id.password) private EditText mEditPassword;
-	@InjectView(R.id.sign_in) private Button mSignInButton;
-	@InjectView(R.id.sign_up) private Button mSignUpButton;
-	@InjectView(R.id.sign_in_sign_up) private LinearLayout mSigninSignup;
-	@InjectView(R.id.username_password) private LinearLayout mUsernamePassword;
-	@InjectView(R.id.set_color) private ImageButton mSetColorButton;
+	private int mAuthType, mUserColor;
+	private boolean mUserColorSet;
+	private EditText mEditUsername, mEditPassword;
+	private Button mSignInButton, mSignUpButton;
+	private LinearLayout mSigninSignup, mUsernamePassword;
+	private ImageButton mSetColorButton;
 	private AbstractTask mTask;
 	private RequestToken mRequestToken;
 
@@ -100,6 +104,18 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 					}
 				}
 				break;
+			case REQUEST_SET_COLOR:
+				if (resultCode == BaseActivity.RESULT_OK) {
+					if (data != null && data.getExtras() != null) {
+						mUserColor = data.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
+						mUserColorSet = true;
+					} else {
+						mUserColor = Color.TRANSPARENT;
+						mUserColorSet = false;
+					}
+				}
+				setUserColorButton();
+				break;
 		}
 		setSignInButton();
 		super.onActivityResult(requestCode, resultCode, data);
@@ -123,6 +139,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				break;
 			case R.id.set_color:
 				intent = new Intent(INTENT_ACTION_SET_COLOR);
+				Bundle bundle = new Bundle();
+				bundle.putInt(Accounts.USER_COLOR, mUserColor);
+				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 		}
 
@@ -132,7 +151,14 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-
+		setContentView(R.layout.twitter_login);
+		mEditUsername = (EditText) findViewById(R.id.username);
+		mEditPassword = (EditText) findViewById(R.id.password);
+		mSignInButton = (Button) findViewById(R.id.sign_in);
+		mSignUpButton = (Button) findViewById(R.id.sign_up);
+		mSigninSignup = (LinearLayout) findViewById(R.id.sign_in_sign_up);
+		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
+		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
 		setSupportProgressBarIndeterminateVisibility(false);
 		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {}, null, null,
 				null);
@@ -171,6 +197,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mEditPassword.setText(mPassword);
 		mEditPassword.addTextChangedListener(this);
 		setSignInButton();
+		setUserColorButton();
 
 	}
 
@@ -228,6 +255,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		outState.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
 		outState.putString(Accounts.USERNAME, mUsername);
 		outState.putString(Accounts.PASSWORD, mPassword);
+		outState.putInt(Accounts.USER_COLOR, mUserColor);
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
 		super.onSaveInstanceState(outState);
 	}
@@ -235,6 +263,22 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		setSignInButton();
+	}
+
+	private void analyseUserProfileColor(String url_string) {
+		try {
+			URL url = new URL(url_string);
+			InputStream is = url.openConnection().getInputStream();
+			Bitmap bm = BitmapFactory.decodeStream(is);
+			mUserColor = ColorAnalyser.analyse(bm);
+			mUserColorSet = true;
+			return;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		mUserColorSet = false;
 	}
 
 	private void saveEditedText() {
@@ -251,6 +295,15 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	private void setSignInButton() {
 		mSignInButton.setEnabled(mEditPassword.getText().length() > 0
 				&& mEditUsername.getText().length() > 0 || mAuthType == Accounts.AUTH_TYPE_OAUTH);
+	}
+
+	private void setUserColorButton() {
+		if (mUserColorSet) {
+			mSetColorButton.setImageBitmap(CommonUtils.getColorPreviewBitmap(this, mUserColor));
+		} else {
+			mSetColorButton.setImageResource(android.R.color.transparent);
+		}
+
 	}
 
 	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {
@@ -296,6 +349,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			} catch (TwitterException e) {
 				return CommonUtils.getErrorCode(e);
 			}
+			if (!mUserColorSet) {
+				analyseUserProfileColor(profile_image_url);
+			}
 			if (accessToken != null) {
 				long userid = accessToken.getUserId();
 				String[] cols = new String[] {};
@@ -317,6 +373,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
 						values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
 						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
+						values.put(Accounts.USER_COLOR, mUserColor);
 						values.put(Accounts.IS_ACTIVATED, 1);
 						resolver.insert(Accounts.CONTENT_URI, values);
 					}
@@ -368,6 +425,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			}
 
 			if (account_valid && user != null) {
+				String profile_image_url = user.getProfileImageURL().toString();
+				if (!mUserColorSet) {
+					analyseUserProfileColor(profile_image_url);
+				}
 				String[] cols = new String[] {};
 				StringBuilder where = new StringBuilder();
 				where.append(Accounts.USER_ID + "='" + user.getId() + "'");
@@ -384,7 +445,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						values.put(Accounts.REST_API_BASE, mRestAPIBase);
 						values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
 						values.put(Accounts.USERNAME, user.getScreenName());
-						values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
+						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
+						values.put(Accounts.USER_COLOR, mUserColor);
 						values.put(Accounts.BASIC_AUTH_PASSWORD, mPassword);
 						values.put(Accounts.IS_ACTIVATED, 1);
 						resolver.insert(Accounts.CONTENT_URI, values);
@@ -431,6 +493,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			} catch (TwitterException e) {
 				return new Result(CommonUtils.getErrorCode(e), Accounts.AUTH_TYPE_XAUTH, null);
 			}
+			if (!mUserColorSet) {
+				analyseUserProfileColor(profile_image_url);
+			}
 			if (accessToken != null) {
 				long userid = accessToken.getUserId();
 				String[] cols = new String[] {};
@@ -450,6 +515,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
 						values.put(Accounts.USERNAME, accessToken.getScreenName());
 						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
+						values.put(Accounts.USER_COLOR, mUserColor);
 						values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
 						values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
 						values.put(Accounts.IS_ACTIVATED, 1);

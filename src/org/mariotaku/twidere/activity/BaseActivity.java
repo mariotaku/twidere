@@ -8,9 +8,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-public class BaseActivity extends RoboSherlockFragmentActivity implements Constants {
+public class BaseActivity extends SherlockFragmentActivity implements Constants {
 
 	private int mThemeId;
 

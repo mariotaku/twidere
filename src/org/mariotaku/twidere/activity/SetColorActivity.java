@@ -9,8 +9,6 @@ import org.mariotaku.twidere.fragment.ColorPickerDialogFragment.OnColorSelectedL
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.CommonUtils;
 
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -25,11 +23,10 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-@ContentView(R.layout.set_color)
 public class SetColorActivity extends BaseDialogActivity implements OnItemClickListener,
 		OnColorSelectedListener {
 
-	@InjectView(R.id.colors_grid) private GridView mColorsGrid;
+	private GridView mColorsGrid;
 
 	private int mCustomizedColor = Color.WHITE;
 
@@ -46,6 +43,8 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.set_color);
+		mColorsGrid = (GridView) findViewById(R.id.colors_grid);
 
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 
@@ -53,11 +52,11 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 				: Color.WHITE;
 
 		Resources res = getResources();
-		mColors.add(res.getColor(R.color.holo_red_light));
-		mColors.add(res.getColor(R.color.holo_orange_light));
-		mColors.add(res.getColor(R.color.holo_green_light));
-		mColors.add(res.getColor(R.color.holo_blue_light));
-		mColors.add(res.getColor(R.color.holo_purple));
+		mColors.add(res.getColor(android.R.color.holo_red_light));
+		mColors.add(res.getColor(android.R.color.holo_orange_light));
+		mColors.add(res.getColor(android.R.color.holo_green_light));
+		mColors.add(res.getColor(android.R.color.holo_blue_light));
+		mColors.add(res.getColor(android.R.color.holo_purple));
 		mColors.add(Color.TRANSPARENT);
 		if (mColors.contains(mCustomizedColor)) {
 
@@ -111,10 +110,10 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View view = getLayoutInflater().inflate(R.layout.color_grid_item, parent, false);
 			ImageView color = (ImageView) view.findViewById(R.id.color);
-			color.setImageBitmap(CommonUtils.getPreviewBitmap(mContext, getItem(position)));
+			color.setImageBitmap(CommonUtils.getColorPreviewBitmap(mContext, getItem(position)));
 			if (position == getCount() - 1) {
 				view.findViewById(R.id.text).setVisibility(View.VISIBLE);
-				color.setImageBitmap(CommonUtils.getPreviewBitmap(mContext, mCustomizedColor));
+				color.setImageBitmap(CommonUtils.getColorPreviewBitmap(mContext, mCustomizedColor));
 			}
 			return view;
 		}

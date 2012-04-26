@@ -31,10 +31,18 @@
 		android:showAsAction="ifRoom"
 		android:title="@string/share"/>
 	<item
-		android:id="@id/delete"
+		android:id="@+id/delete_submenu"
 		android:icon="@drawable/ic_menu_delete"
 		android:showAsAction="ifRoom"
 		android:title="@string/delete"
-		android:visible="false"/>
+		android:visible="false">
+		<menu>
+			<item
+				android:id="@id/delete"
+				android:title="@string/delete"/>
+			<item
+				android:title="@android:string/cancel"/>
+		</menu>
+	</item>
 
 </menu>

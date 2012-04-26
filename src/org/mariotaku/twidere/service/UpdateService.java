@@ -15,7 +15,6 @@ import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
 
-import roboguice.service.RoboService;
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Paging;
@@ -24,6 +23,7 @@ import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -32,7 +32,7 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-public class UpdateService extends RoboService implements Constants {
+public class UpdateService extends Service implements Constants {
 
 	private final ServiceStub mBinder = new ServiceStub(this);
 	private AsyncTaskManager mAsyncTaskManager;

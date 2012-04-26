@@ -95,7 +95,7 @@
 	<string name="display_profile_image">Display profile image</string>
 	<string name="display_profile_image_summary">Display profile image, uncheck this will increase list scroll speed and reduce traffic usage.</string>
 	<string name="in_reply_to">In reply to <xliff:g id="user_name">%s</xliff:g></string>
-	<string name="sent_from">Sent from <xliff:g id="source">%s</xliff:g></string>
+	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
 	<string name="filters">Filters</string>
 	<string name="filters_summary">Hide tweets from unwanted users / sources or contains specified keywords</string>
 	<string name="filters_list">Filters list</string>

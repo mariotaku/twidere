@@ -6,8 +6,6 @@ import java.util.List;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -20,10 +18,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-@ContentView(R.layout.basic_list)
 public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener {
 
-	@InjectView(android.R.id.list) private ListView mListView;
+	private ListView mListView;
 	private SimpleCursorAdapter mAdapter;
 	private Cursor mCursor;
 	private List<Long> mActivatedUsersId = new ArrayList<Long>();
@@ -58,6 +55,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.basic_list);
+		mListView = (ListView) findViewById(android.R.id.list);
 		int layoutRes = MULTIPLE_ACCOUNTS_ENABLED ? android.R.layout.simple_list_item_multiple_choice
 				: android.R.layout.simple_list_item_single_choice;
 		String[] from = new String[] { Accounts.USERNAME };
