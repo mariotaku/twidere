@@ -16,50 +16,20 @@
 
 package org.mariotaku.twidere.activity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
+import org.mariotaku.twidere.fragment.LicenseFragment;
 import android.os.Bundle;
-import android.webkit.WebView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 
-public class LicenseActivity extends WebViewActivity {
-
-	private int mThemeId;
-
-	@Override
-	public boolean isThemeChanged() {
-		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? android.R.style.Theme_Holo_Dialog
-				: android.R.style.Theme_Holo_Light_Dialog;
-		return new_theme_id != mThemeId;
-	}
+public class LicenseActivity extends BaseDialogActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		setTheme();
 		super.onCreate(savedInstanceState);
-		loadUrl("file:///android_asset/gpl-3.0-standalone.html");
-		setWebViewClient(new LicenseWebViewClient());
-
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		Fragment fragment = Fragment.instantiate(this, LicenseFragment.class.getName());
+		ft.replace(android.R.id.content, fragment);
+		ft.commit();
 	}
 
-	@Override
-	public void setTheme() {
-		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? android.R.style.Theme_Holo_Dialog
-				: android.R.style.Theme_Holo_Light_Dialog;
-		setTheme(mThemeId);
-	}
-
-	private class LicenseWebViewClient extends DefaultWebViewClient {
-
-		@Override
-		public void onPageFinished(WebView view, String url) {
-			setTitle(view.getTitle());
-		}
-
-		@Override
-		public void onPageStarted(WebView view, String url, Bitmap favicon) {
-		}
-	}
 }

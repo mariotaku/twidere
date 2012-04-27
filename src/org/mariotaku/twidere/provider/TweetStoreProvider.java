@@ -7,6 +7,10 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.CommonUtils;
+import org.mariotaku.twidere.util.UserTimelineCursor;
+
+import twitter4j.Twitter;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -34,11 +38,10 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	static {
 		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, Statuses.CONTENT_PATH, URI_STATUSES);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, Accounts.CONTENT_PATH, URI_ACCOUNTS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, Mentions.CONTENT_PATH, URI_MENTIONS);
-		// URI_MATCHER.addURI(TweetStore.AUTHORITY, "user/*",
-		// URI_USER_TIMELINE);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
 	}
 
 	private SQLiteDatabase database;
@@ -81,6 +84,19 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
 			String sortOrder) {
 
+		switch (getTableId(uri)) {
+			case URI_USER_TIMELINE:
+				String screen_name = uri.getLastPathSegment();
+				String param = uri.getQueryParameter(TweetStore.KEY_ACCOUNT_ID);
+				if (param != null) {
+					Twitter twitter = CommonUtils.getTwitterInstance(getContext(), Long.valueOf(param));
+					return new UserTimelineCursor(twitter, screen_name, projection);
+				} else {
+					return null;
+				}
+			default:
+				break;
+		}
 		String table = getTableName(uri);
 		if (table == null) return null;
 
@@ -101,7 +117,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	}
 
 	private String getTableName(Uri uri) {
-		switch (URI_MATCHER.match(uri)) {
+		switch (getTableId(uri)) {
 			case URI_STATUSES:
 				return TABLE_STATUSES;
 			case URI_ACCOUNTS:
@@ -111,6 +127,10 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			default:
 				return null;
 		}
+	}
+	
+	private int getTableId(Uri uri) {
+		return URI_MATCHER.match(uri);
 	}
 
 	private void sendBroadcastForOperatedUri(Uri uri) {

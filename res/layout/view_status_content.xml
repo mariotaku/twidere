@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:baselineAligned="false"
+	android:orientation="vertical">
+
+	<TextView
+		android:id="@+id/text"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:paddingBottom="8dp"
+		android:paddingTop="8dp"
+		android:singleLine="false"
+		android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+	<FrameLayout
+		android:id="@+id/map"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"/>
+
+	<TextView
+		android:id="@+id/time_source"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingBottom="8dp"
+		android:paddingTop="8dp"
+		android:text="@string/time_source"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+</LinearLayout>

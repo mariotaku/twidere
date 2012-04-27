@@ -7,7 +7,7 @@ public interface Constants {
 	public static final boolean MULTIPLE_ACCOUNTS_ENABLED = true;
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 4;
+	public static final int DATABASES_VERSION = 5;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -58,6 +58,10 @@ public interface Constants {
 	public static final String INTENT_ACTION_EDIT_API = INTENT_ACTION_PREFIX + "EDIT_API";
 	public static final String INTENT_ACTION_SET_COLOR = INTENT_ACTION_PREFIX + "SET_COLOR";
 	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_ACTION_PREFIX + "TWITTER_LOGIN";
+	
+	public static final String INTENT_KEY_LATITUDE = "latitude";
+	public static final String INTENT_KEY_LONGITUDE = "longitude";
+	public static final String INTENT_KEY_URI = "uri";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;

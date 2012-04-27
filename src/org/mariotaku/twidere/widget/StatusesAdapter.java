@@ -25,7 +25,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	private boolean mDisplayProfileImage, mMultipleAccountsActivated;
 	private LazyImageLoader mImageLoader;
 	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx, mTextIdx,
-			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mHasLocationIdx,
+			mProfileImageUrlIdx, mRetweetCountIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx,
 			mHasMediaIdx, mInReplyToStatusIdIdx, mInReplyToScreennameIdx;
 
 	private Context mContext;
@@ -58,12 +58,11 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			String screen_name = cursor.getString(mScreenNameIdx);
 			String text = cursor.getString(mTextIdx);
 			String profile_image_url = cursor.getString(mProfileImageUrlIdx);
-			boolean is_retweet = cursor.getInt(mIsRetweetIdx) == 1;
-			boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
+			boolean is_retweet = cursor.getInt(mRetweetCountIdx) != 0;
+			boolean is_favorite = cursor.getInt(mIsFavoriteIdx) != 0;
 			boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
-			boolean has_location = cursor.getInt(mHasLocationIdx) == 1;
+			boolean has_location = cursor.getString(mLocationIdx) != null;
 			boolean is_reply = cursor.getInt(mInReplyToStatusIdIdx) != -1;
-
 			holder.screen_name.setText("@" + screen_name);
 			holder.text.setText(Html.fromHtml(text).toString());
 			holder.tweet_time.setText(CommonUtils.formatToShortTimeString(context,
@@ -106,10 +105,10 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			mScreenNameIdx = cursor.getColumnIndexOrThrow(Statuses.SCREEN_NAME);
 			mTextIdx = cursor.getColumnIndexOrThrow(Statuses.TEXT);
 			mProfileImageUrlIdx = cursor.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
-			mIsRetweetIdx = cursor.getColumnIndexOrThrow(Statuses.IS_RETWEET);
+			mRetweetCountIdx = cursor.getColumnIndexOrThrow(Statuses.RETWEET_COUNT);
 			mIsFavoriteIdx = cursor.getColumnIndexOrThrow(Statuses.IS_FAVORITE);
 			mIsGapIdx = cursor.getColumnIndexOrThrow(Statuses.IS_GAP);
-			mHasLocationIdx = cursor.getColumnIndexOrThrow(Statuses.HAS_LOCATION);
+			mLocationIdx = cursor.getColumnIndexOrThrow(Statuses.LOCATION);
 			mHasMediaIdx = cursor.getColumnIndexOrThrow(Statuses.HAS_MEDIA);
 			mInReplyToStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_STATUS_ID);
 			mInReplyToScreennameIdx = cursor

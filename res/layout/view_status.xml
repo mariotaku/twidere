@@ -68,29 +68,12 @@
 		</FrameLayout>
 	</RelativeLayout>
 
-	<LinearLayout
+	<include
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_alignLeft="@+id/profile"
 		android:layout_below="@+id/profile"
-		android:orientation="vertical"
-		android:padding="8dip">
-
-		<TextView
-			android:id="@+id/text"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_weight="1"
-			android:singleLine="false"
-			android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-		<TextView
-			android:id="@+id/time_source"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:paddingTop="8dip"
-			android:text="@string/time_source"
-			android:textAppearance="?android:attr/textAppearanceSmall"/>
-	</LinearLayout>
+		layout="@layout/view_status_content"
+		android:padding="8dip"/>
 
 </RelativeLayout>

@@ -14,6 +14,7 @@ import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
+import twitter4j.GeoLocation;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -27,6 +28,8 @@ import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -53,12 +56,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	private TextView mName, mScreenName, mText, mTimeAndSource;
 	private ImageView mProfileImage;
 	private Button mFollowButton;
-	private FrameLayout mFollowIndicator;
+	private FrameLayout mFollowIndicator, mMapView;
 	private ProgressBar mProgress;
 	private long mTweetUserId;
 
 	private FollowInfoTask mFollowInfoTask;
-	private boolean mIsFavorite;
+	private boolean mIsFavorite, mIsRetweetByMe;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -92,6 +95,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		mTimeAndSource = (TextView) view.findViewById(R.id.time_source);
 		mFollowButton = (Button) view.findViewById(R.id.follow);
 		mFollowIndicator = (FrameLayout) view.findViewById(R.id.follow_indicator);
+		mMapView = (FrameLayout) view.findViewById(R.id.map);
 		mProgress = (ProgressBar) view.findViewById(R.id.progress);
 		displayStatus();
 		showFollowInfo();
@@ -133,7 +137,11 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			case MENU_REPLY:
 				break;
 			case MENU_RETWEET:
-				mServiceInterface.retweetStatus(new long[] { mAccountId }, mStatusId);
+				if (mIsRetweetByMe) {
+					mServiceInterface.retweetStatus(new long[] { mAccountId }, mStatusId);
+				} else {
+					// There is no way to "undo" retweet yet.
+				}
 				break;
 			case MENU_QUOTE:
 				break;
@@ -196,6 +204,14 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			} else {
 				itemFav.getIcon().clearColorFilter();
 				itemFav.setTitle(R.string.fav);
+			}
+			MenuItem itemRt = menu.findItem(R.id.retweet_submenu);
+			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_RETWEET)) < 0) {
+				itemRt.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+				itemRt.setTitle(R.string.unfav);
+			} else {
+				itemRt.getIcon().clearColorFilter();
+				itemRt.setTitle(R.string.fav);
 			}
 		} else {
 			if (getSherlockActivity() instanceof ViewStatusActivity) {
@@ -263,6 +279,17 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			mTimeAndSource.setMovementMethod(LinkMovementMethod.getInstance());
 			mTweetUserId = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
 			mIsFavorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
+			mIsRetweetByMe = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_RETWEET)) < 0;
+			String location_string = cur.getString(cur.getColumnIndexOrThrow(Statuses.LOCATION));
+			GeoLocation location = CommonUtils.getGeoLocationFromString(location_string);
+			mMapView.setVisibility(location == null ? View.GONE : View.VISIBLE);
+			if (location != null) {
+				FragmentTransaction ft = getFragmentManager().beginTransaction();
+				Fragment fragment = new GoogleMapFragment(location.getLatitude(), location.getLongitude(), true);
+				ft.replace(R.id.map, fragment);
+				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				ft.commit();
+			}
 
 			LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity()
 					.getApplication()).getListProfileImageLoader();

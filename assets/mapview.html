@@ -1,36 +1,49 @@
-<html> 
-<head> 
-<meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"/> 
-<title>Simple V3 Map for Android</title> 
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"/> 
-<script type="text/javascript"> 
-  var map;
-  function initialize() {
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Maps</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi" />
+    <style type="text/css">
+      html, body, #map_canvas {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <script type="text/javascript"
+        src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript">
+      var map;
+      function initialize() {
+      
     var latitude = 0;
     var longitude = 0;
-    if (window.android){
-      latitude = window.android.getLatitude();
-      longitude = window.android.getLongitude();
-    }
-    
-    var myLatlng = new google.maps.LatLng(latitude,longitude);
-    var myOptions = {
-      zoom: 8,
-      center: myLatlng,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    }
-    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    var disable_ui = false;
+          if (window.android){
+			latitude = window.android.getLatitude();
+			longitude = window.android.getLongitude();
+			disable_ui = window.android.isUIDisabled();
+    	}
+    	var latlng = new google.maps.LatLng(latitude,  longitude);
+        var options = {
+          zoom: 12,
+          center: latlng,
+          disableDefaultUI: disable_ui,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById('map_canvas'),
+            options);
+        var marker = new google.maps.Marker({
+        position: latlng, 
+        map: map	});
+      }
 
-  }
-  function centerAt(latitude, longitude){
-    myLatlng = new google.maps.LatLng(latitude,longitude);
-    map.panTo(myLatlng);
-    
-  }
-</script> 
-</head> 
-<body style="margin:0px; padding:0px;" onload="initialize()"> 
-  <div id="map_canvas" style="width:100%; height:100%"></div> 
-</body> 
-</html> 
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body>
+    <div id="map_canvas"></div>
+  </body>
+</html>

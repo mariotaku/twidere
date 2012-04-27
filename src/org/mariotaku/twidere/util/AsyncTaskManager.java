@@ -7,7 +7,8 @@ import java.util.Set;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class AsyncTaskManager {
 
-	public Map<Integer, ManagedAsyncTask> mTasks = new HashMap<Integer, ManagedAsyncTask>();
+	private Map<Integer, ManagedAsyncTask> mTasks = new HashMap<Integer, ManagedAsyncTask>();
+	private static AsyncTaskManager sInstance;
 
 	public int add(ManagedAsyncTask task, boolean exec, Object... params) {
 		int hashCode = task.hashCode();
@@ -72,5 +73,12 @@ public class AsyncTaskManager {
 		if (mTasks.containsKey(hashCode)) {
 			mTasks.remove(hashCode);
 		}
+	}
+
+	public static AsyncTaskManager getInstance() {
+		if (sInstance == null) {
+			sInstance = new AsyncTaskManager();
+		}
+		return sInstance;
 	}
 }

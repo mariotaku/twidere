@@ -9,10 +9,10 @@ import android.widget.TextView;
 
 public class StatusItemHolder {
 
-	public ImageView profile_image, color_indicator;
-	public TextView user_name, screen_name, text, tweet_time, in_reply_to;
+	public final ImageView profile_image, color_indicator;
+	public final TextView user_name, screen_name, text, tweet_time, in_reply_to;
+	private final View content, gap_text;
 	public long status_id, account_id;
-	private View content, gap_text;
 	private boolean is_gap;
 
 	public StatusItemHolder(View view) {

@@ -9,6 +9,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.service.UpdateService;
 
+import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -129,6 +130,17 @@ public class CommonUtils implements Constants {
 		wrapper.unbindService(binder);
 	}
 
+	/**
+	 * 
+	 * @param location
+	 * 
+	 * @return Location in "[longitude],[latitude]" format.
+	 */
+	public static String formatGeoLocationToString(GeoLocation location) {
+		if (location == null) return null;
+		return location.getLatitude() + "," + location.getLongitude();
+	}
+
 	public static String formatStatusString(Status status) {
 		final CharSequence TAG_START = "<p>";
 		final CharSequence TAG_END = "</p>";
@@ -198,7 +210,7 @@ public class CommonUtils implements Constants {
 		int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL
 				| DateUtils.FORMAT_CAP_AMPM;
 
-		format_flags |= (DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
+		format_flags |= DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME;
 
 		return DateUtils.formatDateTime(context, timestamp, format_flags);
 	}
@@ -316,6 +328,17 @@ public class CommonUtils implements Constants {
 			return RESULT_SERVER_ERROR;
 		else
 			return RESULT_UNKNOWN_ERROR;
+	}
+
+	public static GeoLocation getGeoLocationFromString(String location) {
+		if (location == null) return null;
+		String[] longlat = location.split(",");
+		if (longlat == null || longlat.length != 2) return null;
+		try {
+			return new GeoLocation(Double.valueOf(longlat[0]), Double.valueOf(longlat[1]));
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 
 	public static String getImagePathFromUri(Context context, Uri uri) {

@@ -1,6 +1,9 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,52 +14,63 @@ import android.webkit.WebViewClient;
 
 public class WebViewFragment extends BaseFragment {
 
-	private WebView mWebview;
+	private WebView mWebView;
 
 	public final WebView getWebView() {
-		return mWebview;
+		return mWebView;
 	}
 
 	public final void loadUrl(String url) {
-		mWebview.loadUrl(url);
+		mWebView.loadUrl(url);
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		mWebview = (WebView) getView().findViewById(R.id.webview);
-		mWebview.setWebViewClient(new DefaultWebViewClient());
-		mWebview.getSettings().setBuiltInZoomControls(true);
-
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		mWebView = (WebView) getView().findViewById(R.id.webview);
+		mWebView.setWebViewClient(new DefaultWebViewClient(getSherlockActivity()));
+		mWebView.getSettings().setBuiltInZoomControls(true);
+		mWebView.getSettings().setJavaScriptEnabled(true);
+		Bundle bundle = getArguments();
+		if (bundle != null) {
+			String url = bundle.getString(INTENT_KEY_URI, "about:blank");
+			loadUrl(url);
+		}
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.id.webview, container, false);
+		return inflater.inflate(R.layout.webview, container, false);
 	}
 
 	@Override
 	public void onDestroy() {
-		mWebview.clearCache(true);
+		//mWebview.clearCache(true);
 		super.onDestroy();
 	}
 
 	public final void setWebViewClient(WebViewClient client) {
-		mWebview.setWebViewClient(client);
+		mWebView.setWebViewClient(client);
 	}
 
-	public class DefaultWebViewClient extends WebViewClient {
+	public static class DefaultWebViewClient extends WebViewClient {
+
+		private SherlockFragmentActivity mActivity;
+
+		public DefaultWebViewClient(SherlockFragmentActivity activity) {
+			mActivity = activity;
+		}
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+			mActivity.setSupportProgressBarIndeterminateVisibility(false);
 		}
 
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+			mActivity.setSupportProgressBarIndeterminateVisibility(true);
 		}
 
 		@Override

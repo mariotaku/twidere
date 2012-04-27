@@ -26,6 +26,7 @@ import twitter4j.User;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
@@ -79,13 +80,14 @@ public class UpdateService extends Service implements Constants {
 
 	public int refreshHomeTimeline(long[] account_ids, long[] max_ids) {
 		mAsyncTaskManager.cancel(mRefreshHomeTimelineTaskId);
-		GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids);
+		GetHomeTimelineTask task = new GetHomeTimelineTask(this, mAsyncTaskManager, account_ids,
+				max_ids);
 		return mRefreshHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public int refreshMentions(long[] account_ids, long[] max_ids) {
 		mAsyncTaskManager.cancel(mRefreshMentionsTaskId);
-		GetMentionsTask task = new GetMentionsTask(account_ids, max_ids);
+		GetMentionsTask task = new GetMentionsTask(this, mAsyncTaskManager, account_ids, max_ids);
 		return mRefreshMentionsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
@@ -283,13 +285,36 @@ public class UpdateService extends Service implements Constants {
 
 	}
 
-	private class GetHomeTimelineTask extends
-			ManagedAsyncTask<Object, Void, List<GetHomeTimelineTask.AccountResponce>> {
+	private class GetHomeTimelineTask extends GetStatusTask {
+
+		public GetHomeTimelineTask(Context context, AsyncTaskManager manager, long[] account_ids,
+				long[] max_ids) {
+			super(context, manager, Statuses.CONTENT_URI, account_ids, max_ids);
+		}
+
+	}
+
+	private class GetMentionsTask extends GetStatusTask {
+
+		public GetMentionsTask(Context context, AsyncTaskManager manager, long[] account_ids,
+				long[] max_ids) {
+			super(context, manager, Mentions.CONTENT_URI, account_ids, max_ids);
+		}
+
+	}
+
+	private static class GetStatusTask extends
+			ManagedAsyncTask<Object, Void, List<GetStatusTask.AccountResponce>> {
 
 		private long[] account_ids, max_ids;
+		private final Uri uri;
+		private Context context;
 
-		public GetHomeTimelineTask(long[] account_ids, long[] max_ids) {
-			super(UpdateService.this, mAsyncTaskManager);
+		public GetStatusTask(Context context, AsyncTaskManager manager, Uri uri,
+				long[] account_ids, long[] max_ids) {
+			super(context, manager);
+			this.uri = uri;
+			this.context = context;
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
 		}
@@ -305,14 +330,19 @@ public class UpdateService extends Service implements Constants {
 
 			int idx = 0;
 			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				Twitter twitter = CommonUtils.getTwitterInstance(context, account_id);
 				if (twitter != null) {
 					try {
 						Paging paging = new Paging();
 						if (since_valid) {
 							paging.setMaxId(max_ids[idx]);
 						}
-						ResponseList<twitter4j.Status> statuses = twitter.getHomeTimeline(paging);
+						ResponseList<twitter4j.Status> statuses = null;
+						if (Statuses.CONTENT_URI.equals(uri)) {
+							statuses = twitter.getHomeTimeline(paging);
+						} else if (Mentions.CONTENT_URI.equals(uri)) {
+							statuses = twitter.getMentions(paging);
+						}
 						result.add(new AccountResponce(account_id, statuses));
 					} catch (TwitterException e) {
 						e.printStackTrace();
@@ -325,7 +355,7 @@ public class UpdateService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(List<AccountResponce> responces) {
-			ContentResolver resolver = getContentResolver();
+			ContentResolver resolver = context.getContentResolver();
 
 			for (AccountResponce responce : responces) {
 				ResponseList<twitter4j.Status> statuses = responce.responselist;
@@ -343,6 +373,8 @@ public class UpdateService extends Service implements Constants {
 					User user = status.getUser();
 					long status_id = status.getId();
 					MediaEntity[] medias = status.getMediaEntities();
+					int retweet_status = Math.abs(status.isRetweet() ? 1 : 0);
+					retweet_status = status.isRetweetedByMe() ? -retweet_status : retweet_status;
 					values.put(Statuses.STATUS_ID, status_id);
 					values.put(Statuses.ACCOUNT_ID, account_id);
 					values.put(Statuses.USER_ID, user.getId());
@@ -351,14 +383,17 @@ public class UpdateService extends Service implements Constants {
 					values.put(Statuses.NAME, user.getName());
 					values.put(Statuses.SCREEN_NAME, user.getScreenName());
 					values.put(Statuses.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
-					values.put(Statuses.IS_RETWEET, status.isRetweet() ? 1 : 0);
-					values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
+					values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
 					values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 					values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
 					values.put(Statuses.IN_REPLY_TO_USER_ID, status.getInReplyToUserId());
-					values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
-					values.put(Statuses.HAS_LOCATION, status.getGeoLocation() != null ? 1 : 0);
 					values.put(Statuses.SOURCE, status.getSource());
+					values.put(Statuses.LOCATION,
+							CommonUtils.formatGeoLocationToString(status.getGeoLocation()));
+					values.put(Statuses.IS_RETWEET, retweet_status);
+					values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
+					values.put(Statuses.IS_PROTECTED, user.isProtected() ? 1 : 0);
+					values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
 
 					if (status_id < min_id || min_id == -1) {
 						min_id = status_id;
@@ -376,12 +411,11 @@ public class UpdateService extends Service implements Constants {
 					where.append(Statuses.STATUS_ID + ">=" + min_id);
 					where.append(" AND " + Statuses.STATUS_ID + "<=" + max_id);
 
-					rows_deleted = resolver.delete(Statuses.CONTENT_URI, where.toString(), null);
+					rows_deleted = resolver.delete(uri, where.toString(), null);
 				}
 
 				// Insert previously fetched items.
-				resolver.bulkInsert(Statuses.CONTENT_URI,
-						values_list.toArray(new ContentValues[values_list.size()]));
+				resolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 				// No row deleted, so I will insert a gap.
 				if (rows_deleted == 0) {
@@ -390,135 +424,9 @@ public class UpdateService extends Service implements Constants {
 					StringBuilder where = new StringBuilder();
 					where.append(Statuses.ACCOUNT_ID + "=" + account_id);
 					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
-					resolver.update(Statuses.CONTENT_URI, values, where.toString(), null);
+					resolver.update(uri, values, where.toString(), null);
 				}
 
-			}
-			super.onPostExecute(responces);
-		}
-
-		private class AccountResponce {
-
-			public long account_id;
-			public ResponseList<twitter4j.Status> responselist;
-
-			public AccountResponce(long account_id, ResponseList<twitter4j.Status> responselist) {
-				this.account_id = account_id;
-				this.responselist = responselist;
-
-			}
-		}
-
-	}
-
-	private class GetMentionsTask extends
-			ManagedAsyncTask<Object, Void, List<GetMentionsTask.AccountResponce>> {
-
-		private long[] account_ids, max_ids;
-
-		public GetMentionsTask(long[] account_ids, long[] max_ids) {
-			super(UpdateService.this, mAsyncTaskManager);
-			this.account_ids = account_ids;
-			this.max_ids = max_ids;
-		}
-
-		@Override
-		protected List<AccountResponce> doInBackground(Object... params) {
-
-			List<AccountResponce> result = new ArrayList<AccountResponce>();
-
-			if (account_ids == null) return result;
-
-			boolean since_valid = max_ids != null && max_ids.length == account_ids.length;
-
-			int idx = 0;
-
-			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
-				if (twitter != null) {
-					try {
-						Paging paging = new Paging();
-						if (since_valid) {
-							paging.setMaxId(max_ids[idx]);
-						}
-						ResponseList<twitter4j.Status> mentions = twitter.getMentions(paging);
-						result.add(new AccountResponce(account_id, mentions));
-					} catch (TwitterException e) {
-						e.printStackTrace();
-					}
-				}
-				idx++;
-			}
-			return result;
-		}
-
-		@Override
-		protected void onPostExecute(List<AccountResponce> responces) {
-			ContentResolver resolver = getContentResolver();
-			for (AccountResponce responce : responces) {
-				ResponseList<twitter4j.Status> mentions = responce.responselist;
-				long account_id = responce.account_id;
-				if (mentions == null) return;
-				List<ContentValues> values_list = new ArrayList<ContentValues>();
-
-				long min_id = -1, max_id = -1;
-				for (twitter4j.Status mention : mentions) {
-					if (mention == null) {
-						continue;
-					}
-					ContentValues values = new ContentValues();
-					long status_id = mention.getId();
-					MediaEntity[] medias = mention.getMediaEntities();
-					User user = mention.getUser();
-					values.put(Mentions.ACCOUNT_ID, account_id);
-					values.put(Mentions.STATUS_ID, status_id);
-					values.put(Mentions.USER_ID, user.getId());
-					values.put(Mentions.STATUS_TIMESTAMP, mention.getCreatedAt().getTime());
-					values.put(Mentions.TEXT, CommonUtils.formatStatusString(mention));
-					values.put(Mentions.NAME, user.getName());
-					values.put(Mentions.SCREEN_NAME, user.getScreenName());
-					values.put(Mentions.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
-					values.put(Mentions.IS_RETWEET, mention.isRetweet() ? 1 : 0);
-					values.put(Mentions.IS_FAVORITE, mention.isFavorited() ? 1 : 0);
-					values.put(Mentions.IN_REPLY_TO_SCREEN_NAME, mention.getInReplyToScreenName());
-					values.put(Mentions.IN_REPLY_TO_STATUS_ID, mention.getInReplyToStatusId());
-					values.put(Mentions.IN_REPLY_TO_USER_ID, mention.getInReplyToUserId());
-					values.put(Mentions.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
-					values.put(Mentions.HAS_LOCATION, mention.getGeoLocation() != null ? 1 : 0);
-					values.put(Mentions.SOURCE, mention.getSource());
-
-					if (status_id < min_id || min_id == -1) {
-						min_id = status_id;
-					}
-					if (status_id > max_id || max_id == -1) {
-						max_id = status_id;
-					}
-
-					values_list.add(values);
-				}
-
-				// Delete all rows conflicting before new data inserted.
-				int rows_deleted = -1;
-				if (min_id != -1 && max_id != -1) {
-					StringBuilder where = new StringBuilder();
-					where.append(Mentions.STATUS_ID + ">=" + min_id);
-					where.append(" AND " + Mentions.STATUS_ID + "<=" + max_id);
-
-					rows_deleted = resolver.delete(Mentions.CONTENT_URI, where.toString(), null);
-				}
-
-				resolver.bulkInsert(Mentions.CONTENT_URI,
-						values_list.toArray(new ContentValues[values_list.size()]));
-
-				// No row deleted, so I will insert a gap.
-				if (rows_deleted == 0) {
-					ContentValues values = new ContentValues();
-					values.put(Mentions.IS_GAP, 1);
-					StringBuilder where = new StringBuilder();
-					where.append(Mentions.ACCOUNT_ID + "=" + account_id);
-					where.append(" AND " + Mentions.STATUS_ID + "=" + min_id);
-					resolver.update(Mentions.CONTENT_URI, values, where.toString(), null);
-				}
 			}
 			super.onPostExecute(responces);
 		}
@@ -576,7 +484,8 @@ public class UpdateService extends Service implements Constants {
 
 			for (AccountResponce responce : result) {
 				ContentValues values = new ContentValues();
-				values.put(Statuses.IS_RETWEET, 1);
+				values.put(Statuses.RETWEET_COUNT, responce.status.getRetweetCount());
+				values.put(Statuses.IS_RETWEET, -1);
 				StringBuilder where = new StringBuilder();
 				where.append(Statuses.ACCOUNT_ID + "=" + responce.account_id);
 				where.append(" AND " + Statuses.STATUS_ID + "=" + responce.status.getId());

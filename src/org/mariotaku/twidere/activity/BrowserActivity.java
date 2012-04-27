@@ -17,19 +17,24 @@
 package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.WebViewFragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 
-public class BrowserActivity extends WebViewActivity {
+public class BrowserActivity extends BaseActivity {
 
 	private Uri mUri = Uri.parse("about:blank");
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		mUri = getIntent().getData();
 		if (mUri == null) {
@@ -37,7 +42,13 @@ public class BrowserActivity extends WebViewActivity {
 			finish();
 			return;
 		}
-		loadUrl(mUri.toString());
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		Fragment fragment = Fragment.instantiate(this, WebViewFragment.class.getName());
+		Bundle bundle = new Bundle();
+		bundle.putString(INTENT_KEY_URI, mUri.toString());
+		fragment.setArguments(bundle);
+		ft.replace(android.R.id.content, fragment);
+		ft.commit();
 	}
 
 	@Override
