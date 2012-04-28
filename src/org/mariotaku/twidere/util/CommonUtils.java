@@ -6,11 +6,13 @@ import java.util.HashMap;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.service.UpdateService;
 
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
+import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -26,6 +28,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -51,6 +54,18 @@ public class CommonUtils implements Constants {
 
 	private Context mContext;
 	private HashMap<Context, ServiceBinder> mConnectionMap = new HashMap<Context, ServiceBinder>();
+
+	private static UriMatcher URI_MATCHER;
+
+	static {
+		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FAVORITES, URI_FAVORITES);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_USERS, URI_CACHED_USERS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
+	}
 
 	public CommonUtils(Context context) {
 		mContext = context;
@@ -192,6 +207,22 @@ public class CommonUtils implements Constants {
 				}
 			}
 		}
+		// Format media.
+		MediaEntity[] media = status.getMediaEntities();
+		if (media != null) {
+			for (MediaEntity media_item : media) {
+				int start = media_item.getStart();
+				int end = media_item.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				URL media_url = media_item.getMediaURL();
+				if (media_url != null) {
+					text.setSpan(new URLSpan(media_url.toString()), start, end,
+							Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+			}
+		}
 		String formatted = Html.toHtml(text);
 		if (formatted != null && formatted.contains(TAG_START) && formatted.contains(TAG_END)) {
 			int start = formatted.indexOf(TAG_START.toString()) + TAG_START.length();
@@ -257,6 +288,24 @@ public class CommonUtils implements Constants {
 		long[] accounts = new long[] {};
 		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
 				new String[] { Accounts.USER_ID }, Accounts.IS_ACTIVATED + "=1", null, null);
+		if (cur != null) {
+			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			cur.moveToFirst();
+			accounts = new long[cur.getCount()];
+			int i = 0;
+			while (!cur.isAfterLast()) {
+				accounts[i] = cur.getLong(idx);
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		return accounts;
+	}
+	
+	public static long[] getAccounts(Context context) {
+		long[] accounts = new long[] {};
+		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+				new String[] { Accounts.USER_ID }, null, null, null);
 		if (cur != null) {
 			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
 			cur.moveToFirst();
@@ -362,6 +411,10 @@ public class CommonUtils implements Constants {
 			return path;
 		} else if (uri.getScheme().equals("file")) return uri.getPath();
 		return null;
+	}
+
+	public static int getTableId(Uri uri) {
+		return URI_MATCHER.match(uri);
 	}
 
 	public static Twitter getTwitterInstance(Context context, long account_id) {

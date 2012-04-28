@@ -74,7 +74,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 			case REQUEST_SET_COLOR:
-				if (resultCode == BaseActivity.RESULT_OK) {
+				if (resultCode == BaseActivity.RESULT_OK)
 					if (data != null && data.getExtras() != null) {
 						int color = data.getIntExtra(Accounts.USER_COLOR, Color.WHITE);
 						ContentValues values = new ContentValues();
@@ -83,7 +83,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 						mResolver.update(Accounts.CONTENT_URI, values, where, null);
 						getLoaderManager().restartLoader(0, null, this);
 					}
-				}
 				break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -269,7 +268,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
-			builder.setIcon(android.R.drawable.ic_dialog_alert);
 			builder.setTitle(R.string.delete_account);
 			builder.setMessage(getString(R.string.delete_account_desc, mSelectedScreenName));
 			builder.setPositiveButton(android.R.string.ok, this);

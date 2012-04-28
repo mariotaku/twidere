@@ -1,5 +1,11 @@
 package org.mariotaku.twidere;
 
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.Favorites;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
+
 public interface Constants {
 
 	public static final String LOGTAG = "Twidere";
@@ -43,6 +49,10 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
 	public static final String PREFERENCE_KEY_BOTTOM_ACTIONS = "bottom_actions";
+	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
+	
+	public static final int PREFERENCE_DEFAULT_ITEM_LIMIT = 100;
+	
 
 	public static final String INTENT_ACTION_PREFIX = "org.mariotaku.twidere.";
 
@@ -58,7 +68,7 @@ public interface Constants {
 	public static final String INTENT_ACTION_EDIT_API = INTENT_ACTION_PREFIX + "EDIT_API";
 	public static final String INTENT_ACTION_SET_COLOR = INTENT_ACTION_PREFIX + "SET_COLOR";
 	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_ACTION_PREFIX + "TWITTER_LOGIN";
-	
+
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
 	public static final String INTENT_KEY_URI = "uri";
@@ -102,5 +112,18 @@ public interface Constants {
 	public static final int RESULT_BAD_ADDRESS = 4;
 	public static final int RESULT_NO_PERMISSION = 5;
 	public static final int RESULT_OPEN_BROWSER = 6;
+
+	public static final String TABLE_ACCOUNTS = Accounts.CONTENT_PATH;
+	public static final String TABLE_STATUSES = Statuses.CONTENT_PATH;
+	public static final String TABLE_MENTIONS = Mentions.CONTENT_PATH;
+	public static final String TABLE_FAVORITES = Favorites.CONTENT_PATH;
+	public static final String TABLE_CACHED_USERS = CachedUsers.CONTENT_PATH;
+
+	public static final int URI_ACCOUNTS = 1;
+	public static final int URI_STATUSES = 2;
+	public static final int URI_MENTIONS = 3;
+	public static final int URI_FAVORITES = 4;
+	public static final int URI_CACHED_USERS = 5;
+	public static final int URI_USER_TIMELINE = 6;
 
 }

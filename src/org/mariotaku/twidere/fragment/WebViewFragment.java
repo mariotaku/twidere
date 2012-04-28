@@ -2,8 +2,6 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 public class WebViewFragment extends BaseFragment {
 
@@ -45,7 +45,7 @@ public class WebViewFragment extends BaseFragment {
 
 	@Override
 	public void onDestroy() {
-		//mWebview.clearCache(true);
+		// mWebview.clearCache(true);
 		super.onDestroy();
 	}
 

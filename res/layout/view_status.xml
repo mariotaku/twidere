@@ -7,7 +7,8 @@
 	<RelativeLayout
 		android:id="@+id/profile"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:background="@color/profile_selector_background">
 
 		<org.mariotaku.twidere.widget.RoundCorneredImageView
 			android:id="@+id/profile_image"
@@ -68,12 +69,29 @@
 		</FrameLayout>
 	</RelativeLayout>
 
-	<include
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_alignLeft="@+id/profile"
+		android:layout_alignParentBottom="true"
 		android:layout_below="@+id/profile"
-		layout="@layout/view_status_content"
-		android:padding="8dip"/>
+		android:orientation="vertical"
+		android:padding="8dip">
+
+		<TextView
+			android:id="@+id/text"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:singleLine="false"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<TextView
+			android:id="@+id/time_source"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/time_source"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+	</LinearLayout>
 
 </RelativeLayout>

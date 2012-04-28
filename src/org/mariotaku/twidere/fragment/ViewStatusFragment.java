@@ -28,8 +28,6 @@ import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -37,7 +35,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -56,7 +53,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	private TextView mName, mScreenName, mText, mTimeAndSource;
 	private ImageView mProfileImage;
 	private Button mFollowButton;
-	private FrameLayout mFollowIndicator, mMapView;
+	private View mProfileView, mFollowIndicator, mMapView;
 	private ProgressBar mProgress;
 	private long mTweetUserId;
 
@@ -94,9 +91,11 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		mProfileImage = (ImageView) view.findViewById(R.id.profile_image);
 		mTimeAndSource = (TextView) view.findViewById(R.id.time_source);
 		mFollowButton = (Button) view.findViewById(R.id.follow);
-		mFollowIndicator = (FrameLayout) view.findViewById(R.id.follow_indicator);
-		mMapView = (FrameLayout) view.findViewById(R.id.map);
+		mFollowIndicator = view.findViewById(R.id.follow_indicator);
+		mProfileView = view.findViewById(R.id.profile);
+		// mMapView = (FrameLayout) view.findViewById(R.id.map);
 		mProgress = (ProgressBar) view.findViewById(R.id.progress);
+		mProfileView.setOnClickListener(this);
 		displayStatus();
 		showFollowInfo();
 	}
@@ -213,13 +212,11 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				itemRt.getIcon().clearColorFilter();
 				itemRt.setTitle(R.string.fav);
 			}
+		} else if (getSherlockActivity() instanceof ViewStatusActivity) {
+			getSherlockActivity().finish();
 		} else {
-			if (getSherlockActivity() instanceof ViewStatusActivity) {
-				getSherlockActivity().finish();
-			} else {
-				// Do what? I will make a decision after I have a tablet.
-				// getFragmentManager().beginTransaction().remove(this);
-			}
+			// Do what? I will make a decision after I have a tablet.
+			// getFragmentManager().beginTransaction().remove(this);
 		}
 		if (cur != null) {
 			cur.close();
@@ -282,14 +279,16 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			mIsRetweetByMe = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_RETWEET)) < 0;
 			String location_string = cur.getString(cur.getColumnIndexOrThrow(Statuses.LOCATION));
 			GeoLocation location = CommonUtils.getGeoLocationFromString(location_string);
-			mMapView.setVisibility(location == null ? View.GONE : View.VISIBLE);
-			if (location != null) {
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				Fragment fragment = new GoogleMapFragment(location.getLatitude(), location.getLongitude(), true);
-				ft.replace(R.id.map, fragment);
-				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				ft.commit();
-			}
+			// mMapView.setVisibility(location == null ? View.GONE :
+			// View.VISIBLE);
+			// if (location != null) {
+			// FragmentTransaction ft = getFragmentManager().beginTransaction();
+			// Fragment fragment = new GoogleMapFragment(location.getLatitude(),
+			// location.getLongitude(), true);
+			// ft.replace(R.id.map, fragment);
+			// ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			// ft.commit();
+			// }
 
 			LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity()
 					.getApplication()).getListProfileImageLoader();

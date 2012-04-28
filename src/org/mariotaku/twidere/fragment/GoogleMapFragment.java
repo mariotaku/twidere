@@ -1,12 +1,12 @@
 package org.mariotaku.twidere.fragment;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 public class GoogleMapFragment extends WebViewFragment {
 
@@ -14,21 +14,21 @@ public class GoogleMapFragment extends WebViewFragment {
 	private double latitude, longitude;
 	private boolean disable_ui = false;
 
+	public GoogleMapFragment() {
+	}
+
+	public GoogleMapFragment(double latitude, double longitude, boolean disable_ui) {
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.disable_ui = disable_ui;
+	}
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getLocation();
 		setupWebView();
 
-	}
-
-	public GoogleMapFragment() {
-	}
-	
-	public GoogleMapFragment(double latitude, double longitude, boolean disable_ui) {
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.disable_ui = disable_ui;
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class GoogleMapFragment extends WebViewFragment {
 		public double getLongitude() {
 			return longitude;
 		}
-		
+
 		public boolean isUIDisabled() {
 			return disable_ui;
 		}

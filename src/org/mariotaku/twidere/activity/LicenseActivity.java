@@ -17,6 +17,7 @@
 package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.fragment.LicenseFragment;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;

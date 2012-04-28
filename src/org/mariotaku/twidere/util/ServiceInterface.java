@@ -29,17 +29,15 @@ public class ServiceInterface implements Constants, IUpdateService {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (BROADCAST_HOME_TIMELINE_UPDATED.equals(action)) {
-				for (StateListener listener : mStateListeners) {
+				for (StateListener listener : mStateListeners)
 					if (listener != null) {
 						listener.onHomeTimelineRefreshed();
 					}
-				}
 			} else if (BROADCAST_MENTIONS_UPDATED.equals(action)) {
-				for (StateListener listener : mStateListeners) {
+				for (StateListener listener : mStateListeners)
 					if (listener != null) {
 						listener.onMentionsRefreshed();
 					}
-				}
 			}
 		}
 

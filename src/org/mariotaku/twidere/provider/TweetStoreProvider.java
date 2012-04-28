@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.cursor.FavoriteCursor;
+import org.mariotaku.twidere.cursor.UserTimelineCursor;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.CommonUtils;
-import org.mariotaku.twidere.util.UserTimelineCursor;
 
 import twitter4j.Twitter;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -24,25 +24,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 public class TweetStoreProvider extends ContentProvider implements Constants {
-
-	private static UriMatcher URI_MATCHER;
-
-	private static final String TABLE_ACCOUNTS = Accounts.CONTENT_PATH;
-	private static final String TABLE_STATUSES = Statuses.CONTENT_PATH;
-	private static final String TABLE_MENTIONS = Mentions.CONTENT_PATH;
-
-	private static final int URI_ACCOUNTS = 1;
-	private static final int URI_STATUSES = 2;
-	private static final int URI_MENTIONS = 3;
-	private static final int URI_USER_TIMELINE = 4;
-
-	static {
-		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
-	}
 
 	private SQLiteDatabase database;
 
@@ -84,16 +65,24 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
 			String sortOrder) {
 
-		switch (getTableId(uri)) {
+		String account_id_string = uri.getQueryParameter(TweetStore.KEY_ACCOUNT_ID);
+
+		switch (CommonUtils.getTableId(uri)) {
+			case URI_FAVORITES:
+				if (account_id_string != null) {
+					Twitter twitter = CommonUtils.getTwitterInstance(getContext(),
+							Long.parseLong(account_id_string));
+					return new FavoriteCursor(twitter, null, projection);
+				} else
+					return null;
 			case URI_USER_TIMELINE:
 				String screen_name = uri.getLastPathSegment();
-				String param = uri.getQueryParameter(TweetStore.KEY_ACCOUNT_ID);
-				if (param != null) {
-					Twitter twitter = CommonUtils.getTwitterInstance(getContext(), Long.valueOf(param));
-					return new UserTimelineCursor(twitter, screen_name, projection);
-				} else {
+				if (account_id_string != null) {
+					Twitter twitter = CommonUtils.getTwitterInstance(getContext(),
+							Long.valueOf(account_id_string));
+					return new UserTimelineCursor(twitter, screen_name, null, projection);
+				} else
 					return null;
-				}
 			default:
 				break;
 		}
@@ -117,25 +106,23 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	}
 
 	private String getTableName(Uri uri) {
-		switch (getTableId(uri)) {
+		switch (CommonUtils.getTableId(uri)) {
 			case URI_STATUSES:
 				return TABLE_STATUSES;
 			case URI_ACCOUNTS:
 				return TABLE_ACCOUNTS;
 			case URI_MENTIONS:
 				return TABLE_MENTIONS;
+			case URI_CACHED_USERS:
+				return TABLE_CACHED_USERS;
 			default:
 				return null;
 		}
 	}
-	
-	private int getTableId(Uri uri) {
-		return URI_MATCHER.match(uri);
-	}
 
 	private void sendBroadcastForOperatedUri(Uri uri) {
 		Context context = getContext();
-		switch (URI_MATCHER.match(uri)) {
+		switch (CommonUtils.getTableId(uri)) {
 			case URI_STATUSES:
 				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_UPDATED));
 				break;
@@ -173,6 +160,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			db.execSQL(createTable(TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES));
 			db.execSQL(createTable(TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES));
 			db.execSQL(createTable(TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES));
+			db.execSQL(createTable(TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES));
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
@@ -239,12 +227,12 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			safeVersionChange(db, TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES);
 			safeVersionChange(db, TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES);
 			safeVersionChange(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES);
+			safeVersionChange(db, TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES);
 		}
 
 		private boolean isColumnContained(String[] cols, String col) {
-			for (String tmp_col : cols) {
+			for (String tmp_col : cols)
 				if (col.equals(tmp_col)) return true;
-			}
 			return false;
 		}
 

@@ -58,11 +58,11 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			String screen_name = cursor.getString(mScreenNameIdx);
 			String text = cursor.getString(mTextIdx);
 			String profile_image_url = cursor.getString(mProfileImageUrlIdx);
-			boolean is_retweet = cursor.getInt(mRetweetCountIdx) != 0;
+			boolean is_retweet = cursor.getLong(mRetweetCountIdx) != 0;
 			boolean is_favorite = cursor.getInt(mIsFavoriteIdx) != 0;
 			boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
 			boolean has_location = cursor.getString(mLocationIdx) != null;
-			boolean is_reply = cursor.getInt(mInReplyToStatusIdIdx) != -1;
+			boolean is_reply = cursor.getLong(mInReplyToStatusIdIdx) != -1;
 			holder.screen_name.setText("@" + screen_name);
 			holder.text.setText(Html.fromHtml(text).toString());
 			holder.tweet_time.setText(CommonUtils.formatToShortTimeString(context,

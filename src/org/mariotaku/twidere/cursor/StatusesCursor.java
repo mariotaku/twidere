@@ -1,10 +1,12 @@
-package org.mariotaku.twidere.util;
+package org.mariotaku.twidere.cursor;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.CommonUtils;
 
 import twitter4j.Paging;
 import twitter4j.Status;
@@ -13,47 +15,39 @@ import twitter4j.TwitterException;
 import android.database.AbstractCursor;
 import android.os.Bundle;
 
-public class UserTimelineCursor extends AbstractCursor {
+public abstract class StatusesCursor extends AbstractCursor {
 
-	private List<Status> statuses = new ArrayList<Status>();
-	private String[] mColumns = new String[0];
-	private long mAccountId;
+	private static List<Status> statuses = new ArrayList<Status>();
+	private static String[] mColumns = new String[0];
+	private static long mAccountId;
 
-	public UserTimelineCursor(Twitter twitter, long id, String[] cols) {
-		mColumns = cols;
+	/**
+	 * Perform alphabetical comparison of application entry objects.
+	 */
+	public static final Comparator<Status> TIMESTAMP_COMPARATOR = new Comparator<Status>() {
+
+		@Override
+		public int compare(Status object1, Status object2) {
+			long diff = object1.getCreatedAt().getTime() - object2.getCreatedAt().getTime();
+			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+			return (int) (object1.getCreatedAt().getTime() - object2.getCreatedAt().getTime());
+		}
+	};
+
+	public StatusesCursor(Twitter twitter, long id, Paging paging, String[] cols) {
 		try {
-			mAccountId = twitter.getId();
-			statuses = twitter.getUserTimeline(id);
+			init(twitter, cols);
+			statuses = getStatuses(twitter, id, paging);
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public UserTimelineCursor(Twitter twitter, long id, Paging paging, String[] cols) {
-		mColumns = cols;
+
+	public StatusesCursor(Twitter twitter, String screen_name, Paging paging, String[] cols) {
 		try {
-			mAccountId = twitter.getId();
-			statuses = twitter.getUserTimeline(id, paging);
-		} catch (TwitterException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public UserTimelineCursor(Twitter twitter, String screen_name, String[] cols) {
-		mColumns = cols;
-		try {
-			mAccountId = twitter.getId();
-			statuses = twitter.getUserTimeline(screen_name);
-		} catch (TwitterException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public UserTimelineCursor(Twitter twitter, String screen_name, Paging paging, String[] cols) {
-		mColumns = cols;
-		try {
-			mAccountId = twitter.getId();
-			statuses = twitter.getUserTimeline(screen_name, paging);
+			init(twitter, cols);
+			statuses = getStatuses(twitter, screen_name, paging);
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
@@ -100,6 +94,12 @@ public class UserTimelineCursor extends AbstractCursor {
 		return (Short) getObject(index);
 	}
 
+	public abstract List<Status> getStatuses(Twitter twitter, long id, Paging paging)
+			throws TwitterException;
+
+	public abstract List<Status> getStatuses(Twitter twitter, String screen_name, Paging paging)
+			throws TwitterException;
+
 	@Override
 	public String getString(int index) {
 		Object obj = getObject(index);
@@ -114,8 +114,9 @@ public class UserTimelineCursor extends AbstractCursor {
 	private Object getObject(int index) {
 		String col = mColumns[index];
 		Status status = statuses.get(getPosition());
+		if (Statuses._ID.equals(col)) return status.getId();
 		if (Statuses.ACCOUNT_ID.equals(col)) return mAccountId;
-		if (Statuses.HAS_MEDIA.equals(col)) return status.getMediaEntities() == null;
+		if (Statuses.HAS_MEDIA.equals(col)) return status.getMediaEntities() == null ? 0 : 1;
 		if (Statuses.IN_REPLY_TO_SCREEN_NAME.equals(col)) return status.getInReplyToScreenName();
 		if (Statuses.IN_REPLY_TO_STATUS_ID.equals(col)) return status.getInReplyToStatusId();
 		if (Statuses.IN_REPLY_TO_USER_ID.equals(col)) return status.getInReplyToUserId();
@@ -143,5 +144,14 @@ public class UserTimelineCursor extends AbstractCursor {
 		if (Statuses.USER_ID.equals(col)) return status.getUser().getId();
 
 		return null;
+	}
+
+	private void init(Twitter twitter, String[] cols) throws TwitterException {
+		if (cols == null) {
+			mColumns = Statuses.COLUMNS;
+		} else {
+			mColumns = cols;
+		}
+		mAccountId = twitter.getId();
 	}
 }

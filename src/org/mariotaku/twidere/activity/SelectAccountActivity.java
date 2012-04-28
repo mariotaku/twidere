@@ -125,10 +125,8 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 			if (mActivatedUsersId.contains(user_id)) {
 				mActivatedUsersId.remove(user_id);
 			}
-		} else {
-			if (!mActivatedUsersId.contains(user_id)) {
-				mActivatedUsersId.add(user_id);
-			}
+		} else if (!mActivatedUsersId.contains(user_id)) {
+			mActivatedUsersId.add(user_id);
 		}
 	}
 

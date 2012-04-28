@@ -1,14 +1,14 @@
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 
-public class ConnectFragment extends TimelineFragment {
+public class ConnectFragment extends StatusesFragment {
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -19,16 +19,15 @@ public class ConnectFragment extends TimelineFragment {
 				mListView.onRefreshComplete();
 				getLoaderManager().restartLoader(0, null, ConnectFragment.this);
 			} else if ((ConnectFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
-					.equals(action)) {
-				if (mListView != null) {
-					mListView.getRefreshableView().setSelection(0);
-				}
+					.equals(action)) if (mListView != null) {
+				mListView.getRefreshableView().setSelection(0);
 			}
 		}
 	};
 
-	public ConnectFragment() {
-		super(Mentions.CONTENT_URI, TweetStore.VALUE_TYPE_MENTION);
+	@Override
+	public Uri getContentUri() {
+		return Mentions.CONTENT_URI;
 	}
 
 	@Override

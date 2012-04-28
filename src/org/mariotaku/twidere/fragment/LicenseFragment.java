@@ -16,10 +16,10 @@
 
 package org.mariotaku.twidere.fragment;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
 import android.os.Bundle;
 import android.webkit.WebView;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 public class LicenseFragment extends WebViewFragment {
 

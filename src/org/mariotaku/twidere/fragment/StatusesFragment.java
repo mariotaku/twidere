@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusItemHolder;
@@ -41,7 +41,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public abstract class TimelineFragment extends BaseFragment implements OnRefreshListener,
+public abstract class StatusesFragment extends BaseFragment implements OnRefreshListener,
 		LoaderCallbacks<Cursor>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
 		ActionMode.Callback {
 
@@ -58,18 +58,11 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 	private boolean mBottomReached, mDisplayProfileImage;
 	private SharedPreferences mPreferences;
 
-	private final Uri CONTENT_URI;
-
-	public final int TYPE;
-
-	public TimelineFragment(Uri uri, int type) {
-		CONTENT_URI = uri;
-		TYPE = type;
-	}
+	public abstract Uri getContentUri();
 
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		Uri uri = CONTENT_URI;
+		Uri uri = getContentUri();
 		String[] cols = Statuses.COLUMNS;
 		String where = Statuses.STATUS_ID + "=" + mSelectedStatusId;
 		Cursor cur = mResolver.query(uri, cols, where, null, null);
@@ -141,7 +134,7 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String[] cols = Statuses.COLUMNS;
-		Uri uri = CONTENT_URI;
+		Uri uri = getContentUri();
 		return new CursorLoader(getSherlockActivity(), uri, cols, null, null,
 				Statuses.DEFAULT_SORT_ORDER);
 	}
@@ -169,7 +162,6 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 				Bundle bundle = new Bundle();
 				bundle.putLong(Statuses.ACCOUNT_ID, account_id);
 				bundle.putLong(Statuses.STATUS_ID, status_id);
-				bundle.putInt(TweetStore.KEY_TYPE, TYPE);
 				Intent intent = new Intent(INTENT_ACTION_VIEW_STATUS).putExtras(bundle);
 				startActivity(intent);
 			}
@@ -215,7 +207,7 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 			}
 			accounts_cur.close();
 		}
-		Uri uri = CONTENT_URI;
+		Uri uri = getContentUri();
 		String[] cols = Statuses.COLUMNS;
 		String where = Statuses.STATUS_ID + "=" + mSelectedStatusId;
 		Cursor cur = mResolver.query(uri, cols, where, null, null);
@@ -324,12 +316,14 @@ public abstract class TimelineFragment extends BaseFragment implements OnRefresh
 	}
 
 	private void refresh(long[] account_ids, long[] max_ids) {
-		switch (TYPE) {
-			case TweetStore.VALUE_TYPE_STATUS:
+		switch (CommonUtils.getTableId(getContentUri())) {
+			case URI_STATUSES:
 				mServiceInterface.getHomeTimeline(account_ids, max_ids);
 				break;
-			case TweetStore.VALUE_TYPE_MENTION:
+			case URI_MENTIONS:
 				mServiceInterface.getMentions(account_ids, max_ids);
+				break;
+			case URI_FAVORITES:
 				break;
 		}
 	}

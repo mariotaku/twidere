@@ -248,7 +248,6 @@ public class ColorPickerView extends View {
 		boolean update = false;
 
 		if (event.getAction() == MotionEvent.ACTION_MOVE) {
-
 			switch (mLastTouchedPanel) {
 
 				case PANEL_SAT_VAL:
@@ -315,7 +314,6 @@ public class ColorPickerView extends View {
 
 					break;
 			}
-
 		}
 
 		if (update) {

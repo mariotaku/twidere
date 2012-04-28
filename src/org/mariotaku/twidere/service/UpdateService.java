@@ -9,6 +9,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.IUpdateService;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
+import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
@@ -370,19 +371,22 @@ public class UpdateService extends Service implements Constants {
 						continue;
 					}
 					ContentValues values = new ContentValues();
+					ContentValues user_values = new ContentValues();
 					User user = status.getUser();
-					long status_id = status.getId();
+					long status_id = status.getId(), user_id = user.getId();
+					String profile_image_url = user.getProfileImageURL().toString();
+					String name = user.getName(), screen_name = user.getScreenName();
 					MediaEntity[] medias = status.getMediaEntities();
 					int retweet_status = Math.abs(status.isRetweet() ? 1 : 0);
 					retweet_status = status.isRetweetedByMe() ? -retweet_status : retweet_status;
 					values.put(Statuses.STATUS_ID, status_id);
 					values.put(Statuses.ACCOUNT_ID, account_id);
-					values.put(Statuses.USER_ID, user.getId());
+					values.put(Statuses.USER_ID, user_id);
 					values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
 					values.put(Statuses.TEXT, CommonUtils.formatStatusString(status));
-					values.put(Statuses.NAME, user.getName());
-					values.put(Statuses.SCREEN_NAME, user.getScreenName());
-					values.put(Statuses.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
+					values.put(Statuses.NAME, name);
+					values.put(Statuses.SCREEN_NAME, screen_name);
+					values.put(Statuses.PROFILE_IMAGE_URL, profile_image_url);
 					values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
 					values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 					values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
@@ -395,13 +399,21 @@ public class UpdateService extends Service implements Constants {
 					values.put(Statuses.IS_PROTECTED, user.isProtected() ? 1 : 0);
 					values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
 
+					resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + user_id,
+							null);
+					user_values.put(CachedUsers.NAME, name);
+					user_values.put(CachedUsers.PROFILE_IMAGE_URL, profile_image_url);
+					user_values.put(CachedUsers.SCREEN_NAME, screen_name);
+					user_values.put(CachedUsers.USER_ID, user_id);
+					
+					resolver.insert(CachedUsers.CONTENT_URI, user_values);
+
 					if (status_id < min_id || min_id == -1) {
 						min_id = status_id;
 					}
 					if (status_id > max_id || max_id == -1) {
 						max_id = status_id;
 					}
-
 					values_list.add(values);
 				}
 				// Delete all rows conflicting before new data inserted.

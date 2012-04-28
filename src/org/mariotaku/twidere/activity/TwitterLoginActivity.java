@@ -105,7 +105,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				}
 				break;
 			case REQUEST_SET_COLOR:
-				if (resultCode == BaseActivity.RESULT_OK) {
+				if (resultCode == BaseActivity.RESULT_OK)
 					if (data != null && data.getExtras() != null) {
 						mUserColor = data.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
 						mUserColorSet = true;
@@ -113,7 +113,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						mUserColor = Color.TRANSPARENT;
 						mUserColorSet = false;
 					}
-				}
 				setUserColorButton();
 				break;
 		}

@@ -9,11 +9,7 @@ public class TweetStore {
 
 	public static final String AUTHORITY = "org.mariotaku.twidere.provider.TweetStore";
 
-	public static final String KEY_TYPE = "type";
 	public static final String KEY_ACCOUNT_ID = "account_id";
-
-	public static final int VALUE_TYPE_STATUS = 1;
-	public static final int VALUE_TYPE_MENTION = 2;
 
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI,
 			Mentions.CONTENT_URI };
@@ -120,6 +116,45 @@ public class TweetStore {
 
 	}
 
+	public static class CachedUsers implements BaseColumns {
+
+		public static final String CONTENT_PATH = "cached_users";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(
+				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+
+		/**
+		 * User's ID of the status.<br>
+		 * Type: INTEGER (long)
+		 */
+		public static final String USER_ID = "user_id";
+
+		/**
+		 * User name of the status.<br>
+		 * Type: TEXT
+		 */
+		public static final String NAME = "name";
+
+		/**
+		 * User's screen name of the status.<br>
+		 * Type: TEXT
+		 */
+		public static final String SCREEN_NAME = "screen_name";
+
+		/**
+		 * User's profile image URL of the status.<br>
+		 * Type: TEXT NOT NULL
+		 */
+		public static final String PROFILE_IMAGE_URL = "profile_image_url";
+
+		public static final String[] COLUMNS = new String[] { _ID, USER_ID, NAME, SCREEN_NAME,
+				PROFILE_IMAGE_URL };
+
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT_UNIQUE,
+				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
+
+	}
+
 	public static class Drafts implements BaseColumns {
 
 		public static final String CONTENT_PATH = "drafts";
@@ -140,6 +175,15 @@ public class TweetStore {
 		 * Type: TEXT
 		 */
 		public static final String TEXT = "text";
+	}
+
+	public static class Favorites extends Statuses {
+
+		public static final String CONTENT_PATH = "favorites";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(
+				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+
 	}
 
 	public static class Mentions extends Statuses {
@@ -182,6 +226,12 @@ public class TweetStore {
 		public static final String SCREEN_NAME = "screen_name";
 
 		/**
+		 * User's profile image URL of the status.<br>
+		 * Type: TEXT NOT NULL
+		 */
+		public static final String PROFILE_IMAGE_URL = "profile_image_url";
+
+		/**
 		 * Unique id of the status.<br>
 		 * Type: INTEGER UNIQUE(long)
 		 */
@@ -214,12 +264,6 @@ public class TweetStore {
 		 * Type: INTEGER (boolean)
 		 */
 		public static final String IS_GAP = "is_gap";
-
-		/**
-		 * User's profile image URL of the status.<br>
-		 * Type: TEXT NOT NULL
-		 */
-		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
 		/**
 		 * User's ID of the status.<br>
