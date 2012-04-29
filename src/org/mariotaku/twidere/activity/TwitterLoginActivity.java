@@ -351,34 +351,30 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			if (!mUserColorSet) {
 				analyseUserProfileColor(profile_image_url);
 			}
-			if (accessToken != null) {
-				long userid = accessToken.getUserId();
-				String[] cols = new String[] {};
-				StringBuilder where = new StringBuilder();
-				where.append(Accounts.USER_ID + "='" + userid + "'");
-				Cursor cur = resolver.query(Accounts.CONTENT_URI, cols, where.toString(), null,
-						null);
-				if (cur != null) {
-					if (cur.getCount() > 0) {
-						cur.close();
-						return RESULT_ALREADY_LOGGED_IN;
-					} else {
-						ContentValues values = new ContentValues();
-						values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
-						values.put(Accounts.USER_ID, userid);
-						values.put(Accounts.REST_API_BASE, mRestAPIBase);
-						values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
-						values.put(Accounts.USERNAME, accessToken.getScreenName());
-						values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
-						values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
-						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
-						values.put(Accounts.USER_COLOR, mUserColor);
-						values.put(Accounts.IS_ACTIVATED, 1);
-						resolver.insert(Accounts.CONTENT_URI, values);
-					}
+			long userid = accessToken.getUserId();
+			String[] cols = new String[] {};
+			StringBuilder where = new StringBuilder();
+			where.append(Accounts.USER_ID + "='" + userid + "'");
+			Cursor cur = resolver.query(Accounts.CONTENT_URI, cols, where.toString(), null, null);
+			if (cur != null) {
+				if (cur.getCount() > 0) {
 					cur.close();
-					return RESULT_SUCCESS;
+					return RESULT_ALREADY_LOGGED_IN;
 				}
+				ContentValues values = new ContentValues();
+				values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
+				values.put(Accounts.USER_ID, userid);
+				values.put(Accounts.REST_API_BASE, mRestAPIBase);
+				values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
+				values.put(Accounts.USERNAME, accessToken.getScreenName());
+				values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
+				values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
+				values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
+				values.put(Accounts.USER_COLOR, mUserColor);
+				values.put(Accounts.IS_ACTIVATED, 1);
+				resolver.insert(Accounts.CONTENT_URI, values);
+				cur.close();
+				return RESULT_SUCCESS;
 			}
 			return RESULT_UNKNOWN_ERROR;
 		}
@@ -437,19 +433,18 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 					if (cur.getCount() > 0) {
 						cur.close();
 						return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_BASIC, null);
-					} else {
-						ContentValues values = new ContentValues();
-						values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_BASIC);
-						values.put(Accounts.USER_ID, user.getId());
-						values.put(Accounts.REST_API_BASE, mRestAPIBase);
-						values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
-						values.put(Accounts.USERNAME, user.getScreenName());
-						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
-						values.put(Accounts.USER_COLOR, mUserColor);
-						values.put(Accounts.BASIC_AUTH_PASSWORD, mPassword);
-						values.put(Accounts.IS_ACTIVATED, 1);
-						resolver.insert(Accounts.CONTENT_URI, values);
 					}
+					ContentValues values = new ContentValues();
+					values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_BASIC);
+					values.put(Accounts.USER_ID, user.getId());
+					values.put(Accounts.REST_API_BASE, mRestAPIBase);
+					values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
+					values.put(Accounts.USERNAME, user.getScreenName());
+					values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
+					values.put(Accounts.USER_COLOR, mUserColor);
+					values.put(Accounts.BASIC_AUTH_PASSWORD, mPassword);
+					values.put(Accounts.IS_ACTIVATED, 1);
+					resolver.insert(Accounts.CONTENT_URI, values);
 					cur.close();
 					return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_BASIC, null);
 				}
@@ -495,34 +490,30 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			if (!mUserColorSet) {
 				analyseUserProfileColor(profile_image_url);
 			}
-			if (accessToken != null) {
-				long userid = accessToken.getUserId();
-				String[] cols = new String[] {};
-				StringBuilder where = new StringBuilder();
-				where.append(Accounts.USER_ID + "='" + userid + "'");
-				Cursor cur = resolver.query(Accounts.CONTENT_URI, cols, where.toString(), null,
-						null);
-				if (cur != null) {
-					if (cur.getCount() > 0) {
-						cur.close();
-						return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_XAUTH, null);
-					} else {
-						ContentValues values = new ContentValues();
-						values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_XAUTH);
-						values.put(Accounts.USER_ID, userid);
-						values.put(Accounts.REST_API_BASE, mRestAPIBase);
-						values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
-						values.put(Accounts.USERNAME, accessToken.getScreenName());
-						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
-						values.put(Accounts.USER_COLOR, mUserColor);
-						values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
-						values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
-						values.put(Accounts.IS_ACTIVATED, 1);
-						resolver.insert(Accounts.CONTENT_URI, values);
-					}
+			long userid = accessToken.getUserId();
+			String[] cols = new String[] {};
+			StringBuilder where = new StringBuilder();
+			where.append(Accounts.USER_ID + "='" + userid + "'");
+			Cursor cur = resolver.query(Accounts.CONTENT_URI, cols, where.toString(), null, null);
+			if (cur != null) {
+				if (cur.getCount() > 0) {
 					cur.close();
-					return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_XAUTH, null);
+					return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_XAUTH, null);
 				}
+				ContentValues values = new ContentValues();
+				values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_XAUTH);
+				values.put(Accounts.USER_ID, userid);
+				values.put(Accounts.REST_API_BASE, mRestAPIBase);
+				values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
+				values.put(Accounts.USERNAME, accessToken.getScreenName());
+				values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
+				values.put(Accounts.USER_COLOR, mUserColor);
+				values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
+				values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
+				values.put(Accounts.IS_ACTIVATED, 1);
+				resolver.insert(Accounts.CONTENT_URI, values);
+				cur.close();
+				return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_XAUTH, null);
 			}
 			return new Result(RESULT_UNKNOWN_ERROR, Accounts.AUTH_TYPE_XAUTH, null);
 		}

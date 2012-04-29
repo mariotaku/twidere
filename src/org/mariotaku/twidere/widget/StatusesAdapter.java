@@ -12,7 +12,6 @@ import org.mariotaku.twidere.util.StatusItemHolder;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Html;
 import android.view.View;
@@ -50,8 +49,10 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 		holder.status_id = cursor.getLong(mStatusIdIdx);
 		holder.account_id = cursor.getLong(mAccountIdIdx);
 
-		holder.setAccountColor(mMultipleAccountsActivated ? CommonUtils.getAccountColor(context,
-				holder.account_id) : Color.TRANSPARENT);
+		holder.setAccountColorEnabled(mMultipleAccountsActivated);
+		if (mMultipleAccountsActivated) {
+			holder.setAccountColor(CommonUtils.getAccountColor(context, holder.account_id));
+		}
 
 		if (!is_gap) {
 

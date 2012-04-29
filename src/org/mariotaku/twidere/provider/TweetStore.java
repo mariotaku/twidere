@@ -3,7 +3,7 @@ package org.mariotaku.twidere.provider;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class TweetStore {
+public final class TweetStore {
 
 	public static final String PROTOCOL_CONTENT = "content://";
 
@@ -26,7 +26,7 @@ public class TweetStore {
 
 	private static final String TYPE_BOOLEAN = "INTEGER(1)";
 
-	public static class Accounts implements BaseColumns {
+	public static interface Accounts extends BaseColumns {
 
 		public static final int AUTH_TYPE_OAUTH = 0;
 		public static final int AUTH_TYPE_XAUTH = 1;
@@ -47,11 +47,6 @@ public class TweetStore {
 		 * Type: INTEGER (long)
 		 */
 		public static final String USER_ID = "user_id";
-
-		/**
-		 * User's IDs in long array. Only used for Intent.<br>
-		 */
-		public static final String USER_IDS = "user_ids";
 
 		/**
 		 * Auth type of the account.</br> Type: INTEGER
@@ -116,7 +111,7 @@ public class TweetStore {
 
 	}
 
-	public static class CachedUsers implements BaseColumns {
+	public static interface CachedUsers extends BaseColumns {
 
 		public static final String CONTENT_PATH = "cached_users";
 
@@ -177,7 +172,7 @@ public class TweetStore {
 		public static final String TEXT = "text";
 	}
 
-	public static class Favorites extends Statuses {
+	public static interface Favorites extends Statuses {
 
 		public static final String CONTENT_PATH = "favorites";
 
@@ -186,7 +181,7 @@ public class TweetStore {
 
 	}
 
-	public static class Mentions extends Statuses {
+	public static interface Mentions extends Statuses {
 
 		public static final String CONTENT_PATH = "mentions";
 
@@ -195,7 +190,37 @@ public class TweetStore {
 
 	}
 
-	public static class Statuses implements BaseColumns {
+	public static interface Filters extends BaseColumns {
+
+		public static final String TEXT = "text";
+
+		public static final String[] COLUMNS = new String[] { _ID, TEXT };
+
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL };
+
+		public static interface Users extends Filters {
+
+			public static final String CONTENT_PATH = "filtered_users";
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(
+					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+		}
+
+		public static interface Keywords extends Filters {
+
+			public static final String CONTENT_PATH = "filtered_keywords";
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(
+					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+		}
+
+		public static interface Sources extends Filters {
+
+			public static final String CONTENT_PATH = "filtered_sources";
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(
+					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+		}
+	}
+
+	public static interface Statuses extends BaseColumns {
 
 		public static final String CONTENT_PATH = "statuses";
 

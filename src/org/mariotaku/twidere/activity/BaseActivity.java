@@ -2,6 +2,7 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ActivityThemeChangeImpl;
 import org.mariotaku.twidere.util.CommonUtils;
 
 import android.content.Context;
@@ -10,10 +11,12 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-public class BaseActivity extends SherlockFragmentActivity implements Constants {
+public class BaseActivity extends SherlockFragmentActivity implements Constants,
+		ActivityThemeChangeImpl {
 
 	private int mThemeId;
 
+	@Override
 	public boolean isThemeChanged() {
 		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere
@@ -36,6 +39,7 @@ public class BaseActivity extends SherlockFragmentActivity implements Constants 
 		}
 	}
 
+	@Override
 	public void setTheme() {
 		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere

@@ -491,18 +491,14 @@ public class ColorPickerView extends View {
 
 	private int chooseHeight(int mode, int size) {
 
-		if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY)
-			return size;
-		else
-			return getPrefferedHeight();
+		if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY) return size;
+		return getPrefferedHeight();
 	}
 
 	private int chooseWidth(int mode, int size) {
 
-		if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY)
-			return size;
-		else
-			return getPrefferedWidth();
+		if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY) return size;
+		return getPrefferedWidth();
 	}
 
 	private void drawAlphaPanel(Canvas canvas) {

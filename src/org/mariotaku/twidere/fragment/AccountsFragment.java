@@ -279,18 +279,19 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	private class ViewHolder {
 
-		public ImageView profile_image, color_indicator;
+		public ImageView profile_image;
+		public View content;
 		public int user_color;
 		public String username;
 		public long user_id;
 
 		public ViewHolder(View view) {
-			profile_image = (ImageView) view.findViewById(R.id.profile_image);
-			color_indicator = (ImageView) view.findViewById(R.id.color);
+			profile_image = (ImageView) view.findViewById(android.R.id.icon);
+			content = view;
 		}
 
 		public void setAccountColor(int color) {
-			color_indicator.getDrawable().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			content.getBackground().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 		}
 	}
 }

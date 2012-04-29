@@ -3,6 +3,7 @@ package org.mariotaku.twidere.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
@@ -45,7 +46,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 				ids[i] = id_long;
 				i++;
 			}
-			bundle.putLongArray(Accounts.USER_IDS, ids);
+			bundle.putLongArray(Constants.INTENT_KEY_USER_IDS, ids);
 			setResult(RESULT_OK, new Intent().putExtras(bundle));
 			finish();
 		}
@@ -72,7 +73,8 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 				: ListView.CHOICE_MODE_SINGLE);
 
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
-		long[] activated_ids = bundle != null ? bundle.getLongArray(Accounts.USER_IDS) : null;
+		long[] activated_ids = bundle != null ? bundle.getLongArray(Constants.INTENT_KEY_USER_IDS)
+				: null;
 		mActivatedUsersId.clear();
 		if (activated_ids == null) {
 			mCursor.moveToFirst();
@@ -136,7 +138,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		for (int i = 0; i < mActivatedUsersId.size(); i++) {
 			ids[i] = mActivatedUsersId.get(i);
 		}
-		outState.putLongArray(Accounts.USER_IDS, ids);
+		outState.putLongArray(Constants.INTENT_KEY_USER_IDS, ids);
 		super.onSaveInstanceState(outState);
 	}
 

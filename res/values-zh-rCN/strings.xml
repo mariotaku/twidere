@@ -84,7 +84,7 @@
 	<string name="display_profile_image">显示个人资料图片</string>
 	<string name="display_profile_image_summary">显示个人资料图片，关闭可以加快列表的滚动速度，以及减少数据流量。</string>
 	<string name="in_reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
-	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>，来自 <xliff:g id="source">%2$s</xliff:g></string>
+	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>，来自<xliff:g id="source">%2$s</xliff:g></string>
 	<string name="filters">过滤</string>
 	<string name="filters_summary">隐藏不希望看到的用户/来源或者含有特定关键词的推文。</string>
 	<string name="filters_list">过滤列表</string>

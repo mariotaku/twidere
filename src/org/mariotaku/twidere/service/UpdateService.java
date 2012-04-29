@@ -109,7 +109,7 @@ public class UpdateService extends Service implements Constants {
 	}
 
 	private class CreateFavoriteTask extends
-			ManagedAsyncTask<Object, Void, List<CreateFavoriteTask.AccountResponce>> {
+			ManagedAsyncTask<List<CreateFavoriteTask.AccountResponce>> {
 
 		private long[] account_ids;
 		private long status_id;
@@ -172,7 +172,7 @@ public class UpdateService extends Service implements Constants {
 	}
 
 	private class DestroyFavoriteTask extends
-			ManagedAsyncTask<Object, Void, List<DestroyFavoriteTask.AccountResponce>> {
+			ManagedAsyncTask<List<DestroyFavoriteTask.AccountResponce>> {
 
 		private long[] account_ids;
 		private long status_id;
@@ -234,8 +234,7 @@ public class UpdateService extends Service implements Constants {
 
 	}
 
-	private class DestroyStatusTask extends
-			ManagedAsyncTask<Object, Void, DestroyStatusTask.AccountResponce> {
+	private class DestroyStatusTask extends ManagedAsyncTask<DestroyStatusTask.AccountResponce> {
 
 		private long account_id;
 		private long status_id;
@@ -305,7 +304,7 @@ public class UpdateService extends Service implements Constants {
 	}
 
 	private static class GetStatusTask extends
-			ManagedAsyncTask<Object, Void, List<GetStatusTask.AccountResponce>> {
+			ManagedAsyncTask<List<GetStatusTask.AccountResponce>> {
 
 		private long[] account_ids, max_ids;
 		private final Uri uri;
@@ -405,7 +404,7 @@ public class UpdateService extends Service implements Constants {
 					user_values.put(CachedUsers.PROFILE_IMAGE_URL, profile_image_url);
 					user_values.put(CachedUsers.SCREEN_NAME, screen_name);
 					user_values.put(CachedUsers.USER_ID, user_id);
-					
+
 					resolver.insert(CachedUsers.CONTENT_URI, user_values);
 
 					if (status_id < min_id || min_id == -1) {
@@ -458,7 +457,7 @@ public class UpdateService extends Service implements Constants {
 	}
 
 	private class RetweetStatusTask extends
-			ManagedAsyncTask<Object, Void, List<RetweetStatusTask.AccountResponce>> {
+			ManagedAsyncTask<List<RetweetStatusTask.AccountResponce>> {
 
 		private long[] account_ids;
 		private long status_id;
@@ -521,7 +520,7 @@ public class UpdateService extends Service implements Constants {
 
 	}
 
-	private class UpdateStatusTask extends ManagedAsyncTask<Object, Void, Void> {
+	private class UpdateStatusTask extends ManagedAsyncTask<Void> {
 
 		private long[] account_ids;
 		private String content;

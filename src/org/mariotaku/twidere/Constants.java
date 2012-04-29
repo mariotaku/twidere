@@ -3,6 +3,7 @@ package org.mariotaku.twidere;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Favorites;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
@@ -13,7 +14,7 @@ public interface Constants {
 	public static final boolean MULTIPLE_ACCOUNTS_ENABLED = true;
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 5;
+	public static final int DATABASES_VERSION = 8;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -50,9 +51,8 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
 	public static final String PREFERENCE_KEY_BOTTOM_ACTIONS = "bottom_actions";
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
-	
+
 	public static final int PREFERENCE_DEFAULT_ITEM_LIMIT = 100;
-	
 
 	public static final String INTENT_ACTION_PREFIX = "org.mariotaku.twidere.";
 
@@ -72,6 +72,8 @@ public interface Constants {
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
 	public static final String INTENT_KEY_URI = "uri";
+	public static final String INTENT_KEY_MENTIONS = "mentions";
+	public static final String INTENT_KEY_TEXT = "text";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;
@@ -118,12 +120,23 @@ public interface Constants {
 	public static final String TABLE_MENTIONS = Mentions.CONTENT_PATH;
 	public static final String TABLE_FAVORITES = Favorites.CONTENT_PATH;
 	public static final String TABLE_CACHED_USERS = CachedUsers.CONTENT_PATH;
+	public static final String TABLE_FILTERED_USERS = Filters.Users.CONTENT_PATH;
+	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.CONTENT_PATH;
+	public static final String TABLE_FILTERED_SOURCES = Filters.Sources.CONTENT_PATH;
 
 	public static final int URI_ACCOUNTS = 1;
 	public static final int URI_STATUSES = 2;
 	public static final int URI_MENTIONS = 3;
 	public static final int URI_FAVORITES = 4;
 	public static final int URI_CACHED_USERS = 5;
-	public static final int URI_USER_TIMELINE = 6;
+	public static final int URI_FILTERED_USERS = 6;
+	public static final int URI_FILTERED_KEYWORDS = 7;
+	public static final int URI_FILTERED_SOURCES = 8;
+	public static final int URI_USER_TIMELINE = 9;
+
+	/**
+	 * User's IDs in long array. Only used for Intent.<br>
+	 */
+	public static final String INTENT_KEY_USER_IDS = "user_ids";
 
 }

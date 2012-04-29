@@ -15,39 +15,30 @@
      limitations under the License.
 -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:minHeight="?android:attr/listPreferredItemHeight">
+	android:layout_gravity="center_vertical"
+	android:background="@drawable/ic_label_color"
+	android:minHeight="?android:attr/listPreferredItemHeight"
+	android:padding="4dip">
 
-	<RelativeLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical"
-		android:padding="4dip">
+	<org.mariotaku.twidere.widget.RoundCorneredImageView
+		android:id="@android:id/icon"
+		android:layout_width="@dimen/profile_image_size"
+		android:layout_height="@dimen/profile_image_size"
+		android:layerType="software"
+		android:scaleType="fitCenter"/>
 
-		<org.mariotaku.twidere.widget.RoundCorneredImageView
-			android:id="@+id/profile_image"
-			android:layout_width="@dimen/profile_image_size"
-			android:layout_height="@dimen/profile_image_size"
-			android:layerType="software"
-			android:scaleType="fitCenter"/>
-
-		<TextView
-			android:id="@android:id/text1"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerVertical="true"
-			android:layout_toRightOf="@+id/profile_image"
-			android:padding="8dip"
-			android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearanceLarge"/>
-	</RelativeLayout>
-
-	<ImageView
-		android:id="@+id/color"
+	<TextView
+		android:id="@android:id/text1"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:src="@drawable/ic_label_color"/>
+		android:layout_centerVertical="true"
+		android:layout_toRightOf="@android:id/icon"
+		android:gravity="center"
+		android:padding="8dip"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-</FrameLayout>
+</RelativeLayout>

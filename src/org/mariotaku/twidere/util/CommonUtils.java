@@ -1,13 +1,19 @@
 package org.mariotaku.twidere.util;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.service.UpdateService;
 
 import twitter4j.GeoLocation;
@@ -24,6 +30,7 @@ import twitter4j.auth.BasicAuthorization;
 import twitter4j.conf.ConfigurationBuilder;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -64,8 +71,13 @@ public class CommonUtils implements Constants {
 		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
 		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FAVORITES, URI_FAVORITES);
 		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_USERS, URI_CACHED_USERS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, URI_FILTERED_USERS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_KEYWORDS, URI_FILTERED_KEYWORDS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, URI_FILTERED_SOURCES);
 		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
 	}
+
+	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 
 	public CommonUtils(Context context) {
 		mContext = context;
@@ -228,8 +240,8 @@ public class CommonUtils implements Constants {
 			int start = formatted.indexOf(TAG_START.toString()) + TAG_START.length();
 			int end = formatted.lastIndexOf(TAG_END.toString());
 			return formatted.substring(start, end);
-		} else
-			return formatted;
+		}
+		return formatted;
 	}
 
 	public static String formatToLongTimeString(Context context, long timestamp) {
@@ -271,23 +283,34 @@ public class CommonUtils implements Constants {
 		return then.format3339(true);
 	}
 
+	public static void clearAccountColor() {
+		sAccountColors.clear();
+	}
+
 	public static int getAccountColor(Context context, long account_id) {
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.USER_COLOR }, Accounts.USER_ID + "=" + account_id, null,
-				null);
-		if (cur == null || cur.getCount() <= 0) return Color.TRANSPARENT;
-		cur.moveToFirst();
-		int color = cur.getInt(cur.getColumnIndexOrThrow(Accounts.USER_COLOR));
-		if (cur != null) {
+
+		Integer color = sAccountColors.get(account_id);
+		if (color == null) {
+			Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+					new String[] { Accounts.USER_COLOR }, Accounts.USER_ID + "=" + account_id,
+					null, null);
+			if (cur == null) return Color.TRANSPARENT;
+			if (cur.getCount() <= 0) {
+				cur.close();
+				return Color.TRANSPARENT;
+			}
+			cur.moveToFirst();
+			color = cur.getInt(cur.getColumnIndexOrThrow(Accounts.USER_COLOR));
 			cur.close();
+			sAccountColors.put(account_id, color);
 		}
 		return color;
 	}
 
-	public static long[] getActivatedAccounts(Context context) {
+	public static long[] getAccounts(Context context) {
 		long[] accounts = new long[] {};
 		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.USER_ID }, Accounts.IS_ACTIVATED + "=1", null, null);
+				new String[] { Accounts.USER_ID }, null, null, null);
 		if (cur != null) {
 			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
 			cur.moveToFirst();
@@ -301,11 +324,11 @@ public class CommonUtils implements Constants {
 		}
 		return accounts;
 	}
-	
-	public static long[] getAccounts(Context context) {
+
+	public static long[] getActivatedAccounts(Context context) {
 		long[] accounts = new long[] {};
 		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.USER_ID }, null, null, null);
+				new String[] { Accounts.USER_ID }, Accounts.IS_ACTIVATED + "=1", null, null);
 		if (cur != null) {
 			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
 			cur.moveToFirst();
@@ -313,6 +336,7 @@ public class CommonUtils implements Constants {
 			int i = 0;
 			while (!cur.isAfterLast()) {
 				accounts[i] = cur.getLong(idx);
+				i++;
 				cur.moveToNext();
 			}
 			cur.close();
@@ -413,6 +437,21 @@ public class CommonUtils implements Constants {
 		return null;
 	}
 
+	public static String[] getMentionedNames(String text, boolean at_sign) {
+		Pattern pattern = Pattern.compile("(?<!\\w)(@(\\w+))", Pattern.MULTILINE);
+		Matcher matcher = pattern.matcher(text);
+		List<String> mentions = new ArrayList<String>();
+
+		while (matcher.find()) {
+			String mention = matcher.group(at_sign ? 1 : 2);
+			if (mentions.contains(mention)) {
+				continue;
+			}
+			mentions.add(mention);
+		}
+		return mentions.toArray(new String[mentions.size()]);
+	}
+
 	public static int getTableId(Uri uri) {
 		return URI_MATCHER.match(uri);
 	}
@@ -474,6 +513,30 @@ public class CommonUtils implements Constants {
 			return R.drawable.ic_tweet_stat_has_media;
 		else if (has_location) return R.drawable.ic_tweet_stat_has_location;
 		return 0;
+	}
+
+	public static void limitDatabases(Context context) {
+		ContentResolver resolver = context.getContentResolver();
+		String[] cols = new String[0];
+		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+		int item_limit = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
+				.getInt(PREFERENCE_KEY_ITEM_LIMIT, PREFERENCE_DEFAULT_ITEM_LIMIT);
+
+		for (long account_id : getAccounts(context)) {
+			// Clean statuses.
+			for (Uri uri : uris) {
+				Cursor cur = resolver.query(uri, cols, Statuses.ACCOUNT_ID + "=" + account_id,
+						null, Statuses.DEFAULT_SORT_ORDER);
+				if (cur != null && cur.getCount() > item_limit) {
+					cur.moveToPosition(item_limit - 1);
+					int _id = cur.getInt(cur.getColumnIndexOrThrow(Statuses._ID));
+					resolver.delete(uri, Statuses._ID + "<" + _id, null);
+				}
+				if (cur != null) {
+					cur.close();
+				}
+			}
+		}
 	}
 
 	public static void restartActivity(Activity activity) {

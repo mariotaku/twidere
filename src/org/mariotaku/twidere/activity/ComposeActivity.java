@@ -16,6 +16,7 @@ public class ComposeActivity extends BaseActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		Fragment fragment = Fragment.instantiate(this, ComposeFragment.class.getName());
+		fragment.setArguments(getIntent().getExtras());
 		ft.replace(android.R.id.content, fragment);
 		ft.commit();
 	}

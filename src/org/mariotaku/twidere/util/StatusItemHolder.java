@@ -3,23 +3,23 @@ package org.mariotaku.twidere.util;
 import org.mariotaku.twidere.R;
 
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class StatusItemHolder {
 
-	public final ImageView profile_image, color_indicator;
+	public final ImageView profile_image;
 	public final TextView user_name, screen_name, text, tweet_time, in_reply_to;
 	private final View content, gap_text;
 	public long status_id, account_id;
-	private boolean is_gap;
+	private boolean is_gap, account_color_enabled;
 
 	public StatusItemHolder(View view) {
-		content = view.findViewById(R.id.content);
+		content = view;
 		gap_text = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
-		color_indicator = (ImageView) view.findViewById(R.id.color);
 		user_name = (TextView) view.findViewById(R.id.user_name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		text = (TextView) view.findViewById(R.id.text);
@@ -33,12 +33,31 @@ public class StatusItemHolder {
 	}
 
 	public void setAccountColor(int color) {
-		color_indicator.getDrawable().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+		if (!is_gap && account_color_enabled) {
+			Drawable background = content.getBackground();
+			if (background != null) {
+				background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			}
+		}
+	}
+
+	public void setAccountColorEnabled(boolean enabled) {
+		account_color_enabled = enabled;
+		if (!is_gap) {
+			content.setBackgroundResource(enabled ? R.drawable.ic_label_color : 0);
+		}
 	}
 
 	public void setIsGap(boolean is_gap) {
 		this.is_gap = is_gap;
-		content.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		content.setBackgroundResource(is_gap ? R.drawable.ic_list_gap
+				: account_color_enabled ? R.drawable.ic_label_color : 0);
+		profile_image.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		user_name.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		screen_name.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		text.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		tweet_time.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		in_reply_to.setVisibility(is_gap ? View.GONE : View.VISIBLE);
 		gap_text.setVisibility(!is_gap ? View.GONE : View.VISIBLE);
 	}
 

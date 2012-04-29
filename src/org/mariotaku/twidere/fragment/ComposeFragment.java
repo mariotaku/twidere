@@ -5,7 +5,6 @@ import java.io.File;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ComposeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
 
@@ -13,7 +12,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.PorterDuff.Mode;
 import android.location.Criteria;
 import android.location.Location;
@@ -40,6 +38,7 @@ import com.actionbarsherlock.view.MenuItem;
 public class ComposeFragment extends BaseFragment implements OnClickListener, TextWatcher,
 		LocationListener {
 
+	private String mText;
 	private Uri mImageUri;
 	private EditText mEditText;
 	private TextView mTextCount;
@@ -71,6 +70,15 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				.getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
+		getLocation();
+		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
+		long[] activated_ids = bundle != null ? bundle.getLongArray(INTENT_KEY_USER_IDS) : null;
+		if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null)
+			mText = bundle.getString(INTENT_KEY_TEXT, "");
+
+		mAccountIds = activated_ids == null ? CommonUtils
+				.getActivatedAccounts(getSherlockActivity()) : activated_ids;
+
 		View view = getView();
 		mEditText = (EditText) view.findViewById(R.id.edit_text);
 		mTextCount = (TextView) view.findViewById(R.id.text_count);
@@ -80,35 +88,11 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		mSelectAccount.setOnClickListener(this);
 		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
+		if (mText != null) mEditText.setText(mText);
 		int length = mEditText.length();
 		mTextCount.setText(String.valueOf(length));
 		mSendButton.setEnabled(length > 0 && length <= 140);
 
-		getLocation();
-
-		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
-		long[] activated_ids = bundle != null ? bundle.getLongArray(Accounts.USER_IDS) : null;
-
-		if (activated_ids == null) {
-			Cursor cur = getSherlockActivity().getContentResolver().query(Accounts.CONTENT_URI,
-					new String[] { Accounts.USER_ID }, Accounts.IS_ACTIVATED + "=1", null, null);
-			if (cur != null && cur.getCount() > 0) {
-				int userid_idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
-				mAccountIds = new long[cur.getCount()];
-				cur.moveToFirst();
-				int idx = 0;
-				while (!cur.isAfterLast()) {
-					mAccountIds[idx] = cur.getLong(userid_idx);
-					idx++;
-					cur.moveToNext();
-				}
-			}
-			if (cur != null) {
-				cur.close();
-			}
-		} else {
-			mAccountIds = activated_ids;
-		}
 	}
 
 	@Override
@@ -148,7 +132,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 					if (bundle == null) {
 						break;
 					}
-					long[] user_ids = bundle.getLongArray(Accounts.USER_IDS);
+					long[] user_ids = bundle.getLongArray(INTENT_KEY_USER_IDS);
 					if (user_ids != null) {
 						mAccountIds = user_ids;
 					}
@@ -174,7 +158,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 			case R.id.select_account:
 				Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
 				Bundle bundle = new Bundle();
-				bundle.putLongArray(Accounts.USER_IDS, mAccountIds);
+				bundle.putLongArray(INTENT_KEY_USER_IDS, mAccountIds);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
@@ -258,7 +242,9 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putLongArray(Accounts.USER_IDS, mAccountIds);
+		mText = mEditText.getText().toString();
+		outState.putLongArray(INTENT_KEY_USER_IDS, mAccountIds);
+		outState.putString(INTENT_KEY_TEXT, mText);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -287,9 +273,6 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
 		String provider = mLocationManager.getBestProvider(criteria, true);
 
-		// In order to make sure the device is getting location, request
-		// updates. locationManager.requestLocationUpdates(provider, 1, 0,
-		// this);
 		mRecentLocation = mLocationManager.getLastKnownLocation(provider);
 	}
 

@@ -1,13 +1,11 @@
 package org.mariotaku.twidere.util;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import android.util.SparseArray;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class AsyncTaskManager {
 
-	private Map<Integer, ManagedAsyncTask> mTasks = new HashMap<Integer, ManagedAsyncTask>();
+	private SparseArray<ManagedAsyncTask> mTasks = new SparseArray<ManagedAsyncTask>();
 	private static AsyncTaskManager sInstance;
 
 	public int add(ManagedAsyncTask task, boolean exec, Object... params) {
@@ -24,13 +22,11 @@ public class AsyncTaskManager {
 	}
 
 	public boolean cancel(int hashCode, boolean mayInterruptIfRunning) {
-		if (mTasks.containsKey(hashCode)) {
-			ManagedAsyncTask task = mTasks.get(hashCode);
-			if (task != null) {
-				task.cancel(mayInterruptIfRunning);
-				mTasks.remove(hashCode);
-				return true;
-			}
+		ManagedAsyncTask task = mTasks.get(hashCode);
+		if (task != null) {
+			task.cancel(mayInterruptIfRunning);
+			mTasks.remove(hashCode);
+			return true;
 		}
 		return false;
 	}
@@ -39,20 +35,17 @@ public class AsyncTaskManager {
 	 * Cancel all tasks added, then clear all tasks.
 	 */
 	public void cancelAll() {
-		Set<Integer> set = mTasks.keySet();
-		for (Integer i : set) {
-			cancel(i);
+		for (int i = 0; i < mTasks.size(); i++) {
+			cancel(mTasks.keyAt(i));
 		}
 		mTasks.clear();
 	}
 
 	public boolean execute(int hashCode, Object... params) {
-		if (mTasks.containsKey(hashCode)) {
-			ManagedAsyncTask task = mTasks.get(hashCode);
-			if (task != null) {
-				task.execute(params);
-				return true;
-			}
+		ManagedAsyncTask task = mTasks.get(hashCode);
+		if (task != null) {
+			task.execute(params);
+			return true;
 		}
 		return false;
 	}
@@ -62,17 +55,13 @@ public class AsyncTaskManager {
 	}
 
 	public boolean isExcuting(int hashCode) {
-		if (mTasks.containsKey(hashCode)) {
-			ManagedAsyncTask task = mTasks.get(hashCode);
-			if (task != null) return true;
-		}
+		ManagedAsyncTask task = mTasks.get(hashCode);
+		if (task != null && !task.isCancelled()) return true;
 		return false;
 	}
 
 	public void remove(int hashCode) {
-		if (mTasks.containsKey(hashCode)) {
-			mTasks.remove(hashCode);
-		}
+		mTasks.remove(hashCode);
 	}
 
 	public static AsyncTaskManager getInstance() {

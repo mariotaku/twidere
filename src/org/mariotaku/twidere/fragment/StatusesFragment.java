@@ -25,6 +25,7 @@ import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,11 +69,16 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		Cursor cur = mResolver.query(uri, cols, where, null, null);
 		if (cur != null && cur.getCount() > 0) {
 			cur.moveToFirst();
-			String text = cur.getString(cur.getColumnIndexOrThrow(Statuses.TEXT));
+			String text = Html.fromHtml(cur.getString(cur.getColumnIndexOrThrow(Statuses.TEXT)))
+					.toString();
 			long status_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_ID));
 			long account_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.ACCOUNT_ID));
 			switch (item.getItemId()) {
 				case MENU_REPLY:
+					Bundle bundle = new Bundle();
+					bundle.putStringArray(INTENT_KEY_MENTIONS,
+							CommonUtils.getMentionedNames(text, true));
+					startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
 					break;
 				case MENU_RETWEET:
 					mServiceInterface.retweetStatus(new long[] { account_id }, status_id);
@@ -215,6 +221,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			cur.moveToFirst();
 			long user_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
 			menu.findItem(R.id.delete_submenu).setVisible(ids.contains(user_id));
+			menu.findItem(MENU_RETWEET).setVisible(!ids.contains(user_id) || ids.size() > 1);
 			MenuItem itemFav = menu.findItem(MENU_FAV);
 			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1) {
 				itemFav.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);

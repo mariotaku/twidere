@@ -3,11 +3,13 @@ package org.mariotaku.twidere.provider;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.cursor.FavoriteCursor;
 import org.mariotaku.twidere.cursor.UserTimelineCursor;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.CommonUtils;
@@ -35,7 +37,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			result = database.delete(table, selection, selectionArgs);
 		}
 		if (result > 0) {
-			sendBroadcastForOperatedUri(uri);
+			notifyForUpdatedUri(uri);
 		}
 		return result;
 	}
@@ -50,7 +52,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		String table = getTableName(uri);
 		if (table == null) return null;
 		long row_id = database.insert(table, null, values);
-		sendBroadcastForOperatedUri(uri);
+		notifyForUpdatedUri(uri);
 		return Uri.withAppendedPath(uri, String.valueOf(row_id));
 	}
 
@@ -66,6 +68,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			String sortOrder) {
 
 		String account_id_string = uri.getQueryParameter(TweetStore.KEY_ACCOUNT_ID);
+		String table = getTableName(uri);
 
 		switch (CommonUtils.getTableId(uri)) {
 			case URI_FAVORITES:
@@ -73,20 +76,44 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 					Twitter twitter = CommonUtils.getTwitterInstance(getContext(),
 							Long.parseLong(account_id_string));
 					return new FavoriteCursor(twitter, null, projection);
-				} else
-					return null;
+				}
+				return null;
 			case URI_USER_TIMELINE:
 				String screen_name = uri.getLastPathSegment();
 				if (account_id_string != null) {
 					Twitter twitter = CommonUtils.getTwitterInstance(getContext(),
 							Long.valueOf(account_id_string));
 					return new UserTimelineCursor(twitter, screen_name, null, projection);
-				} else
-					return null;
+				}
+				return null;
+			case URI_STATUSES:
+			case URI_MENTIONS:
+				StringBuilder filterbuilder = new StringBuilder();
+				if (selection != null) {
+					filterbuilder.append(selection);
+					filterbuilder.append(" AND ");
+				}
+				filterbuilder.append(Statuses._ID + " NOT IN ( ");
+				filterbuilder.append("SELECT DISTINCT " + TABLE_STATUSES + "." + Statuses._ID
+						+ " FROM " + TABLE_STATUSES + ", " + TABLE_FILTERED_SOURCES);
+				filterbuilder.append(" WHERE " + TABLE_STATUSES + "." + Statuses.SOURCE
+						+ " LIKE '%'||" + TABLE_FILTERED_SOURCES + "." + Filters.Sources.TEXT
+						+ "||'%'");
+				filterbuilder.append(" UNION SELECT DISTINCT " + TABLE_STATUSES + "."
+						+ Statuses._ID + " FROM " + TABLE_STATUSES);
+				filterbuilder.append(" WHERE " + TABLE_STATUSES + "." + Statuses.SCREEN_NAME
+						+ " IN(SELECT " + TABLE_FILTERED_USERS + "." + Filters.Users.TEXT
+						+ " FROM " + TABLE_FILTERED_USERS + ")");
+				filterbuilder
+						.append(" UNION SELECT DISTINCT " + TABLE_STATUSES + "." + Statuses._ID
+								+ " FROM " + TABLE_STATUSES + ", " + TABLE_FILTERED_KEYWORDS);
+				filterbuilder.append(" WHERE " + TABLE_STATUSES + "." + Statuses.TEXT
+						+ " LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.Keywords.TEXT
+						+ "||'%' )");
+				return database.query(table, projection, filterbuilder.toString(),selectionArgs, null, null, sortOrder);
 			default:
 				break;
 		}
-		String table = getTableName(uri);
 		if (table == null) return null;
 
 		return database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
@@ -100,7 +127,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			result = database.update(table, values, selection, selectionArgs);
 		}
 		if (result > 0) {
-			sendBroadcastForOperatedUri(uri);
+			notifyForUpdatedUri(uri);
 		}
 		return result;
 	}
@@ -115,18 +142,25 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 				return TABLE_MENTIONS;
 			case URI_CACHED_USERS:
 				return TABLE_CACHED_USERS;
+			case URI_FILTERED_USERS:
+				return TABLE_FILTERED_USERS;
+			case URI_FILTERED_KEYWORDS:
+				return TABLE_FILTERED_KEYWORDS;
+			case URI_FILTERED_SOURCES:
+				return TABLE_FILTERED_SOURCES;
 			default:
 				return null;
 		}
 	}
 
-	private void sendBroadcastForOperatedUri(Uri uri) {
+	private void notifyForUpdatedUri(Uri uri) {
 		Context context = getContext();
 		switch (CommonUtils.getTableId(uri)) {
 			case URI_STATUSES:
 				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_UPDATED));
 				break;
 			case URI_ACCOUNTS:
+				CommonUtils.clearAccountColor();
 				context.sendBroadcast(new Intent(BROADCAST_ACCOUNTS_LIST_UPDATED));
 				break;
 			case URI_MENTIONS:
@@ -157,10 +191,17 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			db.beginTransaction();
-			db.execSQL(createTable(TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES));
-			db.execSQL(createTable(TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES));
-			db.execSQL(createTable(TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES));
-			db.execSQL(createTable(TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES));
+			db.execSQL(createTable(TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, false));
+			db.execSQL(createTable(TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, false));
+			db.execSQL(createTable(TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, false));
+			db.execSQL(createTable(TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES,
+					false));
+			db.execSQL(createTable(TABLE_FILTERED_USERS, Filters.Users.COLUMNS,
+					Filters.Users.TYPES, false));
+			db.execSQL(createTable(TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS,
+					Filters.Keywords.TYPES, false));
+			db.execSQL(createTable(TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS,
+					Filters.Sources.TYPES, false));
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
@@ -175,24 +216,24 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			handleVersionChange(db);
 		}
 
-		private String createTable(String tableName, String[] columns, String[] types) {
+		private String createTable(String tableName, String[] columns, String[] types,
+				boolean create_if_not_exists) {
 			if (tableName == null || columns == null || types == null
 					|| types.length != columns.length || types.length == 0)
 				throw new IllegalArgumentException("Invalid parameters for creating table "
 						+ tableName);
-			else {
-				StringBuilder stringBuilder = new StringBuilder("CREATE TABLE ");
+			StringBuilder stringBuilder = new StringBuilder(
+					create_if_not_exists ? "CREATE TABLE IF NOT EXISTS " : "CREATE TABLE ");
 
-				stringBuilder.append(tableName);
-				stringBuilder.append(" (");
-				for (int n = 0, i = columns.length; n < i; n++) {
-					if (n > 0) {
-						stringBuilder.append(", ");
-					}
-					stringBuilder.append(columns[n]).append(' ').append(types[n]);
+			stringBuilder.append(tableName);
+			stringBuilder.append(" (");
+			for (int n = 0, i = columns.length; n < i; n++) {
+				if (n > 0) {
+					stringBuilder.append(", ");
 				}
-				return stringBuilder.append(");").toString();
+				stringBuilder.append(columns[n]).append(' ').append(types[n]);
 			}
+			return stringBuilder.append(");").toString();
 		}
 
 		private int getTypeInt(String type) {
@@ -228,6 +269,11 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			safeVersionChange(db, TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES);
 			safeVersionChange(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES);
 			safeVersionChange(db, TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES);
+			safeVersionChange(db, TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES);
+			safeVersionChange(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS,
+					Filters.Keywords.TYPES);
+			safeVersionChange(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS,
+					Filters.Sources.TYPES);
 		}
 
 		private boolean isColumnContained(String[] cols, String col) {
@@ -256,7 +302,10 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 				throw new IllegalArgumentException(
 						"Invalid parameters, length of columns and types not match.");
 
-			// First we need to get all data from old table.
+			// First, create the table if not exists.
+			db.execSQL(createTable(table, new_cols, new_types, true));
+
+			// We need to get all data from old table.
 			Cursor cur = db.query(table, null, null, null, null, null, null);
 			cur.moveToFirst();
 			String[] old_cols = cur.getColumnNames();
@@ -306,7 +355,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			// OK, now we got all data can be moved from old table, so we will
 			// delete the old table and create a new one.
 			db.execSQL("DROP TABLE IF EXISTS " + table);
-			db.execSQL(createTable(table, new_cols, new_types));
+			db.execSQL(createTable(table, new_cols, new_types, false));
 
 			// Now, insert all data backuped into new table.
 			for (ContentValues values : values_list) {
