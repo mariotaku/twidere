@@ -25,13 +25,6 @@ public abstract class ManagedAsyncTask<Result> extends AsyncTask<Object, Integer
 	}
 
 	@Override
-	protected void onCancelled(Result result) {
-		manager.remove(hashCode());
-		context.sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED));
-		super.onCancelled(result);
-	}
-
-	@Override
 	protected void onPostExecute(Result result) {
 		manager.remove(hashCode());
 		context.sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED));

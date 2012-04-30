@@ -181,15 +181,6 @@ public final class TweetStore {
 
 	}
 
-	public static interface Mentions extends Statuses {
-
-		public static final String CONTENT_PATH = "mentions";
-
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(
-				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
-
-	}
-
 	public static interface Filters extends BaseColumns {
 
 		public static final String TEXT = "text";
@@ -197,13 +188,6 @@ public final class TweetStore {
 		public static final String[] COLUMNS = new String[] { _ID, TEXT };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL };
-
-		public static interface Users extends Filters {
-
-			public static final String CONTENT_PATH = "filtered_users";
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(
-					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
-		}
 
 		public static interface Keywords extends Filters {
 
@@ -218,6 +202,22 @@ public final class TweetStore {
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(
 					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
 		}
+
+		public static interface Users extends Filters {
+
+			public static final String CONTENT_PATH = "filtered_users";
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(
+					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+		}
+	}
+
+	public static interface Mentions extends Statuses {
+
+		public static final String CONTENT_PATH = "mentions";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(
+				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+
 	}
 
 	public static interface Statuses extends BaseColumns {

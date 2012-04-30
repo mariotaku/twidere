@@ -3,7 +3,6 @@ package org.mariotaku.twidere.provider;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.cursor.FavoriteCursor;
 import org.mariotaku.twidere.cursor.UserTimelineCursor;
@@ -19,6 +18,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -88,29 +88,14 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 				return null;
 			case URI_STATUSES:
 			case URI_MENTIONS:
-				StringBuilder filterbuilder = new StringBuilder();
-				if (selection != null) {
-					filterbuilder.append(selection);
-					filterbuilder.append(" AND ");
+				SharedPreferences preferences = getContext().getSharedPreferences(PREFERENCE_NAME,
+						Context.MODE_PRIVATE);
+				if (preferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTERS, false)) {
+					String where = CommonUtils.buildFilterWhereClause(table, selection);
+					return database.query(table, projection, where, selectionArgs, null, null,
+							sortOrder);
 				}
-				filterbuilder.append(Statuses._ID + " NOT IN ( ");
-				filterbuilder.append("SELECT DISTINCT " + TABLE_STATUSES + "." + Statuses._ID
-						+ " FROM " + TABLE_STATUSES + ", " + TABLE_FILTERED_SOURCES);
-				filterbuilder.append(" WHERE " + TABLE_STATUSES + "." + Statuses.SOURCE
-						+ " LIKE '%'||" + TABLE_FILTERED_SOURCES + "." + Filters.Sources.TEXT
-						+ "||'%'");
-				filterbuilder.append(" UNION SELECT DISTINCT " + TABLE_STATUSES + "."
-						+ Statuses._ID + " FROM " + TABLE_STATUSES);
-				filterbuilder.append(" WHERE " + TABLE_STATUSES + "." + Statuses.SCREEN_NAME
-						+ " IN(SELECT " + TABLE_FILTERED_USERS + "." + Filters.Users.TEXT
-						+ " FROM " + TABLE_FILTERED_USERS + ")");
-				filterbuilder
-						.append(" UNION SELECT DISTINCT " + TABLE_STATUSES + "." + Statuses._ID
-								+ " FROM " + TABLE_STATUSES + ", " + TABLE_FILTERED_KEYWORDS);
-				filterbuilder.append(" WHERE " + TABLE_STATUSES + "." + Statuses.TEXT
-						+ " LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.Keywords.TEXT
-						+ "||'%' )");
-				return database.query(table, projection, filterbuilder.toString(),selectionArgs, null, null, sortOrder);
+				break;
 			default:
 				break;
 		}
@@ -157,14 +142,16 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		Context context = getContext();
 		switch (CommonUtils.getTableId(uri)) {
 			case URI_STATUSES:
-				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_UPDATED));
+				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED)
+						.putExtra(INTENT_KEY_SUCCEED, true));
 				break;
 			case URI_ACCOUNTS:
 				CommonUtils.clearAccountColor();
-				context.sendBroadcast(new Intent(BROADCAST_ACCOUNTS_LIST_UPDATED));
+				context.sendBroadcast(new Intent(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED));
 				break;
 			case URI_MENTIONS:
-				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_UPDATED));
+				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED).putExtra(
+						INTENT_KEY_SUCCEED, true));
 				break;
 			default:
 				return;

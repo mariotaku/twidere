@@ -71,6 +71,7 @@
 		<EditTextPreference
 			android:dialogMessage="@string/warn_expert_only"
 			android:dialogTitle="@string/consumer_key"
+			android:enabled="false"
 			android:key="consumer_key"
 			android:singleLine="true"
 			android:summary="@string/consumer_key_summary"
@@ -78,12 +79,14 @@
 		<EditTextPreference
 			android:dialogMessage="@string/warn_expert_only"
 			android:dialogTitle="@string/consumer_secret"
+			android:enabled="false"
 			android:key="consumer_secret"
 			android:singleLine="true"
 			android:summary="@string/consumer_secret_summary"
 			android:title="@string/consumer_secret"/>
 	</PreferenceCategory>
 	<PreferenceCategory
+		android:enabled="false"
 		android:key="cat_proxy"
 		android:title="@string/proxy">
 		<CheckBoxPreference

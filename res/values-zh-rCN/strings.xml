@@ -101,5 +101,7 @@
 	<string name="bottom_actions">底部放置的动作菜单</string>
 	<string name="bottom_actions_summary">使用手机且方向是纵向时将一些菜单键放置在底部，如果你的手机屏幕难以单手操作，它会有不少帮助。</string>
 	<string name="quote">引用</string>
+	<string name="add_rule">添加规则</string>
+	<string name="longclick_to_delete">长按以删除。</string>
 
 </resources>

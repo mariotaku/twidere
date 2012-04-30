@@ -8,17 +8,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 
-public class ConnectFragment extends StatusesFragment {
+public class MentionsFragment extends StatusesFragment {
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			if (BROADCAST_MENTIONS_UPDATED.equals(action)) {
+			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
 				mListView.onRefreshComplete();
-				getLoaderManager().restartLoader(0, null, ConnectFragment.this);
-			} else if ((ConnectFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
+				if (intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+					getLoaderManager().restartLoader(0, null, MentionsFragment.this);
+				}
+			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
+			} else if ((MentionsFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
 					.equals(action)) if (mListView != null) {
 				mListView.getRefreshableView().setSelection(0);
 			}
@@ -33,7 +37,8 @@ public class ConnectFragment extends StatusesFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_UPDATED);
+		IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
+		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		if (getSherlockActivity() != null) {
 			getSherlockActivity().registerReceiver(mStatusReceiver, filter);

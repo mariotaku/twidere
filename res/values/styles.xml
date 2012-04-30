@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<style name="Widget.Twidere.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+		<item name="background">@drawable/bg_actionbar_light_theme</item>
+		<item name="android:background">@drawable/bg_actionbar_light_theme</item>
+	</style>
+
 </resources>

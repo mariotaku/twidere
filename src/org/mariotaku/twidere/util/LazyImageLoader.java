@@ -39,8 +39,8 @@ import android.widget.ListView;
  */
 public class LazyImageLoader {
 
-	MemoryCache mMemoryCache = new MemoryCache();
-	FileCache mFileCache;
+	private MemoryCache mMemoryCache = new MemoryCache();
+	private FileCache mFileCache;
 	private Map<ImageView, Object> mImageViews = Collections
 			.synchronizedMap(new WeakHashMap<ImageView, Object>());
 	ExecutorService mExecutorService;
@@ -103,7 +103,8 @@ public class LazyImageLoader {
 				}
 				os.write(bytes, 0, count);
 			}
-		} catch (Exception ex) {
+		} catch (IOException e) {
+			// e.printStackTrace();
 		}
 	}
 
@@ -143,21 +144,19 @@ public class LazyImageLoader {
 		// from SD cache
 		Bitmap bitmap = decodeFile(f, imageview);
 
-		if (bitmap != null)
-			return bitmap;
-		else {
-			bitmap = decodeFile(file, imageview);
-			if (bitmap == null) return null;
-			try {
-				FileOutputStream fos = new FileOutputStream(f);
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fos);
-				fos.flush();
-				fos.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		if (bitmap != null) return bitmap;
+		bitmap = decodeFile(file, imageview);
+		if (bitmap == null) return null;
+		try {
+			FileOutputStream fos = new FileOutputStream(f);
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fos);
+			fos.flush();
+			fos.close();
+		} catch (FileNotFoundException e) {
+			// Storage state may changed, so call FileCache.init() again.
+			mFileCache.init();
+		} catch (IOException e) {
+			// e.printStackTrace();
 		}
 
 		return bitmap;
@@ -185,10 +184,13 @@ public class LazyImageLoader {
 			os.close();
 			bitmap = decodeFile(f, imageview);
 			return bitmap;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
+		} catch (FileNotFoundException e) {
+			// Storage state may changed, so call FileCache.init() again.
+			mFileCache.init();
+		} catch (IOException e) {
+			// e.printStackTrace();
 		}
+		return null;
 	}
 
 	private void queuePhoto(File file, ImageView imageview) {
@@ -235,25 +237,19 @@ public class LazyImageLoader {
 
 	private class FileCache {
 
-		private static final String CACHE_DIR_NAME = "profile_images";
+		private static final String CACHE_DIR_NAME = "thumbnails";
 
-		private File cacheDir;
+		private File mCacheDir;
+		private Context mContext;
 
 		public FileCache(Context context) {
-			/* Find the dir to save cached images. */
-			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-				cacheDir = new File(context.getExternalCacheDir(), CACHE_DIR_NAME);
-			} else {
-				cacheDir = new File(context.getCacheDir(), CACHE_DIR_NAME);
-			}
-			if (cacheDir != null && !cacheDir.exists()) {
-				cacheDir.mkdirs();
-			}
+			mContext = context;
+			init();
 		}
 
 		public void clear() {
-			if (cacheDir == null) return;
-			File[] files = cacheDir.listFiles();
+			if (mCacheDir == null) return;
+			File[] files = mCacheDir.listFiles();
 			if (files == null) return;
 			for (File f : files) {
 				f.delete();
@@ -265,10 +261,25 @@ public class LazyImageLoader {
 		 * demo.
 		 */
 		public File getFile(Object tag) {
-			if (cacheDir == null) return null;
+			if (mCacheDir == null) return null;
+			if (tag instanceof File) {
+				if (mCacheDir.equals(((File) tag).getParentFile())) return (File) tag;
+			}
 			String filename = Integer.toHexString(tag.hashCode());
-			File f = new File(cacheDir, filename);
+			File f = new File(mCacheDir, filename);
 			return f;
+		}
+
+		public void init() {
+			/* Find the dir to save cached images. */
+			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+				mCacheDir = new File(mContext.getExternalCacheDir(), CACHE_DIR_NAME);
+			} else {
+				mCacheDir = new File(mContext.getCacheDir(), CACHE_DIR_NAME);
+			}
+			if (mCacheDir != null && !mCacheDir.exists()) {
+				mCacheDir.mkdirs();
+			}
 		}
 
 	}

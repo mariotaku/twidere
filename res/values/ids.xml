@@ -12,6 +12,7 @@
 	<item name="image" type="id"/>
 	<item name="view" type="id"/>
 	<item name="delete" type="id"/>
+	<item name="add" type="id"/>
 	<item name="pick_from_gallery" type="id"/>
 	<item name="pick_from_map" type="id"/>
 	<item name="reply" type="id"/>

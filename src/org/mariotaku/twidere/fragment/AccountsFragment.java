@@ -13,12 +13,14 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -54,8 +56,18 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	private AccountsAdapter mAdapter;
 
-	private int mUserColorIdx, mUserIdIdx, mProfileImageIdx, mUsernameIdx;
 	private DeleteConfirmFragment mFragment = new DeleteConfirmFragment();
+
+	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+				getLoaderManager().restartLoader(0, null, AccountsFragment.this);
+			}
+		}
+	};
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -136,7 +148,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		String[] cols = Accounts.COLUMNS;
 		StringBuilder where = new StringBuilder();
 		where.append(Accounts.IS_ACTIVATED + "=1");
-		return new CursorLoader(getSherlockActivity(), uri, cols, null, null, null);
+		return new CursorLoader(getSherlockActivity(), uri, cols, where.toString(), null, null);
 	}
 
 	@Override
@@ -169,6 +181,23 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
+		}
+	}
+
+	@Override
+	public void onStop() {
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		}
+		super.onStop();
+	}
+
 	private void confirmDelection() {
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		mFragment.show(ft, "delete_confirm");
@@ -183,9 +212,29 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		ft.commit();
 	}
 
-	private class AccountsAdapter extends SimpleCursorAdapter {
+	public static class ViewHolder {
+
+		public ImageView profile_image;
+		public View content;
+		public int user_color;
+		public String username;
+		public long user_id;
+
+		public ViewHolder(View view) {
+			profile_image = (ImageView) view.findViewById(android.R.id.icon);
+			content = view;
+		}
+
+		public void setAccountColor(int color) {
+			content.getBackground().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+		}
+	}
+
+	private static class AccountsAdapter extends SimpleCursorAdapter {
 
 		private LazyImageLoader mImageLoader;
+
+		private int mUserColorIdx, mUserIdIdx, mProfileImageIdx, mUsernameIdx;
 
 		public AccountsAdapter(Context context, LazyImageLoader loader) {
 			super(context, R.layout.account_list_item, null, new String[] { Accounts.USERNAME },
@@ -275,23 +324,5 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			return builder.create();
 		}
 
-	}
-
-	private class ViewHolder {
-
-		public ImageView profile_image;
-		public View content;
-		public int user_color;
-		public String username;
-		public long user_id;
-
-		public ViewHolder(View view) {
-			profile_image = (ImageView) view.findViewById(android.R.id.icon);
-			content = view;
-		}
-
-		public void setAccountColor(int color) {
-			content.getBackground().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-		}
 	}
 }

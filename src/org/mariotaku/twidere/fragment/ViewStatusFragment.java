@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -162,7 +161,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		int activated_color = getResources().getColor(R.color.holo_blue_light);
 		String[] accounts_cols = new String[] { Accounts.USER_ID };
 		Cursor accounts_cur = mResolver
 				.query(Accounts.CONTENT_URI, accounts_cols, null, null, null);
@@ -179,49 +177,26 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		String[] cols = Statuses.COLUMNS;
 		String where = Statuses.STATUS_ID + "=" + mStatusId;
 
-		Cursor cur = null;
-
 		for (Uri uri : TweetStore.STATUSES_URIS) {
-			cur = mResolver.query(uri, cols, where, null, null);
+			Cursor cur = mResolver.query(uri, cols, where, null, null);
 			if (cur != null && cur.getCount() > 0) {
-				break;
+				cur.close();
+				CommonUtils.setMenuForStatus(getSherlockActivity(), menu, mStatusId, uri);
+				super.onPrepareOptionsMenu(menu);
+				return;
 			}
 			if (cur != null) {
 				cur.close();
 			}
 		}
 
-		if (cur != null && cur.getCount() > 0) {
-			cur.moveToFirst();
-			int idx = cur.getColumnIndexOrThrow(Statuses.USER_ID);
-			long user_id = cur.getLong(idx);
-			menu.findItem(R.id.delete_submenu).setVisible(ids.contains(user_id));
-			MenuItem itemFav = menu.findItem(MENU_FAV);
-			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1) {
-				itemFav.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
-				itemFav.setTitle(R.string.unfav);
-			} else {
-				itemFav.getIcon().clearColorFilter();
-				itemFav.setTitle(R.string.fav);
-			}
-			MenuItem itemRt = menu.findItem(R.id.retweet_submenu);
-			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_RETWEET)) < 0) {
-				itemRt.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
-				itemRt.setTitle(R.string.unfav);
-			} else {
-				itemRt.getIcon().clearColorFilter();
-				itemRt.setTitle(R.string.fav);
-			}
-		} else if (getSherlockActivity() instanceof ViewStatusActivity) {
+		super.onPrepareOptionsMenu(menu);
+		if (getSherlockActivity() instanceof ViewStatusActivity) {
 			getSherlockActivity().finish();
 		} else {
 			// Do what? I will make a decision after I have a tablet.
 			// getFragmentManager().beginTransaction().remove(this);
 		}
-		if (cur != null) {
-			cur.close();
-		}
-		super.onPrepareOptionsMenu(menu);
 
 	}
 

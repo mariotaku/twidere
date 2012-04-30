@@ -38,18 +38,17 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		if (mActivatedUsersId.size() <= 0) {
 			Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
 			return;
-		} else {
-			Bundle bundle = new Bundle();
-			long[] ids = new long[mActivatedUsersId.size()];
-			int i = 0;
-			for (Long id_long : mActivatedUsersId) {
-				ids[i] = id_long;
-				i++;
-			}
-			bundle.putLongArray(Constants.INTENT_KEY_USER_IDS, ids);
-			setResult(RESULT_OK, new Intent().putExtras(bundle));
-			finish();
 		}
+		Bundle bundle = new Bundle();
+		long[] ids = new long[mActivatedUsersId.size()];
+		int i = 0;
+		for (Long id_long : mActivatedUsersId) {
+			ids[i] = id_long;
+			i++;
+		}
+		bundle.putLongArray(INTENT_KEY_USER_IDS, ids);
+		setResult(RESULT_OK, new Intent().putExtras(bundle));
+		finish();
 	}
 
 	@Override

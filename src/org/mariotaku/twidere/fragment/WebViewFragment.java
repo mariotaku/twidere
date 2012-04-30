@@ -21,7 +21,7 @@ public class WebViewFragment extends BaseFragment {
 	}
 
 	public final void loadUrl(String url) {
-		mWebView.loadUrl(url);
+		mWebView.loadUrl(url == null ? "about:blank" : url);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class WebViewFragment extends BaseFragment {
 		mWebView.getSettings().setJavaScriptEnabled(true);
 		Bundle bundle = getArguments();
 		if (bundle != null) {
-			String url = bundle.getString(INTENT_KEY_URI, "about:blank");
+			String url = bundle.getString(INTENT_KEY_URI);
 			loadUrl(url);
 		}
 	}

@@ -28,12 +28,12 @@ public class ServiceInterface implements Constants, IUpdateService {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			if (BROADCAST_HOME_TIMELINE_UPDATED.equals(action)) {
+			if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
 				for (StateListener listener : mStateListeners)
 					if (listener != null) {
 						listener.onHomeTimelineRefreshed();
 					}
-			} else if (BROADCAST_MENTIONS_UPDATED.equals(action)) {
+			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
 				for (StateListener listener : mStateListeners)
 					if (listener != null) {
 						listener.onMentionsRefreshed();
@@ -53,8 +53,8 @@ public class ServiceInterface implements Constants, IUpdateService {
 			IntentFilter filter = new IntentFilter() {
 
 				{
-					addAction(BROADCAST_HOME_TIMELINE_UPDATED);
-					addAction(BROADCAST_MENTIONS_UPDATED);
+					addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
+					addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
 				}
 			};
 			mContext.registerReceiver(mStatusReceiver, filter);
@@ -66,7 +66,9 @@ public class ServiceInterface implements Constants, IUpdateService {
 		}
 	};
 
-	public ServiceInterface(Context context) {
+	private static ServiceInterface sInstance;
+
+	private ServiceInterface(Context context) {
 		((TwidereApplication) context.getApplicationContext()).getCommonUtils().bindToService(
 				mConntecion);
 		mContext = context;
@@ -203,6 +205,18 @@ public class ServiceInterface implements Constants, IUpdateService {
 	}
 
 	@Override
+	public boolean test() {
+		if (mService == null) return false;
+		try {
+			return mService.test();
+		} catch (RemoteException e) {
+			// Maybe service died, so we return false value to let
+			// ServiceInterface restart the service.
+		}
+		return false;
+	}
+
+	@Override
 	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri,
 			long in_reply_to) {
 		if (mService == null) return -1;
@@ -212,6 +226,13 @@ public class ServiceInterface implements Constants, IUpdateService {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+
+	public static ServiceInterface getInstance(Context context) {
+		if (sInstance == null || !sInstance.test()) {
+			sInstance = new ServiceInterface(context);
+		}
+		return sInstance;
 	}
 
 	public interface StateListener {

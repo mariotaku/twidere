@@ -2,16 +2,18 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.fragment.ConnectFragment;
 import org.mariotaku.twidere.fragment.DashboardFragment;
 import org.mariotaku.twidere.fragment.DiscoverFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
+import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.widget.TabsAdapter;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -102,7 +104,7 @@ public class HomeActivity extends BaseActivity {
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mAdapter = new TabsAdapter(this, getSupportFragmentManager());
 		mAdapter.addTab(HomeTimelineFragment.class, null, R.drawable.ic_tab_home);
-		mAdapter.addTab(ConnectFragment.class, null, R.drawable.ic_tab_connect);
+		mAdapter.addTab(MentionsFragment.class, null, R.drawable.ic_tab_connect);
 		mAdapter.addTab(DiscoverFragment.class, null, R.drawable.ic_tab_discover);
 		mAdapter.addTab(DashboardFragment.class, null, R.drawable.ic_tab_me);
 		mViewPager.setAdapter(mAdapter);
@@ -177,5 +179,38 @@ public class HomeActivity extends BaseActivity {
 			CommonUtils.setUiOptions(getWindow(),
 					ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
 		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		ContentResolver resolver = getContentResolver();
+		ContentValues values;
+		switch (requestCode) {
+			case REQUEST_SELECT_ACCOUNT:
+				if (resultCode != RESULT_OK) {
+					break;
+				}
+				if (intent == null || intent.getExtras() == null) {
+					break;
+				}
+				Bundle bundle = intent.getExtras();
+				if (bundle == null) {
+					break;
+				}
+				long[] account_ids = bundle.getLongArray(INTENT_KEY_USER_IDS);
+				if (account_ids != null) {
+					values = new ContentValues();
+					values.put(Accounts.IS_ACTIVATED, 0);
+					resolver.update(Accounts.CONTENT_URI, values, null, null);
+					values = new ContentValues();
+					values.put(Accounts.IS_ACTIVATED, 1);
+					for (long account_id : account_ids) {
+						String where = Accounts.USER_ID + "=" + account_id;
+						resolver.update(Accounts.CONTENT_URI, values, where, null);
+					}
+				}
+				break;
+		}
+		super.onActivityResult(requestCode, resultCode, intent);
 	}
 }

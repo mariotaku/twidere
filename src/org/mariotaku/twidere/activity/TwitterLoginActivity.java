@@ -340,43 +340,23 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			AccessToken accessToken = null;
-			String profile_image_url = null;
+			User user = null;
 			try {
 				accessToken = twitter.getOAuthAccessToken(requestToken, oauthVerifier);
-				profile_image_url = twitter.showUser(accessToken.getUserId()).getProfileImageURL()
-						.toString();
+				user = twitter.showUser(accessToken.getUserId());
 			} catch (TwitterException e) {
 				return CommonUtils.getErrorCode(e);
 			}
 			if (!mUserColorSet) {
-				analyseUserProfileColor(profile_image_url);
+				analyseUserProfileColor(user.getProfileImageURL().toString());
 			}
 			long userid = accessToken.getUserId();
-			String[] cols = new String[] {};
-			StringBuilder where = new StringBuilder();
-			where.append(Accounts.USER_ID + "='" + userid + "'");
-			Cursor cur = resolver.query(Accounts.CONTENT_URI, cols, where.toString(), null, null);
-			if (cur != null) {
-				if (cur.getCount() > 0) {
-					cur.close();
-					return RESULT_ALREADY_LOGGED_IN;
-				}
-				ContentValues values = new ContentValues();
-				values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
-				values.put(Accounts.USER_ID, userid);
-				values.put(Accounts.REST_API_BASE, mRestAPIBase);
-				values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
-				values.put(Accounts.USERNAME, accessToken.getScreenName());
-				values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
-				values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
-				values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
-				values.put(Accounts.USER_COLOR, mUserColor);
-				values.put(Accounts.IS_ACTIVATED, 1);
-				resolver.insert(Accounts.CONTENT_URI, values);
-				cur.close();
-				return RESULT_SUCCESS;
-			}
-			return RESULT_UNKNOWN_ERROR;
+			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, userid))
+				return RESULT_ALREADY_LOGGED_IN;
+			ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, accessToken,
+					user, mRestAPIBase, mSearchAPIBase, null, Accounts.AUTH_TYPE_OAUTH);
+			resolver.insert(Accounts.CONTENT_URI, values);
+			return RESULT_SUCCESS;
 		}
 
 		@Override
@@ -424,30 +404,14 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				if (!mUserColorSet) {
 					analyseUserProfileColor(profile_image_url);
 				}
-				String[] cols = new String[] {};
-				StringBuilder where = new StringBuilder();
-				where.append(Accounts.USER_ID + "='" + user.getId() + "'");
-				Cursor cur = resolver.query(Accounts.CONTENT_URI, cols, where.toString(), null,
-						null);
-				if (cur != null) {
-					if (cur.getCount() > 0) {
-						cur.close();
-						return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_BASIC, null);
-					}
-					ContentValues values = new ContentValues();
-					values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_BASIC);
-					values.put(Accounts.USER_ID, user.getId());
-					values.put(Accounts.REST_API_BASE, mRestAPIBase);
-					values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
-					values.put(Accounts.USERNAME, user.getScreenName());
-					values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
-					values.put(Accounts.USER_COLOR, mUserColor);
-					values.put(Accounts.BASIC_AUTH_PASSWORD, mPassword);
-					values.put(Accounts.IS_ACTIVATED, 1);
-					resolver.insert(Accounts.CONTENT_URI, values);
-					cur.close();
-					return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_BASIC, null);
-				}
+
+				if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, user.getId()))
+					return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_BASIC, null);
+				ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, null, user,
+						mRestAPIBase, mSearchAPIBase, mPassword, Accounts.AUTH_TYPE_BASIC);
+				resolver.insert(Accounts.CONTENT_URI, values);
+				return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_BASIC, null);
+
 			}
 			return new Result(RESULT_UNKNOWN_ERROR, Accounts.AUTH_TYPE_BASIC, null);
 		}
@@ -479,43 +443,23 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			AccessToken accessToken = null;
-			String profile_image_url = null;
+			User user = null;
 			try {
 				accessToken = twitter.getOAuthAccessToken(mUsername, mPassword);
-				profile_image_url = twitter.showUser(accessToken.getUserId()).getProfileImageURL()
-						.toString();
+				user = twitter.showUser(accessToken.getUserId());
 			} catch (TwitterException e) {
 				return new Result(CommonUtils.getErrorCode(e), Accounts.AUTH_TYPE_XAUTH, null);
 			}
 			if (!mUserColorSet) {
-				analyseUserProfileColor(profile_image_url);
+				analyseUserProfileColor(user.getProfileImageURL().toString());
 			}
-			long userid = accessToken.getUserId();
-			String[] cols = new String[] {};
-			StringBuilder where = new StringBuilder();
-			where.append(Accounts.USER_ID + "='" + userid + "'");
-			Cursor cur = resolver.query(Accounts.CONTENT_URI, cols, where.toString(), null, null);
-			if (cur != null) {
-				if (cur.getCount() > 0) {
-					cur.close();
-					return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_XAUTH, null);
-				}
-				ContentValues values = new ContentValues();
-				values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_XAUTH);
-				values.put(Accounts.USER_ID, userid);
-				values.put(Accounts.REST_API_BASE, mRestAPIBase);
-				values.put(Accounts.SEARCH_API_BASE, mSearchAPIBase);
-				values.put(Accounts.USERNAME, accessToken.getScreenName());
-				values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url);
-				values.put(Accounts.USER_COLOR, mUserColor);
-				values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
-				values.put(Accounts.TOKEN_SECRET, accessToken.getTokenSecret());
-				values.put(Accounts.IS_ACTIVATED, 1);
-				resolver.insert(Accounts.CONTENT_URI, values);
-				cur.close();
-				return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_XAUTH, null);
-			}
-			return new Result(RESULT_UNKNOWN_ERROR, Accounts.AUTH_TYPE_XAUTH, null);
+			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, user.getId()))
+				return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_XAUTH, null);
+			ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, accessToken,
+					user, mRestAPIBase, mSearchAPIBase, null, Accounts.AUTH_TYPE_XAUTH);
+			resolver.insert(Accounts.CONTENT_URI, values);
+			return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_XAUTH, null);
+
 		}
 
 		private Result doAuth() {

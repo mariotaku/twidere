@@ -34,10 +34,12 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 	@Override
 	public void changeCursor(Cursor cursor) {
 		super.changeCursor(cursor);
-		mNameIdx = cursor.getColumnIndexOrThrow(CachedUsers.NAME);
-		mProfileImageUrlIdx = cursor.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
-		mScreenNameIdx = cursor.getColumnIndexOrThrow(CachedUsers.SCREEN_NAME);
-		mUserIdIdx = cursor.getColumnIndexOrThrow(CachedUsers.USER_ID);
+		if (cursor != null) {
+			mNameIdx = cursor.getColumnIndexOrThrow(CachedUsers.NAME);
+			mProfileImageUrlIdx = cursor.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
+			mScreenNameIdx = cursor.getColumnIndexOrThrow(CachedUsers.SCREEN_NAME);
+			mUserIdIdx = cursor.getColumnIndexOrThrow(CachedUsers.USER_ID);
+		}
 
 	}
 

@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -77,13 +76,11 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			}
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				URL url = null;
 				try {
-					url = new URL(profile_image_url);
+					mImageLoader.displayImage(new URL(profile_image_url), holder.profile_image);
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				}
-				mImageLoader.displayImage(url, holder.profile_image);
 			}
 		}
 		super.bindView(view, context, cursor);
@@ -93,12 +90,8 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	@Override
 	public void changeCursor(Cursor cursor) {
 		super.changeCursor(cursor);
-		Cursor cur = mContext.getContentResolver().query(Accounts.CONTENT_URI, new String[0], null,
-				null, null);
-		if (cur != null) {
-			mMultipleAccountsActivated = cur.getCount() > 1;
-			cur.close();
-		}
+		long[] account_ids = CommonUtils.getActivatedAccounts(mContext);
+		mMultipleAccountsActivated = account_ids != null && account_ids.length > 1;
 		if (cursor != null) {
 			mAccountIdIdx = cursor.getColumnIndexOrThrow(Statuses.ACCOUNT_ID);
 			mStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.STATUS_ID);

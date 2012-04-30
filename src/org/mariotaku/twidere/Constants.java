@@ -30,9 +30,12 @@ public interface Constants {
 	public static final String DEFAULT_REST_API_BASE = DEFAULT_PROTOCOL + "api.twitter.com/1/";
 	public static final String DEFAULT_SEARCH_API_BASE = DEFAULT_PROTOCOL + "search.twitter.com/";
 
-	public static final String BROADCAST_HOME_TIMELINE_UPDATED = "org.mariotaku.twidere.HOME_TIMELINE_UPDATED";
-	public static final String BROADCAST_MENTIONS_UPDATED = "org.mariotaku.twidere.MENTIONS_UPDATED";
-	public static final String BROADCAST_ACCOUNTS_LIST_UPDATED = "org.mariotaku.twidere.ACCOUNTS_LIST_UPDATED";
+	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = "org.mariotaku.twidere.HOME_TIMELINE_DATABASE_UPDATED";
+	public static final String BROADCAST_MENTIONS_DATABASE_UPDATED = "org.mariotaku.twidere.MENTIONS_DATABASE_UPDATED";
+	public static final String BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED = "org.mariotaku.twidere.ACCOUNT_LIST_DATABASE_UPDATED";
+
+	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = "org.mariotaku.twidere.HOME_TIMELINE_REFRESHED";
+	public static final String BROADCAST_MENTIONS_REFRESHED = "org.mariotaku.twidere.MENTIONS_REFRESHED";
 
 	public static final String BROADCAST_REFRESHSTATE_CHANGED = "org.mariotaku.twidere.REFRESHSTATE_CHANGED";
 	public static final String BROADCAST_DATABASE_UPDATED = "org.mariotaku.twidere.DATABASE_UPDATED";
@@ -51,6 +54,8 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
 	public static final String PREFERENCE_KEY_BOTTOM_ACTIONS = "bottom_actions";
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
+	public static final String PREFERENCE_KEY_ENABLE_FILTERS = "enable_filters";
+	public static final String PREFERENCE_KEY_GZIP_COMPRESSING = "gzip_compressing";
 
 	public static final int PREFERENCE_DEFAULT_ITEM_LIMIT = 100;
 
@@ -74,6 +79,7 @@ public interface Constants {
 	public static final String INTENT_KEY_URI = "uri";
 	public static final String INTENT_KEY_MENTIONS = "mentions";
 	public static final String INTENT_KEY_TEXT = "text";
+	public static final String INTENT_KEY_SUCCEED = "succeed";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;
@@ -87,6 +93,7 @@ public interface Constants {
 	public static final int MENU_IMAGE = R.id.image;
 	public static final int MENU_VIEW = R.id.view;
 	public static final int MENU_DELETE = R.id.delete;
+	public static final int MENU_ADD = R.id.add;
 	public static final int MENU_PICK_FROM_GALLERY = R.id.pick_from_gallery;
 	public static final int MENU_PICK_FROM_MAP = R.id.pick_from_map;
 	public static final int MENU_EDIT_API = R.id.edit_api;

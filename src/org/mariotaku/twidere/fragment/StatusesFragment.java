@@ -1,10 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
-import java.util.ArrayList;
-
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -17,7 +14,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -56,7 +52,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 
 	private Handler mHandler;
 	private Runnable mTicker;
-	private boolean mBottomReached, mDisplayProfileImage;
+	private boolean mBottomReached, mDisplayProfileImage, mActivityFirstCreated;
 	private SharedPreferences mPreferences;
 
 	public abstract Uri getContentUri();
@@ -132,6 +128,12 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mActivityFirstCreated = true;
+	}
+
+	@Override
 	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.action_status, menu);
 		return true;
@@ -141,13 +143,20 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String[] cols = Statuses.COLUMNS;
 		Uri uri = getContentUri();
-		return new CursorLoader(getSherlockActivity(), uri, cols, null, null,
+		String where = CommonUtils.buildActivatedStatsWhereClause(getSherlockActivity(), null);
+		return new CursorLoader(getSherlockActivity(), uri, cols, where, null,
 				Statuses.DEFAULT_SORT_ORDER);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.refreshable_list, container, false);
+	}
+
+	@Override
+	public void onDestroy() {
+		mActivityFirstCreated = true;
+		super.onDestroy();
 	}
 
 	@Override
@@ -163,7 +172,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			long status_id = holder.status_id;
 			long account_id = holder.account_id;
 			if (holder.isGap()) {
-				refresh(new long[] { account_id }, new long[] { status_id });
+				doRefresh(new long[] { account_id }, new long[] { status_id });
 			} else {
 				Bundle bundle = new Bundle();
 				bundle.putLong(Statuses.ACCOUNT_ID, account_id);
@@ -199,59 +208,16 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 
 	@Override
 	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		int activated_color = getResources().getColor(R.color.holo_blue_bright);
-		String[] accounts_cols = new String[] { Accounts.USER_ID };
-		Cursor accounts_cur = mResolver
-				.query(Accounts.CONTENT_URI, accounts_cols, null, null, null);
-		ArrayList<Long> ids = new ArrayList<Long>();
-		if (accounts_cur != null) {
-			accounts_cur.moveToFirst();
-			int idx = accounts_cur.getColumnIndexOrThrow(Accounts.USER_ID);
-			while (!accounts_cur.isAfterLast()) {
-				ids.add(accounts_cur.getLong(idx));
-				accounts_cur.moveToNext();
-			}
-			accounts_cur.close();
-		}
-		Uri uri = getContentUri();
-		String[] cols = Statuses.COLUMNS;
-		String where = Statuses.STATUS_ID + "=" + mSelectedStatusId;
-		Cursor cur = mResolver.query(uri, cols, where, null, null);
-		if (cur != null && cur.getCount() > 0) {
-			cur.moveToFirst();
-			long user_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
-			menu.findItem(R.id.delete_submenu).setVisible(ids.contains(user_id));
-			menu.findItem(MENU_RETWEET).setVisible(!ids.contains(user_id) || ids.size() > 1);
-			MenuItem itemFav = menu.findItem(MENU_FAV);
-			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1) {
-				itemFav.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
-				itemFav.setTitle(R.string.unfav);
-			} else {
-				itemFav.getIcon().clearColorFilter();
-				itemFav.setTitle(R.string.fav);
-			}
-		}
-		if (cur != null) {
-			cur.close();
-		}
+		CommonUtils.setMenuForStatus(getSherlockActivity(), menu, mSelectedStatusId,
+				getContentUri());
 		return true;
 	}
 
 	@Override
 	public void onRefresh() {
-		String[] cols = new String[] { Accounts.USER_ID };
-		Cursor cur = mResolver.query(Accounts.CONTENT_URI, cols, null, null, null);
 
-		if (cur != null) {
-			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
-			long[] ids = new long[cur.getCount()];
-			for (int i = 0; i < cur.getCount(); i++) {
-				cur.moveToPosition(i);
-				ids[i] = cur.getLong(idx);
-			}
-			refresh(ids, null);
-			cur.close();
-		}
+		long[] account_ids = CommonUtils.getActivatedAccounts(getSherlockActivity());
+		doRefresh(account_ids, null);
 
 	}
 
@@ -314,15 +280,20 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			}
 		};
 		mTicker.run();
+
+		if (!mActivityFirstCreated) {
+			getLoaderManager().restartLoader(0, null, this);
+		}
 	}
 
 	@Override
 	public void onStop() {
 		mTickerStopped = true;
+		mActivityFirstCreated = false;
 		super.onStop();
 	}
 
-	private void refresh(long[] account_ids, long[] max_ids) {
+	private void doRefresh(long[] account_ids, long[] max_ids) {
 		switch (CommonUtils.getTableId(getContentUri())) {
 			case URI_STATUSES:
 				mServiceInterface.getHomeTimeline(account_ids, max_ids);

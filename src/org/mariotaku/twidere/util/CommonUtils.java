@@ -12,6 +12,8 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.service.UpdateService;
@@ -24,6 +26,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.URLEntity;
+import twitter4j.User;
 import twitter4j.UserMentionEntity;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
@@ -31,10 +34,12 @@ import twitter4j.conf.ConfigurationBuilder;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -42,6 +47,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
@@ -56,6 +62,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class CommonUtils implements Constants {
 
@@ -157,6 +166,65 @@ public class CommonUtils implements Constants {
 		wrapper.unbindService(binder);
 	}
 
+	public static String buildActivatedStatsWhereClause(Context context, String selection) {
+		long[] account_ids = getActivatedAccounts(context);
+		if (account_ids == null || account_ids.length <= 0) return null;
+		StringBuilder builder = new StringBuilder();
+		if (selection != null) {
+			builder.append(selection);
+			builder.append(" AND ");
+		}
+
+		builder.append(Statuses.ACCOUNT_ID + " IN ( ");
+		for (int i = 0; i < account_ids.length; i++) {
+			String id_string = String.valueOf(account_ids[i]);
+			if (id_string != null) {
+				if (i > 0) {
+					builder.append(", ");
+				}
+				builder.append(id_string);
+			}
+		}
+		builder.append(" )");
+
+		return builder.toString();
+	}
+
+	public static String buildFilterWhereClause(String table, String selection) {
+		StringBuilder builder = new StringBuilder();
+		if (selection != null) {
+			builder.append(selection);
+			builder.append(" AND ");
+		}
+		builder.append(Statuses._ID + " NOT IN ( ");
+		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table);
+		builder.append(" WHERE " + table + "." + Statuses.SCREEN_NAME + " IN(SELECT "
+				+ TABLE_FILTERED_USERS + "." + Filters.Users.TEXT + " FROM " + TABLE_FILTERED_USERS
+				+ ")");
+		builder.append(" UNION ");
+		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table);
+		builder.append(" WHERE " + table + "." + Statuses.NAME + " IN(SELECT "
+				+ TABLE_FILTERED_USERS + "." + Filters.Users.TEXT + " FROM " + TABLE_FILTERED_USERS
+				+ ")");
+		builder.append(" UNION ");
+		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
+				+ TABLE_FILTERED_SOURCES);
+		builder.append(" WHERE " + table + "." + Statuses.SOURCE + " LIKE '%'||"
+				+ TABLE_FILTERED_SOURCES + "." + Filters.Sources.TEXT + "||'%'");
+		builder.append(" UNION ");
+		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
+				+ TABLE_FILTERED_KEYWORDS);
+		builder.append(" WHERE " + table + "." + Statuses.TEXT + " LIKE '%'||"
+				+ TABLE_FILTERED_KEYWORDS + "." + Filters.Keywords.TEXT + "||'%'");
+		builder.append(" )");
+
+		return builder.toString();
+	}
+
+	public static void clearAccountColor() {
+		sAccountColors.clear();
+	}
+
 	/**
 	 * 
 	 * @param location
@@ -199,9 +267,7 @@ public class CommonUtils implements Constants {
 					continue;
 				}
 				String link = "https://twitter.com/#!/" + mention.getScreenName();
-				if (link != null) {
-					text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				}
+				text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
 		}
 		// Format hashtags.
@@ -214,9 +280,7 @@ public class CommonUtils implements Constants {
 					continue;
 				}
 				String link = "https://twitter.com/search/#" + hashtag.getText();
-				if (link != null) {
-					text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				}
+				text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
 		}
 		// Format media.
@@ -281,10 +345,6 @@ public class CommonUtils implements Constants {
 			return context.getResources().getQuantityString(R.plurals.Nminutes, diff, diff);
 		} else if (then.minute == now.minute) return context.getString(R.string.just_now);
 		return then.format3339(true);
-	}
-
-	public static void clearAccountColor() {
-		sAccountColors.clear();
 	}
 
 	public static int getAccountColor(Context context, long account_id) {
@@ -457,6 +517,10 @@ public class CommonUtils implements Constants {
 	}
 
 	public static Twitter getTwitterInstance(Context context, long account_id) {
+		final SharedPreferences preferences = context.getSharedPreferences(PREFERENCE_NAME,
+				Context.MODE_PRIVATE);
+		final boolean enable_gzip_compressing = preferences.getBoolean(
+				PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		Twitter twitter = null;
 		StringBuilder where = new StringBuilder();
 		where.append(Accounts.USER_ID + "=" + account_id);
@@ -466,6 +530,7 @@ public class CommonUtils implements Constants {
 			if (cur.getCount() == 1) {
 				cur.moveToFirst();
 				ConfigurationBuilder cb = new ConfigurationBuilder();
+				cb.setGZIPEnabled(enable_gzip_compressing);
 				String rest_api_base = cur.getString(cur
 						.getColumnIndexOrThrow(Accounts.REST_API_BASE));
 				String search_api_base = cur.getString(cur
@@ -515,6 +580,15 @@ public class CommonUtils implements Constants {
 		return 0;
 	}
 
+	public static boolean isUserLoggedIn(Context context, long account_id) {
+		long[] ids = getAccounts(context);
+		if (ids == null) return false;
+		for (long id : ids) {
+			if (id == account_id) return true;
+		}
+		return false;
+	}
+
 	public static void limitDatabases(Context context) {
 		ContentResolver resolver = context.getContentResolver();
 		String[] cols = new String[0];
@@ -539,6 +613,85 @@ public class CommonUtils implements Constants {
 		}
 	}
 
+	public static ContentValues makeAccountContentValues(int color, AccessToken access_token,
+			User user, String rest_api_base, String search_api_base, String basic_password,
+			int auth_type) {
+		if (user == null) throw new IllegalArgumentException("User can't be null!");
+		ContentValues values = new ContentValues();
+		switch (auth_type) {
+			case Accounts.AUTH_TYPE_BASIC:
+				if (basic_password == null)
+					throw new IllegalArgumentException("Password can't be null in Basic mode!");
+				values.put(Accounts.BASIC_AUTH_PASSWORD, basic_password);
+				break;
+			case Accounts.AUTH_TYPE_OAUTH:
+			case Accounts.AUTH_TYPE_XAUTH:
+				if (access_token == null)
+					throw new IllegalArgumentException(
+							"Access Token can't be null in OAuth/xAuth mode!");
+				if (user.getId() != access_token.getUserId())
+					throw new IllegalArgumentException("User and Access Token not match!");
+				values.put(Accounts.OAUTH_TOKEN, access_token.getToken());
+				values.put(Accounts.TOKEN_SECRET, access_token.getTokenSecret());
+				break;
+		}
+		values.put(Accounts.AUTH_TYPE, auth_type);
+		values.put(Accounts.USER_ID, user.getId());
+		values.put(Accounts.USERNAME, user.getScreenName());
+		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
+		values.put(Accounts.USER_COLOR, color);
+		values.put(Accounts.IS_ACTIVATED, 1);
+		if (rest_api_base != null) {
+			values.put(Accounts.REST_API_BASE, rest_api_base);
+		}
+		if (search_api_base != null) {
+			values.put(Accounts.SEARCH_API_BASE, search_api_base);
+		}
+
+		return values;
+	}
+
+	public static ContentValues makeCachedUsersContentValues(User user) {
+		ContentValues values = new ContentValues();
+		values.put(CachedUsers.NAME, user.getName());
+		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
+		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
+		values.put(CachedUsers.USER_ID, user.getId());
+
+		return values;
+	}
+
+	public static ContentValues makeStatusesContentValues(Status status, long account_id) {
+		ContentValues values = new ContentValues();
+		User user = status.getUser();
+		long status_id = status.getId(), user_id = user.getId();
+		String profile_image_url = user.getProfileImageURL().toString();
+		String name = user.getName(), screen_name = user.getScreenName();
+		MediaEntity[] medias = status.getMediaEntities();
+		int retweet_status = Math.abs(status.isRetweet() ? 1 : 0);
+		retweet_status = status.isRetweetedByMe() ? -retweet_status : retweet_status;
+		values.put(Statuses.STATUS_ID, status_id);
+		values.put(Statuses.ACCOUNT_ID, account_id);
+		values.put(Statuses.USER_ID, user_id);
+		values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
+		values.put(Statuses.TEXT, formatStatusString(status));
+		values.put(Statuses.NAME, name);
+		values.put(Statuses.SCREEN_NAME, screen_name);
+		values.put(Statuses.PROFILE_IMAGE_URL, profile_image_url);
+		values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
+		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
+		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
+		values.put(Statuses.IN_REPLY_TO_USER_ID, status.getInReplyToUserId());
+		values.put(Statuses.SOURCE, status.getSource());
+		values.put(Statuses.LOCATION, formatGeoLocationToString(status.getGeoLocation()));
+		values.put(Statuses.IS_RETWEET, retweet_status);
+		values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
+		values.put(Statuses.IS_PROTECTED, user.isProtected() ? 1 : 0);
+		values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
+
+		return values;
+	}
+
 	public static void restartActivity(Activity activity) {
 		int fade_in = android.R.anim.fade_in;
 		int fade_out = android.R.anim.fade_out;
@@ -551,6 +704,43 @@ public class CommonUtils implements Constants {
 	public static void setLayerType(View view, int layerType, Paint paint) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			new MethodsCompat().setLayerType(view, layerType, paint);
+		}
+	}
+
+	public static void setMenuForStatus(Context context, Menu menu, long status_id, Uri uri) {
+		int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
+		ContentResolver resolver = context.getContentResolver();
+		String[] accounts_cols = new String[] { Accounts.USER_ID };
+		Cursor accounts_cur = resolver.query(Accounts.CONTENT_URI, accounts_cols, null, null, null);
+		ArrayList<Long> ids = new ArrayList<Long>();
+		if (accounts_cur != null) {
+			accounts_cur.moveToFirst();
+			int idx = accounts_cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			while (!accounts_cur.isAfterLast()) {
+				ids.add(accounts_cur.getLong(idx));
+				accounts_cur.moveToNext();
+			}
+			accounts_cur.close();
+		}
+		String[] cols = Statuses.COLUMNS;
+		String where = Statuses.STATUS_ID + "=" + status_id;
+		Cursor cur = resolver.query(uri, cols, where, null, null);
+		if (cur != null && cur.getCount() > 0) {
+			cur.moveToFirst();
+			long user_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
+			menu.findItem(R.id.delete_submenu).setVisible(ids.contains(user_id));
+			menu.findItem(MENU_RETWEET).setVisible(!ids.contains(user_id) || ids.size() > 1);
+			MenuItem itemFav = menu.findItem(MENU_FAV);
+			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1) {
+				itemFav.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+				itemFav.setTitle(R.string.unfav);
+			} else {
+				itemFav.getIcon().clearColorFilter();
+				itemFav.setTitle(R.string.fav);
+			}
+		}
+		if (cur != null) {
+			cur.close();
 		}
 	}
 

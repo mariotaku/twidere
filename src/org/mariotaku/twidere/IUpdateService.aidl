@@ -12,4 +12,5 @@ interface IUpdateService {
 	boolean isHomeTimelineRefreshing();
 	boolean isMentionsRefreshing();
 	boolean hasActivatedTask();
+	boolean test();
 }

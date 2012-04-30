@@ -13,7 +13,6 @@ public class TwidereApplication extends Application implements Constants {
 
 	private LazyImageLoader mListProfileImageLoader;
 	private CommonUtils mCommonUtils;
-	private ServiceInterface mServiceInterface;
 	private AsyncTaskManager mAsyncTaskManager = new AsyncTaskManager();
 
 	public AsyncTaskManager getAsyncTaskManager() {
@@ -29,7 +28,7 @@ public class TwidereApplication extends Application implements Constants {
 	}
 
 	public ServiceInterface getServiceInterface() {
-		return mServiceInterface;
+		return ServiceInterface.getInstance(this);
 	}
 
 	@Override
@@ -38,7 +37,6 @@ public class TwidereApplication extends Application implements Constants {
 		mListProfileImageLoader = new LazyImageLoader(this, R.drawable.ic_profile_image_default,
 				getResources().getDimensionPixelSize(R.dimen.profile_image_size));
 		mCommonUtils = new CommonUtils(this);
-		mServiceInterface = new ServiceInterface(this);
 		CommonUtils.limitDatabases(this);
 	}
 

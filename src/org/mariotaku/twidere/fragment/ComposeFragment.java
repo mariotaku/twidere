@@ -73,8 +73,9 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		getLocation();
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
 		long[] activated_ids = bundle != null ? bundle.getLongArray(INTENT_KEY_USER_IDS) : null;
-		if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null)
-			mText = bundle.getString(INTENT_KEY_TEXT, "");
+		if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null) {
+			mText = bundle.getString(INTENT_KEY_TEXT);
+		}
 
 		mAccountIds = activated_ids == null ? CommonUtils
 				.getActivatedAccounts(getSherlockActivity()) : activated_ids;
@@ -88,7 +89,9 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		mSelectAccount.setOnClickListener(this);
 		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
-		if (mText != null) mEditText.setText(mText);
+		if (mText != null) {
+			mEditText.setText(mText);
+		}
 		int length = mEditText.length();
 		mTextCount.setText(String.valueOf(length));
 		mSendButton.setEnabled(length > 0 && length <= 140);
@@ -164,6 +167,14 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				break;
 		}
 
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// Tell the framework to try to keep this fragment around
+		// during a configuration change.
+		setRetainInstance(true);
 	}
 
 	@Override

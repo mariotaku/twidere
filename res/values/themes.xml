@@ -19,6 +19,8 @@
 		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
+		<item name="actionBarStyle">@style/Widget.Twidere.ActionBar</item>
+		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
 	</style>
 
 </resources>
