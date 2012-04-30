@@ -133,6 +133,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			case MENU_SHARE:
 				break;
 			case MENU_REPLY:
+				Bundle bundle = new Bundle();
+				bundle.putStringArray(INTENT_KEY_MENTIONS,
+						CommonUtils.getMentionedNames(mText.getText(), true));
+				startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
 				break;
 			case MENU_RETWEET:
 				if (mIsRetweetByMe) {

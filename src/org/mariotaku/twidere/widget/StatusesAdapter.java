@@ -91,7 +91,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	public void changeCursor(Cursor cursor) {
 		super.changeCursor(cursor);
 		long[] account_ids = CommonUtils.getActivatedAccounts(mContext);
-		mMultipleAccountsActivated = account_ids != null && account_ids.length > 1;
+		mMultipleAccountsActivated = account_ids.length > 1;
 		if (cursor != null) {
 			mAccountIdIdx = cursor.getColumnIndexOrThrow(Statuses.ACCOUNT_ID);
 			mStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.STATUS_ID);

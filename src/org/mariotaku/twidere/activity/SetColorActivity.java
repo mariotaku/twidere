@@ -52,11 +52,11 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 				: Color.WHITE;
 
 		Resources res = getResources();
-		mColors.add(res.getColor(android.R.color.holo_red_light));
-		mColors.add(res.getColor(android.R.color.holo_orange_light));
-		mColors.add(res.getColor(android.R.color.holo_green_light));
-		mColors.add(res.getColor(android.R.color.holo_blue_light));
-		mColors.add(res.getColor(android.R.color.holo_purple));
+		mColors.add(res.getColor(R.color.holo_red_light));
+		mColors.add(res.getColor(R.color.holo_orange_light));
+		mColors.add(res.getColor(R.color.holo_green_light));
+		mColors.add(res.getColor(R.color.holo_blue_light));
+		mColors.add(res.getColor(R.color.holo_purple));
 		mColors.add(Color.TRANSPARENT);
 		if (mColors.contains(mCustomizedColor)) {
 

@@ -168,7 +168,7 @@ public class CommonUtils implements Constants {
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
 		long[] account_ids = getActivatedAccounts(context);
-		if (account_ids == null || account_ids.length <= 0) return null;
+		if (account_ids.length <= 0) return null;
 		StringBuilder builder = new StringBuilder();
 		if (selection != null) {
 			builder.append(selection);
@@ -198,24 +198,32 @@ public class CommonUtils implements Constants {
 		}
 		builder.append(Statuses._ID + " NOT IN ( ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table);
-		builder.append(" WHERE " + table + "." + Statuses.SCREEN_NAME + " IN(SELECT "
+		builder.append(" WHERE " + table + "." + Statuses.SCREEN_NAME + " IN ( SELECT "
 				+ TABLE_FILTERED_USERS + "." + Filters.Users.TEXT + " FROM " + TABLE_FILTERED_USERS
-				+ ")");
+				+ " )");
+		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
+		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table);
-		builder.append(" WHERE " + table + "." + Statuses.NAME + " IN(SELECT "
+		builder.append(" WHERE " + table + "." + Statuses.NAME + " IN ( SELECT "
 				+ TABLE_FILTERED_USERS + "." + Filters.Users.TEXT + " FROM " + TABLE_FILTERED_USERS
-				+ ")");
+				+ " )");
+		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
+		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
 				+ TABLE_FILTERED_SOURCES);
 		builder.append(" WHERE " + table + "." + Statuses.SOURCE + " LIKE '%'||"
 				+ TABLE_FILTERED_SOURCES + "." + Filters.Sources.TEXT + "||'%'");
+		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
+		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
 				+ TABLE_FILTERED_KEYWORDS);
 		builder.append(" WHERE " + table + "." + Statuses.TEXT + " LIKE '%'||"
 				+ TABLE_FILTERED_KEYWORDS + "." + Filters.Keywords.TEXT + "||'%'");
+		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
+		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" )");
 
 		return builder.toString();
@@ -497,7 +505,7 @@ public class CommonUtils implements Constants {
 		return null;
 	}
 
-	public static String[] getMentionedNames(String text, boolean at_sign) {
+	public static String[] getMentionedNames(CharSequence text, boolean at_sign) {
 		Pattern pattern = Pattern.compile("(?<!\\w)(@(\\w+))", Pattern.MULTILINE);
 		Matcher matcher = pattern.matcher(text);
 		List<String> mentions = new ArrayList<String>();
@@ -514,6 +522,27 @@ public class CommonUtils implements Constants {
 
 	public static int getTableId(Uri uri) {
 		return URI_MATCHER.match(uri);
+	}
+
+	public static String getTableNameForContentUri(Uri uri) {
+		switch (CommonUtils.getTableId(uri)) {
+			case URI_STATUSES:
+				return TABLE_STATUSES;
+			case URI_ACCOUNTS:
+				return TABLE_ACCOUNTS;
+			case URI_MENTIONS:
+				return TABLE_MENTIONS;
+			case URI_CACHED_USERS:
+				return TABLE_CACHED_USERS;
+			case URI_FILTERED_USERS:
+				return TABLE_FILTERED_USERS;
+			case URI_FILTERED_KEYWORDS:
+				return TABLE_FILTERED_KEYWORDS;
+			case URI_FILTERED_SOURCES:
+				return TABLE_FILTERED_SOURCES;
+			default:
+				return null;
+		}
 	}
 
 	public static Twitter getTwitterInstance(Context context, long account_id) {

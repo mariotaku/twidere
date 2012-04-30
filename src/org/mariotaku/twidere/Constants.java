@@ -44,8 +44,6 @@ public interface Constants {
 
 	public static final String OAUTH_VERIFIER = "oauth_verifier";
 
-	public static final String INTENT_KEY_REFRESH_ALL = "refresh_all";
-
 	public static final String PREFERENCE_NAME = "preference";
 
 	public static final String PREFERENCE_KEY_ITEM_LIMIT = "item_limit";
@@ -80,6 +78,8 @@ public interface Constants {
 	public static final String INTENT_KEY_MENTIONS = "mentions";
 	public static final String INTENT_KEY_TEXT = "text";
 	public static final String INTENT_KEY_SUCCEED = "succeed";
+	public static final String INTENT_KEY_REFRESH_ALL = "refresh_all";
+	public static final String INTENT_KEY_IDS = "ids";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;

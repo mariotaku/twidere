@@ -21,7 +21,6 @@ import twitter4j.conf.ConfigurationBuilder;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -54,6 +53,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	private ImageButton mSetColorButton;
 	private AbstractTask mTask;
 	private RequestToken mRequestToken;
+	private long mLoggedId;
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -85,6 +85,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 										: LinearLayout.HORIZONTAL);
 					}
 				}
+				setSignInButton();
 				break;
 			case REQUEST_GOTO_AUTHORIZATION:
 				if (resultCode == RESULT_OK) {
@@ -116,7 +117,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				setUserColorButton();
 				break;
 		}
-		setSignInButton();
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
@@ -159,12 +159,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
 		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
 		setSupportProgressBarIndeterminateVisibility(false);
-		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {}, null, null,
-				null);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(cur != null && cur.getCount() > 0);
-		if (cur != null) {
-			cur.close();
-		}
+		long[] account_ids = CommonUtils.getActivatedAccounts(this);
+		boolean called_from_twidere = getPackageName().equals(getCallingPackage());
+		getSupportActionBar().setDisplayHomeAsUpEnabled(
+				account_ids.length > 0 && called_from_twidere);
 
 		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
 		if (bundle == null) {
@@ -221,13 +219,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 		switch (item.getItemId()) {
 			case MENU_HOME:
-				Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[] {},
-						null, null, null);
-				if (cur != null && cur.getCount() > 0) {
+				long[] account_ids = CommonUtils.getActivatedAccounts(this);
+				boolean called_from_twidere = getPackageName().equals(getCallingPackage());
+				if (account_ids.length > 0 && called_from_twidere) {
 					finish();
-				}
-				if (cur != null) {
-					cur.close();
 				}
 				break;
 			case MENU_SETTINGS:
@@ -311,11 +306,21 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		protected void onPostExecute(Object result_obj) {
 			setSupportProgressBarIndeterminateVisibility(false);
 			mTask = null;
+			mEditPassword.setEnabled(true);
+			mEditUsername.setEnabled(true);
+			mSignInButton.setEnabled(true);
+			mSignUpButton.setEnabled(true);
+			super.onPostExecute(result_obj);
 		}
 
 		@Override
 		protected void onPreExecute() {
+			super.onPreExecute();
 			setSupportProgressBarIndeterminateVisibility(true);
+			mEditPassword.setEnabled(false);
+			mEditUsername.setEnabled(false);
+			mSignInButton.setEnabled(false);
+			mSignUpButton.setEnabled(false);
 		}
 
 	}
@@ -350,8 +355,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			if (!mUserColorSet) {
 				analyseUserProfileColor(user.getProfileImageURL().toString());
 			}
-			long userid = accessToken.getUserId();
-			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, userid))
+			mLoggedId = user.getId();
+			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 				return RESULT_ALREADY_LOGGED_IN;
 			ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, accessToken,
 					user, mRestAPIBase, mSearchAPIBase, null, Accounts.AUTH_TYPE_OAUTH);
@@ -366,7 +371,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				case RESULT_SUCCESS:
 					Intent intent = new Intent(INTENT_ACTION_HOME);
 					Bundle bundle = new Bundle();
-					bundle.putBoolean(INTENT_KEY_REFRESH_ALL, true);
+					bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
 					intent.putExtras(bundle);
 					intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 					startActivity(intent);
@@ -405,7 +410,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 					analyseUserProfileColor(profile_image_url);
 				}
 
-				if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, user.getId()))
+				mLoggedId = user.getId();
+				if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_BASIC, null);
 				ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, null, user,
 						mRestAPIBase, mSearchAPIBase, mPassword, Accounts.AUTH_TYPE_BASIC);
@@ -453,7 +459,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			if (!mUserColorSet) {
 				analyseUserProfileColor(user.getProfileImageURL().toString());
 			}
-			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, user.getId()))
+
+			mLoggedId = user.getId();
+			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 				return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_XAUTH, null);
 			ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, accessToken,
 					user, mRestAPIBase, mSearchAPIBase, null, Accounts.AUTH_TYPE_XAUTH);
@@ -487,10 +495,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			Result result = (Result) result_obj;
 			switch (result.result_code) {
 				case RESULT_SUCCESS:
-					Intent intent = new Intent(TwitterLoginActivity.this, HomeActivity.class);
+					Intent intent = new Intent(INTENT_ACTION_HOME);
 					Bundle bundle = new Bundle();
-					bundle.putBoolean(INTENT_KEY_REFRESH_ALL, true);
+					bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
 					intent.putExtras(bundle);
+					intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 					startActivity(intent);
 					finish();
 					break;

@@ -19,7 +19,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -63,36 +62,20 @@ public class HomeActivity extends BaseActivity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		StringBuilder where = new StringBuilder();
 		where.append(Accounts.IS_ACTIVATED + "=1");
-		Cursor cur = getContentResolver().query(Accounts.CONTENT_URI, new String[0],
-				where.toString(), null, null);
-		int accounts_count = cur == null ? 0 : cur.getCount();
-		cur.close();
+		long[] activated_ids = CommonUtils.getActivatedAccounts(this);
 
-		if (accounts_count <= 0) {
+		if (activated_ids.length <= 0) {
 			startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
 			finish();
 			return;
 		}
 
 		Bundle bundle = getIntent().getExtras();
-		if (bundle != null && bundle.getBoolean(INTENT_KEY_REFRESH_ALL)) {
-			Cursor refresh_cur = getContentResolver().query(Accounts.CONTENT_URI,
-					new String[] { Accounts.USER_ID }, where.toString(), null, null);
-			if (refresh_cur != null) {
-				long[] account_ids = new long[refresh_cur.getCount()];
-				refresh_cur.moveToFirst();
-				int idx = 0;
-				while (!refresh_cur.isAfterLast()) {
-					account_ids[idx] = refresh_cur.getLong(refresh_cur
-							.getColumnIndexOrThrow(Accounts.USER_ID));
-					refresh_cur.moveToNext();
-					idx++;
-				}
-				mInterface.getHomeTimeline(account_ids, null);
-				mInterface.getMentions(account_ids, null);
-				mInterface.getMessages(account_ids, null);
-				refresh_cur.close();
-			}
+		if (bundle != null && bundle.getLongArray(INTENT_KEY_IDS) != null) {
+			long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
+			mInterface.getHomeTimeline(refreshed_ids, null);
+			mInterface.getMentions(refreshed_ids, null);
+			mInterface.getMessages(refreshed_ids, null);
 		}
 		mActionBar = getSupportActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);

@@ -14,17 +14,21 @@ import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.SparseBooleanArray;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener {
+public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener,
+		OnClickListener {
 
 	private ListView mListView;
 	private SimpleCursorAdapter mAdapter;
 	private Cursor mCursor;
 	private List<Long> mActivatedUsersId = new ArrayList<Long>();
+	private Button mAddAccountButton;
 
 	public Cursor getAccountsCursor() {
 		Uri uri = Accounts.CONTENT_URI;
@@ -52,10 +56,22 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	}
 
 	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.add:
+				startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
+				finish();
+				break;
+		}
+
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.basic_list);
+		setContentView(R.layout.select_account);
 		mListView = (ListView) findViewById(android.R.id.list);
+		mAddAccountButton = (Button) findViewById(R.id.add);
 		int layoutRes = MULTIPLE_ACCOUNTS_ENABLED ? android.R.layout.simple_list_item_multiple_choice
 				: android.R.layout.simple_list_item_single_choice;
 		String[] from = new String[] { Accounts.USERNAME };
@@ -70,6 +86,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		mListView.setOnItemClickListener(this);
 		mListView.setChoiceMode(MULTIPLE_ACCOUNTS_ENABLED ? ListView.CHOICE_MODE_MULTIPLE
 				: ListView.CHOICE_MODE_SINGLE);
+		mAddAccountButton.setOnClickListener(this);
 
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		long[] activated_ids = bundle != null ? bundle.getLongArray(Constants.INTENT_KEY_USER_IDS)

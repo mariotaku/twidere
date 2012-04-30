@@ -18,7 +18,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -31,7 +31,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		String table = getTableName(uri);
+		String table = CommonUtils.getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
 			result = database.delete(table, selection, selectionArgs);
@@ -49,7 +49,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		String table = getTableName(uri);
+		String table = CommonUtils.getTableNameForContentUri(uri);
 		if (table == null) return null;
 		long row_id = database.insert(table, null, values);
 		notifyForUpdatedUri(uri);
@@ -58,7 +58,14 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	@Override
 	public boolean onCreate() {
-		database = new DatabaseHelper(getContext(), DATABASES_NAME, DATABASES_VERSION)
+		Context context = getContext();
+		int db_version = DATABASES_VERSION;
+		try {
+			db_version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e) {
+			// This should not happen.
+		}
+		database = new DatabaseHelper(getContext(), DATABASES_NAME, db_version)
 				.getWritableDatabase();
 		return database != null;
 	}
@@ -68,7 +75,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			String sortOrder) {
 
 		String account_id_string = uri.getQueryParameter(TweetStore.KEY_ACCOUNT_ID);
-		String table = getTableName(uri);
+		String table = CommonUtils.getTableNameForContentUri(uri);
 
 		switch (CommonUtils.getTableId(uri)) {
 			case URI_FAVORITES:
@@ -86,16 +93,6 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 					return new UserTimelineCursor(twitter, screen_name, null, projection);
 				}
 				return null;
-			case URI_STATUSES:
-			case URI_MENTIONS:
-				SharedPreferences preferences = getContext().getSharedPreferences(PREFERENCE_NAME,
-						Context.MODE_PRIVATE);
-				if (preferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTERS, false)) {
-					String where = CommonUtils.buildFilterWhereClause(table, selection);
-					return database.query(table, projection, where, selectionArgs, null, null,
-							sortOrder);
-				}
-				break;
 			default:
 				break;
 		}
@@ -106,7 +103,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-		String table = getTableName(uri);
+		String table = CommonUtils.getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
 			result = database.update(table, values, selection, selectionArgs);
@@ -115,27 +112,6 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			notifyForUpdatedUri(uri);
 		}
 		return result;
-	}
-
-	private String getTableName(Uri uri) {
-		switch (CommonUtils.getTableId(uri)) {
-			case URI_STATUSES:
-				return TABLE_STATUSES;
-			case URI_ACCOUNTS:
-				return TABLE_ACCOUNTS;
-			case URI_MENTIONS:
-				return TABLE_MENTIONS;
-			case URI_CACHED_USERS:
-				return TABLE_CACHED_USERS;
-			case URI_FILTERED_USERS:
-				return TABLE_FILTERED_USERS;
-			case URI_FILTERED_KEYWORDS:
-				return TABLE_FILTERED_KEYWORDS;
-			case URI_FILTERED_SOURCES:
-				return TABLE_FILTERED_SOURCES;
-			default:
-				return null;
-		}
 	}
 
 	private void notifyForUpdatedUri(Uri uri) {

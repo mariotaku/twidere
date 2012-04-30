@@ -144,6 +144,10 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		String[] cols = Statuses.COLUMNS;
 		Uri uri = getContentUri();
 		String where = CommonUtils.buildActivatedStatsWhereClause(getSherlockActivity(), null);
+		if (mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTERS, false)) {
+			String table = CommonUtils.getTableNameForContentUri(uri);
+			where = CommonUtils.buildFilterWhereClause(table, where);
+		}
 		return new CursorLoader(getSherlockActivity(), uri, cols, where, null,
 				Statuses.DEFAULT_SORT_ORDER);
 	}
