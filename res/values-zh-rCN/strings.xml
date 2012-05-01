@@ -72,8 +72,8 @@
 	<string name="gzip_compressing">GZip 压缩</string>
 	<string name="gzip_compressing_summary">压缩所有的 API 请求，这将减少数据流量，但并不是所有的API服务器都支持这个功能。</string>
 	<string name="storage">存储</string>
-	<string name="item_limit">条目上限</string>
-	<string name="item_limit_summary">每个帐号在数据库中保存的推文/信息条目上限，降低数值可以节省更多存储空间以及加快载入的速度。</string>
+	<string name="database_item_limit">条目上限</string>
+	<string name="database_item_limit_summary">每个帐号在数据库中保存的推文/信息条目上限，降低数值可以节省更多存储空间以及加快载入的速度。</string>
 	<string name="clear_cache">清除缓存</string>
 	<string name="clear_cache_summary">清除储存的个人资料图片缓存。</string>
 	<string name="clear_databases">清除数据库</string>
@@ -84,10 +84,14 @@
 	<string name="display_profile_image">显示个人资料图片</string>
 	<string name="display_profile_image_summary">显示个人资料图片，关闭可以加快列表的滚动速度，以及减少数据流量。</string>
 	<string name="in_reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
+	<string name="reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>，来自<xliff:g id="source">%2$s</xliff:g></string>
-	<string name="filters">过滤</string>
-	<string name="filters_summary">隐藏不希望看到的用户/来源或者含有特定关键词的推文。</string>
-	<string name="filters_list">过滤列表</string>
+	<string name="filter">过滤</string>
+	<string name="filter_summary">隐藏不希望看到的用户/来源或者含有特定关键词的推文。</string>
+	<string name="filter_enabled">过滤已启用</string>
+	<string name="filter_disabled">过滤已禁用</string>
+	<string name="enable">启用</string>
+	<string name="disable">禁用</string>
 	<string name="users">用户</string>
 	<string name="keywords">关键词</string>
 	<string name="sources">来源</string>
@@ -98,8 +102,15 @@
 	<string name="follow">关注</string>
 	<string name="delete_account">删除帐号</string>
 	<string name="delete_account_desc">你确定删除帐号 <xliff:g id="user_name">%s</xliff:g> ？</string>
+	<string name="bottom_compose_button">底部放置的撰写按钮</string>
+	<string name="bottom_compose_button_summary">将撰写按钮放置在底部，当你的手机屏幕难以单手操作，它会有不少帮助。</string>
+	<string name="leftside_compose_button">左侧撰写按钮</string>
+	<string name="leftside_compose_button_summary">将撰写按钮放置在左边。</string>
+	<string name="load_item_limit">载入推文上限</string>
+	<string name="load_item_limit_summary">设定一次载入推文的数量上限。</string>
+	<string name="load_more_automatically">自动载入更多内容</string>
+	<string name="load_more_automatically_summary">自动载入更多内容，如照片、地图、推文等。</string>
 	<string name="bottom_actions">底部放置的动作菜单</string>
-	<string name="bottom_actions_summary">使用手机且方向是纵向时将一些菜单键放置在底部，如果你的手机屏幕难以单手操作，它会有不少帮助。</string>
 	<string name="quote">引用</string>
 	<string name="add_rule">添加规则</string>
 	<string name="longclick_to_delete">长按以删除。</string>

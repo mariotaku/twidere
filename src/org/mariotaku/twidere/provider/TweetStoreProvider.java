@@ -65,14 +65,12 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		} catch (NameNotFoundException e) {
 			// This should not happen.
 		}
-		database = new DatabaseHelper(getContext(), DATABASES_NAME, db_version)
-				.getWritableDatabase();
+		database = new DatabaseHelper(getContext(), DATABASES_NAME, db_version).getWritableDatabase();
 		return database != null;
 	}
 
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
-			String sortOrder) {
+	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 
 		String account_id_string = uri.getQueryParameter(TweetStore.KEY_ACCOUNT_ID);
 		String table = CommonUtils.getTableNameForContentUri(uri);
@@ -80,16 +78,14 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		switch (CommonUtils.getTableId(uri)) {
 			case URI_FAVORITES:
 				if (account_id_string != null) {
-					Twitter twitter = CommonUtils.getTwitterInstance(getContext(),
-							Long.parseLong(account_id_string));
+					Twitter twitter = CommonUtils.getTwitterInstance(getContext(), Long.parseLong(account_id_string));
 					return new FavoriteCursor(twitter, null, projection);
 				}
 				return null;
 			case URI_USER_TIMELINE:
 				String screen_name = uri.getLastPathSegment();
 				if (account_id_string != null) {
-					Twitter twitter = CommonUtils.getTwitterInstance(getContext(),
-							Long.valueOf(account_id_string));
+					Twitter twitter = CommonUtils.getTwitterInstance(getContext(), Long.valueOf(account_id_string));
 					return new UserTimelineCursor(twitter, screen_name, null, projection);
 				}
 				return null;
@@ -118,16 +114,16 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		Context context = getContext();
 		switch (CommonUtils.getTableId(uri)) {
 			case URI_STATUSES:
-				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED)
-						.putExtra(INTENT_KEY_SUCCEED, true));
+				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
+						true));
 				break;
 			case URI_ACCOUNTS:
 				CommonUtils.clearAccountColor();
 				context.sendBroadcast(new Intent(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED));
 				break;
 			case URI_MENTIONS:
-				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED).putExtra(
-						INTENT_KEY_SUCCEED, true));
+				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED)
+						.putExtra(INTENT_KEY_SUCCEED, true));
 				break;
 			default:
 				return;
@@ -136,16 +132,6 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	}
 
 	private class DatabaseHelper extends SQLiteOpenHelper {
-
-		private static final int FIELD_TYPE_NULL = 0;
-
-		private static final int FIELD_TYPE_INTEGER = 1;
-
-		private static final int FIELD_TYPE_FLOAT = 2;
-
-		private static final int FIELD_TYPE_STRING = 3;
-
-		private static final int FIELD_TYPE_BLOB = 4;
 
 		public DatabaseHelper(Context context, String name, int version) {
 			super(context, name, null, version);
@@ -157,14 +143,10 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			db.execSQL(createTable(TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, false));
 			db.execSQL(createTable(TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, false));
 			db.execSQL(createTable(TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, false));
-			db.execSQL(createTable(TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES,
-					false));
-			db.execSQL(createTable(TABLE_FILTERED_USERS, Filters.Users.COLUMNS,
-					Filters.Users.TYPES, false));
-			db.execSQL(createTable(TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS,
-					Filters.Keywords.TYPES, false));
-			db.execSQL(createTable(TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS,
-					Filters.Sources.TYPES, false));
+			db.execSQL(createTable(TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES, false));
+			db.execSQL(createTable(TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES, false));
+			db.execSQL(createTable(TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, false));
+			db.execSQL(createTable(TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, false));
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
@@ -179,14 +161,12 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			handleVersionChange(db);
 		}
 
-		private String createTable(String tableName, String[] columns, String[] types,
-				boolean create_if_not_exists) {
-			if (tableName == null || columns == null || types == null
-					|| types.length != columns.length || types.length == 0)
-				throw new IllegalArgumentException("Invalid parameters for creating table "
-						+ tableName);
-			StringBuilder stringBuilder = new StringBuilder(
-					create_if_not_exists ? "CREATE TABLE IF NOT EXISTS " : "CREATE TABLE ");
+		private String createTable(String tableName, String[] columns, String[] types, boolean create_if_not_exists) {
+			if (tableName == null || columns == null || types == null || types.length != columns.length
+					|| types.length == 0)
+				throw new IllegalArgumentException("Invalid parameters for creating table " + tableName);
+			StringBuilder stringBuilder = new StringBuilder(create_if_not_exists ? "CREATE TABLE IF NOT EXISTS "
+					: "CREATE TABLE ");
 
 			stringBuilder.append(tableName);
 			stringBuilder.append(" (");
@@ -233,10 +213,8 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			safeVersionChange(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES);
 			safeVersionChange(db, TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES);
 			safeVersionChange(db, TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES);
-			safeVersionChange(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS,
-					Filters.Keywords.TYPES);
-			safeVersionChange(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS,
-					Filters.Sources.TYPES);
+			safeVersionChange(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES);
+			safeVersionChange(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES);
 		}
 
 		private boolean isColumnContained(String[] cols, String col) {
@@ -247,10 +225,8 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 		private boolean isTypeCompatible(String old_type, String new_type) {
 			if (old_type != null && new_type != null) {
-				int old_idx = old_type.contains("(") ? old_type.indexOf("(") : old_type
-						.indexOf(" ");
-				int new_idx = new_type.contains("(") ? new_type.indexOf("(") : new_type
-						.indexOf(" ");
+				int old_idx = old_type.contains("(") ? old_type.indexOf("(") : old_type.indexOf(" ");
+				int new_idx = new_type.contains("(") ? new_type.indexOf("(") : new_type.indexOf(" ");
 				String old_type_main = old_idx > -1 ? old_type.substring(0, old_idx) : old_type;
 				String new_type_main = new_idx > -1 ? new_type.substring(0, new_idx) : new_type;
 				return old_type_main.equalsIgnoreCase(new_type_main);
@@ -258,12 +234,10 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			return false;
 		}
 
-		private void safeVersionChange(SQLiteDatabase db, String table, String[] new_cols,
-				String[] new_types) {
+		private void safeVersionChange(SQLiteDatabase db, String table, String[] new_cols, String[] new_types) {
 
 			if (new_cols == null || new_types == null || new_cols.length != new_types.length)
-				throw new IllegalArgumentException(
-						"Invalid parameters, length of columns and types not match.");
+				throw new IllegalArgumentException("Invalid parameters, length of columns and types not match.");
 
 			// First, create the table if not exists.
 			db.execSQL(createTable(table, new_cols, new_types, true));
@@ -325,6 +299,16 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 				db.insert(table, null, values);
 			}
 		}
+
+		private static final int FIELD_TYPE_NULL = 0;
+
+		private static final int FIELD_TYPE_INTEGER = 1;
+
+		private static final int FIELD_TYPE_FLOAT = 2;
+
+		private static final int FIELD_TYPE_STRING = 3;
+
+		private static final int FIELD_TYPE_BLOB = 4;
 
 	}
 

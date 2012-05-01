@@ -49,79 +49,9 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	private int mSelectedColor;
 
 	private long mSelectedUserId;
+
 	private String mSelectedScreenName;
 	private ContentResolver mResolver;
-
-	private static final long INVALID_ID = -1;
-
-	private AccountsAdapter mAdapter;
-
-	private DeleteConfirmFragment mFragment = new DeleteConfirmFragment();
-
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
-			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, AccountsFragment.this);
-			}
-		}
-	};
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getListProfileImageLoader();
-		mResolver = getSherlockActivity().getContentResolver();
-		mAdapter = new AccountsAdapter(getSherlockActivity(), imageloader);
-		getLoaderManager().initLoader(0, null, this);
-		mListView = getListView();
-		mListView.setOnCreateContextMenuListener(this);
-		setListAdapter(mAdapter);
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-			case REQUEST_SET_COLOR:
-				if (resultCode == BaseActivity.RESULT_OK)
-					if (data != null && data.getExtras() != null) {
-						int color = data.getIntExtra(Accounts.USER_COLOR, Color.WHITE);
-						ContentValues values = new ContentValues();
-						values.put(Accounts.USER_COLOR, color);
-						String where = Accounts.USER_ID + "=" + mSelectedUserId;
-						mResolver.update(Accounts.CONTENT_URI, values, where, null);
-						getLoaderManager().restartLoader(0, null, this);
-					}
-				break;
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		Intent intent;
-		switch (item.getItemId()) {
-			case MENU_VIEW:
-				showDetails(mSelectedUserId);
-				break;
-			case MENU_SET_COLOR:
-				if (mSelectedUserId != INVALID_ID) {
-					intent = new Intent(INTENT_ACTION_SET_COLOR);
-					Bundle bundle = new Bundle();
-					bundle.putInt(Accounts.USER_COLOR, mSelectedColor);
-					intent.putExtras(bundle);
-					startActivityForResult(intent, REQUEST_SET_COLOR);
-				}
-				break;
-			case MENU_DELETE:
-				confirmDelection();
-				break;
-		}
-		return super.onContextItemSelected(item);
-	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -212,6 +142,76 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		ft.commit();
 	}
 
+	private static final long INVALID_ID = -1;
+
+	private AccountsAdapter mAdapter;
+
+	private DeleteConfirmFragment mFragment = new DeleteConfirmFragment();
+
+	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+				getLoaderManager().restartLoader(0, null, AccountsFragment.this);
+			}
+		}
+	};
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
+				.getListProfileImageLoader();
+		mResolver = getSherlockActivity().getContentResolver();
+		mAdapter = new AccountsAdapter(getSherlockActivity(), imageloader);
+		getLoaderManager().initLoader(0, null, this);
+		mListView = getListView();
+		mListView.setOnCreateContextMenuListener(this);
+		setListAdapter(mAdapter);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+			case REQUEST_SET_COLOR:
+				if (resultCode == BaseActivity.RESULT_OK) if (data != null && data.getExtras() != null) {
+					int color = data.getIntExtra(Accounts.USER_COLOR, Color.WHITE);
+					ContentValues values = new ContentValues();
+					values.put(Accounts.USER_COLOR, color);
+					String where = Accounts.USER_ID + "=" + mSelectedUserId;
+					mResolver.update(Accounts.CONTENT_URI, values, where, null);
+					getLoaderManager().restartLoader(0, null, this);
+				}
+				break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		Intent intent;
+		switch (item.getItemId()) {
+			case MENU_VIEW:
+				showDetails(mSelectedUserId);
+				break;
+			case MENU_SET_COLOR:
+				if (mSelectedUserId != INVALID_ID) {
+					intent = new Intent(INTENT_ACTION_SET_COLOR);
+					Bundle bundle = new Bundle();
+					bundle.putInt(Accounts.USER_COLOR, mSelectedColor);
+					intent.putExtras(bundle);
+					startActivityForResult(intent, REQUEST_SET_COLOR);
+				}
+				break;
+			case MENU_DELETE:
+				confirmDelection();
+				break;
+		}
+		return super.onContextItemSelected(item);
+	}
+
 	public static class ViewHolder {
 
 		public ImageView profile_image;
@@ -287,24 +287,20 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		public void onClick(DialogInterface dialog, int which) {
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE:
-					Cursor cur = mResolver.query(Accounts.CONTENT_URI, new String[0],
-							Accounts.IS_ACTIVATED + "=1", null, null);
+					Cursor cur = mResolver.query(Accounts.CONTENT_URI, new String[0], Accounts.IS_ACTIVATED + "=1",
+							null, null);
 					if (cur == null) {
 						break;
 					}
 					// Have more than one accounts? Then delete the account we
 					// selected.
 					if (cur.getCount() > 1) {
-						mResolver.delete(Accounts.CONTENT_URI, Accounts.USER_ID + "="
-								+ mSelectedUserId, null);
+						mResolver.delete(Accounts.CONTENT_URI, Accounts.USER_ID + "=" + mSelectedUserId, null);
 						// Also delete tweets related to the account we
 						// previously deleted.
-						mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + "="
-								+ mSelectedUserId, null);
-						mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + "="
-								+ mSelectedUserId, null);
-						AccountsFragment.this.getLoaderManager().restartLoader(0, null,
-								AccountsFragment.this);
+						mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + "=" + mSelectedUserId, null);
+						mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + "=" + mSelectedUserId, null);
+						AccountsFragment.this.getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 					} else {
 						// Do something else if we only have one account.
 					}

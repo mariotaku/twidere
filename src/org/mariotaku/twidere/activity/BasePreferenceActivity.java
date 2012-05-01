@@ -11,8 +11,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
-public class BasePreferenceActivity extends SherlockPreferenceActivity implements Constants,
-		ActivityThemeChangeImpl {
+public class BasePreferenceActivity extends SherlockPreferenceActivity implements Constants, ActivityThemeChangeImpl {
 
 	private int mThemeId;
 

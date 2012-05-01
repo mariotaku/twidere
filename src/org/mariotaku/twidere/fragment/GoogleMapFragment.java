@@ -11,7 +11,9 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 public class GoogleMapFragment extends WebViewFragment {
 
 	private final Uri mUri = Uri.parse("file:///android_asset/mapview.html");
+
 	private double latitude, longitude;
+
 	private boolean disable_ui = false;
 
 	public GoogleMapFragment() {

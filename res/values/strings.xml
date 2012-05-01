@@ -83,8 +83,8 @@
 	<string name="gzip_compressing">GZip compressing</string>
 	<string name="gzip_compressing_summary">Compress all API request, it can reduce traffic usage, but may not work on all API servers.</string>
 	<string name="storage">Storage</string>
-	<string name="item_limit">Item limit</string>
-	<string name="item_limit_summary">Upper limit of item stored in databases for each account, set to a smaller value to save space and increase loading speed.</string>
+	<string name="database_item_limit">Database item limit</string>
+	<string name="database_item_limit_summary">Upper limit of item stored in databases for each account, set to a smaller value to save space and increase loading speed.</string>
 	<string name="clear_cache">Clear cache</string>
 	<string name="clear_cache_summary">Clear stored profile image cache.</string>
 	<string name="clear_databases">Clear databases</string>
@@ -95,10 +95,14 @@
 	<string name="display_profile_image">Display profile image</string>
 	<string name="display_profile_image_summary">Display profile image, uncheck this will increase list scroll speed and reduce traffic usage.</string>
 	<string name="in_reply_to">In reply to <xliff:g id="user_name">%s</xliff:g></string>
+	<string name="reply_to">Reply to <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
-	<string name="filters">Filters</string>
-	<string name="filters_summary">Hide tweets from unwanted users / sources or contains specified keywords</string>
-	<string name="filters_list">Filters list</string>
+	<string name="filter">Filter</string>
+	<string name="filter_enabled">Filter is enabled</string>
+	<string name="filter_disabled">Filter is disabled</string>
+	<string name="enable">Enable</string>
+	<string name="disable">Disable</string>
+	<string name="filter_summary">Hide tweets from unwanted users / sources or contains specified keywords</string>
 	<string name="users">Users</string>
 	<string name="keywords">Keywords</string>
 	<string name="sources">Sources</string>
@@ -109,10 +113,17 @@
 	<string name="follow">Follow</string>
 	<string name="delete_account">Delete account</string>
 	<string name="delete_account_desc">Are you sure to delete account <xliff:g id="user_name">%s</xliff:g> ?</string>
-	<string name="bottom_actions">Put action menus in bottom</string>
-	<string name="bottom_actions_summary">Put action menus in bottom, you can enable this when your screen is large.</string>
+	<string name="bottom_compose_button">Bottom compose button</string>
+	<string name="bottom_compose_button_summary">Put the compose button in the bottom, you can enable this if your screen is large.</string>
+	<string name="leftside_compose_button">Leftside compose button</string>
+	<string name="leftside_compose_button_summary">Put the compose button on the left.</string>
+	<string name="load_item_limit">Load item limit</string>
+	<string name="load_item_limit_summary">Set items limit per load.</string>
+	<string name="load_more_automatically">Load more content automatically</string>
+	<string name="load_more_automatically_summary">Load more content (e.g. photo, map, statuses etc) automatically</string>
 	<string name="quote">Quote</string>
 	<string name="add_rule">Add rule</string>
 	<string name="longclick_to_delete">Longclick to delete.</string>
+	<string name="debug">Debug</string>
 
 </resources>

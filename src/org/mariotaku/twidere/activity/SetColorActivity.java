@@ -23,8 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-public class SetColorActivity extends BaseDialogActivity implements OnItemClickListener,
-		OnColorSelectedListener {
+public class SetColorActivity extends BaseDialogActivity implements OnItemClickListener, OnColorSelectedListener {
 
 	private GridView mColorsGrid;
 
@@ -48,8 +47,7 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 
-		mCustomizedColor = bundle != null ? bundle.getInt(Accounts.USER_COLOR, Color.WHITE)
-				: Color.WHITE;
+		mCustomizedColor = bundle != null ? bundle.getInt(Accounts.USER_COLOR, Color.WHITE) : Color.WHITE;
 
 		Resources res = getResources();
 		mColors.add(res.getColor(R.color.holo_red_light));
@@ -76,6 +74,12 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 
 	}
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putInt(Accounts.USER_COLOR, mCustomizedColor);
+		super.onSaveInstanceState(outState);
+	}
+
 	private void finishSelecting(int color) {
 		Intent intent = new Intent();
 		Bundle bundle = new Bundle();
@@ -89,12 +93,6 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		mFragment.setInitialColor(mCustomizedColor);
 		mFragment.show(ft, "dialog");
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putInt(Accounts.USER_COLOR, mCustomizedColor);
-		super.onSaveInstanceState(outState);
 	}
 
 	private class ColorsAdapter extends ArrayAdapter<Integer> {

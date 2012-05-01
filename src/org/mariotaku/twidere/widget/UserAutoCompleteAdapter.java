@@ -15,12 +15,12 @@ import android.widget.TextView;
 public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 
 	private Context mContext;
+
 	private int mNameIdx, mProfileImageUrlIdx, mScreenNameIdx, mUserIdIdx;
 
 	public UserAutoCompleteAdapter(Context context) {
 		super(context, R.layout.user_autocomplete_list_item, null, new String[0], new int[0], 0);
-		Cursor cur = context.getContentResolver().query(CachedUsers.CONTENT_URI,
-				CachedUsers.COLUMNS, null, null, null);
+		Cursor cur = context.getContentResolver().query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, null, null, null);
 		changeCursor(cur);
 	}
 

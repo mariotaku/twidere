@@ -12,8 +12,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.ListView;
 
-public class SelectAccountFragment extends BaseListFragment implements Constants,
-		LoaderCallbacks<Cursor> {
+public class SelectAccountFragment extends BaseListFragment implements Constants, LoaderCallbacks<Cursor> {
 
 	private SimpleCursorAdapter mAdapter;
 	private ListView mListView;
@@ -28,16 +27,15 @@ public class SelectAccountFragment extends BaseListFragment implements Constants
 		mAdapter = new SimpleCursorAdapter(getSherlockActivity(), layoutRes, null, cols, ids, 0);
 		setListAdapter(mAdapter);
 		mListView = getListView();
-		mListView.setChoiceMode(MULTIPLE_ACCOUNTS_ENABLED ? ListView.CHOICE_MODE_MULTIPLE
-				: ListView.CHOICE_MODE_SINGLE);
+		mListView
+				.setChoiceMode(MULTIPLE_ACCOUNTS_ENABLED ? ListView.CHOICE_MODE_MULTIPLE : ListView.CHOICE_MODE_SINGLE);
 		getLoaderManager().initLoader(0, null, this);
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri uri = Accounts.CONTENT_URI;
-		String[] cols = new String[] { Accounts._ID, Accounts.USER_ID, Accounts.USERNAME,
-				Accounts.IS_ACTIVATED };
+		String[] cols = new String[] { Accounts._ID, Accounts.USER_ID, Accounts.USERNAME, Accounts.IS_ACTIVATED };
 		return new CursorLoader(getSherlockActivity(), uri, cols, null, null, null);
 	}
 

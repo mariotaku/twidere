@@ -28,6 +28,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
@@ -36,6 +37,7 @@ import android.os.RemoteException;
 public class UpdateService extends Service implements Constants {
 
 	private final ServiceStub mBinder = new ServiceStub(this);
+
 	private AsyncTaskManager mAsyncTaskManager;
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
@@ -57,8 +59,7 @@ public class UpdateService extends Service implements Constants {
 
 	public int getHomeTimeline(long[] account_ids, long[] max_ids) {
 		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
-		GetHomeTimelineTask task = new GetHomeTimelineTask(this, mAsyncTaskManager, account_ids,
-				max_ids);
+		GetHomeTimelineTask task = new GetHomeTimelineTask(this, mAsyncTaskManager, account_ids, max_ids);
 		return mGetHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
 	}
 
@@ -100,17 +101,15 @@ public class UpdateService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri,
-			long in_reply_to) {
-		UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri,
-				in_reply_to);
+	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
+		UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	private class CreateFavoriteTask extends
-			ManagedAsyncTask<List<CreateFavoriteTask.AccountResponce>> {
+	private class CreateFavoriteTask extends ManagedAsyncTask<List<CreateFavoriteTask.AccountResponce>> {
 
 		private long[] account_ids;
+
 		private long status_id;
 
 		public CreateFavoriteTask(long[] account_ids, long status_id) {
@@ -170,10 +169,10 @@ public class UpdateService extends Service implements Constants {
 
 	}
 
-	private class DestroyFavoriteTask extends
-			ManagedAsyncTask<List<DestroyFavoriteTask.AccountResponce>> {
+	private class DestroyFavoriteTask extends ManagedAsyncTask<List<DestroyFavoriteTask.AccountResponce>> {
 
 		private long[] account_ids;
+
 		private long status_id;
 
 		public DestroyFavoriteTask(long[] account_ids, long status_id) {
@@ -236,6 +235,7 @@ public class UpdateService extends Service implements Constants {
 	private class DestroyStatusTask extends ManagedAsyncTask<DestroyStatusTask.AccountResponce> {
 
 		private long account_id;
+
 		private long status_id;
 
 		public DestroyStatusTask(long account_id, long status_id) {
@@ -288,8 +288,7 @@ public class UpdateService extends Service implements Constants {
 
 		private Context context;
 
-		public GetHomeTimelineTask(Context context, AsyncTaskManager manager, long[] account_ids,
-				long[] max_ids) {
+		public GetHomeTimelineTask(Context context, AsyncTaskManager manager, long[] account_ids, long[] max_ids) {
 			super(context, manager, Statuses.CONTENT_URI, account_ids, max_ids);
 			this.context = context;
 		}
@@ -297,8 +296,8 @@ public class UpdateService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(List<GetStatusesTask.AccountResponce> responces) {
 			super.onPostExecute(responces);
-			context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(
-					INTENT_KEY_SUCCEED, responces.size() > 0));
+			context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
+					responces.size() > 0));
 		}
 
 	}
@@ -307,8 +306,7 @@ public class UpdateService extends Service implements Constants {
 
 		private Context context;
 
-		public GetMentionsTask(Context context, AsyncTaskManager manager, long[] account_ids,
-				long[] max_ids) {
+		public GetMentionsTask(Context context, AsyncTaskManager manager, long[] account_ids, long[] max_ids) {
 			super(context, manager, Mentions.CONTENT_URI, account_ids, max_ids);
 			this.context = context;
 		}
@@ -316,21 +314,20 @@ public class UpdateService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(List<GetStatusesTask.AccountResponce> responces) {
 			super.onPostExecute(responces);
-			context.sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(
-					INTENT_KEY_SUCCEED, responces.size() > 0));
+			context.sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
+					responces.size() > 0));
 		}
 
 	}
 
-	private static class GetStatusesTask extends
-			ManagedAsyncTask<List<GetStatusesTask.AccountResponce>> {
+	private static class GetStatusesTask extends ManagedAsyncTask<List<GetStatusesTask.AccountResponce>> {
 
 		private long[] account_ids, max_ids;
+
 		private final Uri uri;
 		private Context context;
 
-		public GetStatusesTask(Context context, AsyncTaskManager manager, Uri uri,
-				long[] account_ids, long[] max_ids) {
+		public GetStatusesTask(Context context, AsyncTaskManager manager, Uri uri, long[] account_ids, long[] max_ids) {
 			super(context, manager);
 			this.uri = uri;
 			this.context = context;
@@ -345,24 +342,32 @@ public class UpdateService extends Service implements Constants {
 
 			if (account_ids == null) return result;
 
-			boolean since_valid = max_ids != null && max_ids.length == account_ids.length;
+			boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
 
 			int idx = 0;
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT) + 1;
 			for (long account_id : account_ids) {
 				Twitter twitter = CommonUtils.getTwitterInstance(context, account_id);
 				if (twitter != null) {
 					try {
 						Paging paging = new Paging();
-						if (since_valid) {
+						paging.setCount(load_item_limit);
+						if (max_ids_valid && max_ids[idx] > 0) {
 							paging.setMaxId(max_ids[idx]);
 						}
 						ResponseList<twitter4j.Status> statuses = null;
-						if (Statuses.CONTENT_URI.equals(uri)) {
-							statuses = twitter.getHomeTimeline(paging);
-						} else if (Mentions.CONTENT_URI.equals(uri)) {
-							statuses = twitter.getMentions(paging);
+						switch (CommonUtils.getTableId(uri)) {
+							case URI_STATUSES:
+								statuses = twitter.getHomeTimeline(paging);
+								break;
+							case URI_MENTIONS:
+								statuses = twitter.getMentions(paging);
+								break;
 						}
-						result.add(new AccountResponce(account_id, statuses));
+						if (statuses != null) {
+							result.add(new AccountResponce(account_id, statuses));
+						}
 					} catch (TwitterException e) {
 						e.printStackTrace();
 					}
@@ -380,7 +385,10 @@ public class UpdateService extends Service implements Constants {
 				ResponseList<twitter4j.Status> statuses = responce.responselist;
 				long account_id = responce.account_id;
 
-				if (statuses == null || statuses.size() <= 0) return;
+				if (statuses == null || statuses.size() <= 0) {
+					super.onPostExecute(responces);
+					return;
+				}
 				List<ContentValues> values_list = new ArrayList<ContentValues>();
 
 				long min_id = -1, max_id = -1;
@@ -391,11 +399,8 @@ public class UpdateService extends Service implements Constants {
 					User user = status.getUser();
 					long status_id = status.getId(), user_id = user.getId();
 
-					resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + user_id,
-							null);
-
-					resolver.insert(CachedUsers.CONTENT_URI,
-							CommonUtils.makeCachedUsersContentValues(user));
+					resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + user_id, null);
+					resolver.insert(CachedUsers.CONTENT_URI, CommonUtils.makeCachedUsersContentValues(user));
 
 					if (status_id < min_id || min_id == -1) {
 						min_id = status_id;
@@ -446,10 +451,10 @@ public class UpdateService extends Service implements Constants {
 
 	}
 
-	private class RetweetStatusTask extends
-			ManagedAsyncTask<List<RetweetStatusTask.AccountResponce>> {
+	private class RetweetStatusTask extends ManagedAsyncTask<List<RetweetStatusTask.AccountResponce>> {
 
 		private long[] account_ids;
+
 		private long status_id;
 
 		public RetweetStatusTask(long[] account_ids, long status_id) {
@@ -518,8 +523,7 @@ public class UpdateService extends Service implements Constants {
 		private Uri image_uri;
 		private long in_reply_to;
 
-		public UpdateStatusTask(long[] account_ids, String content, Location location,
-				Uri image_uri, long in_reply_to) {
+		public UpdateStatusTask(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
 			super(UpdateService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.content = content;
@@ -540,11 +544,9 @@ public class UpdateService extends Service implements Constants {
 						StatusUpdate status = new StatusUpdate(content);
 						status.setInReplyToStatusId(in_reply_to);
 						if (location != null) {
-							status.setLocation(new GeoLocation(location.getLatitude(), location
-									.getLongitude()));
+							status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
 						}
-						String image_path = CommonUtils.getImagePathFromUri(UpdateService.this,
-								image_uri);
+						String image_path = CommonUtils.getImagePathFromUri(UpdateService.this, image_uri);
 						if (image_path != null) {
 							status.setMedia(new File(image_path));
 						}
@@ -629,10 +631,9 @@ public class UpdateService extends Service implements Constants {
 		}
 
 		@Override
-		public int updateStatus(long[] account_ids, String content, Location location,
-				Uri image_uri, long in_reply_to) throws RemoteException {
-			return mService.get().updateStatus(account_ids, content, location, image_uri,
-					in_reply_to);
+		public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to)
+				throws RemoteException {
+			return mService.get().updateStatus(account_ids, content, location, image_uri, in_reply_to);
 
 		}
 

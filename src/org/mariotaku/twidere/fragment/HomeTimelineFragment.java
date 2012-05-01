@@ -22,10 +22,10 @@ public class HomeTimelineFragment extends StatusesFragment {
 				}
 			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
-			} else if ((HomeTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
-					.equals(action)) if (mListView != null) {
-				mListView.getRefreshableView().setSelection(0);
-			}
+			} else if ((HomeTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
+				if (mListView != null) {
+					mListView.getRefreshableView().setSelection(0);
+				}
 		}
 	};
 

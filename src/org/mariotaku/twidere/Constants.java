@@ -46,36 +46,40 @@ public interface Constants {
 
 	public static final String PREFERENCE_NAME = "preference";
 
-	public static final String PREFERENCE_KEY_ITEM_LIMIT = "item_limit";
+	public static final String PREFERENCE_KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
+	public static final String PREFERENCE_KEY_LOAD_ITEM_LIMIT = "load_item_limit";
 	public static final String PREFERENCE_KEY_DARK_THEME = "dark_theme";
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
-	public static final String PREFERENCE_KEY_BOTTOM_ACTIONS = "bottom_actions";
+	public static final String PREFERENCE_KEY_COMPOSE_BUTTON = "bottom_compose_button";
+	public static final String PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON = "leftside_compose_button";
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
-	public static final String PREFERENCE_KEY_ENABLE_FILTERS = "enable_filters";
+	public static final String PREFERENCE_KEY_ENABLE_FILTER = "enable_filter";
 	public static final String PREFERENCE_KEY_GZIP_COMPRESSING = "gzip_compressing";
+	public static final String PREFERENCE_LOAD_MORE_AUTOMATICALLY = "load_more_automatically";
 
-	public static final int PREFERENCE_DEFAULT_ITEM_LIMIT = 100;
+	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
+	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 
 	public static final String INTENT_ACTION_PREFIX = "org.mariotaku.twidere.";
 
 	public static final String INTENT_ACTION_HOME = INTENT_ACTION_PREFIX + "HOME";
 	public static final String INTENT_ACTION_COMPOSE = INTENT_ACTION_PREFIX + "COMPOSE";
-	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_ACTION_PREFIX
-			+ "GLOBAL_SETTINGS";
-	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_ACTION_PREFIX
-			+ "SELECT_ACCOUNT";
+	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_ACTION_PREFIX + "GLOBAL_SETTINGS";
+	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_ACTION_PREFIX + "SELECT_ACCOUNT";
 	public static final String INTENT_ACTION_VIEW_STATUS = INTENT_ACTION_PREFIX + "VIEW_STATUS";
 	public static final String INTENT_ACTION_FILTERS = INTENT_ACTION_PREFIX + "FILTERS";
 	public static final String INTENT_ACTION_ABOUT = INTENT_ACTION_PREFIX + "ABOUT";
 	public static final String INTENT_ACTION_EDIT_API = INTENT_ACTION_PREFIX + "EDIT_API";
 	public static final String INTENT_ACTION_SET_COLOR = INTENT_ACTION_PREFIX + "SET_COLOR";
+	public static final String INTENT_ACTION_DEBUG = INTENT_ACTION_PREFIX + "DEBUG";
 	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_ACTION_PREFIX + "TWITTER_LOGIN";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
 	public static final String INTENT_KEY_URI = "uri";
 	public static final String INTENT_KEY_MENTIONS = "mentions";
+	public static final String INTENT_KEY_IN_REPLY_TO_ID = "in_reply_to_id";
 	public static final String INTENT_KEY_TEXT = "text";
 	public static final String INTENT_KEY_SUCCEED = "succeed";
 	public static final String INTENT_KEY_REFRESH_ALL = "refresh_all";
@@ -93,6 +97,7 @@ public interface Constants {
 	public static final int MENU_IMAGE = R.id.image;
 	public static final int MENU_VIEW = R.id.view;
 	public static final int MENU_DELETE = R.id.delete;
+	public static final int MENU_TOGGLE = R.id.toggle;
 	public static final int MENU_ADD = R.id.add;
 	public static final int MENU_PICK_FROM_GALLERY = R.id.pick_from_gallery;
 	public static final int MENU_PICK_FROM_MAP = R.id.pick_from_map;
@@ -105,6 +110,7 @@ public interface Constants {
 	public static final int MENU_RETWEET = R.id.retweet;
 	public static final int MENU_QUOTE = R.id.quote;
 	public static final int MENU_SHARE = R.id.share;
+	public static final int MENU_DEBUG = R.id.debug;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_ADD_IMAGE = 2;
@@ -140,10 +146,5 @@ public interface Constants {
 	public static final int URI_FILTERED_KEYWORDS = 7;
 	public static final int URI_FILTERED_SOURCES = 8;
 	public static final int URI_USER_TIMELINE = 9;
-
-	/**
-	 * User's IDs in long array. Only used for Intent.<br>
-	 */
-	public static final String INTENT_KEY_USER_IDS = "user_ids";
 
 }

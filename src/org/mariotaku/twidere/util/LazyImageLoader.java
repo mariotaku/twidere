@@ -40,11 +40,15 @@ import android.widget.ListView;
 public class LazyImageLoader {
 
 	private MemoryCache mMemoryCache = new MemoryCache();
+
 	private FileCache mFileCache;
-	private Map<ImageView, Object> mImageViews = Collections
-			.synchronizedMap(new WeakHashMap<ImageView, Object>());
+
+	private Map<ImageView, Object> mImageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, Object>());
+
 	ExecutorService mExecutorService;
+
 	private int mFallbackRes;
+
 	private int mRequiredSize;
 
 	public LazyImageLoader(Context context, int fallback, int required_size) {

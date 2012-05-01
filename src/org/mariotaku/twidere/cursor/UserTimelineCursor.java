@@ -18,15 +18,13 @@ public class UserTimelineCursor extends StatusesCursor {
 	}
 
 	@Override
-	public List<Status> getStatuses(Twitter twitter, long id, Paging paging)
-			throws TwitterException {
+	public List<Status> getStatuses(Twitter twitter, long id, Paging paging) throws TwitterException {
 		if (paging == null) return twitter.getUserTimeline(id);
 		return twitter.getUserTimeline(id, paging);
 	}
 
 	@Override
-	public List<Status> getStatuses(Twitter twitter, String screen_name, Paging paging)
-			throws TwitterException {
+	public List<Status> getStatuses(Twitter twitter, String screen_name, Paging paging) throws TwitterException {
 		if (paging == null) return twitter.getUserTimeline(screen_name);
 		return twitter.getUserTimeline(screen_name, paging);
 	}

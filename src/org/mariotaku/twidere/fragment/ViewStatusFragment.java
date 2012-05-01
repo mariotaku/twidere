@@ -44,8 +44,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class ViewStatusFragment extends BaseFragment implements OnClickListener {
 
-	private long mAccountId;
-	private long mStatusId;
+	private long mAccountId, mStatusId;
 
 	public ServiceInterface mServiceInterface;
 	private ContentResolver mResolver;
@@ -54,7 +53,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	private Button mFollowButton;
 	private View mProfileView, mFollowIndicator, mMapView;
 	private ProgressBar mProgress;
-	private long mTweetUserId;
+	private long mStatusUserId;
+	private String mStatusScreenName;
 
 	private FollowInfoTask mFollowInfoTask;
 	private boolean mIsFavorite, mIsRetweetByMe;
@@ -73,8 +73,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 
-		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getServiceInterface();
+		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		mResolver = getSherlockActivity().getContentResolver();
 		super.onActivityCreated(savedInstanceState);
 		Bundle bundle = getArguments();
@@ -134,8 +133,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				break;
 			case MENU_REPLY:
 				Bundle bundle = new Bundle();
+				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatusId);
 				bundle.putStringArray(INTENT_KEY_MENTIONS,
-						CommonUtils.getMentionedNames(mText.getText(), true));
+						CommonUtils.getMentionedNames(mStatusScreenName, mText.getText(), false, true));
 				startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
 				break;
 			case MENU_RETWEET:
@@ -166,8 +166,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		String[] accounts_cols = new String[] { Accounts.USER_ID };
-		Cursor accounts_cur = mResolver
-				.query(Accounts.CONTENT_URI, accounts_cols, null, null, null);
+		Cursor accounts_cur = mResolver.query(Accounts.CONTENT_URI, accounts_cols, null, null, null);
 		ArrayList<Long> ids = new ArrayList<Long>();
 		if (accounts_cur != null) {
 			accounts_cur.moveToFirst();
@@ -184,8 +183,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		for (Uri uri : TweetStore.STATUSES_URIS) {
 			Cursor cur = mResolver.query(uri, cols, where, null, null);
 			if (cur != null && cur.getCount() > 0) {
-				cur.close();
+				cur.moveToFirst();
+				mStatusScreenName = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
 				CommonUtils.setMenuForStatus(getSherlockActivity(), menu, mStatusId, uri);
+				cur.close();
 				super.onPrepareOptionsMenu(menu);
 				return;
 			}
@@ -253,7 +254,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			String time = CommonUtils.formatToLongTimeString(getSherlockActivity(), timestamp);
 			mTimeAndSource.setText(Html.fromHtml(getString(R.string.time_source, time, source)));
 			mTimeAndSource.setMovementMethod(LinkMovementMethod.getInstance());
-			mTweetUserId = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
+			mStatusUserId = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
 			mIsFavorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
 			mIsRetweetByMe = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_RETWEET)) < 0;
 			String location_string = cur.getString(cur.getColumnIndexOrThrow(Statuses.LOCATION));
@@ -269,10 +270,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			// ft.commit();
 			// }
 
-			LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity()
-					.getApplication()).getListProfileImageLoader();
-			String profile_image_url = cur.getString(cur
-					.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL));
+			LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
+					.getListProfileImageLoader();
+			String profile_image_url = cur.getString(cur.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL));
 			URL url = null;
 			try {
 				url = new URL(profile_image_url);
@@ -296,23 +296,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 
 	private class FollowInfoTask extends AsyncTask<Void, Void, Boolean> {
 
-		private boolean isAllFollowing() {
-			long[] ids = CommonUtils.getActivatedAccounts(getSherlockActivity());
-			for (long id : ids) {
-				if (id == mTweetUserId) {
-					continue;
-				}
-				Twitter twitter = CommonUtils.getTwitterInstance(getSherlockActivity(), id);
-				try {
-					Relationship result = twitter.showFriendship(id, mTweetUserId);
-					if (!result.isSourceFollowingTarget()) return false;
-				} catch (TwitterException e) {
-					e.printStackTrace();
-				}
-			}
-			return true;
-		}
-
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			return isAllFollowing();
@@ -333,6 +316,23 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			mFollowButton.setVisibility(View.GONE);
 			mProgress.setVisibility(View.VISIBLE);
 			super.onPreExecute();
+		}
+
+		private boolean isAllFollowing() {
+			long[] ids = CommonUtils.getActivatedAccounts(getSherlockActivity());
+			for (long id : ids) {
+				if (id == mStatusUserId) {
+					continue;
+				}
+				Twitter twitter = CommonUtils.getTwitterInstance(getSherlockActivity(), id);
+				try {
+					Relationship result = twitter.showFriendship(id, mStatusUserId);
+					if (!result.isSourceFollowingTarget()) return false;
+				} catch (TwitterException e) {
+					e.printStackTrace();
+				}
+			}
+			return true;
 		}
 	}
 

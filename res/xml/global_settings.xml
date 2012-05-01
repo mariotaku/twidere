@@ -4,7 +4,7 @@
 	android:title="@string/global_settings">
 
 	<PreferenceCategory
-		android:key="cat_lookNfeel"
+		android:key="cat_appearance"
 		android:title="@string/look_and_feel">
 		<CheckBoxPreference
 			android:defaultValue="false"
@@ -18,22 +18,37 @@
 			android:title="@string/display_profile_image"/>
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:key="bottom_actions"
-			android:summary="@string/bottom_actions_summary"
-			android:title="@string/bottom_actions"/>
+			android:key="bottom_compose_button"
+			android:summary="@string/bottom_compose_button_summary"
+			android:title="@string/bottom_compose_button"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:dependency="bottom_compose_button"
+			android:key="leftside_compose_button"
+			android:summary="@string/leftside_compose_button_summary"
+			android:title="@string/leftside_compose_button"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="cat_content"
 		android:title="@string/content">
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:key="enable_filters"
-			android:summary="@string/filters_summary"
-			android:title="@string/filters"/>
+			android:key="load_more_automatically"
+			android:summary="@string/load_more_automatically_summary"
+			android:title="@string/load_more_automatically"/>
+
+		<org.mariotaku.preferences.SeekBarPreference
+			maxValue="200"
+			minValue="10"
+			android:defaultValue="20"
+			android:key="load_item_limit"
+			android:summary="@string/load_item_limit_summary"
+			android:title="@string/load_item_limit"/>
 
 		<PreferenceScreen
-			android:key="filters_list"
-			android:title="@string/filters_list">
+			android:key="filter_list"
+			android:summary="@string/filter_summary"
+			android:title="@string/filter">
 			<intent
 				android:action="org.mariotaku.twidere.FILTERS"
 				android:targetPackage="org.mariotaku.twidere"/>
@@ -46,11 +61,12 @@
 			maxValue="300"
 			minValue="50"
 			android:defaultValue="100"
-			android:key="item_limit"
-			android:summary="@string/item_limit_summary"
-			android:title="@string/item_limit"/>
+			android:key="database_item_limit"
+			android:summary="@string/database_item_limit_summary"
+			android:title="@string/database_item_limit"/>
 
 		<Preference
+			android:enabled="false"
 			android:key="clear_cache"
 			android:summary="@string/clear_cache_summary"
 			android:title="@string/clear_cache"/>

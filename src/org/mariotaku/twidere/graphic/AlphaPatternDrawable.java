@@ -71,6 +71,21 @@ public class AlphaPatternDrawable extends Drawable {
 
 	}
 
+	@Override
+	protected void onBoundsChange(Rect bounds) {
+
+		super.onBoundsChange(bounds);
+
+		int height = bounds.height();
+		int width = bounds.width();
+
+		numRectanglesHorizontal = (int) Math.ceil(width / mRectangleSize);
+		numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
+
+		generatePatternBitmap();
+
+	}
+
 	/**
 	 * This will generate a bitmap with the pattern as big as the rectangle we
 	 * were allow to draw on. We do this to chache the bitmap so we don't need
@@ -106,21 +121,6 @@ public class AlphaPatternDrawable extends Drawable {
 			verticalStartWhite = !verticalStartWhite;
 
 		}
-
-	}
-
-	@Override
-	protected void onBoundsChange(Rect bounds) {
-
-		super.onBoundsChange(bounds);
-
-		int height = bounds.height();
-		int width = bounds.width();
-
-		numRectanglesHorizontal = (int) Math.ceil(width / mRectangleSize);
-		numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
-
-		generatePatternBitmap();
 
 	}
 

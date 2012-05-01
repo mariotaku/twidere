@@ -34,10 +34,9 @@ public class TwidereApplication extends Application implements Constants {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		mListProfileImageLoader = new LazyImageLoader(this, R.drawable.ic_profile_image_default,
-				getResources().getDimensionPixelSize(R.dimen.profile_image_size));
+		mListProfileImageLoader = new LazyImageLoader(this, R.drawable.ic_profile_image_default, getResources()
+				.getDimensionPixelSize(R.dimen.profile_image_size));
 		mCommonUtils = new CommonUtils(this);
-		CommonUtils.limitDatabases(this);
 	}
 
 	@Override

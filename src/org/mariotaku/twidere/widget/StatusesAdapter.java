@@ -20,11 +20,11 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 
 	private final static String[] mFrom = new String[] { Statuses.NAME };
 	private final static int[] mTo = new int[] { R.id.user_name };
-	private boolean mDisplayProfileImage, mMultipleAccountsActivated;
+	private boolean mDisplayProfileImage, mMultipleAccountsActivated, mShowLastItemAsGap;
 	private LazyImageLoader mImageLoader;
-	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx, mTextIdx,
-			mProfileImageUrlIdx, mRetweetCountIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx,
-			mHasMediaIdx, mInReplyToStatusIdIdx, mInReplyToScreennameIdx;
+	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx, mTextIdx, mProfileImageUrlIdx,
+			mRetweetCountIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx, mHasMediaIdx, mInReplyToStatusIdIdx,
+			mInReplyToScreennameIdx;
 
 	private Context mContext;
 
@@ -41,10 +41,11 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 
 		if (holder == null) return;
 
-		boolean is_gap = cursor.getInt(mIsGapIdx) == 1
-				&& cursor.getPosition() != cursor.getCount() - 1;
+		boolean is_last = cursor.getPosition() == cursor.getCount() - 1;
+		boolean is_gap = cursor.getInt(mIsGapIdx) == 1;
+		boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last;
 
-		holder.setIsGap(is_gap);
+		holder.setIsGap(show_gap);
 		holder.status_id = cursor.getLong(mStatusIdIdx);
 		holder.account_id = cursor.getLong(mAccountIdIdx);
 
@@ -53,7 +54,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			holder.setAccountColor(CommonUtils.getAccountColor(context, holder.account_id));
 		}
 
-		if (!is_gap) {
+		if (!show_gap) {
 
 			String screen_name = cursor.getString(mScreenNameIdx);
 			String text = cursor.getString(mTextIdx);
@@ -65,8 +66,8 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			boolean is_reply = cursor.getLong(mInReplyToStatusIdIdx) != -1;
 			holder.screen_name.setText("@" + screen_name);
 			holder.text.setText(Html.fromHtml(text).toString());
-			holder.tweet_time.setText(CommonUtils.formatToShortTimeString(context,
-					cursor.getLong(mStatusTimestampIdx)));
+			holder.tweet_time
+					.setText(CommonUtils.formatToShortTimeString(context, cursor.getLong(mStatusTimestampIdx)));
 			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					CommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media), 0);
 			holder.in_reply_to.setVisibility(is_reply ? View.VISIBLE : View.GONE);
@@ -105,8 +106,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			mLocationIdx = cursor.getColumnIndexOrThrow(Statuses.LOCATION);
 			mHasMediaIdx = cursor.getColumnIndexOrThrow(Statuses.HAS_MEDIA);
 			mInReplyToStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_STATUS_ID);
-			mInReplyToScreennameIdx = cursor
-					.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_SCREEN_NAME);
+			mInReplyToScreennameIdx = cursor.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_SCREEN_NAME);
 		}
 	}
 
@@ -121,6 +121,10 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 
 	public void setDisplayProfileImage(boolean display) {
 		mDisplayProfileImage = display;
+	}
+
+	public void setShowLastItemAsGap(boolean gap) {
+		mShowLastItemAsGap = gap;
 	}
 
 }

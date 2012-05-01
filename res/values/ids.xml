@@ -13,6 +13,7 @@
 	<item name="view" type="id"/>
 	<item name="delete" type="id"/>
 	<item name="add" type="id"/>
+	<item name="toggle" type="id"/>
 	<item name="pick_from_gallery" type="id"/>
 	<item name="pick_from_map" type="id"/>
 	<item name="reply" type="id"/>
@@ -24,5 +25,6 @@
 	<item name="open_in_browser" type="id"/>
 	<item name="add_account" type="id"/>
 	<item name="quote" type="id"/>
+	<item name="debug" type="id"/>
 
 </resources>

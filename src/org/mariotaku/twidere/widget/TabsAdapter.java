@@ -15,6 +15,7 @@ import com.viewpagerindicator.TitleProvider;
 public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider {
 
 	private ArrayList<TabInfo> mTabsInfo = new ArrayList<TabInfo>();
+
 	private Context mContext;
 
 	public TabsAdapter(Context context, FragmentManager fm) {
@@ -56,6 +57,11 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	public void onPageReselected(int position) {
 		String action = mTabsInfo.get(position).cls.getName() + HomeActivity.SHUFFIX_SCROLL_TO_TOP;
 		mContext.sendBroadcast(new Intent(action));
+	}
+
+	@Override
+	public void onPageSelected(int position) {
+
 	}
 
 	private class TabInfo {

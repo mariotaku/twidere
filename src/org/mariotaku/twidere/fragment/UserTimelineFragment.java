@@ -18,10 +18,10 @@ public class UserTimelineFragment extends StatusesFragment {
 			if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
 				mListView.onRefreshComplete();
 				getLoaderManager().restartLoader(0, null, UserTimelineFragment.this);
-			} else if ((UserTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP)
-					.equals(action)) if (mListView != null) {
-				mListView.getRefreshableView().setSelection(0);
-			}
+			} else if ((UserTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
+				if (mListView != null) {
+					mListView.getRefreshableView().setSelection(0);
+				}
 		}
 	};
 

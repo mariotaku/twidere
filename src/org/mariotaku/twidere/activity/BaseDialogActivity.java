@@ -10,8 +10,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-public class BaseDialogActivity extends SherlockFragmentActivity implements Constants,
-		ActivityThemeChangeImpl {
+public class BaseDialogActivity extends SherlockFragmentActivity implements Constants, ActivityThemeChangeImpl {
 
 	private int mThemeId;
 

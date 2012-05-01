@@ -14,8 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
-public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener,
-		OnClickListener {
+public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener, OnClickListener {
 
 	private EditText mEditRestAPIBase, mEditSearchAPIBase;
 	private RadioGroup mEditAuthType;
@@ -75,8 +74,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		mEditAuthType.setOnCheckedChangeListener(this);
 		mSaveButton.setOnClickListener(this);
 		mEditRestAPIBase.setText(mRestAPIBase != null ? mRestAPIBase : DEFAULT_REST_API_BASE);
-		mEditSearchAPIBase.setText(mSearchAPIBase != null ? mSearchAPIBase
-				: DEFAULT_SEARCH_API_BASE);
+		mEditSearchAPIBase.setText(mSearchAPIBase != null ? mSearchAPIBase : DEFAULT_SEARCH_API_BASE);
 		mButtonOAuth.setChecked(mAuthType == Accounts.AUTH_TYPE_OAUTH);
 		mButtonxAuth.setChecked(mAuthType == Accounts.AUTH_TYPE_XAUTH);
 		mButtonBasic.setChecked(mAuthType == Accounts.AUTH_TYPE_BASIC);

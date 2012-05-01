@@ -59,8 +59,7 @@ public class AuthorizationActivity extends WebViewActivity {
 	private class AuthorizationWebViewClient extends DefaultWebViewClient {
 
 		@Override
-		public void onReceivedError(WebView view, int errorCode, String description,
-				String failingUrl) {
+		public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 			super.onReceivedError(view, errorCode, description, failingUrl);
 			Toast.makeText(AuthorizationActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT);
 			finish();

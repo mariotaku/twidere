@@ -42,84 +42,6 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class TwitterLoginActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
-	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
-
-	private String mRestAPIBase, mSearchAPIBase, mUsername, mPassword;
-	private int mAuthType, mUserColor;
-	private boolean mUserColorSet;
-	private EditText mEditUsername, mEditPassword;
-	private Button mSignInButton, mSignUpButton;
-	private LinearLayout mSigninSignup, mUsernamePassword;
-	private ImageButton mSetColorButton;
-	private AbstractTask mTask;
-	private RequestToken mRequestToken;
-	private long mLoggedId;
-
-	@Override
-	public void afterTextChanged(Editable s) {
-
-	}
-
-	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-			case REQUEST_EDIT_API:
-				if (resultCode == RESULT_OK) {
-					Bundle bundle = new Bundle();
-					if (data != null) {
-						bundle = data.getExtras();
-					}
-					if (bundle != null) {
-						mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
-						mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
-						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
-						findViewById(R.id.username_password).setVisibility(
-								mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
-						((LinearLayout) findViewById(R.id.sign_in_sign_up))
-								.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
-										: LinearLayout.HORIZONTAL);
-					}
-				}
-				setSignInButton();
-				break;
-			case REQUEST_GOTO_AUTHORIZATION:
-				if (resultCode == RESULT_OK) {
-					Bundle bundle = new Bundle();
-					if (data != null) {
-						bundle = data.getExtras();
-					}
-					if (bundle != null) {
-						String oauth_verifier = bundle.getString(OAUTH_VERIFIER);
-						if (oauth_verifier != null && mRequestToken != null) {
-							if (mTask != null) {
-								mTask.cancel(true);
-							}
-							mTask = new CallbackAuthTask(mRequestToken, oauth_verifier);
-							mTask.execute();
-						}
-					}
-				}
-				break;
-			case REQUEST_SET_COLOR:
-				if (resultCode == BaseActivity.RESULT_OK)
-					if (data != null && data.getExtras() != null) {
-						mUserColor = data.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
-						mUserColorSet = true;
-					} else {
-						mUserColor = Color.TRANSPARENT;
-						mUserColorSet = false;
-					}
-				setUserColorButton();
-				break;
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-
 	@Override
 	public void onClick(View v) {
 		Intent intent = new Intent();
@@ -161,8 +83,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		setSupportProgressBarIndeterminateVisibility(false);
 		long[] account_ids = CommonUtils.getActivatedAccounts(this);
 		boolean called_from_twidere = getPackageName().equals(getCallingPackage());
-		getSupportActionBar().setDisplayHomeAsUpEnabled(
-				account_ids.length > 0 && called_from_twidere);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0 && called_from_twidere);
 
 		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
 		if (bundle == null) {
@@ -184,8 +105,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mSignInButton.setOnClickListener(this);
 		mSignUpButton.setOnClickListener(this);
 		mSetColorButton.setOnClickListener(this);
-		mUsernamePassword.setVisibility(mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE
-				: View.VISIBLE);
+		mUsernamePassword.setVisibility(mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
 		mSigninSignup.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
 				: LinearLayout.HORIZONTAL);
 
@@ -287,8 +207,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	private void setSignInButton() {
-		mSignInButton.setEnabled(mEditPassword.getText().length() > 0
-				&& mEditUsername.getText().length() > 0 || mAuthType == Accounts.AUTH_TYPE_OAUTH);
+		mSignInButton.setEnabled(mEditPassword.getText().length() > 0 && mEditUsername.getText().length() > 0
+				|| mAuthType == Accounts.AUTH_TYPE_OAUTH);
 	}
 
 	private void setUserColorButton() {
@@ -298,6 +218,92 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			mSetColorButton.setImageResource(android.R.color.transparent);
 		}
 
+	}
+
+	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
+
+	private String mRestAPIBase, mSearchAPIBase, mUsername, mPassword;
+
+	private int mAuthType, mUserColor;
+
+	private boolean mUserColorSet;
+
+	private EditText mEditUsername, mEditPassword;
+
+	private Button mSignInButton, mSignUpButton;
+
+	private LinearLayout mSigninSignup, mUsernamePassword;
+
+	private ImageButton mSetColorButton;
+
+	private AbstractTask mTask;
+
+	private RequestToken mRequestToken;
+
+	private long mLoggedId;
+
+	@Override
+	public void afterTextChanged(Editable s) {
+
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+			case REQUEST_EDIT_API:
+				if (resultCode == RESULT_OK) {
+					Bundle bundle = new Bundle();
+					if (data != null) {
+						bundle = data.getExtras();
+					}
+					if (bundle != null) {
+						mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
+						mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
+						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
+						findViewById(R.id.username_password).setVisibility(
+								mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
+						((LinearLayout) findViewById(R.id.sign_in_sign_up))
+								.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
+										: LinearLayout.HORIZONTAL);
+					}
+				}
+				setSignInButton();
+				break;
+			case REQUEST_GOTO_AUTHORIZATION:
+				if (resultCode == RESULT_OK) {
+					Bundle bundle = new Bundle();
+					if (data != null) {
+						bundle = data.getExtras();
+					}
+					if (bundle != null) {
+						String oauth_verifier = bundle.getString(OAUTH_VERIFIER);
+						if (oauth_verifier != null && mRequestToken != null) {
+							if (mTask != null) {
+								mTask.cancel(true);
+							}
+							mTask = new CallbackAuthTask(mRequestToken, oauth_verifier);
+							mTask.execute();
+						}
+					}
+				}
+				break;
+			case REQUEST_SET_COLOR:
+				if (resultCode == BaseActivity.RESULT_OK) if (data != null && data.getExtras() != null) {
+					mUserColor = data.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
+					mUserColorSet = true;
+				} else {
+					mUserColor = Color.TRANSPARENT;
+					mUserColorSet = false;
+				}
+				setUserColorButton();
+				break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {
@@ -356,10 +362,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				analyseUserProfileColor(user.getProfileImageURL().toString());
 			}
 			mLoggedId = user.getId();
-			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
-				return RESULT_ALREADY_LOGGED_IN;
-			ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, accessToken,
-					user, mRestAPIBase, mSearchAPIBase, null, Accounts.AUTH_TYPE_OAUTH);
+			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, mLoggedId)) return RESULT_ALREADY_LOGGED_IN;
+			ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, accessToken, user, mRestAPIBase,
+					mSearchAPIBase, null, Accounts.AUTH_TYPE_OAUTH);
 			resolver.insert(Accounts.CONTENT_URI, values);
 			return RESULT_SUCCESS;
 		}
@@ -388,13 +393,43 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	private class LoginTask extends AbstractTask {
 
+		@Override
+		protected Result doInBackground(Void... params) {
+			return doAuth();
+		}
+
+		@Override
+		protected void onPostExecute(Object result_obj) {
+			Result result = (Result) result_obj;
+			switch (result.result_code) {
+				case RESULT_SUCCESS:
+					Intent intent = new Intent(INTENT_ACTION_HOME);
+					Bundle bundle = new Bundle();
+					bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
+					intent.putExtras(bundle);
+					intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					startActivity(intent);
+					finish();
+					break;
+				case RESULT_OPEN_BROWSER:
+					mRequestToken = result.request_token;
+					Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
+					startActivityForResult(new Intent(Intent.ACTION_DEFAULT, uri, getApplicationContext(),
+							AuthorizationActivity.class), REQUEST_GOTO_AUTHORIZATION);
+					break;
+				default:
+					CommonUtils.showErrorMessage(TwitterLoginActivity.this, result.result_code);
+					break;
+			}
+			super.onPostExecute(result_obj);
+		}
+
 		private Result authBasic() {
 			ContentResolver resolver = getContentResolver();
 			ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestAPIBase);
 			cb.setSearchBaseURL(mSearchAPIBase);
-			Twitter twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(
-					mUsername, mPassword));
+			Twitter twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(mUsername, mPassword));
 			boolean account_valid = false;
 			User user = null;
 			try {
@@ -413,8 +448,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				mLoggedId = user.getId();
 				if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_BASIC, null);
-				ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, null, user,
-						mRestAPIBase, mSearchAPIBase, mPassword, Accounts.AUTH_TYPE_BASIC);
+				ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, null, user, mRestAPIBase,
+						mSearchAPIBase, mPassword, Accounts.AUTH_TYPE_BASIC);
 				resolver.insert(Accounts.CONTENT_URI, values);
 				return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_BASIC, null);
 
@@ -435,8 +470,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			} catch (TwitterException e) {
 				return new Result(CommonUtils.getErrorCode(e), Accounts.AUTH_TYPE_OAUTH, null);
 			}
-			if (requestToken != null)
-				return new Result(RESULT_OPEN_BROWSER, Accounts.AUTH_TYPE_OAUTH, requestToken);
+			if (requestToken != null) return new Result(RESULT_OPEN_BROWSER, Accounts.AUTH_TYPE_OAUTH, requestToken);
 			return new Result(RESULT_UNKNOWN_ERROR, Accounts.AUTH_TYPE_OAUTH, null);
 		}
 
@@ -463,8 +497,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			mLoggedId = user.getId();
 			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 				return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_XAUTH, null);
-			ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, accessToken,
-					user, mRestAPIBase, mSearchAPIBase, null, Accounts.AUTH_TYPE_XAUTH);
+			ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, accessToken, user, mRestAPIBase,
+					mSearchAPIBase, null, Accounts.AUTH_TYPE_XAUTH);
 			resolver.insert(Accounts.CONTENT_URI, values);
 			return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_XAUTH, null);
 
@@ -485,38 +519,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			return authOAuth();
 		}
 
-		@Override
-		protected Result doInBackground(Void... params) {
-			return doAuth();
-		}
-
-		@Override
-		protected void onPostExecute(Object result_obj) {
-			Result result = (Result) result_obj;
-			switch (result.result_code) {
-				case RESULT_SUCCESS:
-					Intent intent = new Intent(INTENT_ACTION_HOME);
-					Bundle bundle = new Bundle();
-					bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
-					intent.putExtras(bundle);
-					intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-					startActivity(intent);
-					finish();
-					break;
-				case RESULT_OPEN_BROWSER:
-					mRequestToken = result.request_token;
-					Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
-					startActivityForResult(new Intent(Intent.ACTION_DEFAULT, uri,
-							getApplicationContext(), AuthorizationActivity.class),
-							REQUEST_GOTO_AUTHORIZATION);
-					break;
-				default:
-					CommonUtils.showErrorMessage(TwitterLoginActivity.this, result.result_code);
-					break;
-			}
-			super.onPostExecute(result_obj);
-		}
-
 		private class Result {
 
 			public int result_code;
@@ -527,15 +529,13 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				switch (auth_type) {
 					case Accounts.AUTH_TYPE_OAUTH:
 						if (result_code == RESULT_OPEN_BROWSER && request_token == null)
-							throw new IllegalArgumentException(
-									"Request Token cannot be null in oauth mode!");
+							throw new IllegalArgumentException("Request Token cannot be null in oauth mode!");
 						this.request_token = request_token;
 						break;
 					case Accounts.AUTH_TYPE_XAUTH:
 					case Accounts.AUTH_TYPE_BASIC:
 						if (request_token != null)
-							throw new IllegalArgumentException(
-									"Request Token must be null in xauth/basic mode!");
+							throw new IllegalArgumentException("Request Token must be null in xauth/basic mode!");
 						break;
 				}
 			}

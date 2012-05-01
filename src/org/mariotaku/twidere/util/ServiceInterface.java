@@ -21,6 +21,7 @@ import android.os.RemoteException;
 public class ServiceInterface implements Constants, IUpdateService {
 
 	private IUpdateService mService;
+
 	private Context mContext;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -66,11 +67,8 @@ public class ServiceInterface implements Constants, IUpdateService {
 		}
 	};
 
-	private static ServiceInterface sInstance;
-
 	private ServiceInterface(Context context) {
-		((TwidereApplication) context.getApplicationContext()).getCommonUtils().bindToService(
-				mConntecion);
+		((TwidereApplication) context.getApplicationContext()).getCommonUtils().bindToService(mConntecion);
 		mContext = context;
 
 	}
@@ -217,8 +215,7 @@ public class ServiceInterface implements Constants, IUpdateService {
 	}
 
 	@Override
-	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri,
-			long in_reply_to) {
+	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
 		if (mService == null) return -1;
 		try {
 			return mService.updateStatus(account_ids, content, location, image_uri, in_reply_to);
@@ -227,6 +224,8 @@ public class ServiceInterface implements Constants, IUpdateService {
 		}
 		return -1;
 	}
+
+	private static ServiceInterface sInstance;
 
 	public static ServiceInterface getInstance(Context context) {
 		if (sInstance == null || !sInstance.test()) {

@@ -21,8 +21,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener,
-		OnClickListener {
+public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener, OnClickListener {
 
 	private ListView mListView;
 	private SimpleCursorAdapter mAdapter;
@@ -32,8 +31,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 
 	public Cursor getAccountsCursor() {
 		Uri uri = Accounts.CONTENT_URI;
-		String[] cols = new String[] { Accounts._ID, Accounts.USER_ID, Accounts.USERNAME,
-				Accounts.IS_ACTIVATED };
+		String[] cols = new String[] { Accounts._ID, Accounts.USER_ID, Accounts.USERNAME, Accounts.IS_ACTIVATED };
 		return getContentResolver().query(uri, cols, null, null, null);
 	}
 
@@ -50,7 +48,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 			ids[i] = id_long;
 			i++;
 		}
-		bundle.putLongArray(INTENT_KEY_USER_IDS, ids);
+		bundle.putLongArray(INTENT_KEY_IDS, ids);
 		setResult(RESULT_OK, new Intent().putExtras(bundle));
 		finish();
 	}
@@ -84,19 +82,17 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		mAdapter = new SimpleCursorAdapter(this, layoutRes, mCursor, from, to, 0);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
-		mListView.setChoiceMode(MULTIPLE_ACCOUNTS_ENABLED ? ListView.CHOICE_MODE_MULTIPLE
-				: ListView.CHOICE_MODE_SINGLE);
+		mListView
+				.setChoiceMode(MULTIPLE_ACCOUNTS_ENABLED ? ListView.CHOICE_MODE_MULTIPLE : ListView.CHOICE_MODE_SINGLE);
 		mAddAccountButton.setOnClickListener(this);
 
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
-		long[] activated_ids = bundle != null ? bundle.getLongArray(Constants.INTENT_KEY_USER_IDS)
-				: null;
+		long[] activated_ids = bundle != null ? bundle.getLongArray(Constants.INTENT_KEY_IDS) : null;
 		mActivatedUsersId.clear();
 		if (activated_ids == null) {
 			mCursor.moveToFirst();
 			while (!mCursor.isAfterLast()) {
-				boolean is_activated = mCursor.getInt(mCursor
-						.getColumnIndexOrThrow(Accounts.IS_ACTIVATED)) == 1;
+				boolean is_activated = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.IS_ACTIVATED)) == 1;
 				long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
 				if (is_activated) {
 					mActivatedUsersId.add(user_id);
@@ -154,7 +150,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		for (int i = 0; i < mActivatedUsersId.size(); i++) {
 			ids[i] = mActivatedUsersId.get(i);
 		}
-		outState.putLongArray(Constants.INTENT_KEY_USER_IDS, ids);
+		outState.putLongArray(Constants.INTENT_KEY_IDS, ids);
 		super.onSaveInstanceState(outState);
 	}
 

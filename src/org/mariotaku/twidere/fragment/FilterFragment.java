@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnShowListener;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,7 +46,9 @@ import com.viewpagerindicator.TabPageIndicator;
 public class FilterFragment extends BaseFragment {
 
 	private ViewPager mViewPager;
+
 	private TabsAdapter mAdapter;
+
 	private TabPageIndicator mIndicator;
 
 	@Override
@@ -76,11 +79,32 @@ public class FilterFragment extends BaseFragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		return false;
+		switch (item.getItemId()) {
+			case MENU_ADD:
+				return false;
+			case MENU_TOGGLE:
+				SharedPreferences prefs = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME,
+						Context.MODE_PRIVATE);
+				boolean filter_enabled = prefs.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false);
+				prefs.edit().putBoolean(PREFERENCE_KEY_ENABLE_FILTER, !filter_enabled).commit();
+				getSherlockActivity().invalidateOptionsMenu();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
-	public static abstract class BaseFilterListFragment extends BaseListFragment implements
-			LoaderCallbacks<Cursor>, OnItemLongClickListener {
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		SharedPreferences prefs = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		boolean filter_enabled = prefs.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false);
+		getSherlockActivity().getSupportActionBar().setSubtitle(
+				filter_enabled ? R.string.filter_enabled : R.string.filter_disabled);
+		menu.findItem(MENU_TOGGLE).setTitle(filter_enabled ? R.string.disable : R.string.enable);
+		super.onPrepareOptionsMenu(menu);
+	}
+
+	public static abstract class BaseFilterListFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
+			OnItemLongClickListener {
 
 		private FilterListAdapter mAdapter;
 
@@ -122,8 +146,7 @@ public class FilterFragment extends BaseFragment {
 
 		@Override
 		public void onListItemClick(ListView l, View v, int position, long id) {
-			Toast.makeText(getSherlockActivity(), R.string.longclick_to_delete, Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(getSherlockActivity(), R.string.longclick_to_delete, Toast.LENGTH_SHORT).show();
 			super.onListItemClick(l, v, position, id);
 		}
 
@@ -149,17 +172,18 @@ public class FilterFragment extends BaseFragment {
 
 		public static class FilterListAdapter extends SimpleCursorAdapter {
 
-			private static final String[] from = new String[] { Filters.TEXT };
-			private static final int[] to = new int[] { android.R.id.text1 };
-
 			public FilterListAdapter(Context context) {
 				super(context, android.R.layout.simple_list_item_1, null, from, to, 0);
 			}
 
+			private static final String[] from = new String[] { Filters.TEXT };
+
+			private static final int[] to = new int[] { android.R.id.text1 };
+
 		}
 
-		private static class AddItemFragment extends BaseDialogFragment implements OnClickListener,
-				TextWatcher, OnShowListener {
+		private static class AddItemFragment extends BaseDialogFragment implements OnClickListener, TextWatcher,
+				OnShowListener {
 
 			private BaseFilterListFragment mFragment;
 			private EditText mEditText;
@@ -189,17 +213,14 @@ public class FilterFragment extends BaseFragment {
 							final CharSequence TAG_END = "</p>";
 							SpannableString tmp = new SpannableString(text);
 							String formatted = Html.toHtml(tmp);
-							if (formatted != null && formatted.contains(TAG_START)
-									&& formatted.contains(TAG_END)) {
-								int start = formatted.indexOf(TAG_START.toString())
-										+ TAG_START.length();
+							if (formatted != null && formatted.contains(TAG_START) && formatted.contains(TAG_END)) {
+								int start = formatted.indexOf(TAG_START.toString()) + TAG_START.length();
 								int end = formatted.lastIndexOf(TAG_END.toString());
 								text = formatted.substring(start, end);
 							}
 						}
 						values.put(Filters.TEXT, text);
-						getSherlockActivity().getContentResolver().insert(
-								mFragment.getContentUri(), values);
+						getSherlockActivity().getContentResolver().insert(mFragment.getContentUri(), values);
 						mFragment.getLoaderManager().restartLoader(0, null, mFragment);
 						break;
 				}
@@ -212,8 +233,7 @@ public class FilterFragment extends BaseFragment {
 				FrameLayout layout = new FrameLayout(getSherlockActivity());
 				mEditText = new EditText(getSherlockActivity());
 				mEditText.addTextChangedListener(this);
-				layout.addView(mEditText, new LayoutParams(LayoutParams.MATCH_PARENT,
-						LayoutParams.WRAP_CONTENT) {
+				layout.addView(mEditText, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT) {
 
 					{
 						int margin = (int) (getResources().getDisplayMetrics().density * 16);
@@ -245,8 +265,7 @@ public class FilterFragment extends BaseFragment {
 
 			private void setOKButton(int length) {
 				if (getDialog() instanceof AlertDialog) {
-					Button button = ((AlertDialog) getDialog())
-							.getButton(AlertDialog.BUTTON_POSITIVE);
+					Button button = ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE);
 					if (button != null) {
 						button.setVisibility(length > 0 ? View.VISIBLE : View.INVISIBLE);
 					}

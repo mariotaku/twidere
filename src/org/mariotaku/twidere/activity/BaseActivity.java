@@ -11,8 +11,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-public class BaseActivity extends SherlockFragmentActivity implements Constants,
-		ActivityThemeChangeImpl {
+public class BaseActivity extends SherlockFragmentActivity implements Constants, ActivityThemeChangeImpl {
 
 	private int mThemeId;
 

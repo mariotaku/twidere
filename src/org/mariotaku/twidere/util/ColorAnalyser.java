@@ -23,8 +23,7 @@ public class ColorAnalyser {
 	 * 
 	 * Get the main color from a {@link Bitmap}.<br>
 	 * 
-	 * @param bitmap
-	 *            The {@link Bitmap} to analyse
+	 * @param bitmap The {@link Bitmap} to analyse
 	 * @return The rgb {@link Color} in integer (no alpha)
 	 */
 	public static int analyse(Bitmap bitmap) {
@@ -36,12 +35,9 @@ public class ColorAnalyser {
 	 * 
 	 * Get the main color from a {@link Bitmap}.<br>
 	 * 
-	 * @param bitmap
-	 *            The {@link Bitmap} to analyse
-	 * @param width
-	 *            The desired width of scaled bitmap
-	 * @param height
-	 *            The desired height of scaled bitmap
+	 * @param bitmap The {@link Bitmap} to analyse
+	 * @param width The desired width of scaled bitmap
+	 * @param height The desired height of scaled bitmap
 	 * @return The rgb {@link Color} in integer (no alpha)
 	 */
 	public static int analyse(Bitmap bitmap, int width, int height) {
@@ -58,8 +54,7 @@ public class ColorAnalyser {
 		for (int y = 0; y < resized.getHeight(); y++) {
 			for (int x = 0; x < resized.getWidth(); x++) {
 				int temp_color = resized.getPixel(x, y);
-				color = Color.argb(0xFF, Color.red(temp_color), Color.green(temp_color),
-						Color.blue(temp_color));
+				color = Color.argb(0xFF, Color.red(temp_color), Color.green(temp_color), Color.blue(temp_color));
 				float[] hsv = new float[3];
 				Color.colorToHSV(color, hsv);
 
@@ -81,14 +76,10 @@ public class ColorAnalyser {
 	 * 
 	 * Get the main color from a {@link Bitmap}.<br>
 	 * 
-	 * @param bitmap
-	 *            The {@link Bitmap} to analyse
-	 * @param width
-	 *            The desired width of scaled bitmap
-	 * @param height
-	 *            The desired height of scaled bitmap
-	 * @param def
-	 *            The default color returned, if bitmap is null
+	 * @param bitmap The {@link Bitmap} to analyse
+	 * @param width The desired width of scaled bitmap
+	 * @param height The desired height of scaled bitmap
+	 * @param def The default color returned, if bitmap is null
 	 * @return The rgb {@link Color} in integer (no alpha)
 	 */
 	public static int analyse(Bitmap bitmap, int width, int height, int def) {
@@ -105,8 +96,7 @@ public class ColorAnalyser {
 		for (int y = 0; y < resized.getHeight(); y++) {
 			for (int x = 0; x < resized.getWidth(); x++) {
 				int temp_color = resized.getPixel(x, y);
-				color = Color.argb(0xFF, Color.red(temp_color), Color.green(temp_color),
-						Color.blue(temp_color));
+				color = Color.argb(0xFF, Color.red(temp_color), Color.green(temp_color), Color.blue(temp_color));
 				float[] hsv = new float[3];
 				Color.colorToHSV(color, hsv);
 

@@ -14,8 +14,8 @@ import android.preference.Preference.OnPreferenceClickListener;
 import com.actionbarsherlock.view.MenuItem;
 
 @SuppressWarnings("deprecation")
-public class GlobalSettingsActivity extends BasePreferenceActivity implements
-		OnPreferenceChangeListener, OnPreferenceClickListener {
+public class GlobalSettingsActivity extends BasePreferenceActivity implements OnPreferenceChangeListener,
+		OnPreferenceClickListener {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

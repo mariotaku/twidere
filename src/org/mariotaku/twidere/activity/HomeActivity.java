@@ -18,27 +18,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.ActionMode.Callback;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TabPageIndicator;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements OnClickListener {
 
 	private ViewPager mViewPager;
-
+	private SharedPreferences mPreferences;
 	private ActionBar mActionBar;
 	private ProgressBar mProgress;
 	private TabsAdapter mAdapter;
+	private ImageButton mComposeButton;
 	private ServiceInterface mInterface;
 	private TabPageIndicator mIndicator;
-	private boolean mBottomActions;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -52,16 +59,30 @@ public class HomeActivity extends BaseActivity {
 
 	};
 
+	private ActionMode mActionMode;
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.compose:
+				if (mActionMode != null) {
+					mActionMode.finish();
+				}
+				startActivity(new Intent(INTENT_ACTION_COMPOSE));
+				break;
+		}
+
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		setUiOptions();
 		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
+		mPreferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		mViewPager = (ViewPager) findViewById(R.id.pager);
-		StringBuilder where = new StringBuilder();
-		where.append(Accounts.IS_ACTIVATED + "=1");
+		mComposeButton = (ImageButton) findViewById(R.id.compose);
 		long[] activated_ids = CommonUtils.getActivatedAccounts(this);
 
 		if (activated_ids.length <= 0) {
@@ -85,12 +106,13 @@ public class HomeActivity extends BaseActivity {
 		View view = mActionBar.getCustomView();
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager());
+		mAdapter = new HomeTabsAdapter(this, getSupportFragmentManager());
 		mAdapter.addTab(HomeTimelineFragment.class, null, R.drawable.ic_tab_home);
 		mAdapter.addTab(MentionsFragment.class, null, R.drawable.ic_tab_connect);
 		mAdapter.addTab(DiscoverFragment.class, null, R.drawable.ic_tab_discover);
 		mAdapter.addTab(DashboardFragment.class, null, R.drawable.ic_tab_me);
 		mViewPager.setAdapter(mAdapter);
+		mComposeButton.setOnClickListener(this);
 		mIndicator.setViewPager(mViewPager);
 
 	}
@@ -102,14 +124,20 @@ public class HomeActivity extends BaseActivity {
 	}
 
 	@Override
+	public void onDestroy() {
+		// Delete unused items in databases.
+		CommonUtils.cleanDatabasesByItemLimit(this);
+		super.onDestroy();
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_COMPOSE:
 				startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				break;
 			case MENU_SELECT_ACCOUNT:
-				startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT),
-						REQUEST_SELECT_ACCOUNT);
+				startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
 				break;
 			case MENU_SETTINGS:
 				startActivity(new Intent(INTENT_ACTION_GLOBAL_SETTINGS));
@@ -119,12 +147,21 @@ public class HomeActivity extends BaseActivity {
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
+		menu.findItem(MENU_COMPOSE).setVisible(!bottom_actions);
+		boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
+		mComposeButton.setVisibility(bottom_actions ? View.VISIBLE : View.GONE);
+		LayoutParams lp = (FrameLayout.LayoutParams) mComposeButton.getLayoutParams();
+		lp.gravity = Gravity.BOTTOM | (leftside_compose_button ? Gravity.LEFT : Gravity.RIGHT);
+		mComposeButton.setLayoutParams(lp);
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
-		if (isUiOptionsChanged()) {
-			CommonUtils.restartActivity(this);
-			return;
-		}
+		invalidateOptionsMenu();
 	}
 
 	@Override
@@ -141,27 +178,11 @@ public class HomeActivity extends BaseActivity {
 		super.onStop();
 	}
 
-	private boolean isUiOptionsChanged() {
-		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		boolean bottom_actions = preferences.getBoolean(PREFERENCE_KEY_BOTTOM_ACTIONS, false);
-		return bottom_actions != mBottomActions;
-	}
-
-	private void setRefreshState() {
-		boolean is_refresh = false;
-		if (mInterface != null) {
-			is_refresh = mInterface.hasActivatedTask();
-		}
-		mProgress.setVisibility(is_refresh ? View.VISIBLE : View.INVISIBLE);
-	}
-
-	private void setUiOptions() {
-		SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		mBottomActions = preferences.getBoolean(PREFERENCE_KEY_BOTTOM_ACTIONS, false);
-		if (mBottomActions) {
-			CommonUtils.setUiOptions(getWindow(),
-					ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
-		}
+	@Override
+	public ActionMode startActionMode(Callback callback) {
+		ActionMode action_mode = super.startActionMode(callback);
+		mActionMode = action_mode;
+		return action_mode;
 	}
 
 	@Override
@@ -180,7 +201,7 @@ public class HomeActivity extends BaseActivity {
 				if (bundle == null) {
 					break;
 				}
-				long[] account_ids = bundle.getLongArray(INTENT_KEY_USER_IDS);
+				long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
 				if (account_ids != null) {
 					values = new ContentValues();
 					values.put(Accounts.IS_ACTIVATED, 0);
@@ -195,5 +216,32 @@ public class HomeActivity extends BaseActivity {
 				break;
 		}
 		super.onActivityResult(requestCode, resultCode, intent);
+	}
+
+	private void setRefreshState() {
+		boolean is_refresh = false;
+		if (mInterface != null) {
+			is_refresh = mInterface.hasActivatedTask();
+		}
+		mProgress.setVisibility(is_refresh ? View.VISIBLE : View.INVISIBLE);
+	}
+
+	private class HomeTabsAdapter extends TabsAdapter {
+
+		private int mPosition;
+
+		public HomeTabsAdapter(Context context, FragmentManager fm) {
+			super(context, fm);
+		}
+
+		@Override
+		public void onPageSelected(int position) {
+			if (mPosition != position && mActionMode != null) {
+				mActionMode.finish();
+			}
+			mPosition = position;
+			super.onPageSelected(position);
+		}
+
 	}
 }

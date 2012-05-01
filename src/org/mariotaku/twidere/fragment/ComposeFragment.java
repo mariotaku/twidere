@@ -35,8 +35,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class ComposeFragment extends BaseFragment implements OnClickListener, TextWatcher,
-		LocationListener {
+public class ComposeFragment extends BaseFragment implements OnClickListener, TextWatcher, LocationListener {
 
 	private String mText;
 	private Uri mImageUri;
@@ -49,6 +48,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 	private Location mRecentLocation;
 	private LocationManager mLocationManager;
 	private SharedPreferences mPreferences;
+	private long mInReplyToStatusId = -1;
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -62,24 +62,46 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		mLocationManager = (LocationManager) getSherlockActivity().getSystemService(
-				Context.LOCATION_SERVICE);
-		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME,
-				Context.MODE_PRIVATE);
-		mInterface = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getServiceInterface();
+		mLocationManager = (LocationManager) getSherlockActivity().getSystemService(Context.LOCATION_SERVICE);
+		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		mInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 		getLocation();
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
-		long[] activated_ids = bundle != null ? bundle.getLongArray(INTENT_KEY_USER_IDS) : null;
-		if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null) {
-			mText = bundle.getString(INTENT_KEY_TEXT);
+		long[] activated_ids = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
+		mInReplyToStatusId = bundle != null ? bundle.getLong(INTENT_KEY_IN_REPLY_TO_ID) : -1;
+		int text_selection_start = -1;
+		if (mInReplyToStatusId > -1) {
+			String screen_name = CommonUtils.getScreenNameForStatusId(getSherlockActivity(), mInReplyToStatusId);
+			long account_id = CommonUtils.getAccountIdForStatusId(getSherlockActivity(), mInReplyToStatusId);
+			String account_username = CommonUtils.getAccountUsername(getSherlockActivity(), account_id);
+
+			String[] mentions = getArguments() != null ? getArguments().getStringArray(INTENT_KEY_MENTIONS) : null;
+
+			if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null
+					&& (mentions == null || mentions.length < 1)) {
+				mText = bundle.getString(INTENT_KEY_TEXT);
+			} else if (mentions != null) {
+				StringBuilder builder = new StringBuilder();
+				for (String mention : mentions) {
+					if (!mentions.equals(account_username)) {
+						builder.append('@' + mention + ' ');
+					}
+				}
+				mText = builder.toString();
+				text_selection_start = mText.indexOf(' ') + 1;
+			}
+
+			getSherlockActivity().setTitle(getString(R.string.reply_to, screen_name));
+			mAccountIds = new long[] { account_id };
+		} else {
+			mAccountIds = activated_ids == null ? CommonUtils.getActivatedAccounts(getSherlockActivity())
+					: activated_ids;
+			if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null) {
+				mText = bundle.getString(INTENT_KEY_TEXT);
+			}
 		}
-
-		mAccountIds = activated_ids == null ? CommonUtils
-				.getActivatedAccounts(getSherlockActivity()) : activated_ids;
-
 		View view = getView();
 		mEditText = (EditText) view.findViewById(R.id.edit_text);
 		mTextCount = (TextView) view.findViewById(R.id.text_count);
@@ -91,6 +113,11 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		mEditText.addTextChangedListener(this);
 		if (mText != null) {
 			mEditText.setText(mText);
+			if (text_selection_start != -1 && text_selection_start < mEditText.length() && mEditText.length() > 0) {
+				mEditText.setSelection(text_selection_start, mEditText.length() - 1);
+			} else if (mEditText.length() > 0) {
+				mEditText.setSelection(mEditText.length());
+			}
 		}
 		int length = mEditText.length();
 		mTextCount.setText(String.valueOf(length));
@@ -117,8 +144,8 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 			case REQUEST_ADD_IMAGE:
 				if (resultCode == Activity.RESULT_OK) {
 					Uri uri = intent.getData();
-					File file = uri == null ? null : new File(CommonUtils.getImagePathFromUri(
-							getSherlockActivity(), uri));
+					File file = uri == null ? null : new File(CommonUtils.getImagePathFromUri(getSherlockActivity(),
+							uri));
 					if (file != null && file.exists()) {
 						mImageUri = uri;
 						mIsPhotoAttached = false;
@@ -135,7 +162,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 					if (bundle == null) {
 						break;
 					}
-					long[] user_ids = bundle.getLongArray(INTENT_KEY_USER_IDS);
+					long[] user_ids = bundle.getLongArray(INTENT_KEY_IDS);
 					if (user_ids != null) {
 						mAccountIds = user_ids;
 					}
@@ -150,10 +177,9 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		switch (v.getId()) {
 			case R.id.send:
 				String content = mEditText != null ? mEditText.getText().toString() : null;
-				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION,
-						false);
-				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation
-						: null, mImageUri, -1);
+				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation : null, mImageUri,
+						mInReplyToStatusId);
 				if (getSherlockActivity() instanceof ComposeActivity) {
 					getSherlockActivity().finish();
 				}
@@ -161,7 +187,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 			case R.id.select_account:
 				Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
 				Bundle bundle = new Bundle();
-				bundle.putLongArray(INTENT_KEY_USER_IDS, mAccountIds);
+				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
@@ -209,10 +235,8 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				pickImage();
 				break;
 			case MENU_ADD_LOCATION:
-				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION,
-						false);
-				mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, !attach_location)
-						.commit();
+				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+				mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, !attach_location).commit();
 				getSherlockActivity().invalidateOptionsMenu();
 				break;
 		}
@@ -235,8 +259,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 
 		boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		if (attach_location) {
-			menu.findItem(MENU_ADD_LOCATION).getIcon()
-					.setColorFilter(activated_color, Mode.MULTIPLY);
+			menu.findItem(MENU_ADD_LOCATION).getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
 		} else {
 			menu.findItem(MENU_ADD_LOCATION).getIcon().clearColorFilter();
 		}
@@ -254,7 +277,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		mText = mEditText.getText().toString();
-		outState.putLongArray(INTENT_KEY_USER_IDS, mAccountIds);
+		outState.putLongArray(INTENT_KEY_IDS, mAccountIds);
 		outState.putString(INTENT_KEY_TEXT, mText);
 		super.onSaveInstanceState(outState);
 	}
@@ -294,8 +317,8 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 
 	private void takePhoto() {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		File file = new File(getSherlockActivity().getExternalCacheDir(), "tmp_photo_"
-				+ System.currentTimeMillis() + ".jpg");
+		File file = new File(getSherlockActivity().getExternalCacheDir(), "tmp_photo_" + System.currentTimeMillis()
+				+ ".jpg");
 		mImageUri = Uri.fromFile(file);
 		intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
 		startActivityForResult(intent, REQUEST_TAKE_PHOTO);

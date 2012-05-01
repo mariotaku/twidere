@@ -25,25 +25,32 @@
 					disable_ui = window.android.isUIDisabled();
 				}
 			
-				var latlng = new google.maps.LatLng(latitude, longitude);
-				var options = {
-					zoom: 12,
-					center: latlng,
-					disableDefaultUI: disable_ui,
-					mapTypeId: google.maps.MapTypeId.ROADMAP
-				};
-				map = new google.maps.Map(document.getElementById('map_canvas'), options);
+				setupMap(latitude, longitude, 12, disable_ui);
 				setCenter(latitude, longitude);
 				setMark(latitude, longitude);
 			}
 			
+			function setupMap(latitude, longitude, default_zoom, disable_ui) {
+				var options = {
+					zoom: default_zoom,
+					center: getLatLng(latitude, longitude),
+					disableDefaultUI: disable_ui,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
+				map = new google.maps.Map(document.getElementById('map_canvas'), options);
+			}
+			
+
+			function getLatLng(latitude, longitude) {
+				return new google.maps.LatLng(latitude, longitude);
+			}
+
 			function setCenter(latitude, longitude) {
-				var latlng = new google.maps.LatLng(latitude, longitude);
-				map.panTo(latlng);
+				map.panTo(getLatLng(latitude, longitude));
 			}
 			
 			function setMark(latitude, longitude) {
-				var latlng = new google.maps.LatLng(latitude, longitude);
+				var latlng = getLatLng(latitude, longitude);
 				var marker = new google.maps.Marker({
 					position: latlng, 
 					map: map

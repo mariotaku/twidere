@@ -11,8 +11,7 @@ public final class TweetStore {
 
 	public static final String KEY_ACCOUNT_ID = "account_id";
 
-	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI,
-			Mentions.CONTENT_URI };
+	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 
 	private static final String TYPE_PRIMARY_KEY = "INTEGER PRIMARY KEY AUTOINCREMENT";
 
@@ -33,8 +32,8 @@ public final class TweetStore {
 		public static final int AUTH_TYPE_BASIC = 2;
 
 		public static final String CONTENT_PATH = "accounts";
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(
-				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
 
 		/**
 		 * Login name of the account<br>
@@ -101,13 +100,11 @@ public final class TweetStore {
 		 */
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
-		public static final String[] COLUMNS = new String[] { _ID, USERNAME, USER_ID, AUTH_TYPE,
-				BASIC_AUTH_PASSWORD, OAUTH_TOKEN, TOKEN_SECRET, REST_API_BASE, SEARCH_API_BASE,
-				PROFILE_IMAGE_URL, USER_COLOR, IS_ACTIVATED };
+		public static final String[] COLUMNS = new String[] { _ID, USERNAME, USER_ID, AUTH_TYPE, BASIC_AUTH_PASSWORD,
+				OAUTH_TOKEN, TOKEN_SECRET, REST_API_BASE, SEARCH_API_BASE, PROFILE_IMAGE_URL, USER_COLOR, IS_ACTIVATED };
 
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL,
-				TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_INT_UNIQUE,
+				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
 
 	}
 
@@ -115,8 +112,8 @@ public final class TweetStore {
 
 		public static final String CONTENT_PATH = "cached_users";
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(
-				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
 
 		/**
 		 * User's ID of the status.<br>
@@ -142,11 +139,10 @@ public final class TweetStore {
 		 */
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
-		public static final String[] COLUMNS = new String[] { _ID, USER_ID, NAME, SCREEN_NAME,
-				PROFILE_IMAGE_URL };
+		public static final String[] COLUMNS = new String[] { _ID, USER_ID, NAME, SCREEN_NAME, PROFILE_IMAGE_URL };
 
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT_UNIQUE,
-				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT_UNIQUE, TYPE_TEXT, TYPE_TEXT,
+				TYPE_TEXT };
 
 	}
 
@@ -154,8 +150,8 @@ public final class TweetStore {
 
 		public static final String CONTENT_PATH = "drafts";
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(
-				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
 
 		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
 
@@ -176,8 +172,8 @@ public final class TweetStore {
 
 		public static final String CONTENT_PATH = "favorites";
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(
-				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
 
 	}
 
@@ -192,22 +188,22 @@ public final class TweetStore {
 		public static interface Keywords extends Filters {
 
 			public static final String CONTENT_PATH = "filtered_keywords";
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(
-					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+					CONTENT_PATH);
 		}
 
 		public static interface Sources extends Filters {
 
 			public static final String CONTENT_PATH = "filtered_sources";
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(
-					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+					CONTENT_PATH);
 		}
 
 		public static interface Users extends Filters {
 
 			public static final String CONTENT_PATH = "filtered_users";
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(
-					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+					CONTENT_PATH);
 		}
 	}
 
@@ -215,8 +211,8 @@ public final class TweetStore {
 
 		public static final String CONTENT_PATH = "mentions";
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(
-				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
 
 	}
 
@@ -224,8 +220,8 @@ public final class TweetStore {
 
 		public static final String CONTENT_PATH = "statuses";
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(
-				Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
 		/**
 		 * Account ID of the status.<br>
 		 * Type: TEXT
@@ -314,15 +310,14 @@ public final class TweetStore {
 
 		public static final String DEFAULT_SORT_ORDER = STATUS_TIMESTAMP + " DESC";
 
-		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID,
-				STATUS_TIMESTAMP, TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL,
-				IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID, IN_REPLY_TO_SCREEN_NAME, SOURCE,
-				LOCATION, RETWEET_COUNT, IS_RETWEET, IS_FAVORITE, HAS_MEDIA, IS_PROTECTED, IS_GAP };
+		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
+				TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID,
+				IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, IS_RETWEET, IS_FAVORITE, HAS_MEDIA,
+				IS_PROTECTED, IS_GAP };
 
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT,
-				TYPE_INT_UNIQUE, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT,
-				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT_UNIQUE, TYPE_INT,
+				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
+				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
 
 	}
 }

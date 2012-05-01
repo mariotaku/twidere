@@ -69,24 +69,8 @@ import com.actionbarsherlock.view.MenuItem;
 public class CommonUtils implements Constants {
 
 	private Context mContext;
+
 	private HashMap<Context, ServiceBinder> mConnectionMap = new HashMap<Context, ServiceBinder>();
-
-	private static UriMatcher URI_MATCHER;
-
-	static {
-		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FAVORITES, URI_FAVORITES);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_USERS, URI_CACHED_USERS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, URI_FILTERED_USERS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_KEYWORDS, URI_FILTERED_KEYWORDS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, URI_FILTERED_SOURCES);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
-	}
-
-	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 
 	public CommonUtils(Context context) {
 		mContext = context;
@@ -116,8 +100,7 @@ public class CommonUtils implements Constants {
 		Time now = new Time();
 		now.setToNow();
 
-		int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL
-				| DateUtils.FORMAT_CAP_AMPM;
+		int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_CAP_AMPM;
 
 		if (then.year != now.year) {
 			format_flags |= DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_DATE;
@@ -166,6 +149,23 @@ public class CommonUtils implements Constants {
 		wrapper.unbindService(binder);
 	}
 
+	private static UriMatcher URI_MATCHER;
+
+	static {
+		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FAVORITES, URI_FAVORITES);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_USERS, URI_CACHED_USERS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, URI_FILTERED_USERS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_KEYWORDS, URI_FILTERED_KEYWORDS);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, URI_FILTERED_SOURCES);
+		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
+	}
+
+	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
+
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
 		long[] account_ids = getActivatedAccounts(context);
 		if (account_ids.length <= 0) return null;
@@ -198,35 +198,70 @@ public class CommonUtils implements Constants {
 		}
 		builder.append(Statuses._ID + " NOT IN ( ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table);
-		builder.append(" WHERE " + table + "." + Statuses.SCREEN_NAME + " IN ( SELECT "
-				+ TABLE_FILTERED_USERS + "." + Filters.Users.TEXT + " FROM " + TABLE_FILTERED_USERS
-				+ " )");
+		builder.append(" WHERE " + table + "." + Statuses.SCREEN_NAME + " IN ( SELECT " + TABLE_FILTERED_USERS + "."
+				+ Filters.Users.TEXT + " FROM " + TABLE_FILTERED_USERS + " )");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table);
-		builder.append(" WHERE " + table + "." + Statuses.NAME + " IN ( SELECT "
-				+ TABLE_FILTERED_USERS + "." + Filters.Users.TEXT + " FROM " + TABLE_FILTERED_USERS
-				+ " )");
+		builder.append(" WHERE " + table + "." + Statuses.NAME + " IN ( SELECT " + TABLE_FILTERED_USERS + "."
+				+ Filters.Users.TEXT + " FROM " + TABLE_FILTERED_USERS + " )");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
 				+ TABLE_FILTERED_SOURCES);
-		builder.append(" WHERE " + table + "." + Statuses.SOURCE + " LIKE '%'||"
-				+ TABLE_FILTERED_SOURCES + "." + Filters.Sources.TEXT + "||'%'");
+		builder.append(" WHERE " + table + "." + Statuses.SOURCE + " LIKE '%'||" + TABLE_FILTERED_SOURCES + "."
+				+ Filters.Sources.TEXT + "||'%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
 				+ TABLE_FILTERED_KEYWORDS);
-		builder.append(" WHERE " + table + "." + Statuses.TEXT + " LIKE '%'||"
-				+ TABLE_FILTERED_KEYWORDS + "." + Filters.Keywords.TEXT + "||'%'");
+		builder.append(" WHERE " + table + "." + Statuses.TEXT + " LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "."
+				+ Filters.Keywords.TEXT + "||'%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" )");
 
 		return builder.toString();
+	}
+
+	public static synchronized void cleanDatabasesByItemLimit(Context context) {
+		ContentResolver resolver = context.getContentResolver();
+		String[] cols = new String[0];
+		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+		int item_limit = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).getInt(
+				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
+
+		for (long account_id : getAccounts(context)) {
+			// Clean statuses.
+			for (Uri uri : uris) {
+				Cursor cur = resolver.query(uri, cols, Statuses.ACCOUNT_ID + "=" + account_id, null,
+						Statuses.DEFAULT_SORT_ORDER);
+				if (cur != null && cur.getCount() > item_limit) {
+					cur.moveToPosition(item_limit - 1);
+					int _id = cur.getInt(cur.getColumnIndexOrThrow(Statuses._ID));
+					resolver.delete(uri, Statuses._ID + "<" + _id, null);
+				}
+				if (cur != null) {
+					cur.close();
+				}
+			}
+		}
+		// Clean cached users.
+		{
+			Uri uri = CachedUsers.CONTENT_URI;
+			Cursor cur = resolver.query(uri, cols, null, null, null);
+			if (cur != null && cur.getCount() > item_limit * 4) {
+				cur.moveToPosition(item_limit - 1);
+				int _id = cur.getInt(cur.getColumnIndexOrThrow(Statuses._ID));
+				resolver.delete(uri, Statuses._ID + "<" + _id, null);
+			}
+			if (cur != null) {
+				cur.close();
+			}
+		}
 	}
 
 	public static void clearAccountColor() {
@@ -260,8 +295,7 @@ public class CommonUtils implements Constants {
 				}
 				URL expanded_url = url.getExpandedURL();
 				if (expanded_url != null) {
-					text.setSpan(new URLSpan(expanded_url.toString()), start, end,
-							Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+					text.setSpan(new URLSpan(expanded_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
 			}
 		}
@@ -302,8 +336,7 @@ public class CommonUtils implements Constants {
 				}
 				URL media_url = media_item.getMediaURL();
 				if (media_url != null) {
-					text.setSpan(new URLSpan(media_url.toString()), start, end,
-							Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+					text.setSpan(new URLSpan(media_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
 			}
 		}
@@ -322,8 +355,7 @@ public class CommonUtils implements Constants {
 		Time now = new Time();
 		now.setToNow();
 
-		int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL
-				| DateUtils.FORMAT_CAP_AMPM;
+		int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_CAP_AMPM;
 
 		format_flags |= DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME;
 
@@ -359,9 +391,8 @@ public class CommonUtils implements Constants {
 
 		Integer color = sAccountColors.get(account_id);
 		if (color == null) {
-			Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-					new String[] { Accounts.USER_COLOR }, Accounts.USER_ID + "=" + account_id,
-					null, null);
+			Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_COLOR },
+					Accounts.USER_ID + "=" + account_id, null, null);
 			if (cur == null) return Color.TRANSPARENT;
 			if (cur.getCount() <= 0) {
 				cur.close();
@@ -375,10 +406,32 @@ public class CommonUtils implements Constants {
 		return color;
 	}
 
+	public static long getAccountIdForStatusId(Context context, long status_id) {
+
+		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+		String[] cols = new String[] { Statuses.ACCOUNT_ID };
+		String where = Statuses.STATUS_ID + " = " + status_id;
+
+		for (Uri uri : uris) {
+			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
+			if (cur == null) {
+				continue;
+			}
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				long id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.ACCOUNT_ID));
+				cur.close();
+				return id;
+			}
+			cur.close();
+		}
+		return -1;
+	}
+
 	public static long[] getAccounts(Context context) {
 		long[] accounts = new long[] {};
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.USER_ID }, null, null, null);
+		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID }, null,
+				null, null);
 		if (cur != null) {
 			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
 			cur.moveToFirst();
@@ -393,10 +446,25 @@ public class CommonUtils implements Constants {
 		return accounts;
 	}
 
+	public static String getAccountUsername(Context context, long account_id) {
+
+		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USERNAME },
+				Accounts.USER_ID + "=" + account_id, null, null);
+		if (cur == null) return null;
+		if (cur.getCount() <= 0) {
+			cur.close();
+			return null;
+		}
+		cur.moveToFirst();
+		String username = cur.getString(cur.getColumnIndexOrThrow(Accounts.USERNAME));
+		cur.close();
+		return username;
+	}
+
 	public static long[] getActivatedAccounts(Context context) {
 		long[] accounts = new long[] {};
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.USER_ID }, Accounts.IS_ACTIVATED + "=1", null, null);
+		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
+				Accounts.IS_ACTIVATED + "=1", null, null);
 		if (cur != null) {
 			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
 			cur.moveToFirst();
@@ -449,8 +517,8 @@ public class CommonUtils implements Constants {
 		Paint paint = new Paint();
 		paint.setColor(Color.WHITE);
 		paint.setStrokeWidth(2.0f);
-		float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0,
-				height, width, height };
+		float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0, height, width,
+				height };
 		canvas.drawLines(points, paint);
 
 		return bm;
@@ -505,10 +573,38 @@ public class CommonUtils implements Constants {
 		return null;
 	}
 
-	public static String[] getMentionedNames(CharSequence text, boolean at_sign) {
+	public static long[] getLastStatusIds(Context context, Uri uri) {
+		long[] account_ids = getActivatedAccounts(context);
+		String[] cols = new String[] { Statuses.STATUS_ID };
+		ContentResolver resolver = context.getContentResolver();
+		long[] status_ids = new long[account_ids.length];
+		int idx = 0;
+		for (long account_id : account_ids) {
+			String where = Statuses.ACCOUNT_ID + " = " + account_id;
+			Cursor cur = resolver.query(uri, cols, where, null, Statuses.STATUS_ID);
+			if (cur == null) {
+				continue;
+			}
+
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_ID));
+			}
+			cur.close();
+			idx++;
+		}
+		return status_ids;
+	}
+
+	public static String[] getMentionedNames(CharSequence user_name, CharSequence text, boolean at_sign,
+			boolean include_author) {
 		Pattern pattern = Pattern.compile("(?<!\\w)(@(\\w+))", Pattern.MULTILINE);
 		Matcher matcher = pattern.matcher(text);
 		List<String> mentions = new ArrayList<String>();
+
+		if (include_author) {
+			mentions.add((at_sign ? "@" : "") + user_name);
+		}
 
 		while (matcher.find()) {
 			String mention = matcher.group(at_sign ? 1 : 2);
@@ -518,6 +614,28 @@ public class CommonUtils implements Constants {
 			mentions.add(mention);
 		}
 		return mentions.toArray(new String[mentions.size()]);
+	}
+
+	public static String getScreenNameForStatusId(Context context, long status_id) {
+
+		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+		String[] cols = new String[] { Statuses.SCREEN_NAME };
+		String where = Statuses.STATUS_ID + " = " + status_id;
+
+		for (Uri uri : uris) {
+			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
+			if (cur == null) {
+				continue;
+			}
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				String name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
+				cur.close();
+				return name;
+			}
+			cur.close();
+		}
+		return null;
 	}
 
 	public static int getTableId(Uri uri) {
@@ -546,24 +664,20 @@ public class CommonUtils implements Constants {
 	}
 
 	public static Twitter getTwitterInstance(Context context, long account_id) {
-		final SharedPreferences preferences = context.getSharedPreferences(PREFERENCE_NAME,
-				Context.MODE_PRIVATE);
-		final boolean enable_gzip_compressing = preferences.getBoolean(
-				PREFERENCE_KEY_GZIP_COMPRESSING, false);
+		final SharedPreferences preferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		Twitter twitter = null;
 		StringBuilder where = new StringBuilder();
 		where.append(Accounts.USER_ID + "=" + account_id);
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS,
-				where.toString(), null, null);
+		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS, where.toString(), null,
+				null);
 		if (cur != null) {
 			if (cur.getCount() == 1) {
 				cur.moveToFirst();
 				ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setGZIPEnabled(enable_gzip_compressing);
-				String rest_api_base = cur.getString(cur
-						.getColumnIndexOrThrow(Accounts.REST_API_BASE));
-				String search_api_base = cur.getString(cur
-						.getColumnIndexOrThrow(Accounts.SEARCH_API_BASE));
+				String rest_api_base = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_API_BASE));
+				String search_api_base = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_API_BASE));
 				if (rest_api_base == null || "".equals(rest_api_base)) {
 					rest_api_base = DEFAULT_REST_API_BASE;
 				}
@@ -578,16 +692,14 @@ public class CommonUtils implements Constants {
 					case Accounts.AUTH_TYPE_XAUTH:
 						cb.setOAuthConsumerKey(CONSUMER_KEY);
 						cb.setOAuthConsumerSecret(CONSUMER_SECRET);
-						twitter = new TwitterFactory(cb.build()).getInstance(new AccessToken(cur
-								.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN)), cur
-								.getString(cur.getColumnIndexOrThrow(Accounts.TOKEN_SECRET))));
+						twitter = new TwitterFactory(cb.build()).getInstance(new AccessToken(cur.getString(cur
+								.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN)), cur.getString(cur
+								.getColumnIndexOrThrow(Accounts.TOKEN_SECRET))));
 						break;
 					case Accounts.AUTH_TYPE_BASIC:
-						twitter = new TwitterFactory(cb.build())
-								.getInstance(new BasicAuthorization(
-										cur.getString(cur.getColumnIndexOrThrow(Accounts.USERNAME)),
-										cur.getString(cur
-												.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD))));
+						twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(cur.getString(cur
+								.getColumnIndexOrThrow(Accounts.USERNAME)), cur.getString(cur
+								.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD))));
 						break;
 					default:
 				}
@@ -597,8 +709,7 @@ public class CommonUtils implements Constants {
 		return twitter;
 	}
 
-	public static int getTypeIcon(boolean is_retweet, boolean is_fav, boolean has_location,
-			boolean has_media) {
+	public static int getTypeIcon(boolean is_retweet, boolean is_fav, boolean has_location, boolean has_media) {
 		if (is_fav)
 			return R.drawable.ic_tweet_stat_starred;
 		else if (is_retweet)
@@ -618,33 +729,8 @@ public class CommonUtils implements Constants {
 		return false;
 	}
 
-	public static void limitDatabases(Context context) {
-		ContentResolver resolver = context.getContentResolver();
-		String[] cols = new String[0];
-		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
-		int item_limit = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
-				.getInt(PREFERENCE_KEY_ITEM_LIMIT, PREFERENCE_DEFAULT_ITEM_LIMIT);
-
-		for (long account_id : getAccounts(context)) {
-			// Clean statuses.
-			for (Uri uri : uris) {
-				Cursor cur = resolver.query(uri, cols, Statuses.ACCOUNT_ID + "=" + account_id,
-						null, Statuses.DEFAULT_SORT_ORDER);
-				if (cur != null && cur.getCount() > item_limit) {
-					cur.moveToPosition(item_limit - 1);
-					int _id = cur.getInt(cur.getColumnIndexOrThrow(Statuses._ID));
-					resolver.delete(uri, Statuses._ID + "<" + _id, null);
-				}
-				if (cur != null) {
-					cur.close();
-				}
-			}
-		}
-	}
-
-	public static ContentValues makeAccountContentValues(int color, AccessToken access_token,
-			User user, String rest_api_base, String search_api_base, String basic_password,
-			int auth_type) {
+	public static ContentValues makeAccountContentValues(int color, AccessToken access_token, User user,
+			String rest_api_base, String search_api_base, String basic_password, int auth_type) {
 		if (user == null) throw new IllegalArgumentException("User can't be null!");
 		ContentValues values = new ContentValues();
 		switch (auth_type) {
@@ -656,8 +742,7 @@ public class CommonUtils implements Constants {
 			case Accounts.AUTH_TYPE_OAUTH:
 			case Accounts.AUTH_TYPE_XAUTH:
 				if (access_token == null)
-					throw new IllegalArgumentException(
-							"Access Token can't be null in OAuth/xAuth mode!");
+					throw new IllegalArgumentException("Access Token can't be null in OAuth/xAuth mode!");
 				if (user.getId() != access_token.getUserId())
 					throw new IllegalArgumentException("User and Access Token not match!");
 				values.put(Accounts.OAUTH_TOKEN, access_token.getToken());
@@ -782,12 +867,10 @@ public class CommonUtils implements Constants {
 	public static void showErrorMessage(Context context, int error_code) {
 		switch (error_code) {
 			case RESULT_ALREADY_LOGGED_IN:
-				Toast.makeText(context, R.string.error_already_logged_in, Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(context, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
 				break;
 			case RESULT_CONNECTIVITY_ERROR:
-				Toast.makeText(context, R.string.error_connectivity_error, Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(context, R.string.error_connectivity_error, Toast.LENGTH_SHORT).show();
 				break;
 			case RESULT_SERVER_ERROR:
 				Toast.makeText(context, R.string.error_server_error, Toast.LENGTH_SHORT).show();

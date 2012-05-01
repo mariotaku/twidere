@@ -26,7 +26,9 @@ import android.widget.LinearLayout;
 public class ColorPickerDialogFragment extends BaseDialogFragment {
 
 	private ColorPickerDialog mDialog;
+
 	private OnColorSelectedListener mListener;
+
 	private int mInitialColor;
 
 	@Override
@@ -61,8 +63,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 		mListener = listener;
 	}
 
-	public class ColorPickerDialog extends AlertDialog implements OnColorChangedListener,
-			OnClickListener {
+	public class ColorPickerDialog extends AlertDialog implements OnColorChangedListener, OnClickListener {
 
 		private ColorPickerView mColorPicker;
 
@@ -140,8 +141,8 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 			Paint paint = new Paint();
 			paint.setColor(Color.WHITE);
 			paint.setStrokeWidth(2.0f);
-			float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width,
-					height, 0, height, width, height };
+			float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0, height, width,
+					height };
 			canvas.drawLines(points, paint);
 
 			return bm;
@@ -157,8 +158,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 
 			mColorPicker = new ColorPickerView(context);
 
-			mContentView
-					.addView(mColorPicker, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+			mContentView.addView(mColorPicker, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
 			mContentView.setPadding(Math.round(mColorPicker.getDrawingOffset()), 0,
 					Math.round(mColorPicker.getDrawingOffset()), 0);

@@ -1,12 +1,14 @@
 package org.mariotaku.twidere.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.util.SparseArray;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class AsyncTaskManager {
 
 	private SparseArray<ManagedAsyncTask> mTasks = new SparseArray<ManagedAsyncTask>();
-	private static AsyncTaskManager sInstance;
 
 	public int add(ManagedAsyncTask task, boolean exec, Object... params) {
 		int hashCode = task.hashCode();
@@ -50,6 +52,18 @@ public class AsyncTaskManager {
 		return false;
 	}
 
+	public List<ManagedAsyncTask<?>> getTaskList() {
+		List<ManagedAsyncTask<?>> list = new ArrayList<ManagedAsyncTask<?>>();
+
+		for (int i = 0; i < mTasks.size(); i++) {
+			ManagedAsyncTask task = mTasks.valueAt(i);
+			if (task != null) {
+				list.add(task);
+			}
+		}
+		return list;
+	}
+
 	public boolean hasActivatedTask() {
 		return mTasks.size() > 0;
 	}
@@ -63,6 +77,8 @@ public class AsyncTaskManager {
 	public void remove(int hashCode) {
 		mTasks.remove(hashCode);
 	}
+
+	private static AsyncTaskManager sInstance;
 
 	public static AsyncTaskManager getInstance() {
 		if (sInstance == null) {

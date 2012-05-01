@@ -14,15 +14,13 @@ public class FavoriteCursor extends StatusesCursor {
 	}
 
 	@Override
-	public List<Status> getStatuses(Twitter twitter, long id, Paging paging)
-			throws TwitterException {
+	public List<Status> getStatuses(Twitter twitter, long id, Paging paging) throws TwitterException {
 		if (paging == null) return twitter.getFavorites();
 		return twitter.getFavorites(paging);
 	}
 
 	@Override
-	public List<Status> getStatuses(Twitter twitter, String screen_name, Paging paging)
-			throws TwitterException {
+	public List<Status> getStatuses(Twitter twitter, String screen_name, Paging paging) throws TwitterException {
 		if (paging == null) return twitter.getFavorites();
 		return twitter.getFavorites(paging);
 	}

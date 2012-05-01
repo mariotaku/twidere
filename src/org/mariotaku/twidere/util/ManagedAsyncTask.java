@@ -6,8 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
-public abstract class ManagedAsyncTask<Result> extends AsyncTask<Object, Integer, Result> implements
-		Constants {
+public abstract class ManagedAsyncTask<Result> extends AsyncTask<Object, Integer, Result> implements Constants {
 
 	private AsyncTaskManager manager;
 	private Context context;

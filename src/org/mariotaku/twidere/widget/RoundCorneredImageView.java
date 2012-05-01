@@ -41,7 +41,6 @@ public class RoundCorneredImageView extends ImageView {
 	private void createPath() {
 		float density = getResources().getDisplayMetrics().density;
 		mPath.reset();
-		mPath.addRoundRect(new RectF(0, 0, getWidth(), getHeight()), 4 * density, 4 * density,
-				Path.Direction.CW);
+		mPath.addRoundRect(new RectF(0, 0, getWidth(), getHeight()), 4 * density, 4 * density, Path.Direction.CW);
 	}
 }

@@ -3,6 +3,7 @@ package org.mariotaku.twidere.fragment;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -38,22 +39,25 @@ import com.actionbarsherlock.view.MenuItem;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public abstract class StatusesFragment extends BaseFragment implements OnRefreshListener,
-		LoaderCallbacks<Cursor>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
-		ActionMode.Callback {
+public abstract class StatusesFragment extends BaseFragment implements OnRefreshListener, LoaderCallbacks<Cursor>,
+		OnScrollListener, OnItemClickListener, OnItemLongClickListener, ActionMode.Callback {
 
 	public ServiceInterface mServiceInterface;
 	public PullToRefreshListView mListView;
 	public ContentResolver mResolver;
 	public long mSelectedStatusId;
-
+	private int mRunningTaskId;
+	private AsyncTaskManager mAsyncTaskManager;
 	private StatusesAdapter mAdapter;
 	private boolean mBusy, mTickerStopped;
 
 	private Handler mHandler;
 	private Runnable mTicker;
-	private boolean mBottomReached, mDisplayProfileImage, mActivityFirstCreated;
+	private boolean mReachedBottom, mDisplayProfileImage, mActivityFirstCreated;
 	private SharedPreferences mPreferences;
+	private boolean mLoadMoreAutomatically;
+
+	private boolean mNotReachedBottomBefore = true;
 
 	public abstract Uri getContentUri();
 
@@ -65,33 +69,32 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		Cursor cur = mResolver.query(uri, cols, where, null, null);
 		if (cur != null && cur.getCount() > 0) {
 			cur.moveToFirst();
-			String text = Html.fromHtml(cur.getString(cur.getColumnIndexOrThrow(Statuses.TEXT)))
-					.toString();
-			long status_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_ID));
+			String text = Html.fromHtml(cur.getString(cur.getColumnIndexOrThrow(Statuses.TEXT))).toString();
+			String screen_name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
 			long account_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.ACCOUNT_ID));
 			switch (item.getItemId()) {
 				case MENU_REPLY:
 					Bundle bundle = new Bundle();
 					bundle.putStringArray(INTENT_KEY_MENTIONS,
-							CommonUtils.getMentionedNames(text, true));
+							CommonUtils.getMentionedNames(screen_name, text, false, true));
+					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mSelectedStatusId);
 					startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
 					break;
 				case MENU_RETWEET:
-					mServiceInterface.retweetStatus(new long[] { account_id }, status_id);
+					mServiceInterface.retweetStatus(new long[] { account_id }, mSelectedStatusId);
 					break;
 				case MENU_QUOTE:
 					break;
 				case MENU_FAV:
-					boolean is_favorite = cur.getInt(cur
-							.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
+					boolean is_favorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
 					if (is_favorite) {
-						mServiceInterface.destroyFavorite(new long[] { account_id }, status_id);
+						mServiceInterface.destroyFavorite(new long[] { account_id }, mSelectedStatusId);
 					} else {
-						mServiceInterface.createFavorite(new long[] { account_id }, status_id);
+						mServiceInterface.createFavorite(new long[] { account_id }, mSelectedStatusId);
 					}
 					break;
 				case MENU_DELETE:
-					mServiceInterface.destroyStatus(account_id, status_id);
+					mServiceInterface.destroyStatus(account_id, mSelectedStatusId);
 					break;
 				default:
 					cur.close();
@@ -108,22 +111,21 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME,
-				Context.MODE_PRIVATE);
+		mAsyncTaskManager = AsyncTaskManager.getInstance();
+		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		mResolver = getSherlockActivity().getContentResolver();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getServiceInterface();
+		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
 		mAdapter = new StatusesAdapter(getSherlockActivity(), imageloader);
 		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
 		ListView list = mListView.getRefreshableView();
+		list.setAdapter(mAdapter);
 		list.setOnScrollListener(this);
 		list.setOnItemClickListener(this);
 		list.setOnItemLongClickListener(this);
-		list.setAdapter(mAdapter);
 		getLoaderManager().initLoader(0, null, this);
 	}
 
@@ -144,12 +146,11 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		String[] cols = Statuses.COLUMNS;
 		Uri uri = getContentUri();
 		String where = CommonUtils.buildActivatedStatsWhereClause(getSherlockActivity(), null);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTERS, false)) {
+		if (mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
 			String table = CommonUtils.getTableNameForContentUri(uri);
 			where = CommonUtils.buildFilterWhereClause(table, where);
 		}
-		return new CursorLoader(getSherlockActivity(), uri, cols, where, null,
-				Statuses.DEFAULT_SORT_ORDER);
+		return new CursorLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
 	}
 
 	@Override
@@ -175,8 +176,8 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			StatusItemHolder holder = (StatusItemHolder) tag;
 			long status_id = holder.status_id;
 			long account_id = holder.account_id;
-			if (holder.isGap()) {
-				doRefresh(new long[] { account_id }, new long[] { status_id });
+			if (holder.isGap() || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
+				getStatuses(new long[] { account_id }, new long[] { status_id });
 			} else {
 				Bundle bundle = new Bundle();
 				bundle.putLong(Statuses.ACCOUNT_ID, account_id);
@@ -212,8 +213,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 
 	@Override
 	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		CommonUtils.setMenuForStatus(getSherlockActivity(), menu, mSelectedStatusId,
-				getContentUri());
+		CommonUtils.setMenuForStatus(getSherlockActivity(), menu, mSelectedStatusId, getContentUri());
 		return true;
 	}
 
@@ -221,15 +221,16 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public void onRefresh() {
 
 		long[] account_ids = CommonUtils.getActivatedAccounts(getSherlockActivity());
-		doRefresh(account_ids, null);
+		mRunningTaskId = getStatuses(account_ids, null);
 
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		boolean display_profile_image = mPreferences.getBoolean(
-				PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_LOAD_MORE_AUTOMATICALLY, false);
+		mAdapter.setShowLastItemAsGap(!mLoadMoreAutomatically);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		if (mDisplayProfileImage != display_profile_image) {
 			mDisplayProfileImage = display_profile_image;
@@ -238,13 +239,20 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-			int totalItemCount) {
-		boolean reached = firstVisibleItem + visibleItemCount == totalItemCount;
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+		boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount && totalItemCount >= visibleItemCount;
 
-		if (mBottomReached != reached) {
-			mBottomReached = reached;
-			if (mBottomReached) {
+		if (mReachedBottom != reached) {
+			mReachedBottom = reached;
+			if (mReachedBottom && mNotReachedBottomBefore) {
+				mNotReachedBottomBefore = false;
+				return;
+			}
+			if (mLoadMoreAutomatically && mReachedBottom) {
+				if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
+					mRunningTaskId = getStatuses(CommonUtils.getActivatedAccounts(getSherlockActivity()),
+							CommonUtils.getLastStatusIds(getSherlockActivity(), getContentUri()));
+				}
 			}
 		}
 
@@ -269,6 +277,10 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		super.onStart();
 		mTickerStopped = false;
 		mHandler = new Handler();
+
+		if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
+			mListView.onRefreshComplete();
+		}
 
 		mTicker = new Runnable() {
 
@@ -297,16 +309,15 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		super.onStop();
 	}
 
-	private void doRefresh(long[] account_ids, long[] max_ids) {
+	private int getStatuses(long[] account_ids, long[] max_ids) {
 		switch (CommonUtils.getTableId(getContentUri())) {
 			case URI_STATUSES:
-				mServiceInterface.getHomeTimeline(account_ids, max_ids);
-				break;
+				return mServiceInterface.getHomeTimeline(account_ids, max_ids);
 			case URI_MENTIONS:
-				mServiceInterface.getMentions(account_ids, max_ids);
-				break;
+				return mServiceInterface.getMentions(account_ids, max_ids);
 			case URI_FAVORITES:
 				break;
 		}
+		return 0;
 	}
 }
