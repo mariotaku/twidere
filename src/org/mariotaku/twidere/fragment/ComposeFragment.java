@@ -72,6 +72,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		long[] activated_ids = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
 		mInReplyToStatusId = bundle != null ? bundle.getLong(INTENT_KEY_IN_REPLY_TO_ID) : -1;
 		int text_selection_start = -1;
+		boolean is_quote = false;
 		if (mInReplyToStatusId > -1) {
 			String screen_name = CommonUtils.getScreenNameForStatusId(getSherlockActivity(), mInReplyToStatusId);
 			long account_id = CommonUtils.getAccountIdForStatusId(getSherlockActivity(), mInReplyToStatusId);
@@ -93,12 +94,9 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				text_selection_start = mText.indexOf(' ') + 1;
 			}
 
-			if (bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false) {
-				getSherlockActivity().setTitle(getString(R.string.quote_user, screen_name));
-				text_selection_start = 0;
-			} else {
-				getSherlockActivity().setTitle(getString(R.string.reply_to, screen_name));
-			}
+			is_quote = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false;
+			
+			getSherlockActivity().setTitle(getString(is_quote ? R.string.quote_user : R.string.reply_to, screen_name));
 			mAccountIds = new long[] { account_id };
 		} else {
 			mAccountIds = activated_ids == null ? CommonUtils.getActivatedAccounts(getSherlockActivity())
@@ -118,7 +116,9 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		mEditText.addTextChangedListener(this);
 		if (mText != null) {
 			mEditText.setText(mText);
-			if (text_selection_start != -1 && text_selection_start < mEditText.length() && mEditText.length() > 0) {
+			if (is_quote) {
+				mEditText.setSelection(0);
+			} else if (text_selection_start != -1 && text_selection_start < mEditText.length() && mEditText.length() > 0) {
 				mEditText.setSelection(text_selection_start, mEditText.length() - 1);
 			} else if (mEditText.length() > 0) {
 				mEditText.setSelection(mEditText.length());
