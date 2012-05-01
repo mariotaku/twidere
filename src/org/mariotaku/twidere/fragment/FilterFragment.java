@@ -41,11 +41,12 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.viewpagerindicator.ExtendedViewPager;
 import com.viewpagerindicator.TabPageIndicator;
 
 public class FilterFragment extends BaseFragment {
 
-	private ViewPager mViewPager;
+	private ExtendedViewPager mViewPager;
 
 	private TabsAdapter mAdapter;
 
@@ -56,7 +57,7 @@ public class FilterFragment extends BaseFragment {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 		View view = getView();
-		mViewPager = (ViewPager) view.findViewById(R.id.pager);
+		mViewPager = (ExtendedViewPager) view.findViewById(R.id.pager);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mAdapter = new TabsAdapter(getSherlockActivity(), getFragmentManager());
 		mAdapter.addTab(FilteredUsersFragment.class, getString(R.string.users), null);

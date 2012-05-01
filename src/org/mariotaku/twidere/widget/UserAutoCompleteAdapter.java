@@ -45,7 +45,6 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		// TODO Auto-generated method stub
 		return super.newView(context, cursor, parent);
 	}
 

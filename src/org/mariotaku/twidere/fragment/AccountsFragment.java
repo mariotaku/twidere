@@ -5,6 +5,7 @@ import java.net.URL;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.BaseActivity;
+import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
@@ -27,6 +28,7 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -42,7 +44,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor> {
+public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, OnBackStackChangedListener {
 
 	private ListView mListView;
 
@@ -133,10 +135,17 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		mFragment.show(ft, "delete_confirm");
 	}
 
+	Fragment mDetailFragment;
+
 	private void showDetails(long user_id) {
-		Fragment fragment = new MeFragment();
+		if (getSherlockActivity() instanceof HomeActivity) {
+			((HomeActivity) getSherlockActivity()).setPagingEnabled(false);
+		}
+		if (mDetailFragment == null) {
+			mDetailFragment = Fragment.instantiate(getSherlockActivity(), MeFragment.class.getName(), null);
+		}
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.replace(R.id.dashboard, fragment);
+		ft.replace(R.id.dashboard, mDetailFragment);
 		ft.addToBackStack(null);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 		ft.commit();
@@ -170,6 +179,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		mListView = getListView();
 		mListView.setOnCreateContextMenuListener(this);
 		setListAdapter(mAdapter);
+		getFragmentManager().addOnBackStackChangedListener(this);
 	}
 
 	@Override
@@ -318,6 +328,15 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();
+		}
+
+	}
+
+	@Override
+	public void onBackStackChanged() {
+		if (getSherlockActivity() instanceof HomeActivity) {
+			((HomeActivity) getSherlockActivity()).setPagingEnabled(mDetailFragment == null
+					|| !mDetailFragment.isAdded());
 		}
 
 	}

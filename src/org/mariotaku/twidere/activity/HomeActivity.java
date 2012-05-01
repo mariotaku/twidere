@@ -34,11 +34,12 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.ActionMode.Callback;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.viewpagerindicator.ExtendedViewPager;
 import com.viewpagerindicator.TabPageIndicator;
 
 public class HomeActivity extends BaseActivity implements OnClickListener {
 
-	private ViewPager mViewPager;
+	private ExtendedViewPager mViewPager;
 	private SharedPreferences mPreferences;
 	private ActionBar mActionBar;
 	private ProgressBar mProgress;
@@ -46,6 +47,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private ImageButton mComposeButton;
 	private ServiceInterface mInterface;
 	private TabPageIndicator mIndicator;
+
+	public void setPagingEnabled(boolean enabled) {
+		if (mIndicator != null) mIndicator.setPagingEnabled(enabled);
+	}
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -81,7 +86,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		mPreferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
 		mComposeButton = (ImageButton) findViewById(R.id.compose);
 		long[] activated_ids = CommonUtils.getActivatedAccounts(this);
 
