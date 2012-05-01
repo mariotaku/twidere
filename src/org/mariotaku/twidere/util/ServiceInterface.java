@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.IUpdateService;
+import org.mariotaku.twidere.ITwidereService;
 import org.mariotaku.twidere.app.TwidereApplication;
 
 import android.content.BroadcastReceiver;
@@ -18,9 +18,9 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-public class ServiceInterface implements Constants, IUpdateService {
+public class ServiceInterface implements Constants, ITwidereService {
 
-	private IUpdateService mService;
+	private ITwidereService mService;
 
 	private Context mContext;
 
@@ -50,7 +50,7 @@ public class ServiceInterface implements Constants, IUpdateService {
 
 		@Override
 		public void onServiceConnected(ComponentName service, IBinder obj) {
-			mService = IUpdateService.Stub.asInterface(obj);
+			mService = ITwidereService.Stub.asInterface(obj);
 			IntentFilter filter = new IntentFilter() {
 
 				{

@@ -23,8 +23,8 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	private boolean mDisplayProfileImage, mMultipleAccountsActivated, mShowLastItemAsGap;
 	private LazyImageLoader mImageLoader;
 	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx, mTextIdx, mProfileImageUrlIdx,
-			mRetweetCountIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx, mHasMediaIdx, mIsProtectedIdx, mInReplyToStatusIdIdx,
-			mInReplyToScreennameIdx;
+			mRetweetCountIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx, mHasMediaIdx, mIsProtectedIdx,
+			mInReplyToStatusIdIdx, mInReplyToScreennameIdx;
 
 	private Context mContext;
 
@@ -65,7 +65,8 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			boolean has_location = cursor.getString(mLocationIdx) != null;
 			boolean is_reply = cursor.getLong(mInReplyToStatusIdIdx) != -1;
 			boolean is_protected = cursor.getInt(mIsProtectedIdx) == 1;
-			holder.user_name.setCompoundDrawablesWithIntrinsicBounds(is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
+			holder.user_name.setCompoundDrawablesWithIntrinsicBounds(
+					is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
 			holder.screen_name.setText("@" + screen_name);
 			holder.text.setText(Html.fromHtml(text).toString());
 			holder.tweet_time

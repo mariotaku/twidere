@@ -214,7 +214,8 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 			boolean has_location = status.getGeoLocation() != null;
 			boolean is_protected = user.isProtected();
 			holder.user_name.setText(user.getName());
-			holder.user_name.setCompoundDrawablesWithIntrinsicBounds(is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
+			holder.user_name.setCompoundDrawablesWithIntrinsicBounds(
+					is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
 			holder.screen_name.setText(user.getScreenName());
 			holder.text.setText(status.getText());
 			holder.tweet_time.setText(CommonUtils

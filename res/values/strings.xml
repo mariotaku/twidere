@@ -127,5 +127,10 @@
 	<string name="add_rule">Add rule</string>
 	<string name="longclick_to_delete">Longclick to delete.</string>
 	<string name="debug">Debug</string>
+	<string name="retweet_success">Retweet success.</string>
+	<string name="delete_success">Delete success.</string>
+	<string name="send_success">Send success.</string>
+	<string name="favorite_success">Favorite success.</string>
+	<string name="unfavorite_success">Unfavorite success.</string>
 
 </resources>

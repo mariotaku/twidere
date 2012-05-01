@@ -180,7 +180,7 @@
 		</provider>
 
 		<service
-			android:name=".service.UpdateService"
+			android:name=".service.TwidereService"
 			android:label="@string/label_update_service">
 		</service>
 

@@ -17,7 +17,7 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.service.UpdateService;
+import org.mariotaku.twidere.service.TwidereService;
 
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
@@ -86,9 +86,9 @@ public class CommonUtils implements Constants {
 	public ServiceToken bindToService(ServiceConnection callback) {
 
 		ContextWrapper cw = new ContextWrapper(mContext);
-		cw.startService(new Intent(cw, UpdateService.class));
+		cw.startService(new Intent(cw, TwidereService.class));
 		ServiceBinder sb = new ServiceBinder(callback);
-		if (cw.bindService(new Intent(cw, UpdateService.class), sb, 0)) {
+		if (cw.bindService(new Intent(cw, TwidereService.class), sb, 0)) {
 			mConnectionMap.put(cw, sb);
 			return new ServiceToken(cw);
 		}

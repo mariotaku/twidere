@@ -29,12 +29,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -52,7 +52,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView;
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
-	private View mProfileView, mFollowIndicator, mMapView;
+	private ImageButton mViewMapButton, mViewMediaButton;
+	private View mProfileView, mFollowIndicator;
 	private ProgressBar mProgress;
 	private long mStatusUserId;
 	private String mStatusScreenName;
@@ -94,6 +95,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		mFollowButton = (Button) view.findViewById(R.id.follow);
 		mFollowIndicator = view.findViewById(R.id.follow_indicator);
 		mProfileView = view.findViewById(R.id.profile);
+		mViewMapButton = (ImageButton) view.findViewById(R.id.view_map);
+		mViewMediaButton = (ImageButton) view.findViewById(R.id.view_media);
 		// mMapView = (FrameLayout) view.findViewById(R.id.map);
 		mProgress = (ProgressBar) view.findViewById(R.id.progress);
 		mProfileView.setOnClickListener(this);
@@ -138,7 +141,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case MENU_SHARE:{
+			case MENU_SHARE: {
 				break;
 			}
 			case MENU_REPLY: {
@@ -157,7 +160,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				}
 				break;
 			}
-			case MENU_QUOTE:{
+			case MENU_QUOTE: {
 				Bundle bundle = new Bundle();
 				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatusId);
 				bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
@@ -285,16 +288,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			mIsRetweetByMe = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_RETWEET)) < 0;
 			String location_string = cur.getString(cur.getColumnIndexOrThrow(Statuses.LOCATION));
 			GeoLocation location = CommonUtils.getGeoLocationFromString(location_string);
-			// mMapView.setVisibility(location == null ? View.GONE :
-			// View.VISIBLE);
-			// if (location != null) {
-			// FragmentTransaction ft = getFragmentManager().beginTransaction();
-			// Fragment fragment = new GoogleMapFragment(location.getLatitude(),
-			// location.getLongitude(), true);
-			// ft.replace(R.id.map, fragment);
-			// ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			// ft.commit();
-			// }
+			mViewMapButton.setVisibility(location != null ? View.VISIBLE : View.GONE);
+			mViewMediaButton.setVisibility(View.GONE);
 
 			LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 					.getListProfileImageLoader();

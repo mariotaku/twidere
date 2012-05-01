@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.IUpdateService;
+import org.mariotaku.twidere.ITwidereService;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -33,9 +34,9 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
+import android.widget.Toast;
 
-public class UpdateService extends Service implements Constants {
+public class TwidereService extends Service implements Constants {
 
 	private final ServiceStub mBinder = new ServiceStub(this);
 
@@ -114,7 +115,7 @@ public class UpdateService extends Service implements Constants {
 		private long status_id;
 
 		public CreateFavoriteTask(long[] account_ids, long status_id) {
-			super(UpdateService.this, mAsyncTaskManager);
+			super(TwidereService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.status_id = status_id;
 		}
@@ -127,7 +128,7 @@ public class UpdateService extends Service implements Constants {
 			List<AccountResponce> result = new ArrayList<AccountResponce>();
 
 			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id, false);
+				Twitter twitter = CommonUtils.getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.createFavorite(status_id);
@@ -154,6 +155,11 @@ public class UpdateService extends Service implements Constants {
 					resolver.update(uri, values, where.toString(), null);
 				}
 			}
+			if (result.size() > 0) {
+				Toast.makeText(TwidereService.this, R.string.favorite_success, Toast.LENGTH_SHORT).show();
+			} else {
+
+			}
 			super.onPostExecute(result);
 		}
 
@@ -177,7 +183,7 @@ public class UpdateService extends Service implements Constants {
 		private long status_id;
 
 		public DestroyFavoriteTask(long[] account_ids, long status_id) {
-			super(UpdateService.this, mAsyncTaskManager);
+			super(TwidereService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.status_id = status_id;
 		}
@@ -190,7 +196,7 @@ public class UpdateService extends Service implements Constants {
 			List<AccountResponce> result = new ArrayList<AccountResponce>();
 
 			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id, false);
+				Twitter twitter = CommonUtils.getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.destroyFavorite(status_id);
@@ -217,6 +223,11 @@ public class UpdateService extends Service implements Constants {
 					resolver.update(uri, values, where.toString(), null);
 				}
 			}
+			if (result.size() > 0) {
+				Toast.makeText(TwidereService.this, R.string.unfavorite_success, Toast.LENGTH_SHORT).show();
+			} else {
+
+			}
 			super.onPostExecute(result);
 		}
 
@@ -240,7 +251,7 @@ public class UpdateService extends Service implements Constants {
 		private long status_id;
 
 		public DestroyStatusTask(long account_id, long status_id) {
-			super(UpdateService.this, mAsyncTaskManager);
+			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
@@ -248,7 +259,7 @@ public class UpdateService extends Service implements Constants {
 		@Override
 		protected AccountResponce doInBackground(Object... params) {
 
-			Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id, false);
+			Twitter twitter = CommonUtils.getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					twitter4j.Status status = twitter.destroyStatus(status_id);
@@ -268,6 +279,11 @@ public class UpdateService extends Service implements Constants {
 			where.append(" AND " + Statuses.STATUS_ID + "=" + result.status.getId());
 			for (Uri uri : TweetStore.STATUSES_URIS) {
 				resolver.delete(uri, where.toString(), null);
+			}
+			if (result != null) {
+				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
+			} else {
+
 			}
 			super.onPostExecute(result);
 		}
@@ -465,7 +481,7 @@ public class UpdateService extends Service implements Constants {
 		private long status_id;
 
 		public RetweetStatusTask(long[] account_ids, long status_id) {
-			super(UpdateService.this, mAsyncTaskManager);
+			super(TwidereService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.status_id = status_id;
 		}
@@ -478,7 +494,7 @@ public class UpdateService extends Service implements Constants {
 			List<AccountResponce> result = new ArrayList<AccountResponce>();
 
 			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id, false);
+				Twitter twitter = CommonUtils.getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.retweetStatus(status_id);
@@ -506,6 +522,11 @@ public class UpdateService extends Service implements Constants {
 					resolver.update(uri, values, where.toString(), null);
 				}
 			}
+			if (result.size() > 0) {
+				Toast.makeText(TwidereService.this, R.string.retweet_success, Toast.LENGTH_SHORT).show();
+			} else {
+
+			}
 			super.onPostExecute(result);
 		}
 
@@ -522,7 +543,7 @@ public class UpdateService extends Service implements Constants {
 
 	}
 
-	private class UpdateStatusTask extends ManagedAsyncTask<Void> {
+	private class UpdateStatusTask extends ManagedAsyncTask<UpdateStatusTask.AccountResponce> {
 
 		private long[] account_ids;
 		private String content;
@@ -531,7 +552,7 @@ public class UpdateService extends Service implements Constants {
 		private long in_reply_to;
 
 		public UpdateStatusTask(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
-			super(UpdateService.this, mAsyncTaskManager);
+			super(TwidereService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.content = content;
 			this.location = location;
@@ -540,12 +561,12 @@ public class UpdateService extends Service implements Constants {
 		}
 
 		@Override
-		protected Void doInBackground(Object... params) {
+		protected AccountResponce doInBackground(Object... params) {
 
 			if (account_ids == null) return null;
 
 			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id, false);
+				Twitter twitter = CommonUtils.getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						StatusUpdate status = new StatusUpdate(content);
@@ -553,17 +574,40 @@ public class UpdateService extends Service implements Constants {
 						if (location != null) {
 							status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
 						}
-						String image_path = CommonUtils.getImagePathFromUri(UpdateService.this, image_uri);
+						String image_path = CommonUtils.getImagePathFromUri(TwidereService.this, image_uri);
 						if (image_path != null) {
 							status.setMedia(new File(image_path));
 						}
-						twitter.updateStatus(status);
+						return new AccountResponce(twitter.updateStatus(status), null);
 					} catch (TwitterException e) {
-						e.printStackTrace();
+						return new AccountResponce(null, e);
 					}
 				}
 			}
 			return null;
+		}
+
+		private class AccountResponce {
+			public TwitterException exception;
+			public twitter4j.Status status;
+
+			public AccountResponce(twitter4j.Status status, TwitterException excepton) {
+				this.exception = exception;
+				this.status = status;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(AccountResponce result) {
+
+			if (result != null && result.status != null) {
+				Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
+			} else if (result != null && result.status != null) {
+
+			} else {
+
+			}
+			super.onPostExecute(result);
 		}
 
 	}
@@ -573,13 +617,13 @@ public class UpdateService extends Service implements Constants {
 	 * ensure that the Service can be GCd even when the system process still has
 	 * a remote reference to the stub.
 	 */
-	final static class ServiceStub extends IUpdateService.Stub {
+	final static class ServiceStub extends ITwidereService.Stub {
 
-		WeakReference<UpdateService> mService;
+		WeakReference<TwidereService> mService;
 
-		public ServiceStub(UpdateService service) {
+		public ServiceStub(TwidereService service) {
 
-			mService = new WeakReference<UpdateService>(service);
+			mService = new WeakReference<TwidereService>(service);
 		}
 
 		@Override

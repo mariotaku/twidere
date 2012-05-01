@@ -85,7 +85,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 					mServiceInterface.retweetStatus(new long[] { account_id }, mSelectedStatusId);
 					break;
 				}
-				case MENU_QUOTE:{
+				case MENU_QUOTE: {
 					Bundle bundle = new Bundle();
 					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mSelectedStatusId);
 					bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);

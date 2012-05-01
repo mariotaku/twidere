@@ -93,8 +93,9 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				text_selection_start = mText.indexOf(' ') + 1;
 			}
 
-			if (bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, true) : false){
+			if (bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false) {
 				getSherlockActivity().setTitle(getString(R.string.quote_user, screen_name));
+				text_selection_start = 0;
 			} else {
 				getSherlockActivity().setTitle(getString(R.string.reply_to, screen_name));
 			}

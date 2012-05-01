@@ -1,6 +1,6 @@
 package org.mariotaku.twidere;
 
-interface IUpdateService {
+interface ITwidereService {
 	int getHomeTimeline(in long[] account_ids, in long[] max_ids);
 	int getMentions(in long[] account_ids, in long[] max_ids);
 	int getMessages(in long[] account_ids, in long[] max_ids);
