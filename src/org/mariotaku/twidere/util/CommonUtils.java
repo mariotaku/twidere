@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore;
@@ -41,6 +42,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -130,8 +132,8 @@ public class CommonUtils implements Constants {
 		return getImagePathFromUri(mContext, uri);
 	}
 
-	public Twitter getTwitterInstance(long account_id) {
-		return getTwitterInstance(mContext, account_id);
+	public Twitter getTwitterInstance(long account_id, boolean include_entities) {
+		return getTwitterInstance(mContext, account_id, include_entities);
 	}
 
 	public void unbindFromService(ServiceToken token) {
@@ -287,15 +289,18 @@ public class CommonUtils implements Constants {
 		// Format links.
 		URLEntity[] urls = status.getURLEntities();
 		if (urls != null) {
-			for (URLEntity url : urls) {
-				int start = url.getStart();
-				int end = url.getEnd();
+			for (URLEntity url_entity : urls) {
+				int start = url_entity.getStart();
+				int end = url_entity.getEnd();
 				if (start < 0 || end > text.length()) {
 					continue;
 				}
-				URL expanded_url = url.getExpandedURL();
+				URL expanded_url = url_entity.getExpandedURL();
+				URL url = url_entity.getURL();
 				if (expanded_url != null) {
 					text.setSpan(new URLSpan(expanded_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				} else if (url != null) {
+					text.setSpan(new URLSpan(url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
 			}
 		}
@@ -663,7 +668,7 @@ public class CommonUtils implements Constants {
 		}
 	}
 
-	public static Twitter getTwitterInstance(Context context, long account_id) {
+	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities) {
 		final SharedPreferences preferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		Twitter twitter = null;
@@ -686,6 +691,16 @@ public class CommonUtils implements Constants {
 				}
 				cb.setRestBaseURL(rest_api_base);
 				cb.setSearchBaseURL(search_api_base);
+				cb.setIncludeEntitiesEnabled(include_entities);
+				cb.setClientURL(CLIENT_URL);
+				cb.setPrettyDebugEnabled(BuildConfig.DEBUG);
+				cb.setDebugEnabled(BuildConfig.DEBUG);
+				try {
+					String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+					cb.setClientVersion(version);
+				} catch (NameNotFoundException e) {
+					// This should not happen.
+				}
 
 				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
@@ -842,8 +857,9 @@ public class CommonUtils implements Constants {
 		if (cur != null && cur.getCount() > 0) {
 			cur.moveToFirst();
 			long user_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
+			boolean is_protected = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_PROTECTED)) == 1;
 			menu.findItem(R.id.delete_submenu).setVisible(ids.contains(user_id));
-			menu.findItem(MENU_RETWEET).setVisible(!ids.contains(user_id) || ids.size() > 1);
+			menu.findItem(MENU_RETWEET).setVisible(!is_protected && (!ids.contains(user_id) || ids.size() > 1));
 			MenuItem itemFav = menu.findItem(MENU_FAV);
 			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1) {
 				itemFav.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);

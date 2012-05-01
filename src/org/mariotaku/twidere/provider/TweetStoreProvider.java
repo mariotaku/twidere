@@ -78,14 +78,16 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 		switch (CommonUtils.getTableId(uri)) {
 			case URI_FAVORITES:
 				if (account_id_string != null) {
-					Twitter twitter = CommonUtils.getTwitterInstance(getContext(), Long.parseLong(account_id_string));
+					Twitter twitter = CommonUtils.getTwitterInstance(getContext(), Long.parseLong(account_id_string),
+							true);
 					return new FavoriteCursor(twitter, null, projection);
 				}
 				return null;
 			case URI_USER_TIMELINE:
 				String screen_name = uri.getLastPathSegment();
 				if (account_id_string != null) {
-					Twitter twitter = CommonUtils.getTwitterInstance(getContext(), Long.valueOf(account_id_string));
+					Twitter twitter = CommonUtils.getTwitterInstance(getContext(), Long.valueOf(account_id_string),
+							true);
 					return new UserTimelineCursor(twitter, screen_name, null, projection);
 				}
 				return null;

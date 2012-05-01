@@ -1,16 +1,17 @@
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.twidere.fragment.ViewStatusFragment;
+import org.mariotaku.twidere.fragment.ViewConversationFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 
-public class ViewStatusActivity extends BaseActivity {
-
+public class ViewConversationActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		Bundle bundle = getIntent().getExtras();
@@ -19,7 +20,7 @@ public class ViewStatusActivity extends BaseActivity {
 			return;
 		}
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ViewStatusFragment fragment = new ViewStatusFragment();
+		ViewConversationFragment fragment = new ViewConversationFragment();
 		fragment.setArguments(bundle);
 		ft.replace(android.R.id.content, fragment);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -35,5 +36,4 @@ public class ViewStatusActivity extends BaseActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 }

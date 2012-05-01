@@ -23,7 +23,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	private boolean mDisplayProfileImage, mMultipleAccountsActivated, mShowLastItemAsGap;
 	private LazyImageLoader mImageLoader;
 	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx, mTextIdx, mProfileImageUrlIdx,
-			mRetweetCountIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx, mHasMediaIdx, mInReplyToStatusIdIdx,
+			mRetweetCountIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx, mHasMediaIdx, mIsProtectedIdx, mInReplyToStatusIdIdx,
 			mInReplyToScreennameIdx;
 
 	private Context mContext;
@@ -59,11 +59,13 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			String screen_name = cursor.getString(mScreenNameIdx);
 			String text = cursor.getString(mTextIdx);
 			String profile_image_url = cursor.getString(mProfileImageUrlIdx);
-			boolean is_retweet = cursor.getLong(mRetweetCountIdx) != 0;
-			boolean is_favorite = cursor.getInt(mIsFavoriteIdx) != 0;
+			boolean is_retweet = cursor.getLong(mRetweetCountIdx) == 1;
+			boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
 			boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
 			boolean has_location = cursor.getString(mLocationIdx) != null;
 			boolean is_reply = cursor.getLong(mInReplyToStatusIdIdx) != -1;
+			boolean is_protected = cursor.getInt(mIsProtectedIdx) == 1;
+			holder.user_name.setCompoundDrawablesWithIntrinsicBounds(is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
 			holder.screen_name.setText("@" + screen_name);
 			holder.text.setText(Html.fromHtml(text).toString());
 			holder.tweet_time
@@ -105,6 +107,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			mIsGapIdx = cursor.getColumnIndexOrThrow(Statuses.IS_GAP);
 			mLocationIdx = cursor.getColumnIndexOrThrow(Statuses.LOCATION);
 			mHasMediaIdx = cursor.getColumnIndexOrThrow(Statuses.HAS_MEDIA);
+			mIsProtectedIdx = cursor.getColumnIndexOrThrow(Statuses.IS_PROTECTED);
 			mInReplyToStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_STATUS_ID);
 			mInReplyToScreennameIdx = cursor.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_SCREEN_NAME);
 		}

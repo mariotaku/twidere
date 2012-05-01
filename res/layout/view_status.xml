@@ -8,7 +8,7 @@
 		android:id="@+id/profile"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@color/profile_selector_background">
+		android:background="@color/item_selector_background">
 
 		<org.mariotaku.twidere.widget.RoundCorneredImageView
 			android:id="@+id/profile_image"
@@ -79,6 +79,17 @@
 		android:layout_below="@+id/profile"
 		android:orientation="vertical"
 		android:padding="8dip">
+
+		<TextView
+			android:id="@+id/in_reply_to"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@color/item_selector_background"
+			android:paddingBottom="8dp"
+			android:paddingTop="8dp"
+			android:text="@string/in_reply_to"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:visibility="gone"/>
 
 		<TextView
 			android:id="@+id/text"

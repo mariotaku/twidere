@@ -51,6 +51,7 @@
 	<string name="view_image">查看图像</string>
 	<string name="view_map">查看地图</string>
 	<string name="view_status">查看推文</string>
+	<string name="view_conversation">查看对话</string>
 	<string name="browser">浏览器</string>
 	<string name="pick_from_gallery">从图库中选取</string>
 	<string name="pick_from_map">从地图上选取</string>
@@ -85,6 +86,7 @@
 	<string name="display_profile_image_summary">显示个人资料图片，关闭可以加快列表的滚动速度，以及减少数据流量。</string>
 	<string name="in_reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
+	<string name="quote_user">引用 <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>，来自<xliff:g id="source">%2$s</xliff:g></string>
 	<string name="filter">过滤</string>
 	<string name="filter_summary">隐藏不希望看到的用户/来源或者含有特定关键词的推文。</string>

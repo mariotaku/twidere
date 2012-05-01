@@ -73,19 +73,27 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			String screen_name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
 			long account_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.ACCOUNT_ID));
 			switch (item.getItemId()) {
-				case MENU_REPLY:
+				case MENU_REPLY: {
 					Bundle bundle = new Bundle();
 					bundle.putStringArray(INTENT_KEY_MENTIONS,
 							CommonUtils.getMentionedNames(screen_name, text, false, true));
 					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mSelectedStatusId);
 					startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
 					break;
-				case MENU_RETWEET:
+				}
+				case MENU_RETWEET: {
 					mServiceInterface.retweetStatus(new long[] { account_id }, mSelectedStatusId);
 					break;
-				case MENU_QUOTE:
+				}
+				case MENU_QUOTE:{
+					Bundle bundle = new Bundle();
+					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mSelectedStatusId);
+					bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
+					bundle.putString(INTENT_KEY_TEXT, "RT @" + screen_name + ": " + text);
+					startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
 					break;
-				case MENU_FAV:
+				}
+				case MENU_FAV: {
 					boolean is_favorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
 					if (is_favorite) {
 						mServiceInterface.destroyFavorite(new long[] { account_id }, mSelectedStatusId);
@@ -93,9 +101,11 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 						mServiceInterface.createFavorite(new long[] { account_id }, mSelectedStatusId);
 					}
 					break;
-				case MENU_DELETE:
+				}
+				case MENU_DELETE: {
 					mServiceInterface.destroyStatus(account_id, mSelectedStatusId);
 					break;
+				}
 				default:
 					cur.close();
 					return false;

@@ -29,6 +29,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,8 +49,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 
 	public ServiceInterface mServiceInterface;
 	private ContentResolver mResolver;
-	private TextView mName, mScreenName, mText, mTimeAndSource;
-	private ImageView mProfileImage;
+	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView;
+	private ImageView mProfileImageView;
 	private Button mFollowButton;
 	private View mProfileView, mFollowIndicator, mMapView;
 	private ProgressBar mProgress;
@@ -83,11 +84,13 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		}
 		setHasOptionsMenu(true);
 		View view = getView();
-		mName = (TextView) view.findViewById(R.id.name);
-		mScreenName = (TextView) view.findViewById(R.id.screen_name);
-		mText = (TextView) view.findViewById(R.id.text);
-		mProfileImage = (ImageView) view.findViewById(R.id.profile_image);
-		mTimeAndSource = (TextView) view.findViewById(R.id.time_source);
+		mNameView = (TextView) view.findViewById(R.id.name);
+		mScreenNameView = (TextView) view.findViewById(R.id.screen_name);
+		mTextView = (TextView) view.findViewById(R.id.text);
+		mProfileImageView = (ImageView) view.findViewById(R.id.profile_image);
+		mTimeAndSourceView = (TextView) view.findViewById(R.id.time_source);
+		mInReplyToView = (TextView) view.findViewById(R.id.in_reply_to);
+		mInReplyToView.setOnClickListener(this);
 		mFollowButton = (Button) view.findViewById(R.id.follow);
 		mFollowIndicator = view.findViewById(R.id.follow_indicator);
 		mProfileView = view.findViewById(R.id.profile);
@@ -102,6 +105,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.follow:
+				break;
+			case R.id.in_reply_to:
+				Bundle bundle = new Bundle();
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+				bundle.putLong(INTENT_KEY_STATUS_ID, mStatusId);
+				startActivity(new Intent(INTENT_ACTION_VIEW_CONVERSATION).putExtras(bundle));
 				break;
 		}
 
@@ -129,34 +138,45 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case MENU_SHARE:
+			case MENU_SHARE:{
 				break;
-			case MENU_REPLY:
+			}
+			case MENU_REPLY: {
 				Bundle bundle = new Bundle();
 				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatusId);
 				bundle.putStringArray(INTENT_KEY_MENTIONS,
-						CommonUtils.getMentionedNames(mStatusScreenName, mText.getText(), false, true));
+						CommonUtils.getMentionedNames(mStatusScreenName, mTextView.getText(), false, true));
 				startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
 				break;
-			case MENU_RETWEET:
+			}
+			case MENU_RETWEET: {
 				if (mIsRetweetByMe) {
 					mServiceInterface.retweetStatus(new long[] { mAccountId }, mStatusId);
 				} else {
 					// There is no way to "undo" retweet yet.
 				}
 				break;
-			case MENU_QUOTE:
+			}
+			case MENU_QUOTE:{
+				Bundle bundle = new Bundle();
+				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatusId);
+				bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
+				bundle.putString(INTENT_KEY_TEXT, "RT @" + mStatusScreenName + ": " + mTextView.getText());
+				startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
 				break;
-			case MENU_FAV:
+			}
+			case MENU_FAV: {
 				if (mIsFavorite) {
 					mServiceInterface.destroyFavorite(new long[] { mAccountId }, mStatusId);
 				} else {
 					mServiceInterface.createFavorite(new long[] { mAccountId }, mStatusId);
 				}
 				break;
-			case MENU_DELETE:
+			}
+			case MENU_DELETE: {
 				mServiceInterface.destroyStatus(mAccountId, mStatusId);
 				break;
+			}
 			default:
 				return false;
 		}
@@ -241,19 +261,25 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		if (cur != null && cur.getCount() > 0) {
 			cur.moveToFirst();
 			String name = cur.getString(cur.getColumnIndexOrThrow(Statuses.NAME));
-			mName.setText(name != null ? name : "");
+			mNameView.setText(name != null ? name : "");
 			String screen_name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
-			mScreenName.setText(screen_name != null ? "@" + screen_name : "");
+			mScreenNameView.setText(screen_name != null ? "@" + screen_name : "");
 			String text = cur.getString(cur.getColumnIndexOrThrow(Statuses.TEXT));
 			if (text != null) {
-				mText.setText(Html.fromHtml(text));
+				mTextView.setText(Html.fromHtml(text));
 			}
-			mText.setMovementMethod(LinkMovementMethod.getInstance());
+			mTextView.setMovementMethod(LinkMovementMethod.getInstance());
 			String source = cur.getString(cur.getColumnIndexOrThrow(Statuses.SOURCE));
 			long timestamp = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_TIMESTAMP));
+			boolean is_reply = cur.getLong(cur.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_STATUS_ID)) != -1;
 			String time = CommonUtils.formatToLongTimeString(getSherlockActivity(), timestamp);
-			mTimeAndSource.setText(Html.fromHtml(getString(R.string.time_source, time, source)));
-			mTimeAndSource.setMovementMethod(LinkMovementMethod.getInstance());
+			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, source)));
+			mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
+			mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
+			if (is_reply) {
+				mInReplyToView.setText(getString(R.string.in_reply_to,
+						cur.getString(cur.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_SCREEN_NAME))));
+			}
 			mStatusUserId = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
 			mIsFavorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
 			mIsRetweetByMe = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_RETWEET)) < 0;
@@ -279,7 +305,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
-			imageloader.displayImage(url, mProfileImage);
+			imageloader.displayImage(url, mProfileImageView);
 		}
 		if (cur != null) {
 			cur.close();
@@ -324,7 +350,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				if (id == mStatusUserId) {
 					continue;
 				}
-				Twitter twitter = CommonUtils.getTwitterInstance(getSherlockActivity(), id);
+				Twitter twitter = CommonUtils.getTwitterInstance(getSherlockActivity(), id, false);
 				try {
 					Relationship result = twitter.showFriendship(id, mStatusUserId);
 					if (!result.isSourceFollowingTarget()) return false;

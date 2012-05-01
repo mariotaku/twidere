@@ -33,6 +33,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
 
 public class UpdateService extends Service implements Constants {
 
@@ -126,7 +127,7 @@ public class UpdateService extends Service implements Constants {
 			List<AccountResponce> result = new ArrayList<AccountResponce>();
 
 			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.createFavorite(status_id);
@@ -189,7 +190,7 @@ public class UpdateService extends Service implements Constants {
 			List<AccountResponce> result = new ArrayList<AccountResponce>();
 
 			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.destroyFavorite(status_id);
@@ -247,7 +248,7 @@ public class UpdateService extends Service implements Constants {
 		@Override
 		protected AccountResponce doInBackground(Object... params) {
 
-			Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+			Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					twitter4j.Status status = twitter.destroyStatus(status_id);
@@ -300,6 +301,11 @@ public class UpdateService extends Service implements Constants {
 					responces.size() > 0));
 		}
 
+		@Override
+		public ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException {
+			return twitter.getHomeTimeline(paging);
+		}
+
 	}
 
 	private class GetMentionsTask extends GetStatusesTask {
@@ -318,14 +324,22 @@ public class UpdateService extends Service implements Constants {
 					responces.size() > 0));
 		}
 
+		@Override
+		public ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException {
+			return twitter.getMentions(paging);
+		}
+
 	}
 
-	private static class GetStatusesTask extends ManagedAsyncTask<List<GetStatusesTask.AccountResponce>> {
+	private static abstract class GetStatusesTask extends ManagedAsyncTask<List<GetStatusesTask.AccountResponce>> {
 
 		private long[] account_ids, max_ids;
 
 		private final Uri uri;
 		private Context context;
+
+		public abstract ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
+				throws TwitterException;
 
 		public GetStatusesTask(Context context, AsyncTaskManager manager, Uri uri, long[] account_ids, long[] max_ids) {
 			super(context, manager);
@@ -348,7 +362,7 @@ public class UpdateService extends Service implements Constants {
 			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 			int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT) + 1;
 			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(context, account_id);
+				Twitter twitter = CommonUtils.getTwitterInstance(context, account_id, true);
 				if (twitter != null) {
 					try {
 						Paging paging = new Paging();
@@ -356,15 +370,8 @@ public class UpdateService extends Service implements Constants {
 						if (max_ids_valid && max_ids[idx] > 0) {
 							paging.setMaxId(max_ids[idx]);
 						}
-						ResponseList<twitter4j.Status> statuses = null;
-						switch (CommonUtils.getTableId(uri)) {
-							case URI_STATUSES:
-								statuses = twitter.getHomeTimeline(paging);
-								break;
-							case URI_MENTIONS:
-								statuses = twitter.getMentions(paging);
-								break;
-						}
+						ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
+
 						if (statuses != null) {
 							result.add(new AccountResponce(account_id, statuses));
 						}
@@ -471,7 +478,7 @@ public class UpdateService extends Service implements Constants {
 			List<AccountResponce> result = new ArrayList<AccountResponce>();
 
 			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.retweetStatus(status_id);
@@ -538,7 +545,7 @@ public class UpdateService extends Service implements Constants {
 			if (account_ids == null) return null;
 
 			for (long account_id : account_ids) {
-				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id);
+				Twitter twitter = CommonUtils.getTwitterInstance(UpdateService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						StatusUpdate status = new StatusUpdate(content);

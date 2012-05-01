@@ -11,6 +11,8 @@ public interface Constants {
 
 	public static final String LOGTAG = "Twidere";
 
+	public static final String CLIENT_URL = "https://github.com/mariotaku/twidere";
+
 	public static final boolean MULTIPLE_ACCOUNTS_ENABLED = true;
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
@@ -68,6 +70,7 @@ public interface Constants {
 	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_ACTION_PREFIX + "GLOBAL_SETTINGS";
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_ACTION_PREFIX + "SELECT_ACCOUNT";
 	public static final String INTENT_ACTION_VIEW_STATUS = INTENT_ACTION_PREFIX + "VIEW_STATUS";
+	public static final String INTENT_ACTION_VIEW_CONVERSATION = INTENT_ACTION_PREFIX + "VIEW_CONVERSATION";
 	public static final String INTENT_ACTION_FILTERS = INTENT_ACTION_PREFIX + "FILTERS";
 	public static final String INTENT_ACTION_ABOUT = INTENT_ACTION_PREFIX + "ABOUT";
 	public static final String INTENT_ACTION_EDIT_API = INTENT_ACTION_PREFIX + "EDIT_API";
@@ -79,11 +82,14 @@ public interface Constants {
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
 	public static final String INTENT_KEY_URI = "uri";
 	public static final String INTENT_KEY_MENTIONS = "mentions";
+	public static final String INTENT_KEY_ACCOUNT_ID = "account_id";
+	public static final String INTENT_KEY_STATUS_ID = "status_id";
 	public static final String INTENT_KEY_IN_REPLY_TO_ID = "in_reply_to_id";
 	public static final String INTENT_KEY_TEXT = "text";
 	public static final String INTENT_KEY_SUCCEED = "succeed";
 	public static final String INTENT_KEY_REFRESH_ALL = "refresh_all";
 	public static final String INTENT_KEY_IDS = "ids";
+	public static final String INTENT_KEY_IS_QUOTE = "is_quote";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;

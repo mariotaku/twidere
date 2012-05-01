@@ -58,6 +58,7 @@
 	<string name="view_image">View image</string>
 	<string name="view_map">View map</string>
 	<string name="view_status">View tweet</string>
+	<string name="view_conversation">View conversation</string>
 	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Pick from gallery</string>
 	<string name="pick_from_map">Pick from map</string>
@@ -96,6 +97,7 @@
 	<string name="display_profile_image_summary">Display profile image, uncheck this will increase list scroll speed and reduce traffic usage.</string>
 	<string name="in_reply_to">In reply to <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="reply_to">Reply to <xliff:g id="user_name">%s</xliff:g></string>
+	<string name="quote_user">Quote <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
 	<string name="filter">Filter</string>
 	<string name="filter_enabled">Filter is enabled</string>

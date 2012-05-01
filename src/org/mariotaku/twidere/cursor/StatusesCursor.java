@@ -33,6 +33,7 @@ public abstract class StatusesCursor extends AbstractCursor {
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	@Override
@@ -94,7 +95,7 @@ public abstract class StatusesCursor extends AbstractCursor {
 
 	private Object getObject(int index) {
 		String col = mColumns[index];
-		Status status = statuses.get(getPosition());
+		Status status = statuses.get(mPos);
 		if (Statuses._ID.equals(col)) return status.getId();
 		if (Statuses.ACCOUNT_ID.equals(col)) return mAccountId;
 		if (Statuses.HAS_MEDIA.equals(col)) return status.getMediaEntities() == null ? 0 : 1;

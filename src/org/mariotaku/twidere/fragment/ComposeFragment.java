@@ -85,7 +85,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 			} else if (mentions != null) {
 				StringBuilder builder = new StringBuilder();
 				for (String mention : mentions) {
-					if (!mentions.equals(account_username)) {
+					if (!mention.equals(account_username)) {
 						builder.append('@' + mention + ' ');
 					}
 				}
@@ -93,7 +93,11 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				text_selection_start = mText.indexOf(' ') + 1;
 			}
 
-			getSherlockActivity().setTitle(getString(R.string.reply_to, screen_name));
+			if (bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, true) : false){
+				getSherlockActivity().setTitle(getString(R.string.quote_user, screen_name));
+			} else {
+				getSherlockActivity().setTitle(getString(R.string.reply_to, screen_name));
+			}
 			mAccountIds = new long[] { account_id };
 		} else {
 			mAccountIds = activated_ids == null ? CommonUtils.getActivatedAccounts(getSherlockActivity())
