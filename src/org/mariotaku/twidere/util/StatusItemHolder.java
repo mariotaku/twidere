@@ -11,7 +11,7 @@ import android.widget.TextView;
 public class StatusItemHolder {
 
 	public final ImageView profile_image;
-	public final TextView user_name, screen_name, text, tweet_time, in_reply_to;
+	public final TextView name, text, tweet_time, in_reply_to;
 	private final View content, gap_text;
 	public long status_id, account_id;
 	private boolean is_gap, account_color_enabled;
@@ -20,10 +20,9 @@ public class StatusItemHolder {
 		content = view;
 		gap_text = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
-		user_name = (TextView) view.findViewById(R.id.user_name);
-		screen_name = (TextView) view.findViewById(R.id.screen_name);
+		name = (TextView) view.findViewById(R.id.name);
 		text = (TextView) view.findViewById(R.id.text);
-		tweet_time = (TextView) view.findViewById(R.id.tweet_time);
+		tweet_time = (TextView) view.findViewById(R.id.time);
 		in_reply_to = (TextView) view.findViewById(R.id.in_reply_to);
 
 	}
@@ -53,8 +52,7 @@ public class StatusItemHolder {
 		content.setBackgroundResource(is_gap ? R.drawable.ic_list_gap
 				: account_color_enabled ? R.drawable.ic_label_color : 0);
 		profile_image.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		user_name.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		screen_name.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		name.setVisibility(is_gap ? View.GONE : View.VISIBLE);
 		text.setVisibility(is_gap ? View.GONE : View.VISIBLE);
 		tweet_time.setVisibility(is_gap ? View.GONE : View.VISIBLE);
 		in_reply_to.setVisibility(is_gap ? View.GONE : View.VISIBLE);

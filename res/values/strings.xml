@@ -132,5 +132,8 @@
 	<string name="send_success">Send success.</string>
 	<string name="favorite_success">Favorite success.</string>
 	<string name="unfavorite_success">Unfavorite success.</string>
+	<string name="display_name">Display name</string>
+	<string name="display_name_summaryon">Display username of tweet.</string>
+	<string name="display_name_summaryoff">Display screen name (e.g. @username) of tweet</string>
 
 </resources>

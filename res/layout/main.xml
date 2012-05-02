@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:layerType="software">
+	android:layout_height="match_parent">
 
 	<com.viewpagerindicator.ExtendedViewPager
 		android:id="@+id/pager"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"/>
+		android:layout_height="match_parent"
+		android:layerType="software"/>
 
 	<ImageButton
 		android:id="@+id/compose"
 		android:layout_width="56dp"
 		android:layout_height="56dp"
 		android:layout_gravity="bottom|right"
+		android:contentDescription="@string/compose"
 		android:src="@drawable/ic_menu_compose"/>
 
 </FrameLayout>

@@ -18,13 +18,13 @@ import android.view.ViewGroup;
 
 public class StatusesAdapter extends SimpleCursorAdapter {
 
-	private final static String[] mFrom = new String[] { Statuses.NAME };
-	private final static int[] mTo = new int[] { R.id.user_name };
-	private boolean mDisplayProfileImage, mMultipleAccountsActivated, mShowLastItemAsGap;
+	private final static String[] mFrom = new String[] {};
+	private final static int[] mTo = new int[] {};
+	private boolean mDisplayProfileImage, mDisplayName, mMultipleAccountsActivated, mShowLastItemAsGap;
 	private LazyImageLoader mImageLoader;
-	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mScreenNameIdx, mTextIdx, mProfileImageUrlIdx,
-			mRetweetCountIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx, mHasMediaIdx, mIsProtectedIdx,
-			mInReplyToStatusIdIdx, mInReplyToScreennameIdx;
+	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mNameIdx, mScreenNameIdx, mTextIdx,
+			mProfileImageUrlIdx, mRetweetCountIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx, mHasMediaIdx,
+			mIsProtectedIdx, mInReplyToStatusIdIdx, mInReplyToScreennameIdx;
 
 	private Context mContext;
 
@@ -57,6 +57,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 		if (!show_gap) {
 
 			String screen_name = cursor.getString(mScreenNameIdx);
+			String user_name = cursor.getString(mNameIdx);
 			String text = cursor.getString(mTextIdx);
 			String profile_image_url = cursor.getString(mProfileImageUrlIdx);
 			boolean is_retweet = cursor.getLong(mRetweetCountIdx) == 1;
@@ -65,9 +66,9 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			boolean has_location = cursor.getString(mLocationIdx) != null;
 			boolean is_reply = cursor.getLong(mInReplyToStatusIdIdx) != -1;
 			boolean is_protected = cursor.getInt(mIsProtectedIdx) == 1;
-			holder.user_name.setCompoundDrawablesWithIntrinsicBounds(
-					is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
-			holder.screen_name.setText("@" + screen_name);
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+					is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
+			holder.name.setText(mDisplayName ? user_name : "@" + screen_name);
 			holder.text.setText(Html.fromHtml(text).toString());
 			holder.tweet_time
 					.setText(CommonUtils.formatToShortTimeString(context, cursor.getLong(mStatusTimestampIdx)));
@@ -100,6 +101,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			mAccountIdIdx = cursor.getColumnIndexOrThrow(Statuses.ACCOUNT_ID);
 			mStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.STATUS_ID);
 			mStatusTimestampIdx = cursor.getColumnIndexOrThrow(Statuses.STATUS_TIMESTAMP);
+			mNameIdx = cursor.getColumnIndexOrThrow(Statuses.NAME);
 			mScreenNameIdx = cursor.getColumnIndexOrThrow(Statuses.SCREEN_NAME);
 			mTextIdx = cursor.getColumnIndexOrThrow(Statuses.TEXT);
 			mProfileImageUrlIdx = cursor.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
@@ -121,6 +123,10 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 		StatusItemHolder viewholder = new StatusItemHolder(view);
 		view.setTag(viewholder);
 		return view;
+	}
+
+	public void setDisplayName(boolean display) {
+		mDisplayName = display;
 	}
 
 	public void setDisplayProfileImage(boolean display) {

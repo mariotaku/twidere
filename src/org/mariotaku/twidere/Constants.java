@@ -53,6 +53,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_DARK_THEME = "dark_theme";
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
+	public static final String PREFERENCE_KEY_DISPLAY_NAME = "display_name";
 	public static final String PREFERENCE_KEY_COMPOSE_BUTTON = "bottom_compose_button";
 	public static final String PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON = "leftside_compose_button";
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
@@ -71,6 +72,7 @@ public interface Constants {
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_ACTION_PREFIX + "SELECT_ACCOUNT";
 	public static final String INTENT_ACTION_VIEW_STATUS = INTENT_ACTION_PREFIX + "VIEW_STATUS";
 	public static final String INTENT_ACTION_VIEW_CONVERSATION = INTENT_ACTION_PREFIX + "VIEW_CONVERSATION";
+	public static final String INTENT_ACTION_VIEW_MAP = INTENT_ACTION_PREFIX + "VIEW_MAP";
 	public static final String INTENT_ACTION_FILTERS = INTENT_ACTION_PREFIX + "FILTERS";
 	public static final String INTENT_ACTION_ABOUT = INTENT_ACTION_PREFIX + "ABOUT";
 	public static final String INTENT_ACTION_EDIT_API = INTENT_ACTION_PREFIX + "EDIT_API";

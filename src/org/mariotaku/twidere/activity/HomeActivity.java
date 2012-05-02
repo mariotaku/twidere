@@ -20,7 +20,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,10 +46,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private ImageButton mComposeButton;
 	private ServiceInterface mInterface;
 	private TabPageIndicator mIndicator;
-
-	public void setPagingEnabled(boolean enabled) {
-		if (mIndicator != null) mIndicator.setPagingEnabled(enabled);
-	}
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -181,6 +176,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	public void onStop() {
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
+	}
+
+	public void setPagingEnabled(boolean enabled) {
+		if (mIndicator != null) {
+			mIndicator.setPagingEnabled(enabled);
+		}
 	}
 
 	@Override

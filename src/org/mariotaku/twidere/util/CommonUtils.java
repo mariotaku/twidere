@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore;
@@ -621,6 +620,28 @@ public class CommonUtils implements Constants {
 		return mentions.toArray(new String[mentions.size()]);
 	}
 
+	public static String getNameForStatusId(Context context, long status_id) {
+
+		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+		String[] cols = new String[] { Statuses.NAME };
+		String where = Statuses.STATUS_ID + " = " + status_id;
+
+		for (Uri uri : uris) {
+			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
+			if (cur == null) {
+				continue;
+			}
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				String name = cur.getString(cur.getColumnIndexOrThrow(Statuses.NAME));
+				cur.close();
+				return name;
+			}
+			cur.close();
+		}
+		return null;
+	}
+
 	public static String getScreenNameForStatusId(Context context, long status_id) {
 
 		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
@@ -691,10 +712,6 @@ public class CommonUtils implements Constants {
 				}
 				cb.setRestBaseURL(rest_api_base);
 				cb.setSearchBaseURL(search_api_base);
-				cb.setIncludeEntitiesEnabled(include_entities);
-				cb.setClientURL(CLIENT_URL);
-				cb.setPrettyDebugEnabled(BuildConfig.DEBUG);
-				cb.setDebugEnabled(BuildConfig.DEBUG);
 				try {
 					String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
 					cb.setClientVersion(version);

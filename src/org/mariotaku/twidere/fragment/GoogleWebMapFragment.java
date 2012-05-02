@@ -8,7 +8,7 @@ import android.webkit.WebView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-public class GoogleMapFragment extends WebViewFragment {
+public class GoogleWebMapFragment extends WebViewFragment {
 
 	private final Uri mUri = Uri.parse("file:///android_asset/mapview.html");
 
@@ -16,21 +16,11 @@ public class GoogleMapFragment extends WebViewFragment {
 
 	private boolean disable_ui = false;
 
-	public GoogleMapFragment() {
-	}
-
-	public GoogleMapFragment(double latitude, double longitude, boolean disable_ui) {
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.disable_ui = disable_ui;
-	}
-
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getLocation();
 		setupWebView();
-
 	}
 
 	/**

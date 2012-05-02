@@ -55,6 +55,8 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	private String mSelectedScreenName;
 	private ContentResolver mResolver;
 
+	Fragment mDetailFragment;
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		new MenuInflater(getSherlockActivity()).inflate(R.menu.context_account, menu);
@@ -135,8 +137,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		mFragment.show(ft, "delete_confirm");
 	}
 
-	Fragment mDetailFragment;
-
 	private void showDetails(long user_id) {
 		if (getSherlockActivity() instanceof HomeActivity) {
 			((HomeActivity) getSherlockActivity()).setPagingEnabled(false);
@@ -197,6 +197,15 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onBackStackChanged() {
+		if (getSherlockActivity() instanceof HomeActivity) {
+			((HomeActivity) getSherlockActivity()).setPagingEnabled(mDetailFragment == null
+					|| !mDetailFragment.isAdded());
+		}
+
 	}
 
 	@Override
@@ -328,15 +337,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();
-		}
-
-	}
-
-	@Override
-	public void onBackStackChanged() {
-		if (getSherlockActivity() instanceof HomeActivity) {
-			((HomeActivity) getSherlockActivity()).setPagingEnabled(mDetailFragment == null
-					|| !mDetailFragment.isAdded());
 		}
 
 	}

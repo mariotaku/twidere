@@ -57,7 +57,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	private ProgressBar mProgress;
 	private long mStatusUserId;
 	private String mStatusScreenName;
-
+	private GeoLocation mGeoLocation;
 	private FollowInfoTask mFollowInfoTask;
 	private boolean mIsFavorite, mIsRetweetByMe;
 
@@ -96,8 +96,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		mFollowIndicator = view.findViewById(R.id.follow_indicator);
 		mProfileView = view.findViewById(R.id.profile);
 		mViewMapButton = (ImageButton) view.findViewById(R.id.view_map);
+		mViewMapButton.setOnClickListener(this);
 		mViewMediaButton = (ImageButton) view.findViewById(R.id.view_media);
-		// mMapView = (FrameLayout) view.findViewById(R.id.map);
+		mViewMediaButton.setOnClickListener(this);
 		mProgress = (ProgressBar) view.findViewById(R.id.progress);
 		mProfileView.setOnClickListener(this);
 		displayStatus();
@@ -109,11 +110,20 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		switch (view.getId()) {
 			case R.id.follow:
 				break;
-			case R.id.in_reply_to:
+			case R.id.in_reply_to: {
 				Bundle bundle = new Bundle();
 				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 				bundle.putLong(INTENT_KEY_STATUS_ID, mStatusId);
 				startActivity(new Intent(INTENT_ACTION_VIEW_CONVERSATION).putExtras(bundle));
+				break;
+			}
+			case R.id.view_map:
+				if (mGeoLocation != null) {
+					Bundle bundle = new Bundle();
+					bundle.putDouble(INTENT_KEY_LATITUDE, mGeoLocation.getLatitude());
+					bundle.putDouble(INTENT_KEY_LONGITUDE, mGeoLocation.getLongitude());
+					startActivity(new Intent(INTENT_ACTION_VIEW_MAP).putExtras(bundle));
+				}
 				break;
 		}
 
@@ -287,9 +297,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			mIsFavorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
 			mIsRetweetByMe = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_RETWEET)) < 0;
 			String location_string = cur.getString(cur.getColumnIndexOrThrow(Statuses.LOCATION));
-			GeoLocation location = CommonUtils.getGeoLocationFromString(location_string);
-			mViewMapButton.setVisibility(location != null ? View.VISIBLE : View.GONE);
-			mViewMediaButton.setVisibility(View.GONE);
+			mGeoLocation = CommonUtils.getGeoLocationFromString(location_string);
+			mViewMapButton.setVisibility(mGeoLocation != null ? View.VISIBLE : View.GONE);
+			boolean has_media = cur.getInt(cur.getColumnIndexOrThrow(Statuses.HAS_MEDIA)) == 1;
+			mViewMediaButton.setVisibility( has_media ? View.VISIBLE : View.GONE);
 
 			LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 					.getListProfileImageLoader();

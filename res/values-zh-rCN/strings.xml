@@ -121,5 +121,8 @@
 	<string name="send_success">发送成功。</string>
 	<string name="favorite_success">收藏成功。</string>
 	<string name="unfavorite_success">取消收藏成功。</string>
+	<string name="display_name">显示姓名</string>
+	<string name="display_name_summaryon">显示推文作者的姓名。</string>
+	<string name="display_name_summaryoff">显示推文作者的用户名（例如 @username）。</string>
 
 </resources>

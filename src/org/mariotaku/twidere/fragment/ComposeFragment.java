@@ -86,6 +86,9 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 			} else if (mentions != null) {
 				StringBuilder builder = new StringBuilder();
 				for (String mention : mentions) {
+					if (mentions.length == 1 && mentions[0].equals(account_username)) {
+						builder.append('@' + account_username + ' ');
+					}
 					if (!mention.equals(account_username)) {
 						builder.append('@' + mention + ' ');
 					}
@@ -95,8 +98,11 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 			}
 
 			is_quote = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false;
-			
-			getSherlockActivity().setTitle(getString(is_quote ? R.string.quote_user : R.string.reply_to, screen_name));
+
+			boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+			String name = display_name ? CommonUtils.getNameForStatusId(getSherlockActivity(), mInReplyToStatusId)
+					: screen_name;
+			getSherlockActivity().setTitle(getString(is_quote ? R.string.quote_user : R.string.reply_to, name));
 			mAccountIds = new long[] { account_id };
 		} else {
 			mAccountIds = activated_ids == null ? CommonUtils.getActivatedAccounts(getSherlockActivity())
@@ -118,7 +124,8 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 			mEditText.setText(mText);
 			if (is_quote) {
 				mEditText.setSelection(0);
-			} else if (text_selection_start != -1 && text_selection_start < mEditText.length() && mEditText.length() > 0) {
+			} else if (text_selection_start != -1 && text_selection_start < mEditText.length()
+					&& mEditText.length() > 0) {
 				mEditText.setSelection(text_selection_start, mEditText.length() - 1);
 			} else if (mEditText.length() > 0) {
 				mEditText.setSelection(mEditText.length());

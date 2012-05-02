@@ -53,11 +53,9 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 
 	private Handler mHandler;
 	private Runnable mTicker;
-	private boolean mReachedBottom, mDisplayProfileImage, mActivityFirstCreated;
+	private boolean mDisplayProfileImage, mDisplayName, mReachedBottom, mActivityFirstCreated;
 	private SharedPreferences mPreferences;
-	private boolean mLoadMoreAutomatically;
-
-	private boolean mNotReachedBottomBefore = true;
+	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
 
 	public abstract Uri getContentUri();
 
@@ -125,6 +123,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		mResolver = getSherlockActivity().getContentResolver();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
@@ -239,11 +238,14 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public void onResume() {
 		super.onResume();
 		boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_LOAD_MORE_AUTOMATICALLY, false);
 		mAdapter.setShowLastItemAsGap(!mLoadMoreAutomatically);
 		mAdapter.setDisplayProfileImage(display_profile_image);
-		if (mDisplayProfileImage != display_profile_image) {
+		mAdapter.setDisplayName(display_name);
+		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name) {
 			mDisplayProfileImage = display_profile_image;
+			mDisplayName = display_name;
 			mListView.getRefreshableView().invalidateViews();
 		}
 	}

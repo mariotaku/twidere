@@ -22,7 +22,6 @@ public class ViewStatusActivity extends BaseActivity {
 		ViewStatusFragment fragment = new ViewStatusFragment();
 		fragment.setArguments(bundle);
 		ft.replace(android.R.id.content, fragment);
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();
 	}
 

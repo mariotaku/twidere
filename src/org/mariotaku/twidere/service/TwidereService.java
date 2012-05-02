@@ -311,15 +311,15 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException {
+			return twitter.getHomeTimeline(paging);
+		}
+
+		@Override
 		protected void onPostExecute(List<GetStatusesTask.AccountResponce> responces) {
 			super.onPostExecute(responces);
 			context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
 					responces.size() > 0));
-		}
-
-		@Override
-		public ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException {
-			return twitter.getHomeTimeline(paging);
 		}
 
 	}
@@ -334,15 +334,15 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException {
+			return twitter.getMentions(paging);
+		}
+
+		@Override
 		protected void onPostExecute(List<GetStatusesTask.AccountResponce> responces) {
 			super.onPostExecute(responces);
 			context.sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
 					responces.size() > 0));
-		}
-
-		@Override
-		public ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException {
-			return twitter.getMentions(paging);
 		}
 
 	}
@@ -354,9 +354,6 @@ public class TwidereService extends Service implements Constants {
 		private final Uri uri;
 		private Context context;
 
-		public abstract ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
-				throws TwitterException;
-
 		public GetStatusesTask(Context context, AsyncTaskManager manager, Uri uri, long[] account_ids, long[] max_ids) {
 			super(context, manager);
 			this.uri = uri;
@@ -364,6 +361,9 @@ public class TwidereService extends Service implements Constants {
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
 		}
+
+		public abstract ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
+				throws TwitterException;
 
 		@Override
 		protected List<AccountResponce> doInBackground(Object... params) {
@@ -587,16 +587,6 @@ public class TwidereService extends Service implements Constants {
 			return null;
 		}
 
-		private class AccountResponce {
-			public TwitterException exception;
-			public twitter4j.Status status;
-
-			public AccountResponce(twitter4j.Status status, TwitterException excepton) {
-				this.exception = exception;
-				this.status = status;
-			}
-		}
-
 		@Override
 		protected void onPostExecute(AccountResponce result) {
 
@@ -608,6 +598,16 @@ public class TwidereService extends Service implements Constants {
 
 			}
 			super.onPostExecute(result);
+		}
+
+		private class AccountResponce {
+			public TwitterException exception;
+			public twitter4j.Status status;
+
+			public AccountResponce(twitter4j.Status status, TwitterException excepton) {
+				exception = exception;
+				this.status = status;
+			}
 		}
 
 	}
