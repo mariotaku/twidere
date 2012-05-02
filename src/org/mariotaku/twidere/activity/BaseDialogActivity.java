@@ -1,16 +1,12 @@
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.util.ActivityThemeChangeImpl;
 import org.mariotaku.twidere.util.CommonUtils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
-public class BaseDialogActivity extends SherlockFragmentActivity implements Constants, ActivityThemeChangeImpl {
+public class BaseDialogActivity extends BaseActivity {
 
 	private int mThemeId;
 

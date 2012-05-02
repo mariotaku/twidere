@@ -179,6 +179,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		setSignInButton();
 	}
 
+	@Override
+	public void setRefreshState() {
+		// Do nothing.
+	}
+
 	private void analyseUserProfileColor(String url_string) {
 		try {
 			URL url = new URL(url_string);

@@ -163,11 +163,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				break;
 			}
 			case MENU_RETWEET: {
-				if (mIsRetweetByMe) {
-					mServiceInterface.retweetStatus(new long[] { mAccountId }, mStatusId);
-				} else {
-					// There is no way to "undo" retweet yet.
-				}
+				mServiceInterface.retweetStatus(new long[] { mAccountId }, mStatusId);
 				break;
 			}
 			case MENU_QUOTE: {
@@ -300,7 +296,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			mGeoLocation = CommonUtils.getGeoLocationFromString(location_string);
 			mViewMapButton.setVisibility(mGeoLocation != null ? View.VISIBLE : View.GONE);
 			boolean has_media = cur.getInt(cur.getColumnIndexOrThrow(Statuses.HAS_MEDIA)) == 1;
-			mViewMediaButton.setVisibility( has_media ? View.VISIBLE : View.GONE);
+			mViewMediaButton.setVisibility(has_media ? View.VISIBLE : View.GONE);
 
 			LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 					.getListProfileImageLoader();

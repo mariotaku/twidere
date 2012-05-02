@@ -2,10 +2,15 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ActivityThemeChangeImpl;
 import org.mariotaku.twidere.util.CommonUtils;
+import org.mariotaku.twidere.util.ServiceInterface;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -14,6 +19,19 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 public class BaseActivity extends SherlockFragmentActivity implements Constants, ActivityThemeChangeImpl {
 
 	private int mThemeId;
+	private ServiceInterface mInterface;
+
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+				setRefreshState();
+			}
+		}
+
+	};
 
 	@Override
 	public boolean isThemeChanged() {
@@ -26,6 +44,7 @@ public class BaseActivity extends SherlockFragmentActivity implements Constants,
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		setTheme();
+		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		super.onCreate(savedInstanceState);
 	}
 
@@ -36,6 +55,28 @@ public class BaseActivity extends SherlockFragmentActivity implements Constants,
 			CommonUtils.restartActivity(this);
 			return;
 		}
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		setRefreshState();
+		IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		registerReceiver(mStateReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
+	}
+
+	public void setRefreshState() {
+		boolean is_refresh = false;
+		if (mInterface != null) {
+			is_refresh = mInterface.hasActivatedTask();
+		}
+		setSupportProgressBarIndeterminateVisibility(is_refresh);
 	}
 
 	@Override

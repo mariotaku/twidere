@@ -54,6 +54,11 @@ public class WebViewActivity extends BaseActivity {
 		super.onDestroy();
 	}
 
+	@Override
+	public void setRefreshState() {
+		// Do nothing.
+	}
+
 	public final void setWebViewClient(WebViewClient client) {
 		mWebview.setWebViewClient(client);
 	}

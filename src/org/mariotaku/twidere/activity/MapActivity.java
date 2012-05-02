@@ -19,4 +19,9 @@ public class MapActivity extends BaseActivity {
 		ft.replace(android.R.id.content, fragment);
 		ft.commit();
 	}
+
+	@Override
+	public void setRefreshState() {
+		// Do nothing.
+	}
 }
