@@ -42,6 +42,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -67,88 +68,9 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class CommonUtils implements Constants {
+public final class CommonUtils implements Constants {
 
-	private Context mContext;
-
-	private HashMap<Context, ServiceBinder> mConnectionMap = new HashMap<Context, ServiceBinder>();
-
-	public CommonUtils(Context context) {
-		mContext = context;
-	}
-
-	public ServiceToken bindToService() {
-
-		return bindToService(null);
-	}
-
-	public ServiceToken bindToService(ServiceConnection callback) {
-
-		ContextWrapper cw = new ContextWrapper(mContext);
-		cw.startService(new Intent(cw, TwidereService.class));
-		ServiceBinder sb = new ServiceBinder(callback);
-		if (cw.bindService(new Intent(cw, TwidereService.class), sb, 0)) {
-			mConnectionMap.put(cw, sb);
-			return new ServiceToken(cw);
-		}
-		Log.e(LOGTAG, "Failed to bind to service");
-		return null;
-	}
-
-	public String formatTimeStampString(long timestamp) {
-		Time then = new Time();
-		then.set(timestamp);
-		Time now = new Time();
-		now.setToNow();
-
-		int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_CAP_AMPM;
-
-		if (then.year != now.year) {
-			format_flags |= DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_DATE;
-		} else if (then.yearDay != now.yearDay) {
-			format_flags |= DateUtils.FORMAT_SHOW_DATE;
-		} else {
-			format_flags |= DateUtils.FORMAT_SHOW_TIME;
-		}
-
-		return DateUtils.formatDateTime(mContext, timestamp, format_flags);
-	}
-
-	@SuppressWarnings("deprecation")
-	public String formatTimeStampString(String date_time) {
-		return formatTimeStampString(Date.parse(date_time));
-	}
-
-	public String formatToShortTimeString(long timestamp) {
-		return formatToShortTimeString(mContext, timestamp);
-	}
-
-	public Bitmap getColorPreviewBitmap(int color) {
-		return getColorPreviewBitmap(mContext, color);
-	}
-
-	public String getImagePathFromUri(Uri uri) {
-		return getImagePathFromUri(mContext, uri);
-	}
-
-	public Twitter getTwitterInstance(long account_id, boolean include_entities) {
-		return getTwitterInstance(mContext, account_id, include_entities);
-	}
-
-	public void unbindFromService(ServiceToken token) {
-
-		if (token == null) {
-			Log.e(LOGTAG, "Trying to unbind with null token");
-			return;
-		}
-		ContextWrapper wrapper = token.mWrappedContext;
-		ServiceBinder binder = mConnectionMap.remove(wrapper);
-		if (binder == null) {
-			Log.e(LOGTAG, "Trying to unbind for unknown Context");
-			return;
-		}
-		wrapper.unbindService(binder);
-	}
+	private static HashMap<Context, ServiceBinder> mConnectionMap = new HashMap<Context, ServiceBinder>();
 
 	private static UriMatcher URI_MATCHER;
 
@@ -166,6 +88,24 @@ public class CommonUtils implements Constants {
 	}
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
+
+	public static ServiceToken bindToService(Context context) {
+
+		return bindToService(context, null);
+	}
+
+	public static ServiceToken bindToService(Context context, ServiceConnection callback) {
+
+		ContextWrapper cw = new ContextWrapper(context);
+		cw.startService(new Intent(cw, TwidereService.class));
+		ServiceBinder sb = new ServiceBinder(callback);
+		if (cw.bindService(new Intent(cw, TwidereService.class), sb, 0)) {
+			mConnectionMap.put(cw, sb);
+			return new ServiceToken(cw);
+		}
+		Log.e(LOGTAG, "Failed to bind to service");
+		return null;
+	}
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
 		long[] account_ids = getActivatedAccounts(context);
@@ -353,6 +293,30 @@ public class CommonUtils implements Constants {
 		return formatted;
 	}
 
+	public static String formatTimeStampString(Context context, long timestamp) {
+		Time then = new Time();
+		then.set(timestamp);
+		Time now = new Time();
+		now.setToNow();
+
+		int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_CAP_AMPM;
+
+		if (then.year != now.year) {
+			format_flags |= DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_DATE;
+		} else if (then.yearDay != now.yearDay) {
+			format_flags |= DateUtils.FORMAT_SHOW_DATE;
+		} else {
+			format_flags |= DateUtils.FORMAT_SHOW_TIME;
+		}
+
+		return DateUtils.formatDateTime(context, timestamp, format_flags);
+	}
+
+	@SuppressWarnings("deprecation")
+	public static String formatTimeStampString(Context context, String date_time) {
+		return formatTimeStampString(context, Date.parse(date_time));
+	}
+
 	public static String formatToLongTimeString(Context context, long timestamp) {
 		Time then = new Time();
 		then.set(timestamp);
@@ -367,27 +331,49 @@ public class CommonUtils implements Constants {
 	}
 
 	public static String formatToShortTimeString(Context context, long timestamp) {
-		Time then = new Time();
+		final Resources res = context.getResources();
+		final Time then = new Time(), now = new Time();
 		then.set(timestamp);
-		Time now = new Time();
 		now.setToNow();
+		if (then.before(now)) {
 
-		if (then.year < now.year) {
-			int diff = now.year - then.year;
-			return context.getResources().getQuantityString(R.plurals.Nyears, diff, diff);
-		} else if (then.month < now.month) {
-			int diff = now.month - then.month;
-			return context.getResources().getQuantityString(R.plurals.Nmonths, diff, diff);
-		} else if (then.yearDay < now.yearDay) {
-			int diff = now.yearDay - then.yearDay;
-			return context.getResources().getQuantityString(R.plurals.Ndays, diff, diff);
-		} else if (then.hour < now.hour) {
-			int diff = now.hour - then.hour;
-			return context.getResources().getQuantityString(R.plurals.Nhours, diff, diff);
-		} else if (then.minute < now.minute) {
-			int diff = now.minute - then.minute;
-			return context.getResources().getQuantityString(R.plurals.Nminutes, diff, diff);
-		} else if (then.minute == now.minute) return context.getString(R.string.just_now);
+			int year_diff = now.year - then.year;
+
+			int month_diff = (year_diff > 0 ? 12 : 0) + now.month - then.month;
+			if (year_diff < 1) {
+				int day_diff = (month_diff > 0 ? then.getActualMaximum(Time.MONTH_DAY) : 0) + now.monthDay
+						- then.monthDay;
+				if (month_diff < 1) {
+					if (day_diff >= then.getActualMaximum(Time.MONTH_DAY))
+						return res.getQuantityString(R.plurals.Nmonths, month_diff, month_diff);
+					int hour_diff = (day_diff > 0 ? 24 : 0) + now.hour - then.hour;
+					if (day_diff < 1) {
+						if (hour_diff >= 24) return res.getQuantityString(R.plurals.Ndays, day_diff, day_diff);
+						int minute_diff = (hour_diff > 0 ? 60 : 0) + now.minute - then.minute;
+						if (hour_diff < 1) {
+							if (minute_diff >= 60)
+								return res.getQuantityString(R.plurals.Nhours, hour_diff, hour_diff);
+							if (minute_diff <= 1) return context.getString(R.string.just_now);
+							return res.getQuantityString(R.plurals.Nminutes, minute_diff, minute_diff);
+						} else if (hour_diff == 1) {
+							if (minute_diff < 60)
+								return res.getQuantityString(R.plurals.Nminutes, minute_diff, minute_diff);
+						}
+						return res.getQuantityString(R.plurals.Nhours, hour_diff, hour_diff);
+					} else if (day_diff == 1) {
+						if (hour_diff < 24) return res.getQuantityString(R.plurals.Nhours, hour_diff, hour_diff);
+					}
+					return res.getQuantityString(R.plurals.Ndays, day_diff, day_diff);
+				} else if (month_diff == 1) {
+					if (day_diff < then.getActualMaximum(Time.MONTH_DAY))
+						return res.getQuantityString(R.plurals.Ndays, day_diff, day_diff);
+				}
+				return res.getQuantityString(R.plurals.Nmonths, month_diff, month_diff);
+			} else if (year_diff == 1) {
+				if (month_diff < 12) return res.getQuantityString(R.plurals.Nmonths, month_diff, month_diff);
+			}
+			return res.getQuantityString(R.plurals.Nyears, year_diff, year_diff);
+		}
 		return then.format3339(true);
 	}
 
@@ -838,12 +824,12 @@ public class CommonUtils implements Constants {
 		return values;
 	}
 
-	public static void restartActivity(Activity activity) {
-		int fade_in = android.R.anim.fade_in;
-		int fade_out = android.R.anim.fade_out;
-		activity.overridePendingTransition(fade_in, fade_out);
+	public static void restartActivity(Activity activity, boolean animation) {
+		int enter_anim = animation ? android.R.anim.fade_in : 0;
+		int exit_anim = animation ? android.R.anim.fade_out : 0;
+		activity.overridePendingTransition(enter_anim, exit_anim);
 		activity.finish();
-		activity.overridePendingTransition(fade_in, fade_out);
+		activity.overridePendingTransition(enter_anim, exit_anim);
 		activity.startActivity(activity.getIntent());
 	}
 
@@ -920,7 +906,22 @@ public class CommonUtils implements Constants {
 		}
 	}
 
-	private class ServiceBinder implements ServiceConnection {
+	public static void unbindFromService(ServiceToken token) {
+
+		if (token == null) {
+			Log.e(LOGTAG, "Trying to unbind with null token");
+			return;
+		}
+		ContextWrapper wrapper = token.mWrappedContext;
+		ServiceBinder binder = mConnectionMap.remove(wrapper);
+		if (binder == null) {
+			Log.e(LOGTAG, "Trying to unbind for unknown Context");
+			return;
+		}
+		wrapper.unbindService(binder);
+	}
+
+	private static class ServiceBinder implements ServiceConnection {
 
 		private ServiceConnection mCallback;
 

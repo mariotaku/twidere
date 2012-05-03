@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.util;
 
+import java.net.URL;
+
 import org.mariotaku.twidere.R;
 
 import android.graphics.PorterDuff;
@@ -10,29 +12,29 @@ import android.widget.TextView;
 
 public class StatusItemHolder {
 
-	public final ImageView profile_image;
-	public final TextView name, text, tweet_time, in_reply_to;
-	private final View content, gap_text;
-	public long status_id, account_id;
-	private boolean is_gap, account_color_enabled;
+	public final ImageView profile_image_view;
+	public final TextView name_view, text_view, tweet_time_view, in_reply_to_view;
+	private final View content, gap_indicator;
+	public long status_id = -1, account_id = -1, status_timestamp = -1;
+	public CharSequence name, screen_name, text, in_reply_to;
+	public URL profile_image_url;
+	private boolean show_as_gap, account_color_enabled;
+	public byte is_gap = -1, is_reply = -1, is_retweet = -2, is_favorite = -1, is_protected = -1, has_media = -1,
+			has_location = -1;
 
 	public StatusItemHolder(View view) {
 		content = view;
-		gap_text = view.findViewById(R.id.list_gap_text);
-		profile_image = (ImageView) view.findViewById(R.id.profile_image);
-		name = (TextView) view.findViewById(R.id.name);
-		text = (TextView) view.findViewById(R.id.text);
-		tweet_time = (TextView) view.findViewById(R.id.time);
-		in_reply_to = (TextView) view.findViewById(R.id.in_reply_to);
+		gap_indicator = view.findViewById(R.id.list_gap_text);
+		profile_image_view = (ImageView) view.findViewById(R.id.profile_image);
+		name_view = (TextView) view.findViewById(R.id.name);
+		text_view = (TextView) view.findViewById(R.id.text);
+		tweet_time_view = (TextView) view.findViewById(R.id.time);
+		in_reply_to_view = (TextView) view.findViewById(R.id.in_reply_to);
 
-	}
-
-	public boolean isGap() {
-		return is_gap;
 	}
 
 	public void setAccountColor(int color) {
-		if (!is_gap && account_color_enabled) {
+		if (!show_as_gap && account_color_enabled) {
 			Drawable background = content.getBackground();
 			if (background != null) {
 				background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
@@ -42,21 +44,21 @@ public class StatusItemHolder {
 
 	public void setAccountColorEnabled(boolean enabled) {
 		account_color_enabled = enabled;
-		if (!is_gap) {
+		if (!show_as_gap) {
 			content.setBackgroundResource(enabled ? R.drawable.ic_label_color : 0);
 		}
 	}
 
-	public void setIsGap(boolean is_gap) {
-		this.is_gap = is_gap;
+	public void setShowAsGap(boolean is_gap) {
+		show_as_gap = is_gap;
 		content.setBackgroundResource(is_gap ? R.drawable.ic_list_gap
 				: account_color_enabled ? R.drawable.ic_label_color : 0);
-		profile_image.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		name.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		text.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		tweet_time.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		in_reply_to.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		gap_text.setVisibility(!is_gap ? View.GONE : View.VISIBLE);
+		profile_image_view.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		name_view.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		text_view.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		tweet_time_view.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		in_reply_to_view.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		gap_indicator.setVisibility(!is_gap ? View.GONE : View.VISIBLE);
 	}
 
 }

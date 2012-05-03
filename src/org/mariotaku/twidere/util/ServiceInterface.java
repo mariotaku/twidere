@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
-import org.mariotaku.twidere.app.TwidereApplication;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -68,7 +67,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 	};
 
 	private ServiceInterface(Context context) {
-		((TwidereApplication) context.getApplicationContext()).getCommonUtils().bindToService(mConntecion);
+		CommonUtils.bindToService(context, mConntecion);
 		mContext = context;
 
 	}

@@ -185,7 +185,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			StatusItemHolder holder = (StatusItemHolder) tag;
 			long status_id = holder.status_id;
 			long account_id = holder.account_id;
-			if (holder.isGap() || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
+			if (holder.is_gap == 1 || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getStatuses(new long[] { account_id }, new long[] { status_id });
 			} else {
 				Bundle bundle = new Bundle();
@@ -202,7 +202,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		Object tag = view.getTag();
 		if (tag instanceof StatusItemHolder) {
 			StatusItemHolder holder = (StatusItemHolder) tag;
-			if (holder.isGap()) return false;
+			if (holder.is_gap == 1) return false;
 			mSelectedStatusId = holder.status_id;
 			getSherlockActivity().startActionMode(this);
 			return true;

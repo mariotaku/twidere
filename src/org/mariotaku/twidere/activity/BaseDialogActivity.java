@@ -1,10 +1,7 @@
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.twidere.util.CommonUtils;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 
 public class BaseDialogActivity extends BaseActivity {
 
@@ -16,20 +13,6 @@ public class BaseDialogActivity extends BaseActivity {
 		int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? android.R.style.Theme_Holo_Dialog
 				: android.R.style.Theme_Holo_Light_Dialog;
 		return new_theme_id != mThemeId;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		setTheme();
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		if (isThemeChanged()) {
-			CommonUtils.restartActivity(this);
-		}
 	}
 
 	@Override

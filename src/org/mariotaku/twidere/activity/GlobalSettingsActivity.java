@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
 
 import com.actionbarsherlock.view.MenuItem;
 
@@ -40,7 +42,15 @@ public class GlobalSettingsActivity extends BasePreferenceActivity implements On
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
 		if (PREFERENCE_KEY_DARK_THEME.equals(preference.getKey())) {
-			CommonUtils.restartActivity(this);
+			boolean show_anim = false;
+			try {
+				float transition_animation = Settings.System.getFloat(getContentResolver(),
+						Settings.System.TRANSITION_ANIMATION_SCALE);
+				show_anim = transition_animation > 0.0;
+			} catch (SettingNotFoundException e) {
+				e.printStackTrace();
+			}
+			CommonUtils.restartActivity(this, show_anim);
 		}
 		return true;
 	}

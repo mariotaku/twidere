@@ -8,6 +8,8 @@ import org.mariotaku.twidere.util.CommonUtils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
@@ -33,7 +35,15 @@ public class BasePreferenceActivity extends SherlockPreferenceActivity implement
 	public void onResume() {
 		super.onResume();
 		if (isThemeChanged()) {
-			CommonUtils.restartActivity(this);
+			boolean show_anim = false;
+			try {
+				float transition_animation = Settings.System.getFloat(getContentResolver(),
+						Settings.System.TRANSITION_ANIMATION_SCALE);
+				show_anim = transition_animation > 0.0;
+			} catch (SettingNotFoundException e) {
+				e.printStackTrace();
+			}
+			CommonUtils.restartActivity(this, show_anim);
 		}
 	}
 

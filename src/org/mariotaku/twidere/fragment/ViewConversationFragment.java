@@ -165,17 +165,17 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 			boolean has_media = status.getMediaEntities() != null && status.getMediaEntities().length > 0;
 			boolean has_location = status.getGeoLocation() != null;
 			boolean is_protected = user.isProtected();
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+			holder.name_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
-			holder.name.setText(mDisplayName ? user.getName() : "@" + user.getScreenName());
-			holder.text.setText(status.getText());
-			holder.tweet_time.setText(CommonUtils
-					.formatToShortTimeString(getContext(), status.getCreatedAt().getTime()));
-			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+			holder.name_view.setText(mDisplayName ? user.getName() : "@" + user.getScreenName());
+			holder.text_view.setText(status.getText());
+			holder.tweet_time_view.setText(CommonUtils.formatToShortTimeString(getContext(), status.getCreatedAt()
+					.getTime()));
+			holder.tweet_time_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					CommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media), 0);
-			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+			holder.profile_image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				image_loader.displayImage(user.getProfileImageURL(), holder.profile_image);
+				image_loader.displayImage(user.getProfileImageURL(), holder.profile_image_view);
 			}
 			return view;
 		}
