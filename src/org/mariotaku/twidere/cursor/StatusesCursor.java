@@ -1,12 +1,14 @@
 package org.mariotaku.twidere.cursor;
 
+import static org.mariotaku.twidere.util.Utils.formatGeoLocationToString;
+import static org.mariotaku.twidere.util.Utils.formatStatusString;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.CommonUtils;
 
 import twitter4j.Paging;
 import twitter4j.Status;
@@ -16,6 +18,26 @@ import android.database.AbstractCursor;
 import android.os.Bundle;
 
 public abstract class StatusesCursor extends AbstractCursor {
+
+	private static List<Status> statuses = new ArrayList<Status>();
+
+	private static String[] mColumns = new String[0];
+
+	private static long mAccountId;
+
+	/**
+	 * Perform alphabetical comparison of application entry objects.
+	 */
+	public static final Comparator<Status> TIMESTAMP_COMPARATOR = new Comparator<Status>() {
+
+		@Override
+		public int compare(Status object1, Status object2) {
+			long diff = object1.getCreatedAt().getTime() - object2.getCreatedAt().getTime();
+			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+			return (int) (object1.getCreatedAt().getTime() - object2.getCreatedAt().getTime());
+		}
+	};
 
 	public StatusesCursor(Twitter twitter, long id, Paging paging, String[] cols) {
 		try {
@@ -110,7 +132,7 @@ public abstract class StatusesCursor extends AbstractCursor {
 			retweet_status = status.isRetweetedByMe() ? -retweet_status : retweet_status;
 			return retweet_status;
 		}
-		if (Statuses.LOCATION.equals(col)) return CommonUtils.formatGeoLocationToString(status.getGeoLocation());
+		if (Statuses.LOCATION.equals(col)) return formatGeoLocationToString(status.getGeoLocation());
 		if (Statuses.NAME.equals(col)) return status.getUser().getName();
 		if (Statuses.PROFILE_IMAGE_URL.equals(col)) {
 			URL url = status.getUser().getProfileImageURL();
@@ -121,7 +143,7 @@ public abstract class StatusesCursor extends AbstractCursor {
 		if (Statuses.SOURCE.equals(col)) return status.getSource();
 		if (Statuses.STATUS_ID.equals(col)) return status.getId();
 		if (Statuses.STATUS_TIMESTAMP.equals(col)) return status.getCreatedAt().getTime();
-		if (Statuses.TEXT.equals(col)) return CommonUtils.formatStatusString(status);
+		if (Statuses.TEXT.equals(col)) return formatStatusString(status, mAccountId);
 		if (Statuses.USER_ID.equals(col)) return status.getUser().getId();
 
 		return null;
@@ -135,24 +157,4 @@ public abstract class StatusesCursor extends AbstractCursor {
 		}
 		mAccountId = twitter.getId();
 	}
-
-	private static List<Status> statuses = new ArrayList<Status>();
-
-	private static String[] mColumns = new String[0];
-
-	private static long mAccountId;
-
-	/**
-	 * Perform alphabetical comparison of application entry objects.
-	 */
-	public static final Comparator<Status> TIMESTAMP_COMPARATOR = new Comparator<Status>() {
-
-		@Override
-		public int compare(Status object1, Status object2) {
-			long diff = object1.getCreatedAt().getTime() - object2.getCreatedAt().getTime();
-			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
-			return (int) (object1.getCreatedAt().getTime() - object2.getCreatedAt().getTime());
-		}
-	};
 }

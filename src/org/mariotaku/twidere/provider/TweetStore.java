@@ -302,6 +302,14 @@ public final class TweetStore {
 
 		public static final String IS_PROTECTED = "is_protected";
 
+		public static final String RETWEET_ID = "retweet_id";
+
+		public static final String RETWEETED_BY_ID = "retweeted_by_id";
+
+		public static final String RETWEETED_BY_NAME = "retweeted_by_name";
+
+		public static final String RETWEETED_BY_SCREEN_NAME = "retweeted_by_screen_name";
+
 		/**
 		 * Timestamp of the status.<br>
 		 * Type: INTEGER (long)
@@ -312,12 +320,13 @@ public final class TweetStore {
 
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
 				TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID,
-				IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, IS_RETWEET, IS_FAVORITE, HAS_MEDIA,
-				IS_PROTECTED, IS_GAP };
+				IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID,
+				RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, IS_RETWEET, IS_FAVORITE, HAS_MEDIA, IS_PROTECTED, IS_GAP };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT_UNIQUE, TYPE_INT,
 				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
+				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN,
+				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
 
 	}
 }

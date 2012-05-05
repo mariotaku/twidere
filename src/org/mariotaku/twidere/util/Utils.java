@@ -1,5 +1,6 @@
 package org.mariotaku.twidere.util;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,6 +52,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -62,13 +64,12 @@ import android.text.format.Time;
 import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public final class CommonUtils implements Constants {
+public final class Utils implements Constants {
 
 	private static HashMap<Context, ServiceBinder> mConnectionMap = new HashMap<Context, ServiceBinder>();
 
@@ -88,6 +89,8 @@ public final class CommonUtils implements Constants {
 	}
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
+
+	private static final String IMAGE_URL_PATTERN = "href=\\s*[\\\"'](http(s?):\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp))[\\\"']\\s*";
 
 	public static ServiceToken bindToService(Context context) {
 
@@ -109,7 +112,6 @@ public final class CommonUtils implements Constants {
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
 		long[] account_ids = getActivatedAccounts(context);
-		if (account_ids.length <= 0) return null;
 		StringBuilder builder = new StringBuilder();
 		if (selection != null) {
 			builder.append(selection);
@@ -175,7 +177,7 @@ public final class CommonUtils implements Constants {
 		int item_limit = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 
-		for (long account_id : getAccounts(context)) {
+		for (long account_id : getAccountIds(context)) {
 			// Clean statuses.
 			for (Uri uri : uris) {
 				Cursor cur = resolver.query(uri, cols, Statuses.ACCOUNT_ID + "=" + account_id, null,
@@ -220,7 +222,7 @@ public final class CommonUtils implements Constants {
 		return location.getLatitude() + "," + location.getLongitude();
 	}
 
-	public static String formatStatusString(Status status) {
+	public static String formatStatusString(Status status, long account_id) {
 		final CharSequence TAG_START = "<p>";
 		final CharSequence TAG_END = "</p>";
 		if (status == null || status.getText() == null) return "";
@@ -252,8 +254,12 @@ public final class CommonUtils implements Constants {
 				if (start < 0 || end > text.length()) {
 					continue;
 				}
-				String link = "https://twitter.com/#!/" + mention.getScreenName();
-				text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(HOST_USER);
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, mention.getScreenName());
+				text.setSpan(new URLSpan(builder.build().toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
 		}
 		// Format hashtags.
@@ -418,7 +424,7 @@ public final class CommonUtils implements Constants {
 		return -1;
 	}
 
-	public static long[] getAccounts(Context context) {
+	public static long[] getAccountIds(Context context) {
 		long[] accounts = new long[] {};
 		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID }, null,
 				null, null);
@@ -540,6 +546,32 @@ public final class CommonUtils implements Constants {
 		}
 	}
 
+	public static URL[] getImageLinksForText(CharSequence text) {
+
+		final Pattern pattern = Pattern.compile(IMAGE_URL_PATTERN);
+		final Matcher matcher = pattern.matcher(text);
+		final List<URL> image_links = new ArrayList<URL>();
+		while (matcher.find()) {
+			String link_string = matcher.group(1);
+			if (link_string == null) {
+				continue;
+			}
+			URL link = null;
+			try {
+				link = new URL(link_string);
+			} catch (MalformedURLException e) {
+
+			}
+			if (link == null) {
+				continue;
+			}
+			if (!image_links.contains(link)) {
+				image_links.add(link);
+			}
+		}
+		return image_links.toArray(new URL[image_links.size()]);
+	}
+
 	public static String getImagePathFromUri(Context context, Uri uri) {
 		if (uri == null) return null;
 
@@ -655,7 +687,7 @@ public final class CommonUtils implements Constants {
 	}
 
 	public static String getTableNameForContentUri(Uri uri) {
-		switch (CommonUtils.getTableId(uri)) {
+		switch (getTableId(uri)) {
 			case URI_STATUSES:
 				return TABLE_STATUSES;
 			case URI_ACCOUNTS:
@@ -698,6 +730,7 @@ public final class CommonUtils implements Constants {
 				}
 				cb.setRestBaseURL(rest_api_base);
 				cb.setSearchBaseURL(search_api_base);
+				cb.setIncludeEntitiesEnabled(include_entities);
 				try {
 					String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
 					cb.setClientVersion(version);
@@ -727,11 +760,9 @@ public final class CommonUtils implements Constants {
 		return twitter;
 	}
 
-	public static int getTypeIcon(boolean is_retweet, boolean is_fav, boolean has_location, boolean has_media) {
+	public static int getTypeIcon(boolean is_fav, boolean has_location, boolean has_media) {
 		if (is_fav)
 			return R.drawable.ic_tweet_stat_starred;
-		else if (is_retweet)
-			return R.drawable.ic_tweet_stat_retweet;
 		else if (has_media)
 			return R.drawable.ic_tweet_stat_has_media;
 		else if (has_location) return R.drawable.ic_tweet_stat_has_location;
@@ -739,7 +770,7 @@ public final class CommonUtils implements Constants {
 	}
 
 	public static boolean isUserLoggedIn(Context context, long account_id) {
-		long[] ids = getAccounts(context);
+		long[] ids = getAccountIds(context);
 		if (ids == null) return false;
 		for (long id : ids) {
 			if (id == account_id) return true;
@@ -795,18 +826,26 @@ public final class CommonUtils implements Constants {
 
 	public static ContentValues makeStatusesContentValues(Status status, long account_id) {
 		ContentValues values = new ContentValues();
+		int is_retweet = status.isRetweet() ? 1 : 0;
+		Status retweeted_status = status.getRetweetedStatus();
+		if (is_retweet == 1 && retweeted_status != null) {
+			User retweet_user = status.getUser();
+			values.put(Statuses.RETWEET_ID, status.getId());
+			values.put(Statuses.RETWEETED_BY_ID, retweet_user.getId());
+			values.put(Statuses.RETWEETED_BY_NAME, retweet_user.getName());
+			values.put(Statuses.RETWEETED_BY_SCREEN_NAME, retweet_user.getScreenName());
+			status = retweeted_status;
+		}
 		User user = status.getUser();
 		long status_id = status.getId(), user_id = user.getId();
 		String profile_image_url = user.getProfileImageURL().toString();
 		String name = user.getName(), screen_name = user.getScreenName();
 		MediaEntity[] medias = status.getMediaEntities();
-		int retweet_status = Math.abs(status.isRetweet() ? 1 : 0);
-		retweet_status = status.isRetweetedByMe() ? -retweet_status : retweet_status;
 		values.put(Statuses.STATUS_ID, status_id);
 		values.put(Statuses.ACCOUNT_ID, account_id);
 		values.put(Statuses.USER_ID, user_id);
 		values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
-		values.put(Statuses.TEXT, formatStatusString(status));
+		values.put(Statuses.TEXT, formatStatusString(status, account_id));
 		values.put(Statuses.NAME, name);
 		values.put(Statuses.SCREEN_NAME, screen_name);
 		values.put(Statuses.PROFILE_IMAGE_URL, profile_image_url);
@@ -816,11 +855,10 @@ public final class CommonUtils implements Constants {
 		values.put(Statuses.IN_REPLY_TO_USER_ID, status.getInReplyToUserId());
 		values.put(Statuses.SOURCE, status.getSource());
 		values.put(Statuses.LOCATION, formatGeoLocationToString(status.getGeoLocation()));
-		values.put(Statuses.IS_RETWEET, retweet_status);
+		values.put(Statuses.IS_RETWEET, is_retweet);
 		values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
 		values.put(Statuses.IS_PROTECTED, user.isProtected() ? 1 : 0);
 		values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
-
 		return values;
 	}
 
@@ -833,26 +871,12 @@ public final class CommonUtils implements Constants {
 		activity.startActivity(activity.getIntent());
 	}
 
-	public static void setLayerType(View view, int layerType, Paint paint) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			new MethodsCompat().setLayerType(view, layerType, paint);
-		}
-	}
-
 	public static void setMenuForStatus(Context context, Menu menu, long status_id, Uri uri) {
 		int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
 		ContentResolver resolver = context.getContentResolver();
-		String[] accounts_cols = new String[] { Accounts.USER_ID };
-		Cursor accounts_cur = resolver.query(Accounts.CONTENT_URI, accounts_cols, null, null, null);
-		ArrayList<Long> ids = new ArrayList<Long>();
-		if (accounts_cur != null) {
-			accounts_cur.moveToFirst();
-			int idx = accounts_cur.getColumnIndexOrThrow(Accounts.USER_ID);
-			while (!accounts_cur.isAfterLast()) {
-				ids.add(accounts_cur.getLong(idx));
-				accounts_cur.moveToNext();
-			}
-			accounts_cur.close();
+		final ArrayList<Long> ids = new ArrayList<Long>();
+		for (long id : getAccountIds(context)) {
+			ids.add(id);
 		}
 		String[] cols = Statuses.COLUMNS;
 		String where = Statuses.STATUS_ID + "=" + status_id;
@@ -862,13 +886,23 @@ public final class CommonUtils implements Constants {
 			long user_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
 			boolean is_protected = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_PROTECTED)) == 1;
 			menu.findItem(R.id.delete_submenu).setVisible(ids.contains(user_id));
-			menu.findItem(MENU_RETWEET).setVisible(!is_protected && (!ids.contains(user_id) || ids.size() > 1));
+			MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
+			itemRetweet.setVisible(!is_protected && (!ids.contains(user_id) || ids.size() > 1));
+			Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
+			if (ids.contains(cur.getInt(cur.getColumnIndexOrThrow(Statuses.RETWEETED_BY_ID)))) {
+				iconRetweetSubMenu.setColorFilter(activated_color, Mode.MULTIPLY);
+				itemRetweet.setTitle(R.string.cancel_retweet);
+			} else {
+				iconRetweetSubMenu.clearColorFilter();
+				itemRetweet.setTitle(R.string.retweet);
+			}
 			MenuItem itemFav = menu.findItem(MENU_FAV);
+			Drawable iconFav = itemFav.getIcon();
 			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1) {
-				itemFav.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+				iconFav.setColorFilter(activated_color, Mode.MULTIPLY);
 				itemFav.setTitle(R.string.unfav);
 			} else {
-				itemFav.getIcon().clearColorFilter();
+				iconFav.clearColorFilter();
 				itemFav.setTitle(R.string.fav);
 			}
 		}
@@ -877,9 +911,9 @@ public final class CommonUtils implements Constants {
 		}
 	}
 
-	public static void setUiOptions(Window window, int uiOptions) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			new MethodsCompat().setUiOptions(window, uiOptions);
+	public static void setViewLayerType(View view, int layerType, Paint paint) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			new MethodsCompat().setLayerType(view, layerType, paint);
 		}
 	}
 

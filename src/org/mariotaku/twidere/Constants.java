@@ -21,9 +21,18 @@ public interface Constants {
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
 
-	public static final String PROTOCOL_HTTP = "http://";
-	public static final String PROTOCOL_HTTPS = "https://";
-	public static final String PROTOCOL_TWIDERE = "twidere://";
+	public static final String SCHEME_HTTP = "http";
+	public static final String SCHEME_HTTPS = "https";
+	public static final String SCHEME_TWIDERE = "twidere";
+
+	public static final String PROTOCOL_HTTP = SCHEME_HTTP + "://";
+	public static final String PROTOCOL_HTTPS = SCHEME_HTTPS + "://";
+	public static final String PROTOCOL_TWIDERE = SCHEME_TWIDERE + "://";
+
+	public static final String HOST_USER = "user";
+
+	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
+	public static final String QUERY_PARAM_SCREEN_NAME = "screen_name";
 
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
 
@@ -71,6 +80,7 @@ public interface Constants {
 	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_ACTION_PREFIX + "GLOBAL_SETTINGS";
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_ACTION_PREFIX + "SELECT_ACCOUNT";
 	public static final String INTENT_ACTION_VIEW_STATUS = INTENT_ACTION_PREFIX + "VIEW_STATUS";
+	public static final String INTENT_ACTION_VIEW_USER_PROFILE = INTENT_ACTION_PREFIX + "VIEW_USER_PROFILE";
 	public static final String INTENT_ACTION_VIEW_CONVERSATION = INTENT_ACTION_PREFIX + "VIEW_CONVERSATION";
 	public static final String INTENT_ACTION_VIEW_MAP = INTENT_ACTION_PREFIX + "VIEW_MAP";
 	public static final String INTENT_ACTION_FILTERS = INTENT_ACTION_PREFIX + "FILTERS";
@@ -85,7 +95,9 @@ public interface Constants {
 	public static final String INTENT_KEY_URI = "uri";
 	public static final String INTENT_KEY_MENTIONS = "mentions";
 	public static final String INTENT_KEY_ACCOUNT_ID = "account_id";
+	public static final String INTENT_KEY_USER_ID = "user_id";
 	public static final String INTENT_KEY_STATUS_ID = "status_id";
+	public static final String INTENT_KEY_SCREEN_NAME = "screen_name";
 	public static final String INTENT_KEY_IN_REPLY_TO_ID = "in_reply_to_id";
 	public static final String INTENT_KEY_TEXT = "text";
 	public static final String INTENT_KEY_SUCCEED = "succeed";

@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -55,101 +57,8 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	private String mSelectedScreenName;
 	private ContentResolver mResolver;
 
-	Fragment mDetailFragment;
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		new MenuInflater(getSherlockActivity()).inflate(R.menu.context_account, menu);
-
-		AdapterContextMenuInfo adapterinfo = (AdapterContextMenuInfo) menuInfo;
-
-		Object tag = adapterinfo.targetView.getTag();
-		if (tag instanceof ViewHolder) {
-			ViewHolder holder = (ViewHolder) tag;
-			mSelectedColor = holder.user_color;
-			mSelectedUserId = holder.user_id;
-			mSelectedScreenName = holder.username;
-			menu.setHeaderTitle(holder.username);
-		} else {
-			mSelectedUserId = INVALID_ID;
-		}
-		super.onCreateContextMenu(menu, v, menuInfo);
-	}
-
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Uri uri = Accounts.CONTENT_URI;
-		String[] cols = Accounts.COLUMNS;
-		StringBuilder where = new StringBuilder();
-		where.append(Accounts.IS_ACTIVATED + "=1");
-		return new CursorLoader(getSherlockActivity(), uri, cols, where.toString(), null, null);
-	}
-
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		Object tag = v.getTag();
-		if (tag instanceof ViewHolder) {
-			ViewHolder holder = (ViewHolder) tag;
-			showDetails(holder.user_id);
-		}
-		super.onListItemClick(l, v, position, id);
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		mAdapter.changeCursor(null);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mAdapter.changeCursor(data);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_ADD_ACCOUNT:
-				startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
-				break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
-		}
-	}
-
-	@Override
-	public void onStop() {
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().unregisterReceiver(mStatusReceiver);
-		}
-		super.onStop();
-	}
-
-	private void confirmDelection() {
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		mFragment.show(ft, "delete_confirm");
-	}
-
-	private void showDetails(long user_id) {
-		if (getSherlockActivity() instanceof HomeActivity) {
-			((HomeActivity) getSherlockActivity()).setPagingEnabled(false);
-		}
-		if (mDetailFragment == null) {
-			mDetailFragment = Fragment.instantiate(getSherlockActivity(), MeFragment.class.getName(), null);
-		}
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.replace(R.id.dashboard, mDetailFragment);
-		ft.addToBackStack(null);
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-		ft.commit();
-	}
+	private Fragment mDetailFragment;
+	private boolean mActivityFirstCreated;
 
 	private static final long INVALID_ID = -1;
 
@@ -231,6 +140,114 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		return super.onContextItemSelected(item);
 	}
 
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		mActivityFirstCreated = true;
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		new MenuInflater(getSherlockActivity()).inflate(R.menu.context_account, menu);
+
+		AdapterContextMenuInfo adapterinfo = (AdapterContextMenuInfo) menuInfo;
+
+		Object tag = adapterinfo.targetView.getTag();
+		if (tag instanceof ViewHolder) {
+			ViewHolder holder = (ViewHolder) tag;
+			mSelectedColor = holder.user_color;
+			mSelectedUserId = holder.user_id;
+			mSelectedScreenName = holder.username;
+			menu.setHeaderTitle(holder.username);
+		} else {
+			mSelectedUserId = INVALID_ID;
+		}
+		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		Uri uri = Accounts.CONTENT_URI;
+		String[] cols = Accounts.COLUMNS;
+		return new CursorLoader(getSherlockActivity(), uri, cols, null, null, null);
+	}
+
+	@Override
+	public void onDestroy() {
+		mActivityFirstCreated = true;
+		super.onDestroy();
+	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Object tag = v.getTag();
+		if (tag instanceof ViewHolder) {
+			ViewHolder holder = (ViewHolder) tag;
+			showDetails(holder.user_id);
+		}
+		super.onListItemClick(l, v, position, id);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		mAdapter.changeCursor(null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		mAdapter.changeCursor(data);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_ADD_ACCOUNT:
+				startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
+		}
+		if (!mActivityFirstCreated) {
+			getLoaderManager().restartLoader(0, null, this);
+		}
+	}
+
+	@Override
+	public void onStop() {
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		}
+		mActivityFirstCreated = false;
+		super.onStop();
+	}
+
+	private void confirmDelection() {
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		mFragment.show(ft, "delete_confirm");
+	}
+
+	private void showDetails(long user_id) {
+		if (getSherlockActivity() instanceof HomeActivity) {
+			((HomeActivity) getSherlockActivity()).setPagingEnabled(false);
+		}
+		if (mDetailFragment == null) {
+			mDetailFragment = Fragment.instantiate(getSherlockActivity(), MeFragment.class.getName(), null);
+		}
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.replace(R.id.dashboard, mDetailFragment);
+		ft.addToBackStack(null);
+		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+		ft.commit();
+	}
+
 	public static class ViewHolder {
 
 		public ImageView profile_image;
@@ -305,26 +322,19 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
 			switch (which) {
-				case DialogInterface.BUTTON_POSITIVE:
-					Cursor cur = mResolver.query(Accounts.CONTENT_URI, new String[0], Accounts.IS_ACTIVATED + "=1",
-							null, null);
-					if (cur == null) {
-						break;
-					}
-					// Have more than one accounts? Then delete the account we
-					// selected.
-					if (cur.getCount() > 1) {
-						mResolver.delete(Accounts.CONTENT_URI, Accounts.USER_ID + "=" + mSelectedUserId, null);
-						// Also delete tweets related to the account we
-						// previously deleted.
-						mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + "=" + mSelectedUserId, null);
-						mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + "=" + mSelectedUserId, null);
+				case DialogInterface.BUTTON_POSITIVE: {
+					mResolver.delete(Accounts.CONTENT_URI, Accounts.USER_ID + "=" + mSelectedUserId, null);
+					// Also delete tweets related to the account we
+					// previously deleted.
+					mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + "=" + mSelectedUserId, null);
+					mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + "=" + mSelectedUserId, null);
+					if (getActivatedAccounts(getSherlockActivity()).length > 0) {
 						AccountsFragment.this.getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 					} else {
-						// Do something else if we only have one account.
+						getSherlockActivity().finish();
 					}
-					cur.close();
 					break;
+				}
 			}
 
 		}

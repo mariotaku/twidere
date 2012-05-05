@@ -1,5 +1,10 @@
 package org.mariotaku.twidere.provider;
 
+import static org.mariotaku.twidere.util.Utils.clearAccountColor;
+import static org.mariotaku.twidere.util.Utils.getTableId;
+import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +16,6 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.CommonUtils;
 
 import twitter4j.Twitter;
 import android.content.ContentProvider;
@@ -31,7 +35,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		String table = CommonUtils.getTableNameForContentUri(uri);
+		String table = getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
 			result = database.delete(table, selection, selectionArgs);
@@ -49,7 +53,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		String table = CommonUtils.getTableNameForContentUri(uri);
+		String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
 		long row_id = database.insert(table, null, values);
 		notifyForUpdatedUri(uri);
@@ -73,21 +77,19 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 
 		String account_id_string = uri.getQueryParameter(TweetStore.KEY_ACCOUNT_ID);
-		String table = CommonUtils.getTableNameForContentUri(uri);
+		String table = getTableNameForContentUri(uri);
 
-		switch (CommonUtils.getTableId(uri)) {
+		switch (getTableId(uri)) {
 			case URI_FAVORITES:
 				if (account_id_string != null) {
-					Twitter twitter = CommonUtils.getTwitterInstance(getContext(), Long.parseLong(account_id_string),
-							true);
+					Twitter twitter = getTwitterInstance(getContext(), Long.parseLong(account_id_string), true);
 					return new FavoriteCursor(twitter, null, projection);
 				}
 				return null;
 			case URI_USER_TIMELINE:
 				String screen_name = uri.getLastPathSegment();
 				if (account_id_string != null) {
-					Twitter twitter = CommonUtils.getTwitterInstance(getContext(), Long.valueOf(account_id_string),
-							true);
+					Twitter twitter = getTwitterInstance(getContext(), Long.valueOf(account_id_string), true);
 					return new UserTimelineCursor(twitter, screen_name, null, projection);
 				}
 				return null;
@@ -101,7 +103,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-		String table = CommonUtils.getTableNameForContentUri(uri);
+		String table = getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
 			result = database.update(table, values, selection, selectionArgs);
@@ -114,13 +116,13 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 
 	private void notifyForUpdatedUri(Uri uri) {
 		Context context = getContext();
-		switch (CommonUtils.getTableId(uri)) {
+		switch (getTableId(uri)) {
 			case URI_STATUSES:
 				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
 						true));
 				break;
 			case URI_ACCOUNTS:
-				CommonUtils.clearAccountColor();
+				clearAccountColor();
 				context.sendBroadcast(new Intent(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED));
 				break;
 			case URI_MENTIONS:
@@ -134,6 +136,16 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	}
 
 	private class DatabaseHelper extends SQLiteOpenHelper {
+
+		private static final int FIELD_TYPE_NULL = 0;
+
+		private static final int FIELD_TYPE_INTEGER = 1;
+
+		private static final int FIELD_TYPE_FLOAT = 2;
+
+		private static final int FIELD_TYPE_STRING = 3;
+
+		private static final int FIELD_TYPE_BLOB = 4;
 
 		public DatabaseHelper(Context context, String name, int version) {
 			super(context, name, null, version);
@@ -301,16 +313,6 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 				db.insert(table, null, values);
 			}
 		}
-
-		private static final int FIELD_TYPE_NULL = 0;
-
-		private static final int FIELD_TYPE_INTEGER = 1;
-
-		private static final int FIELD_TYPE_FLOAT = 2;
-
-		private static final int FIELD_TYPE_STRING = 3;
-
-		private static final int FIELD_TYPE_BLOB = 4;
 
 	}
 

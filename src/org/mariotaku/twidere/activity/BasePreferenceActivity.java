@@ -1,9 +1,10 @@
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.restartActivity;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ActivityThemeChangeImpl;
-import org.mariotaku.twidere.util.CommonUtils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -43,7 +44,7 @@ public class BasePreferenceActivity extends SherlockPreferenceActivity implement
 			} catch (SettingNotFoundException e) {
 				e.printStackTrace();
 			}
-			CommonUtils.restartActivity(this, show_anim);
+			restartActivity(this, show_anim);
 		}
 	}
 

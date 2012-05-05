@@ -1,10 +1,11 @@
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.restartActivity;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ActivityThemeChangeImpl;
-import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.content.BroadcastReceiver;
@@ -62,7 +63,7 @@ public class BaseActivity extends SherlockFragmentActivity implements Constants,
 			} catch (SettingNotFoundException e) {
 				e.printStackTrace();
 			}
-			CommonUtils.restartActivity(this, show_anim);
+			restartActivity(this, show_anim);
 			return;
 		}
 	}

@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.Utils.bindToService;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,8 +68,10 @@ public class ServiceInterface implements Constants, ITwidereService {
 		}
 	};
 
+	private static ServiceInterface sInstance;
+
 	private ServiceInterface(Context context) {
-		CommonUtils.bindToService(context, mConntecion);
+		bindToService(context, mConntecion);
 		mContext = context;
 
 	}
@@ -223,8 +227,6 @@ public class ServiceInterface implements Constants, ITwidereService {
 		}
 		return -1;
 	}
-
-	private static ServiceInterface sInstance;
 
 	public static ServiceInterface getInstance(Context context) {
 		if (sInstance == null || !sInstance.test()) {

@@ -1,13 +1,21 @@
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
+import static org.mariotaku.twidere.util.Utils.buildFilterWhereClause;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getLastStatusIds;
+import static org.mariotaku.twidere.util.Utils.getMentionedNames;
+import static org.mariotaku.twidere.util.Utils.getTableId;
+import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
+import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
-import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.util.StatusItemHolder;
+import org.mariotaku.twidere.util.StatusViewHolder;
 import org.mariotaku.twidere.widget.StatusesAdapter;
 
 import android.content.ContentResolver;
@@ -73,8 +81,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			switch (item.getItemId()) {
 				case MENU_REPLY: {
 					Bundle bundle = new Bundle();
-					bundle.putStringArray(INTENT_KEY_MENTIONS,
-							CommonUtils.getMentionedNames(screen_name, text, false, true));
+					bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text, false, true));
 					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mSelectedStatusId);
 					startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
 					break;
@@ -154,10 +161,10 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String[] cols = Statuses.COLUMNS;
 		Uri uri = getContentUri();
-		String where = CommonUtils.buildActivatedStatsWhereClause(getSherlockActivity(), null);
+		String where = buildActivatedStatsWhereClause(getSherlockActivity(), null);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
-			String table = CommonUtils.getTableNameForContentUri(uri);
-			where = CommonUtils.buildFilterWhereClause(table, where);
+			String table = getTableNameForContentUri(uri);
+			where = buildFilterWhereClause(table, where);
 		}
 		return new CursorLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
 	}
@@ -181,11 +188,11 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		Object tag = view.getTag();
-		if (tag instanceof StatusItemHolder) {
-			StatusItemHolder holder = (StatusItemHolder) tag;
+		if (tag instanceof StatusViewHolder) {
+			StatusViewHolder holder = (StatusViewHolder) tag;
 			long status_id = holder.status_id;
 			long account_id = holder.account_id;
-			if (holder.is_gap == 1 || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
+			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getStatuses(new long[] { account_id }, new long[] { status_id });
 			} else {
 				Bundle bundle = new Bundle();
@@ -200,9 +207,9 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
 		Object tag = view.getTag();
-		if (tag instanceof StatusItemHolder) {
-			StatusItemHolder holder = (StatusItemHolder) tag;
-			if (holder.is_gap == 1) return false;
+		if (tag instanceof StatusViewHolder) {
+			StatusViewHolder holder = (StatusViewHolder) tag;
+			if (holder == null || holder.show_as_gap) return false;
 			mSelectedStatusId = holder.status_id;
 			getSherlockActivity().startActionMode(this);
 			return true;
@@ -222,14 +229,14 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 
 	@Override
 	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		CommonUtils.setMenuForStatus(getSherlockActivity(), menu, mSelectedStatusId, getContentUri());
+		setMenuForStatus(getSherlockActivity(), menu, mSelectedStatusId, getContentUri());
 		return true;
 	}
 
 	@Override
 	public void onRefresh() {
 
-		long[] account_ids = CommonUtils.getActivatedAccounts(getSherlockActivity());
+		long[] account_ids = getActivatedAccounts(getSherlockActivity());
 		mRunningTaskId = getStatuses(account_ids, null);
 
 	}
@@ -262,8 +269,8 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			}
 			if (mLoadMoreAutomatically && mReachedBottom) {
 				if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
-					mRunningTaskId = getStatuses(CommonUtils.getActivatedAccounts(getSherlockActivity()),
-							CommonUtils.getLastStatusIds(getSherlockActivity(), getContentUri()));
+					mRunningTaskId = getStatuses(getActivatedAccounts(getSherlockActivity()),
+							getLastStatusIds(getSherlockActivity(), getContentUri()));
 				}
 			}
 		}
@@ -322,7 +329,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	private int getStatuses(long[] account_ids, long[] max_ids) {
-		switch (CommonUtils.getTableId(getContentUri())) {
+		switch (getTableId(getContentUri())) {
 			case URI_STATUSES:
 				return mServiceInterface.getHomeTimeline(account_ids, max_ids);
 			case URI_MENTIONS:

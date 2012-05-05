@@ -48,21 +48,24 @@
 	<string name="open_in_browser">Open in browser</string>
 	<string name="just_now">Just now</string>
 	<string name="tap_to_load_more">Tap to load more</string>
+	<string name="go_to_my_profile_page">Go to my profile page</string>
 	<string name="delete">Delete</string>
 	<string name="retweet">Retweet</string>
+	<string name="cancel_retweet">Cancel retweet</string>
 	<string name="fav">Fav</string>
 	<string name="unfav">Unfav</string>
 	<string name="reply">Reply</string>
 	<string name="share">Share</string>
 	<string name="view">View</string>
-	<string name="view_image">View image</string>
-	<string name="view_map">View map</string>
+	<string name="view_image">Image</string>
+	<string name="view_media">Media</string>
+	<string name="view_map">Map</string>
 	<string name="view_status">View tweet</string>
-	<string name="view_conversation">View conversation</string>
+	<string name="view_conversation">Conversation</string>
+	<string name="view_user_profile">User profile</string>
 	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Pick from gallery</string>
 	<string name="pick_from_map">Pick from map</string>
-	<string name="go_to_my_profile_page">Go to my profile page</string>
 	<string name="tweets">Tweets</string>
 	<string name="followers">Followers</string>
 	<string name="following">Following</string>
@@ -96,15 +99,16 @@
 	<string name="display_profile_image">Display profile image</string>
 	<string name="display_profile_image_summary">Display profile image, uncheck this will increase list scroll speed and reduce traffic usage.</string>
 	<string name="in_reply_to">In reply to <xliff:g id="user_name">%s</xliff:g></string>
+	<string name="retweeted_by">Retweeted by <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="reply_to">Reply to <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="quote_user">Quote <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
 	<string name="filter">Filter</string>
+	<string name="filter_summary">Hide tweets from unwanted users / sources or contains specified keywords</string>
 	<string name="filter_enabled">Filter is enabled</string>
 	<string name="filter_disabled">Filter is disabled</string>
 	<string name="enable">Enable</string>
 	<string name="disable">Disable</string>
-	<string name="filter_summary">Hide tweets from unwanted users / sources or contains specified keywords</string>
 	<string name="users">Users</string>
 	<string name="keywords">Keywords</string>
 	<string name="sources">Sources</string>
@@ -135,5 +139,6 @@
 	<string name="display_name">Display name</string>
 	<string name="display_name_summaryon">Display username of tweet.</string>
 	<string name="display_name_summaryoff">Display screen name (e.g. @username) of tweet</string>
+	<string name="cannot_get_location">Can\'t get your location.</string>
 
 </resources>

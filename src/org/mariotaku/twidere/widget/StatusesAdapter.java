@@ -1,13 +1,17 @@
 package org.mariotaku.twidere.widget;
 
+import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
+import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getTypeIcon;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.StatusItemHolder;
+import org.mariotaku.twidere.util.StatusViewHolder;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -21,12 +25,12 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	private final static String[] mFrom = new String[] {};
 	private final static int[] mTo = new int[] {};
 	private boolean mDisplayProfileImage, mDisplayName, mMultipleAccountsActivated, mShowLastItemAsGap;
-	private LazyImageLoader mImageLoader;
+	private final LazyImageLoader mImageLoader;
 	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mNameIdx, mScreenNameIdx, mTextIdx,
 			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx, mHasMediaIdx, mIsProtectedIdx,
-			mInReplyToStatusIdIdx, mInReplyToScreennameIdx;
+			mInReplyToStatusIdIdx, mInReplyToScreennameIdx, mRetweetedByNameIdx, mRetweetedByScreenNameIdx;
 
-	private Context mContext;
+	private final Context mContext;
 
 	public StatusesAdapter(Context context, LazyImageLoader loader) {
 		super(context, R.layout.status_list_item, null, mFrom, mTo, 0);
@@ -37,95 +41,62 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 
-		StatusItemHolder holder = (StatusItemHolder) view.getTag();
+		final StatusViewHolder holder = (StatusViewHolder) view.getTag();
 
 		if (holder == null) return;
 
-		boolean is_last = cursor.getPosition() == cursor.getCount() - 1;
+		final long status_id = cursor.getLong(mStatusIdIdx);
+		final long account_id = cursor.getLong(mAccountIdIdx);
+		final long status_timestamp = cursor.getLong(mStatusTimestampIdx);
+		final CharSequence text = Html.fromHtml(cursor.getString(mTextIdx)).toString();
+		final CharSequence name = mDisplayName ? cursor.getString(mNameIdx) : "@" + cursor.getString(mScreenNameIdx);
+		final CharSequence in_reply_to = cursor.getString(mInReplyToScreennameIdx);
+		final CharSequence retweeted_by_screen_name = cursor.getString(mRetweetedByScreenNameIdx);
+		final CharSequence retweeted_by = mDisplayName ? cursor.getString(mRetweetedByNameIdx)
+				: retweeted_by_screen_name != null ? "@" + retweeted_by_screen_name : null;
+		final URL profile_image_url = parseURL(cursor.getString(mProfileImageUrlIdx));
+		final boolean is_retweet = cursor.getInt(mIsRetweetIdx) == 1;
+		final boolean is_reply = cursor.getLong(mInReplyToStatusIdIdx) != -1;
+		final boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
+		final boolean is_protected = cursor.getInt(mIsProtectedIdx) == 1;
+		final boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
+		final boolean has_location = cursor.getString(mLocationIdx) != null;
+		final boolean is_gap = cursor.getInt(mIsGapIdx) == 1;
 
-		if (holder.is_gap == -1) {
-			holder.is_gap = (byte) cursor.getInt(mIsGapIdx);
-		}
+		final boolean is_last = cursor.getPosition() == getCount() - 1;
+		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last;
 
-		boolean is_gap = holder.is_gap == 1;
-		boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last;
-
+		holder.status_id = status_id;
+		holder.account_id = account_id;
 		holder.setShowAsGap(show_gap);
-		if (holder.status_id == -1) {
-			holder.status_id = cursor.getLong(mStatusIdIdx);
-		}
-		if (holder.account_id == -1) {
-			holder.account_id = cursor.getLong(mAccountIdIdx);
-		}
-
 		holder.setAccountColorEnabled(mMultipleAccountsActivated);
+
 		if (mMultipleAccountsActivated) {
-			holder.setAccountColor(CommonUtils.getAccountColor(context, holder.account_id));
+			holder.setAccountColor(getAccountColor(context, account_id));
 		}
 
 		if (!show_gap) {
 
-			// Use this to avoid get values from cursor too often, this may make
-			// scroll faster.
-			if (holder.text == null) {
-				holder.text = Html.fromHtml(cursor.getString(mTextIdx)).toString();
-			}
-			if (holder.screen_name == null) {
-				holder.screen_name = cursor.getString(mScreenNameIdx);
-			}
-			if (holder.name == null) {
-				holder.name = cursor.getString(mNameIdx);
-			}
-			if (holder.status_timestamp == -1) {
-				holder.status_timestamp = cursor.getLong(mStatusTimestampIdx);
-			}
-			if (holder.profile_image_url == null) {
-				holder.profile_image_url = parseURL(cursor.getString(mProfileImageUrlIdx));
-			}
-			if (holder.is_retweet == -2) {
-				holder.is_retweet = (byte) cursor.getInt(mIsRetweetIdx);
-			}
-			if (holder.is_reply == -1) {
-				holder.is_reply = (byte) (cursor.getLong(mInReplyToStatusIdIdx) == -1 ? 0 : 1);
-			}
-			if (holder.is_favorite == -1) {
-				holder.is_favorite = (byte) cursor.getInt(mIsFavoriteIdx);
-			}
-			if (holder.is_protected == -1) {
-				holder.is_protected = (byte) cursor.getInt(mIsProtectedIdx);
-			}
-			if (holder.has_media == -1) {
-				holder.has_media = (byte) cursor.getInt(mHasMediaIdx);
-			}
-			if (holder.has_location == -1) {
-				holder.has_location = (byte) (cursor.getString(mLocationIdx) == null ? 0 : 1);
-			}
-			if (holder.is_reply == 1 && holder.in_reply_to == null) {
-				holder.in_reply_to = cursor.getString(mInReplyToScreennameIdx);
-			}
-
-			boolean is_retweet = holder.is_retweet == 1;
-			boolean is_favorite = holder.is_favorite == 1;
-			boolean has_media = holder.has_media == 1;
-			boolean has_location = holder.has_location == 1;
-			boolean is_reply = holder.is_reply == 1;
-			boolean is_protected = holder.is_protected == 1;
-
 			holder.name_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
-			holder.name_view.setText(mDisplayName ? holder.name : "@" + holder.screen_name);
-			holder.text_view.setText(holder.text);
-			holder.tweet_time_view.setText(CommonUtils.formatToShortTimeString(context, holder.status_timestamp));
+			holder.name_view.setText(name);
+			holder.tweet_time_view.setText(formatToShortTimeString(context, status_timestamp));
 			holder.tweet_time_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					CommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media), 0);
-			holder.in_reply_to_view.setVisibility(is_reply ? View.VISIBLE : View.GONE);
-			if (is_reply && holder.in_reply_to != null) {
-				holder.in_reply_to_view.setText(context.getString(R.string.in_reply_to,
-						holder.in_reply_to));
+					getTypeIcon(is_favorite, has_location, has_media), 0);
+			holder.text_view.setText(text);
+			holder.reply_retweet_status_view.setVisibility(is_reply || is_retweet ? View.VISIBLE : View.GONE);
+			if (is_retweet && retweeted_by != null) {
+				holder.reply_retweet_status_view.setText(context.getString(R.string.retweeted_by, retweeted_by));
+				holder.reply_retweet_status_view.setCompoundDrawablesWithIntrinsicBounds(
+						R.drawable.ic_tweet_stat_retweet, 0, 0, 0);
+			} else if (is_reply && in_reply_to != null) {
+				holder.reply_retweet_status_view.setText(context.getString(R.string.in_reply_to, in_reply_to));
+				holder.reply_retweet_status_view.setCompoundDrawablesWithIntrinsicBounds(
+						R.drawable.ic_tweet_stat_reply, 0, 0, 0);
 			}
 			holder.profile_image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				mImageLoader.displayImage(holder.profile_image_url, holder.profile_image_view);
+				mImageLoader.displayImage(profile_image_url, holder.profile_image_view);
 			}
 		}
 		super.bindView(view, context, cursor);
@@ -135,7 +106,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	@Override
 	public void changeCursor(Cursor cursor) {
 		super.changeCursor(cursor);
-		long[] account_ids = CommonUtils.getActivatedAccounts(mContext);
+		final long[] account_ids = getActivatedAccounts(mContext);
 		mMultipleAccountsActivated = account_ids.length > 1;
 		if (cursor != null) {
 			mAccountIdIdx = cursor.getColumnIndexOrThrow(Statuses.ACCOUNT_ID);
@@ -153,6 +124,8 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			mIsProtectedIdx = cursor.getColumnIndexOrThrow(Statuses.IS_PROTECTED);
 			mInReplyToStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_STATUS_ID);
 			mInReplyToScreennameIdx = cursor.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_SCREEN_NAME);
+			mRetweetedByNameIdx = cursor.getColumnIndexOrThrow(Statuses.RETWEETED_BY_NAME);
+			mRetweetedByScreenNameIdx = cursor.getColumnIndexOrThrow(Statuses.RETWEETED_BY_SCREEN_NAME);
 		}
 	}
 
@@ -160,8 +133,12 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
 		View view = super.newView(context, cursor, parent);
-		StatusItemHolder viewholder = new StatusItemHolder(view);
-		view.setTag(viewholder);
+
+		if (!(view.getTag() instanceof StatusViewHolder)) {
+			StatusViewHolder viewholder = new StatusViewHolder(view);
+			view.setTag(viewholder);
+		}
+
 		return view;
 	}
 

@@ -1,9 +1,10 @@
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.restartActivity;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.CommonUtils;
 
 import android.content.ContentResolver;
 import android.os.Bundle;
@@ -50,7 +51,7 @@ public class GlobalSettingsActivity extends BasePreferenceActivity implements On
 			} catch (SettingNotFoundException e) {
 				e.printStackTrace();
 			}
-			CommonUtils.restartActivity(this, show_anim);
+			restartActivity(this, show_anim);
 		}
 		return true;
 	}

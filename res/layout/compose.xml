@@ -3,7 +3,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-	<EditText
+	<org.mariotaku.twidere.widget.StatusComposeEditText
 		android:id="@+id/edit_text"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"

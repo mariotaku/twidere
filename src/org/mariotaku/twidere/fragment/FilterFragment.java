@@ -172,13 +172,13 @@ public class FilterFragment extends BaseFragment {
 
 		public static class FilterListAdapter extends SimpleCursorAdapter {
 
-			public FilterListAdapter(Context context) {
-				super(context, android.R.layout.simple_list_item_1, null, from, to, 0);
-			}
-
 			private static final String[] from = new String[] { Filters.TEXT };
 
 			private static final int[] to = new int[] { android.R.id.text1 };
+
+			public FilterListAdapter(Context context) {
+				super(context, android.R.layout.simple_list_item_1, null, from, to, 0);
+			}
 
 		}
 

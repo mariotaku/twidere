@@ -1,12 +1,22 @@
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getAccountIdForStatusId;
+import static org.mariotaku.twidere.util.Utils.getAccountUsername;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
+import static org.mariotaku.twidere.util.Utils.getNameForStatusId;
+import static org.mariotaku.twidere.util.Utils.getScreenNameForStatusId;
+
 import java.io.File;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ComposeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.util.CommonUtils;
+import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ScreenNameTokenizer;
 import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.widget.StatusComposeEditText;
+import org.mariotaku.twidere.widget.UserAutoCompleteAdapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -27,9 +37,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -39,7 +49,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 
 	private String mText;
 	private Uri mImageUri;
-	private EditText mEditText;
+	private StatusComposeEditText mEditText;
 	private TextView mTextCount;
 	private ImageButton mSendButton, mSelectAccount;
 	private boolean mIsImageAttached, mIsPhotoAttached;
@@ -67,16 +77,15 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		mInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
-		getLocation();
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
 		long[] activated_ids = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
 		mInReplyToStatusId = bundle != null ? bundle.getLong(INTENT_KEY_IN_REPLY_TO_ID) : -1;
 		int text_selection_start = -1;
 		boolean is_quote = false;
 		if (mInReplyToStatusId > -1) {
-			String screen_name = CommonUtils.getScreenNameForStatusId(getSherlockActivity(), mInReplyToStatusId);
-			long account_id = CommonUtils.getAccountIdForStatusId(getSherlockActivity(), mInReplyToStatusId);
-			String account_username = CommonUtils.getAccountUsername(getSherlockActivity(), account_id);
+			String screen_name = getScreenNameForStatusId(getSherlockActivity(), mInReplyToStatusId);
+			long account_id = getAccountIdForStatusId(getSherlockActivity(), mInReplyToStatusId);
+			String account_username = getAccountUsername(getSherlockActivity(), account_id);
 
 			String[] mentions = getArguments() != null ? getArguments().getStringArray(INTENT_KEY_MENTIONS) : null;
 
@@ -100,19 +109,17 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 			is_quote = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false;
 
 			boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-			String name = display_name ? CommonUtils.getNameForStatusId(getSherlockActivity(), mInReplyToStatusId)
-					: screen_name;
+			String name = display_name ? getNameForStatusId(getSherlockActivity(), mInReplyToStatusId) : screen_name;
 			getSherlockActivity().setTitle(getString(is_quote ? R.string.quote_user : R.string.reply_to, name));
 			mAccountIds = new long[] { account_id };
 		} else {
-			mAccountIds = activated_ids == null ? CommonUtils.getActivatedAccounts(getSherlockActivity())
-					: activated_ids;
+			mAccountIds = activated_ids == null ? getActivatedAccounts(getSherlockActivity()) : activated_ids;
 			if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null) {
 				mText = bundle.getString(INTENT_KEY_TEXT);
 			}
 		}
 		View view = getView();
-		mEditText = (EditText) view.findViewById(R.id.edit_text);
+		mEditText = (StatusComposeEditText) view.findViewById(R.id.edit_text);
 		mTextCount = (TextView) view.findViewById(R.id.text_count);
 		mSendButton = (ImageButton) view.findViewById(R.id.send);
 		mSelectAccount = (ImageButton) view.findViewById(R.id.select_account);
@@ -120,6 +127,10 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		mSelectAccount.setOnClickListener(this);
 		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
+		final LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
+				.getListProfileImageLoader();
+		mEditText.setAdapter(new UserAutoCompleteAdapter(getSherlockActivity(), imageloader));
+		mEditText.setTokenizer(new ScreenNameTokenizer(mEditText));
 		if (mText != null) {
 			mEditText.setText(mText);
 			if (is_quote) {
@@ -156,8 +167,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 			case REQUEST_ADD_IMAGE:
 				if (resultCode == Activity.RESULT_OK) {
 					Uri uri = intent.getData();
-					File file = uri == null ? null : new File(CommonUtils.getImagePathFromUri(getSherlockActivity(),
-							uri));
+					File file = uri == null ? null : new File(getImagePathFromUri(getSherlockActivity(), uri));
 					if (file != null && file.exists()) {
 						mImageUri = uri;
 						mIsPhotoAttached = false;
@@ -248,6 +258,9 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				break;
 			case MENU_ADD_LOCATION:
 				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+				if (!attach_location) {
+					getLocation();
+				}
 				mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, !attach_location).commit();
 				getSherlockActivity().invalidateOptionsMenu();
 				break;
@@ -270,9 +283,10 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		}
 
 		boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
-		if (attach_location) {
+		if (attach_location && getLocation()) {
 			menu.findItem(MENU_ADD_LOCATION).getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
 		} else {
+			mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false).commit();
 			menu.findItem(MENU_ADD_LOCATION).getIcon().clearColorFilter();
 		}
 		super.onPrepareOptionsMenu(menu);
@@ -314,12 +328,17 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 	 * the best provider of data (GPS, WiFi/cell phone tower lookup, some other
 	 * mechanism) and finds the last known location.
 	 **/
-	private void getLocation() {
+	private boolean getLocation() {
 		Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
 		String provider = mLocationManager.getBestProvider(criteria, true);
 
-		mRecentLocation = mLocationManager.getLastKnownLocation(provider);
+		if (provider != null) {
+			mRecentLocation = mLocationManager.getLastKnownLocation(provider);
+		} else {
+			Toast.makeText(getSherlockActivity(), R.string.cannot_get_location, Toast.LENGTH_SHORT).show();
+		}
+		return provider != null;
 	}
 
 	private void pickImage() {

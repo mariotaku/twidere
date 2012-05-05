@@ -10,6 +10,8 @@ public class AsyncTaskManager {
 
 	private SparseArray<ManagedAsyncTask> mTasks = new SparseArray<ManagedAsyncTask>();
 
+	private static AsyncTaskManager sInstance;
+
 	public int add(ManagedAsyncTask task, boolean exec, Object... params) {
 		int hashCode = task.hashCode();
 		mTasks.put(hashCode, task);
@@ -77,8 +79,6 @@ public class AsyncTaskManager {
 	public void remove(int hashCode) {
 		mTasks.remove(hashCode);
 	}
-
-	private static AsyncTaskManager sInstance;
 
 	public static AsyncTaskManager getInstance() {
 		if (sInstance == null) {

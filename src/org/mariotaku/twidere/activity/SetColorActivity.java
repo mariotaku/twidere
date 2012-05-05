@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ColorPickerDialogFragment;
 import org.mariotaku.twidere.fragment.ColorPickerDialogFragment.OnColorSelectedListener;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.util.CommonUtils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -108,10 +109,10 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View view = getLayoutInflater().inflate(R.layout.color_grid_item, parent, false);
 			ImageView color = (ImageView) view.findViewById(R.id.color);
-			color.setImageBitmap(CommonUtils.getColorPreviewBitmap(mContext, getItem(position)));
+			color.setImageBitmap(getColorPreviewBitmap(mContext, getItem(position)));
 			if (position == getCount() - 1) {
 				view.findViewById(R.id.text).setVisibility(View.VISIBLE);
-				color.setImageBitmap(CommonUtils.getColorPreviewBitmap(mContext, mCustomizedColor));
+				color.setImageBitmap(getColorPreviewBitmap(mContext, mCustomizedColor));
 			}
 			return view;
 		}

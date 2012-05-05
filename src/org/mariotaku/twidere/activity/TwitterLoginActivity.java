@@ -1,5 +1,12 @@
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
+import static org.mariotaku.twidere.util.Utils.getErrorCode;
+import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
+import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -8,7 +15,6 @@ import java.net.URL;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ColorAnalyser;
-import org.mariotaku.twidere.util.CommonUtils;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -41,189 +47,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 public class TwitterLoginActivity extends BaseActivity implements OnClickListener, TextWatcher {
-
-	@Override
-	public void onClick(View v) {
-		Intent intent = new Intent();
-		switch (v.getId()) {
-			case R.id.sign_up:
-				intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(TWITTER_SIGNUP_URL));
-				startActivity(intent);
-				break;
-			case R.id.sign_in:
-				saveEditedText();
-				if (mTask != null) {
-					mTask.cancel(true);
-				}
-				mTask = new LoginTask();
-				mTask.execute();
-				break;
-			case R.id.set_color:
-				intent = new Intent(INTENT_ACTION_SET_COLOR);
-				Bundle bundle = new Bundle();
-				bundle.putInt(Accounts.USER_COLOR, mUserColor);
-				intent.putExtras(bundle);
-				startActivityForResult(intent, REQUEST_SET_COLOR);
-		}
-
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.twitter_login);
-		mEditUsername = (EditText) findViewById(R.id.username);
-		mEditPassword = (EditText) findViewById(R.id.password);
-		mSignInButton = (Button) findViewById(R.id.sign_in);
-		mSignUpButton = (Button) findViewById(R.id.sign_up);
-		mSigninSignup = (LinearLayout) findViewById(R.id.sign_in_sign_up);
-		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
-		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
-		setSupportProgressBarIndeterminateVisibility(false);
-		long[] account_ids = CommonUtils.getActivatedAccounts(this);
-		boolean called_from_twidere = getPackageName().equals(getCallingPackage());
-		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0 && called_from_twidere);
-
-		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
-		if (bundle == null) {
-			bundle = new Bundle();
-		}
-		mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
-		mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
-
-		if (mRestAPIBase == null) {
-			mRestAPIBase = DEFAULT_REST_API_BASE;
-		}
-		if (mSearchAPIBase == null) {
-			mSearchAPIBase = DEFAULT_SEARCH_API_BASE;
-		}
-
-		mUsername = bundle.getString(Accounts.USERNAME);
-		mPassword = bundle.getString(Accounts.PASSWORD);
-		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
-		mSignInButton.setOnClickListener(this);
-		mSignUpButton.setOnClickListener(this);
-		mSetColorButton.setOnClickListener(this);
-		mUsernamePassword.setVisibility(mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
-		mSigninSignup.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
-				: LinearLayout.HORIZONTAL);
-
-		mEditUsername.setText(mUsername);
-		mEditUsername.addTextChangedListener(this);
-		mEditPassword.setText(mPassword);
-		mEditPassword.addTextChangedListener(this);
-		setSignInButton();
-		setUserColorButton();
-
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu_login, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public void onDestroy() {
-		if (mTask != null) {
-			mTask.cancel(true);
-		}
-		super.onDestroy();
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		Intent intent = new Intent();
-
-		switch (item.getItemId()) {
-			case MENU_HOME:
-				long[] account_ids = CommonUtils.getActivatedAccounts(this);
-				boolean called_from_twidere = getPackageName().equals(getCallingPackage());
-				if (account_ids.length > 0 && called_from_twidere) {
-					finish();
-				}
-				break;
-			case MENU_SETTINGS:
-				intent = new Intent(INTENT_ACTION_GLOBAL_SETTINGS);
-				startActivity(intent);
-				break;
-			case MENU_EDIT_API:
-				intent = new Intent(INTENT_ACTION_EDIT_API);
-				Bundle bundle = new Bundle();
-				bundle.putString(Accounts.REST_API_BASE, mRestAPIBase);
-				bundle.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
-				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
-				intent.putExtras(bundle);
-				startActivityForResult(intent, REQUEST_EDIT_API);
-				break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		saveEditedText();
-		outState.putString(Accounts.REST_API_BASE, mRestAPIBase);
-		outState.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
-		outState.putString(Accounts.USERNAME, mUsername);
-		outState.putString(Accounts.PASSWORD, mPassword);
-		outState.putInt(Accounts.USER_COLOR, mUserColor);
-		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	public void onTextChanged(CharSequence s, int start, int before, int count) {
-		setSignInButton();
-	}
-
-	@Override
-	public void setRefreshState() {
-		// Do nothing.
-	}
-
-	private void analyseUserProfileColor(String url_string) {
-		try {
-			URL url = new URL(url_string);
-			InputStream is = url.openConnection().getInputStream();
-			Bitmap bm = BitmapFactory.decodeStream(is);
-			mUserColor = ColorAnalyser.analyse(bm);
-			mUserColorSet = true;
-			return;
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		mUserColorSet = false;
-	}
-
-	private void saveEditedText() {
-		Editable ed = mEditUsername.getText();
-		if (ed != null) {
-			mUsername = ed.toString();
-		}
-		ed = mEditPassword.getText();
-		if (ed != null) {
-			mPassword = ed.toString();
-		}
-	}
-
-	private void setSignInButton() {
-		mSignInButton.setEnabled(mEditPassword.getText().length() > 0 && mEditUsername.getText().length() > 0
-				|| mAuthType == Accounts.AUTH_TYPE_OAUTH);
-	}
-
-	private void setUserColorButton() {
-		if (mUserColorSet) {
-			mSetColorButton.setImageBitmap(CommonUtils.getColorPreviewBitmap(this, mUserColor));
-		} else {
-			mSetColorButton.setImageResource(android.R.color.transparent);
-		}
-
-	}
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 
@@ -311,6 +134,189 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	@Override
+	public void onClick(View v) {
+		Intent intent = new Intent();
+		switch (v.getId()) {
+			case R.id.sign_up:
+				intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(TWITTER_SIGNUP_URL));
+				startActivity(intent);
+				break;
+			case R.id.sign_in:
+				saveEditedText();
+				if (mTask != null) {
+					mTask.cancel(true);
+				}
+				mTask = new LoginTask();
+				mTask.execute();
+				break;
+			case R.id.set_color:
+				intent = new Intent(INTENT_ACTION_SET_COLOR);
+				Bundle bundle = new Bundle();
+				bundle.putInt(Accounts.USER_COLOR, mUserColor);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, REQUEST_SET_COLOR);
+		}
+
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.twitter_login);
+		mEditUsername = (EditText) findViewById(R.id.username);
+		mEditPassword = (EditText) findViewById(R.id.password);
+		mSignInButton = (Button) findViewById(R.id.sign_in);
+		mSignUpButton = (Button) findViewById(R.id.sign_up);
+		mSigninSignup = (LinearLayout) findViewById(R.id.sign_in_sign_up);
+		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
+		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
+		setSupportProgressBarIndeterminateVisibility(false);
+		long[] account_ids = getActivatedAccounts(this);
+		boolean called_from_twidere = getPackageName().equals(getCallingPackage());
+		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0 && called_from_twidere);
+
+		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
+		if (bundle == null) {
+			bundle = new Bundle();
+		}
+		mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
+		mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
+
+		if (mRestAPIBase == null) {
+			mRestAPIBase = DEFAULT_REST_API_BASE;
+		}
+		if (mSearchAPIBase == null) {
+			mSearchAPIBase = DEFAULT_SEARCH_API_BASE;
+		}
+
+		mUsername = bundle.getString(Accounts.USERNAME);
+		mPassword = bundle.getString(Accounts.PASSWORD);
+		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
+		mSignInButton.setOnClickListener(this);
+		mSignUpButton.setOnClickListener(this);
+		mSetColorButton.setOnClickListener(this);
+		mUsernamePassword.setVisibility(mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
+		mSigninSignup.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
+				: LinearLayout.HORIZONTAL);
+
+		mEditUsername.setText(mUsername);
+		mEditUsername.addTextChangedListener(this);
+		mEditPassword.setText(mPassword);
+		mEditPassword.addTextChangedListener(this);
+		setSignInButton();
+		setUserColorButton();
+
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.menu_login, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public void onDestroy() {
+		if (mTask != null) {
+			mTask.cancel(true);
+		}
+		super.onDestroy();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		Intent intent = new Intent();
+
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				long[] account_ids = getActivatedAccounts(this);
+				boolean called_from_twidere = getPackageName().equals(getCallingPackage());
+				if (account_ids.length > 0 && called_from_twidere) {
+					finish();
+				}
+				break;
+			case MENU_SETTINGS:
+				intent = new Intent(INTENT_ACTION_GLOBAL_SETTINGS);
+				startActivity(intent);
+				break;
+			case MENU_EDIT_API:
+				intent = new Intent(INTENT_ACTION_EDIT_API);
+				Bundle bundle = new Bundle();
+				bundle.putString(Accounts.REST_API_BASE, mRestAPIBase);
+				bundle.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
+				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, REQUEST_EDIT_API);
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		saveEditedText();
+		outState.putString(Accounts.REST_API_BASE, mRestAPIBase);
+		outState.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
+		outState.putString(Accounts.USERNAME, mUsername);
+		outState.putString(Accounts.PASSWORD, mPassword);
+		outState.putInt(Accounts.USER_COLOR, mUserColor);
+		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		setSignInButton();
+	}
+
+	@Override
+	public void setRefreshState() {
+		// Do nothing.
+	}
+
+	private void analyseUserProfileColor(String url_string) {
+		try {
+			URL url = new URL(url_string);
+			InputStream is = url.openConnection().getInputStream();
+			Bitmap bm = BitmapFactory.decodeStream(is);
+			mUserColor = ColorAnalyser.analyse(bm);
+			mUserColorSet = true;
+			return;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		mUserColorSet = false;
+	}
+
+	private void saveEditedText() {
+		Editable ed = mEditUsername.getText();
+		if (ed != null) {
+			mUsername = ed.toString();
+		}
+		ed = mEditPassword.getText();
+		if (ed != null) {
+			mPassword = ed.toString();
+		}
+	}
+
+	private void setSignInButton() {
+		mSignInButton.setEnabled(mEditPassword.getText().length() > 0 && mEditUsername.getText().length() > 0
+				|| mAuthType == Accounts.AUTH_TYPE_OAUTH);
+	}
+
+	private void setUserColorButton() {
+		if (mUserColorSet) {
+			mSetColorButton.setImageBitmap(getColorPreviewBitmap(this, mUserColor));
+		} else {
+			mSetColorButton.setImageResource(android.R.color.transparent);
+		}
+
+	}
+
 	private abstract class AbstractTask extends AsyncTask<Void, Void, Object> {
 
 		@Override
@@ -361,14 +367,14 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				accessToken = twitter.getOAuthAccessToken(requestToken, oauthVerifier);
 				user = twitter.showUser(accessToken.getUserId());
 			} catch (TwitterException e) {
-				return CommonUtils.getErrorCode(e);
+				return getErrorCode(e);
 			}
 			if (!mUserColorSet) {
 				analyseUserProfileColor(user.getProfileImageURL().toString());
 			}
 			mLoggedId = user.getId();
-			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, mLoggedId)) return RESULT_ALREADY_LOGGED_IN;
-			ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, accessToken, user, mRestAPIBase,
+			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId)) return RESULT_ALREADY_LOGGED_IN;
+			ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestAPIBase,
 					mSearchAPIBase, null, Accounts.AUTH_TYPE_OAUTH);
 			resolver.insert(Accounts.CONTENT_URI, values);
 			return RESULT_SUCCESS;
@@ -388,7 +394,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 					finish();
 					break;
 				default:
-					CommonUtils.showErrorMessage(TwitterLoginActivity.this, result);
+					showErrorMessage(TwitterLoginActivity.this, result);
 					break;
 			}
 			super.onPostExecute(result_obj);
@@ -423,7 +429,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 							AuthorizationActivity.class), REQUEST_GOTO_AUTHORIZATION);
 					break;
 				default:
-					CommonUtils.showErrorMessage(TwitterLoginActivity.this, result.result_code);
+					showErrorMessage(TwitterLoginActivity.this, result.result_code);
 					break;
 			}
 			super.onPostExecute(result_obj);
@@ -441,7 +447,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				account_valid = twitter.test();
 				user = twitter.verifyCredentials();
 			} catch (TwitterException e) {
-				return new Result(CommonUtils.getErrorCode(e), Accounts.AUTH_TYPE_BASIC, null);
+				return new Result(getErrorCode(e), Accounts.AUTH_TYPE_BASIC, null);
 			}
 
 			if (account_valid && user != null) {
@@ -451,10 +457,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				}
 
 				mLoggedId = user.getId();
-				if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
+				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_BASIC, null);
-				ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, null, user, mRestAPIBase,
-						mSearchAPIBase, mPassword, Accounts.AUTH_TYPE_BASIC);
+				ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestAPIBase, mSearchAPIBase,
+						mPassword, Accounts.AUTH_TYPE_BASIC);
 				resolver.insert(Accounts.CONTENT_URI, values);
 				return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_BASIC, null);
 
@@ -473,7 +479,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			try {
 				requestToken = twitter.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
 			} catch (TwitterException e) {
-				return new Result(CommonUtils.getErrorCode(e), Accounts.AUTH_TYPE_OAUTH, null);
+				return new Result(getErrorCode(e), Accounts.AUTH_TYPE_OAUTH, null);
 			}
 			if (requestToken != null) return new Result(RESULT_OPEN_BROWSER, Accounts.AUTH_TYPE_OAUTH, requestToken);
 			return new Result(RESULT_UNKNOWN_ERROR, Accounts.AUTH_TYPE_OAUTH, null);
@@ -493,16 +499,16 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				accessToken = twitter.getOAuthAccessToken(mUsername, mPassword);
 				user = twitter.showUser(accessToken.getUserId());
 			} catch (TwitterException e) {
-				return new Result(CommonUtils.getErrorCode(e), Accounts.AUTH_TYPE_XAUTH, null);
+				return new Result(getErrorCode(e), Accounts.AUTH_TYPE_XAUTH, null);
 			}
 			if (!mUserColorSet) {
 				analyseUserProfileColor(user.getProfileImageURL().toString());
 			}
 
 			mLoggedId = user.getId();
-			if (CommonUtils.isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
+			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 				return new Result(RESULT_ALREADY_LOGGED_IN, Accounts.AUTH_TYPE_XAUTH, null);
-			ContentValues values = CommonUtils.makeAccountContentValues(mUserColor, accessToken, user, mRestAPIBase,
+			ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestAPIBase,
 					mSearchAPIBase, null, Accounts.AUTH_TYPE_XAUTH);
 			resolver.insert(Accounts.CONTENT_URI, values);
 			return new Result(RESULT_SUCCESS, Accounts.AUTH_TYPE_XAUTH, null);

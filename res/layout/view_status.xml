@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:padding="8dip">
+	android:layout_height="match_parent">
 
 	<RelativeLayout
 		android:id="@+id/profile"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@color/item_selector_background">
+		android:background="@drawable/list_selector_holo_light"
+		android:padding="8dip">
 
 		<org.mariotaku.twidere.widget.RoundCorneredImageView
 			android:id="@+id/profile_image"
@@ -77,16 +77,14 @@
 		android:layout_alignLeft="@+id/profile"
 		android:layout_alignParentBottom="true"
 		android:layout_below="@+id/profile"
-		android:orientation="vertical"
-		android:padding="8dip">
+		android:orientation="vertical">
 
 		<TextView
 			android:id="@+id/in_reply_to"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:background="@color/item_selector_background"
-			android:paddingBottom="8dp"
-			android:paddingTop="8dp"
+			android:background="@drawable/list_selector_holo_light"
+			android:padding="8dip"
 			android:text="@string/in_reply_to"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:visibility="gone"/>
@@ -95,7 +93,8 @@
 			android:id="@+id/text_frame"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
-			android:layout_weight="1">
+			android:layout_weight="1"
+			android:padding="8dip">
 
 			<TextView
 				android:id="@+id/text"
@@ -114,12 +113,14 @@
 					android:id="@+id/view_media"
 					android:layout_width="56dp"
 					android:layout_height="56dp"
+					android:contentDescription="@string/view_media"
 					android:src="@drawable/ic_menu_gallery"/>
 
 				<ImageButton
 					android:id="@+id/view_map"
 					android:layout_width="56dp"
 					android:layout_height="56dp"
+					android:contentDescription="@string/view_map"
 					android:src="@drawable/ic_menu_mapmode"/>
 			</LinearLayout>
 		</FrameLayout>
@@ -128,6 +129,7 @@
 			android:id="@+id/time_source"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:padding="8dip"
 			android:text="@string/time_source"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</LinearLayout>

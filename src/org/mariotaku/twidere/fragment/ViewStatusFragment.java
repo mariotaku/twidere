@@ -1,5 +1,12 @@
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
+import static org.mariotaku.twidere.util.Utils.getMentionedNames;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,7 +17,6 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
@@ -108,8 +114,18 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-			case R.id.follow:
+			case R.id.profile: {
+				Intent intent = new Intent(INTENT_ACTION_VIEW_USER_PROFILE);
+				Bundle bundle = new Bundle();
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+				bundle.putLong(INTENT_KEY_USER_ID, mStatusUserId);
+				intent.putExtras(bundle);
+				startActivity(intent);
 				break;
+			}
+			case R.id.follow: {
+				break;
+			}
 			case R.id.in_reply_to: {
 				Bundle bundle = new Bundle();
 				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
@@ -117,7 +133,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				startActivity(new Intent(INTENT_ACTION_VIEW_CONVERSATION).putExtras(bundle));
 				break;
 			}
-			case R.id.view_map:
+			case R.id.view_map: {
 				if (mGeoLocation != null) {
 					Bundle bundle = new Bundle();
 					bundle.putDouble(INTENT_KEY_LATITUDE, mGeoLocation.getLatitude());
@@ -125,6 +141,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 					startActivity(new Intent(INTENT_ACTION_VIEW_MAP).putExtras(bundle));
 				}
 				break;
+			}
 		}
 
 	}
@@ -158,7 +175,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				Bundle bundle = new Bundle();
 				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatusId);
 				bundle.putStringArray(INTENT_KEY_MENTIONS,
-						CommonUtils.getMentionedNames(mStatusScreenName, mTextView.getText(), false, true));
+						getMentionedNames(mStatusScreenName, mTextView.getText(), false, true));
 				startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
 				break;
 			}
@@ -214,7 +231,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			if (cur != null && cur.getCount() > 0) {
 				cur.moveToFirst();
 				mStatusScreenName = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
-				CommonUtils.setMenuForStatus(getSherlockActivity(), menu, mStatusId, uri);
+				setMenuForStatus(getSherlockActivity(), menu, mStatusId, uri);
 				cur.close();
 				super.onPrepareOptionsMenu(menu);
 				return;
@@ -281,7 +298,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			String source = cur.getString(cur.getColumnIndexOrThrow(Statuses.SOURCE));
 			long timestamp = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_TIMESTAMP));
 			boolean is_reply = cur.getLong(cur.getColumnIndexOrThrow(Statuses.IN_REPLY_TO_STATUS_ID)) != -1;
-			String time = CommonUtils.formatToLongTimeString(getSherlockActivity(), timestamp);
+			String time = formatToLongTimeString(getSherlockActivity(), timestamp);
 			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, source)));
 			mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
 			mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
@@ -293,7 +310,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			mIsFavorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
 			mIsRetweetByMe = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_RETWEET)) < 0;
 			String location_string = cur.getString(cur.getColumnIndexOrThrow(Statuses.LOCATION));
-			mGeoLocation = CommonUtils.getGeoLocationFromString(location_string);
+			mGeoLocation = getGeoLocationFromString(location_string);
 			mViewMapButton.setVisibility(mGeoLocation != null ? View.VISIBLE : View.GONE);
 			boolean has_media = cur.getInt(cur.getColumnIndexOrThrow(Statuses.HAS_MEDIA)) == 1;
 			mViewMediaButton.setVisibility(has_media ? View.VISIBLE : View.GONE);
@@ -347,12 +364,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		}
 
 		private boolean isAllFollowing() {
-			long[] ids = CommonUtils.getActivatedAccounts(getSherlockActivity());
+			long[] ids = getActivatedAccounts(getSherlockActivity());
 			for (long id : ids) {
 				if (id == mStatusUserId) {
 					continue;
 				}
-				Twitter twitter = CommonUtils.getTwitterInstance(getSherlockActivity(), id, false);
+				Twitter twitter = getTwitterInstance(getSherlockActivity(), id, false);
 				try {
 					Relationship result = twitter.showFriendship(id, mStatusUserId);
 					if (!result.isSourceFollowingTarget()) return false;

@@ -1,5 +1,9 @@
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
+import static org.mariotaku.twidere.util.Utils.getAccountIds;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.DashboardFragment;
@@ -7,7 +11,6 @@ import org.mariotaku.twidere.fragment.DiscoverFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.widget.TabsAdapter;
 
@@ -22,7 +25,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
@@ -48,6 +50,43 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private ActionMode mActionMode;
 
 	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		ContentResolver resolver = getContentResolver();
+		ContentValues values;
+		switch (requestCode) {
+			case REQUEST_SELECT_ACCOUNT: {
+				if (resultCode == RESULT_OK) {
+					if (intent == null || intent.getExtras() == null) {
+						break;
+					}
+					Bundle bundle = intent.getExtras();
+					if (bundle == null) {
+						break;
+					}
+					long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
+					if (account_ids != null) {
+						values = new ContentValues();
+						values.put(Accounts.IS_ACTIVATED, 0);
+						resolver.update(Accounts.CONTENT_URI, values, null, null);
+						values = new ContentValues();
+						values.put(Accounts.IS_ACTIVATED, 1);
+						for (long account_id : account_ids) {
+							String where = Accounts.USER_ID + "=" + account_id;
+							resolver.update(Accounts.CONTENT_URI, values, where, null);
+						}
+					}
+				} else if (resultCode == RESULT_CANCELED) {
+					if (getActivatedAccounts(this).length <= 0) {
+						finish();
+					}
+				}
+				break;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, intent);
+	}
+
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.compose:
@@ -69,12 +108,16 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		setContentView(R.layout.main);
 		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
 		mComposeButton = (ImageButton) findViewById(R.id.compose);
-		long[] activated_ids = CommonUtils.getActivatedAccounts(this);
+		long[] account_ids = getAccountIds(this);
+		long[] activated_ids = getActivatedAccounts(this);
 
-		if (activated_ids.length <= 0) {
+		if (account_ids.length <= 0) {
 			startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
 			finish();
 			return;
+		}
+		if (activated_ids.length <= 0) {
+			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
 		}
 
 		Bundle bundle = getIntent().getExtras();
@@ -112,7 +155,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	@Override
 	public void onDestroy() {
 		// Delete unused items in databases.
-		CommonUtils.cleanDatabasesByItemLimit(this);
+		cleanDatabasesByItemLimit(this);
 		super.onDestroy();
 	}
 
@@ -134,13 +177,15 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
+		final boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
+		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
 		menu.findItem(MENU_COMPOSE).setVisible(!bottom_actions);
-		boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
 		mComposeButton.setVisibility(bottom_actions ? View.VISIBLE : View.GONE);
-		LayoutParams lp = (FrameLayout.LayoutParams) mComposeButton.getLayoutParams();
-		lp.gravity = Gravity.BOTTOM | (leftside_compose_button ? Gravity.LEFT : Gravity.RIGHT);
-		mComposeButton.setLayoutParams(lp);
+		if (bottom_actions) {
+			FrameLayout.LayoutParams compose_lp = (FrameLayout.LayoutParams) mComposeButton.getLayoutParams();
+			compose_lp.gravity = Gravity.BOTTOM | (leftside_compose_button ? Gravity.LEFT : Gravity.RIGHT);
+			mComposeButton.setLayoutParams(compose_lp);
+		}
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -166,39 +211,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		ActionMode action_mode = super.startActionMode(callback);
 		mActionMode = action_mode;
 		return action_mode;
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		ContentResolver resolver = getContentResolver();
-		ContentValues values;
-		switch (requestCode) {
-			case REQUEST_SELECT_ACCOUNT:
-				if (resultCode != RESULT_OK) {
-					break;
-				}
-				if (intent == null || intent.getExtras() == null) {
-					break;
-				}
-				Bundle bundle = intent.getExtras();
-				if (bundle == null) {
-					break;
-				}
-				long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
-				if (account_ids != null) {
-					values = new ContentValues();
-					values.put(Accounts.IS_ACTIVATED, 0);
-					resolver.update(Accounts.CONTENT_URI, values, null, null);
-					values = new ContentValues();
-					values.put(Accounts.IS_ACTIVATED, 1);
-					for (long account_id : account_ids) {
-						String where = Accounts.USER_ID + "=" + account_id;
-						resolver.update(Accounts.CONTENT_URI, values, where, null);
-					}
-				}
-				break;
-		}
-		super.onActivityResult(requestCode, resultCode, intent);
 	}
 
 	private class HomeTabsAdapter extends TabsAdapter {

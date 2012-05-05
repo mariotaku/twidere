@@ -1,10 +1,13 @@
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.getTypeIcon;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.util.CommonUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.StatusItemHolder;
+import org.mariotaku.twidere.util.StatusViewHolder;
 
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -151,16 +154,15 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View view = super.getView(position, convertView, parent);
 			Object tag = view.getTag();
-			StatusItemHolder holder = null;
-			if (tag instanceof StatusItemHolder) {
-				holder = (StatusItemHolder) tag;
+			StatusViewHolder holder = null;
+			if (tag instanceof StatusViewHolder) {
+				holder = (StatusViewHolder) tag;
 			} else {
-				holder = new StatusItemHolder(view);
+				holder = new StatusViewHolder(view);
 				view.setTag(holder);
 			}
 			Status status = getItem(position);
 			User user = status.getUser();
-			boolean is_retweet = status.isRetweet();
 			boolean is_favorite = status.isFavorited();
 			boolean has_media = status.getMediaEntities() != null && status.getMediaEntities().length > 0;
 			boolean has_location = status.getGeoLocation() != null;
@@ -169,10 +171,9 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 					is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
 			holder.name_view.setText(mDisplayName ? user.getName() : "@" + user.getScreenName());
 			holder.text_view.setText(status.getText());
-			holder.tweet_time_view.setText(CommonUtils.formatToShortTimeString(getContext(), status.getCreatedAt()
-					.getTime()));
+			holder.tweet_time_view.setText(formatToShortTimeString(getContext(), status.getCreatedAt().getTime()));
 			holder.tweet_time_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					CommonUtils.getTypeIcon(is_retweet, is_favorite, has_location, has_media), 0);
+					getTypeIcon(is_favorite, has_location, has_media), 0);
 			holder.profile_image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				image_loader.displayImage(user.getProfileImageURL(), holder.profile_image_view);
@@ -206,7 +207,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 		@Override
 		protected TwitterException doInBackground(Void... params) {
-			Twitter twitter = CommonUtils.getTwitterInstance(mActivity, mAccountId, true);
+			Twitter twitter = getTwitterInstance(mActivity, mAccountId, true);
 			try {
 				twitter4j.Status status = twitter.showStatus(mStatusId);
 				mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, status));

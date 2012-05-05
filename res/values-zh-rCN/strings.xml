@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
+	<string name="app_name">Twidere</string>
 	<string name="pull_down_to_update">下拉并释放以刷新…</string>
 	<string name="release_to_update">释放以刷新</string>
 	<string name="loading">正在载入…</string>
@@ -15,7 +16,14 @@
 	<string name="tweet_hint">你在做什么？</string>
 	<string name="sign_up">注册</string>
 	<string name="sign_in">登录</string>
+	<string name="rest_api_base">REST API Base</string>
+	<string name="search_api_base">Search API Base</string>
 	<string name="auth_type">验证方式</string>
+	<string name="oauth">OAuth</string>
+	<string name="xauth">xAuth</string>
+	<string name="basic">Basic</string>
+	<string name="save">Save</string>
+	<string name="test">Test</string>
 	<string name="login_to_twitter">登录到 Twitter</string>
 	<string name="edit_api">编辑 API</string>
 	<string name="home">主页</string>
@@ -43,15 +51,18 @@
 	<string name="go_to_my_profile_page">查看我的个人资料页面</string>
 	<string name="delete">删除</string>
 	<string name="retweet">转推</string>
+	<string name="cancel_retweet">取消转推</string>
 	<string name="fav">收藏</string>
 	<string name="unfav">取消收藏</string>
 	<string name="reply">回复</string>
 	<string name="share">分享</string>
 	<string name="view">查看</string>
-	<string name="view_image">查看图像</string>
-	<string name="view_map">查看地图</string>
-	<string name="view_status">查看推文</string>
-	<string name="view_conversation">查看对话</string>
+	<string name="view_image">图像</string>
+	<string name="view_media">媒体</string>
+	<string name="view_map">地图</string>
+	<string name="view_status">推文</string>
+	<string name="view_conversation">对话</string>
+	<string name="view_user_profile">用户资料</string>
 	<string name="browser">浏览器</string>
 	<string name="pick_from_gallery">从图库中选取</string>
 	<string name="pick_from_map">从地图上选取</string>
@@ -67,7 +78,10 @@
 	<string name="http_proxy">HTTP 代理</string>
 	<string name="http_proxy_username">HTTP 代理的用户名</string>
 	<string name="http_proxy_password">HTTP 代理的密码</string>
+	<string name="api">API</string>
+	<string name="consumer_key">Consumer key</string>
 	<string name="consumer_key_summary">OAuth/xAuth 所需的 Consumer key，留空则使用默认。</string>
+	<string name="consumer_secret">Consumer secret</string>
 	<string name="consumer_secret_summary">OAuth/xAuth 所需的 Consumer secret，留空则使用默认。</string>
 	<string name="warn_expert_only">请小心！错误的 Consumer key/secret 将导致连接错误！</string>
 	<string name="gzip_compressing">GZip 压缩</string>
@@ -85,6 +99,7 @@
 	<string name="display_profile_image">显示个人资料图片</string>
 	<string name="display_profile_image_summary">显示个人资料图片，关闭可以加快列表的滚动速度，以及减少数据流量。</string>
 	<string name="in_reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
+	<string name="retweeted_by">由 <xliff:g id="user_name">%s</xliff:g> 转推</string>
 	<string name="reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="quote_user">引用 <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>，来自<xliff:g id="source">%2$s</xliff:g></string>
@@ -112,10 +127,10 @@
 	<string name="load_item_limit_summary">设定一次载入推文的数量上限。</string>
 	<string name="load_more_automatically">自动载入更多内容</string>
 	<string name="load_more_automatically_summary">自动载入更多内容，如照片、地图、推文等。</string>
-	<string name="bottom_actions">底部放置的动作菜单</string>
 	<string name="quote">引用</string>
 	<string name="add_rule">添加规则</string>
 	<string name="longclick_to_delete">长按以删除</string>
+	<string name="debug">Debug</string>
 	<string name="retweet_success">转推成功</string>
 	<string name="delete_success">删除成功</string>
 	<string name="send_success">发送成功</string>
@@ -124,5 +139,6 @@
 	<string name="display_name">显示姓名</string>
 	<string name="display_name_summaryon">显示推文作者的姓名。</string>
 	<string name="display_name_summaryoff">显示推文作者的用户名（例如 @username）。</string>
+	<string name="cannot_get_location">不能获得你的位置。</string>
 
 </resources>
