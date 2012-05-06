@@ -35,6 +35,7 @@
 	<string name="error_bad_address">Error: Bad address, you may entered an invalid API address.</string>
 	<string name="error_no_permission">Error: You have no permission to access twitter, the application key may invalid.</string>
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
+	<string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
 	<string name="select_account">Select account</string>
 	<string name="username">Username</string>
 	<string name="password">Password</string>
@@ -132,13 +133,18 @@
 	<string name="longclick_to_delete">Longclick to delete.</string>
 	<string name="debug">Debug</string>
 	<string name="retweet_success">Retweet success.</string>
+	<string name="cancel_retweet_success">Cancel retweet success.</string>
 	<string name="delete_success">Delete success.</string>
 	<string name="send_success">Send success.</string>
 	<string name="favorite_success">Favorite success.</string>
 	<string name="unfavorite_success">Unfavorite success.</string>
+	<string name="follow_success">Follow success.</string>
+	<string name="unfollow_success">Unfollow success.</string>
 	<string name="display_name">Display name</string>
 	<string name="display_name_summaryon">Display username of tweet.</string>
 	<string name="display_name_summaryoff">Display screen name (e.g. @username) of tweet</string>
+	<string name="text_size">Text size</string>
+	<string name="text_size_summary">Text size of statuses.</string>
 	<string name="cannot_get_location">Can\'t get your location.</string>
 
 </resources>

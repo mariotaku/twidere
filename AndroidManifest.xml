@@ -227,7 +227,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.UserProfileActivity"
+			android:name=".activity.LinkHandlerActivity"
 			android:label="@string/view_user_profile">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_USER_PROFILE"/>

@@ -9,7 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
-public class UserProfileActivity extends BaseActivity {
+public class LinkHandlerActivity extends BaseActivity {
 
 	private UserTimelineFragment mFragment;
 
@@ -22,13 +22,12 @@ public class UserProfileActivity extends BaseActivity {
 		mFragment = new UserTimelineFragment();
 		Uri data = getIntent().getData();
 		if (data != null) {
-			Bundle bundle = new Bundle();
-			bundle.putString(INTENT_KEY_SCREEN_NAME, data.getQueryParameter(QUERY_PARAM_SCREEN_NAME));
-			try {
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, Long.valueOf(data.getQueryParameter(QUERY_PARAM_ACCOUNT_ID)));
-			} catch (NumberFormatException e) {
+			String param_screen_name = data.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+			String param_account_id = data.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 
-			}
+			Bundle bundle = new Bundle();
+			bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+			bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
 			mFragment.setArguments(bundle);
 		} else {
 			mFragment.setArguments(getIntent().getExtras());
@@ -45,5 +44,15 @@ public class UserProfileActivity extends BaseActivity {
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private long parseLong(String source) {
+		if (source == null) return -1;
+		try {
+			return Long.parseLong(source);
+		} catch (NumberFormatException e) {
+			// Wrong number format? Ignore them.
+		}
+		return -1;
 	}
 }

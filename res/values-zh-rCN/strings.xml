@@ -35,10 +35,11 @@
 	<string name="error_bad_address">错误：错误的地址，你可能输入了无效的API地址。</string>
 	<string name="error_no_permission">错误：你没有权限访问twitter，应用程序的密钥可能是无效的。</string>
 	<string name="error_unknown_error">错误：未知错误，这很可能是个bug。</string>
+	<string name="error_message">错误：<xliff:g id="message">%s</xliff:g></string>
 	<string name="select_account">选择帐号</string>
 	<string name="username">用户名</string>
 	<string name="password">密码</string>
-	<string name="label_tweetstore_provider">Twidere 数据库提供商</string>
+	<string name="label_tweetstore_provider">Twidere 数据库存储</string>
 	<string name="label_update_service">时间线更新服务</string>
 	<string name="label_permission_group_access_twidere">访问 Twidere 应用</string>
 	<string name="label_permission_read_databases">读取 Twidere 的数据库</string>
@@ -132,13 +133,18 @@
 	<string name="longclick_to_delete">长按以删除</string>
 	<string name="debug">Debug</string>
 	<string name="retweet_success">转推成功</string>
+	<string name="cancel_retweet_success">取消转推成功</string>
 	<string name="delete_success">删除成功</string>
 	<string name="send_success">发送成功</string>
 	<string name="favorite_success">收藏成功</string>
 	<string name="unfavorite_success">取消收藏成功</string>
+	<string name="follow_success">关注成功</string>
+	<string name="unfollow_success">取消关注成功</string>
 	<string name="display_name">显示姓名</string>
 	<string name="display_name_summaryon">显示推文作者的姓名。</string>
 	<string name="display_name_summaryoff">显示推文作者的用户名（例如 @username）。</string>
+	<string name="text_size">文字尺寸</string>
+	<string name="text_size_summary">推文的文字尺寸。</string>
 	<string name="cannot_get_location">不能获得你的位置。</string>
 
 </resources>

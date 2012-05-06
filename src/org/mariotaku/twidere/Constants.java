@@ -59,6 +59,7 @@ public interface Constants {
 
 	public static final String PREFERENCE_KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
 	public static final String PREFERENCE_KEY_LOAD_ITEM_LIMIT = "load_item_limit";
+	public static final String PREFERENCE_KEY_TEXT_SIZE = "text_size";
 	public static final String PREFERENCE_KEY_DARK_THEME = "dark_theme";
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
@@ -72,6 +73,7 @@ public interface Constants {
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
+	public static final int PREFERENCE_DEFAULT_TEXT_SIZE = 12;
 
 	public static final String INTENT_ACTION_PREFIX = "org.mariotaku.twidere.";
 
@@ -95,6 +97,7 @@ public interface Constants {
 	public static final String INTENT_KEY_URI = "uri";
 	public static final String INTENT_KEY_MENTIONS = "mentions";
 	public static final String INTENT_KEY_ACCOUNT_ID = "account_id";
+	public static final String INTENT_KEY_QUERY = "query";
 	public static final String INTENT_KEY_USER_ID = "user_id";
 	public static final String INTENT_KEY_STATUS_ID = "status_id";
 	public static final String INTENT_KEY_SCREEN_NAME = "screen_name";

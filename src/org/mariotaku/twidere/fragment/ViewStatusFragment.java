@@ -5,6 +5,7 @@ import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
 import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
 import java.net.MalformedURLException;
@@ -65,7 +66,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	private String mStatusScreenName;
 	private GeoLocation mGeoLocation;
 	private FollowInfoTask mFollowInfoTask;
-	private boolean mIsFavorite, mIsRetweetByMe;
+	private boolean mIsFavorite;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -99,14 +100,15 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		mInReplyToView = (TextView) view.findViewById(R.id.in_reply_to);
 		mInReplyToView.setOnClickListener(this);
 		mFollowButton = (Button) view.findViewById(R.id.follow);
+		mFollowButton.setOnClickListener(this);
 		mFollowIndicator = view.findViewById(R.id.follow_indicator);
 		mProfileView = view.findViewById(R.id.profile);
+		mProfileView.setOnClickListener(this);
 		mViewMapButton = (ImageButton) view.findViewById(R.id.view_map);
 		mViewMapButton.setOnClickListener(this);
 		mViewMediaButton = (ImageButton) view.findViewById(R.id.view_media);
 		mViewMediaButton.setOnClickListener(this);
 		mProgress = (ProgressBar) view.findViewById(R.id.progress);
-		mProfileView.setOnClickListener(this);
 		displayStatus();
 		showFollowInfo();
 	}
@@ -124,6 +126,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				break;
 			}
 			case R.id.follow: {
+				ServiceInterface.getInstance(getSherlockActivity()).createFriendship(mAccountId, mStatusUserId);
 				break;
 			}
 			case R.id.in_reply_to: {
@@ -169,6 +172,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_SHARE: {
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				intent.putExtra(Intent.EXTRA_TEXT, "@" + mStatusScreenName + ": " + mTextView.getText());
+				startActivity(Intent.createChooser(intent, getString(R.string.share)));
 				break;
 			}
 			case MENU_REPLY: {
@@ -180,7 +187,11 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				break;
 			}
 			case MENU_RETWEET: {
-				mServiceInterface.retweetStatus(new long[] { mAccountId }, mStatusId);
+				if (isMyRetweet(getSherlockActivity(), mAccountId, mStatusId)) {
+					mServiceInterface.cancelRetweet(mAccountId, mStatusId);
+				} else {
+					mServiceInterface.retweetStatus(new long[] { mAccountId }, mStatusId);
+				}
 				break;
 			}
 			case MENU_QUOTE: {
@@ -308,7 +319,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			}
 			mStatusUserId = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
 			mIsFavorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
-			mIsRetweetByMe = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_RETWEET)) < 0;
 			String location_string = cur.getString(cur.getColumnIndexOrThrow(Statuses.LOCATION));
 			mGeoLocation = getGeoLocationFromString(location_string);
 			mViewMapButton.setVisibility(mGeoLocation != null ? View.VISIBLE : View.GONE);

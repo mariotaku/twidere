@@ -62,6 +62,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	private Handler mHandler;
 	private Runnable mTicker;
 	private boolean mDisplayProfileImage, mDisplayName, mReachedBottom, mActivityFirstCreated;
+	private float mTextSize;
 	private SharedPreferences mPreferences;
 	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
 
@@ -79,6 +80,13 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			String screen_name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
 			long account_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.ACCOUNT_ID));
 			switch (item.getItemId()) {
+				case MENU_SHARE: {
+					Intent intent = new Intent(Intent.ACTION_SEND);
+					intent.setType("text/plain");
+					intent.putExtra(Intent.EXTRA_TEXT, "@" + screen_name + ": " + text);
+					startActivity(Intent.createChooser(intent, getString(R.string.share)));
+					break;
+				}
 				case MENU_REPLY: {
 					Bundle bundle = new Bundle();
 					bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text, false, true));
@@ -131,6 +139,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		mResolver = getSherlockActivity().getContentResolver();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
@@ -246,13 +255,16 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		super.onResume();
 		boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_LOAD_MORE_AUTOMATICALLY, false);
 		mAdapter.setShowLastItemAsGap(!mLoadMoreAutomatically);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayName(display_name);
-		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name) {
+		mAdapter.setStatusesTextSize(text_size);
+		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name || mTextSize != text_size) {
 			mDisplayProfileImage = display_profile_image;
 			mDisplayName = display_name;
+			mTextSize = text_size;
 			mListView.getRefreshableView().invalidateViews();
 		}
 	}

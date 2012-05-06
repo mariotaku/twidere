@@ -4,6 +4,7 @@ import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
+import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,6 +30,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mNameIdx, mScreenNameIdx, mTextIdx,
 			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx, mHasMediaIdx, mIsProtectedIdx,
 			mInReplyToStatusIdIdx, mInReplyToScreennameIdx, mRetweetedByNameIdx, mRetweetedByScreenNameIdx;
+	private float mTextSize;
 
 	private final Context mContext;
 
@@ -53,14 +55,14 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 		final CharSequence in_reply_to = cursor.getString(mInReplyToScreennameIdx);
 		final CharSequence retweeted_by_screen_name = cursor.getString(mRetweetedByScreenNameIdx);
 		final CharSequence retweeted_by = mDisplayName ? cursor.getString(mRetweetedByNameIdx)
-				: retweeted_by_screen_name != null ? "@" + retweeted_by_screen_name : null;
+				: !isNullOrEmpty(retweeted_by_screen_name) ? "@" + retweeted_by_screen_name : null;
 		final URL profile_image_url = parseURL(cursor.getString(mProfileImageUrlIdx));
 		final boolean is_retweet = cursor.getInt(mIsRetweetIdx) == 1;
 		final boolean is_reply = cursor.getLong(mInReplyToStatusIdIdx) != -1;
 		final boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
 		final boolean is_protected = cursor.getInt(mIsProtectedIdx) == 1;
 		final boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
-		final boolean has_location = cursor.getString(mLocationIdx) != null;
+		final boolean has_location = isNullOrEmpty(cursor.getString(mLocationIdx));
 		final boolean is_gap = cursor.getInt(mIsGapIdx) == 1;
 
 		final boolean is_last = cursor.getPosition() == getCount() - 1;
@@ -84,12 +86,13 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 			holder.tweet_time_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getTypeIcon(is_favorite, has_location, has_media), 0);
 			holder.text_view.setText(text);
+			holder.text_view.setTextSize(mTextSize);
 			holder.reply_retweet_status_view.setVisibility(is_reply || is_retweet ? View.VISIBLE : View.GONE);
-			if (is_retweet && retweeted_by != null) {
+			if (is_retweet && !isNullOrEmpty(retweeted_by)) {
 				holder.reply_retweet_status_view.setText(context.getString(R.string.retweeted_by, retweeted_by));
 				holder.reply_retweet_status_view.setCompoundDrawablesWithIntrinsicBounds(
 						R.drawable.ic_tweet_stat_retweet, 0, 0, 0);
-			} else if (is_reply && in_reply_to != null) {
+			} else if (is_reply && !isNullOrEmpty(in_reply_to)) {
 				holder.reply_retweet_status_view.setText(context.getString(R.string.in_reply_to, in_reply_to));
 				holder.reply_retweet_status_view.setCompoundDrawablesWithIntrinsicBounds(
 						R.drawable.ic_tweet_stat_reply, 0, 0, 0);
@@ -152,6 +155,10 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 
 	public void setShowLastItemAsGap(boolean gap) {
 		mShowLastItemAsGap = gap;
+	}
+	
+	public void setStatusesTextSize(float text_size) {
+		mTextSize = text_size;
 	}
 
 	private URL parseURL(String url_string) {

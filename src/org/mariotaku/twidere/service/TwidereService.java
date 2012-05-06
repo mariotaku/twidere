@@ -1,9 +1,11 @@
 package org.mariotaku.twidere.service;
 
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
+import static org.mariotaku.twidere.util.Utils.getRetweetId;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.makeCachedUsersContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusesContentValues;
+import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -48,13 +50,28 @@ public class TwidereService extends Service implements Constants {
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 
+	public int cancelRetweet(long account_id, long status_id) {
+		CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
+		return mAsyncTaskManager.add(task, true);
+	}
+
 	public int createFavorite(long[] account_ids, long status_id) {
 		CreateFavoriteTask task = new CreateFavoriteTask(account_ids, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
+	public int createFriendship(long account_id, long user_id) {
+		CreateFriendshipTask task = new CreateFriendshipTask(account_id, user_id);
+		return mAsyncTaskManager.add(task, true);
+	}
+
 	public int destroyFavorite(long[] account_ids, long status_id) {
 		DestroyFavoriteTask task = new DestroyFavoriteTask(account_ids, status_id);
+		return mAsyncTaskManager.add(task, true);
+	}
+
+	public int destroyFriendship(long account_id, long user_id) {
+		DestroyFriendshipTask task = new DestroyFriendshipTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -112,17 +129,69 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	private class AccountResponce {
-		public TwitterException exception;
-		public twitter4j.Status status;
+	private class CancelRetweetTask extends ManagedAsyncTask<StatusResponse> {
 
-		public AccountResponce(twitter4j.Status status, TwitterException exception) {
-			this.exception = exception;
-			this.status = status;
+		private long account_id;
+		private long status_id, retweeted_id;
+
+		public CancelRetweetTask(long account_id, long status_id) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.status_id = status_id;
 		}
+
+		@Override
+		protected StatusResponse doInBackground(Object... params) {
+
+			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				try {
+					twitter4j.Status status = twitter.destroyStatus(retweeted_id);
+					return new StatusResponse(status, null);
+				} catch (TwitterException e) {
+					return new StatusResponse(null, e);
+				}
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(StatusResponse result) {
+			if (result != null && result.status != null) {
+				ContentResolver resolver = getContentResolver();
+				User user = result.status.getUser();
+				twitter4j.Status retweeted_status = result.status.getRetweetedStatus();
+				if (user != null && retweeted_status != null) {
+					ContentValues values = new ContentValues();
+					values.put(Statuses.RETWEET_COUNT, result.status.getRetweetCount());
+					values.put(Statuses.RETWEET_ID, -1);
+					values.put(Statuses.RETWEETED_BY_ID, -1);
+					values.put(Statuses.RETWEETED_BY_NAME, "");
+					values.put(Statuses.RETWEETED_BY_SCREEN_NAME, "");
+					values.put(Statuses.IS_RETWEET, 0);
+					StringBuilder where = new StringBuilder();
+					where.append(Statuses.ACCOUNT_ID + "=" + result.status.getUser().getId());
+					where.append(" AND " + Statuses.STATUS_ID + "=" + retweeted_status.getId());
+					for (Uri uri : TweetStore.STATUSES_URIS) {
+						resolver.update(uri, values, where.toString(), null);
+					}
+				}
+				Toast.makeText(TwidereService.this, R.string.cancel_retweet_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(TwidereService.this, result.exception, true);
+			}
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			retweeted_id = getRetweetId(TwidereService.this, status_id);
+		}
+
 	}
 
-	private class CreateFavoriteTask extends ManagedAsyncTask<List<AccountResponce>> {
+	private class CreateFavoriteTask extends ManagedAsyncTask<List<StatusResponse>> {
 
 		private long[] account_ids;
 
@@ -135,20 +204,20 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected List<AccountResponce> doInBackground(Object... params) {
+		protected List<StatusResponse> doInBackground(Object... params) {
 
 			if (account_ids == null) return null;
 
-			List<AccountResponce> result = new ArrayList<AccountResponce>();
+			List<StatusResponse> result = new ArrayList<StatusResponse>();
 
 			for (long account_id : account_ids) {
 				Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.createFavorite(status_id);
-						result.add(new AccountResponce(status, null));
+						result.add(new StatusResponse(status, null));
 					} catch (TwitterException e) {
-						result.add(new AccountResponce(null, e));
+						result.add(new StatusResponse(null, e));
 					}
 				}
 			}
@@ -156,35 +225,76 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<AccountResponce> result) {
+		protected void onPostExecute(List<StatusResponse> result) {
 			ContentResolver resolver = getContentResolver();
 
 			boolean succeed = false;
+			TwitterException exception = null;
 
-			for (AccountResponce responce : result) {
-				if (responce.status != null) {
+			for (StatusResponse response : result) {
+				if (response.status != null) {
 					ContentValues values = new ContentValues();
 					values.put(Statuses.IS_FAVORITE, 1);
 					StringBuilder where = new StringBuilder();
-					where.append(Statuses.ACCOUNT_ID + "=" + responce.status.getUser().getId());
-					where.append(" AND " + Statuses.STATUS_ID + "=" + responce.status.getId());
+					where.append(Statuses.ACCOUNT_ID + "=" + response.status.getUser().getId());
+					where.append(" AND " + Statuses.STATUS_ID + "=" + response.status.getId());
 					for (Uri uri : TweetStore.STATUSES_URIS) {
 						resolver.update(uri, values, where.toString(), null);
 					}
 					succeed = true;
+				} else {
+					exception = response.exception;
 				}
 			}
 			if (succeed) {
 				Toast.makeText(TwidereService.this, R.string.favorite_success, Toast.LENGTH_SHORT).show();
 			} else {
-
+				showErrorToast(TwidereService.this, exception, true);
 			}
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private class DestroyFavoriteTask extends ManagedAsyncTask<List<AccountResponce>> {
+	private class CreateFriendshipTask extends ManagedAsyncTask<UserResponse> {
+
+		private long account_id;
+		private long user_id;
+
+		public CreateFriendshipTask(long account_id, long user_id) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.user_id = user_id;
+		}
+
+		@Override
+		protected UserResponse doInBackground(Object... params) {
+
+			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				try {
+					User user = twitter.createFriendship(user_id);
+					return new UserResponse(user, null);
+				} catch (TwitterException e) {
+					return new UserResponse(null, e);
+				}
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(UserResponse result) {
+			if (result != null && result.user != null) {
+				Toast.makeText(TwidereService.this, R.string.follow_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(TwidereService.this, result.exception, true);
+			}
+			super.onPostExecute(result);
+		}
+
+	}
+
+	private class DestroyFavoriteTask extends ManagedAsyncTask<List<StatusResponse>> {
 
 		private long[] account_ids;
 
@@ -197,20 +307,20 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected List<AccountResponce> doInBackground(Object... params) {
+		protected List<StatusResponse> doInBackground(Object... params) {
 
 			if (account_ids == null) return null;
 
-			List<AccountResponce> result = new ArrayList<AccountResponce>();
+			List<StatusResponse> result = new ArrayList<StatusResponse>();
 
 			for (long account_id : account_ids) {
 				Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.destroyFavorite(status_id);
-						result.add(new AccountResponce(status, null));
+						result.add(new StatusResponse(status, null));
 					} catch (TwitterException e) {
-						result.add(new AccountResponce(null, e));
+						result.add(new StatusResponse(null, e));
 					}
 				}
 			}
@@ -218,35 +328,76 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<AccountResponce> result) {
+		protected void onPostExecute(List<StatusResponse> result) {
 			ContentResolver resolver = getContentResolver();
 
 			boolean succeed = false;
+			TwitterException exception = null;
 
-			for (AccountResponce responce : result) {
-				if (responce.status != null) {
+			for (StatusResponse response : result) {
+				if (response.status != null) {
 					ContentValues values = new ContentValues();
 					values.put(Statuses.IS_FAVORITE, 0);
 					StringBuilder where = new StringBuilder();
-					where.append(Statuses.ACCOUNT_ID + "=" + responce.status.getUser().getId());
-					where.append(" AND " + Statuses.STATUS_ID + "=" + responce.status.getId());
+					where.append(Statuses.ACCOUNT_ID + "=" + response.status.getUser().getId());
+					where.append(" AND " + Statuses.STATUS_ID + "=" + response.status.getId());
 					for (Uri uri : TweetStore.STATUSES_URIS) {
 						resolver.update(uri, values, where.toString(), null);
 					}
 					succeed = true;
+				} else {
+					exception = response.exception;
 				}
 			}
 			if (succeed) {
 				Toast.makeText(TwidereService.this, R.string.unfavorite_success, Toast.LENGTH_SHORT).show();
 			} else {
-
+				showErrorToast(TwidereService.this, exception, true);
 			}
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private class DestroyStatusTask extends ManagedAsyncTask<AccountResponce> {
+	private class DestroyFriendshipTask extends ManagedAsyncTask<UserResponse> {
+
+		private long account_id;
+		private long user_id;
+
+		public DestroyFriendshipTask(long account_id, long user_id) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.user_id = user_id;
+		}
+
+		@Override
+		protected UserResponse doInBackground(Object... params) {
+
+			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				try {
+					User user = twitter.destroyFriendship(user_id);
+					return new UserResponse(user, null);
+				} catch (TwitterException e) {
+					return new UserResponse(null, e);
+				}
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(UserResponse result) {
+			if (result != null && result.user != null) {
+				Toast.makeText(TwidereService.this, R.string.unfollow_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(TwidereService.this, result.exception, true);
+			}
+			super.onPostExecute(result);
+		}
+
+	}
+
+	private class DestroyStatusTask extends ManagedAsyncTask<StatusResponse> {
 
 		private long account_id;
 
@@ -259,22 +410,22 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected AccountResponce doInBackground(Object... params) {
+		protected StatusResponse doInBackground(Object... params) {
 
 			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					twitter4j.Status status = twitter.destroyStatus(status_id);
-					return new AccountResponce(status, null);
+					return new StatusResponse(status, null);
 				} catch (TwitterException e) {
-					return new AccountResponce(null, e);
+					return new StatusResponse(null, e);
 				}
 			}
 			return null;
 		}
 
 		@Override
-		protected void onPostExecute(AccountResponce result) {
+		protected void onPostExecute(StatusResponse result) {
 			if (result != null && result.status != null) {
 				ContentResolver resolver = getContentResolver();
 				StringBuilder where = new StringBuilder();
@@ -285,7 +436,7 @@ public class TwidereService extends Service implements Constants {
 				}
 				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
 			} else {
-
+				showErrorToast(TwidereService.this, result.exception, true);
 			}
 			super.onPostExecute(result);
 		}
@@ -307,10 +458,10 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<GetStatusesTask.AccountResponce> responces) {
-			super.onPostExecute(responces);
+		protected void onPostExecute(List<GetStatusesTask.AccountResponse> responses) {
+			super.onPostExecute(responses);
 			context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
-					responces.size() > 0));
+					responses.size() > 0));
 		}
 
 	}
@@ -330,15 +481,15 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<GetStatusesTask.AccountResponce> responces) {
-			super.onPostExecute(responces);
+		protected void onPostExecute(List<GetStatusesTask.AccountResponse> responses) {
+			super.onPostExecute(responses);
 			context.sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
-					responces.size() > 0));
+					responses.size() > 0));
 		}
 
 	}
 
-	private static abstract class GetStatusesTask extends ManagedAsyncTask<List<GetStatusesTask.AccountResponce>> {
+	private static abstract class GetStatusesTask extends ManagedAsyncTask<List<GetStatusesTask.AccountResponse>> {
 
 		private long[] account_ids, max_ids;
 
@@ -357,9 +508,9 @@ public class TwidereService extends Service implements Constants {
 				throws TwitterException;
 
 		@Override
-		protected List<AccountResponce> doInBackground(Object... params) {
+		protected List<AccountResponse> doInBackground(Object... params) {
 
-			List<AccountResponce> result = new ArrayList<AccountResponce>();
+			List<AccountResponse> result = new ArrayList<AccountResponse>();
 
 			if (account_ids == null) return result;
 
@@ -380,7 +531,7 @@ public class TwidereService extends Service implements Constants {
 						ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
 
 						if (statuses != null) {
-							result.add(new AccountResponce(account_id, statuses));
+							result.add(new AccountResponse(account_id, statuses));
 						}
 					} catch (TwitterException e) {
 						e.printStackTrace();
@@ -392,15 +543,15 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<AccountResponce> responces) {
+		protected void onPostExecute(List<AccountResponse> responses) {
 			ContentResolver resolver = context.getContentResolver();
 
-			for (AccountResponce responce : responces) {
-				ResponseList<twitter4j.Status> statuses = responce.responselist;
-				long account_id = responce.account_id;
+			for (AccountResponse response : responses) {
+				ResponseList<twitter4j.Status> statuses = response.responselist;
+				long account_id = response.account_id;
 
 				if (statuses == null || statuses.size() <= 0) {
-					super.onPostExecute(responces);
+					super.onPostExecute(responses);
 					return;
 				}
 				List<ContentValues> values_list = new ArrayList<ContentValues>();
@@ -448,15 +599,15 @@ public class TwidereService extends Service implements Constants {
 				}
 
 			}
-			super.onPostExecute(responces);
+			super.onPostExecute(responses);
 		}
 
-		private class AccountResponce {
+		private class AccountResponse {
 
 			public long account_id;
 			public ResponseList<twitter4j.Status> responselist;
 
-			public AccountResponce(long account_id, ResponseList<twitter4j.Status> responselist) {
+			public AccountResponse(long account_id, ResponseList<twitter4j.Status> responselist) {
 				this.account_id = account_id;
 				this.responselist = responselist;
 
@@ -465,7 +616,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class RetweetStatusTask extends ManagedAsyncTask<List<AccountResponce>> {
+	private class RetweetStatusTask extends ManagedAsyncTask<List<StatusResponse>> {
 
 		private long[] account_ids;
 
@@ -478,20 +629,20 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected List<AccountResponce> doInBackground(Object... params) {
+		protected List<StatusResponse> doInBackground(Object... params) {
 
 			if (account_ids == null) return null;
 
-			List<AccountResponce> result = new ArrayList<AccountResponce>();
+			List<StatusResponse> result = new ArrayList<StatusResponse>();
 
 			for (long account_id : account_ids) {
 				Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.retweetStatus(status_id);
-						result.add(new AccountResponce(status, null));
+						result.add(new StatusResponse(status, null));
 					} catch (TwitterException e) {
-						result.add(new AccountResponce(null, e));
+						result.add(new StatusResponse(null, e));
 					}
 				}
 			}
@@ -499,97 +650,42 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<AccountResponce> result) {
+		protected void onPostExecute(List<StatusResponse> result) {
 			ContentResolver resolver = getContentResolver();
 
 			boolean succeed = false;
+			TwitterException exception = null;
 
-			for (AccountResponce responce : result) {
-				if (responce.status != null) {
-					ContentValues values = new ContentValues();
-					twitter4j.Status status = responce.status.getRetweetedStatus();
-					values.put(Statuses.RETWEET_COUNT, responce.status.getRetweetCount());
-					values.put(Statuses.IS_RETWEET, -1);
-					StringBuilder where = new StringBuilder();
-					where.append(Statuses.ACCOUNT_ID + "=" + responce.status.getUser().getId());
-					where.append(" AND " + Statuses.STATUS_ID + "=" + status.getId());
-					for (Uri uri : TweetStore.STATUSES_URIS) {
-						resolver.update(uri, values, where.toString(), null);
+			for (StatusResponse response : result) {
+				if (response.status != null) {
+					User user = response.status.getUser();
+					twitter4j.Status retweeted_status = response.status.getRetweetedStatus();
+					if (user != null && retweeted_status != null) {
+						ContentValues values = new ContentValues();
+						values.put(Statuses.RETWEET_COUNT, response.status.getRetweetCount());
+						values.put(Statuses.RETWEET_ID, response.status.getId());
+						values.put(Statuses.RETWEETED_BY_ID, user.getId());
+						values.put(Statuses.RETWEETED_BY_NAME, user.getName());
+						values.put(Statuses.RETWEETED_BY_SCREEN_NAME, user.getScreenName());
+						values.put(Statuses.IS_RETWEET, 1);
+						StringBuilder where = new StringBuilder();
+						where.append(Statuses.ACCOUNT_ID + "=" + response.status.getUser().getId());
+						where.append(" AND " + Statuses.STATUS_ID + "=" + retweeted_status.getId());
+						for (Uri uri : TweetStore.STATUSES_URIS) {
+							resolver.update(uri, values, where.toString(), null);
+						}
 					}
 					succeed = true;
 				} else {
-
+					exception = response.exception;
 				}
 
 			}
 			if (succeed) {
 				Toast.makeText(TwidereService.this, R.string.retweet_success, Toast.LENGTH_SHORT).show();
 			} else {
-
+				showErrorToast(TwidereService.this, exception, true);
 			}
-			super.onPostExecute(result);
-		}
-
-	}
-
-	private class UpdateStatusTask extends ManagedAsyncTask<List<AccountResponce>> {
-
-		private long[] account_ids;
-		private String content;
-		private Location location;
-		private Uri image_uri;
-		private long in_reply_to;
-
-		public UpdateStatusTask(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
-			super(TwidereService.this, mAsyncTaskManager);
-			this.account_ids = account_ids;
-			this.content = content;
-			this.location = location;
-			this.image_uri = image_uri;
-			this.in_reply_to = in_reply_to;
-		}
-
-		@Override
-		protected List<AccountResponce> doInBackground(Object... params) {
-
-			if (account_ids == null) return null;
-
-			final List<AccountResponce> result = new ArrayList<AccountResponce>();
-
-			for (long account_id : account_ids) {
-				Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
-				if (twitter != null) {
-					try {
-						StatusUpdate status = new StatusUpdate(content);
-						status.setInReplyToStatusId(in_reply_to);
-						if (location != null) {
-							status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
-						}
-						String image_path = getImagePathFromUri(TwidereService.this, image_uri);
-						if (image_path != null) {
-							status.setMedia(new File(image_path));
-						}
-						result.add(new AccountResponce(twitter.updateStatus(status), null));
-					} catch (TwitterException e) {
-						result.add(new AccountResponce(null, e));
-					}
-				}
-			}
-			return result;
-		}
-
-		@Override
-		protected void onPostExecute(List<AccountResponce> result) {
-
-			for (AccountResponce responce : result) {
-				if (responce.status != null) {
-					Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
-					break;
-				} else {
-
-				}
-			}
-
 			super.onPostExecute(result);
 		}
 
@@ -600,7 +696,7 @@ public class TwidereService extends Service implements Constants {
 	 * ensure that the Service can be GCd even when the system process still has
 	 * a remote reference to the stub.
 	 */
-	final static class ServiceStub extends ITwidereService.Stub {
+	private static final class ServiceStub extends ITwidereService.Stub {
 
 		WeakReference<TwidereService> mService;
 
@@ -610,13 +706,28 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public int cancelRetweet(long account_id, long status_id) throws RemoteException {
+			return mService.get().cancelRetweet(account_id, status_id);
+		}
+
+		@Override
 		public int createFavorite(long[] account_ids, long status_id) throws RemoteException {
 			return mService.get().createFavorite(account_ids, status_id);
 		}
 
 		@Override
+		public int createFriendship(long account_id, long user_id) throws RemoteException {
+			return mService.get().createFriendship(account_id, user_id);
+		}
+
+		@Override
 		public int destroyFavorite(long[] account_ids, long status_id) throws RemoteException {
 			return mService.get().destroyFavorite(account_ids, status_id);
+		}
+
+		@Override
+		public int destroyFriendship(long account_id, long user_id) throws RemoteException {
+			return mService.get().destroyFriendship(account_id, user_id);
 		}
 
 		@Override
@@ -671,6 +782,96 @@ public class TwidereService extends Service implements Constants {
 
 		}
 
+	}
+
+	private static final class StatusResponse {
+		public TwitterException exception;
+		public twitter4j.Status status;
+
+		public StatusResponse(twitter4j.Status status, TwitterException exception) {
+			this.exception = exception;
+			this.status = status;
+		}
+	}
+
+	private class UpdateStatusTask extends ManagedAsyncTask<List<StatusResponse>> {
+
+		private long[] account_ids;
+		private String content;
+		private Location location;
+		private Uri image_uri;
+		private long in_reply_to;
+
+		public UpdateStatusTask(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_ids = account_ids;
+			this.content = content;
+			this.location = location;
+			this.image_uri = image_uri;
+			this.in_reply_to = in_reply_to;
+		}
+
+		@Override
+		protected List<StatusResponse> doInBackground(Object... params) {
+
+			if (account_ids == null) return null;
+
+			final List<StatusResponse> result = new ArrayList<StatusResponse>();
+
+			for (long account_id : account_ids) {
+				Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+				if (twitter != null) {
+					try {
+						StatusUpdate status = new StatusUpdate(content);
+						status.setInReplyToStatusId(in_reply_to);
+						if (location != null) {
+							status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
+						}
+						String image_path = getImagePathFromUri(TwidereService.this, image_uri);
+						if (image_path != null) {
+							status.setMedia(new File(image_path));
+						}
+						result.add(new StatusResponse(twitter.updateStatus(status), null));
+					} catch (TwitterException e) {
+						result.add(new StatusResponse(null, e));
+					}
+				}
+			}
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(List<StatusResponse> result) {
+
+			boolean succeed = false;
+			TwitterException exception = null;
+
+			for (StatusResponse response : result) {
+				if (response.status != null) {
+					succeed = true;
+					break;
+				} else {
+					exception = response.exception;
+				}
+			}
+			if (succeed) {
+				Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(TwidereService.this, exception, true);
+			}
+			super.onPostExecute(result);
+		}
+
+	}
+
+	private static final class UserResponse {
+		public TwitterException exception;
+		public User user;
+
+		public UserResponse(User user, TwitterException exception) {
+			this.exception = exception;
+			this.user = user;
+		}
 	}
 
 }

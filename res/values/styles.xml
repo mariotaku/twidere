@@ -6,4 +6,8 @@
 		<item name="android:background">@drawable/bg_actionbar_light_theme</item>
 	</style>
 
+	<style name="Widget.Toggle.ActionBarView" parent="Widget.Holo.Light.Button.Toggle">
+		<item name="android:textColor">@android:color/white</item>
+	</style>
+
 </resources>

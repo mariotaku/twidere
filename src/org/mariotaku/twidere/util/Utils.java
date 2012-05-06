@@ -73,24 +73,26 @@ public final class Utils implements Constants {
 
 	private static HashMap<Context, ServiceBinder> mConnectionMap = new HashMap<Context, ServiceBinder>();
 
-	private static UriMatcher URI_MATCHER;
+	private static UriMatcher CONTENT_PROVIDER_URI_MATCHER;
 
 	static {
-		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FAVORITES, URI_FAVORITES);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_USERS, URI_CACHED_USERS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, URI_FILTERED_USERS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_KEYWORDS, URI_FILTERED_KEYWORDS);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, URI_FILTERED_SOURCES);
-		URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
+		CONTENT_PROVIDER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FAVORITES, URI_FAVORITES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_USERS, URI_CACHED_USERS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, URI_FILTERED_USERS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_KEYWORDS, URI_FILTERED_KEYWORDS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, URI_FILTERED_SOURCES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
 	}
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 
 	private static final String IMAGE_URL_PATTERN = "href=\\s*[\\\"'](http(s?):\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp))[\\\"']\\s*";
+
+	private static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 
 	public static ServiceToken bindToService(Context context) {
 
@@ -173,13 +175,12 @@ public final class Utils implements Constants {
 	public static synchronized void cleanDatabasesByItemLimit(Context context) {
 		ContentResolver resolver = context.getContentResolver();
 		String[] cols = new String[0];
-		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 		int item_limit = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 
 		for (long account_id : getAccountIds(context)) {
 			// Clean statuses.
-			for (Uri uri : uris) {
+			for (Uri uri : STATUSES_URIS) {
 				Cursor cur = resolver.query(uri, cols, Statuses.ACCOUNT_ID + "=" + account_id, null,
 						Statuses.DEFAULT_SORT_ORDER);
 				if (cur != null && cur.getCount() > item_limit) {
@@ -404,11 +405,10 @@ public final class Utils implements Constants {
 
 	public static long getAccountIdForStatusId(Context context, long status_id) {
 
-		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 		String[] cols = new String[] { Statuses.ACCOUNT_ID };
 		String where = Statuses.STATUS_ID + " = " + status_id;
 
-		for (Uri uri : uris) {
+		for (Uri uri : STATUSES_URIS) {
 			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
 			if (cur == null) {
 				continue;
@@ -640,11 +640,10 @@ public final class Utils implements Constants {
 
 	public static String getNameForStatusId(Context context, long status_id) {
 
-		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 		String[] cols = new String[] { Statuses.NAME };
 		String where = Statuses.STATUS_ID + " = " + status_id;
 
-		for (Uri uri : uris) {
+		for (Uri uri : STATUSES_URIS) {
 			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
 			if (cur == null) {
 				continue;
@@ -660,13 +659,50 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static String getScreenNameForStatusId(Context context, long status_id) {
+	public static long getRetweetedByUserId(Context context, long status_id) {
+		String[] cols = new String[] { Statuses.RETWEETED_BY_ID };
+		String where = Statuses.STATUS_ID + "=" + status_id;
 
-		Uri[] uris = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+		for (Uri uri : STATUSES_URIS) {
+			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
+			if (cur == null) {
+				continue;
+			}
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				long retweeted_by_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.RETWEETED_BY_ID));
+				cur.close();
+				return retweeted_by_id;
+			}
+			cur.close();
+		}
+		return -1;
+	}
+
+	public static long getRetweetId(Context context, long status_id) {
+		String[] cols = new String[] { Statuses.RETWEET_ID };
+		String where = Statuses.STATUS_ID + "=" + status_id;
+		for (Uri uri : STATUSES_URIS) {
+			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
+			if (cur == null) {
+				continue;
+			}
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				long retweet_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.RETWEET_ID));
+				cur.close();
+				return retweet_id;
+			}
+			cur.close();
+		}
+		return -1;
+	}
+
+	public static String getScreenNameForStatusId(Context context, long status_id) {
 		String[] cols = new String[] { Statuses.SCREEN_NAME };
 		String where = Statuses.STATUS_ID + " = " + status_id;
 
-		for (Uri uri : uris) {
+		for (Uri uri : STATUSES_URIS) {
 			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
 			if (cur == null) {
 				continue;
@@ -683,7 +719,7 @@ public final class Utils implements Constants {
 	}
 
 	public static int getTableId(Uri uri) {
-		return URI_MATCHER.match(uri);
+		return CONTENT_PROVIDER_URI_MATCHER.match(uri);
 	}
 
 	public static String getTableNameForContentUri(Uri uri) {
@@ -767,6 +803,21 @@ public final class Utils implements Constants {
 			return R.drawable.ic_tweet_stat_has_media;
 		else if (has_location) return R.drawable.ic_tweet_stat_has_location;
 		return 0;
+	}
+
+	public static boolean isMyAccount(Context context, long account_id) {
+		for (long id : getAccountIds(context)) {
+			if (id == account_id) return true;
+		}
+		return false;
+	}
+
+	public static boolean isMyRetweet(Context context, long account_id, long status_id) {
+		return account_id == getRetweetedByUserId(context, status_id);
+	}
+
+	public static boolean isNullOrEmpty(CharSequence text) {
+		return text == null || "".equals(text);
 	}
 
 	public static boolean isUserLoggedIn(Context context, long account_id) {
@@ -874,10 +925,6 @@ public final class Utils implements Constants {
 	public static void setMenuForStatus(Context context, Menu menu, long status_id, Uri uri) {
 		int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
 		ContentResolver resolver = context.getContentResolver();
-		final ArrayList<Long> ids = new ArrayList<Long>();
-		for (long id : getAccountIds(context)) {
-			ids.add(id);
-		}
 		String[] cols = Statuses.COLUMNS;
 		String where = Statuses.STATUS_ID + "=" + status_id;
 		Cursor cur = resolver.query(uri, cols, where, null, null);
@@ -885,11 +932,12 @@ public final class Utils implements Constants {
 			cur.moveToFirst();
 			long user_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
 			boolean is_protected = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_PROTECTED)) == 1;
-			menu.findItem(R.id.delete_submenu).setVisible(ids.contains(user_id));
+			menu.findItem(R.id.delete_submenu).setVisible(isMyAccount(context, user_id));
 			MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
-			itemRetweet.setVisible(!is_protected && (!ids.contains(user_id) || ids.size() > 1));
+			itemRetweet.setVisible(!is_protected
+					&& (!isMyAccount(context, user_id) || getActivatedAccounts(context).length > 1));
 			Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
-			if (ids.contains(cur.getInt(cur.getColumnIndexOrThrow(Statuses.RETWEETED_BY_ID)))) {
+			if (isMyAccount(context, cur.getLong(cur.getColumnIndexOrThrow(Statuses.RETWEETED_BY_ID)))) {
 				iconRetweetSubMenu.setColorFilter(activated_color, Mode.MULTIPLY);
 				itemRetweet.setTitle(R.string.cancel_retweet);
 			} else {
@@ -917,27 +965,12 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void showErrorMessage(Context context, int error_code) {
-		switch (error_code) {
-			case RESULT_ALREADY_LOGGED_IN:
-				Toast.makeText(context, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
-				break;
-			case RESULT_CONNECTIVITY_ERROR:
-				Toast.makeText(context, R.string.error_connectivity_error, Toast.LENGTH_SHORT).show();
-				break;
-			case RESULT_SERVER_ERROR:
-				Toast.makeText(context, R.string.error_server_error, Toast.LENGTH_SHORT).show();
-				break;
-			case RESULT_BAD_ADDRESS:
-				Toast.makeText(context, R.string.error_bad_address, Toast.LENGTH_SHORT).show();
-				break;
-			case RESULT_NO_PERMISSION:
-				Toast.makeText(context, R.string.error_no_permission, Toast.LENGTH_SHORT).show();
-				break;
-			case RESULT_UNKNOWN_ERROR:
-				Toast.makeText(context, R.string.error_unknown_error, Toast.LENGTH_SHORT).show();
-				break;
-		}
+	public static void showErrorToast(Context context, Exception e, boolean long_message) {
+		String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
+				.getString(R.string.error_unknown_error);
+		int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
+		Toast toast = Toast.makeText(context, message, length);
+		toast.show();
 	}
 
 	public static void unbindFromService(ServiceToken token) {

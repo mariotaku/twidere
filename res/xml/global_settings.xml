@@ -11,6 +11,15 @@
 			android:key="dark_theme"
 			android:summary="@string/dark_theme_summary"
 			android:title="@string/dark_theme"/>
+
+		<org.mariotaku.preferences.TextSizePreference
+			maxValue="24.0"
+			minValue="10.0"
+			android:defaultValue="12.0"
+			android:key="text_size"
+			android:summary="@string/text_size_summary"
+			android:title="@string/text_size"/>
+
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="display_profile_image"

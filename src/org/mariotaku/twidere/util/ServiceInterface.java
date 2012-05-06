@@ -90,6 +90,17 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int cancelRetweet(long account_id, long status_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.cancelRetweet(account_id, status_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public int createFavorite(long[] account_ids, long status_id) {
 		if (mService == null) return -1;
 		try {
@@ -101,10 +112,32 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int createFriendship(long account_id, long user_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.createFriendship(account_id, user_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public int destroyFavorite(long[] account_ids, long status_id) {
 		if (mService == null) return -1;
 		try {
 			return mService.destroyFavorite(account_ids, status_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int destroyFriendship(long account_id, long user_id) throws RemoteException {
+		if (mService == null) return -1;
+		try {
+			return mService.destroyFriendship(account_id, user_id);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

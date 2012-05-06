@@ -67,6 +67,7 @@ public class LazyImageLoader {
 	}
 
 	public void displayImage(File file, ImageView imageview) {
+		if (imageview == null) return;
 		if (file == null) {
 			imageview.setImageResource(mFallbackRes);
 			return;
@@ -82,6 +83,7 @@ public class LazyImageLoader {
 	}
 
 	public void displayImage(URL url, ImageView imageview) {
+		if (imageview == null) return;
 		if (url == null) {
 			imageview.setImageResource(mFallbackRes);
 			return;

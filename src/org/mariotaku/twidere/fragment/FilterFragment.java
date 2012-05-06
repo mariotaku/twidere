@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnShowListener;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -82,25 +81,8 @@ public class FilterFragment extends BaseFragment {
 		switch (item.getItemId()) {
 			case MENU_ADD:
 				return false;
-			case MENU_TOGGLE:
-				SharedPreferences prefs = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME,
-						Context.MODE_PRIVATE);
-				boolean filter_enabled = prefs.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false);
-				prefs.edit().putBoolean(PREFERENCE_KEY_ENABLE_FILTER, !filter_enabled).commit();
-				getSherlockActivity().invalidateOptionsMenu();
-				break;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		SharedPreferences prefs = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		boolean filter_enabled = prefs.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false);
-		getSherlockActivity().getSupportActionBar().setSubtitle(
-				filter_enabled ? R.string.filter_enabled : R.string.filter_disabled);
-		menu.findItem(MENU_TOGGLE).setTitle(filter_enabled ? R.string.disable : R.string.enable);
-		super.onPrepareOptionsMenu(menu);
 	}
 
 	public static abstract class BaseFilterListFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
