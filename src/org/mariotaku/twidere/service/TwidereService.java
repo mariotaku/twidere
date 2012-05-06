@@ -36,6 +36,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
@@ -547,9 +548,14 @@ public class TwidereService extends Service implements Constants {
 			ContentResolver resolver = context.getContentResolver();
 
 			for (AccountResponse response : responses) {
-				ResponseList<twitter4j.Status> statuses = response.responselist;
 				long account_id = response.account_id;
-
+				ResponseList<twitter4j.Status> statuses = response.responselist;
+				Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id , null, null);
+				boolean no_items_before = false;
+				if (cur != null) {
+					no_items_before = cur.getCount() > 0;
+					cur.close();
+				}
 				if (statuses == null || statuses.size() <= 0) {
 					super.onPostExecute(responses);
 					return;
@@ -589,7 +595,7 @@ public class TwidereService extends Service implements Constants {
 				resolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 				// No row deleted, so I will insert a gap.
-				if (rows_deleted == 0 && (max_ids == null || max_ids.length <= 0)) {
+				if (rows_deleted == 0 && (max_ids == null || max_ids.length <= 0) && !no_items_before) {
 					ContentValues values = new ContentValues();
 					values.put(Statuses.IS_GAP, 1);
 					StringBuilder where = new StringBuilder();
