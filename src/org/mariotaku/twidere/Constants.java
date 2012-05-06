@@ -29,7 +29,10 @@ public interface Constants {
 	public static final String PROTOCOL_HTTPS = SCHEME_HTTPS + "://";
 	public static final String PROTOCOL_TWIDERE = SCHEME_TWIDERE + "://";
 
-	public static final String HOST_USER = "user";
+	public static final String AUTHORITY_USER = "user";
+	public static final String AUTHORITY_SEARCH = "search";
+	public static final String AUTHORITY_SEARCH_USER = "search_user";
+	public static final String AUTHORITY_STATUS = "status";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_SCREEN_NAME = "screen_name";

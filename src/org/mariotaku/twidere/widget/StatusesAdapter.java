@@ -62,7 +62,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 		final boolean is_favorite = cursor.getInt(mIsFavoriteIdx) == 1;
 		final boolean is_protected = cursor.getInt(mIsProtectedIdx) == 1;
 		final boolean has_media = cursor.getInt(mHasMediaIdx) == 1;
-		final boolean has_location = isNullOrEmpty(cursor.getString(mLocationIdx));
+		final boolean has_location = !isNullOrEmpty(cursor.getString(mLocationIdx));
 		final boolean is_gap = cursor.getInt(mIsGapIdx) == 1;
 
 		final boolean is_last = cursor.getPosition() == getCount() - 1;

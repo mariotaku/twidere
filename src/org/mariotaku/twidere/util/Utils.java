@@ -257,7 +257,7 @@ public final class Utils implements Constants {
 				}
 				Uri.Builder builder = new Uri.Builder();
 				builder.scheme(SCHEME_TWIDERE);
-				builder.authority(HOST_USER);
+				builder.authority(AUTHORITY_USER);
 				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, mention.getScreenName());
 				text.setSpan(new URLSpan(builder.build().toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

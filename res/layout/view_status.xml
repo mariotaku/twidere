@@ -84,7 +84,9 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:background="@drawable/list_selector_holo_light"
-			android:padding="8dip"
+			android:drawableLeft="@drawable/ic_tweet_stat_reply"
+			android:drawablePadding="4dp"
+			android:padding="8dp"
 			android:text="@string/in_reply_to"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:visibility="gone"/>

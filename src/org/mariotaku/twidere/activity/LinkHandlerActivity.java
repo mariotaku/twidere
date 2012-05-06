@@ -2,6 +2,7 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 
+import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -13,6 +14,11 @@ public class LinkHandlerActivity extends BaseActivity {
 
 	private UserTimelineFragment mFragment;
 
+	private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+	
+	static {
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
