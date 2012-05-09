@@ -14,7 +14,6 @@ public class StatusViewHolder {
 	public final TextView name_view, text_view, tweet_time_view, reply_retweet_status_view;
 	private final View content, gap_indicator;
 	public boolean show_as_gap;
-	public long status_id, account_id;
 	private boolean account_color_enabled;
 
 	public StatusViewHolder(View view) {

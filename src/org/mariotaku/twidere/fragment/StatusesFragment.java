@@ -20,7 +20,7 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusViewHolder;
-import org.mariotaku.twidere.widget.StatusesAdapter;
+import org.mariotaku.twidere.widget.ParcelableStatusesAdapter;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -60,7 +60,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public long mSelectedStatusId;
 	private int mRunningTaskId;
 	private AsyncTaskManager mAsyncTaskManager;
-	private StatusesAdapter mAdapter;
+	private ParcelableStatusesAdapter mAdapter;
 	private boolean mBusy, mTickerStopped;
 
 	private Handler mHandler;
@@ -147,7 +147,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
-		mAdapter = new StatusesAdapter(getSherlockActivity(), imageloader);
+		mAdapter = new ParcelableStatusesAdapter(getSherlockActivity(), imageloader);
 		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
 		ListView list = mListView.getRefreshableView();
@@ -202,17 +202,16 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
+			ParcelableStatus status = mAdapter.findItemById(id);
 			StatusViewHolder holder = (StatusViewHolder) tag;
-			long status_id = holder.status_id;
-			long account_id = holder.account_id;
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
-				getStatuses(new long[] { account_id }, new long[] { status_id });
+				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
 				Uri.Builder builder = new Uri.Builder();
 				builder.scheme(SCHEME_TWIDERE);
 				builder.authority(AUTHORITY_STATUS);
-				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
+				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
 				startActivity(new Intent(Intent.ACTION_DEFAULT, builder.build()));
 			}
 		}
@@ -224,7 +223,8 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		if (tag instanceof StatusViewHolder) {
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder == null || holder.show_as_gap) return false;
-			mSelectedStatusId = holder.status_id;
+			ParcelableStatus status = mAdapter.findItemById(id);
+			mSelectedStatusId = status.status_id;
 			getSherlockActivity().startActionMode(this);
 			return true;
 		}
