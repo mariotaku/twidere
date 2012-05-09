@@ -550,10 +550,10 @@ public class TwidereService extends Service implements Constants {
 			for (AccountResponse response : responses) {
 				long account_id = response.account_id;
 				ResponseList<twitter4j.Status> statuses = response.responselist;
-				Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id , null, null);
+				Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id, null, null);
 				boolean no_items_before = false;
 				if (cur != null) {
-					no_items_before = cur.getCount() > 0;
+					no_items_before = cur.getCount() <= 0;
 					cur.close();
 				}
 				if (statuses == null || statuses.size() <= 0) {

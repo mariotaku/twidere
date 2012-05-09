@@ -50,10 +50,9 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		Bundle bundle = getArguments();
-		if (bundle == null) return;
+		if (bundle == null) bundle = new Bundle();
 		long account_id = bundle.getLong(INTENT_KEY_ACCOUNT_ID, INVALID_ID);
 		long status_id = bundle.getLong(INTENT_KEY_STATUS_ID, INVALID_ID);
-		if (account_id == INVALID_ID || status_id == INVALID_ID) return;
 
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
@@ -66,7 +65,10 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView.setOnScrollListener(this);
-		mShowConversationTask.execute();
+
+		if (account_id != INVALID_ID && status_id != INVALID_ID) {
+			mShowConversationTask.execute();
+		}
 	}
 
 	@Override
@@ -166,7 +168,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 			boolean is_favorite = status.isFavorited();
 			boolean has_media = status.getMediaEntities() != null && status.getMediaEntities().length > 0;
 			boolean has_location = status.getGeoLocation() != null;
-			boolean is_protected = user.isProtected();
+			boolean is_protected = user != null ? user.isProtected() : false;
 			holder.name_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
 			holder.name_view.setText(mDisplayName ? user.getName() : "@" + user.getScreenName());

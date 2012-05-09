@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.ViewStatusActivity;
+import org.mariotaku.twidere.activity.LinkHandlerActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -87,8 +87,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		super.onActivityCreated(savedInstanceState);
 		Bundle bundle = getArguments();
 		if (bundle != null) {
-			mAccountId = bundle.getLong(Statuses.ACCOUNT_ID);
-			mStatusId = bundle.getLong(Statuses.STATUS_ID);
+			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
+			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
 		}
 		setHasOptionsMenu(true);
 		View view = getView();
@@ -117,12 +117,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.profile: {
-				Intent intent = new Intent(INTENT_ACTION_VIEW_USER_PROFILE);
-				Bundle bundle = new Bundle();
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				bundle.putLong(INTENT_KEY_USER_ID, mStatusUserId);
-				intent.putExtras(bundle);
-				startActivity(intent);
+				Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(AUTHORITY_USER);
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, mStatusScreenName);
+				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				break;
 			}
 			case R.id.follow: {
@@ -130,10 +130,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				break;
 			}
 			case R.id.in_reply_to: {
-				Bundle bundle = new Bundle();
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				bundle.putLong(INTENT_KEY_STATUS_ID, mStatusId);
-				startActivity(new Intent(INTENT_ACTION_VIEW_CONVERSATION).putExtras(bundle));
+				Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(AUTHORITY_CONVERSATION);
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
+				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(mStatusId));
+				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				break;
 			}
 			case R.id.view_map: {
@@ -253,7 +255,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		}
 
 		super.onPrepareOptionsMenu(menu);
-		if (getSherlockActivity() instanceof ViewStatusActivity) {
+		if (getSherlockActivity() instanceof LinkHandlerActivity) {
 			getSherlockActivity().finish();
 		} else {
 			// Do what? I will make a decision after I have a tablet.

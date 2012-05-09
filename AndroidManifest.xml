@@ -78,18 +78,6 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.ViewStatusActivity"
-			android:label="@string/view_status"
-			android:uiOptions="splitActionBarWhenNarrow"
-			android:windowSoftInputMode="adjustResize">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<action android:name="org.mariotaku.twidere.VIEW_STATUS"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
 			android:name=".activity.GlobalSettingsActivity"
 			android:label="@string/global_settings"
 			android:theme="@style/Theme.Sherlock.Light.DarkActionBar">
@@ -217,23 +205,9 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.ViewConversationActivity"
-			android:label="@string/view_conversation">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<action android:name="org.mariotaku.twidere.VIEW_CONVERSATION"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
 			android:name=".activity.LinkHandlerActivity"
-			android:label="@string/view_user_profile">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.VIEW_USER_PROFILE"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
+			android:label="@string/link_handler"
+			android:uiOptions="splitActionBarWhenNarrow">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>
 
@@ -242,6 +216,12 @@
 
 				<data
 					android:host="user"
+					android:scheme="twidere"/>
+				<data
+					android:host="status"
+					android:scheme="twidere"/>
+				<data
+					android:host="conversation"
 					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>

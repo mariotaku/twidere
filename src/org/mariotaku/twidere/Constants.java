@@ -30,11 +30,12 @@ public interface Constants {
 	public static final String PROTOCOL_TWIDERE = SCHEME_TWIDERE + "://";
 
 	public static final String AUTHORITY_USER = "user";
-	public static final String AUTHORITY_SEARCH = "search";
-	public static final String AUTHORITY_SEARCH_USER = "search_user";
 	public static final String AUTHORITY_STATUS = "status";
+	public static final String AUTHORITY_CONVERSATION = "conversation";
+	public static final String AUTHORITY_SEARCH = "search";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
+	public static final String QUERY_PARAM_STATUS_ID = "status_id";
 	public static final String QUERY_PARAM_SCREEN_NAME = "screen_name";
 
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
@@ -84,9 +85,6 @@ public interface Constants {
 	public static final String INTENT_ACTION_COMPOSE = INTENT_ACTION_PREFIX + "COMPOSE";
 	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_ACTION_PREFIX + "GLOBAL_SETTINGS";
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_ACTION_PREFIX + "SELECT_ACCOUNT";
-	public static final String INTENT_ACTION_VIEW_STATUS = INTENT_ACTION_PREFIX + "VIEW_STATUS";
-	public static final String INTENT_ACTION_VIEW_USER_PROFILE = INTENT_ACTION_PREFIX + "VIEW_USER_PROFILE";
-	public static final String INTENT_ACTION_VIEW_CONVERSATION = INTENT_ACTION_PREFIX + "VIEW_CONVERSATION";
 	public static final String INTENT_ACTION_VIEW_MAP = INTENT_ACTION_PREFIX + "VIEW_MAP";
 	public static final String INTENT_ACTION_FILTERS = INTENT_ACTION_PREFIX + "FILTERS";
 	public static final String INTENT_ACTION_ABOUT = INTENT_ACTION_PREFIX + "ABOUT";

@@ -9,11 +9,15 @@ import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
+import java.util.List;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.loader.CursorToStatusesLoader;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusViewHolder;
 import org.mariotaku.twidere.widget.StatusesAdapter;
@@ -28,7 +32,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -47,8 +50,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public abstract class StatusesFragment extends BaseFragment implements OnRefreshListener, LoaderCallbacks<Cursor>,
-		OnScrollListener, OnItemClickListener, OnItemLongClickListener, ActionMode.Callback {
+public abstract class StatusesFragment extends BaseFragment implements OnRefreshListener,
+		LoaderCallbacks<List<ParcelableStatus>>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
+		ActionMode.Callback {
 
 	public ServiceInterface mServiceInterface;
 	public PullToRefreshListView mListView;
@@ -167,7 +171,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	public Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
 		String[] cols = Statuses.COLUMNS;
 		Uri uri = getContentUri();
 		String where = buildActivatedStatsWhereClause(getSherlockActivity(), null);
@@ -175,7 +179,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			String table = getTableNameForContentUri(uri);
 			where = buildFilterWhereClause(table, where);
 		}
-		return new CursorLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
+		return new CursorToStatusesLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
 	}
 
 	@Override
@@ -204,11 +208,12 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getStatuses(new long[] { account_id }, new long[] { status_id });
 			} else {
-				Bundle bundle = new Bundle();
-				bundle.putLong(Statuses.ACCOUNT_ID, account_id);
-				bundle.putLong(Statuses.STATUS_ID, status_id);
-				Intent intent = new Intent(INTENT_ACTION_VIEW_STATUS).putExtras(bundle);
-				startActivity(intent);
+				Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(AUTHORITY_STATUS);
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+				startActivity(new Intent(Intent.ACTION_DEFAULT, builder.build()));
 			}
 		}
 	}
@@ -227,13 +232,13 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		mAdapter.changeCursor(null);
+	public void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
+		mAdapter.changeData(null);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mAdapter.changeCursor(data);
+	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
+		mAdapter.changeData(data);
 	}
 
 	@Override
