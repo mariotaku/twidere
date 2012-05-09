@@ -107,7 +107,7 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 
 			@Override
 			public int compare(Status object1, Status object2) {
-				long diff = object1.getCreatedAt().getTime() - object2.getCreatedAt().getTime();
+				long diff = object2.getCreatedAt().getTime() - object1.getCreatedAt().getTime();
 				if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 				if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 				return (int) diff;
