@@ -73,6 +73,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
 	public static final String PREFERENCE_KEY_ENABLE_FILTER = "enable_filter";
 	public static final String PREFERENCE_KEY_GZIP_COMPRESSING = "gzip_compressing";
+	public static final String PREFERENCE_KEY_IGNORE_SSL_ERROR = "ignore_ssl_error";
 	public static final String PREFERENCE_LOAD_MORE_AUTOMATICALLY = "load_more_automatically";
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;

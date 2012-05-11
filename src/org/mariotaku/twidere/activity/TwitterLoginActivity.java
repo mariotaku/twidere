@@ -25,7 +25,9 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.ConfigurationBuilder;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -36,7 +38,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -45,6 +46,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 
 public class TwitterLoginActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
@@ -356,13 +358,18 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 		@Override
 		protected Response doInBackground(Void... params) {
-			ContentResolver resolver = getContentResolver();
-			ConfigurationBuilder cb = new ConfigurationBuilder();
+			final SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
+			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+			final ContentResolver resolver = getContentResolver();
+			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestAPIBase);
 			cb.setSearchBaseURL(mSearchAPIBase);
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
-			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+			cb.setGZIPEnabled(enable_gzip_compressing);
+			cb.setIgnoreSSLError(ignore_ssl_error);
+			final Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			AccessToken accessToken = null;
 			User user = null;
 			try {
@@ -445,10 +452,16 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 
 		private Response authBasic() {
-			ContentResolver resolver = getContentResolver();
-			ConfigurationBuilder cb = new ConfigurationBuilder();
+			final SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
+			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+			final ContentResolver resolver = getContentResolver();
+			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestAPIBase);
 			cb.setSearchBaseURL(mSearchAPIBase);
+			cb.setGZIPEnabled(enable_gzip_compressing);
+			cb.setIgnoreSSLError(ignore_ssl_error);
+			
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(mUsername, mPassword));
 			boolean account_valid = false;
 			User user = null;
@@ -478,11 +491,16 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 
 		private Response authOAuth() {
-			ConfigurationBuilder cb = new ConfigurationBuilder();
+			final SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
+			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestAPIBase);
 			cb.setSearchBaseURL(mSearchAPIBase);
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
+			cb.setGZIPEnabled(enable_gzip_compressing);
+			cb.setIgnoreSSLError(ignore_ssl_error);
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			RequestToken requestToken = null;
 			try {
@@ -496,12 +514,17 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 
 		private Response authxAuth() {
-			ContentResolver resolver = getContentResolver();
-			ConfigurationBuilder cb = new ConfigurationBuilder();
+			final SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
+			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+			final ContentResolver resolver = getContentResolver();
+			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestAPIBase);
 			cb.setSearchBaseURL(mSearchAPIBase);
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
+			cb.setGZIPEnabled(enable_gzip_compressing);
+			cb.setIgnoreSSLError(ignore_ssl_error);
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			AccessToken accessToken = null;
 			User user = null;

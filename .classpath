@@ -4,10 +4,5 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ActionBarSherlock"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/android-holocompat"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/android-preferences"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/android-pulltorefresh"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/viewpagerindicator"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

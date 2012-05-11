@@ -746,6 +746,7 @@ public final class Utils implements Constants {
 	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities) {
 		final SharedPreferences preferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
+		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 		Twitter twitter = null;
 		StringBuilder where = new StringBuilder();
 		where.append(Accounts.USER_ID + "=" + account_id);
@@ -756,6 +757,7 @@ public final class Utils implements Constants {
 				cur.moveToFirst();
 				ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setGZIPEnabled(enable_gzip_compressing);
+				cb.setIgnoreSSLError(ignore_ssl_error);
 				String rest_api_base = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_API_BASE));
 				String search_api_base = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_API_BASE));
 				if (rest_api_base == null || "".equals(rest_api_base)) {

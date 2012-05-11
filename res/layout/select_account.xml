@@ -10,21 +10,15 @@
 		android:layout_height="0dp"
 		android:layout_weight="1"/>
 
-	<ImageView
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:src="@android:drawable/divider_horizontal_bright"/>
-
 	<Button
 		android:id="@+id/add"
 		style="?android:attr/buttonStyleSmall"
-		android:layout_width="wrap_content"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
-		android:layout_margin="8dp"
+		android:background="@drawable/list_selector_holo_light"
 		android:gravity="center"
 		android:minHeight="48dp"
-		android:minWidth="96dp"
 		android:text="@string/add_account"/>
 
 </LinearLayout>

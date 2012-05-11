@@ -86,6 +86,8 @@
 	<string name="consumer_secret">Consumer secret</string>
 	<string name="consumer_secret_summary">Consumer secret for OAuth/xAuth, leave blank for default.</string>
 	<string name="warn_expert_only">Be attention! Wrong consumer key/secret will make connection errors!</string>
+	<string name="ignore_ssl_error">Ignore SSL Error</string>
+	<string name="ignore_ssl_error_summary">Ignore SSL Error, enable this if you are having problem with custom API server.</string>
 	<string name="gzip_compressing">GZip compressing</string>
 	<string name="gzip_compressing_summary">Compress all API request, it can reduce traffic usage, but may not work on all API servers.</string>
 	<string name="storage">Storage</string>
