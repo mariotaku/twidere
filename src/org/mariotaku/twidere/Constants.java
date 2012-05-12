@@ -80,19 +80,19 @@ public interface Constants {
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final int PREFERENCE_DEFAULT_TEXT_SIZE = 12;
 
-	public static final String INTENT_ACTION_PREFIX = "org.mariotaku.twidere.";
+	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 
-	public static final String INTENT_ACTION_HOME = INTENT_ACTION_PREFIX + "HOME";
-	public static final String INTENT_ACTION_COMPOSE = INTENT_ACTION_PREFIX + "COMPOSE";
-	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_ACTION_PREFIX + "GLOBAL_SETTINGS";
-	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_ACTION_PREFIX + "SELECT_ACCOUNT";
-	public static final String INTENT_ACTION_VIEW_MAP = INTENT_ACTION_PREFIX + "VIEW_MAP";
-	public static final String INTENT_ACTION_FILTERS = INTENT_ACTION_PREFIX + "FILTERS";
-	public static final String INTENT_ACTION_ABOUT = INTENT_ACTION_PREFIX + "ABOUT";
-	public static final String INTENT_ACTION_EDIT_API = INTENT_ACTION_PREFIX + "EDIT_API";
-	public static final String INTENT_ACTION_SET_COLOR = INTENT_ACTION_PREFIX + "SET_COLOR";
-	public static final String INTENT_ACTION_DEBUG = INTENT_ACTION_PREFIX + "DEBUG";
-	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_ACTION_PREFIX + "TWITTER_LOGIN";
+	public static final String INTENT_ACTION_HOME = INTENT_PACKAGE_PREFIX + "HOME";
+	public static final String INTENT_ACTION_COMPOSE = INTENT_PACKAGE_PREFIX + "COMPOSE";
+	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_PACKAGE_PREFIX + "GLOBAL_SETTINGS";
+	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_PACKAGE_PREFIX + "SELECT_ACCOUNT";
+	public static final String INTENT_ACTION_VIEW_MAP = INTENT_PACKAGE_PREFIX + "VIEW_MAP";
+	public static final String INTENT_ACTION_FILTERS = INTENT_PACKAGE_PREFIX + "FILTERS";
+	public static final String INTENT_ACTION_ABOUT = INTENT_PACKAGE_PREFIX + "ABOUT";
+	public static final String INTENT_ACTION_EDIT_API = INTENT_PACKAGE_PREFIX + "EDIT_API";
+	public static final String INTENT_ACTION_SET_COLOR = INTENT_PACKAGE_PREFIX + "SET_COLOR";
+	public static final String INTENT_ACTION_DEBUG = INTENT_PACKAGE_PREFIX + "DEBUG";
+	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_PACKAGE_PREFIX + "TWITTER_LOGIN";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -104,11 +104,14 @@ public interface Constants {
 	public static final String INTENT_KEY_STATUS_ID = "status_id";
 	public static final String INTENT_KEY_SCREEN_NAME = "screen_name";
 	public static final String INTENT_KEY_IN_REPLY_TO_ID = "in_reply_to_id";
+	public static final String INTENT_KEY_IN_REPLY_TO_NAME = "in_reply_to_name";
+	public static final String INTENT_KEY_IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
 	public static final String INTENT_KEY_TEXT = "text";
 	public static final String INTENT_KEY_SUCCEED = "succeed";
 	public static final String INTENT_KEY_REFRESH_ALL = "refresh_all";
 	public static final String INTENT_KEY_IDS = "ids";
 	public static final String INTENT_KEY_IS_QUOTE = "is_quote";
+	public static final String INTENT_KEY_STATUS = "status";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;

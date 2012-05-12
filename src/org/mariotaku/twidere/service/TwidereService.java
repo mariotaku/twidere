@@ -560,9 +560,10 @@ public class TwidereService extends Service implements Constants {
 					super.onPostExecute(responses);
 					return;
 				}
-				List<ContentValues> values_list = new ArrayList<ContentValues>();
+				final List<ContentValues> values_list = new ArrayList<ContentValues>();
+				final List<Long> status_ids = new ArrayList<Long>();
 
-				long min_id = -1, max_id = -1;
+				long min_id = -1;
 				for (twitter4j.Status status : statuses) {
 					if (status == null) {
 						continue;
@@ -576,18 +577,25 @@ public class TwidereService extends Service implements Constants {
 					if (status_id < min_id || min_id == -1) {
 						min_id = status_id;
 					}
-					if (status_id > max_id || max_id == -1) {
-						max_id = status_id;
-					}
+					status_ids.add(status.getId());
 					values_list.add(makeStatusesContentValues(status, account_id));
 				}
-				// Delete all rows conflicting before new data inserted.
 				int rows_deleted = -1;
-				if (min_id != -1 && max_id != -1) {
-					StringBuilder where = new StringBuilder();
-					where.append(Statuses.STATUS_ID + ">=" + min_id);
-					where.append(" AND " + Statuses.STATUS_ID + "<=" + max_id);
 
+				// Delete all rows conflicting before new data inserted.
+				{
+					StringBuilder where = new StringBuilder();
+					where.append(Statuses.STATUS_ID + " IN ( ");
+					for (int i = 0; i < status_ids.size(); i++) {
+						String id_string = String.valueOf(status_ids.get(i));
+						if (id_string != null) {
+							if (i > 0) {
+								where.append(", ");
+							}
+							where.append(id_string);
+						}
+					}
+					where.append(" )");
 					rows_deleted = resolver.delete(uri, where.toString(), null);
 				}
 

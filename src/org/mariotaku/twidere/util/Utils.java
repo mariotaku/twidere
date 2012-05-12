@@ -223,83 +223,6 @@ public final class Utils implements Constants {
 		return location.getLatitude() + "," + location.getLongitude();
 	}
 
-	public static String formatStatusString(Status status, long account_id) {
-		final CharSequence TAG_START = "<p>";
-		final CharSequence TAG_END = "</p>";
-		if (status == null || status.getText() == null) return "";
-		SpannableString text = new SpannableString(status.getText());
-		// Format links.
-		URLEntity[] urls = status.getURLEntities();
-		if (urls != null) {
-			for (URLEntity url_entity : urls) {
-				int start = url_entity.getStart();
-				int end = url_entity.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				URL expanded_url = url_entity.getExpandedURL();
-				URL url = url_entity.getURL();
-				if (expanded_url != null) {
-					text.setSpan(new URLSpan(expanded_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				} else if (url != null) {
-					text.setSpan(new URLSpan(url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				}
-			}
-		}
-		// Format mentioned users.
-		UserMentionEntity[] mentions = status.getUserMentionEntities();
-		if (mentions != null) {
-			for (UserMentionEntity mention : mentions) {
-				int start = mention.getStart();
-				int end = mention.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				Uri.Builder builder = new Uri.Builder();
-				builder.scheme(SCHEME_TWIDERE);
-				builder.authority(AUTHORITY_USER);
-				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, mention.getScreenName());
-				text.setSpan(new URLSpan(builder.build().toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			}
-		}
-		// Format hashtags.
-		HashtagEntity[] hashtags = status.getHashtagEntities();
-		if (hashtags != null) {
-			for (HashtagEntity hashtag : hashtags) {
-				int start = hashtag.getStart();
-				int end = hashtag.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				String link = "https://twitter.com/search/#" + hashtag.getText();
-				text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			}
-		}
-		// Format media.
-		MediaEntity[] media = status.getMediaEntities();
-		if (media != null) {
-			for (MediaEntity media_item : media) {
-				int start = media_item.getStart();
-				int end = media_item.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				URL media_url = media_item.getMediaURL();
-				if (media_url != null) {
-					text.setSpan(new URLSpan(media_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				}
-			}
-		}
-		String formatted = Html.toHtml(text);
-		if (formatted != null && formatted.contains(TAG_START) && formatted.contains(TAG_END)) {
-			int start = formatted.indexOf(TAG_START.toString()) + TAG_START.length();
-			int end = formatted.lastIndexOf(TAG_END.toString());
-			return formatted.substring(start, end);
-		}
-		return formatted;
-	}
-
 	public static String formatTimeStampString(Context context, long timestamp) {
 		Time then = new Time();
 		then.set(timestamp);
@@ -403,6 +326,9 @@ public final class Utils implements Constants {
 		return color;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public static long getAccountIdForStatusId(Context context, long status_id) {
 
 		String[] cols = new String[] { Statuses.ACCOUNT_ID };
@@ -520,6 +446,9 @@ public final class Utils implements Constants {
 		return bm;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public static int getErrorCode(TwitterException e) {
 		if (e == null) return RESULT_UNKNOWN_ERROR;
 		int status_code = e.getStatusCode();
@@ -638,6 +567,9 @@ public final class Utils implements Constants {
 		return mentions.toArray(new String[mentions.size()]);
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public static String getNameForStatusId(Context context, long status_id) {
 
 		String[] cols = new String[] { Statuses.NAME };
@@ -659,6 +591,9 @@ public final class Utils implements Constants {
 		return null;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public static long getRetweetedByUserId(Context context, long status_id) {
 		String[] cols = new String[] { Statuses.RETWEETED_BY_ID };
 		String where = Statuses.STATUS_ID + "=" + status_id;
@@ -679,6 +614,9 @@ public final class Utils implements Constants {
 		return -1;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public static long getRetweetId(Context context, long status_id) {
 		String[] cols = new String[] { Statuses.RETWEET_ID };
 		String where = Statuses.STATUS_ID + "=" + status_id;
@@ -698,6 +636,9 @@ public final class Utils implements Constants {
 		return -1;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public static String getScreenNameForStatusId(Context context, long status_id) {
 		String[] cols = new String[] { Statuses.SCREEN_NAME };
 		String where = Statuses.STATUS_ID + " = " + status_id;
@@ -716,6 +657,88 @@ public final class Utils implements Constants {
 			cur.close();
 		}
 		return null;
+	}
+
+	public static String getSpannedStatusString(Spanned text) {
+		if (text == null) return "";
+		final CharSequence TAG_START = "<p>";
+		final CharSequence TAG_END = "</p>";
+		String formatted = Html.toHtml(text);
+		if (formatted != null && formatted.contains(TAG_START) && formatted.contains(TAG_END)) {
+			int start = formatted.indexOf(TAG_START.toString()) + TAG_START.length();
+			int end = formatted.lastIndexOf(TAG_END.toString());
+			return formatted.substring(start, end);
+		}
+		return formatted;
+	}
+
+	public static Spanned getSpannedStatusText(Status status, long account_id) {
+		if (status == null || status.getText() == null) return new SpannableString("");
+		SpannableString text = new SpannableString(status.getText());
+		// Format links.
+		URLEntity[] urls = status.getURLEntities();
+		if (urls != null) {
+			for (URLEntity url_entity : urls) {
+				int start = url_entity.getStart();
+				int end = url_entity.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				URL expanded_url = url_entity.getExpandedURL();
+				URL url = url_entity.getURL();
+				if (expanded_url != null) {
+					text.setSpan(new URLSpan(expanded_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				} else if (url != null) {
+					text.setSpan(new URLSpan(url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+			}
+		}
+		// Format mentioned users.
+		UserMentionEntity[] mentions = status.getUserMentionEntities();
+		if (mentions != null) {
+			for (UserMentionEntity mention : mentions) {
+				int start = mention.getStart();
+				int end = mention.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(AUTHORITY_USER);
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, mention.getScreenName());
+				text.setSpan(new URLSpan(builder.build().toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			}
+		}
+		// Format hashtags.
+		HashtagEntity[] hashtags = status.getHashtagEntities();
+		if (hashtags != null) {
+			for (HashtagEntity hashtag : hashtags) {
+				int start = hashtag.getStart();
+				int end = hashtag.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				String link = "https://twitter.com/search/#" + hashtag.getText();
+				text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			}
+		}
+		// Format media.
+		MediaEntity[] media = status.getMediaEntities();
+		if (media != null) {
+			for (MediaEntity media_item : media) {
+				int start = media_item.getStart();
+				int end = media_item.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				URL media_url = media_item.getMediaURL();
+				if (media_url != null) {
+					text.setSpan(new URLSpan(media_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+			}
+		}
+		return text;
 	}
 
 	public static int getTableId(Uri uri) {
@@ -878,30 +901,36 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues makeStatusesContentValues(Status status, long account_id) {
-		ContentValues values = new ContentValues();
-		int is_retweet = status.isRetweet() ? 1 : 0;
-		Status retweeted_status = status.getRetweetedStatus();
+		final ContentValues values = new ContentValues();
+		final int is_retweet = status.isRetweet() ? 1 : 0;
+		final Status retweeted_status = status.getRetweetedStatus();
 		if (is_retweet == 1 && retweeted_status != null) {
-			User retweet_user = status.getUser();
+			final User retweet_user = status.getUser();
 			values.put(Statuses.RETWEET_ID, status.getId());
 			values.put(Statuses.RETWEETED_BY_ID, retweet_user.getId());
 			values.put(Statuses.RETWEETED_BY_NAME, retweet_user.getName());
 			values.put(Statuses.RETWEETED_BY_SCREEN_NAME, retweet_user.getScreenName());
 			status = retweeted_status;
 		}
-		User user = status.getUser();
-		long status_id = status.getId(), user_id = user.getId();
-		String profile_image_url = user.getProfileImageURL().toString();
-		String name = user.getName(), screen_name = user.getScreenName();
-		MediaEntity[] medias = status.getMediaEntities();
+		final long status_id = status.getId();
+		final User user = status.getUser();
+		if (user != null) {
+			final long user_id = user.getId();
+			final String profile_image_url = user.getProfileImageURL().toString();
+			final String name = user.getName(), screen_name = user.getScreenName();
+			values.put(Statuses.USER_ID, user_id);
+			values.put(Statuses.NAME, name);
+			values.put(Statuses.SCREEN_NAME, screen_name);
+			values.put(Statuses.IS_PROTECTED, user.isProtected() ? 1 : 0);
+			values.put(Statuses.PROFILE_IMAGE_URL, profile_image_url);
+		}
+		final MediaEntity[] medias = status.getMediaEntities();
 		values.put(Statuses.STATUS_ID, status_id);
 		values.put(Statuses.ACCOUNT_ID, account_id);
-		values.put(Statuses.USER_ID, user_id);
-		values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
-		values.put(Statuses.TEXT, formatStatusString(status, account_id));
-		values.put(Statuses.NAME, name);
-		values.put(Statuses.SCREEN_NAME, screen_name);
-		values.put(Statuses.PROFILE_IMAGE_URL, profile_image_url);
+		if (status.getCreatedAt() != null) {
+			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
+		}
+		values.put(Statuses.TEXT, getSpannedStatusString(getSpannedStatusText(status, account_id)));
 		values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
 		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
@@ -910,7 +939,6 @@ public final class Utils implements Constants {
 		values.put(Statuses.LOCATION, formatGeoLocationToString(status.getGeoLocation()));
 		values.put(Statuses.IS_RETWEET, is_retweet);
 		values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
-		values.put(Statuses.IS_PROTECTED, user.isProtected() ? 1 : 0);
 		values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
 		return values;
 	}
@@ -924,40 +952,48 @@ public final class Utils implements Constants {
 		activity.startActivity(activity.getIntent());
 	}
 
+	/**
+	 * @deprecated
+	 */
+	@Deprecated
 	public static void setMenuForStatus(Context context, Menu menu, long status_id, Uri uri) {
-		int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
 		ContentResolver resolver = context.getContentResolver();
 		String[] cols = Statuses.COLUMNS;
 		String where = Statuses.STATUS_ID + "=" + status_id;
 		Cursor cur = resolver.query(uri, cols, where, null, null);
 		if (cur != null && cur.getCount() > 0) {
 			cur.moveToFirst();
-			long user_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.USER_ID));
-			boolean is_protected = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_PROTECTED)) == 1;
-			menu.findItem(R.id.delete_submenu).setVisible(isMyAccount(context, user_id));
-			MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
-			itemRetweet.setVisible(!is_protected
-					&& (!isMyAccount(context, user_id) || getActivatedAccounts(context).length > 1));
-			Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
-			if (isMyAccount(context, cur.getLong(cur.getColumnIndexOrThrow(Statuses.RETWEETED_BY_ID)))) {
-				iconRetweetSubMenu.setColorFilter(activated_color, Mode.MULTIPLY);
-				itemRetweet.setTitle(R.string.cancel_retweet);
-			} else {
-				iconRetweetSubMenu.clearColorFilter();
-				itemRetweet.setTitle(R.string.retweet);
-			}
-			MenuItem itemFav = menu.findItem(MENU_FAV);
-			Drawable iconFav = itemFav.getIcon();
-			if (cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1) {
-				iconFav.setColorFilter(activated_color, Mode.MULTIPLY);
-				itemFav.setTitle(R.string.unfav);
-			} else {
-				iconFav.clearColorFilter();
-				itemFav.setTitle(R.string.fav);
-			}
+			ParcelableStatus status = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
+			setMenuForStatus(context, menu, status);
 		}
 		if (cur != null) {
 			cur.close();
+		}
+	}
+
+	public static void setMenuForStatus(Context context, Menu menu, ParcelableStatus status) {
+		if (status == null) return;
+		int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
+		menu.findItem(R.id.delete_submenu).setVisible(isMyAccount(context, status.user_id));
+		MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
+		itemRetweet.setVisible(!status.is_protected
+				&& (!isMyAccount(context, status.user_id) || getActivatedAccounts(context).length > 1));
+		Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
+		if (isMyAccount(context, status.retweeted_by_id)) {
+			iconRetweetSubMenu.setColorFilter(activated_color, Mode.MULTIPLY);
+			itemRetweet.setTitle(R.string.cancel_retweet);
+		} else {
+			iconRetweetSubMenu.clearColorFilter();
+			itemRetweet.setTitle(R.string.retweet);
+		}
+		MenuItem itemFav = menu.findItem(MENU_FAV);
+		Drawable iconFav = itemFav.getIcon();
+		if (status.is_favorite) {
+			iconFav.setColorFilter(activated_color, Mode.MULTIPLY);
+			itemFav.setTitle(R.string.unfav);
+		} else {
+			iconFav.clearColorFilter();
+			itemFav.setTitle(R.string.fav);
 		}
 	}
 

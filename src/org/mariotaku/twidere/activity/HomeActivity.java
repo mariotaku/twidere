@@ -5,6 +5,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.DashboardFragment;
 import org.mariotaku.twidere.fragment.DiscoverFragment;
@@ -12,7 +13,6 @@ import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.widget.TabsAdapter;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;

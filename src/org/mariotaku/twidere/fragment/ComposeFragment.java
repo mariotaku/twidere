@@ -11,12 +11,12 @@ import java.io.File;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ComposeActivity;
+import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ScreenNameTokenizer;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.widget.StatusComposeEditText;
-import org.mariotaku.twidere.widget.UserAutoCompleteAdapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -58,7 +58,9 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 	private Location mRecentLocation;
 	private LocationManager mLocationManager;
 	private SharedPreferences mPreferences;
-	private long mInReplyToStatusId = -1;
+	private long mInReplyToStatusId = -1, mAccountId = -1;
+	private String mInReplyToScreenName, mInReplyToName;
+	private boolean mIsQuote;
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -79,13 +81,13 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		setHasOptionsMenu(true);
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
 		long[] activated_ids = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
+		mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
 		mInReplyToStatusId = bundle != null ? bundle.getLong(INTENT_KEY_IN_REPLY_TO_ID) : -1;
+		mInReplyToScreenName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME) : null;
+		mInReplyToName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_NAME) : null;
 		int text_selection_start = -1;
-		boolean is_quote = false;
 		if (mInReplyToStatusId > -1) {
-			String screen_name = getScreenNameForStatusId(getSherlockActivity(), mInReplyToStatusId);
-			long account_id = getAccountIdForStatusId(getSherlockActivity(), mInReplyToStatusId);
-			String account_username = getAccountUsername(getSherlockActivity(), account_id);
+			String account_username = getAccountUsername(getSherlockActivity(), mAccountId);
 
 			String[] mentions = getArguments() != null ? getArguments().getStringArray(INTENT_KEY_MENTIONS) : null;
 
@@ -106,12 +108,12 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				text_selection_start = mText.indexOf(' ') + 1;
 			}
 
-			is_quote = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false;
+			mIsQuote = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false;
 
 			boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-			String name = display_name ? getNameForStatusId(getSherlockActivity(), mInReplyToStatusId) : screen_name;
-			getSherlockActivity().setTitle(getString(is_quote ? R.string.quote_user : R.string.reply_to, name));
-			mAccountIds = new long[] { account_id };
+			String name = display_name ? mInReplyToName : mInReplyToScreenName;
+			getSherlockActivity().setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, name));
+			mAccountIds = new long[] { mAccountId };
 		} else {
 			mAccountIds = activated_ids == null ? getActivatedAccounts(getSherlockActivity()) : activated_ids;
 			if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null) {
@@ -133,7 +135,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		mEditText.setTokenizer(new ScreenNameTokenizer(mEditText));
 		if (mText != null) {
 			mEditText.setText(mText);
-			if (is_quote) {
+			if (mIsQuote) {
 				mEditText.setSelection(0);
 			} else if (text_selection_start != -1 && text_selection_start < mEditText.length()
 					&& mEditText.length() > 0) {
@@ -305,6 +307,11 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		mText = mEditText.getText().toString();
 		outState.putLongArray(INTENT_KEY_IDS, mAccountIds);
 		outState.putString(INTENT_KEY_TEXT, mText);
+		outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+		outState.putLong(INTENT_KEY_IN_REPLY_TO_ID, mInReplyToStatusId);
+		outState.putString(INTENT_KEY_IN_REPLY_TO_NAME, mInReplyToName);
+		outState.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mInReplyToScreenName);
+		outState.putBoolean(INTENT_KEY_IS_QUOTE, mIsQuote);
 		super.onSaveInstanceState(outState);
 	}
 

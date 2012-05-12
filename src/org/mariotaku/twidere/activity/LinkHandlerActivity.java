@@ -44,10 +44,11 @@ public class LinkHandlerActivity extends BaseActivity {
 			switch (URI_MATCHER.match(data)) {
 				case CODE_STATUS: {
 					setTitle(R.string.view_status);
+					Bundle extras = getIntent().getExtras();
 					mFragment = new ViewStatusFragment();
 					String param_status_id = data.getQueryParameter(QUERY_PARAM_STATUS_ID);
 					String param_account_id = data.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
-					bundle = new Bundle();
+					bundle = extras != null ? new Bundle(extras) : new Bundle();
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
 					break;

@@ -1,8 +1,8 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.widget.TabsAdapter;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

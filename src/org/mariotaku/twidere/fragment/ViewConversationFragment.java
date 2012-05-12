@@ -50,7 +50,9 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		Bundle bundle = getArguments();
-		if (bundle == null) bundle = new Bundle();
+		if (bundle == null) {
+			bundle = new Bundle();
+		}
 		long account_id = bundle.getLong(INTENT_KEY_ACCOUNT_ID, INVALID_ID);
 		long status_id = bundle.getLong(INTENT_KEY_STATUS_ID, INVALID_ID);
 

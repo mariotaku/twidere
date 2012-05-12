@@ -1,57 +1,145 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.getTypeIcon;
+import static org.mariotaku.twidere.util.Utils.getMentionedNames;
+import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.loader.UserTimelineLoader;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ParcelableStatus;
+import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusViewHolder;
 
-import twitter4j.ResponseList;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.User;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-public class UserTimelineFragment extends BaseListFragment implements LoaderCallbacks<ResponseList<Status>> {
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
-	private UserTimelineAdapter mAdapter;
+public class UserTimelineFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableStatus>>,
+		OnItemClickListener, OnItemLongClickListener, ActionMode.Callback {
+
 	private SharedPreferences mPreferences;
-	private boolean mDisplayProfileImage;
-	private boolean mDisplayName;
+	private ServiceInterface mServiceInterface;
+	private ContentResolver mResolver;
 	private ListView mListView;
+	private ParcelableStatusesAdapter mAdapter;
+
+	private boolean mDisplayProfileImage, mDisplayName;
+	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
+	private ParcelableStatus mSelectedStatus;
+	private float mTextSize;
+
+	@Override
+	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+		if (mSelectedStatus != null) {
+			long status_id = mSelectedStatus.status_id;
+			String text_plain = mSelectedStatus.text_plain;
+			String screen_name = mSelectedStatus.screen_name;
+			String name = mSelectedStatus.name;
+			long account_id = mSelectedStatus.account_id;
+			switch (item.getItemId()) {
+				case MENU_SHARE: {
+					Intent intent = new Intent(Intent.ACTION_SEND);
+					intent.setType("text/plain");
+					intent.putExtra(Intent.EXTRA_TEXT, "@" + screen_name + ": " + text_plain);
+					startActivity(Intent.createChooser(intent, getString(R.string.share)));
+					break;
+				}
+				case MENU_RETWEET: {
+					mServiceInterface.retweetStatus(new long[] { account_id }, status_id);
+					break;
+				}
+				case MENU_QUOTE: {
+					Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					Bundle bundle = new Bundle();
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+					bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
+					bundle.putString(INTENT_KEY_TEXT, "RT @" + screen_name + ": " + text_plain);
+					intent.putExtras(bundle);
+					startActivity(intent);
+					break;
+				}
+				case MENU_REPLY: {
+					Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					Bundle bundle = new Bundle();
+					bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text_plain, false, true));
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+					intent.putExtras(bundle);
+					startActivity(intent);
+					break;
+				}
+				case MENU_FAV: {
+					if (mSelectedStatus.is_favorite) {
+						mServiceInterface.destroyFavorite(new long[] { account_id }, status_id);
+					} else {
+						mServiceInterface.createFavorite(new long[] { account_id }, status_id);
+					}
+					break;
+				}
+				case MENU_DELETE: {
+					mServiceInterface.destroyStatus(account_id, status_id);
+					break;
+				}
+				default:
+					return false;
+			}
+		}
+		mode.finish();
+		return true;
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		mResolver = getSherlockActivity().getContentResolver();
+		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
-		mAdapter = new UserTimelineAdapter(getSherlockActivity(), imageloader);
+		mAdapter = new ParcelableStatusesAdapter(getSherlockActivity(), imageloader);
 		mListView = getListView();
 		setListAdapter(mAdapter);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
 		getLoaderManager().initLoader(0, getArguments(), this);
 	}
 
 	@Override
-	public Loader<ResponseList<Status>> onCreateLoader(int id, Bundle args) {
+	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.action_status, menu);
+		return true;
+	}
+
+	@Override
+	public Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
 		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
 		if (args != null) {
 			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
@@ -66,18 +154,64 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 	}
 
 	@Override
-	public void onLoaderReset(Loader<ResponseList<Status>> loader) {
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+	public void onDestroyActionMode(ActionMode mode) {
 
 	}
 
 	@Override
-	public void onLoadFinished(Loader<ResponseList<Status>> loader, ResponseList<Status> data) {
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
-		if (data != null) {
-			mAdapter.addAll(data);
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		Object tag = view.getTag();
+		if (tag instanceof StatusViewHolder) {
+			ParcelableStatus status = mAdapter.findItemById(id);
+			StatusViewHolder holder = (StatusViewHolder) tag;
+			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
+				// getStatuses(new long[] { status.account_id }, new long[] {
+				// status.status_id });
+			} else {
+				Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(AUTHORITY_STATUS);
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
+				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
+				Intent intent = new Intent(Intent.ACTION_DEFAULT, builder.build());
+				Bundle bundle = new Bundle();
+				bundle.putParcelable(INTENT_KEY_STATUS, status);
+				intent.putExtras(bundle);
+				startActivity(intent);
+			}
 		}
+	}
 
+	@Override
+	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+		Object tag = view.getTag();
+		if (tag instanceof StatusViewHolder) {
+			StatusViewHolder holder = (StatusViewHolder) tag;
+			if (holder.show_as_gap) return false;
+			mSelectedStatus = mAdapter.findItemById(id);
+			getSherlockActivity().startActionMode(this);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
+		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
+		if (data != null) {
+			mAdapter.changeData(data);
+		}
+		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+	}
+
+	@Override
+	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		setMenuForStatus(getSherlockActivity(), menu, mSelectedStatus);
+		return true;
 	}
 
 	@Override
@@ -85,126 +219,16 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 		super.onResume();
 		boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayName(display_name);
-		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name) {
+		mAdapter.setStatusesTextSize(text_size);
+		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name || mTextSize != text_size) {
 			mDisplayProfileImage = display_profile_image;
 			mDisplayName = display_name;
+			mTextSize = text_size;
 			mListView.invalidateViews();
 		}
-	}
-
-	public static class UserTimelineLoader extends AsyncTaskLoader<ResponseList<Status>> {
-
-		private final Twitter mTwitter;
-		private final long mUserId;
-		private final String mUserScreenName;
-
-		/**
-		 * Perform alphabetical comparison of application entry objects.
-		 */
-		public static final Comparator<Status> TIMESTAMP_COMPARATOR = new Comparator<Status>() {
-
-			@Override
-			public int compare(Status object1, Status object2) {
-				long diff = object2.getCreatedAt().getTime() - object1.getCreatedAt().getTime();
-				if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-				if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
-				return (int) diff;
-			}
-		};
-
-		public UserTimelineLoader(Context context, long account_id, long user_id) {
-			super(context);
-			mTwitter = getTwitterInstance(context, account_id, true);
-			mUserId = user_id;
-			mUserScreenName = null;
-		}
-
-		public UserTimelineLoader(Context context, long account_id, String user_screenname) {
-			super(context);
-			mTwitter = getTwitterInstance(context, account_id, true);
-			mUserId = -1;
-			mUserScreenName = user_screenname;
-		}
-
-		@Override
-		public void deliverResult(ResponseList<Status> data) {
-			if (data != null) {
-				Collections.sort(data, TIMESTAMP_COMPARATOR);
-			}
-			super.deliverResult(data);
-		}
-
-		@Override
-		public ResponseList<Status> loadInBackground() {
-			try {
-				if (mUserId != -1)
-					return mTwitter.getUserTimeline(mUserId);
-				else if (mUserScreenName != null) return mTwitter.getUserTimeline(mUserScreenName);
-			} catch (TwitterException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		public void onStartLoading() {
-			forceLoad();
-		}
-
-	}
-
-	private static class UserTimelineAdapter extends ArrayAdapter<Status> {
-
-		private LazyImageLoader image_loader;
-
-		private boolean mDisplayProfileImage, mDisplayName;
-
-		public UserTimelineAdapter(Context context, LazyImageLoader image_loader) {
-			super(context, R.layout.status_list_item, R.id.text);
-			this.image_loader = image_loader;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = super.getView(position, convertView, parent);
-			Object tag = view.getTag();
-			StatusViewHolder holder = null;
-			if (tag instanceof StatusViewHolder) {
-				holder = (StatusViewHolder) tag;
-			} else {
-				holder = new StatusViewHolder(view);
-				view.setTag(holder);
-			}
-			Status status = getItem(position);
-			User user = status.getUser();
-			boolean is_favorite = status.isFavorited();
-			boolean has_media = status.getMediaEntities() != null && status.getMediaEntities().length > 0;
-			boolean has_location = status.getGeoLocation() != null;
-			boolean is_protected = user.isProtected();
-			holder.name_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
-			holder.name_view.setText(mDisplayName ? user.getName() : "@" + user.getScreenName());
-			holder.text_view.setText(status.getText());
-			holder.tweet_time_view.setText(formatToShortTimeString(getContext(), status.getCreatedAt().getTime()));
-			holder.tweet_time_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					getTypeIcon(is_favorite, has_location, has_media), 0);
-			holder.profile_image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-			if (mDisplayProfileImage) {
-				image_loader.displayImage(user.getProfileImageURL(), holder.profile_image_view);
-			}
-			return view;
-		}
-
-		public void setDisplayName(boolean display) {
-			mDisplayName = display;
-		}
-
-		public void setDisplayProfileImage(boolean display) {
-			mDisplayProfileImage = display;
-		}
-
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.widget;
+package org.mariotaku.twidere.adapter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

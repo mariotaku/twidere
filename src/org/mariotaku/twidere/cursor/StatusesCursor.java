@@ -1,7 +1,7 @@
 package org.mariotaku.twidere.cursor;
 
 import static org.mariotaku.twidere.util.Utils.formatGeoLocationToString;
-import static org.mariotaku.twidere.util.Utils.formatStatusString;
+import static org.mariotaku.twidere.util.Utils.getSpannedStatusText;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -143,7 +143,7 @@ public abstract class StatusesCursor extends AbstractCursor {
 		if (Statuses.SOURCE.equals(col)) return status.getSource();
 		if (Statuses.STATUS_ID.equals(col)) return status.getId();
 		if (Statuses.STATUS_TIMESTAMP.equals(col)) return status.getCreatedAt().getTime();
-		if (Statuses.TEXT.equals(col)) return formatStatusString(status, mAccountId);
+		if (Statuses.TEXT.equals(col)) return getSpannedStatusText(status, mAccountId);
 		if (Statuses.USER_ID.equals(col)) return status.getUser().getId();
 
 		return null;

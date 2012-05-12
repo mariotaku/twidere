@@ -12,6 +12,7 @@ import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.CursorToStatusesLoader;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -20,20 +21,17 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusViewHolder;
-import org.mariotaku.twidere.widget.ParcelableStatusesAdapter;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,79 +55,82 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public ServiceInterface mServiceInterface;
 	public PullToRefreshListView mListView;
 	public ContentResolver mResolver;
-	public long mSelectedStatusId;
-	private int mRunningTaskId;
+	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
 	private ParcelableStatusesAdapter mAdapter;
-	private boolean mBusy, mTickerStopped;
 
 	private Handler mHandler;
 	private Runnable mTicker;
+
+	public ParcelableStatus mSelectedStatus;
+	private int mRunningTaskId;
+	private boolean mBusy, mTickerStopped;
 	private boolean mDisplayProfileImage, mDisplayName, mReachedBottom, mActivityFirstCreated;
 	private float mTextSize;
-	private SharedPreferences mPreferences;
 	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
 
 	public abstract Uri getContentUri();
 
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		Uri uri = getContentUri();
-		String[] cols = Statuses.COLUMNS;
-		String where = Statuses.STATUS_ID + "=" + mSelectedStatusId;
-		Cursor cur = mResolver.query(uri, cols, where, null, null);
-		if (cur != null && cur.getCount() > 0) {
-			cur.moveToFirst();
-			String text = Html.fromHtml(cur.getString(cur.getColumnIndexOrThrow(Statuses.TEXT))).toString();
-			String screen_name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
-			long account_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.ACCOUNT_ID));
+		if (mSelectedStatus != null) {
+			long status_id = mSelectedStatus.status_id;
+			String text_plain = mSelectedStatus.text_plain;
+			String screen_name = mSelectedStatus.screen_name;
+			String name = mSelectedStatus.name;
+			long account_id = mSelectedStatus.account_id;
 			switch (item.getItemId()) {
 				case MENU_SHARE: {
 					Intent intent = new Intent(Intent.ACTION_SEND);
 					intent.setType("text/plain");
-					intent.putExtra(Intent.EXTRA_TEXT, "@" + screen_name + ": " + text);
+					intent.putExtra(Intent.EXTRA_TEXT, "@" + screen_name + ": " + text_plain);
 					startActivity(Intent.createChooser(intent, getString(R.string.share)));
 					break;
 				}
-				case MENU_REPLY: {
-					Bundle bundle = new Bundle();
-					bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text, false, true));
-					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mSelectedStatusId);
-					startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
-					break;
-				}
 				case MENU_RETWEET: {
-					mServiceInterface.retweetStatus(new long[] { account_id }, mSelectedStatusId);
+					mServiceInterface.retweetStatus(new long[] { account_id }, status_id);
 					break;
 				}
 				case MENU_QUOTE: {
+					Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 					Bundle bundle = new Bundle();
-					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mSelectedStatusId);
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
 					bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
-					bundle.putString(INTENT_KEY_TEXT, "RT @" + screen_name + ": " + text);
-					startActivity(new Intent(INTENT_ACTION_COMPOSE).putExtras(bundle));
+					bundle.putString(INTENT_KEY_TEXT, "RT @" + screen_name + ": " + text_plain);
+					intent.putExtras(bundle);
+					startActivity(intent);
+					break;
+				}
+				case MENU_REPLY: {
+					Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					Bundle bundle = new Bundle();
+					bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text_plain, false, true));
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+					intent.putExtras(bundle);
+					startActivity(intent);
 					break;
 				}
 				case MENU_FAV: {
-					boolean is_favorite = cur.getInt(cur.getColumnIndexOrThrow(Statuses.IS_FAVORITE)) == 1;
-					if (is_favorite) {
-						mServiceInterface.destroyFavorite(new long[] { account_id }, mSelectedStatusId);
+					if (mSelectedStatus.is_favorite) {
+						mServiceInterface.destroyFavorite(new long[] { account_id }, status_id);
 					} else {
-						mServiceInterface.createFavorite(new long[] { account_id }, mSelectedStatusId);
+						mServiceInterface.createFavorite(new long[] { account_id }, status_id);
 					}
 					break;
 				}
 				case MENU_DELETE: {
-					mServiceInterface.destroyStatus(account_id, mSelectedStatusId);
+					mServiceInterface.destroyStatus(account_id, status_id);
 					break;
 				}
 				default:
-					cur.close();
 					return false;
 			}
-		}
-		if (cur != null) {
-			cur.close();
 		}
 		mode.finish();
 		return true;
@@ -222,9 +223,8 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
 			StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder == null || holder.show_as_gap) return false;
-			ParcelableStatus status = mAdapter.findItemById(id);
-			mSelectedStatusId = status.status_id;
+			if (holder.show_as_gap) return false;
+			mSelectedStatus = mAdapter.findItemById(id);
 			getSherlockActivity().startActionMode(this);
 			return true;
 		}
@@ -243,7 +243,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 
 	@Override
 	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		setMenuForStatus(getSherlockActivity(), menu, mSelectedStatusId, getContentUri());
+		setMenuForStatus(getSherlockActivity(), menu, mSelectedStatus);
 		return true;
 	}
 

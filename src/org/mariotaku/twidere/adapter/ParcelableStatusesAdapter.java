@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.widget;
+package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -46,6 +46,14 @@ public class ParcelableStatusesAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
+	public ParcelableStatus findItemById(long id) {
+		if (mData == null) return null;
+		for (ParcelableStatus status : mData) {
+			if (status.status_id == id) return status;
+		}
+		return null;
+	}
+
 	@Override
 	public int getCount() {
 		if (mData == null) return 0;
@@ -56,20 +64,12 @@ public class ParcelableStatusesAdapter extends BaseAdapter {
 	public ParcelableStatus getItem(int position) {
 		return mData != null ? mData.get(position) : null;
 	}
-	
-	public ParcelableStatus findItemById(long id) {
-		if (mData == null) return null;
-		for (ParcelableStatus status : mData) {
-			if (status.status_id == id) return status;
-		}
-		return null;
-	}
 
 	@Override
 	public long getItemId(int position) {
 		return mData != null ? mData.get(position).status_id : -1;
 	}
-	
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -103,8 +103,8 @@ public class ParcelableStatusesAdapter extends BaseAdapter {
 
 			holder.name_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					status.is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
-			holder.name_view.setText(mDisplayName ? status.name
-					: !isNullOrEmpty(status.screen_name) ? "@" + status.screen_name : null);
+			holder.name_view.setText(mDisplayName ? status.name : !isNullOrEmpty(status.screen_name) ? "@"
+					+ status.screen_name : null);
 			holder.tweet_time_view.setText(formatToShortTimeString(mContext, status.status_timestamp));
 			holder.tweet_time_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getTypeIcon(status.is_favorite, status.location != null, status.has_media), 0);

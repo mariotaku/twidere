@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.widget;
+package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -27,7 +27,7 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 	private final static int[] mTo = new int[] {};
 	private boolean mDisplayProfileImage, mDisplayName, mMultipleAccountsActivated, mShowLastItemAsGap;
 	private final LazyImageLoader mImageLoader;
-	private int mAccountIdIdx, mStatusIdIdx, mStatusTimestampIdx, mNameIdx, mScreenNameIdx, mTextIdx,
+	private int mAccountIdIdx,  mStatusTimestampIdx, mNameIdx, mScreenNameIdx, mTextIdx,
 			mProfileImageUrlIdx, mIsRetweetIdx, mIsFavoriteIdx, mIsGapIdx, mLocationIdx, mHasMediaIdx, mIsProtectedIdx,
 			mInReplyToStatusIdIdx, mInReplyToScreennameIdx, mRetweetedByNameIdx, mRetweetedByScreenNameIdx;
 	private float mTextSize;
@@ -47,7 +47,6 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 
 		if (holder == null) return;
 
-		final long status_id = cursor.getLong(mStatusIdIdx);
 		final long account_id = cursor.getLong(mAccountIdIdx);
 		final long status_timestamp = cursor.getLong(mStatusTimestampIdx);
 		final CharSequence text = Html.fromHtml(cursor.getString(mTextIdx)).toString();
@@ -111,7 +110,6 @@ public class StatusesAdapter extends SimpleCursorAdapter {
 		mMultipleAccountsActivated = account_ids.length > 1;
 		if (cursor != null) {
 			mAccountIdIdx = cursor.getColumnIndexOrThrow(Statuses.ACCOUNT_ID);
-			mStatusIdIdx = cursor.getColumnIndexOrThrow(Statuses.STATUS_ID);
 			mStatusTimestampIdx = cursor.getColumnIndexOrThrow(Statuses.STATUS_TIMESTAMP);
 			mNameIdx = cursor.getColumnIndexOrThrow(Statuses.NAME);
 			mScreenNameIdx = cursor.getColumnIndexOrThrow(Statuses.SCREEN_NAME);
