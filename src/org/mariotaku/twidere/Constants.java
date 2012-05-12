@@ -109,6 +109,7 @@ public interface Constants {
 	public static final String INTENT_KEY_URI = "uri";
 	public static final String INTENT_KEY_MENTIONS = "mentions";
 	public static final String INTENT_KEY_ACCOUNT_ID = "account_id";
+	public static final String INTENT_KEY_PAGE = "page";
 	public static final String INTENT_KEY_QUERY = "query";
 	public static final String INTENT_KEY_USER_ID = "user_id";
 	public static final String INTENT_KEY_STATUS_ID = "status_id";

@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 public class StatusViewHolder {
 
-	public final ImageView profile_image_view;
-	public final TextView name_view, text_view, tweet_time_view, reply_retweet_status_view;
+	public final ImageView profile_image;
+	public final TextView name, text, tweet_time, reply_retweet_status;
 	private final View content, gap_indicator;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
@@ -19,11 +19,11 @@ public class StatusViewHolder {
 	public StatusViewHolder(View view) {
 		content = view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
-		profile_image_view = (ImageView) view.findViewById(R.id.profile_image);
-		name_view = (TextView) view.findViewById(R.id.name);
-		text_view = (TextView) view.findViewById(R.id.text);
-		tweet_time_view = (TextView) view.findViewById(R.id.time);
-		reply_retweet_status_view = (TextView) view.findViewById(R.id.reply_retweet_status);
+		profile_image = (ImageView) view.findViewById(R.id.profile_image);
+		name = (TextView) view.findViewById(R.id.name);
+		text = (TextView) view.findViewById(R.id.text);
+		tweet_time = (TextView) view.findViewById(R.id.time);
+		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
 
 	}
 
@@ -47,11 +47,11 @@ public class StatusViewHolder {
 		show_as_gap = is_gap;
 		content.setBackgroundResource(is_gap ? R.drawable.ic_list_gap
 				: account_color_enabled ? R.drawable.ic_label_color : 0);
-		profile_image_view.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		name_view.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		text_view.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		tweet_time_view.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		reply_retweet_status_view.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		profile_image.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		name.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		text.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		tweet_time.setVisibility(is_gap ? View.GONE : View.VISIBLE);
+		reply_retweet_status.setVisibility(is_gap ? View.GONE : View.VISIBLE);
 		gap_indicator.setVisibility(!is_gap ? View.GONE : View.VISIBLE);
 	}
 

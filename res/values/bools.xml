@@ -2,5 +2,6 @@
 <resources>
 
 	<item name="tab_display_label" type="bool">false</item>
+	<item name="home_display_title_and_icon" type="bool">false</item>
 
 </resources>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/content"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:padding="4dip">
+
+	<org.mariotaku.twidere.widget.RoundCorneredImageView
+		android:id="@+id/profile_image"
+		android:layout_width="@dimen/profile_image_size"
+		android:layout_height="@dimen/profile_image_size"
+		android:layerType="software"
+		android:scaleType="fitCenter"/>
+
+	<TextView
+		android:id="@+id/user_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignTop="@+id/profile_image"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_toRightOf="@+id/profile_image"
+		android:paddingLeft="4dip"
+		android:paddingRight="4dip"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="?android:attr/textColorPrimary"
+		android:textStyle="bold"/>
+
+	<TextView
+		android:id="@+id/screen_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBaseline="@+id/user_name"
+		android:layout_alignRight="@+id/bio"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_toRightOf="@+id/user_name"
+		android:singleLine="true"
+		android:textColor="?android:attr/textColorSecondary"
+		android:textSize="12sp"/>
+
+	<TextView
+		android:id="@+id/bio"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_below="@+id/user_name"
+		android:layout_toLeftOf="@+id/follow"
+		android:layout_toRightOf="@+id/profile_image"
+		android:paddingLeft="4dip"
+		android:paddingRight="4dip"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="?android:attr/textColorPrimary"/>
+
+	<org.mariotaku.twidere.widget.DontPressWithParentButton
+		android:id="@+id/follow"
+		style="?android:attr/buttonStyleSmall"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_alignTop="@+id/user_name"
+		android:text="@string/follow"/>
+
+</RelativeLayout>

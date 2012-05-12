@@ -5,7 +5,8 @@ import static org.mariotaku.twidere.util.Utils.setWindowUiOptions;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.BaseFragment;
 import org.mariotaku.twidere.fragment.DraftsFragment;
-import org.mariotaku.twidere.fragment.TweetSearchFragment;
+import org.mariotaku.twidere.fragment.SearchTweetsFragment;
+import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
@@ -100,9 +101,9 @@ public class LinkHandlerActivity extends BaseActivity {
 				case CODE_SEARCH: {
 					String type = uri.getQueryParameter(QUERY_PARAM_TYPE);
 					if (QUERY_PARAM_VALUE_TWEETS.equals(type)) {
-						fragment = new TweetSearchFragment();
+						fragment = new SearchTweetsFragment();
 					} else if (QUERY_PARAM_VALUE_USERS.equals(type)) {
-						
+						fragment = new SearchUsersFragment();
 					}
 					String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 					String query = uri.getQueryParameter(QUERY_PARAM_QUERY);

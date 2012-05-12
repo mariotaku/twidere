@@ -105,6 +105,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		mPreferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
+		boolean home_display_title_and_icon = getResources().getBoolean(R.bool.home_display_title_and_icon);
+		boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
 		setContentView(R.layout.main);
 		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
 		mComposeButton = (ImageButton) findViewById(R.id.compose);
@@ -130,13 +132,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		mActionBar = getSupportActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
 		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setDisplayShowTitleEnabled(false);
-		mActionBar.setDisplayShowHomeEnabled(false);
+		mActionBar.setDisplayShowTitleEnabled(home_display_title_and_icon);
+		mActionBar.setDisplayShowHomeEnabled(home_display_title_and_icon);
 		View view = mActionBar.getCustomView();
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mAdapter = new HomeTabsAdapter(this, getSupportFragmentManager());
-		boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
 		mAdapter.addTab(HomeTimelineFragment.class, tab_display_label ? getString(R.string.home) : null,
 				R.drawable.ic_tab_home);
 		mAdapter.addTab(MentionsFragment.class, tab_display_label ? getString(R.string.mentions) : null,

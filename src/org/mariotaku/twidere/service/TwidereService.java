@@ -887,7 +887,7 @@ public class TwidereService extends Service implements Constants {
 			} else {
 				showErrorToast(TwidereService.this, exception, true);
 				StringBuilder ids_builder = new StringBuilder();
-				for (int i = 0; i<failed_account_ids.size();i++) {
+				for (int i = 0; i < failed_account_ids.size(); i++) {
 					String id_string = String.valueOf(failed_account_ids.get(i));
 					if (id_string != null) {
 						if (i > 0) {
@@ -900,7 +900,9 @@ public class TwidereService extends Service implements Constants {
 				values.put(Drafts.ACCOUNT_IDS, ids_builder.toString());
 				values.put(Drafts.IN_REPLY_TO_STATUS_ID, in_reply_to);
 				values.put(Drafts.TEXT, content);
-				if (image_uri != null) values.put(Drafts.MEDIA_URI, image_uri.toString());
+				if (image_uri != null) {
+					values.put(Drafts.MEDIA_URI, image_uri.toString());
+				}
 				ContentResolver resolver = getContentResolver();
 				resolver.insert(Drafts.CONTENT_URI, values);
 			}

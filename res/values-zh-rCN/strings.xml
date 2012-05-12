@@ -28,7 +28,7 @@
 	<string name="edit_api">编辑 API</string>
 	<string name="home">主页</string>
 	<string name="mentions">提及</string>
-	<string name="discover">探索</string>
+	<string name="discover">发现</string>
 	<string name="me">我</string>
 	<string name="error_occurred">发生错误，请重试。</string>
 	<string name="error_already_logged_in">你已经登录。</string>
@@ -153,5 +153,6 @@
 	<string name="text_size_summary">推文的文字尺寸。</string>
 	<string name="cannot_get_location">不能获得你的位置。</string>
 	<string name="drafts">草稿</string>
+	<string name="search">搜索</string>
 
 </resources>

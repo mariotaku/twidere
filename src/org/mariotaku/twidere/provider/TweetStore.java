@@ -164,9 +164,9 @@ public final class TweetStore implements Constants {
 		 * Type: TEXT
 		 */
 		public static final String TEXT = "text";
-		
+
 		public static final String MEDIA_URI = "media_uri";
-		
+
 		public static final String[] COLUMNS = new String[] { _ID, IN_REPLY_TO_STATUS_ID, ACCOUNT_IDS, TEXT, MEDIA_URI };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };

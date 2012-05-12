@@ -1024,15 +1024,16 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void showErrorToast(Context context, long account_id, String operation, Exception e, boolean long_message) {
+	public static void showErrorToast(Context context, Exception e, boolean long_message) {
 		String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
 				.getString(R.string.error_unknown_error);
 		int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
 		Toast toast = Toast.makeText(context, message, length);
 		toast.show();
 	}
-	
-	public static void showErrorToast(Context context, Exception e, boolean long_message) {
+
+	public static void showErrorToast(Context context, long account_id, String operation, Exception e,
+			boolean long_message) {
 		String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
 				.getString(R.string.error_unknown_error);
 		int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;

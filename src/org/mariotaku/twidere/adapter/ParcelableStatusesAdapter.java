@@ -111,31 +111,31 @@ public class ParcelableStatusesAdapter extends BaseAdapter {
 
 		if (!show_gap) {
 
-			holder.name_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					status.is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
-			holder.name_view.setText(mDisplayName ? status.name : !isNullOrEmpty(status.screen_name) ? "@"
+			holder.name.setText(mDisplayName ? status.name : !isNullOrEmpty(status.screen_name) ? "@"
 					+ status.screen_name : null);
-			holder.name_view.setTextSize(mTextSize * 1.05f);
-			holder.tweet_time_view.setText(formatToShortTimeString(mContext, status.status_timestamp));
-			holder.tweet_time_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+			holder.name.setTextSize(mTextSize * 1.05f);
+			holder.tweet_time.setText(formatToShortTimeString(mContext, status.status_timestamp));
+			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getTypeIcon(status.is_favorite, status.location != null, status.has_media), 0);
-			holder.text_view.setText(status.text_plain);
-			holder.text_view.setTextSize(mTextSize);
-			holder.reply_retweet_status_view
+			holder.text.setText(status.text_plain);
+			holder.text.setTextSize(mTextSize);
+			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
 			if (status.is_retweet && !isNullOrEmpty(retweeted_by)) {
-				holder.reply_retweet_status_view.setText(mContext.getString(R.string.retweeted_by, retweeted_by));
-				holder.reply_retweet_status_view.setCompoundDrawablesWithIntrinsicBounds(
-						R.drawable.ic_tweet_stat_retweet, 0, 0, 0);
+				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by));
+				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tweet_stat_retweet,
+						0, 0, 0);
 			} else if (status.in_reply_to_status_id != -1 && !isNullOrEmpty(status.in_reply_to_screen_name)) {
-				holder.reply_retweet_status_view.setText(mContext.getString(R.string.in_reply_to,
+				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to,
 						status.in_reply_to_screen_name));
-				holder.reply_retweet_status_view.setCompoundDrawablesWithIntrinsicBounds(
-						R.drawable.ic_tweet_stat_reply, 0, 0, 0);
+				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tweet_stat_reply, 0,
+						0, 0);
 			}
-			holder.profile_image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				mImageLoader.displayImage(status.profile_image_url, holder.profile_image_view);
+				mImageLoader.displayImage(status.profile_image_url, holder.profile_image);
 			}
 		}
 

@@ -73,9 +73,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 	@Override
 	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
 		FilterQueryProvider filter = getFilterQueryProvider();
-		if (filter != null){ 
-			return filter.runQuery(constraint);
-		}
+		if (filter != null) return filter.runQuery(constraint);
 		StringBuilder where = new StringBuilder();
 		where.append(CachedUsers.NAME + " LIKE '%" + constraint + "%'");
 		where.append(" OR " + CachedUsers.SCREEN_NAME + " LIKE '%" + constraint + "%'");

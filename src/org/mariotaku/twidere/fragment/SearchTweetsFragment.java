@@ -28,9 +28,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class TweetSearchFragment extends BaseListFragment implements LoaderCallbacks<List<Tweet>> {
+public class SearchTweetsFragment extends BaseListFragment implements LoaderCallbacks<List<Tweet>> {
 
-	private UserTimelineAdapter mAdapter;
+	private TweetsAdapter mAdapter;
 	private SharedPreferences mPreferences;
 	private boolean mDisplayProfileImage;
 	private boolean mDisplayName;
@@ -44,7 +44,7 @@ public class TweetSearchFragment extends BaseListFragment implements LoaderCallb
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
-		mAdapter = new UserTimelineAdapter(getSherlockActivity(), imageloader);
+		mAdapter = new TweetsAdapter(getSherlockActivity(), imageloader);
 		mListView = getListView();
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
@@ -120,13 +120,13 @@ public class TweetSearchFragment extends BaseListFragment implements LoaderCallb
 
 	}
 
-	private static class UserTimelineAdapter extends ArrayAdapter<Tweet> {
+	private static class TweetsAdapter extends ArrayAdapter<Tweet> {
 
 		private LazyImageLoader image_loader;
 
 		private boolean mDisplayProfileImage;
 
-		public UserTimelineAdapter(Context context, LazyImageLoader image_loader) {
+		public TweetsAdapter(Context context, LazyImageLoader image_loader) {
 			super(context, R.layout.status_list_item, R.id.text);
 			this.image_loader = image_loader;
 		}
@@ -145,14 +145,14 @@ public class TweetSearchFragment extends BaseListFragment implements LoaderCallb
 			Tweet tweet = getItem(position);
 			boolean has_media = tweet.getMediaEntities() != null && tweet.getMediaEntities().length > 0;
 			boolean has_location = tweet.getGeoLocation() != null;
-			holder.name_view.setText("@" + tweet.getFromUser());
-			holder.text_view.setText(tweet.getText());
-			holder.tweet_time_view.setText(formatToShortTimeString(getContext(), tweet.getCreatedAt().getTime()));
-			holder.tweet_time_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+			holder.name.setText("@" + tweet.getFromUser());
+			holder.text.setText(tweet.getText());
+			holder.tweet_time.setText(formatToShortTimeString(getContext(), tweet.getCreatedAt().getTime()));
+			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getTypeIcon(false, has_location, has_media), 0);
-			holder.profile_image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				image_loader.displayImage(parseURL(tweet.getProfileImageUrl()), holder.profile_image_view);
+				image_loader.displayImage(parseURL(tweet.getProfileImageUrl()), holder.profile_image);
 			}
 			return view;
 		}
