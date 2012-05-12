@@ -16,5 +16,9 @@
 		android:icon="@drawable/ic_menu_gallery"
 		android:showAsAction="ifRoom"
 		android:title="@string/add_image"/>
+	<item
+		android:id="@id/drafts"
+		android:icon="@drawable/ic_menu_save"
+		android:title="@string/drafts"/>
 
 </menu>

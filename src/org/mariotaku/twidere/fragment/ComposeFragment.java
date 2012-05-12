@@ -1,11 +1,8 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.getAccountIdForStatusId;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
-import static org.mariotaku.twidere.util.Utils.getNameForStatusId;
-import static org.mariotaku.twidere.util.Utils.getScreenNameForStatusId;
 
 import java.io.File;
 
@@ -247,18 +244,21 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case MENU_HOME:
+			case MENU_HOME:{
 				if (getSherlockActivity() instanceof ComposeActivity) {
 					getSherlockActivity().finish();
 				}
 				break;
-			case MENU_TAKE_PHOTO:
+			}
+			case MENU_TAKE_PHOTO:{
 				takePhoto();
 				break;
-			case MENU_ADD_IMAGE:
+			}
+			case MENU_ADD_IMAGE:{
 				pickImage();
 				break;
-			case MENU_ADD_LOCATION:
+			}
+			case MENU_ADD_LOCATION:{
 				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 				if (!attach_location) {
 					getLocation();
@@ -266,6 +266,14 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, !attach_location).commit();
 				getSherlockActivity().invalidateOptionsMenu();
 				break;
+			}
+			case MENU_DRAFTS:{
+				Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(AUTHORITY_DRAFTS);
+				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+				break;
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}

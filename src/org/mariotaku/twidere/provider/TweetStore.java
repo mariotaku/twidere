@@ -1,15 +1,13 @@
 package org.mariotaku.twidere.provider;
 
+import org.mariotaku.twidere.Constants;
+
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public final class TweetStore {
-
-	public static final String PROTOCOL_CONTENT = "content://";
+public final class TweetStore implements Constants {
 
 	public static final String AUTHORITY = "org.mariotaku.twidere.provider.TweetStore";
-
-	public static final String KEY_ACCOUNT_ID = "account_id";
 
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 
@@ -146,7 +144,7 @@ public final class TweetStore {
 
 	}
 
-	public static class Drafts implements BaseColumns {
+	public static interface Drafts extends BaseColumns {
 
 		public static final String CONTENT_PATH = "drafts";
 
@@ -166,6 +164,12 @@ public final class TweetStore {
 		 * Type: TEXT
 		 */
 		public static final String TEXT = "text";
+		
+		public static final String MEDIA_URI = "media_uri";
+		
+		public static final String[] COLUMNS = new String[] { _ID, IN_REPLY_TO_STATUS_ID, ACCOUNT_IDS, TEXT, MEDIA_URI };
+
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
 	}
 
 	public static interface Favorites extends Statuses {

@@ -51,11 +51,17 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 		mCustomizedColor = bundle != null ? bundle.getInt(Accounts.USER_COLOR, Color.WHITE) : Color.WHITE;
 
 		Resources res = getResources();
+		mColors.add(res.getColor(R.color.holo_red_dark));
 		mColors.add(res.getColor(R.color.holo_red_light));
+		mColors.add(res.getColor(R.color.holo_orange_dark));
 		mColors.add(res.getColor(R.color.holo_orange_light));
 		mColors.add(res.getColor(R.color.holo_green_light));
+		mColors.add(res.getColor(R.color.holo_green_dark));
+		mColors.add(res.getColor(R.color.holo_blue_bright));
 		mColors.add(res.getColor(R.color.holo_blue_light));
+		mColors.add(res.getColor(R.color.holo_blue_dark));
 		mColors.add(res.getColor(R.color.holo_purple));
+		mColors.add(res.getColor(android.R.color.white));
 		mColors.add(Color.TRANSPARENT);
 		if (mColors.contains(mCustomizedColor)) {
 

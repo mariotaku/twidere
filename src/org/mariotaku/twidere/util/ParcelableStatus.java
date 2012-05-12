@@ -2,6 +2,7 @@ package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.Utils.formatGeoLocationToString;
 import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
+import static org.mariotaku.twidere.util.Utils.getSpannedStatusString;
 import static org.mariotaku.twidere.util.Utils.getSpannedStatusText;
 
 import java.net.MalformedURLException;
@@ -159,7 +160,7 @@ public class ParcelableStatus implements Parcelable {
 		out.writeInt(has_media ? 1 : 0);
 		out.writeString(retweeted_by_name);
 		out.writeString(retweeted_by_screen_name);
-		out.writeString(Html.toHtml(text));
+		out.writeString(getSpannedStatusString(text));
 		out.writeString(name);
 		out.writeString(screen_name);
 		out.writeString(in_reply_to_screen_name);

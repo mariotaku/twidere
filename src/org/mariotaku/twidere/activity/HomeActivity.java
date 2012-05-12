@@ -136,11 +136,17 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mAdapter = new HomeTabsAdapter(this, getSupportFragmentManager());
-		mAdapter.addTab(HomeTimelineFragment.class, null, R.drawable.ic_tab_home);
-		mAdapter.addTab(MentionsFragment.class, null, R.drawable.ic_tab_connect);
-		mAdapter.addTab(DiscoverFragment.class, null, R.drawable.ic_tab_discover);
-		mAdapter.addTab(DashboardFragment.class, null, R.drawable.ic_tab_me);
+		boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
+		mAdapter.addTab(HomeTimelineFragment.class, tab_display_label ? getString(R.string.home) : null,
+				R.drawable.ic_tab_home);
+		mAdapter.addTab(MentionsFragment.class, tab_display_label ? getString(R.string.mentions) : null,
+				R.drawable.ic_tab_connect);
+		mAdapter.addTab(DiscoverFragment.class, tab_display_label ? getString(R.string.discover) : null,
+				R.drawable.ic_tab_discover);
+		mAdapter.addTab(DashboardFragment.class, tab_display_label ? getString(R.string.me) : null,
+				R.drawable.ic_tab_me);
 		mViewPager.setAdapter(mAdapter);
+		mViewPager.setOffscreenPageLimit(3);
 		mComposeButton.setOnClickListener(this);
 		mIndicator.setViewPager(mViewPager);
 

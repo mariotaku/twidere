@@ -64,6 +64,7 @@ import android.text.format.Time;
 import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
@@ -80,6 +81,7 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DRAFTS, URI_DRAFTS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FAVORITES, URI_FAVORITES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_USERS, URI_CACHED_USERS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, URI_FILTERED_USERS);
@@ -329,6 +331,7 @@ public final class Utils implements Constants {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static long getAccountIdForStatusId(Context context, long status_id) {
 
 		String[] cols = new String[] { Statuses.ACCOUNT_ID };
@@ -449,6 +452,7 @@ public final class Utils implements Constants {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static int getErrorCode(TwitterException e) {
 		if (e == null) return RESULT_UNKNOWN_ERROR;
 		int status_code = e.getStatusCode();
@@ -570,6 +574,7 @@ public final class Utils implements Constants {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static String getNameForStatusId(Context context, long status_id) {
 
 		String[] cols = new String[] { Statuses.NAME };
@@ -594,6 +599,7 @@ public final class Utils implements Constants {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static long getRetweetedByUserId(Context context, long status_id) {
 		String[] cols = new String[] { Statuses.RETWEETED_BY_ID };
 		String where = Statuses.STATUS_ID + "=" + status_id;
@@ -617,6 +623,7 @@ public final class Utils implements Constants {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static long getRetweetId(Context context, long status_id) {
 		String[] cols = new String[] { Statuses.RETWEET_ID };
 		String where = Statuses.STATUS_ID + "=" + status_id;
@@ -639,6 +646,7 @@ public final class Utils implements Constants {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static String getScreenNameForStatusId(Context context, long status_id) {
 		String[] cols = new String[] { Statuses.SCREEN_NAME };
 		String where = Statuses.STATUS_ID + " = " + status_id;
@@ -719,8 +727,13 @@ public final class Utils implements Constants {
 				if (start < 0 || end > text.length()) {
 					continue;
 				}
-				String link = "https://twitter.com/search/#" + hashtag.getText();
-				text.setSpan(new URLSpan(link), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(AUTHORITY_SEARCH);
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+				builder.appendQueryParameter(QUERY_PARAM_QUERY, hashtag.getText());
+				builder.appendQueryParameter(QUERY_PARAM_TYPE, QUERY_PARAM_VALUE_TWEETS);
+				text.setSpan(new URLSpan(builder.build().toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
 		}
 		// Format media.
@@ -747,12 +760,14 @@ public final class Utils implements Constants {
 
 	public static String getTableNameForContentUri(Uri uri) {
 		switch (getTableId(uri)) {
-			case URI_STATUSES:
-				return TABLE_STATUSES;
 			case URI_ACCOUNTS:
 				return TABLE_ACCOUNTS;
+			case URI_STATUSES:
+				return TABLE_STATUSES;
 			case URI_MENTIONS:
 				return TABLE_MENTIONS;
+			case URI_DRAFTS:
+				return TABLE_DRAFTS;
 			case URI_CACHED_USERS:
 				return TABLE_CACHED_USERS;
 			case URI_FILTERED_USERS:
@@ -1003,6 +1018,20 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void setWindowUiOptions(Window window, int uiOptions) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			new MethodsCompat().setUiOptions(window, uiOptions);
+		}
+	}
+
+	public static void showErrorToast(Context context, long account_id, String operation, Exception e, boolean long_message) {
+		String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
+				.getString(R.string.error_unknown_error);
+		int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
+		Toast toast = Toast.makeText(context, message, length);
+		toast.show();
+	}
+	
 	public static void showErrorToast(Context context, Exception e, boolean long_message) {
 		String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
 				.getString(R.string.error_unknown_error);

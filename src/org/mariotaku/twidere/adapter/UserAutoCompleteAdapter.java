@@ -20,14 +20,14 @@ import android.widget.TextView;
 
 public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 
-	private ContentResolver mContent;
+	private ContentResolver mResolver;
 	private LazyImageLoader mImageLoader;
 
 	private int mNameIdx, mProfileImageUrlIdx, mScreenNameIdx;
 
 	public UserAutoCompleteAdapter(Context context, LazyImageLoader imageloader) {
 		super(context, R.layout.user_autocomplete_list_item, null, new String[0], new int[0], 0);
-		mContent = context.getContentResolver();
+		mResolver = context.getContentResolver();
 		mImageLoader = imageloader;
 	}
 
@@ -73,11 +73,13 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 	@Override
 	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
 		FilterQueryProvider filter = getFilterQueryProvider();
-		if (filter != null) return filter.runQuery(constraint);
+		if (filter != null){ 
+			return filter.runQuery(constraint);
+		}
 		StringBuilder where = new StringBuilder();
 		where.append(CachedUsers.NAME + " LIKE '%" + constraint + "%'");
 		where.append(" OR " + CachedUsers.SCREEN_NAME + " LIKE '%" + constraint + "%'");
-		return mContent.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, where.toString(), null, null);
+		return mResolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, where.toString(), null, null);
 	}
 
 	private static class ViewHolder {

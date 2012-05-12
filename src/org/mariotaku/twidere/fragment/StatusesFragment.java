@@ -163,6 +163,9 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mActivityFirstCreated = true;
+		// Tell the framework to try to keep this fragment around
+		// during a configuration change.
+		setRetainInstance(true);
 	}
 
 	@Override

@@ -26,5 +26,6 @@
 	<item name="add_account" type="id"/>
 	<item name="quote" type="id"/>
 	<item name="debug" type="id"/>
+	<item name="drafts" type="id"/>
 
 </resources>

@@ -2,6 +2,7 @@ package org.mariotaku.twidere;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Favorites;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
@@ -16,27 +17,34 @@ public interface Constants {
 	public static final boolean MULTIPLE_ACCOUNTS_ENABLED = true;
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 8;
+	public static final int DATABASES_VERSION = 10;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
 
 	public static final String SCHEME_HTTP = "http";
 	public static final String SCHEME_HTTPS = "https";
+	public static final String SCHEME_CONTENT = "content";
 	public static final String SCHEME_TWIDERE = "twidere";
 
 	public static final String PROTOCOL_HTTP = SCHEME_HTTP + "://";
 	public static final String PROTOCOL_HTTPS = SCHEME_HTTPS + "://";
+	public static final String PROTOCOL_CONTENT = SCHEME_CONTENT + "://";
 	public static final String PROTOCOL_TWIDERE = SCHEME_TWIDERE + "://";
 
 	public static final String AUTHORITY_USER = "user";
 	public static final String AUTHORITY_STATUS = "status";
 	public static final String AUTHORITY_CONVERSATION = "conversation";
 	public static final String AUTHORITY_SEARCH = "search";
+	public static final String AUTHORITY_DRAFTS = "drafts";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_STATUS_ID = "status_id";
 	public static final String QUERY_PARAM_SCREEN_NAME = "screen_name";
+	public static final String QUERY_PARAM_QUERY = "query";
+	public static final String QUERY_PARAM_TYPE = "type";
+	public static final String QUERY_PARAM_VALUE_USERS = "users";
+	public static final String QUERY_PARAM_VALUE_TWEETS = "tweets";
 
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
 
@@ -44,16 +52,6 @@ public interface Constants {
 
 	public static final String DEFAULT_REST_API_BASE = DEFAULT_PROTOCOL + "api.twitter.com/1/";
 	public static final String DEFAULT_SEARCH_API_BASE = DEFAULT_PROTOCOL + "search.twitter.com/";
-
-	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = "org.mariotaku.twidere.HOME_TIMELINE_DATABASE_UPDATED";
-	public static final String BROADCAST_MENTIONS_DATABASE_UPDATED = "org.mariotaku.twidere.MENTIONS_DATABASE_UPDATED";
-	public static final String BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED = "org.mariotaku.twidere.ACCOUNT_LIST_DATABASE_UPDATED";
-
-	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = "org.mariotaku.twidere.HOME_TIMELINE_REFRESHED";
-	public static final String BROADCAST_MENTIONS_REFRESHED = "org.mariotaku.twidere.MENTIONS_REFRESHED";
-
-	public static final String BROADCAST_REFRESHSTATE_CHANGED = "org.mariotaku.twidere.REFRESHSTATE_CHANGED";
-	public static final String BROADCAST_DATABASE_UPDATED = "org.mariotaku.twidere.DATABASE_UPDATED";
 
 	public static final String SHUFFIX_SCROLL_TO_TOP = ".SCROLL_TO_TOP";
 
@@ -93,6 +91,18 @@ public interface Constants {
 	public static final String INTENT_ACTION_SET_COLOR = INTENT_PACKAGE_PREFIX + "SET_COLOR";
 	public static final String INTENT_ACTION_DEBUG = INTENT_PACKAGE_PREFIX + "DEBUG";
 	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_PACKAGE_PREFIX + "TWITTER_LOGIN";
+
+	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
+			+ "HOME_TIMELINE_DATABASE_UPDATED";
+	public static final String BROADCAST_MENTIONS_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
+			+ "MENTIONS_DATABASE_UPDATED";
+	public static final String BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
+			+ "ACCOUNT_LIST_DATABASE_UPDATED";
+	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = INTENT_PACKAGE_PREFIX + "HOME_TIMELINE_REFRESHED";
+	public static final String BROADCAST_MENTIONS_REFRESHED = INTENT_PACKAGE_PREFIX + "MENTIONS_REFRESHED";
+	public static final String BROADCAST_REFRESHSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "REFRESHSTATE_CHANGED";
+	public static final String BROADCAST_FRIENDSHIP_CHANGED = INTENT_PACKAGE_PREFIX + "FRIENDSHIP_CHANGED";
+	public static final String BROADCAST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DATABASE_UPDATED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -139,6 +149,7 @@ public interface Constants {
 	public static final int MENU_QUOTE = R.id.quote;
 	public static final int MENU_SHARE = R.id.share;
 	public static final int MENU_DEBUG = R.id.debug;
+	public static final int MENU_DRAFTS = R.id.drafts;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_ADD_IMAGE = 2;
@@ -159,6 +170,7 @@ public interface Constants {
 	public static final String TABLE_ACCOUNTS = Accounts.CONTENT_PATH;
 	public static final String TABLE_STATUSES = Statuses.CONTENT_PATH;
 	public static final String TABLE_MENTIONS = Mentions.CONTENT_PATH;
+	public static final String TABLE_DRAFTS = Drafts.CONTENT_PATH;
 	public static final String TABLE_FAVORITES = Favorites.CONTENT_PATH;
 	public static final String TABLE_CACHED_USERS = CachedUsers.CONTENT_PATH;
 	public static final String TABLE_FILTERED_USERS = Filters.Users.CONTENT_PATH;
@@ -169,10 +181,11 @@ public interface Constants {
 	public static final int URI_STATUSES = 2;
 	public static final int URI_MENTIONS = 3;
 	public static final int URI_FAVORITES = 4;
-	public static final int URI_CACHED_USERS = 5;
-	public static final int URI_FILTERED_USERS = 6;
-	public static final int URI_FILTERED_KEYWORDS = 7;
-	public static final int URI_FILTERED_SOURCES = 8;
-	public static final int URI_USER_TIMELINE = 9;
+	public static final int URI_DRAFTS = 5;
+	public static final int URI_CACHED_USERS = 6;
+	public static final int URI_FILTERED_USERS = 7;
+	public static final int URI_FILTERED_KEYWORDS = 8;
+	public static final int URI_FILTERED_SOURCES = 9;
+	public static final int URI_USER_TIMELINE = 10;
 
 }

@@ -56,7 +56,7 @@ public class TweetSearchFragment extends BaseListFragment implements LoaderCallb
 		if (args != null) {
 			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			String query = args.getString(INTENT_KEY_QUERY);
-			return new UserTimelineLoader(getSherlockActivity(), account_id, new Query(query));
+			return new TweetSearchLoader(getSherlockActivity(), account_id, new Query(query));
 		}
 		return null;
 	}
@@ -87,12 +87,12 @@ public class TweetSearchFragment extends BaseListFragment implements LoaderCallb
 		}
 	}
 
-	public static class UserTimelineLoader extends AsyncTaskLoader<List<Tweet>> {
+	public static class TweetSearchLoader extends AsyncTaskLoader<List<Tweet>> {
 
 		private final Twitter mTwitter;
 		private final Query mQuery;
 
-		public UserTimelineLoader(Context context, long account_id, Query query) {
+		public TweetSearchLoader(Context context, long account_id, Query query) {
 			super(context);
 			mTwitter = getTwitterInstance(context, account_id, true);
 			mQuery = query;

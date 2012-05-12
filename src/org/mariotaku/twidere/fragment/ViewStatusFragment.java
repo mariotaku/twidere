@@ -66,6 +66,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			String action = intent.getAction();
 			if (BROADCAST_DATABASE_UPDATED.equals(action)) {
 				getSherlockActivity().invalidateOptionsMenu();
+			} else if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
+				showFollowInfo();
 			}
 		}
 	};
@@ -236,6 +238,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	public void onStart() {
 		super.onStart();
 		IntentFilter filter = new IntentFilter(BROADCAST_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_FRIENDSHIP_CHANGED);
 		if (getSherlockActivity() != null) {
 			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
 		}
@@ -295,7 +298,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			}
 		}
 	}
-	
+
 	private void showFollowInfo() {
 		if (mFollowInfoTask != null) {
 			mFollowInfoTask.cancel(true);

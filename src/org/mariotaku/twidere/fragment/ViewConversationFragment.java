@@ -1,40 +1,49 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
+import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.getTypeIcon;
+import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ParcelableStatus;
+import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusViewHolder;
 
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.User;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
-public class ViewConversationFragment extends BaseListFragment implements OnScrollListener {
+public class ViewConversationFragment extends BaseListFragment implements OnScrollListener, OnItemClickListener,
+		OnItemLongClickListener, ActionMode.Callback {
 
 	private static final int ADD_STATUS = 1;
 	private static final long INVALID_ID = -1;
 
-	private ConversationAdapter mAdapter;
+	private ParcelableStatusesAdapter mAdapter;
 	private ShowConversationTask mShowConversationTask;
 	private StatusHandler mStatusHandler;
 	private ListView mListView;
@@ -42,11 +51,80 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 	private Handler mHandler;
 	private Runnable mTicker;
 	private boolean mBusy, mTickerStopped, mDisplayProfileImage, mDisplayName;
+	private ParcelableStatus mSelectedStatus;
+	private float mTextSize;
+	private ServiceInterface mServiceInterface;
+
+	@Override
+	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+		if (mSelectedStatus != null) {
+			long status_id = mSelectedStatus.status_id;
+			String text_plain = mSelectedStatus.text_plain;
+			String screen_name = mSelectedStatus.screen_name;
+			String name = mSelectedStatus.name;
+			long account_id = mSelectedStatus.account_id;
+			switch (item.getItemId()) {
+				case MENU_SHARE: {
+					Intent intent = new Intent(Intent.ACTION_SEND);
+					intent.setType("text/plain");
+					intent.putExtra(Intent.EXTRA_TEXT, "@" + screen_name + ": " + text_plain);
+					startActivity(Intent.createChooser(intent, getString(R.string.share)));
+					break;
+				}
+				case MENU_RETWEET: {
+					mServiceInterface.retweetStatus(new long[] { account_id }, status_id);
+					break;
+				}
+				case MENU_QUOTE: {
+					Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					Bundle bundle = new Bundle();
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+					bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
+					bundle.putString(INTENT_KEY_TEXT, "RT @" + screen_name + ": " + text_plain);
+					intent.putExtras(bundle);
+					startActivity(intent);
+					break;
+				}
+				case MENU_REPLY: {
+					Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					Bundle bundle = new Bundle();
+					bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text_plain, false, true));
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+					intent.putExtras(bundle);
+					startActivity(intent);
+					break;
+				}
+				case MENU_FAV: {
+					if (mSelectedStatus.is_favorite) {
+						mServiceInterface.destroyFavorite(new long[] { account_id }, status_id);
+					} else {
+						mServiceInterface.createFavorite(new long[] { account_id }, status_id);
+					}
+					break;
+				}
+				case MENU_DELETE: {
+					mServiceInterface.destroyStatus(account_id, status_id);
+					break;
+				}
+				default:
+					return false;
+			}
+		}
+		mode.finish();
+		return true;
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		Bundle bundle = getArguments();
@@ -61,16 +139,24 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
 			mShowConversationTask.cancel(true);
 		}
-		mAdapter = new ConversationAdapter(getSherlockActivity(), imageloader);
-		mStatusHandler = new StatusHandler(mAdapter);
+		mAdapter = new ParcelableStatusesAdapter(getSherlockActivity(), imageloader);
+		mStatusHandler = new StatusHandler(mAdapter, account_id);
 		mShowConversationTask = new ShowConversationTask(getSherlockActivity(), mStatusHandler, account_id, status_id);
 		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView.setOnScrollListener(this);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
 
 		if (account_id != INVALID_ID && status_id != INVALID_ID) {
 			mShowConversationTask.execute();
 		}
+	}
+
+	@Override
+	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.action_status, menu);
+		return true;
 	}
 
 	@Override
@@ -82,15 +168,57 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 	}
 
 	@Override
+	public void onDestroyActionMode(ActionMode mode) {
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		ParcelableStatus status = mAdapter.findItemById(id);
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme(SCHEME_TWIDERE);
+		builder.authority(AUTHORITY_STATUS);
+		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
+		builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
+		Intent intent = new Intent(Intent.ACTION_DEFAULT, builder.build());
+		Bundle bundle = new Bundle();
+		bundle.putParcelable(INTENT_KEY_STATUS, status);
+		intent.putExtras(bundle);
+		startActivity(intent);
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+		Object tag = view.getTag();
+		if (tag instanceof StatusViewHolder) {
+			StatusViewHolder holder = (StatusViewHolder) tag;
+			if (holder.show_as_gap) return false;
+			mSelectedStatus = mAdapter.findItemById(id);
+			getSherlockActivity().startActionMode(this);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		setMenuForStatus(getSherlockActivity(), menu, mSelectedStatus);
+		return true;
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 		boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayName(display_name);
-		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name) {
+		mAdapter.setStatusesTextSize(text_size);
+		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name || mTextSize != text_size) {
 			mDisplayProfileImage = display_profile_image;
 			mDisplayName = display_name;
+			mTextSize = text_size;
 			mListView.invalidateViews();
 		}
 	}
@@ -141,58 +269,6 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 	public void onStop() {
 		mTickerStopped = true;
 		super.onStop();
-	}
-
-	private static class ConversationAdapter extends ArrayAdapter<Status> {
-
-		private LazyImageLoader image_loader;
-
-		private boolean mDisplayProfileImage, mDisplayName;
-
-		public ConversationAdapter(Context context, LazyImageLoader image_loader) {
-			super(context, R.layout.status_list_item, R.id.text);
-			this.image_loader = image_loader;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = super.getView(position, convertView, parent);
-			Object tag = view.getTag();
-			StatusViewHolder holder = null;
-			if (tag instanceof StatusViewHolder) {
-				holder = (StatusViewHolder) tag;
-			} else {
-				holder = new StatusViewHolder(view);
-				view.setTag(holder);
-			}
-			Status status = getItem(position);
-			User user = status.getUser();
-			boolean is_favorite = status.isFavorited();
-			boolean has_media = status.getMediaEntities() != null && status.getMediaEntities().length > 0;
-			boolean has_location = status.getGeoLocation() != null;
-			boolean is_protected = user != null ? user.isProtected() : false;
-			holder.name_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
-			holder.name_view.setText(mDisplayName ? user.getName() : "@" + user.getScreenName());
-			holder.text_view.setText(status.getText());
-			holder.tweet_time_view.setText(formatToShortTimeString(getContext(), status.getCreatedAt().getTime()));
-			holder.tweet_time_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					getTypeIcon(is_favorite, has_location, has_media), 0);
-			holder.profile_image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-			if (mDisplayProfileImage) {
-				image_loader.displayImage(user.getProfileImageURL(), holder.profile_image_view);
-			}
-			return view;
-		}
-
-		public void setDisplayName(boolean display) {
-			mDisplayName = display;
-		}
-
-		public void setDisplayProfileImage(boolean display) {
-			mDisplayProfileImage = display;
-		}
-
 	}
 
 	private static class ShowConversationTask extends AsyncTask<Void, Void, TwitterException> {
@@ -246,10 +322,12 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 	private static class StatusHandler extends Handler {
 
-		private ConversationAdapter mAdapter;
+		private final ParcelableStatusesAdapter mAdapter;
+		private final long mAccountId;
 
-		public StatusHandler(ConversationAdapter adapter) {
+		public StatusHandler(ParcelableStatusesAdapter adapter, long account_id) {
 			mAdapter = adapter;
+			mAccountId = account_id;
 		}
 
 		@Override
@@ -258,7 +336,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 				case ADD_STATUS:
 					Object obj = msg.obj;
 					if (obj instanceof Status) {
-						mAdapter.add((Status) obj);
+						mAdapter.addItem(new ParcelableStatus((Status) obj, mAccountId));
 					}
 					break;
 			}

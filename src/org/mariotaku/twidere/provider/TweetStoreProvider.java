@@ -13,6 +13,7 @@ import org.mariotaku.twidere.cursor.FavoriteCursor;
 import org.mariotaku.twidere.cursor.UserTimelineCursor;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -29,7 +30,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class TweetStoreProvider extends ContentProvider implements Constants {
+public final class TweetStoreProvider extends ContentProvider implements Constants {
 
 	private SQLiteDatabase database;
 
@@ -76,7 +77,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 
-		String account_id_string = uri.getQueryParameter(TweetStore.KEY_ACCOUNT_ID);
+		String account_id_string = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 		String table = getTableNameForContentUri(uri);
 
 		switch (getTableId(uri)) {
@@ -157,6 +158,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			db.execSQL(createTable(TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, false));
 			db.execSQL(createTable(TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, false));
 			db.execSQL(createTable(TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, false));
+			db.execSQL(createTable(TABLE_DRAFTS, Drafts.COLUMNS, Drafts.TYPES, false));
 			db.execSQL(createTable(TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES, false));
 			db.execSQL(createTable(TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES, false));
 			db.execSQL(createTable(TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, false));
@@ -225,6 +227,7 @@ public class TweetStoreProvider extends ContentProvider implements Constants {
 			safeVersionChange(db, TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES);
 			safeVersionChange(db, TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES);
 			safeVersionChange(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES);
+			safeVersionChange(db, TABLE_DRAFTS, Drafts.COLUMNS, Drafts.TYPES);
 			safeVersionChange(db, TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES);
 			safeVersionChange(db, TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES);
 			safeVersionChange(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES);

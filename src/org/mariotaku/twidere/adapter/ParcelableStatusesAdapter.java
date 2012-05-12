@@ -36,6 +36,16 @@ public class ParcelableStatusesAdapter extends BaseAdapter {
 		mImageLoader = loader;
 	}
 
+	public void addItem(ParcelableStatus item) {
+		if (mData == null) {
+			mData = new ArrayList<ParcelableStatus>();
+		}
+		if (item != null) {
+			mData.add(item);
+		}
+		notifyDataSetChanged();
+	}
+
 	public void changeData(List<ParcelableStatus> data) {
 		if (data == null) {
 			mData = new ArrayList<ParcelableStatus>();
@@ -78,7 +88,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter {
 		Object tag = view.getTag();
 		StatusViewHolder holder = null;
 
-		if (view.getTag() instanceof StatusViewHolder) {
+		if (tag instanceof StatusViewHolder) {
 			holder = (StatusViewHolder) tag;
 		} else {
 			holder = new StatusViewHolder(view);
@@ -105,6 +115,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter {
 					status.is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
 			holder.name_view.setText(mDisplayName ? status.name : !isNullOrEmpty(status.screen_name) ? "@"
 					+ status.screen_name : null);
+			holder.name_view.setTextSize(mTextSize * 1.05f);
 			holder.tweet_time_view.setText(formatToShortTimeString(mContext, status.status_timestamp));
 			holder.tweet_time_view.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getTypeIcon(status.is_favorite, status.location != null, status.has_media), 0);

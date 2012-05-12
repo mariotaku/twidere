@@ -8,7 +8,6 @@
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"
 		android:layout_margin="4dp"
-		android:layerType="software"
 		android:scaleType="fitCenter"/>
 
 	<TextView

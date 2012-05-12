@@ -18,6 +18,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
@@ -26,6 +27,7 @@ import org.mariotaku.twidere.util.ManagedAsyncTask;
 import twitter4j.GeoLocation;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
+import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -148,9 +150,9 @@ public class TwidereService extends Service implements Constants {
 			if (twitter != null) {
 				try {
 					twitter4j.Status status = twitter.destroyStatus(retweeted_id);
-					return new StatusResponse(status, null);
+					return new StatusResponse(account_id, status, null);
 				} catch (TwitterException e) {
-					return new StatusResponse(null, e);
+					return new StatusResponse(account_id, null, e);
 				}
 			}
 			return null;
@@ -216,9 +218,9 @@ public class TwidereService extends Service implements Constants {
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.createFavorite(status_id);
-						result.add(new StatusResponse(status, null));
+						result.add(new StatusResponse(account_id, status, null));
 					} catch (TwitterException e) {
-						result.add(new StatusResponse(null, e));
+						result.add(new StatusResponse(account_id, null, e));
 					}
 				}
 			}
@@ -290,6 +292,10 @@ public class TwidereService extends Service implements Constants {
 			} else {
 				showErrorToast(TwidereService.this, result.exception, true);
 			}
+			Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
+			intent.putExtra(INTENT_KEY_USER_ID, user_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -319,9 +325,9 @@ public class TwidereService extends Service implements Constants {
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.destroyFavorite(status_id);
-						result.add(new StatusResponse(status, null));
+						result.add(new StatusResponse(account_id, status, null));
 					} catch (TwitterException e) {
-						result.add(new StatusResponse(null, e));
+						result.add(new StatusResponse(account_id, null, e));
 					}
 				}
 			}
@@ -393,6 +399,10 @@ public class TwidereService extends Service implements Constants {
 			} else {
 				showErrorToast(TwidereService.this, result.exception, true);
 			}
+			Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
+			intent.putExtra(INTENT_KEY_USER_ID, user_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -417,9 +427,9 @@ public class TwidereService extends Service implements Constants {
 			if (twitter != null) {
 				try {
 					twitter4j.Status status = twitter.destroyStatus(status_id);
-					return new StatusResponse(status, null);
+					return new StatusResponse(account_id, status, null);
 				} catch (TwitterException e) {
-					return new StatusResponse(null, e);
+					return new StatusResponse(account_id, null, e);
 				}
 			}
 			return null;
@@ -654,9 +664,9 @@ public class TwidereService extends Service implements Constants {
 				if (twitter != null) {
 					try {
 						twitter4j.Status status = twitter.retweetStatus(status_id);
-						result.add(new StatusResponse(status, null));
+						result.add(new StatusResponse(account_id, status, null));
 					} catch (TwitterException e) {
-						result.add(new StatusResponse(null, e));
+						result.add(new StatusResponse(account_id, null, e));
 					}
 				}
 			}
@@ -799,12 +809,14 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	private static final class StatusResponse {
-		public TwitterException exception;
-		public twitter4j.Status status;
+		public final TwitterException exception;
+		public final Status status;
+		public final long account_id;
 
-		public StatusResponse(twitter4j.Status status, TwitterException exception) {
+		public StatusResponse(long account_id, Status status, TwitterException exception) {
 			this.exception = exception;
 			this.status = status;
+			this.account_id = account_id;
 		}
 	}
 
@@ -845,9 +857,9 @@ public class TwidereService extends Service implements Constants {
 						if (image_path != null) {
 							status.setMedia(new File(image_path));
 						}
-						result.add(new StatusResponse(twitter.updateStatus(status), null));
+						result.add(new StatusResponse(account_id, twitter.updateStatus(status), null));
 					} catch (TwitterException e) {
-						result.add(new StatusResponse(null, e));
+						result.add(new StatusResponse(account_id, null, e));
 					}
 				}
 			}
@@ -859,12 +871,14 @@ public class TwidereService extends Service implements Constants {
 
 			boolean succeed = false;
 			TwitterException exception = null;
+			List<Long> failed_account_ids = new ArrayList<Long>();
 
 			for (StatusResponse response : result) {
 				if (response.status != null) {
 					succeed = true;
 					break;
 				} else {
+					failed_account_ids.add(response.account_id);
 					exception = response.exception;
 				}
 			}
@@ -872,6 +886,23 @@ public class TwidereService extends Service implements Constants {
 				Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(TwidereService.this, exception, true);
+				StringBuilder ids_builder = new StringBuilder();
+				for (int i = 0; i<failed_account_ids.size();i++) {
+					String id_string = String.valueOf(failed_account_ids.get(i));
+					if (id_string != null) {
+						if (i > 0) {
+							ids_builder.append(';');
+						}
+						ids_builder.append(id_string);
+					}
+				}
+				ContentValues values = new ContentValues();
+				values.put(Drafts.ACCOUNT_IDS, ids_builder.toString());
+				values.put(Drafts.IN_REPLY_TO_STATUS_ID, in_reply_to);
+				values.put(Drafts.TEXT, content);
+				if (image_uri != null) values.put(Drafts.MEDIA_URI, image_uri.toString());
+				ContentResolver resolver = getContentResolver();
+				resolver.insert(Drafts.CONTENT_URI, values);
 			}
 			super.onPostExecute(result);
 		}
