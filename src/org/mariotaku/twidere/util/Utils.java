@@ -824,7 +824,7 @@ public final class Utils implements Constants {
 								.getColumnIndexOrThrow(Accounts.USERNAME)), cur.getString(cur
 								.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD))));
 						break;
-					case Accounts.AUTH_TYPE_TWIP_O_MODE: 
+					case Accounts.AUTH_TYPE_TWIP_O_MODE:
 						twitter = new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
 						break;
 					default:

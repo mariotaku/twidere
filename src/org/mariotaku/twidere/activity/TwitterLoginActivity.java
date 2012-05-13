@@ -531,7 +531,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			cb.setGZIPEnabled(enable_gzip_compressing);
 			cb.setIgnoreSSLError(ignore_ssl_error);
 
-			//Twitter twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization("",""));
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
 			boolean account_valid = false;
 			User user = null;
