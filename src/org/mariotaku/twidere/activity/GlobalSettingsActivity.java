@@ -24,7 +24,7 @@ public class GlobalSettingsActivity extends BasePreferenceActivity implements On
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getPreferenceManager().setSharedPreferencesName(PREFERENCE_NAME);
+		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
 		addPreferencesFromResource(R.xml.global_settings);
 		findPreference(PREFERENCE_KEY_DARK_THEME).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_KEY_CLEAR_DATABASES).setOnPreferenceClickListener(this);

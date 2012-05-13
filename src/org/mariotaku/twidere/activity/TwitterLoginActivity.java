@@ -22,6 +22,7 @@ import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.RequestToken;
+import twitter4j.auth.TwipOModeAuthorization;
 import twitter4j.conf.ConfigurationBuilder;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -95,10 +96,12 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
 						mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
 						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
+						boolean hide_username_password = mAuthType == Accounts.AUTH_TYPE_OAUTH
+								|| mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
 						findViewById(R.id.username_password).setVisibility(
-								mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
+								hide_username_password ? View.GONE : View.VISIBLE);
 						((LinearLayout) findViewById(R.id.sign_in_sign_up))
-								.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
+								.setOrientation(hide_username_password ? LinearLayout.VERTICAL
 										: LinearLayout.HORIZONTAL);
 					}
 				}
@@ -232,18 +235,21 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		Intent intent = new Intent();
 
 		switch (item.getItemId()) {
-			case MENU_HOME:
+			case MENU_HOME: {
 				long[] account_ids = getActivatedAccounts(this);
 				boolean called_from_twidere = getPackageName().equals(getCallingPackage());
 				if (account_ids.length > 0 && called_from_twidere) {
 					finish();
 				}
 				break;
-			case MENU_SETTINGS:
+			}
+			case MENU_SETTINGS: {
 				intent = new Intent(INTENT_ACTION_GLOBAL_SETTINGS);
 				startActivity(intent);
 				break;
-			case MENU_EDIT_API:
+			}
+			case MENU_EDIT_API: {
+				if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED) return false;
 				intent = new Intent(INTENT_ACTION_EDIT_API);
 				Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_API_BASE, mRestAPIBase);
@@ -252,6 +258,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_EDIT_API);
 				break;
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -307,7 +314,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	private void setSignInButton() {
 		mSignInButton.setEnabled(mEditPassword.getText().length() > 0 && mEditUsername.getText().length() > 0
-				|| mAuthType == Accounts.AUTH_TYPE_OAUTH);
+				|| mAuthType == Accounts.AUTH_TYPE_OAUTH || mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE);
 	}
 
 	private void setUserColorButton() {
@@ -358,7 +365,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 		@Override
 		protected Response doInBackground(Void... params) {
-			final SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
@@ -452,7 +459,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 
 		private Response authBasic() {
-			final SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
@@ -491,7 +498,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 
 		private Response authOAuth() {
-			final SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -513,8 +520,48 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			return new Response(false, false, false, Accounts.AUTH_TYPE_OAUTH, null, null);
 		}
 
+		private Response authTwipOMode() {
+			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
+			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+			final ContentResolver resolver = getContentResolver();
+			final ConfigurationBuilder cb = new ConfigurationBuilder();
+			cb.setRestBaseURL(mRestAPIBase);
+			cb.setSearchBaseURL(mSearchAPIBase);
+			cb.setGZIPEnabled(enable_gzip_compressing);
+			cb.setIgnoreSSLError(ignore_ssl_error);
+
+			//Twitter twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization("",""));
+			Twitter twitter = new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
+			boolean account_valid = false;
+			User user = null;
+			try {
+				account_valid = twitter.test();
+				user = twitter.verifyCredentials();
+			} catch (TwitterException e) {
+				return new Response(false, false, false, Accounts.AUTH_TYPE_TWIP_O_MODE, null, e);
+			}
+
+			if (account_valid && user != null) {
+				String profile_image_url = user.getProfileImageURL().toString();
+				if (!mUserColorSet) {
+					analyseUserProfileColor(profile_image_url);
+				}
+
+				mLoggedId = user.getId();
+				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
+					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
+				ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestAPIBase, mSearchAPIBase,
+						null, Accounts.AUTH_TYPE_TWIP_O_MODE);
+				resolver.insert(Accounts.CONTENT_URI, values);
+				return new Response(false, false, true, Accounts.AUTH_TYPE_TWIP_O_MODE, null, null);
+
+			}
+			return new Response(false, false, false, Accounts.AUTH_TYPE_TWIP_O_MODE, null, null);
+		}
+
 		private Response authxAuth() {
-			final SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
@@ -556,6 +603,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 					return authxAuth();
 				case Accounts.AUTH_TYPE_BASIC:
 					return authBasic();
+				case Accounts.AUTH_TYPE_TWIP_O_MODE:
+					return authTwipOMode();
 				default:
 					break;
 			}
@@ -586,8 +635,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						break;
 					case Accounts.AUTH_TYPE_XAUTH:
 					case Accounts.AUTH_TYPE_BASIC:
+					case Accounts.AUTH_TYPE_TWIP_O_MODE:
 						if (request_token != null)
-							throw new IllegalArgumentException("Request Token must be null in xauth/basic mode!");
+							throw new IllegalArgumentException("Request Token must be null in xauth/basic/twip_o mode!");
 						break;
 				}
 			}

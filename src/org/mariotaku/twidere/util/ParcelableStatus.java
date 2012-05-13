@@ -7,6 +7,7 @@ import static org.mariotaku.twidere.util.Utils.getSpannedStatusText;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Comparator;
 
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
@@ -43,6 +44,28 @@ public class ParcelableStatus implements Parcelable {
 	public GeoLocation location;
 
 	public URL profile_image_url;
+
+	public static final Comparator<ParcelableStatus> TIMESTAMP_COMPARATOR = new Comparator<ParcelableStatus>() {
+
+		@Override
+		public int compare(ParcelableStatus object1, ParcelableStatus object2) {
+			long diff = object2.status_timestamp - object1.status_timestamp;
+			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+			return (int) diff;
+		}
+	};
+
+	public static final Comparator<ParcelableStatus> ID_COMPARATOR = new Comparator<ParcelableStatus>() {
+
+		@Override
+		public int compare(ParcelableStatus object1, ParcelableStatus object2) {
+			long diff = object1.status_id - object2.status_id;
+			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+			return (int) diff;
+		}
+	};
 
 	public ParcelableStatus(Cursor cursor, StatusesCursorIndices indices) {
 		retweet_id = cursor.getLong(indices.retweet_id);

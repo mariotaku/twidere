@@ -28,7 +28,7 @@ public class FilterActivity extends BaseActivity implements OnCheckedChangeListe
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mPrefs = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		mPrefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		boolean filter_enabled = mPrefs.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);

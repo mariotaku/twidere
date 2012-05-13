@@ -24,8 +24,8 @@ import android.widget.Button;
 
 /**
  * Special class to to allow the parent to be pressed without being pressed
- * itself. This way the time in the list can be pressed without changing
- * the background of the indicator.
+ * itself. This way the time in the list can be pressed without changing the
+ * background of the indicator.
  */
 public class DontPressWithParentButton extends Button {
 

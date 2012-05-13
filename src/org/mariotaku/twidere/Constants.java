@@ -57,7 +57,9 @@ public interface Constants {
 
 	public static final String OAUTH_VERIFIER = "oauth_verifier";
 
-	public static final String PREFERENCE_NAME = "preference";
+	public static final String SHARED_PREFERENCES_NAME = "preferences";
+
+	public static final String UPDATE_TIMESTAMP_NAME = "update_timestamp";
 
 	public static final String PREFERENCE_KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
 	public static final String PREFERENCE_KEY_LOAD_ITEM_LIMIT = "load_item_limit";
@@ -155,9 +157,10 @@ public interface Constants {
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_ADD_IMAGE = 2;
 	public static final int REQUEST_SELECT_ACCOUNT = 3;
-	public static final int REQUEST_EDIT_API = 4;
-	public static final int REQUEST_GOTO_AUTHORIZATION = 5;
-	public static final int REQUEST_SET_COLOR = 6;
+	public static final int REQUEST_COMPOSE = 4;
+	public static final int REQUEST_EDIT_API = 5;
+	public static final int REQUEST_GOTO_AUTHORIZATION = 6;
+	public static final int REQUEST_SET_COLOR = 7;
 
 	public static final int RESULT_UNKNOWN_ERROR = -1;
 	public static final int RESULT_SUCCESS = 0;

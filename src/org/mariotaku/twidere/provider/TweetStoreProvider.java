@@ -23,6 +23,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -133,6 +134,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			default:
 				return;
 		}
+		SharedPreferences preferences = context.getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE);
+		preferences.edit().putLong(getTableNameForContentUri(uri), System.currentTimeMillis()).commit();
 		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
 	}
 

@@ -27,5 +27,7 @@
 	<item name="quote" type="id"/>
 	<item name="debug" type="id"/>
 	<item name="drafts" type="id"/>
+	<item name="send_all" type="id"/>
+	<item name="delete_all" type="id"/>
 
 </resources>

@@ -103,9 +103,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
-		mPreferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
-		boolean home_display_title_and_icon = getResources().getBoolean(R.bool.home_display_title_and_icon);
+		boolean home_display_icon = getResources().getBoolean(R.bool.home_display_icon);
 		boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
 		setContentView(R.layout.main);
 		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
@@ -132,8 +132,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		mActionBar = getSupportActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
 		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setDisplayShowTitleEnabled(home_display_title_and_icon);
-		mActionBar.setDisplayShowHomeEnabled(home_display_title_and_icon);
+		mActionBar.setDisplayShowHomeEnabled(home_display_icon);
 		View view = mActionBar.getCustomView();
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);

@@ -22,6 +22,7 @@
 	<string name="oauth">OAuth</string>
 	<string name="xauth">xAuth</string>
 	<string name="basic">Basic</string>
+	<string name="twip_o">twip O Mode</string>
 	<string name="save">Save</string>
 	<string name="test">Test</string>
 	<string name="login_to_twitter">Login to Twitter</string>
@@ -154,5 +155,7 @@
 	<string name="cannot_get_location">Can\'t get your location.</string>
 	<string name="drafts">Drafts</string>
 	<string name="search">Search</string>
+	<string name="send_all">Send all</string>
+	<string name="delete_all">Delete all</string>
 
 </resources>

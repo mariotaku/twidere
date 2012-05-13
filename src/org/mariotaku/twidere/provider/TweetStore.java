@@ -28,6 +28,7 @@ public final class TweetStore implements Constants {
 		public static final int AUTH_TYPE_OAUTH = 0;
 		public static final int AUTH_TYPE_XAUTH = 1;
 		public static final int AUTH_TYPE_BASIC = 2;
+		public static final int AUTH_TYPE_TWIP_O_MODE = 3;
 
 		public static final String CONTENT_PATH = "accounts";
 		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
@@ -320,7 +321,7 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String STATUS_TIMESTAMP = "status_timestamp";
 
-		public static final String DEFAULT_SORT_ORDER = STATUS_TIMESTAMP + " DESC";
+		public static final String DEFAULT_SORT_ORDER = STATUS_ID + " DESC";
 
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
 				TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID,

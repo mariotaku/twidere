@@ -34,10 +34,10 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		
-		Bundle args = getArguments() != null?getArguments():new Bundle();
+
+		Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 		mAdapter = new UsersAdapter(getSherlockActivity(), account_id);
 		mListView = getListView();
@@ -151,7 +151,7 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 			if (mDisplayProfileImage) {
 				mImageLoader.displayImage(user.getProfileImageURL(), holder.profile_image);
 			}
-			holder.follow.setOnClickListener(new OnClickListener(){
+			holder.follow.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					mServiceInterface.createFriendship(mAccountId, user.getId());

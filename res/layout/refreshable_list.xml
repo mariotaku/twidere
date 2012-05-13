@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.handmark.pulltorefresh.library.PullToRefreshListView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/refreshable_list"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:layerType="hardware"/>
+	android:layout_height="match_parent">
+
+	<com.handmark.pulltorefresh.library.PullToRefreshListView
+		android:id="@+id/refreshable_list"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layerType="hardware"/>
+
+	<ProgressBar
+		android:id="@+id/load_progress"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_margin="16dp"
+		android:background="#10FFFFFF"
+		android:visibility="gone"/>
+
+</FrameLayout>

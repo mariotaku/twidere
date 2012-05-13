@@ -39,17 +39,13 @@ import android.widget.ListView;
  */
 public class LazyImageLoader {
 
-	private MemoryCache mMemoryCache = new MemoryCache();
-
-	private FileCache mFileCache;
-
-	private Map<ImageView, Object> mImageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, Object>());
-
-	ExecutorService mExecutorService;
-
-	private int mFallbackRes;
-
-	private int mRequiredSize;
+	private final MemoryCache mMemoryCache = new MemoryCache();
+	private final FileCache mFileCache;
+	private final Map<ImageView, Object> mImageViews = Collections
+			.synchronizedMap(new WeakHashMap<ImageView, Object>());
+	private final ExecutorService mExecutorService;
+	private final int mFallbackRes;
+	private final int mRequiredSize;
 
 	public LazyImageLoader(Context context, int fallback, int required_size) {
 		mFileCache = new FileCache(context);
@@ -102,12 +98,10 @@ public class LazyImageLoader {
 		final int buffer_size = 1024;
 		try {
 			byte[] bytes = new byte[buffer_size];
-			for (;;) {
-				int count = is.read(bytes, 0, buffer_size);
-				if (count == -1) {
-					break;
-				}
+			int count = is.read(bytes, 0, buffer_size);
+			while (count != -1) {
 				os.write(bytes, 0, count);
+				count = is.read(bytes, 0, buffer_size);
 			}
 		} catch (IOException e) {
 			// e.printStackTrace();
@@ -115,7 +109,7 @@ public class LazyImageLoader {
 	}
 
 	// decodes image and scales it to reduce memory consumption
-	private Bitmap decodeFile(File f, ImageView imageview) {
+	private Bitmap decodeFile(File f) {
 		try {
 			// decode image size
 			BitmapFactory.Options options = new BitmapFactory.Options();
@@ -125,10 +119,7 @@ public class LazyImageLoader {
 			// Find the correct scale value. It should be the power of 2.
 			int width_tmp = options.outWidth, height_tmp = options.outHeight;
 			int scale = 1;
-			while (true) {
-				if (width_tmp / 2 < mRequiredSize || height_tmp / 2 < mRequiredSize) {
-					break;
-				}
+			while (width_tmp / 2 >= mRequiredSize || height_tmp / 2 >= mRequiredSize) {
 				width_tmp /= 2;
 				height_tmp /= 2;
 				scale *= 2;
@@ -136,7 +127,7 @@ public class LazyImageLoader {
 
 			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
-			o2.inSampleSize = scale;
+			o2.inSampleSize = scale / 2;
 			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
 		} catch (FileNotFoundException e) {
 		}
@@ -148,10 +139,10 @@ public class LazyImageLoader {
 		File f = mFileCache.getFile(file);
 
 		// from SD cache
-		Bitmap bitmap = decodeFile(f, imageview);
+		Bitmap bitmap = decodeFile(f);
 
 		if (bitmap != null) return bitmap;
-		bitmap = decodeFile(file, imageview);
+		bitmap = decodeFile(file);
 		if (bitmap == null) return null;
 		try {
 			FileOutputStream fos = new FileOutputStream(f);
@@ -174,7 +165,7 @@ public class LazyImageLoader {
 		File f = mFileCache.getFile(url);
 
 		// from SD cache
-		Bitmap b = decodeFile(f, imageview);
+		Bitmap b = decodeFile(f);
 		if (b != null) return b;
 
 		// from web
@@ -188,7 +179,7 @@ public class LazyImageLoader {
 			OutputStream os = new FileOutputStream(f);
 			copyStream(is, os);
 			os.close();
-			bitmap = decodeFile(f, imageview);
+			bitmap = decodeFile(f);
 			return bitmap;
 		} catch (FileNotFoundException e) {
 			// Storage state may changed, so call FileCache.init() again.

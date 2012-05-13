@@ -31,6 +31,7 @@ import twitter4j.User;
 import twitter4j.UserMentionEntity;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
+import twitter4j.auth.TwipOModeAuthorization;
 import twitter4j.conf.ConfigurationBuilder;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -158,8 +159,8 @@ public final class Utils implements Constants {
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
 				+ TABLE_FILTERED_SOURCES);
-		builder.append(" WHERE " + table + "." + Statuses.SOURCE + " LIKE '%'||" + TABLE_FILTERED_SOURCES + "."
-				+ Filters.Sources.TEXT + "||'%'");
+		builder.append(" WHERE " + table + "." + Statuses.SOURCE + " LIKE '%>'||" + TABLE_FILTERED_SOURCES + "."
+				+ Filters.Sources.TEXT + "||'</a>%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
@@ -177,7 +178,7 @@ public final class Utils implements Constants {
 	public static synchronized void cleanDatabasesByItemLimit(Context context) {
 		ContentResolver resolver = context.getContentResolver();
 		String[] cols = new String[0];
-		int item_limit = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).getInt(
+		int item_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 
 		for (long account_id : getAccountIds(context)) {
@@ -620,9 +621,6 @@ public final class Utils implements Constants {
 		return -1;
 	}
 
-	/**
-	 * @deprecated
-	 */
 	@Deprecated
 	public static long getRetweetId(Context context, long status_id) {
 		String[] cols = new String[] { Statuses.RETWEET_ID };
@@ -643,9 +641,6 @@ public final class Utils implements Constants {
 		return -1;
 	}
 
-	/**
-	 * @deprecated
-	 */
 	@Deprecated
 	public static String getScreenNameForStatusId(Context context, long status_id) {
 		String[] cols = new String[] { Statuses.SCREEN_NAME };
@@ -782,7 +777,8 @@ public final class Utils implements Constants {
 	}
 
 	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities) {
-		final SharedPreferences preferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+				Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 		Twitter twitter = null;
@@ -827,6 +823,9 @@ public final class Utils implements Constants {
 						twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(cur.getString(cur
 								.getColumnIndexOrThrow(Accounts.USERNAME)), cur.getString(cur
 								.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD))));
+						break;
+					case Accounts.AUTH_TYPE_TWIP_O_MODE: 
+						twitter = new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
 						break;
 					default:
 				}
@@ -874,13 +873,17 @@ public final class Utils implements Constants {
 		if (user == null) throw new IllegalArgumentException("User can't be null!");
 		ContentValues values = new ContentValues();
 		switch (auth_type) {
-			case Accounts.AUTH_TYPE_BASIC:
+			case Accounts.AUTH_TYPE_TWIP_O_MODE: {
+				break;
+			}
+			case Accounts.AUTH_TYPE_BASIC: {
 				if (basic_password == null)
 					throw new IllegalArgumentException("Password can't be null in Basic mode!");
 				values.put(Accounts.BASIC_AUTH_PASSWORD, basic_password);
 				break;
+			}
 			case Accounts.AUTH_TYPE_OAUTH:
-			case Accounts.AUTH_TYPE_XAUTH:
+			case Accounts.AUTH_TYPE_XAUTH: {
 				if (access_token == null)
 					throw new IllegalArgumentException("Access Token can't be null in OAuth/xAuth mode!");
 				if (user.getId() != access_token.getUserId())
@@ -888,6 +891,7 @@ public final class Utils implements Constants {
 				values.put(Accounts.OAUTH_TOKEN, access_token.getToken());
 				values.put(Accounts.TOKEN_SECRET, access_token.getTokenSecret());
 				break;
+			}
 		}
 		values.put(Accounts.AUTH_TYPE, auth_type);
 		values.put(Accounts.USER_ID, user.getId());
@@ -1047,7 +1051,7 @@ public final class Utils implements Constants {
 			Log.e(LOGTAG, "Trying to unbind with null token");
 			return;
 		}
-		ContextWrapper wrapper = token.mWrappedContext;
+		ContextWrapper wrapper = token.wrapped_context;
 		ServiceBinder binder = mConnectionMap.remove(wrapper);
 		if (binder == null) {
 			Log.e(LOGTAG, "Trying to unbind for unknown Context");

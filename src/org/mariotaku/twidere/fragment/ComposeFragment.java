@@ -72,7 +72,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mLocationManager = (LocationManager) getSherlockActivity().getSystemService(Context.LOCATION_SERVICE);
-		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
@@ -109,8 +109,10 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 
 			boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 			String name = display_name ? mInReplyToName : mInReplyToScreenName;
-			getSherlockActivity().setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, name));
-			mAccountIds = new long[] { mAccountId };
+			if (name != null) {
+				getSherlockActivity().setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, name));
+			}
+			mAccountIds = activated_ids == null ? new long[] { mAccountId } : activated_ids;
 		} else {
 			mAccountIds = activated_ids == null ? getActivatedAccounts(getSherlockActivity()) : activated_ids;
 			if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null) {
@@ -202,6 +204,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation : null, mImageUri,
 						mInReplyToStatusId);
 				if (getSherlockActivity() instanceof ComposeActivity) {
+					getSherlockActivity().setResult(Activity.RESULT_OK);
 					getSherlockActivity().finish();
 				}
 				break;

@@ -15,6 +15,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.CursorToStatusesLoader;
+import org.mariotaku.twidere.loader.CursorToStatusesLoader.LoadProgressListener;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -35,12 +36,14 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
@@ -50,14 +53,16 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public abstract class StatusesFragment extends BaseFragment implements OnRefreshListener,
 		LoaderCallbacks<List<ParcelableStatus>>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
-		ActionMode.Callback {
+		ActionMode.Callback, LoadProgressListener {
 
 	public ServiceInterface mServiceInterface;
 	public PullToRefreshListView mListView;
 	public ContentResolver mResolver;
+	private ProgressBar mLoadProgress;
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
 	private ParcelableStatusesAdapter mAdapter;
+	private CursorToStatusesLoader mLoader;
 
 	private Handler mHandler;
 	private Runnable mTicker;
@@ -68,6 +73,8 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	private boolean mDisplayProfileImage, mDisplayName, mReachedBottom, mActivityFirstCreated;
 	private float mTextSize;
 	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
+	private boolean mShowLoadProgress;
+	private long mLastUpdateTime;
 
 	public abstract Uri getContentUri();
 
@@ -140,15 +147,18 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mAsyncTaskManager = AsyncTaskManager.getInstance();
-		mPreferences = getSherlockActivity().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = getSherlockActivity().getContentResolver();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		mLastUpdateTime = getSherlockActivity().getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE)
+				.getLong(getTableNameForContentUri(getContentUri()), -1);
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
 		mAdapter = new ParcelableStatusesAdapter(getSherlockActivity(), imageloader);
+		mLoadProgress = (ProgressBar) getView().findViewById(R.id.load_progress);
 		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
 		ListView list = mListView.getRefreshableView();
@@ -163,6 +173,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mActivityFirstCreated = true;
+		mShowLoadProgress = true;
 		// Tell the framework to try to keep this fragment around
 		// during a configuration change.
 		setRetainInstance(true);
@@ -183,7 +194,12 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			String table = getTableNameForContentUri(uri);
 			where = buildFilterWhereClause(table, where);
 		}
-		return new CursorToStatusesLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
+		if (mLoader != null) {
+			mLoader.setLoadProgressListener(null);
+		}
+		mLoader = new CursorToStatusesLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
+		mLoader.setLoadProgressListener(this);
+		return mLoader;
 	}
 
 	@Override
@@ -194,12 +210,22 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	@Override
 	public void onDestroy() {
 		mActivityFirstCreated = true;
+		mShowLoadProgress = true;
 		super.onDestroy();
 	}
 
 	@Override
 	public void onDestroyActionMode(ActionMode mode) {
 
+	}
+
+	@Override
+	public synchronized void onFinishLoading() {
+		if (mShowLoadProgress) {
+			mLoadProgress.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), android.R.anim.fade_out));
+			mLoadProgress.setVisibility(View.GONE);
+			mLoadProgress.setProgress(0);
+		}
 	}
 
 	@Override
@@ -251,8 +277,16 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
+	public synchronized void onProgressChanged(int progress) {
+		if (mShowLoadProgress) {
+			mLoadProgress.setProgress(progress);
+		}
+	}
+
+	@Override
 	public void onRefresh() {
 
+		mShowLoadProgress = true;
 		long[] account_ids = getActivatedAccounts(getSherlockActivity());
 		mRunningTaskId = getStatuses(account_ids, null);
 
@@ -336,8 +370,21 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		};
 		mTicker.run();
 
-		if (!mActivityFirstCreated) {
+		long last_update_time = getSherlockActivity().getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE)
+				.getLong(getTableNameForContentUri(getContentUri()), -1);
+
+		if (!mActivityFirstCreated && mLastUpdateTime != last_update_time) {
+			mLastUpdateTime = last_update_time;
 			getLoaderManager().restartLoader(0, null, this);
+		}
+	}
+
+	@Override
+	public synchronized void onStartLoading(int total_count) {
+		if (mShowLoadProgress) {
+			mLoadProgress.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), android.R.anim.fade_in));
+			mLoadProgress.setVisibility(View.VISIBLE);
+			mLoadProgress.setMax(total_count);
 		}
 	}
 
@@ -345,6 +392,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public void onStop() {
 		mTickerStopped = true;
 		mActivityFirstCreated = false;
+		mShowLoadProgress = false;
 		super.onStop();
 	}
 
@@ -357,6 +405,6 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			case URI_FAVORITES:
 				break;
 		}
-		return 0;
+		return -1;
 	}
 }

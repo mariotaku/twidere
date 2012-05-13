@@ -528,7 +528,7 @@ public class TwidereService extends Service implements Constants {
 			boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
 
 			int idx = 0;
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT) + 1;
 			for (long account_id : account_ids) {
 				Twitter twitter = getTwitterInstance(context, account_id, true);
@@ -536,13 +536,15 @@ public class TwidereService extends Service implements Constants {
 					try {
 						Paging paging = new Paging();
 						paging.setCount(load_item_limit);
-						if (max_ids_valid && max_ids[idx] > 0) {
-							paging.setMaxId(max_ids[idx]);
+						long max_id = -1;
+						if (max_ids_valid && max_ids[idx] != -1) {
+							max_id = max_ids[idx];
+							paging.setMaxId(max_id);
 						}
 						ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
 
 						if (statuses != null) {
-							result.add(new AccountResponse(account_id, statuses));
+							result.add(new AccountResponse(account_id, max_id, statuses));
 						}
 					} catch (TwitterException e) {
 						e.printStackTrace();
@@ -578,16 +580,17 @@ public class TwidereService extends Service implements Constants {
 					if (status == null) {
 						continue;
 					}
-					User user = status.getUser();
-					long status_id = status.getId(), user_id = user.getId();
-
+					final User user = status.getUser();
+					final twitter4j.Status retweeted_status = status.getRetweetedStatus();
+					final long status_id = status.getId(), user_id = user.getId(), retweeted_id = retweeted_status != null ? retweeted_status
+							.getId() : -1;
 					resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + user_id, null);
 					resolver.insert(CachedUsers.CONTENT_URI, makeCachedUsersContentValues(user));
 
 					if (status_id < min_id || min_id == -1) {
 						min_id = status_id;
 					}
-					status_ids.add(status.getId());
+					status_ids.add(retweeted_id == -1 ? status_id : retweeted_id);
 					values_list.add(makeStatusesContentValues(status, account_id));
 				}
 				int rows_deleted = -1;
@@ -613,7 +616,9 @@ public class TwidereService extends Service implements Constants {
 				resolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 				// No row deleted, so I will insert a gap.
-				if (rows_deleted == 0 && (max_ids == null || max_ids.length <= 0) && !no_items_before) {
+				final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
+						|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
+				if (insert_gap) {
 					ContentValues values = new ContentValues();
 					values.put(Statuses.IS_GAP, 1);
 					StringBuilder where = new StringBuilder();
@@ -628,11 +633,12 @@ public class TwidereService extends Service implements Constants {
 
 		private class AccountResponse {
 
-			public long account_id;
-			public ResponseList<twitter4j.Status> responselist;
+			public final long account_id, max_id;
+			public final ResponseList<twitter4j.Status> responselist;
 
-			public AccountResponse(long account_id, ResponseList<twitter4j.Status> responselist) {
+			public AccountResponse(long account_id, long max_id, ResponseList<twitter4j.Status> responselist) {
 				this.account_id = account_id;
+				this.max_id = max_id;
 				this.responselist = responselist;
 
 			}
@@ -859,6 +865,7 @@ public class TwidereService extends Service implements Constants {
 						}
 						result.add(new StatusResponse(account_id, twitter.updateStatus(status), null));
 					} catch (TwitterException e) {
+						e.printStackTrace();
 						result.add(new StatusResponse(account_id, null, e));
 					}
 				}

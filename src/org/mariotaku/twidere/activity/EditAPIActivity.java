@@ -18,7 +18,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 
 	private EditText mEditRestAPIBase, mEditSearchAPIBase;
 	private RadioGroup mEditAuthType;
-	private RadioButton mButtonOAuth, mButtonxAuth, mButtonBasic;
+	private RadioButton mButtonOAuth, mButtonxAuth, mButtonBasic, mButtonTwipOMode;
 	private Button mSaveButton;
 	private String mRestAPIBase, mSearchAPIBase;
 	private int mAuthType;
@@ -26,15 +26,22 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		switch (checkedId) {
-			case R.id.oauth:
+			case R.id.oauth: {
 				mAuthType = Accounts.AUTH_TYPE_OAUTH;
 				break;
-			case R.id.xauth:
+			}
+			case R.id.xauth: {
 				mAuthType = Accounts.AUTH_TYPE_XAUTH;
 				break;
-			case R.id.basic:
+			}
+			case R.id.basic: {
 				mAuthType = Accounts.AUTH_TYPE_BASIC;
 				break;
+			}
+			case R.id.twip_o: {
+				mAuthType = Accounts.AUTH_TYPE_TWIP_O_MODE;
+				break;
+			}
 		}
 	}
 
@@ -63,6 +70,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		mButtonOAuth = (RadioButton) findViewById(R.id.oauth);
 		mButtonxAuth = (RadioButton) findViewById(R.id.xauth);
 		mButtonBasic = (RadioButton) findViewById(R.id.basic);
+		mButtonTwipOMode = (RadioButton) findViewById(R.id.twip_o);
 		mSaveButton = (Button) findViewById(R.id.save);
 		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
 		if (bundle == null) {
@@ -78,6 +86,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		mButtonOAuth.setChecked(mAuthType == Accounts.AUTH_TYPE_OAUTH);
 		mButtonxAuth.setChecked(mAuthType == Accounts.AUTH_TYPE_XAUTH);
 		mButtonBasic.setChecked(mAuthType == Accounts.AUTH_TYPE_BASIC);
+		mButtonTwipOMode.setChecked(mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE);
 	}
 
 	@Override
