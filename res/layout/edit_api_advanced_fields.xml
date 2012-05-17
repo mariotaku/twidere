@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_below="@+id/advanced_api_config_label"
+	android:paddingLeft="8dp">
+
+	<TextView
+		android:id="@+id/label_search_base_url"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:text="@string/search_base_url"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+	<EditText
+		android:id="@+id/search_base_url"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/label_search_base_url"
+		android:ems="10"
+		android:inputType="textUri"
+		android:singleLine="true"/>
+
+	<TextView
+		android:id="@+id/label_upload_base_url"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/search_base_url"
+		android:text="@string/upload_base_url"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+	<EditText
+		android:id="@+id/upload_base_url"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/label_upload_base_url"
+		android:ems="10"
+		android:inputType="textUri"
+		android:singleLine="true"/>
+
+	<TextView
+		android:id="@+id/label_oauth_access_token_url"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/upload_base_url"
+		android:text="@string/oauth_access_token_url"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+	<EditText
+		android:id="@+id/oauth_access_token_url"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_below="@+id/label_oauth_access_token_url"
+		android:ems="10"
+		android:inputType="textUri"
+		android:singleLine="true"/>
+
+	<TextView
+		android:id="@+id/label_oauth_authentication_url"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/oauth_access_token_url"
+		android:text="@string/oauth_authentication_url"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+	<EditText
+		android:id="@+id/oauth_authentication_url"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_below="@+id/label_oauth_authentication_url"
+		android:ems="10"
+		android:inputType="textUri"
+		android:singleLine="true"/>
+
+	<TextView
+		android:id="@+id/label_oauth_authorization_url"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/oauth_authentication_url"
+		android:text="@string/oauth_authorization_url"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+	<EditText
+		android:id="@+id/oauth_authorization_url"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_below="@+id/label_oauth_authorization_url"
+		android:ems="10"
+		android:inputType="textUri"
+		android:singleLine="true"/>
+
+	<TextView
+		android:id="@+id/label_oauth_request_token_url"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/oauth_authorization_url"
+		android:text="@string/oauth_request_token_url"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+	<EditText
+		android:id="@+id/oauth_request_token_url"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_below="@+id/label_oauth_request_token_url"
+		android:ems="10"
+		android:inputType="textUri"
+		android:singleLine="true"/>
+
+</RelativeLayout>

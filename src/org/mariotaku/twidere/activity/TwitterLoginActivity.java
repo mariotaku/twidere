@@ -53,7 +53,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 
-	private String mRestAPIBase, mSearchAPIBase, mUsername, mPassword;
+	private String mRestBaseURL, mSearchBaseURL, mUsername, mPassword;
 
 	private int mAuthType, mUserColor;
 
@@ -93,8 +93,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						bundle = data.getExtras();
 					}
 					if (bundle != null) {
-						mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
-						mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
+						mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
+						mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
 						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
 						boolean hide_username_password = mAuthType == Accounts.AUTH_TYPE_OAUTH
 								|| mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
@@ -141,13 +141,13 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	@Override
 	public void onClick(View v) {
-		Intent intent = new Intent();
 		switch (v.getId()) {
-			case R.id.sign_up:
-				intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(TWITTER_SIGNUP_URL));
+			case R.id.sign_up:{
+				Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(TWITTER_SIGNUP_URL));
 				startActivity(intent);
 				break;
-			case R.id.sign_in:
+			}
+			case R.id.sign_in:{
 				saveEditedText();
 				if (mTask != null) {
 					mTask.cancel(true);
@@ -155,14 +155,16 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				mTask = new LoginTask();
 				mTask.execute();
 				break;
-			case R.id.set_color:
-				intent = new Intent(INTENT_ACTION_SET_COLOR);
+			}
+			case R.id.set_color:{
+				Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
 				Bundle bundle = new Bundle();
 				bundle.putInt(Accounts.USER_COLOR, mUserColor);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
+				break;
+			}
 		}
-
 	}
 
 	@Override
@@ -186,14 +188,14 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		if (bundle == null) {
 			bundle = new Bundle();
 		}
-		mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
-		mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
+		mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
+		mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
 
-		if (mRestAPIBase == null) {
-			mRestAPIBase = DEFAULT_REST_API_BASE;
+		if (mRestBaseURL == null) {
+			mRestBaseURL = DEFAULT_REST_BASE_URL;
 		}
-		if (mSearchAPIBase == null) {
-			mSearchAPIBase = DEFAULT_SEARCH_API_BASE;
+		if (mSearchBaseURL == null) {
+			mSearchBaseURL = DEFAULT_SEARCH_BASE_URL;
 		}
 
 		mUsername = bundle.getString(Accounts.USERNAME);
@@ -252,8 +254,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED) return false;
 				intent = new Intent(INTENT_ACTION_EDIT_API);
 				Bundle bundle = new Bundle();
-				bundle.putString(Accounts.REST_API_BASE, mRestAPIBase);
-				bundle.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
+				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
+				bundle.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_EDIT_API);
@@ -266,8 +268,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		saveEditedText();
-		outState.putString(Accounts.REST_API_BASE, mRestAPIBase);
-		outState.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
+		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
+		outState.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 		outState.putString(Accounts.USERNAME, mUsername);
 		outState.putString(Accounts.PASSWORD, mPassword);
 		outState.putInt(Accounts.USER_COLOR, mUserColor);
@@ -370,8 +372,12 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setRestBaseURL(mRestAPIBase);
-			cb.setSearchBaseURL(mSearchAPIBase);
+			cb.setRestBaseURL(mRestBaseURL);
+			cb.setSearchBaseURL(mSearchBaseURL);
+//			cb.setOAuthAccessTokenURL(oAuthAccessTokenURL);
+//			cb.setOAuthAuthenticationURL(oAuthAuthenticationURL);
+//			cb.setOAuthAuthorizationURL(oAuthAuthorizationURL);
+//			cb.setOAuthRequestTokenURL(oAuthRequestTokenURL);
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			cb.setGZIPEnabled(enable_gzip_compressing);
@@ -390,8 +396,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			}
 			mLoggedId = user.getId();
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId)) return new Response(false, true, null);
-			ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestAPIBase,
-					mSearchAPIBase, null, Accounts.AUTH_TYPE_OAUTH);
+			ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
+					mSearchBaseURL, null, Accounts.AUTH_TYPE_OAUTH);
 			resolver.insert(Accounts.CONTENT_URI, values);
 			return new Response(true, false, null);
 		}
@@ -464,8 +470,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setRestBaseURL(mRestAPIBase);
-			cb.setSearchBaseURL(mSearchAPIBase);
+			cb.setRestBaseURL(mRestBaseURL);
+			cb.setSearchBaseURL(mSearchBaseURL);
 			cb.setGZIPEnabled(enable_gzip_compressing);
 			cb.setIgnoreSSLError(ignore_ssl_error);
 
@@ -488,7 +494,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				mLoggedId = user.getId();
 				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
-				ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestAPIBase, mSearchAPIBase,
+				ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL, mSearchBaseURL,
 						mPassword, Accounts.AUTH_TYPE_BASIC);
 				resolver.insert(Accounts.CONTENT_URI, values);
 				return new Response(false, false, true, Accounts.AUTH_TYPE_BASIC, null, null);
@@ -502,8 +508,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setRestBaseURL(mRestAPIBase);
-			cb.setSearchBaseURL(mSearchAPIBase);
+			cb.setRestBaseURL(mRestBaseURL);
+			cb.setSearchBaseURL(mSearchBaseURL);
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			cb.setGZIPEnabled(enable_gzip_compressing);
@@ -526,8 +532,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setRestBaseURL(mRestAPIBase);
-			cb.setSearchBaseURL(mSearchAPIBase);
+			cb.setRestBaseURL(mRestBaseURL);
+			cb.setSearchBaseURL(mSearchBaseURL);
 			cb.setGZIPEnabled(enable_gzip_compressing);
 			cb.setIgnoreSSLError(ignore_ssl_error);
 
@@ -542,7 +548,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			}
 
 			if (account_valid && user != null) {
-				String profile_image_url = user.getProfileImageURL().toString();
+				String profile_image_url = parseString(user.getProfileImageURL());
 				if (!mUserColorSet) {
 					analyseUserProfileColor(profile_image_url);
 				}
@@ -550,7 +556,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				mLoggedId = user.getId();
 				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
-				ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestAPIBase, mSearchAPIBase,
+				ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL, mSearchBaseURL,
 						null, Accounts.AUTH_TYPE_TWIP_O_MODE);
 				resolver.insert(Accounts.CONTENT_URI, values);
 				return new Response(false, false, true, Accounts.AUTH_TYPE_TWIP_O_MODE, null, null);
@@ -559,14 +565,19 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			return new Response(false, false, false, Accounts.AUTH_TYPE_TWIP_O_MODE, null, null);
 		}
 
+		private String parseString(Object obj) {
+			if (obj == null) return null;
+			return obj.toString();
+		}
+		
 		private Response authxAuth() {
 			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setRestBaseURL(mRestAPIBase);
-			cb.setSearchBaseURL(mSearchAPIBase);
+			cb.setRestBaseURL(mRestBaseURL);
+			cb.setSearchBaseURL(mSearchBaseURL);
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			cb.setGZIPEnabled(enable_gzip_compressing);
@@ -587,8 +598,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			mLoggedId = user.getId();
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 				return new Response(false, true, false, Accounts.AUTH_TYPE_XAUTH, null, null);
-			ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestAPIBase,
-					mSearchAPIBase, null, Accounts.AUTH_TYPE_XAUTH);
+			ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
+					mSearchBaseURL, null, Accounts.AUTH_TYPE_XAUTH);
 			resolver.insert(Accounts.CONTENT_URI, values);
 			return new Response(false, false, true, Accounts.AUTH_TYPE_XAUTH, null, null);
 

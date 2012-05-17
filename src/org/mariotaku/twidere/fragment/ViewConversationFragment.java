@@ -174,7 +174,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		ParcelableStatus status = mAdapter.findItemById(id);
+		ParcelableStatus status = mAdapter.getItem(position);
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme(SCHEME_TWIDERE);
 		builder.authority(AUTHORITY_STATUS);
@@ -193,7 +193,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		if (tag instanceof StatusViewHolder) {
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			mSelectedStatus = mAdapter.findItemById(id);
+			mSelectedStatus = mAdapter.getItem(position);
 			getSherlockActivity().startActionMode(this);
 			return true;
 		}
@@ -336,7 +336,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 				case ADD_STATUS:
 					Object obj = msg.obj;
 					if (obj instanceof Status) {
-						mAdapter.addItem(new ParcelableStatus((Status) obj, mAccountId));
+						mAdapter.add(new ParcelableStatus((Status) obj, mAccountId));
 					}
 					break;
 			}

@@ -12,15 +12,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener, OnClickListener {
 
-	private EditText mEditRestAPIBase, mEditSearchAPIBase;
+	private EditText mEditRestBaseURL, mEditSearchBaseURL, mEditUploadBaseURL, mEditoAuthAccessTokenURL, mEditoAuthenticationURL, mEditoAuthorizationURL, mEditoAuthRequestTokenURL;
 	private RadioGroup mEditAuthType;
 	private RadioButton mButtonOAuth, mButtonxAuth, mButtonBasic, mButtonTwipOMode;
 	private Button mSaveButton;
-	private String mRestAPIBase, mSearchAPIBase;
+	private String mRestBaseURL, mSearchBaseURL, mUploadBaseURL, moAuthAccessTokenURL, moAuthenticationURL, moAuthorizationURL, moAuthRequestTokenURL;
+	private TextView mAdvancedAPIConfigLabel;
 	private int mAuthType;
 
 	@Override
@@ -48,15 +50,42 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.save:
+			case R.id.save:{
 				saveEditedText();
 				Bundle bundle = new Bundle();
-				bundle.putString(Accounts.REST_API_BASE, mRestAPIBase);
-				bundle.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
+				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
+				bundle.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
 				setResult(RESULT_OK, new Intent().putExtras(bundle));
 				finish();
 				break;
+			}
+			case R.id.advanced_api_config_label:{
+				View stub_view = findViewById(R.id.stub_advanced_api_config);
+				View inflated_view = findViewById(R.id.advanced_api_config);
+				if (stub_view != null) {
+					stub_view.setVisibility(View.VISIBLE);
+					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_ic_maximized, 0, 0, 0);
+					mEditSearchBaseURL = (EditText) findViewById(R.id.search_base_url);
+					mEditSearchBaseURL.setText(mSearchBaseURL != null ? mSearchBaseURL : DEFAULT_SEARCH_BASE_URL);
+					mEditUploadBaseURL = (EditText) findViewById(R.id.upload_base_url);
+					mEditUploadBaseURL.setText(mUploadBaseURL != null ? mUploadBaseURL : DEFAULT_UPLOAD_BASE_URL);
+					mEditoAuthAccessTokenURL = (EditText) findViewById(R.id.oauth_access_token_url);
+					mEditoAuthAccessTokenURL.setText(moAuthAccessTokenURL != null ? moAuthAccessTokenURL : DEFAULT_OAUTH_ACCESS_TOKEN_URL);
+					mEditoAuthenticationURL = (EditText) findViewById(R.id.oauth_authentication_url);
+					mEditoAuthenticationURL.setText(moAuthenticationURL != null ? moAuthenticationURL : DEFAULT_OAUTH_AUTHENTICATION_URL);
+					mEditoAuthorizationURL = (EditText) findViewById(R.id.oauth_authorization_url);
+					mEditoAuthorizationURL.setText(moAuthorizationURL != null ? moAuthorizationURL : DEFAULT_OAUTH_AUTHORIZATION_URL);
+					mEditoAuthRequestTokenURL = (EditText) findViewById(R.id.oauth_request_token_url);
+					mEditoAuthRequestTokenURL.setText(moAuthRequestTokenURL != null ? moAuthRequestTokenURL : DEFAULT_OAUTH_REQUEST_TOKEN_URL);
+				} else if (inflated_view != null){
+					boolean is_visible = inflated_view.getVisibility() == View.VISIBLE;
+					int compound_res = is_visible ? R.drawable.expander_ic_maximized : R.drawable.expander_ic_minimized;
+					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(compound_res, 0, 0, 0);
+					inflated_view.setVisibility(is_visible ? View.GONE : View.VISIBLE);
+				}
+				break;
+			}
 		}
 	}
 
@@ -64,25 +93,26 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_api);
-		mEditRestAPIBase = (EditText) findViewById(R.id.rest_api_base);
-		mEditSearchAPIBase = (EditText) findViewById(R.id.search_api_base);
+		mEditRestBaseURL = (EditText) findViewById(R.id.rest_base_url);
 		mEditAuthType = (RadioGroup) findViewById(R.id.auth_type);
 		mButtonOAuth = (RadioButton) findViewById(R.id.oauth);
 		mButtonxAuth = (RadioButton) findViewById(R.id.xauth);
 		mButtonBasic = (RadioButton) findViewById(R.id.basic);
 		mButtonTwipOMode = (RadioButton) findViewById(R.id.twip_o);
+		mAdvancedAPIConfigLabel = (TextView) findViewById(R.id.advanced_api_config_label);
 		mSaveButton = (Button) findViewById(R.id.save);
 		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
 		if (bundle == null) {
 			bundle = new Bundle();
 		}
-		mRestAPIBase = bundle.getString(Accounts.REST_API_BASE);
-		mSearchAPIBase = bundle.getString(Accounts.SEARCH_API_BASE);
+		mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
+		mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
 		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
 		mEditAuthType.setOnCheckedChangeListener(this);
+		mAdvancedAPIConfigLabel.setOnClickListener(this);
 		mSaveButton.setOnClickListener(this);
-		mEditRestAPIBase.setText(mRestAPIBase != null ? mRestAPIBase : DEFAULT_REST_API_BASE);
-		mEditSearchAPIBase.setText(mSearchAPIBase != null ? mSearchAPIBase : DEFAULT_SEARCH_API_BASE);
+		mEditRestBaseURL.setText(mRestBaseURL != null ? mRestBaseURL : DEFAULT_REST_BASE_URL);
+		
 		mButtonOAuth.setChecked(mAuthType == Accounts.AUTH_TYPE_OAUTH);
 		mButtonxAuth.setChecked(mAuthType == Accounts.AUTH_TYPE_XAUTH);
 		mButtonBasic.setChecked(mAuthType == Accounts.AUTH_TYPE_BASIC);
@@ -92,20 +122,54 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		saveEditedText();
-		outState.putString(Accounts.REST_API_BASE, mRestAPIBase);
-		outState.putString(Accounts.SEARCH_API_BASE, mSearchAPIBase);
+		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
+		outState.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
 		super.onSaveInstanceState(outState);
 	}
 
 	private void saveEditedText() {
-		Editable ed = mEditRestAPIBase.getText();
-		if (ed != null) {
-			mRestAPIBase = ed.toString();
+		if (mEditRestBaseURL != null) {
+			Editable ed = mEditRestBaseURL.getText();
+			if (ed != null) {
+				mRestBaseURL = ed.toString();
+			}
 		}
-		ed = mEditSearchAPIBase.getText();
-		if (ed != null) {
-			mSearchAPIBase = ed.toString();
+		if (mEditSearchBaseURL != null) {
+			Editable ed = mEditSearchBaseURL.getText();
+			if (ed != null) {
+				mSearchBaseURL = ed.toString();
+			}
+		}
+		if (mEditUploadBaseURL != null) {
+			Editable ed = mEditUploadBaseURL.getText();
+			if (ed != null) {
+				mUploadBaseURL = ed.toString();
+			}
+		}
+		if (mEditoAuthAccessTokenURL != null) {
+			Editable ed = mEditoAuthAccessTokenURL.getText();
+			if (ed != null) {
+				moAuthAccessTokenURL = ed.toString();
+			}
+		}
+		if (mEditoAuthenticationURL != null) {
+			Editable ed = mEditoAuthenticationURL.getText();
+			if (ed != null) {
+				moAuthenticationURL = ed.toString();
+			}
+		}
+		if (mEditoAuthorizationURL != null) {
+			Editable ed = mEditoAuthorizationURL.getText();
+			if (ed != null) {
+				moAuthorizationURL = ed.toString();
+			}
+		}
+		if (mEditoAuthRequestTokenURL != null) {
+			Editable ed = mEditoAuthRequestTokenURL.getText();
+			if (ed != null) {
+				moAuthRequestTokenURL = ed.toString();
+			}
 		}
 	}
 }

@@ -5,85 +5,33 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.StatusViewHolder;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 
-public class ParcelableStatusesAdapter extends BaseAdapter {
+public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 
 	private boolean mDisplayProfileImage, mDisplayName, mMultipleAccountsActivated, mShowLastItemAsGap;
 	private final LazyImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
-	private final LayoutInflater mInflater;
-
-	private List<ParcelableStatus> mData = new ArrayList<ParcelableStatus>();
 
 	public ParcelableStatusesAdapter(Context context, LazyImageLoader loader) {
-		super();
+		super(context, R.layout.status_list_item, R.id.text);
 		mContext = context;
-		mInflater = LayoutInflater.from(mContext);
 		mImageLoader = loader;
 	}
-
-	public void addItem(ParcelableStatus item) {
-		if (mData == null) {
-			mData = new ArrayList<ParcelableStatus>();
-		}
-		if (item != null) {
-			mData.add(item);
-		}
-		notifyDataSetChanged();
-	}
-
-	public void changeData(List<ParcelableStatus> data) {
-		if (data == null) {
-			mData = new ArrayList<ParcelableStatus>();
-
-		} else {
-			mData = data;
-		}
-		notifyDataSetChanged();
-	}
-
-	public ParcelableStatus findItemById(long id) {
-		if (mData == null) return null;
-		for (ParcelableStatus status : mData) {
-			if (status.status_id == id) return status;
-		}
-		return null;
-	}
-
-	@Override
-	public int getCount() {
-		if (mData == null) return 0;
-		return mData.size();
-	}
-
-	@Override
-	public ParcelableStatus getItem(int position) {
-		return mData != null ? mData.get(position) : null;
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return mData != null ? mData.get(position).status_id : -1;
-	}
-
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
-		View view = convertView != null ? convertView : mInflater.inflate(R.layout.status_list_item, parent, false);
+		View view = super.getView(position, convertView, parent);
 
 		Object tag = view.getTag();
 		StatusViewHolder holder = null;
@@ -119,7 +67,6 @@ public class ParcelableStatusesAdapter extends BaseAdapter {
 			holder.tweet_time.setText(formatToShortTimeString(mContext, status.status_timestamp));
 			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getTypeIcon(status.is_favorite, status.location != null, status.has_media), 0);
-			holder.text.setText(status.text_plain);
 			holder.text.setTextSize(mTextSize);
 			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);

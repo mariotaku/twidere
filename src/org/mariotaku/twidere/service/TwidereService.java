@@ -631,7 +631,7 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(responses);
 		}
 
-		private class AccountResponse {
+		private static class AccountResponse {
 
 			public final long account_id, max_id;
 			public final ResponseList<twitter4j.Status> responselist;
@@ -642,6 +642,20 @@ public class TwidereService extends Service implements Constants {
 				this.responselist = responselist;
 
 			}
+		}
+		
+		private static class StoreStatusTask extends ManagedAsyncTask<Void> {
+
+			public StoreStatusTask(Context context, AsyncTaskManager manager) {
+				super(context, manager);
+			}
+
+			@Override
+			protected Void doInBackground(Object... arg0) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
 		}
 
 	}

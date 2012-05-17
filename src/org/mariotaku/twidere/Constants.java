@@ -8,7 +8,9 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
-public interface Constants {
+import twitter4j.TwitterConstants;
+
+public interface Constants extends TwitterConstants {
 
 	public static final String LOGTAG = "Twidere";
 
@@ -49,9 +51,6 @@ public interface Constants {
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
 
 	public static final String DEFAULT_OAUTH_CALLBACK = PROTOCOL_TWIDERE + "com.twitter.oauth/";
-
-	public static final String DEFAULT_REST_API_BASE = DEFAULT_PROTOCOL + "api.twitter.com/1/";
-	public static final String DEFAULT_SEARCH_API_BASE = DEFAULT_PROTOCOL + "search.twitter.com/";
 
 	public static final String SHUFFIX_SCROLL_TO_TOP = ".SCROLL_TO_TOP";
 

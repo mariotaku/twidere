@@ -76,14 +76,14 @@ public final class TweetStore implements Constants {
 		public static final String TOKEN_SECRET = "token_secret";
 
 		/**
-		 * Rest API Base of the account </br> Type: TEXT
+		 * Rest Base URL of the account </br> Type: TEXT
 		 */
-		public static final String REST_API_BASE = "rest_api_base";
+		public static final String REST_BASE_URL = "rest_api_base";
 
 		/**
-		 * Search API Base of the account </br> Type: TEXT
+		 * Search Base URL of the account </br> Type: TEXT
 		 */
-		public static final String SEARCH_API_BASE = "search_api_base";
+		public static final String SEARCH_BASE_URL = "search_api_base";
 
 		public static final String USER_COLOR = "user_color";
 
@@ -100,7 +100,7 @@ public final class TweetStore implements Constants {
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
 		public static final String[] COLUMNS = new String[] { _ID, USERNAME, USER_ID, AUTH_TYPE, BASIC_AUTH_PASSWORD,
-				OAUTH_TOKEN, TOKEN_SECRET, REST_API_BASE, SEARCH_API_BASE, PROFILE_IMAGE_URL, USER_COLOR, IS_ACTIVATED };
+				OAUTH_TOKEN, TOKEN_SECRET, REST_BASE_URL, SEARCH_BASE_URL, PROFILE_IMAGE_URL, USER_COLOR, IS_ACTIVATED };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_INT_UNIQUE,
 				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };

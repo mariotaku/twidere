@@ -162,7 +162,7 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			ParcelableStatus status = mAdapter.findItemById(id);
+			ParcelableStatus status = mAdapter.getItem(position);
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				// getStatuses(new long[] { status.account_id }, new long[] {
@@ -188,7 +188,7 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 		if (tag instanceof StatusViewHolder) {
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			mSelectedStatus = mAdapter.findItemById(id);
+			mSelectedStatus = mAdapter.getItem(position);
 			getSherlockActivity().startActionMode(this);
 			return true;
 		}
@@ -203,7 +203,10 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 	@Override
 	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
 		if (data != null) {
-			mAdapter.changeData(data);
+			mAdapter.clear();
+			for (ParcelableStatus status : data) {
+				mAdapter.add(status);
+			}
 		}
 		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
 	}

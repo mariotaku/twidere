@@ -15,7 +15,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.CursorToStatusesLoader;
-import org.mariotaku.twidere.loader.CursorToStatusesLoader.LoadProgressListener;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -53,12 +52,11 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public abstract class StatusesFragment extends BaseFragment implements OnRefreshListener,
 		LoaderCallbacks<List<ParcelableStatus>>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
-		ActionMode.Callback, LoadProgressListener {
+		ActionMode.Callback {
 
 	public ServiceInterface mServiceInterface;
 	public PullToRefreshListView mListView;
 	public ContentResolver mResolver;
-	private ProgressBar mLoadProgress;
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
 	private ParcelableStatusesAdapter mAdapter;
@@ -73,7 +71,6 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	private boolean mDisplayProfileImage, mDisplayName, mReachedBottom, mActivityFirstCreated;
 	private float mTextSize;
 	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
-	private boolean mShowLoadProgress;
 	private long mLastUpdateTime;
 
 	public abstract Uri getContentUri();
@@ -158,7 +155,6 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
 		mAdapter = new ParcelableStatusesAdapter(getSherlockActivity(), imageloader);
-		mLoadProgress = (ProgressBar) getView().findViewById(R.id.load_progress);
 		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
 		ListView list = mListView.getRefreshableView();
@@ -173,7 +169,6 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mActivityFirstCreated = true;
-		mShowLoadProgress = true;
 		// Tell the framework to try to keep this fragment around
 		// during a configuration change.
 		setRetainInstance(true);
@@ -194,11 +189,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			String table = getTableNameForContentUri(uri);
 			where = buildFilterWhereClause(table, where);
 		}
-		if (mLoader != null) {
-			mLoader.setLoadProgressListener(null);
-		}
 		mLoader = new CursorToStatusesLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
-		mLoader.setLoadProgressListener(this);
 		return mLoader;
 	}
 
@@ -210,7 +201,6 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	@Override
 	public void onDestroy() {
 		mActivityFirstCreated = true;
-		mShowLoadProgress = true;
 		super.onDestroy();
 	}
 
@@ -220,19 +210,10 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
-	public synchronized void onFinishLoading() {
-		if (mShowLoadProgress) {
-			mLoadProgress.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), android.R.anim.fade_out));
-			mLoadProgress.setVisibility(View.GONE);
-			mLoadProgress.setProgress(0);
-		}
-	}
-
-	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			ParcelableStatus status = mAdapter.findItemById(id);
+			ParcelableStatus status = mAdapter.getItem(position);
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
@@ -253,7 +234,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		if (tag instanceof StatusViewHolder) {
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			mSelectedStatus = mAdapter.findItemById(id);
+			mSelectedStatus = mAdapter.getItem(position);
 			getSherlockActivity().startActionMode(this);
 			return true;
 		}
@@ -262,12 +243,17 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 
 	@Override
 	public void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
-		mAdapter.changeData(null);
+		mAdapter.clear();
 	}
 
 	@Override
 	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
-		mAdapter.changeData(data);
+		if (data != null) {
+			mAdapter.clear();
+			for (ParcelableStatus status : data) {
+				mAdapter.add(status);
+			}
+		}
 	}
 
 	@Override
@@ -277,16 +263,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
-	public synchronized void onProgressChanged(int progress) {
-		if (mShowLoadProgress) {
-			mLoadProgress.setProgress(progress);
-		}
-	}
-
-	@Override
 	public void onRefresh() {
-
-		mShowLoadProgress = true;
 		long[] account_ids = getActivatedAccounts(getSherlockActivity());
 		mRunningTaskId = getStatuses(account_ids, null);
 
@@ -380,19 +357,9 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
-	public synchronized void onStartLoading(int total_count) {
-		if (mShowLoadProgress) {
-			mLoadProgress.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), android.R.anim.fade_in));
-			mLoadProgress.setVisibility(View.VISIBLE);
-			mLoadProgress.setMax(total_count);
-		}
-	}
-
-	@Override
 	public void onStop() {
 		mTickerStopped = true;
 		mActivityFirstCreated = false;
-		mShowLoadProgress = false;
 		super.onStop();
 	}
 

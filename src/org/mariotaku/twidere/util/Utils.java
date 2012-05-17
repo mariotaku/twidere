@@ -792,13 +792,13 @@ public final class Utils implements Constants {
 				ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
-				String rest_api_base = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_API_BASE));
-				String search_api_base = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_API_BASE));
+				String rest_api_base = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_BASE_URL));
+				String search_api_base = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_BASE_URL));
 				if (rest_api_base == null || "".equals(rest_api_base)) {
-					rest_api_base = DEFAULT_REST_API_BASE;
+					rest_api_base = DEFAULT_REST_BASE_URL;
 				}
 				if (search_api_base == null || "".equals(search_api_base)) {
-					search_api_base = DEFAULT_SEARCH_API_BASE;
+					search_api_base = DEFAULT_SEARCH_BASE_URL;
 				}
 				cb.setRestBaseURL(rest_api_base);
 				cb.setSearchBaseURL(search_api_base);
@@ -900,10 +900,10 @@ public final class Utils implements Constants {
 		values.put(Accounts.USER_COLOR, color);
 		values.put(Accounts.IS_ACTIVATED, 1);
 		if (rest_api_base != null) {
-			values.put(Accounts.REST_API_BASE, rest_api_base);
+			values.put(Accounts.REST_BASE_URL, rest_api_base);
 		}
 		if (search_api_base != null) {
-			values.put(Accounts.SEARCH_API_BASE, search_api_base);
+			values.put(Accounts.SEARCH_BASE_URL, search_api_base);
 		}
 
 		return values;
@@ -969,25 +969,6 @@ public final class Utils implements Constants {
 		activity.finish();
 		activity.overridePendingTransition(enter_anim, exit_anim);
 		activity.startActivity(activity.getIntent());
-	}
-
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
-	public static void setMenuForStatus(Context context, Menu menu, long status_id, Uri uri) {
-		ContentResolver resolver = context.getContentResolver();
-		String[] cols = Statuses.COLUMNS;
-		String where = Statuses.STATUS_ID + "=" + status_id;
-		Cursor cur = resolver.query(uri, cols, where, null, null);
-		if (cur != null && cur.getCount() > 0) {
-			cur.moveToFirst();
-			ParcelableStatus status = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
-			setMenuForStatus(context, menu, status);
-		}
-		if (cur != null) {
-			cur.close();
-		}
 	}
 
 	public static void setMenuForStatus(Context context, Menu menu, ParcelableStatus status) {

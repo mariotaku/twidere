@@ -1,115 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:padding="16dip">
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
 
-	<RelativeLayout
+	<ScrollView
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:padding="16dip">
 
-		<TextView
-			android:id="@+id/label_rest_api_base"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:singleLine="true"
-			android:text="@string/rest_api_base"
-			android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-		<EditText
-			android:id="@+id/rest_api_base"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:layout_alignParentRight="true"
-			android:layout_below="@+id/label_rest_api_base"
-			android:ems="10"
-			android:inputType="textUri"
-			android:singleLine="true"/>
-
-		<TextView
-			android:id="@+id/label_search_api_base"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:layout_below="@+id/rest_api_base"
-			android:text="@string/search_api_base"
-			android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-		<EditText
-			android:id="@+id/search_api_base"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:layout_alignParentRight="true"
-			android:layout_below="@+id/label_search_api_base"
-			android:ems="10"
-			android:inputType="textUri"
-			android:singleLine="true"/>
-
-		<TextView
-			android:id="@+id/label_auth_type"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:layout_below="@+id/search_api_base"
-			android:text="@string/auth_type"
-			android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-		<HorizontalScrollView
-			android:id="@+id/auth_type_scroll"
+		<RelativeLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:layout_alignParentRight="true"
-			android:layout_below="@+id/label_auth_type">
+			android:layout_height="wrap_content">
 
-			<RadioGroup
-				android:id="@+id/auth_type"
+			<TextView
+				android:id="@+id/label_rest_base_url"
 				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:orientation="horizontal">
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:text="@string/rest_base_url"
+				android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-				<RadioButton
-					android:id="@+id/oauth"
+			<EditText
+				android:id="@+id/rest_base_url"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentRight="true"
+				android:layout_below="@+id/label_rest_base_url"
+				android:ems="10"
+				android:inputType="textUri"
+				android:singleLine="true"/>
+
+			<TextView
+				android:id="@+id/label_auth_type"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_below="@+id/rest_base_url"
+				android:text="@string/auth_type"
+				android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+			<HorizontalScrollView
+				android:id="@+id/auth_type_scroll"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentRight="true"
+				android:layout_below="@+id/label_auth_type">
+
+				<RadioGroup
+					android:id="@+id/auth_type"
 					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="@string/oauth"/>
+					android:layout_height="match_parent"
+					android:orientation="horizontal">
 
-				<!-- This auth method is not avaliable for now -->
+					<RadioButton
+						android:id="@+id/oauth"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="@string/oauth"/>
 
-				<RadioButton
-					android:id="@+id/xauth"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="@string/xauth"
-					android:visibility="gone"/>
+					<!-- This auth method is not avaliable for now -->
 
-				<RadioButton
-					android:id="@+id/basic"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="@string/basic"/>
+					<RadioButton
+						android:id="@+id/xauth"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="@string/xauth"
+						android:visibility="gone"/>
 
-				<RadioButton
-					android:id="@+id/twip_o"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="@string/twip_o"/>
-			</RadioGroup>
-		</HorizontalScrollView>
+					<RadioButton
+						android:id="@+id/basic"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="@string/basic"/>
 
-		<Button
-			android:id="@+id/save"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_below="@+id/auth_type_scroll"
-			android:minHeight="48dip"
-			android:text="@android:string/ok"/>
-	</RelativeLayout>
+					<RadioButton
+						android:id="@+id/twip_o"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="@string/twip_o"/>
+				</RadioGroup>
+			</HorizontalScrollView>
 
-</ScrollView>
+			<TextView
+				android:id="@+id/advanced_api_config_label"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/auth_type_scroll"
+				android:background="@drawable/list_selector_holo_light"
+				android:drawableLeft="@drawable/expander_ic_minimized"
+				android:drawablePadding="4dp"
+				android:gravity="center_vertical"
+				android:paddingBottom="4dp"
+				android:paddingTop="4dp"
+				android:text="@string/advanced"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<ViewStub
+				android:id="@+id/stub_advanced_api_config"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/advanced_api_config_label"
+				android:inflatedId="@+id/advanced_api_config"
+				android:layout="@layout/edit_api_advanced_fields"
+				android:visibility="gone"/>
+		</RelativeLayout>
+	</ScrollView>
+
+	<Button
+		android:id="@+id/save"
+		style="?android:attr/buttonStyleSmall"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:background="@drawable/list_selector_holo_light"
+		android:gravity="center"
+		android:minHeight="48dp"
+		android:text="@android:string/ok"/>
+
+</LinearLayout>
