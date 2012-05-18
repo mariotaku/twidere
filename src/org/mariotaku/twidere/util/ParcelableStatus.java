@@ -164,7 +164,7 @@ public class ParcelableStatus implements Parcelable {
 	public int describeContents() {
 		return hashCode();
 	}
-	
+
 	@Override
 	public String toString() {
 		return text_plain;

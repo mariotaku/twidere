@@ -43,7 +43,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			result = database.delete(table, selection, selectionArgs);
 		}
 		if (result > 0) {
-			notifyForUpdatedUri(uri);
+			onDatabaseUpdated(uri);
 		}
 		return result;
 	}
@@ -58,20 +58,13 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
 		long row_id = database.insert(table, null, values);
-		notifyForUpdatedUri(uri);
+		onDatabaseUpdated(uri);
 		return Uri.withAppendedPath(uri, String.valueOf(row_id));
 	}
 
 	@Override
 	public boolean onCreate() {
-		Context context = getContext();
-		int db_version = DATABASES_VERSION;
-		try {
-			db_version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
-		} catch (NameNotFoundException e) {
-			// This should not happen.
-		}
-		database = new DatabaseHelper(getContext(), DATABASES_NAME, db_version).getWritableDatabase();
+		database = new DatabaseHelper(getContext(), DATABASES_NAME, DATABASES_VERSION).getWritableDatabase();
 		return database != null;
 	}
 
@@ -111,25 +104,17 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			result = database.update(table, values, selection, selectionArgs);
 		}
 		if (result > 0) {
-			notifyForUpdatedUri(uri);
+			onDatabaseUpdated(uri);
 		}
 		return result;
 	}
 
-	private void notifyForUpdatedUri(Uri uri) {
+	private void onDatabaseUpdated(Uri uri) {
 		Context context = getContext();
 		switch (getTableId(uri)) {
-			case URI_STATUSES:
-				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
-						true));
-				break;
 			case URI_ACCOUNTS:
 				clearAccountColor();
 				context.sendBroadcast(new Intent(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED));
-				break;
-			case URI_MENTIONS:
-				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED)
-						.putExtra(INTENT_KEY_SUCCEED, true));
 				break;
 			default:
 				return;
@@ -139,7 +124,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
 	}
 
-	private class DatabaseHelper extends SQLiteOpenHelper {
+	public static class DatabaseHelper extends SQLiteOpenHelper {
 
 		private static final int FIELD_TYPE_NULL = 0;
 

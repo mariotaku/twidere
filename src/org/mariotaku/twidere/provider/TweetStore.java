@@ -233,6 +233,8 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String ACCOUNT_ID = "account_id";
 
+		public static final String COMPARE_ID = "compare_id";
+		
 		/**
 		 * Status content.<br>
 		 * Type: TEXT
@@ -321,14 +323,14 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String STATUS_TIMESTAMP = "status_timestamp";
 
-		public static final String DEFAULT_SORT_ORDER = STATUS_ID + " DESC";
+		public static final String DEFAULT_SORT_ORDER = COMPARE_ID + " DESC";
 
-		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
+		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, COMPARE_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
 				TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID,
 				IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID,
 				RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, IS_RETWEET, IS_FAVORITE, HAS_MEDIA, IS_PROTECTED, IS_GAP };
 
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT_UNIQUE, TYPE_INT,
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT_UNIQUE, TYPE_INT, TYPE_INT,
 				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
 				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN,
 				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };

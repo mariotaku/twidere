@@ -17,10 +17,9 @@ public class HomeTimelineFragment extends StatusesFragment {
 			String action = intent.getAction();
 			if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
 				mListView.onRefreshComplete();
-				if (intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
-					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
-				}
 			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
+			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if ((HomeTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
 				if (mListView != null) {
@@ -39,6 +38,7 @@ public class HomeTimelineFragment extends StatusesFragment {
 		super.onStart();
 		IntentFilter filter = new IntentFilter(BROADCAST_HOME_TIMELINE_REFRESHED);
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
 		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		if (getSherlockActivity() != null) {
 			getSherlockActivity().registerReceiver(mStatusReceiver, filter);

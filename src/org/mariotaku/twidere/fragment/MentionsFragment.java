@@ -17,10 +17,9 @@ public class MentionsFragment extends StatusesFragment {
 			String action = intent.getAction();
 			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
 				mListView.onRefreshComplete();
-				if (intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
-					getLoaderManager().restartLoader(0, null, MentionsFragment.this);
-				}
 			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
+			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if ((MentionsFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
 				if (mListView != null) {
@@ -39,6 +38,7 @@ public class MentionsFragment extends StatusesFragment {
 		super.onStart();
 		IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
 		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		if (getSherlockActivity() != null) {
 			getSherlockActivity().registerReceiver(mStatusReceiver, filter);

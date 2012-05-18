@@ -12,16 +12,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.TextView;
 
 public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener, OnClickListener {
 
-	private EditText mEditRestBaseURL, mEditSearchBaseURL, mEditUploadBaseURL, mEditoAuthAccessTokenURL, mEditoAuthenticationURL, mEditoAuthorizationURL, mEditoAuthRequestTokenURL;
+	private EditText mEditRestBaseURL, mEditSearchBaseURL, mEditUploadBaseURL, mEditoAuthAccessTokenURL,
+			mEditoAuthenticationURL, mEditoAuthorizationURL, mEditoAuthRequestTokenURL;
 	private RadioGroup mEditAuthType;
 	private RadioButton mButtonOAuth, mButtonxAuth, mButtonBasic, mButtonTwipOMode;
 	private Button mSaveButton;
-	private String mRestBaseURL, mSearchBaseURL, mUploadBaseURL, moAuthAccessTokenURL, moAuthenticationURL, moAuthorizationURL, moAuthRequestTokenURL;
+	private String mRestBaseURL, mSearchBaseURL, mUploadBaseURL, moAuthAccessTokenURL, moAuthenticationURL,
+			moAuthorizationURL, moAuthRequestTokenURL;
 	private TextView mAdvancedAPIConfigLabel;
 	private int mAuthType;
 
@@ -50,7 +52,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.save:{
+			case R.id.save: {
 				saveEditedText();
 				Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
@@ -60,25 +62,30 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 				finish();
 				break;
 			}
-			case R.id.advanced_api_config_label:{
+			case R.id.advanced_api_config_label: {
 				View stub_view = findViewById(R.id.stub_advanced_api_config);
 				View inflated_view = findViewById(R.id.advanced_api_config);
 				if (stub_view != null) {
 					stub_view.setVisibility(View.VISIBLE);
-					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_ic_maximized, 0, 0, 0);
+					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_ic_maximized,
+							0, 0, 0);
 					mEditSearchBaseURL = (EditText) findViewById(R.id.search_base_url);
 					mEditSearchBaseURL.setText(mSearchBaseURL != null ? mSearchBaseURL : DEFAULT_SEARCH_BASE_URL);
 					mEditUploadBaseURL = (EditText) findViewById(R.id.upload_base_url);
 					mEditUploadBaseURL.setText(mUploadBaseURL != null ? mUploadBaseURL : DEFAULT_UPLOAD_BASE_URL);
 					mEditoAuthAccessTokenURL = (EditText) findViewById(R.id.oauth_access_token_url);
-					mEditoAuthAccessTokenURL.setText(moAuthAccessTokenURL != null ? moAuthAccessTokenURL : DEFAULT_OAUTH_ACCESS_TOKEN_URL);
+					mEditoAuthAccessTokenURL.setText(moAuthAccessTokenURL != null ? moAuthAccessTokenURL
+							: DEFAULT_OAUTH_ACCESS_TOKEN_URL);
 					mEditoAuthenticationURL = (EditText) findViewById(R.id.oauth_authentication_url);
-					mEditoAuthenticationURL.setText(moAuthenticationURL != null ? moAuthenticationURL : DEFAULT_OAUTH_AUTHENTICATION_URL);
+					mEditoAuthenticationURL.setText(moAuthenticationURL != null ? moAuthenticationURL
+							: DEFAULT_OAUTH_AUTHENTICATION_URL);
 					mEditoAuthorizationURL = (EditText) findViewById(R.id.oauth_authorization_url);
-					mEditoAuthorizationURL.setText(moAuthorizationURL != null ? moAuthorizationURL : DEFAULT_OAUTH_AUTHORIZATION_URL);
+					mEditoAuthorizationURL.setText(moAuthorizationURL != null ? moAuthorizationURL
+							: DEFAULT_OAUTH_AUTHORIZATION_URL);
 					mEditoAuthRequestTokenURL = (EditText) findViewById(R.id.oauth_request_token_url);
-					mEditoAuthRequestTokenURL.setText(moAuthRequestTokenURL != null ? moAuthRequestTokenURL : DEFAULT_OAUTH_REQUEST_TOKEN_URL);
-				} else if (inflated_view != null){
+					mEditoAuthRequestTokenURL.setText(moAuthRequestTokenURL != null ? moAuthRequestTokenURL
+							: DEFAULT_OAUTH_REQUEST_TOKEN_URL);
+				} else if (inflated_view != null) {
 					boolean is_visible = inflated_view.getVisibility() == View.VISIBLE;
 					int compound_res = is_visible ? R.drawable.expander_ic_maximized : R.drawable.expander_ic_minimized;
 					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(compound_res, 0, 0, 0);
@@ -112,7 +119,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		mAdvancedAPIConfigLabel.setOnClickListener(this);
 		mSaveButton.setOnClickListener(this);
 		mEditRestBaseURL.setText(mRestBaseURL != null ? mRestBaseURL : DEFAULT_REST_BASE_URL);
-		
+
 		mButtonOAuth.setChecked(mAuthType == Accounts.AUTH_TYPE_OAUTH);
 		mButtonxAuth.setChecked(mAuthType == Accounts.AUTH_TYPE_XAUTH);
 		mButtonBasic.setChecked(mAuthType == Accounts.AUTH_TYPE_BASIC);

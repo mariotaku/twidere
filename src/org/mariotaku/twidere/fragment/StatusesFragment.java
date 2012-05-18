@@ -35,14 +35,12 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
@@ -213,7 +211,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			ParcelableStatus status = mAdapter.getItem(position);
+			ParcelableStatus status = mAdapter.findItem(id);
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
@@ -234,7 +232,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		if (tag instanceof StatusViewHolder) {
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			mSelectedStatus = mAdapter.getItem(position);
+			mSelectedStatus = mAdapter.findItem(id);
 			getSherlockActivity().startActionMode(this);
 			return true;
 		}

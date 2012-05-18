@@ -621,7 +621,6 @@ public final class Utils implements Constants {
 		return -1;
 	}
 
-	@Deprecated
 	public static long getRetweetId(Context context, long status_id) {
 		String[] cols = new String[] { Statuses.RETWEET_ID };
 		String where = Statuses.STATUS_ID + "=" + status_id;
@@ -923,6 +922,7 @@ public final class Utils implements Constants {
 		final ContentValues values = new ContentValues();
 		final int is_retweet = status.isRetweet() ? 1 : 0;
 		final Status retweeted_status = status.getRetweetedStatus();
+		values.put(Statuses.COMPARE_ID, retweeted_status == null ? status.getId() : retweeted_status.getId());
 		if (is_retweet == 1 && retweeted_status != null) {
 			final User retweet_user = status.getUser();
 			values.put(Statuses.RETWEET_ID, status.getId());
@@ -1067,4 +1067,22 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void notifyForUpdatedUri(Context context, Uri uri) {
+		switch (getTableId(uri)) {
+			case URI_STATUSES:
+				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
+						true));
+				break;
+			case URI_MENTIONS:
+				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED)
+						.putExtra(INTENT_KEY_SUCCEED, true));
+				break;
+			default:
+				return;
+		}
+		SharedPreferences preferences = context.getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE);
+		preferences.edit().putLong(getTableNameForContentUri(uri), System.currentTimeMillis()).commit();
+		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
+	}
+	
 }

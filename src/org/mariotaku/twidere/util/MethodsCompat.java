@@ -1,14 +1,11 @@
 package org.mariotaku.twidere.util;
 
-import java.util.Collection;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Paint;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 
 public class MethodsCompat {
 

@@ -15,15 +15,11 @@ public class RoundCorneredImageView extends ImageView {
 	private Path mPath = new Path();
 
 	public RoundCorneredImageView(Context context) {
-		super(context);
-		init();
-		createPath();
+		this(context, null);
 	}
 
 	public RoundCorneredImageView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init();
-		createPath();
+		this(context, attrs, 0);
 	}
 
 	public RoundCorneredImageView(Context context, AttributeSet attrs, int defStyle) {

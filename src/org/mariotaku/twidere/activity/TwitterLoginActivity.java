@@ -142,12 +142,12 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.sign_up:{
+			case R.id.sign_up: {
 				Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(TWITTER_SIGNUP_URL));
 				startActivity(intent);
 				break;
 			}
-			case R.id.sign_in:{
+			case R.id.sign_in: {
 				saveEditedText();
 				if (mTask != null) {
 					mTask.cancel(true);
@@ -156,7 +156,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				mTask.execute();
 				break;
 			}
-			case R.id.set_color:{
+			case R.id.set_color: {
 				Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
 				Bundle bundle = new Bundle();
 				bundle.putInt(Accounts.USER_COLOR, mUserColor);
@@ -374,10 +374,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestBaseURL);
 			cb.setSearchBaseURL(mSearchBaseURL);
-//			cb.setOAuthAccessTokenURL(oAuthAccessTokenURL);
-//			cb.setOAuthAuthenticationURL(oAuthAuthenticationURL);
-//			cb.setOAuthAuthorizationURL(oAuthAuthorizationURL);
-//			cb.setOAuthRequestTokenURL(oAuthRequestTokenURL);
+			// cb.setOAuthAccessTokenURL(oAuthAccessTokenURL);
+			// cb.setOAuthAuthenticationURL(oAuthAuthenticationURL);
+			// cb.setOAuthAuthorizationURL(oAuthAuthorizationURL);
+			// cb.setOAuthRequestTokenURL(oAuthRequestTokenURL);
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			cb.setGZIPEnabled(enable_gzip_compressing);
@@ -565,11 +565,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			return new Response(false, false, false, Accounts.AUTH_TYPE_TWIP_O_MODE, null, null);
 		}
 
-		private String parseString(Object obj) {
-			if (obj == null) return null;
-			return obj.toString();
-		}
-		
 		private Response authxAuth() {
 			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
@@ -620,6 +615,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			}
 			mAuthType = Accounts.AUTH_TYPE_OAUTH;
 			return authOAuth();
+		}
+
+		private String parseString(Object obj) {
+			if (obj == null) return null;
+			return obj.toString();
 		}
 
 		private class Response {
