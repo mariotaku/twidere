@@ -137,13 +137,13 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mAdapter = new HomeTabsAdapter(this, getSupportFragmentManager());
-		mAdapter.addTab(HomeTimelineFragment.class, tab_display_label ? getString(R.string.home) : null,
+		mAdapter.addTab(HomeTimelineFragment.class, null, tab_display_label ? getString(R.string.home) : null,
 				R.drawable.ic_tab_home);
-		mAdapter.addTab(MentionsFragment.class, tab_display_label ? getString(R.string.mentions) : null,
+		mAdapter.addTab(MentionsFragment.class, null, tab_display_label ? getString(R.string.mentions) : null,
 				R.drawable.ic_tab_connect);
-		mAdapter.addTab(DiscoverFragment.class, tab_display_label ? getString(R.string.discover) : null,
+		mAdapter.addTab(DiscoverFragment.class, null, tab_display_label ? getString(R.string.discover) : null,
 				R.drawable.ic_tab_discover);
-		mAdapter.addTab(DashboardFragment.class, tab_display_label ? getString(R.string.me) : null,
+		mAdapter.addTab(DashboardFragment.class, null, tab_display_label ? getString(R.string.me) : null,
 				R.drawable.ic_tab_me);
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOffscreenPageLimit(3);
@@ -175,7 +175,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 				startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
 				break;
 			case MENU_SETTINGS:
-				startActivity(new Intent(INTENT_ACTION_GLOBAL_SETTINGS));
+				startActivity(new Intent(INTENT_ACTION_SETTINGS));
 				break;
 		}
 		return super.onOptionsItemSelected(item);

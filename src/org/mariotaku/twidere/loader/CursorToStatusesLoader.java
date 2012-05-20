@@ -1,8 +1,5 @@
 package org.mariotaku.twidere.loader;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.StatusesCursorIndices;
@@ -12,7 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 
-public class CursorToStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>> implements Constants{
+public class CursorToStatusesLoader extends AsyncTaskLoader<ParcelableStatus[]> implements Constants {
 
 	private final Uri mUri;
 	private final String[] mProjection;
@@ -31,14 +28,14 @@ public class CursorToStatusesLoader extends AsyncTaskLoader<List<ParcelableStatu
 	}
 
 	@Override
-	public List<ParcelableStatus> loadInBackground() {
+	public ParcelableStatus[] loadInBackground() {
 		Cursor cursor = getContext().getContentResolver().query(mUri, mProjection, mSelection, mSelectionArgs,
 				mSortOrder);
 		cursor.moveToFirst();
 		final StatusesCursorIndices indices = new StatusesCursorIndices(cursor);
-		final List<ParcelableStatus> result = new ArrayList<ParcelableStatus>();
+		final ParcelableStatus[] result = new ParcelableStatus[cursor.getCount()];
 		while (!cursor.isAfterLast()) {
-			result.add(new ParcelableStatus(cursor, indices));
+			result[cursor.getPosition()] = new ParcelableStatus(cursor, indices);
 			cursor.moveToNext();
 		}
 		cursor.close();

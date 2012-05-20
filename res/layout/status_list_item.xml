@@ -70,7 +70,7 @@
 		android:layout_centerInParent="true"
 		android:text="@string/tap_to_load_more"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="?android:attr/textColorSecondary"
+		android:textColor="#606060"
 		android:textStyle="bold"
 		android:visibility="gone"/>
 

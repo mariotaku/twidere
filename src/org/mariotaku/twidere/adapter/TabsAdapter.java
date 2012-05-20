@@ -6,6 +6,7 @@ import org.mariotaku.twidere.activity.HomeActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -24,12 +25,12 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 		mTabsInfo.clear();
 	}
 
-	public void addTab(Class<? extends Fragment> cls, String name, Integer icon) {
+	public void addTab(Class<? extends Fragment> cls, Bundle args, String name, Integer icon) {
 
 		if (cls == null) throw new IllegalArgumentException("Fragment cannot be null!");
 		if (name == null && icon == null)
 			throw new IllegalArgumentException("You must specify a name or icon for this tab!");
-		mTabsInfo.add(new TabInfo(name, icon, cls));
+		mTabsInfo.add(new TabInfo(name, icon, cls, args));
 		notifyDataSetChanged();
 	}
 
@@ -45,7 +46,9 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	@Override
 	public Fragment getItem(int position) {
-		return Fragment.instantiate(mContext, mTabsInfo.get(position).cls.getName());
+		Fragment fragment = Fragment.instantiate(mContext, mTabsInfo.get(position).cls.getName());
+		fragment.setArguments(mTabsInfo.get(position).args);
+		return fragment;
 	}
 
 	@Override
@@ -66,16 +69,18 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	private class TabInfo {
 
-		private String name;
-		private Integer icon;
-		private Class<? extends Fragment> cls;
+		private final String name;
+		private final Integer icon;
+		private final Class<? extends Fragment> cls;
+		private final Bundle args;
 
-		public TabInfo(String name, Integer icon, Class<? extends Fragment> cls) {
+		public TabInfo(String name, Integer icon, Class<? extends Fragment> cls, Bundle args) {
 			if (name == null && icon == null)
 				throw new IllegalArgumentException("You must specify a name or icon for this tab!");
 			this.name = name;
 			this.icon = icon;
 			this.cls = cls;
+			this.args = args;
 
 		}
 	}

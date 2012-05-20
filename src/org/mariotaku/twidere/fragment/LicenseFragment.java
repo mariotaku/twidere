@@ -45,5 +45,10 @@ public class LicenseFragment extends WebViewFragment {
 			mActivity.setTitle(view.getTitle());
 			super.onPageFinished(view, url);
 		}
+
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			return true;
+		}
 	}
 }

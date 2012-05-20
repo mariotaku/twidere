@@ -17,7 +17,7 @@ import android.provider.Settings.SettingNotFoundException;
 import com.actionbarsherlock.view.MenuItem;
 
 @SuppressWarnings("deprecation")
-public class GlobalSettingsActivity extends BasePreferenceActivity implements OnPreferenceChangeListener,
+public class SettingsActivity extends BasePreferenceActivity implements OnPreferenceChangeListener,
 		OnPreferenceClickListener {
 
 	@Override
@@ -25,7 +25,7 @@ public class GlobalSettingsActivity extends BasePreferenceActivity implements On
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
-		addPreferencesFromResource(R.xml.global_settings);
+		addPreferencesFromResource(R.xml.settings);
 		findPreference(PREFERENCE_KEY_DARK_THEME).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_KEY_CLEAR_DATABASES).setOnPreferenceClickListener(this);
 	}

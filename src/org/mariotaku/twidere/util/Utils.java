@@ -17,7 +17,6 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.service.TwidereService;
 
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
@@ -34,13 +33,10 @@ import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.TwipOModeAuthorization;
 import twitter4j.conf.ConfigurationBuilder;
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -63,7 +59,6 @@ import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
@@ -72,8 +67,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 public final class Utils implements Constants {
-
-	private static HashMap<Context, ServiceBinder> mConnectionMap = new HashMap<Context, ServiceBinder>();
 
 	private static UriMatcher CONTENT_PROVIDER_URI_MATCHER;
 
@@ -96,24 +89,6 @@ public final class Utils implements Constants {
 	private static final String IMAGE_URL_PATTERN = "href=\\s*[\\\"'](http(s?):\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp))[\\\"']\\s*";
 
 	private static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
-
-	public static ServiceToken bindToService(Context context) {
-
-		return bindToService(context, null);
-	}
-
-	public static ServiceToken bindToService(Context context, ServiceConnection callback) {
-
-		ContextWrapper cw = new ContextWrapper(context);
-		cw.startService(new Intent(cw, TwidereService.class));
-		ServiceBinder sb = new ServiceBinder(callback);
-		if (cw.bindService(new Intent(cw, TwidereService.class), sb, 0)) {
-			mConnectionMap.put(cw, sb);
-			return new ServiceToken(cw);
-		}
-		Log.e(LOGTAG, "Failed to bind to service");
-		return null;
-	}
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
 		long[] account_ids = getActivatedAccounts(context);
@@ -919,10 +894,11 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues makeStatusesContentValues(Status status, long account_id) {
+		if (status == null) return null;
 		final ContentValues values = new ContentValues();
+		values.put(Statuses.SORT_ID, status.getId());
 		final int is_retweet = status.isRetweet() ? 1 : 0;
 		final Status retweeted_status = status.getRetweetedStatus();
-		values.put(Statuses.COMPARE_ID, retweeted_status == null ? status.getId() : retweeted_status.getId());
 		if (is_retweet == 1 && retweeted_status != null) {
 			final User retweet_user = status.getUser();
 			values.put(Statuses.RETWEET_ID, status.getId());
@@ -960,6 +936,24 @@ public final class Utils implements Constants {
 		values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
 		values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
 		return values;
+	}
+
+	public static void notifyForUpdatedUri(Context context, Uri uri) {
+		switch (getTableId(uri)) {
+			case URI_STATUSES:
+				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
+						true));
+				break;
+			case URI_MENTIONS:
+				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED)
+						.putExtra(INTENT_KEY_SUCCEED, true));
+				break;
+			default:
+				return;
+		}
+		SharedPreferences preferences = context.getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE);
+		preferences.edit().putLong(getTableNameForContentUri(uri), System.currentTimeMillis()).commit();
+		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
 	}
 
 	public static void restartActivity(Activity activity, boolean animation) {
@@ -1026,63 +1020,4 @@ public final class Utils implements Constants {
 		toast.show();
 	}
 
-	public static void unbindFromService(ServiceToken token) {
-
-		if (token == null) {
-			Log.e(LOGTAG, "Trying to unbind with null token");
-			return;
-		}
-		ContextWrapper wrapper = token.wrapped_context;
-		ServiceBinder binder = mConnectionMap.remove(wrapper);
-		if (binder == null) {
-			Log.e(LOGTAG, "Trying to unbind for unknown Context");
-			return;
-		}
-		wrapper.unbindService(binder);
-	}
-
-	private static class ServiceBinder implements ServiceConnection {
-
-		private ServiceConnection mCallback;
-
-		public ServiceBinder(ServiceConnection callback) {
-
-			mCallback = callback;
-		}
-
-		@Override
-		public void onServiceConnected(ComponentName className, android.os.IBinder service) {
-
-			if (mCallback != null) {
-				mCallback.onServiceConnected(className, service);
-			}
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName className) {
-
-			if (mCallback != null) {
-				mCallback.onServiceDisconnected(className);
-			}
-		}
-	}
-
-	public static void notifyForUpdatedUri(Context context, Uri uri) {
-		switch (getTableId(uri)) {
-			case URI_STATUSES:
-				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
-						true));
-				break;
-			case URI_MENTIONS:
-				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED)
-						.putExtra(INTENT_KEY_SUCCEED, true));
-				break;
-			default:
-				return;
-		}
-		SharedPreferences preferences = context.getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE);
-		preferences.edit().putLong(getTableNameForContentUri(uri), System.currentTimeMillis()).commit();
-		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
-	}
-	
 }

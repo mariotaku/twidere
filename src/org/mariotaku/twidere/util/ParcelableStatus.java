@@ -33,7 +33,7 @@ public class ParcelableStatus implements Parcelable {
 		}
 	};
 
-	public long retweet_id, retweeted_by_id, status_id, account_id, user_id, status_timestamp, retweet_count,
+	public long retweet_id, retweeted_by_id, sort_id, status_id, account_id, user_id, status_timestamp, retweet_count,
 			in_reply_to_status_id, in_reply_to_user_id;
 
 	public boolean is_gap, is_retweet, is_favorite, is_protected, has_media;
@@ -56,11 +56,11 @@ public class ParcelableStatus implements Parcelable {
 		}
 	};
 
-	public static final Comparator<ParcelableStatus> ID_COMPARATOR = new Comparator<ParcelableStatus>() {
+	public static final Comparator<ParcelableStatus> SORT_ID_COMPARATOR = new Comparator<ParcelableStatus>() {
 
 		@Override
 		public int compare(ParcelableStatus object1, ParcelableStatus object2) {
-			long diff = object1.status_id - object2.status_id;
+			long diff = object1.sort_id - object2.sort_id;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 			return (int) diff;
@@ -70,6 +70,7 @@ public class ParcelableStatus implements Parcelable {
 	public ParcelableStatus(Cursor cursor, StatusesCursorIndices indices) {
 		retweet_id = cursor.getLong(indices.retweet_id);
 		retweeted_by_id = cursor.getLong(indices.retweeted_by_id);
+		sort_id = cursor.getLong(indices.sort_id);
 		status_id = cursor.getLong(indices.status_id);
 		account_id = cursor.getLong(indices.account_id);
 		user_id = cursor.getLong(indices.user_id);
@@ -97,6 +98,7 @@ public class ParcelableStatus implements Parcelable {
 	public ParcelableStatus(Parcel in) {
 		retweet_id = in.readLong();
 		retweeted_by_id = in.readLong();
+		sort_id = in.readLong();
 		status_id = in.readLong();
 		account_id = in.readLong();
 		user_id = in.readLong();
@@ -112,7 +114,7 @@ public class ParcelableStatus implements Parcelable {
 		retweeted_by_name = in.readString();
 		retweeted_by_screen_name = in.readString();
 		text = Html.fromHtml(in.readString());
-		text_plain = text.toString();
+		text_plain = String.valueOf(text);
 		name = in.readString();
 		screen_name = in.readString();
 		in_reply_to_screen_name = in.readString();
@@ -123,8 +125,10 @@ public class ParcelableStatus implements Parcelable {
 
 	public ParcelableStatus(Status status, long status_account_id) {
 
+		sort_id = status.getId();
 		is_retweet = status.isRetweet();
 		final Status retweeted_status = status.getRetweetedStatus();
+		
 		if (is_retweet && retweeted_status != null) {
 			final User retweet_user = status.getUser();
 			retweet_id = status.getId();
@@ -148,7 +152,7 @@ public class ParcelableStatus implements Parcelable {
 			status_timestamp = status.getCreatedAt().getTime();
 		}
 		text = getSpannedStatusText(status, account_id);
-		text_plain = text.toString();
+		text_plain = String.valueOf(text);
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();
 		in_reply_to_status_id = status.getInReplyToStatusId();
@@ -174,6 +178,7 @@ public class ParcelableStatus implements Parcelable {
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeLong(retweet_id);
 		out.writeLong(retweeted_by_id);
+		out.writeLong(sort_id);
 		out.writeLong(status_id);
 		out.writeLong(account_id);
 		out.writeLong(user_id);

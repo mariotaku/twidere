@@ -6,6 +6,7 @@ import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.FastParcelableStatusesAdapter;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.UserTimelineLoader;
@@ -39,7 +40,7 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 	private ServiceInterface mServiceInterface;
 	private ContentResolver mResolver;
 	private ListView mListView;
-	private ParcelableStatusesAdapter mAdapter;
+	private FastParcelableStatusesAdapter mAdapter;
 
 	private boolean mDisplayProfileImage, mDisplayName;
 	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
@@ -124,7 +125,7 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
-		mAdapter = new ParcelableStatusesAdapter(getSherlockActivity(), imageloader);
+		mAdapter = new FastParcelableStatusesAdapter(getSherlockActivity(), imageloader);
 		mListView = getListView();
 		setListAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
@@ -202,12 +203,7 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 
 	@Override
 	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
-		if (data != null) {
-			mAdapter.clear();
-			for (ParcelableStatus status : data) {
-				mAdapter.add(status);
-			}
-		}
+		mAdapter.setData(data);
 		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
 	}
 

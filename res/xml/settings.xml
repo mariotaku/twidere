@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	android:key="global_settings"
-	android:title="@string/global_settings">
+	android:title="@string/settings">
 
 	<PreferenceCategory
 		android:key="cat_appearance"

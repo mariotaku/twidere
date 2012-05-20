@@ -7,7 +7,7 @@ import org.mariotaku.twidere.fragment.BaseFragment;
 import org.mariotaku.twidere.fragment.DraftsFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
-import org.mariotaku.twidere.fragment.UserTimelineFragment;
+import org.mariotaku.twidere.fragment.UserFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
 
@@ -81,7 +81,7 @@ public class LinkHandlerActivity extends BaseActivity {
 					break;
 				}
 				case CODE_USER: {
-					fragment = new UserTimelineFragment();
+					fragment = new UserFragment();
 					String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 					bundle = new Bundle();

@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 
-public class MentionsFragment extends StatusesFragment {
+public class MentionsFragment extends StatusesListFragment {
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 

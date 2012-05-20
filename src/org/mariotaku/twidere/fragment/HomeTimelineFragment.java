@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 
-public class HomeTimelineFragment extends StatusesFragment {
+public class HomeTimelineFragment extends StatusesListFragment {
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 

@@ -584,20 +584,12 @@ public class TwidereService extends Service implements Constants {
 			private final List<AccountResponse> responses;
 			private final Context context;
 			private final Uri uri;
-			
+
 			public StoreStatusTask(Context context, AsyncTaskManager manager, List<AccountResponse> result, Uri uri) {
 				super(context, manager);
-				this.responses = result;
+				responses = result;
 				this.context = context;
 				this.uri = uri;
-			}
-
-			@Override
-			protected void onPostExecute(Boolean succeed) {
-				if (succeed) {
-					notifyForUpdatedUri(context, uri);
-				}
-				super.onPostExecute(succeed);
 			}
 
 			@Override
@@ -608,7 +600,8 @@ public class TwidereService extends Service implements Constants {
 				for (AccountResponse response : responses) {
 					long account_id = response.account_id;
 					ResponseList<twitter4j.Status> statuses = response.responselist;
-					Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id, null, null);
+					Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id, null,
+							null);
 					boolean no_items_before = false;
 					if (cur != null) {
 						no_items_before = cur.getCount() <= 0;
@@ -626,13 +619,12 @@ public class TwidereService extends Service implements Constants {
 							continue;
 						}
 						final User user = status.getUser();
-						final twitter4j.Status retweeted_status = status.getRetweetedStatus();
 						final long user_id = user.getId();
-						final long compare_id = retweeted_status == null ? status.getId() : retweeted_status.getId();
+						final long compare_id = status.getId();
 						resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + user_id, null);
 						resolver.insert(CachedUsers.CONTENT_URI, makeCachedUsersContentValues(user));
 
-						if (!status_ids.contains(compare_id)){
+						if (!status_ids.contains(compare_id)) {
 							if (compare_id < min_id || min_id == -1) {
 								min_id = compare_id;
 							}
@@ -670,12 +662,20 @@ public class TwidereService extends Service implements Constants {
 						values.put(Statuses.IS_GAP, 1);
 						StringBuilder where = new StringBuilder();
 						where.append(Statuses.ACCOUNT_ID + "=" + account_id);
-						where.append(" AND " + Statuses.COMPARE_ID + "=" + min_id);
+						where.append(" AND " + Statuses.SORT_ID + "=" + min_id);
 						resolver.update(uri, values, where.toString(), null);
 					}
 					succeed = true;
 				}
 				return succeed;
+			}
+
+			@Override
+			protected void onPostExecute(Boolean succeed) {
+				if (succeed) {
+					notifyForUpdatedUri(context, uri);
+				}
+				super.onPostExecute(succeed);
 			}
 
 		}

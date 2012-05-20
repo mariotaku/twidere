@@ -53,7 +53,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 
-	private String mRestBaseURL, mSearchBaseURL, mUsername, mPassword;
+	private String mRestBaseURL, mSearchBaseURL, mUploadBaseURL, mOAuthAccessTokenURL, mOAuthAuthenticationURL,
+			mOAuthAuthorizationURL, mOAuthRequestTokenURL;
+	private String mUsername, mPassword;
 
 	private int mAuthType, mUserColor;
 
@@ -95,6 +97,12 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 					if (bundle != null) {
 						mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
 						mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
+						mUploadBaseURL = bundle.getString(Accounts.UPLOAD_BASE_URL);
+						mOAuthAccessTokenURL = bundle.getString(Accounts.OAUTH_ACCESS_TOKEN_URL);
+						mOAuthAuthenticationURL = bundle.getString(Accounts.OAUTH_AUTHENTICATION_URL);
+						mOAuthAuthorizationURL = bundle.getString(Accounts.OAUTH_AUTHORIZATION_URL);
+						mOAuthRequestTokenURL = bundle.getString(Accounts.OAUTH_REQUEST_TOKEN_URL);
+
 						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
 						boolean hide_username_password = mAuthType == Accounts.AUTH_TYPE_OAUTH
 								|| mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
@@ -246,7 +254,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				break;
 			}
 			case MENU_SETTINGS: {
-				intent = new Intent(INTENT_ACTION_GLOBAL_SETTINGS);
+				intent = new Intent(INTENT_ACTION_SETTINGS);
 				startActivity(intent);
 				break;
 			}
@@ -256,6 +264,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 				bundle.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
+				bundle.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
+				bundle.putString(Accounts.OAUTH_ACCESS_TOKEN_URL, mOAuthAccessTokenURL);
+				bundle.putString(Accounts.OAUTH_AUTHENTICATION_URL, mOAuthAuthenticationURL);
+				bundle.putString(Accounts.OAUTH_AUTHORIZATION_URL, mOAuthAuthorizationURL);
+				bundle.putString(Accounts.OAUTH_REQUEST_TOKEN_URL, mOAuthRequestTokenURL);
 				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_EDIT_API);
@@ -270,6 +283,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		saveEditedText();
 		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 		outState.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
+		outState.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
+		outState.putString(Accounts.OAUTH_ACCESS_TOKEN_URL, mOAuthAccessTokenURL);
+		outState.putString(Accounts.OAUTH_AUTHENTICATION_URL, mOAuthAuthenticationURL);
+		outState.putString(Accounts.OAUTH_AUTHORIZATION_URL, mOAuthAuthorizationURL);
+		outState.putString(Accounts.OAUTH_REQUEST_TOKEN_URL, mOAuthRequestTokenURL);
 		outState.putString(Accounts.USERNAME, mUsername);
 		outState.putString(Accounts.PASSWORD, mPassword);
 		outState.putInt(Accounts.USER_COLOR, mUserColor);
@@ -374,10 +392,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestBaseURL);
 			cb.setSearchBaseURL(mSearchBaseURL);
-			// cb.setOAuthAccessTokenURL(oAuthAccessTokenURL);
-			// cb.setOAuthAuthenticationURL(oAuthAuthenticationURL);
-			// cb.setOAuthAuthorizationURL(oAuthAuthorizationURL);
-			// cb.setOAuthRequestTokenURL(oAuthRequestTokenURL);
+			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
+			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
+			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
+			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			cb.setGZIPEnabled(enable_gzip_compressing);
@@ -472,6 +490,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestBaseURL);
 			cb.setSearchBaseURL(mSearchBaseURL);
+			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
+			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
+			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
+			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
 			cb.setGZIPEnabled(enable_gzip_compressing);
 			cb.setIgnoreSSLError(ignore_ssl_error);
 
@@ -510,6 +532,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestBaseURL);
 			cb.setSearchBaseURL(mSearchBaseURL);
+			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
+			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
+			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
+			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			cb.setGZIPEnabled(enable_gzip_compressing);
@@ -534,6 +560,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestBaseURL);
 			cb.setSearchBaseURL(mSearchBaseURL);
+			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
+			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
+			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
+			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
 			cb.setGZIPEnabled(enable_gzip_compressing);
 			cb.setIgnoreSSLError(ignore_ssl_error);
 
@@ -573,6 +603,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setRestBaseURL(mRestBaseURL);
 			cb.setSearchBaseURL(mSearchBaseURL);
+			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
+			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
+			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
+			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
 			cb.setGZIPEnabled(enable_gzip_compressing);

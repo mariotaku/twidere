@@ -69,8 +69,11 @@ public class SearchTweetsFragment extends BaseListFragment implements LoaderCall
 	@Override
 	public void onLoadFinished(Loader<List<Tweet>> loader, List<Tweet> data) {
 		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+		mAdapter.clear();
 		if (data != null) {
-			mAdapter.addAll(data);
+			for (Tweet tweet : data) {
+				mAdapter.add(tweet);
+			}
 		}
 	}
 

@@ -6,9 +6,8 @@
 	<string name="release_to_update">释放以刷新</string>
 	<string name="loading">正在载入…</string>
 	<string name="compose">撰写</string>
-	<string name="settings">设定</string>
 	<string name="add_account">添加帐号</string>
-	<string name="global_settings">全局设定</string>
+	<string name="settings">设定</string>
 	<string name="send">发送</string>
 	<string name="add_location">添加位置</string>
 	<string name="add_image">添加图片</string>
@@ -18,14 +17,17 @@
 	<string name="sign_in">登录</string>
 	<string name="rest_base_url">REST Base URL</string>
 	<string name="search_base_url">Search Base URL</string>
-	<string name="oauth_access_token_url">oAuth Access Token URL</string>
-	<string name="oauth_authentication_url">oAuth Authentication URL</string>
-	<string name="oauth_authorization_url">oAuth Authorization URL</string>
-	<string name="oauth_request_token_url">oAuth Request Token URL</string>
+	<string name="upload_base_url">Upload Base URL</string>
+	<string name="oauth_access_token_url">OAuth Access Token URL</string>
+	<string name="oauth_authentication_url">OAuth Authentication URL</string>
+	<string name="oauth_authorization_url">OAuth Authorization URL</string>
+	<string name="oauth_request_token_url">OAuth Request Token URL</string>
 	<string name="auth_type">验证方式</string>
 	<string name="oauth">OAuth</string>
 	<string name="xauth">xAuth</string>
 	<string name="basic">Basic</string>
+	<string name="twip_o">twip O 模式</string>
+	<string name="advanced">高级</string>
 	<string name="save">保存</string>
 	<string name="test">测试</string>
 	<string name="login_to_twitter">登录到 Twitter</string>
@@ -158,5 +160,8 @@
 	<string name="cannot_get_location">不能获得你的位置。</string>
 	<string name="drafts">草稿</string>
 	<string name="search">搜索</string>
-
+	<string name="send_all">全部发送</string>
+	<string name="delete_all">全部删除</string>
+	<string name="profile">资料</string>
+	
 </resources>

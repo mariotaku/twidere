@@ -1,6 +1,6 @@
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.Utils.bindToService;
+import static org.mariotaku.twidere.util.ServiceUtils.bindToService;
 
 import java.util.ArrayList;
 import java.util.List;

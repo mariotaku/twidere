@@ -58,9 +58,9 @@ public class FilterFragment extends BaseFragment {
 		mViewPager = (ExtendedViewPager) view.findViewById(R.id.pager);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mAdapter = new TabsAdapter(getSherlockActivity(), getFragmentManager());
-		mAdapter.addTab(FilteredUsersFragment.class, getString(R.string.users), null);
-		mAdapter.addTab(FilteredKeywordsFragment.class, getString(R.string.keywords), null);
-		mAdapter.addTab(FilteredSourcesFragment.class, getString(R.string.sources), null);
+		mAdapter.addTab(FilteredUsersFragment.class, null, getString(R.string.users), null);
+		mAdapter.addTab(FilteredKeywordsFragment.class, null, getString(R.string.keywords), null);
+		mAdapter.addTab(FilteredSourcesFragment.class, null, getString(R.string.sources), null);
 		mViewPager.setAdapter(mAdapter);
 		mIndicator.setViewPager(mViewPager);
 	}
@@ -73,7 +73,7 @@ public class FilterFragment extends BaseFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.filters_list, container, false);
+		return inflater.inflate(R.layout.viewpager_with_tabs, container, false);
 	}
 
 	@Override

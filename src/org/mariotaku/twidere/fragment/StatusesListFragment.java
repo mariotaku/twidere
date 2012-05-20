@@ -9,10 +9,8 @@ import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
-import java.util.List;
-
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
+import org.mariotaku.twidere.adapter.FastParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.CursorToStatusesLoader;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -35,6 +33,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -48,8 +47,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public abstract class StatusesFragment extends BaseFragment implements OnRefreshListener,
-		LoaderCallbacks<List<ParcelableStatus>>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
+public abstract class StatusesListFragment extends BaseFragment implements OnRefreshListener,
+		LoaderCallbacks<ParcelableStatus[]>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
 		ActionMode.Callback {
 
 	public ServiceInterface mServiceInterface;
@@ -57,8 +56,9 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	public ContentResolver mResolver;
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
-	private ParcelableStatusesAdapter mAdapter;
+	private FastParcelableStatusesAdapter mAdapter;
 	private CursorToStatusesLoader mLoader;
+	private View mLoadIndicator;
 
 	private Handler mHandler;
 	private Runnable mTicker;
@@ -152,7 +152,8 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
-		mAdapter = new ParcelableStatusesAdapter(getSherlockActivity(), imageloader);
+		mAdapter = new FastParcelableStatusesAdapter(getSherlockActivity(), imageloader);
+		mLoadIndicator = getView().findViewById(R.id.load_indicator);
 		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
 		ListView list = mListView.getRefreshableView();
@@ -179,7 +180,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
-	public Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
+	public Loader<ParcelableStatus[]> onCreateLoader(int id, Bundle args) {
 		String[] cols = Statuses.COLUMNS;
 		Uri uri = getContentUri();
 		String where = buildActivatedStatsWhereClause(getSherlockActivity(), null);
@@ -188,6 +189,8 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 			where = buildFilterWhereClause(table, where);
 		}
 		mLoader = new CursorToStatusesLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
+		mLoadIndicator.setVisibility(View.VISIBLE);
+		mLoadIndicator.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), android.R.anim.fade_in));
 		return mLoader;
 	}
 
@@ -221,7 +224,7 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 				builder.authority(AUTHORITY_STATUS);
 				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
 				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
-				startActivity(new Intent(Intent.ACTION_DEFAULT, builder.build()));
+				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 			}
 		}
 	}
@@ -240,18 +243,15 @@ public abstract class StatusesFragment extends BaseFragment implements OnRefresh
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
+	public void onLoaderReset(Loader<ParcelableStatus[]> loader) {
 		mAdapter.clear();
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
-		if (data != null) {
-			mAdapter.clear();
-			for (ParcelableStatus status : data) {
-				mAdapter.add(status);
-			}
-		}
+	public void onLoadFinished(Loader<ParcelableStatus[]> loader, ParcelableStatus[] data) {
+		mLoadIndicator.setVisibility(View.INVISIBLE);
+		mLoadIndicator.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), android.R.anim.fade_out));
+		mAdapter.setData(data);
 	}
 
 	@Override

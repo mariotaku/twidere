@@ -7,7 +7,6 @@
 	<string name="loading">Loading…</string>
 	<string name="compose">Compose</string>
 	<string name="add_account">Add account</string>
-	<string name="global_settings">Global settings</string>
 	<string name="settings">Settings</string>
 	<string name="send">Send</string>
 	<string name="add_location">Add location</string>
@@ -163,5 +162,6 @@
 	<string name="search">Search</string>
 	<string name="send_all">Send all</string>
 	<string name="delete_all">Delete all</string>
+	<string name="profile">Profile</string>
 
 </resources>

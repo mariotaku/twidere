@@ -78,12 +78,22 @@ public final class TweetStore implements Constants {
 		/**
 		 * Rest Base URL of the account </br> Type: TEXT
 		 */
-		public static final String REST_BASE_URL = "rest_api_base";
+		public static final String REST_BASE_URL = "rest_base_url";
 
 		/**
 		 * Search Base URL of the account </br> Type: TEXT
 		 */
-		public static final String SEARCH_BASE_URL = "search_api_base";
+		public static final String SEARCH_BASE_URL = "search_base_url";
+
+		public static final String UPLOAD_BASE_URL = "upload_base_url";
+
+		public static final String OAUTH_ACCESS_TOKEN_URL = "oauth_access_token_url";
+
+		public static final String OAUTH_AUTHENTICATION_URL = "oauth_authentication_url";
+
+		public static final String OAUTH_AUTHORIZATION_URL = "oauth_authorization_url";
+
+		public static final String OAUTH_REQUEST_TOKEN_URL = "oauth_request_token_url";
 
 		public static final String USER_COLOR = "user_color";
 
@@ -100,10 +110,13 @@ public final class TweetStore implements Constants {
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
 		public static final String[] COLUMNS = new String[] { _ID, USERNAME, USER_ID, AUTH_TYPE, BASIC_AUTH_PASSWORD,
-				OAUTH_TOKEN, TOKEN_SECRET, REST_BASE_URL, SEARCH_BASE_URL, PROFILE_IMAGE_URL, USER_COLOR, IS_ACTIVATED };
+				OAUTH_TOKEN, TOKEN_SECRET, REST_BASE_URL, SEARCH_BASE_URL, UPLOAD_BASE_URL, OAUTH_ACCESS_TOKEN_URL,
+				OAUTH_AUTHENTICATION_URL, OAUTH_AUTHORIZATION_URL, OAUTH_REQUEST_TOKEN_URL, PROFILE_IMAGE_URL,
+				USER_COLOR, IS_ACTIVATED };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_INT_UNIQUE,
-				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
+				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
+				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
 
 	}
 
@@ -233,8 +246,8 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String ACCOUNT_ID = "account_id";
 
-		public static final String COMPARE_ID = "compare_id";
-		
+		public static final String SORT_ID = "sort_id";
+
 		/**
 		 * Status content.<br>
 		 * Type: TEXT
@@ -323,16 +336,17 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String STATUS_TIMESTAMP = "status_timestamp";
 
-		public static final String DEFAULT_SORT_ORDER = COMPARE_ID + " DESC";
+		public static final String DEFAULT_SORT_ORDER = SORT_ID + " DESC";
 
-		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, COMPARE_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
-				TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID,
-				IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID,
-				RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, IS_RETWEET, IS_FAVORITE, HAS_MEDIA, IS_PROTECTED, IS_GAP };
+		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, SORT_ID, STATUS_ID, USER_ID,
+				STATUS_TIMESTAMP, TEXT, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID,
+				IN_REPLY_TO_USER_ID, IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID,
+				RETWEETED_BY_ID, RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, IS_RETWEET, IS_FAVORITE, HAS_MEDIA,
+				IS_PROTECTED, IS_GAP };
 
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT_UNIQUE, TYPE_INT, TYPE_INT,
-				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN,
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT_UNIQUE, TYPE_INT,
+				TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT,
+				TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN,
 				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
 
 	}

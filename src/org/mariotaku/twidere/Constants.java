@@ -19,7 +19,7 @@ public interface Constants extends TwitterConstants {
 	public static final boolean MULTIPLE_ACCOUNTS_ENABLED = true;
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 9;
+	public static final int DATABASES_VERSION = 11;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -80,9 +80,10 @@ public interface Constants extends TwitterConstants {
 
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 
+	public static final String INTENT_ACTION_SERVICE = INTENT_PACKAGE_PREFIX + "SERVICE";
 	public static final String INTENT_ACTION_HOME = INTENT_PACKAGE_PREFIX + "HOME";
 	public static final String INTENT_ACTION_COMPOSE = INTENT_PACKAGE_PREFIX + "COMPOSE";
-	public static final String INTENT_ACTION_GLOBAL_SETTINGS = INTENT_PACKAGE_PREFIX + "GLOBAL_SETTINGS";
+	public static final String INTENT_ACTION_SETTINGS = INTENT_PACKAGE_PREFIX + "SETTINGS";
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_PACKAGE_PREFIX + "SELECT_ACCOUNT";
 	public static final String INTENT_ACTION_VIEW_MAP = INTENT_PACKAGE_PREFIX + "VIEW_MAP";
 	public static final String INTENT_ACTION_FILTERS = INTENT_PACKAGE_PREFIX + "FILTERS";
