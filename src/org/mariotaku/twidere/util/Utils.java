@@ -340,6 +340,7 @@ public final class Utils implements Constants {
 			int i = 0;
 			while (!cur.isAfterLast()) {
 				accounts[i] = cur.getLong(idx);
+				i++;
 				cur.moveToNext();
 			}
 			cur.close();
@@ -504,22 +505,22 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static long[] getLastStatusIds(Context context, Uri uri) {
+	public static long[] getLastSortIds(Context context, Uri uri) {
 		long[] account_ids = getActivatedAccounts(context);
-		String[] cols = new String[] { Statuses.STATUS_ID };
+		String[] cols = new String[] { Statuses.SORT_ID };
 		ContentResolver resolver = context.getContentResolver();
 		long[] status_ids = new long[account_ids.length];
 		int idx = 0;
 		for (long account_id : account_ids) {
 			String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			Cursor cur = resolver.query(uri, cols, where, null, Statuses.STATUS_ID);
+			Cursor cur = resolver.query(uri, cols, where, null, Statuses.SORT_ID);
 			if (cur == null) {
 				continue;
 			}
 
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_ID));
+				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(Statuses.SORT_ID));
 			}
 			cur.close();
 			idx++;
@@ -766,23 +767,35 @@ public final class Utils implements Constants {
 				ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
-				String rest_api_base = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_BASE_URL));
-				String search_api_base = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_BASE_URL));
-				if (rest_api_base == null || "".equals(rest_api_base)) {
-					rest_api_base = DEFAULT_REST_BASE_URL;
+				String rest_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_BASE_URL));
+				String search_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_BASE_URL));
+				String upload_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.UPLOAD_BASE_URL));
+				String oauth_access_token_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_ACCESS_TOKEN_URL));
+				String oauth_authentication_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_AUTHENTICATION_URL));
+				String oauth_authorization_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_AUTHORIZATION_URL));
+				String oauth_request_token_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_REQUEST_TOKEN_URL));
+				if (!isNullOrEmpty(rest_base_url)) {
+					cb.setRestBaseURL(rest_base_url);
 				}
-				if (search_api_base == null || "".equals(search_api_base)) {
-					search_api_base = DEFAULT_SEARCH_BASE_URL;
+				if (!isNullOrEmpty(search_base_url)) {
+					cb.setSearchBaseURL(search_base_url);
 				}
-				cb.setRestBaseURL(rest_api_base);
-				cb.setSearchBaseURL(search_api_base);
+				if (!isNullOrEmpty(upload_base_url)) {
+					//Do nothing.
+				}
+				if (!isNullOrEmpty(oauth_access_token_url)) {
+					cb.setOAuthAccessTokenURL(oauth_access_token_url);
+				}
+				if (!isNullOrEmpty(oauth_authentication_url)) {
+					cb.setOAuthAuthenticationURL(oauth_authentication_url);
+				}
+				if (!isNullOrEmpty(oauth_authorization_url)) {
+					cb.setOAuthAuthorizationURL(oauth_authorization_url);	
+				}
+				if (!isNullOrEmpty(oauth_request_token_url)) {
+					cb.setOAuthRequestTokenURL(oauth_request_token_url);
+				}
 				cb.setIncludeEntitiesEnabled(include_entities);
-				try {
-					String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-					cb.setClientVersion(version);
-				} catch (NameNotFoundException e) {
-					// This should not happen.
-				}
 
 				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:

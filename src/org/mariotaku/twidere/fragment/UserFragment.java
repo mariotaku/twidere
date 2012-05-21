@@ -2,10 +2,12 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -28,7 +30,7 @@ public class UserFragment extends BaseFragment {
 		mViewPager = (ExtendedViewPager) view.findViewById(R.id.pager);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mAdapter = new TabsAdapter(getSherlockActivity(), getFragmentManager());
-		mAdapter.addTab(HomeTimelineFragment.class, getArguments(), getString(R.string.profile), null);
+		mAdapter.addTab(UserProfileFragment.class, getArguments(), getString(R.string.profile), null);
 		mAdapter.addTab(UserTimelineFragment.class, getArguments(), getString(R.string.tweets), null);
 		mViewPager.setAdapter(mAdapter);
 		mIndicator.setViewPager(mViewPager);

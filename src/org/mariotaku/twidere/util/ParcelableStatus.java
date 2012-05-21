@@ -128,7 +128,7 @@ public class ParcelableStatus implements Parcelable {
 		sort_id = status.getId();
 		is_retweet = status.isRetweet();
 		final Status retweeted_status = status.getRetweetedStatus();
-		
+
 		if (is_retweet && retweeted_status != null) {
 			final User retweet_user = status.getUser();
 			retweet_id = status.getId();

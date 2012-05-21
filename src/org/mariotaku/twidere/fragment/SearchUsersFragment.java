@@ -5,7 +5,6 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.UserViewHolder;
 
 import twitter4j.ResponseList;
@@ -13,23 +12,28 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class SearchUsersFragment extends BaseListFragment implements LoaderCallbacks<ResponseList<User>> {
+public class SearchUsersFragment extends BaseListFragment implements LoaderCallbacks<ResponseList<User>>,
+		OnItemClickListener {
 
 	private UsersAdapter mAdapter;
 	private SharedPreferences mPreferences;
 	private boolean mDisplayProfileImage;
 	private ListView mListView;
+	private long mAccountId;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -38,9 +42,10 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 
 		Bundle args = getArguments() != null ? getArguments() : new Bundle();
-		long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-		mAdapter = new UsersAdapter(getSherlockActivity(), account_id);
+		mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID);
+		mAdapter = new UsersAdapter(getSherlockActivity());
 		mListView = getListView();
+		mListView.setOnItemClickListener(this);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
 	}
@@ -55,6 +60,17 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 			return new UserSearchLoader(getSherlockActivity(), account_id, query, page);
 		}
 		return null;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		User user = mAdapter.getItem(position);
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme(SCHEME_TWIDERE);
+		builder.authority(AUTHORITY_USER);
+		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
+		builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, user.getScreenName());
+		startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 	}
 
 	@Override
@@ -119,17 +135,13 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 	private static class UsersAdapter extends ArrayAdapter<User> {
 
 		private final LazyImageLoader mImageLoader;
-		private final ServiceInterface mServiceInterface;
-		private final long mAccountId;
-
 		private boolean mDisplayProfileImage;
 
-		public UsersAdapter(Context context, long account_id) {
+		public UsersAdapter(Context context) {
 			super(context, R.layout.user_list_item, R.id.bio);
 			TwidereApplication application = (TwidereApplication) context.getApplicationContext();
 			mImageLoader = application.getListProfileImageLoader();
-			mServiceInterface = application.getServiceInterface();
-			mAccountId = account_id;
+			application.getServiceInterface();
 		}
 
 		@Override
@@ -151,12 +163,6 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 			if (mDisplayProfileImage) {
 				mImageLoader.displayImage(user.getProfileImageURL(), holder.profile_image);
 			}
-			holder.follow.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					mServiceInterface.createFriendship(mAccountId, user.getId());
-				}
-			});
 			return view;
 		}
 

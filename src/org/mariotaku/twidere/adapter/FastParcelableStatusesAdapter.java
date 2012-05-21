@@ -20,7 +20,7 @@ import android.widget.BaseAdapter;
 
 public class FastParcelableStatusesAdapter extends BaseAdapter {
 
-	private boolean mDisplayProfileImage, mDisplayName, mMultipleAccountsActivated, mShowLastItemAsGap;
+	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
 	private final LazyImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -34,11 +34,30 @@ public class FastParcelableStatusesAdapter extends BaseAdapter {
 		mInflater = LayoutInflater.from(mContext);
 	}
 
+	public void clear() {
+		setData((ParcelableStatus[]) null);
+	}
+
 	public ParcelableStatus findItem(long id) {
 		for (int i = 0; i < getCount(); i++) {
 			if (getItemId(i) == id) return getItem(i);
 		}
 		return null;
+	}
+
+	@Override
+	public int getCount() {
+		return mData == null ? 0 : mData.length;
+	}
+
+	@Override
+	public ParcelableStatus getItem(int position) {
+		return mData[position];
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return mData[position].sort_id;
 	}
 
 	@Override
@@ -64,9 +83,9 @@ public class FastParcelableStatusesAdapter extends BaseAdapter {
 		final boolean show_gap = status.is_gap && !is_last || mShowLastItemAsGap && is_last;
 
 		holder.setShowAsGap(show_gap);
-		holder.setAccountColorEnabled(mMultipleAccountsActivated);
+		holder.setAccountColorEnabled(mShowAccountColor);
 
-		if (mMultipleAccountsActivated) {
+		if (mShowAccountColor) {
 			holder.setAccountColor(getAccountColor(mContext, status.account_id));
 		}
 
@@ -105,6 +124,15 @@ public class FastParcelableStatusesAdapter extends BaseAdapter {
 		return view;
 	}
 
+	public void setData(List<ParcelableStatus> data) {
+		setData(data == null ? null : data.toArray(new ParcelableStatus[data.size()]));
+	}
+
+	public void setData(ParcelableStatus[] data) {
+		mData = data;
+		notifyDataSetChanged();
+	}
+
 	public void setDisplayName(boolean display) {
 		mDisplayName = display;
 	}
@@ -116,36 +144,12 @@ public class FastParcelableStatusesAdapter extends BaseAdapter {
 	public void setShowLastItemAsGap(boolean gap) {
 		mShowLastItemAsGap = gap;
 	}
+	
+	public void setShowAccountColor(boolean show) {
+		mShowAccountColor = show;
+	}
 
 	public void setStatusesTextSize(float text_size) {
 		mTextSize = text_size;
-	}
-
-	@Override
-	public int getCount() {
-		return mData == null ? 0 : mData.length;
-	}
-
-	@Override
-	public ParcelableStatus getItem(int position) {
-		return mData[position];
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return mData[position].sort_id;
-	}
-	
-	public void setData(ParcelableStatus[] data) {
-		mData = data;
-		notifyDataSetChanged();
-	}
-	
-	public void setData(List<ParcelableStatus> data) {
-		setData(data == null ? null : data.toArray(new ParcelableStatus[data.size()]));
-	}
-
-	public void clear() {
-		setData((ParcelableStatus[])null);
 	}
 }

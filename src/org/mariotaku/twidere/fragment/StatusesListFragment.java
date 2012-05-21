@@ -3,7 +3,7 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
 import static org.mariotaku.twidere.util.Utils.buildFilterWhereClause;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
-import static org.mariotaku.twidere.util.Utils.getLastStatusIds;
+import static org.mariotaku.twidere.util.Utils.getLastSortIds;
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
@@ -12,13 +12,14 @@ import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.FastParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.loader.CursorToStatusesLoader;
+import org.mariotaku.twidere.loader.CursorStatusesLoader;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusViewHolder;
+import org.mariotaku.twidere.util.Utils;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -57,7 +58,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
 	private FastParcelableStatusesAdapter mAdapter;
-	private CursorToStatusesLoader mLoader;
+	private CursorStatusesLoader mLoader;
 	private View mLoadIndicator;
 
 	private Handler mHandler;
@@ -188,7 +189,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 			String table = getTableNameForContentUri(uri);
 			where = buildFilterWhereClause(table, where);
 		}
-		mLoader = new CursorToStatusesLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
+		mLoader = new CursorStatusesLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
 		mLoadIndicator.setVisibility(View.VISIBLE);
 		mLoadIndicator.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), android.R.anim.fade_in));
 		return mLoader;
@@ -217,7 +218,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 			ParcelableStatus status = mAdapter.findItem(id);
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
-				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
+				getStatuses(new long[] { status.account_id }, new long[] { status.sort_id });
 			} else {
 				Uri.Builder builder = new Uri.Builder();
 				builder.scheme(SCHEME_TWIDERE);
@@ -252,6 +253,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		mLoadIndicator.setVisibility(View.INVISIBLE);
 		mLoadIndicator.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), android.R.anim.fade_out));
 		mAdapter.setData(data);
+		mAdapter.setShowAccountColor(getActivatedAccounts(getSherlockActivity()).length > 1);
 	}
 
 	@Override
@@ -299,7 +301,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 			if (mLoadMoreAutomatically && mReachedBottom) {
 				if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
 					mRunningTaskId = getStatuses(getActivatedAccounts(getSherlockActivity()),
-							getLastStatusIds(getSherlockActivity(), getContentUri()));
+							getLastSortIds(getSherlockActivity(), getContentUri()));
 				}
 			}
 		}

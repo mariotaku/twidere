@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 
-public class CursorToStatusesLoader extends AsyncTaskLoader<ParcelableStatus[]> implements Constants {
+public class CursorStatusesLoader extends AsyncTaskLoader<ParcelableStatus[]> implements Constants {
 
 	private final Uri mUri;
 	private final String[] mProjection;
@@ -17,7 +17,7 @@ public class CursorToStatusesLoader extends AsyncTaskLoader<ParcelableStatus[]> 
 	private final String[] mSelectionArgs;
 	private final String mSortOrder;
 
-	public CursorToStatusesLoader(Context context, Uri uri, String[] projection, String selection,
+	public CursorStatusesLoader(Context context, Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
 		super(context);
 		mUri = uri;

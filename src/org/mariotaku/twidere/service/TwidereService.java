@@ -540,7 +540,7 @@ public class TwidereService extends Service implements Constants {
 						Paging paging = new Paging();
 						paging.setCount(load_item_limit);
 						long max_id = -1;
-						if (max_ids_valid && max_ids[idx] != -1) {
+						if (max_ids_valid && max_ids[idx] >= 0) {
 							max_id = max_ids[idx];
 							paging.setMaxId(max_id);
 						}
@@ -620,15 +620,15 @@ public class TwidereService extends Service implements Constants {
 						}
 						final User user = status.getUser();
 						final long user_id = user.getId();
-						final long compare_id = status.getId();
+						final long sort_id = status.getId();
 						resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + user_id, null);
 						resolver.insert(CachedUsers.CONTENT_URI, makeCachedUsersContentValues(user));
 
-						if (!status_ids.contains(compare_id)) {
-							if (compare_id < min_id || min_id == -1) {
-								min_id = compare_id;
+						if (!status_ids.contains(sort_id)) {
+							if (sort_id < min_id || min_id == -1) {
+								min_id = sort_id;
 							}
-							status_ids.add(compare_id);
+							status_ids.add(sort_id);
 							values_list.add(makeStatusesContentValues(status, account_id));
 						}
 					}
@@ -637,7 +637,7 @@ public class TwidereService extends Service implements Constants {
 					// Delete all rows conflicting before new data inserted.
 					{
 						StringBuilder where = new StringBuilder();
-						where.append(Statuses.STATUS_ID + " IN ( ");
+						where.append(Statuses.SORT_ID + " IN ( ");
 						for (int i = 0; i < status_ids.size(); i++) {
 							String id_string = String.valueOf(status_ids.get(i));
 							if (id_string != null) {

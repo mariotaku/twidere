@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.FastParcelableStatusesAdapter;
-import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.UserTimelineLoader;
 import org.mariotaku.twidere.util.LazyImageLoader;

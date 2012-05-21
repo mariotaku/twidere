@@ -17,7 +17,7 @@ import android.widget.ArrayAdapter;
 
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 
-	private boolean mDisplayProfileImage, mDisplayName, mMultipleAccountsActivated, mShowLastItemAsGap;
+	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
 	private final LazyImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -58,9 +58,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 		final boolean show_gap = status.is_gap && !is_last || mShowLastItemAsGap && is_last;
 
 		holder.setShowAsGap(show_gap);
-		holder.setAccountColorEnabled(mMultipleAccountsActivated);
+		holder.setAccountColorEnabled(mShowAccountColor);
 
-		if (mMultipleAccountsActivated) {
+		if (mShowAccountColor) {
 			holder.setAccountColor(getAccountColor(mContext, status.account_id));
 		}
 
@@ -110,6 +110,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 		mShowLastItemAsGap = gap;
 	}
 
+	public void setShowAccountColor(boolean show) {
+		mShowAccountColor = show;
+	}
+	
 	public void setStatusesTextSize(float text_size) {
 		mTextSize = text_size;
 	}
