@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
 
 	<RelativeLayout
 		android:id="@+id/profile"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@drawable/list_selector_holo_light"
-		android:padding="8dip">
+		android:gravity="center_vertical">
 
 		<org.mariotaku.twidere.widget.RoundCorneredImageView
 			android:id="@+id/profile_image"
 			android:layout_width="@dimen/profile_image_size"
 			android:layout_height="@dimen/profile_image_size"
+			android:layout_margin="8dip"
+			android:background="@drawable/list_selector_holo_light"
 			android:scaleType="fitCenter"
 			android:src="@drawable/ic_profile_image_default"/>
 
 		<LinearLayout
+			android:id="@+id/name_view"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@+id/profile_image"
 			android:layout_alignTop="@+id/profile_image"
+			android:layout_margin="8dip"
 			android:layout_toLeftOf="@+id/follow_indicator"
 			android:layout_toRightOf="@+id/profile_image"
 			android:gravity="center_vertical"
-			android:orientation="vertical"
-			android:paddingLeft="8dip"
-			android:paddingRight="4dip">
+			android:orientation="vertical">
 
 			<TextView
 				android:id="@+id/name"
@@ -49,8 +51,10 @@
 			android:id="@+id/follow_indicator"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_alignBottom="@+id/profile_image"
 			android:layout_alignParentRight="true"
-			android:layout_centerVertical="true"
+			android:layout_alignTop="@+id/profile_image"
+			android:layout_margin="4dp"
 			android:visibility="gone">
 
 			<Button
@@ -58,6 +62,7 @@
 				style="?android:attr/buttonStyleSmall"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_gravity="center"
 				android:text="@string/follow"/>
 
 			<ProgressBar
@@ -72,69 +77,72 @@
 	</RelativeLayout>
 
 	<LinearLayout
+		android:id="@+id/bio_view"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_alignLeft="@+id/profile"
-		android:layout_alignParentBottom="true"
-		android:layout_below="@+id/profile"
-		android:orientation="vertical">
+		android:layout_height="wrap_content"
+		android:background="@drawable/list_selector_holo_light"
+		android:orientation="vertical"
+		android:padding="8dip">
 
 		<TextView
-			android:id="@+id/in_reply_to"
+			android:id="@+id/bio_label"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:background="@drawable/list_selector_holo_light"
-			android:drawableLeft="@drawable/ic_tweet_stat_reply"
-			android:drawablePadding="4dp"
-			android:padding="8dp"
-			android:text="@string/in_reply_to"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:visibility="gone"/>
-
-		<FrameLayout
-			android:id="@+id/text_frame"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_weight="1"
-			android:padding="8dip">
-
-			<TextView
-				android:id="@+id/text"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:singleLine="false"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textIsSelectable="true"/>
-
-			<LinearLayout
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="bottom|right"
-				android:orientation="horizontal">
-
-				<ImageButton
-					android:id="@+id/view_media"
-					android:layout_width="56dp"
-					android:layout_height="56dp"
-					android:contentDescription="@string/view_media"
-					android:src="@drawable/ic_menu_gallery"/>
-
-				<ImageButton
-					android:id="@+id/view_map"
-					android:layout_width="56dp"
-					android:layout_height="56dp"
-					android:contentDescription="@string/view_map"
-					android:src="@drawable/ic_menu_mapmode"/>
-			</LinearLayout>
-		</FrameLayout>
+			android:text="@string/bio"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
 
 		<TextView
-			android:id="@+id/time_source"
+			android:id="@+id/bio"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="8dip"
-			android:text="@string/time_source"
+			android:autoLink="all"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</LinearLayout>
 
-</RelativeLayout>
+	<LinearLayout
+		android:id="@+id/location_view"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@drawable/list_selector_holo_light"
+		android:orientation="vertical"
+		android:padding="8dip">
+
+		<TextView
+			android:id="@+id/location_label"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/location"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+		<TextView
+			android:id="@+id/location"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:autoLink="web|map"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/web_view"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@drawable/list_selector_holo_light"
+		android:orientation="vertical"
+		android:padding="8dip">
+
+		<TextView
+			android:id="@+id/web_label"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/web"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+		<TextView
+			android:id="@+id/web"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:autoLink="web"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+	</LinearLayout>
+
+</LinearLayout>

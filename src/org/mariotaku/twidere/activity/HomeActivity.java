@@ -14,10 +14,12 @@ import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ServiceInterface;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -48,6 +50,18 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private TabPageIndicator mIndicator;
 
 	private ActionMode mActionMode;
+
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+				setRefreshState();
+			}
+		}
+
+	};
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -201,10 +215,32 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		invalidateOptionsMenu();
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		setRefreshState();
+		IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		registerReceiver(mStateReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
+	}
+
 	public void setPagingEnabled(boolean enabled) {
 		if (mIndicator != null) {
 			mIndicator.setPagingEnabled(enabled);
 		}
+	}
+
+	public void setRefreshState() {
+		boolean is_refresh = false;
+		if (mInterface != null) {
+			is_refresh = mInterface.hasActivatedTask();
+		}
+		setSupportProgressBarIndeterminateVisibility(is_refresh);
 	}
 
 	@Override

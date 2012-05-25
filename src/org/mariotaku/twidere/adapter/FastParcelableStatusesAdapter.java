@@ -57,7 +57,7 @@ public class FastParcelableStatusesAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
-		return mData[position].sort_id;
+		return mData[position].status_id;
 	}
 
 	@Override
@@ -141,12 +141,12 @@ public class FastParcelableStatusesAdapter extends BaseAdapter {
 		mDisplayProfileImage = display;
 	}
 
-	public void setShowLastItemAsGap(boolean gap) {
-		mShowLastItemAsGap = gap;
-	}
-	
 	public void setShowAccountColor(boolean show) {
 		mShowAccountColor = show;
+	}
+
+	public void setShowLastItemAsGap(boolean gap) {
+		mShowLastItemAsGap = gap;
 	}
 
 	public void setStatusesTextSize(float text_size) {

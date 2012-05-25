@@ -130,6 +130,7 @@
 	<string name="set_color">Set color</string>
 	<string name="pick_color">Pick color</string>
 	<string name="follow">Follow</string>
+	<string name="unfollow">Unfollow</string>
 	<string name="delete_account">Delete account</string>
 	<string name="delete_account_desc">Are you sure to delete account <xliff:g id="user_name">%s</xliff:g> ?</string>
 	<string name="bottom_compose_button">Bottom compose button</string>
@@ -163,5 +164,8 @@
 	<string name="send_all">Send all</string>
 	<string name="delete_all">Delete all</string>
 	<string name="profile">Profile</string>
+	<string name="bio">Bio</string>
+	<string name="location">Location</string>
+	<string name="web">Web</string>
 
 </resources>

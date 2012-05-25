@@ -14,7 +14,6 @@ import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusViewHolder;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,7 +36,6 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 
 	private SharedPreferences mPreferences;
 	private ServiceInterface mServiceInterface;
-	private ContentResolver mResolver;
 	private ListView mListView;
 	private FastParcelableStatusesAdapter mAdapter;
 
@@ -115,7 +113,7 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mResolver = getSherlockActivity().getContentResolver();
+		getSherlockActivity().getContentResolver();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
@@ -144,10 +142,9 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 		if (args != null) {
 			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			if (user_id == -1) {
-				String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+			String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+			if (user_id == -1 && screen_name != null)
 				return new UserTimelineLoader(getSherlockActivity(), account_id, screen_name);
-			}
 			return new UserTimelineLoader(getSherlockActivity(), account_id, user_id);
 		}
 		return null;

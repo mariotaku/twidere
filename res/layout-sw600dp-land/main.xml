@@ -6,19 +6,6 @@
 	android:orientation="horizontal">
 
 	<FrameLayout
-		android:id="@+id/side_pane"
-		android:layout_width="0dp"
-		android:layout_height="match_parent"
-		android:layout_weight="0.382">
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:text="Stub!"/>
-	</FrameLayout>
-
-	<FrameLayout
 		android:layout_width="0dp"
 		android:layout_height="match_parent"
 		android:layout_weight="0.618">
@@ -36,6 +23,25 @@
 			android:layout_gravity="bottom|right"
 			android:contentDescription="@string/compose"
 			android:src="@drawable/ic_menu_compose"/>
+
+		<FrameLayout
+			android:id="@+id/left_pane"
+			android:layout_width="0dp"
+			android:layout_height="match_parent">
+		</FrameLayout>
+	</FrameLayout>
+
+	<FrameLayout
+		android:id="@+id/right_pane"
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="0.382">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:text="Stub!"/>
 	</FrameLayout>
 
 </LinearLayout>

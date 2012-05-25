@@ -19,7 +19,7 @@ public interface Constants extends TwitterConstants {
 	public static final boolean MULTIPLE_ACCOUNTS_ENABLED = true;
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 11;
+	public static final int DATABASES_VERSION = 12;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";

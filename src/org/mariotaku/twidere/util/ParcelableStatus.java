@@ -4,8 +4,8 @@ import static org.mariotaku.twidere.util.Utils.formatGeoLocationToString;
 import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
 import static org.mariotaku.twidere.util.Utils.getSpannedStatusString;
 import static org.mariotaku.twidere.util.Utils.getSpannedStatusText;
+import static org.mariotaku.twidere.util.Utils.parseURL;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
 
@@ -33,7 +33,7 @@ public class ParcelableStatus implements Parcelable {
 		}
 	};
 
-	public long retweet_id, retweeted_by_id, sort_id, status_id, account_id, user_id, status_timestamp, retweet_count,
+	public long retweet_id, retweeted_by_id, status_id, account_id, user_id, status_timestamp, retweet_count,
 			in_reply_to_status_id, in_reply_to_user_id;
 
 	public boolean is_gap, is_retweet, is_favorite, is_protected, has_media;
@@ -56,11 +56,11 @@ public class ParcelableStatus implements Parcelable {
 		}
 	};
 
-	public static final Comparator<ParcelableStatus> SORT_ID_COMPARATOR = new Comparator<ParcelableStatus>() {
+	public static final Comparator<ParcelableStatus> STATUS_ID_COMPARATOR = new Comparator<ParcelableStatus>() {
 
 		@Override
 		public int compare(ParcelableStatus object1, ParcelableStatus object2) {
-			long diff = object1.sort_id - object2.sort_id;
+			long diff = object1.status_id - object2.status_id;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 			return (int) diff;
@@ -68,37 +68,83 @@ public class ParcelableStatus implements Parcelable {
 	};
 
 	public ParcelableStatus(Cursor cursor, StatusesCursorIndices indices) {
-		retweet_id = cursor.getLong(indices.retweet_id);
-		retweeted_by_id = cursor.getLong(indices.retweeted_by_id);
-		sort_id = cursor.getLong(indices.sort_id);
-		status_id = cursor.getLong(indices.status_id);
-		account_id = cursor.getLong(indices.account_id);
-		user_id = cursor.getLong(indices.user_id);
-		status_timestamp = cursor.getLong(indices.status_timestamp);
-		retweet_count = cursor.getLong(indices.retweet_count);
-		in_reply_to_status_id = cursor.getLong(indices.in_reply_to_status_id);
-		in_reply_to_user_id = cursor.getLong(indices.in_reply_to_user_id);
-		is_gap = cursor.getInt(indices.is_gap) == 1;
-		is_retweet = cursor.getInt(indices.is_retweet) == 1;
-		is_favorite = cursor.getInt(indices.is_favorite) == 1;
-		is_protected = cursor.getInt(indices.is_protected) == 1;
-		has_media = cursor.getInt(indices.has_media) == 1;
-		retweeted_by_name = cursor.getString(indices.retweeted_by_name);
-		retweeted_by_screen_name = cursor.getString(indices.retweeted_by_screen_name);
-		text = Html.fromHtml(cursor.getString(indices.text));
-		text_plain = text.toString();
-		name = cursor.getString(indices.name);
-		screen_name = cursor.getString(indices.screen_name);
-		in_reply_to_screen_name = cursor.getString(indices.in_reply_to_screen_name);
-		source = cursor.getString(indices.source);
-		location = getGeoLocationFromString(cursor.getString(indices.location));
-		profile_image_url = parseURL(cursor.getString(indices.profile_image_url));
+		if (indices.retweet_id != -1) {
+			retweet_id = cursor.getLong(indices.retweet_id);
+		}
+		if (indices.retweeted_by_id != -1) {
+			retweeted_by_id = cursor.getLong(indices.retweeted_by_id);
+		}
+		if (indices.status_id != -1) {
+			status_id = cursor.getLong(indices.status_id);
+		}
+		if (indices.account_id != -1) {
+			account_id = cursor.getLong(indices.account_id);
+		}
+		if (indices.user_id != -1) {
+			user_id = cursor.getLong(indices.user_id);
+		}
+		if (indices.status_timestamp != -1) {
+			status_timestamp = cursor.getLong(indices.status_timestamp);
+		}
+		if (indices.retweet_count != -1) {
+			retweet_count = cursor.getLong(indices.retweet_count);
+		}
+		if (indices.in_reply_to_status_id != -1) {
+			in_reply_to_status_id = cursor.getLong(indices.in_reply_to_status_id);
+		}
+		if (indices.in_reply_to_user_id != -1) {
+			in_reply_to_user_id = cursor.getLong(indices.in_reply_to_user_id);
+		}
+		if (indices.is_gap != -1) {
+			is_gap = cursor.getInt(indices.is_gap) == 1;
+		}
+		if (indices.is_retweet != -1) {
+			is_retweet = cursor.getInt(indices.is_retweet) == 1;
+		}
+		if (indices.is_favorite != -1) {
+			is_favorite = cursor.getInt(indices.is_favorite) == 1;
+		}
+		if (indices.is_protected != -1) {
+			is_protected = cursor.getInt(indices.is_protected) == 1;
+		}
+		if (indices.has_media != -1) {
+			has_media = cursor.getInt(indices.has_media) == 1;
+		}
+		if (indices.retweeted_by_name != -1) {
+			retweeted_by_name = cursor.getString(indices.retweeted_by_name);
+		}
+		if (indices.retweeted_by_screen_name != -1) {
+			retweeted_by_screen_name = cursor.getString(indices.retweeted_by_screen_name);
+		}
+		if (indices.text != -1) {
+			text = Html.fromHtml(cursor.getString(indices.text));
+		}
+		if (indices.text_plain != -1) {
+			text_plain = cursor.getString(indices.text_plain);
+		}
+		if (indices.name != -1) {
+			name = cursor.getString(indices.name);
+		}
+		if (indices.screen_name != -1) {
+			screen_name = cursor.getString(indices.screen_name);
+		}
+		if (indices.in_reply_to_screen_name != -1) {
+			in_reply_to_screen_name = cursor.getString(indices.in_reply_to_screen_name);
+		}
+		if (indices.source != -1) {
+			source = cursor.getString(indices.source);
+		}
+		if (indices.location != -1) {
+			location = getGeoLocationFromString(cursor.getString(indices.location));
+		}
+		if (indices.profile_image_url != -1) {
+			profile_image_url = parseURL(cursor.getString(indices.profile_image_url));
+		}
 	}
 
 	public ParcelableStatus(Parcel in) {
 		retweet_id = in.readLong();
 		retweeted_by_id = in.readLong();
-		sort_id = in.readLong();
 		status_id = in.readLong();
 		account_id = in.readLong();
 		user_id = in.readLong();
@@ -114,7 +160,7 @@ public class ParcelableStatus implements Parcelable {
 		retweeted_by_name = in.readString();
 		retweeted_by_screen_name = in.readString();
 		text = Html.fromHtml(in.readString());
-		text_plain = String.valueOf(text);
+		text_plain = in.readString();
 		name = in.readString();
 		screen_name = in.readString();
 		in_reply_to_screen_name = in.readString();
@@ -125,13 +171,14 @@ public class ParcelableStatus implements Parcelable {
 
 	public ParcelableStatus(Status status, long status_account_id) {
 
-		sort_id = status.getId();
+		status_id = status.getId();
+		account_id = status_account_id;
 		is_retweet = status.isRetweet();
 		final Status retweeted_status = status.getRetweetedStatus();
 
 		if (is_retweet && retweeted_status != null) {
 			final User retweet_user = status.getUser();
-			retweet_id = status.getId();
+			retweet_id = retweeted_status.getId();
 			retweeted_by_id = retweet_user.getId();
 			retweeted_by_name = retweet_user.getName();
 			retweeted_by_screen_name = retweet_user.getScreenName();
@@ -146,13 +193,12 @@ public class ParcelableStatus implements Parcelable {
 			is_protected = user.isProtected();
 		}
 		final MediaEntity[] medias = status.getMediaEntities();
-		status_id = status.getId();
-		account_id = status_account_id;
+
 		if (status.getCreatedAt() != null) {
 			status_timestamp = status.getCreatedAt().getTime();
 		}
 		text = getSpannedStatusText(status, account_id);
-		text_plain = String.valueOf(text);
+		text_plain = status.getText();
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();
 		in_reply_to_status_id = status.getInReplyToStatusId();
@@ -178,7 +224,6 @@ public class ParcelableStatus implements Parcelable {
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeLong(retweet_id);
 		out.writeLong(retweeted_by_id);
-		out.writeLong(sort_id);
 		out.writeLong(status_id);
 		out.writeLong(account_id);
 		out.writeLong(user_id);
@@ -194,20 +239,12 @@ public class ParcelableStatus implements Parcelable {
 		out.writeString(retweeted_by_name);
 		out.writeString(retweeted_by_screen_name);
 		out.writeString(getSpannedStatusString(text));
+		out.writeString(text_plain);
 		out.writeString(name);
 		out.writeString(screen_name);
 		out.writeString(in_reply_to_screen_name);
 		out.writeString(source);
 		out.writeString(formatGeoLocationToString(location));
 		out.writeString(profile_image_url != null ? profile_image_url.toString() : null);
-	}
-
-	private URL parseURL(String url_string) {
-		try {
-			return new URL(url_string);
-		} catch (MalformedURLException e) {
-			// This should not happen.
-		}
-		return null;
 	}
 }

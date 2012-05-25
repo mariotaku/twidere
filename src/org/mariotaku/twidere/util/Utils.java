@@ -39,7 +39,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -83,7 +82,6 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, URI_FILTERED_SOURCES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
 	}
-
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 
 	private static final String IMAGE_URL_PATTERN = "href=\\s*[\\\"'](http(s?):\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp))[\\\"']\\s*";
@@ -331,6 +329,7 @@ public final class Utils implements Constants {
 
 	public static long[] getAccountIds(Context context) {
 		long[] accounts = new long[] {};
+		if (context == null) return accounts;
 		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID }, null,
 				null, null);
 		if (cur != null) {
@@ -507,20 +506,20 @@ public final class Utils implements Constants {
 
 	public static long[] getLastSortIds(Context context, Uri uri) {
 		long[] account_ids = getActivatedAccounts(context);
-		String[] cols = new String[] { Statuses.SORT_ID };
+		String[] cols = new String[] { Statuses.STATUS_ID };
 		ContentResolver resolver = context.getContentResolver();
 		long[] status_ids = new long[account_ids.length];
 		int idx = 0;
 		for (long account_id : account_ids) {
 			String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			Cursor cur = resolver.query(uri, cols, where, null, Statuses.SORT_ID);
+			Cursor cur = resolver.query(uri, cols, where, null, Statuses.STATUS_ID);
 			if (cur == null) {
 				continue;
 			}
 
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(Statuses.SORT_ID));
+				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_ID));
 			}
 			cur.close();
 			idx++;
@@ -752,6 +751,11 @@ public final class Utils implements Constants {
 	}
 
 	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities) {
+		return getTwitterInstance(context, account_id, include_entities, true);
+	}
+
+	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities,
+			boolean include_rts) {
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
@@ -770,10 +774,14 @@ public final class Utils implements Constants {
 				String rest_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_BASE_URL));
 				String search_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_BASE_URL));
 				String upload_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.UPLOAD_BASE_URL));
-				String oauth_access_token_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_ACCESS_TOKEN_URL));
-				String oauth_authentication_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_AUTHENTICATION_URL));
-				String oauth_authorization_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_AUTHORIZATION_URL));
-				String oauth_request_token_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_REQUEST_TOKEN_URL));
+				String oauth_access_token_url = cur.getString(cur
+						.getColumnIndexOrThrow(Accounts.OAUTH_ACCESS_TOKEN_URL));
+				String oauth_authentication_url = cur.getString(cur
+						.getColumnIndexOrThrow(Accounts.OAUTH_AUTHENTICATION_URL));
+				String oauth_authorization_url = cur.getString(cur
+						.getColumnIndexOrThrow(Accounts.OAUTH_AUTHORIZATION_URL));
+				String oauth_request_token_url = cur.getString(cur
+						.getColumnIndexOrThrow(Accounts.OAUTH_REQUEST_TOKEN_URL));
 				if (!isNullOrEmpty(rest_base_url)) {
 					cb.setRestBaseURL(rest_base_url);
 				}
@@ -781,7 +789,7 @@ public final class Utils implements Constants {
 					cb.setSearchBaseURL(search_base_url);
 				}
 				if (!isNullOrEmpty(upload_base_url)) {
-					//Do nothing.
+					// Do nothing.
 				}
 				if (!isNullOrEmpty(oauth_access_token_url)) {
 					cb.setOAuthAccessTokenURL(oauth_access_token_url);
@@ -790,12 +798,13 @@ public final class Utils implements Constants {
 					cb.setOAuthAuthenticationURL(oauth_authentication_url);
 				}
 				if (!isNullOrEmpty(oauth_authorization_url)) {
-					cb.setOAuthAuthorizationURL(oauth_authorization_url);	
+					cb.setOAuthAuthorizationURL(oauth_authorization_url);
 				}
 				if (!isNullOrEmpty(oauth_request_token_url)) {
 					cb.setOAuthRequestTokenURL(oauth_request_token_url);
 				}
 				cb.setIncludeEntitiesEnabled(include_entities);
+				cb.setIncludeRTsEnabled(include_rts);
 
 				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
@@ -909,7 +918,7 @@ public final class Utils implements Constants {
 	public static ContentValues makeStatusesContentValues(Status status, long account_id) {
 		if (status == null) return null;
 		final ContentValues values = new ContentValues();
-		values.put(Statuses.SORT_ID, status.getId());
+		values.put(Statuses.STATUS_ID, status.getId());
 		final int is_retweet = status.isRetweet() ? 1 : 0;
 		final Status retweeted_status = status.getRetweetedStatus();
 		if (is_retweet == 1 && retweeted_status != null) {
@@ -920,7 +929,6 @@ public final class Utils implements Constants {
 			values.put(Statuses.RETWEETED_BY_SCREEN_NAME, retweet_user.getScreenName());
 			status = retweeted_status;
 		}
-		final long status_id = status.getId();
 		final User user = status.getUser();
 		if (user != null) {
 			final long user_id = user.getId();
@@ -933,12 +941,12 @@ public final class Utils implements Constants {
 			values.put(Statuses.PROFILE_IMAGE_URL, profile_image_url);
 		}
 		final MediaEntity[] medias = status.getMediaEntities();
-		values.put(Statuses.STATUS_ID, status_id);
 		values.put(Statuses.ACCOUNT_ID, account_id);
 		if (status.getCreatedAt() != null) {
 			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
 		}
 		values.put(Statuses.TEXT, getSpannedStatusString(getSpannedStatusText(status, account_id)));
+		values.put(Statuses.TEXT_PLAIN, status.getText());
 		values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
 		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
@@ -967,6 +975,15 @@ public final class Utils implements Constants {
 		SharedPreferences preferences = context.getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE);
 		preferences.edit().putLong(getTableNameForContentUri(uri), System.currentTimeMillis()).commit();
 		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
+	}
+
+	public static URL parseURL(String url_string) {
+		try {
+			return new URL(url_string);
+		} catch (MalformedURLException e) {
+			// This should not happen.
+		}
+		return null;
 	}
 
 	public static void restartActivity(Activity activity, boolean animation) {

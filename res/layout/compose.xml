@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:padding="8dp">
 
 	<org.mariotaku.twidere.widget.StatusComposeEditText
 		android:id="@+id/edit_text"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_alignBottom="@+id/text_count"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentTop="true"
 		android:layout_toLeftOf="@+id/send"
 		android:gravity="top"
 		android:hint="@string/tweet_hint"
@@ -21,25 +19,17 @@
 		android:layout_width="64dip"
 		android:layout_height="64dip"
 		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
 		android:contentDescription="@string/send"
 		android:src="@drawable/ic_menu_send"/>
-
-	<ImageButton
-		android:id="@+id/select_account"
-		android:layout_width="64dip"
-		android:layout_height="64dip"
-		android:layout_alignParentRight="true"
-		android:layout_below="@+id/send"
-		android:contentDescription="@string/select_account"
-		android:src="@drawable/ic_menu_accounts"/>
 
 	<TextView
 		android:id="@+id/text_count"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/select_account"
+		android:layout_alignLeft="@+id/send"
+		android:layout_alignParentBottom="true"
 		android:layout_alignParentRight="true"
-		android:layout_below="@+id/select_account"
 		android:gravity="center"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceMedium"/>

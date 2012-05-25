@@ -15,7 +15,7 @@ public class DashboardFragment extends BaseFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		Fragment fragment = MULTIPLE_ACCOUNTS_ENABLED ? new AccountsFragment() : new MeFragment();
+		Fragment fragment = MULTIPLE_ACCOUNTS_ENABLED ? new AccountsFragment() : new UserProfileFragment();
 		ft.replace(R.id.dashboard, fragment);
 		ft.commit();
 	}

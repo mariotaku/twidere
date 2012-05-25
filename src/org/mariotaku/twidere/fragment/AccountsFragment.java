@@ -234,14 +234,18 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		mFragment.show(ft, "delete_confirm");
 	}
 
-	private void showDetails(long user_id) {
+	private void showDetails(long account_id) {
 		if (getSherlockActivity() instanceof HomeActivity) {
 			((HomeActivity) getSherlockActivity()).setPagingEnabled(false);
 		}
 		if (mDetailFragment == null) {
-			mDetailFragment = Fragment.instantiate(getSherlockActivity(), MeFragment.class.getName(), null);
+			mDetailFragment = Fragment.instantiate(getSherlockActivity(), UserProfileFragment.class.getName(), null);
 		}
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		Bundle args = new Bundle();
+		args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+		args.putLong(INTENT_KEY_USER_ID, account_id);
+		mDetailFragment.setArguments(args);
 		ft.replace(R.id.dashboard, mDetailFragment);
 		ft.addToBackStack(null);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

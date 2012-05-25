@@ -17,6 +17,10 @@
 		android:showAsAction="ifRoom"
 		android:title="@string/add_image"/>
 	<item
+		android:id="@id/select_account"
+		android:icon="@drawable/ic_menu_accounts"
+		android:title="@string/select_account"/>
+	<item
 		android:id="@id/drafts"
 		android:icon="@drawable/ic_menu_save"
 		android:title="@string/drafts"/>

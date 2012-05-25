@@ -134,7 +134,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int destroyFriendship(long account_id, long user_id) throws RemoteException {
+	public int destroyFriendship(long account_id, long user_id) {
 		if (mService == null) return -1;
 		try {
 			return mService.destroyFriendship(account_id, user_id);

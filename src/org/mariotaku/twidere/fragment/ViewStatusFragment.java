@@ -15,6 +15,7 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusesCursorIndices;
+import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -65,6 +66,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (BROADCAST_DATABASE_UPDATED.equals(action)) {
+				getStatus();
 				getSherlockActivity().invalidateOptionsMenu();
 			} else if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
 				showFollowInfo();
@@ -307,17 +309,23 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		mFollowInfoTask.execute();
 	}
 
-	private class FollowInfoTask extends AsyncTask<Void, Void, Boolean> {
+	private class FollowInfoTask extends AsyncTask<Void, Void, FollowInfoTask.Response> {
 
 		@Override
-		protected Boolean doInBackground(Void... params) {
+		protected Response doInBackground(Void... params) {
 			return isAllFollowing();
 		}
 
 		@Override
-		protected void onPostExecute(Boolean result) {
-			mFollowIndicator.setVisibility(result ? View.GONE : View.VISIBLE);
-			mFollowButton.setVisibility(result ? View.GONE : View.VISIBLE);
+		protected void onPostExecute(Response result) {
+			if (result.exception == null) {
+				mFollowIndicator.setVisibility(result.value == null || result.value ? View.GONE : View.VISIBLE);
+				if (result.value != null) {
+					mFollowButton.setVisibility(result.value ? View.GONE : View.VISIBLE);
+				}
+			} else {
+				Utils.showErrorToast(getSherlockActivity(), result.exception, true);
+			}
 			mProgress.setVisibility(View.GONE);
 			super.onPostExecute(result);
 			mFollowInfoTask = null;
@@ -331,21 +339,29 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			super.onPreExecute();
 		}
 
-		private boolean isAllFollowing() {
+		private Response isAllFollowing() {
+			if (Utils.isMyAccount(getSherlockActivity(), mStatus.user_id)) return new Response(true, null);
 			long[] ids = getActivatedAccounts(getSherlockActivity());
 			for (long id : ids) {
-				if (id == mStatus.user_id) {
-					continue;
-				}
 				Twitter twitter = getTwitterInstance(getSherlockActivity(), id, false);
 				try {
 					Relationship result = twitter.showFriendship(id, mStatus.user_id);
-					if (!result.isSourceFollowingTarget()) return false;
+					if (!result.isSourceFollowingTarget()) return new Response(false, null);
 				} catch (TwitterException e) {
-					e.printStackTrace();
+					return new Response(null, e);
 				}
 			}
-			return true;
+			return new Response(true, null);
+		}
+
+		private class Response {
+			public final Boolean value;
+			public final TwitterException exception;
+
+			public Response(Boolean value, TwitterException exception) {
+				this.value = value;
+				this.exception = exception;
+			}
 		}
 	}
 

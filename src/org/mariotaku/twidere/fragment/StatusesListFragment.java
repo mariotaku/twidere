@@ -10,31 +10,30 @@ import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.FastParcelableStatusesAdapter;
+import org.mariotaku.twidere.adapter.StatusesCursorAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.loader.CursorStatusesLoader;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusViewHolder;
-import org.mariotaku.twidere.util.Utils;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -48,21 +47,19 @@ import com.actionbarsherlock.view.MenuItem;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public abstract class StatusesListFragment extends BaseFragment implements OnRefreshListener,
-		LoaderCallbacks<ParcelableStatus[]>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
-		ActionMode.Callback {
+public abstract class StatusesListFragment extends BaseFragment implements OnRefreshListener, LoaderCallbacks<Cursor>,
+		OnScrollListener, OnItemClickListener, OnItemLongClickListener, ActionMode.Callback {
 
 	public ServiceInterface mServiceInterface;
 	public PullToRefreshListView mListView;
 	public ContentResolver mResolver;
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
-	private FastParcelableStatusesAdapter mAdapter;
-	private CursorStatusesLoader mLoader;
-	private View mLoadIndicator;
+	private StatusesCursorAdapter mAdapter;
 
 	private Handler mHandler;
 	private Runnable mTicker;
+	private ActionMode mActionMode;
 
 	public ParcelableStatus mSelectedStatus;
 	private int mRunningTaskId;
@@ -153,8 +150,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
-		mAdapter = new FastParcelableStatusesAdapter(getSherlockActivity(), imageloader);
-		mLoadIndicator = getView().findViewById(R.id.load_indicator);
+		mAdapter = new StatusesCursorAdapter(getSherlockActivity(), imageloader);
 		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
 		ListView list = mListView.getRefreshableView();
@@ -181,18 +177,20 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	}
 
 	@Override
-	public Loader<ParcelableStatus[]> onCreateLoader(int id, Bundle args) {
-		String[] cols = Statuses.COLUMNS;
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID, Statuses.USER_ID,
+				Statuses.STATUS_TIMESTAMP, Statuses.TEXT_PLAIN, Statuses.NAME, Statuses.SCREEN_NAME,
+				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID, Statuses.IN_REPLY_TO_USER_ID,
+				Statuses.IN_REPLY_TO_SCREEN_NAME, Statuses.LOCATION, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID,
+				Statuses.RETWEETED_BY_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
+				Statuses.IS_RETWEET, Statuses.IS_FAVORITE, Statuses.HAS_MEDIA, Statuses.IS_PROTECTED, Statuses.IS_GAP };
 		Uri uri = getContentUri();
 		String where = buildActivatedStatsWhereClause(getSherlockActivity(), null);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
 			String table = getTableNameForContentUri(uri);
 			where = buildFilterWhereClause(table, where);
 		}
-		mLoader = new CursorStatusesLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
-		mLoadIndicator.setVisibility(View.VISIBLE);
-		mLoadIndicator.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), android.R.anim.fade_in));
-		return mLoader;
+		return new CursorLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
 	}
 
 	@Override
@@ -218,13 +216,16 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 			ParcelableStatus status = mAdapter.findItem(id);
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
-				getStatuses(new long[] { status.account_id }, new long[] { status.sort_id });
+				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
 				Uri.Builder builder = new Uri.Builder();
 				builder.scheme(SCHEME_TWIDERE);
 				builder.authority(AUTHORITY_STATUS);
 				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
 				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
+				if (mActionMode != null) {
+					mActionMode.finish();
+				}
 				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 			}
 		}
@@ -237,22 +238,20 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
 			mSelectedStatus = mAdapter.findItem(id);
-			getSherlockActivity().startActionMode(this);
+			mActionMode = getSherlockActivity().startActionMode(this);
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public void onLoaderReset(Loader<ParcelableStatus[]> loader) {
-		mAdapter.clear();
+	public void onLoaderReset(Loader<Cursor> loader) {
+		mAdapter.changeCursor(null);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<ParcelableStatus[]> loader, ParcelableStatus[] data) {
-		mLoadIndicator.setVisibility(View.INVISIBLE);
-		mLoadIndicator.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), android.R.anim.fade_out));
-		mAdapter.setData(data);
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		mAdapter.changeCursor(data);
 		mAdapter.setShowAccountColor(getActivatedAccounts(getSherlockActivity()).length > 1);
 	}
 

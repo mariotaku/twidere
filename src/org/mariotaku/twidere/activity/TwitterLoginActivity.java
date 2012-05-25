@@ -2,6 +2,7 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
+import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
@@ -300,11 +301,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		setSignInButton();
 	}
 
-	@Override
-	public void setRefreshState() {
-		// Do nothing.
-	}
-
 	private void analyseUserProfileColor(String url_string) {
 		try {
 			URL url = new URL(url_string);
@@ -330,6 +326,34 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		if (ed != null) {
 			mPassword = ed.toString();
 		}
+	}
+
+	private void setAPI(ConfigurationBuilder cb) {
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
+		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+		if (!isNullOrEmpty(mRestBaseURL)) {
+			cb.setRestBaseURL(mRestBaseURL);
+		}
+		if (!isNullOrEmpty(mSearchBaseURL)) {
+			cb.setSearchBaseURL(mSearchBaseURL);
+		}
+		if (!isNullOrEmpty(mOAuthAccessTokenURL)) {
+			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
+		}
+		if (!isNullOrEmpty(mOAuthAuthenticationURL)) {
+			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
+		}
+		if (!isNullOrEmpty(mOAuthAuthorizationURL)) {
+			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
+		}
+		if (!isNullOrEmpty(mOAuthRequestTokenURL)) {
+			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
+		}
+		cb.setOAuthConsumerKey(CONSUMER_KEY);
+		cb.setOAuthConsumerSecret(CONSUMER_SECRET);
+		cb.setGZIPEnabled(enable_gzip_compressing);
+		cb.setIgnoreSSLError(ignore_ssl_error);
 	}
 
 	private void setSignInButton() {
@@ -385,21 +409,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 		@Override
 		protected Response doInBackground(Void... params) {
-			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
-			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setRestBaseURL(mRestBaseURL);
-			cb.setSearchBaseURL(mSearchBaseURL);
-			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
-			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
-			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
-			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
-			cb.setOAuthConsumerKey(CONSUMER_KEY);
-			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
-			cb.setGZIPEnabled(enable_gzip_compressing);
-			cb.setIgnoreSSLError(ignore_ssl_error);
+			setAPI(cb);
 			final Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			AccessToken accessToken = null;
 			User user = null;
@@ -483,19 +495,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 
 		private Response authBasic() {
-			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
-			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setRestBaseURL(mRestBaseURL);
-			cb.setSearchBaseURL(mSearchBaseURL);
-			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
-			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
-			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
-			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
-			cb.setGZIPEnabled(enable_gzip_compressing);
-			cb.setIgnoreSSLError(ignore_ssl_error);
+			setAPI(cb);
 
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(mUsername, mPassword));
 			boolean account_valid = false;
@@ -526,20 +528,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 
 		private Response authOAuth() {
-			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
-			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setRestBaseURL(mRestBaseURL);
-			cb.setSearchBaseURL(mSearchBaseURL);
-			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
-			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
-			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
-			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
-			cb.setOAuthConsumerKey(CONSUMER_KEY);
-			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
-			cb.setGZIPEnabled(enable_gzip_compressing);
-			cb.setIgnoreSSLError(ignore_ssl_error);
+			setAPI(cb);
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			RequestToken requestToken = null;
 			try {
@@ -553,19 +543,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 
 		private Response authTwipOMode() {
-			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
-			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setRestBaseURL(mRestBaseURL);
-			cb.setSearchBaseURL(mSearchBaseURL);
-			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
-			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
-			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
-			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
-			cb.setGZIPEnabled(enable_gzip_compressing);
-			cb.setIgnoreSSLError(ignore_ssl_error);
+			setAPI(cb);
 
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
 			boolean account_valid = false;
@@ -596,21 +576,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 
 		private Response authxAuth() {
-			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
-			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			cb.setRestBaseURL(mRestBaseURL);
-			cb.setSearchBaseURL(mSearchBaseURL);
-			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
-			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
-			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
-			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
-			cb.setOAuthConsumerKey(CONSUMER_KEY);
-			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
-			cb.setGZIPEnabled(enable_gzip_compressing);
-			cb.setIgnoreSSLError(ignore_ssl_error);
+			setAPI(cb);
 			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			AccessToken accessToken = null;
 			User user = null;

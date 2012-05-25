@@ -1,37 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.handmark.pulltorefresh.library.PullToRefreshListView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/refreshable_list"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
-
-	<com.handmark.pulltorefresh.library.PullToRefreshListView
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/refreshable_list"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layerType="hardware"/>
-
-	<LinearLayout
-		android:id="@+id/load_indicator"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="bottom"
-		android:background="#80000000"
-		android:gravity="center"
-		android:orientation="horizontal"
-		android:padding="8dp"
-		android:visibility="invisible">
-
-		<ProgressBar
-			style="?android:attr/progressBarStyleSmall"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/loading"
-			android:textColor="#ffffff"/>
-	</LinearLayout>
-
-</FrameLayout>
+	android:layout_height="match_parent"
+	android:layerType="software"/>

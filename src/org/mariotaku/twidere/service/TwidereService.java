@@ -442,7 +442,7 @@ public class TwidereService extends Service implements Constants {
 				ContentResolver resolver = getContentResolver();
 				StringBuilder where = new StringBuilder();
 				where.append(Statuses.ACCOUNT_ID + "=" + result.status.getUser().getId());
-				where.append(" AND " + Statuses.STATUS_ID + "=" + result.status.getId());
+				where.append(" AND " + Statuses.STATUS_ID + " = " + result.status.getId());
 				for (Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.delete(uri, where.toString(), null);
 				}
@@ -470,6 +470,11 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public Twitter getTwitter(Context context, long account_id, boolean include_entities) {
+			return getTwitterInstance(context, account_id, include_entities, true);
+		}
+
+		@Override
 		protected void onPostExecute(List<GetStatusesTask.AccountResponse> responses) {
 			super.onPostExecute(responses);
 			context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
@@ -490,6 +495,11 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException {
 			return twitter.getMentions(paging);
+		}
+
+		@Override
+		public Twitter getTwitter(Context context, long account_id, boolean include_entities) {
+			return getTwitterInstance(context, account_id, include_entities, false);
 		}
 
 		@Override
@@ -521,6 +531,8 @@ public class TwidereService extends Service implements Constants {
 		public abstract ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
 				throws TwitterException;
 
+		public abstract Twitter getTwitter(Context context, long account_id, boolean include_entities);
+
 		@Override
 		protected List<AccountResponse> doInBackground(Object... params) {
 
@@ -534,13 +546,13 @@ public class TwidereService extends Service implements Constants {
 			SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT) + 1;
 			for (long account_id : account_ids) {
-				Twitter twitter = getTwitterInstance(context, account_id, true);
+				Twitter twitter = getTwitter(context, account_id, true);
 				if (twitter != null) {
 					try {
 						Paging paging = new Paging();
 						paging.setCount(load_item_limit);
 						long max_id = -1;
-						if (max_ids_valid && max_ids[idx] >= 0) {
+						if (max_ids_valid && max_ids[idx] > 0) {
 							max_id = max_ids[idx];
 							paging.setMaxId(max_id);
 						}
@@ -620,15 +632,15 @@ public class TwidereService extends Service implements Constants {
 						}
 						final User user = status.getUser();
 						final long user_id = user.getId();
-						final long sort_id = status.getId();
+						final long status_id = status.getId();
 						resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + user_id, null);
 						resolver.insert(CachedUsers.CONTENT_URI, makeCachedUsersContentValues(user));
 
-						if (!status_ids.contains(sort_id)) {
-							if (sort_id < min_id || min_id == -1) {
-								min_id = sort_id;
+						if (!status_ids.contains(status_id)) {
+							if (status_id < min_id || min_id == -1) {
+								min_id = status_id;
 							}
-							status_ids.add(sort_id);
+							status_ids.add(status_id);
 							values_list.add(makeStatusesContentValues(status, account_id));
 						}
 					}
@@ -637,7 +649,7 @@ public class TwidereService extends Service implements Constants {
 					// Delete all rows conflicting before new data inserted.
 					{
 						StringBuilder where = new StringBuilder();
-						where.append(Statuses.SORT_ID + " IN ( ");
+						where.append(Statuses.STATUS_ID + " IN ( ");
 						for (int i = 0; i < status_ids.size(); i++) {
 							String id_string = String.valueOf(status_ids.get(i));
 							if (id_string != null) {
@@ -662,7 +674,7 @@ public class TwidereService extends Service implements Constants {
 						values.put(Statuses.IS_GAP, 1);
 						StringBuilder where = new StringBuilder();
 						where.append(Statuses.ACCOUNT_ID + "=" + account_id);
-						where.append(" AND " + Statuses.SORT_ID + "=" + min_id);
+						where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
 						resolver.update(uri, values, where.toString(), null);
 					}
 					succeed = true;

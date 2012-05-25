@@ -106,14 +106,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 		mDisplayProfileImage = display;
 	}
 
+	public void setShowAccountColor(boolean show) {
+		mShowAccountColor = show;
+	}
+
 	public void setShowLastItemAsGap(boolean gap) {
 		mShowLastItemAsGap = gap;
 	}
 
-	public void setShowAccountColor(boolean show) {
-		mShowAccountColor = show;
-	}
-	
 	public void setStatusesTextSize(float text_size) {
 		mTextSize = text_size;
 	}

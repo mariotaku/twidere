@@ -7,7 +7,7 @@ import org.mariotaku.twidere.fragment.BaseFragment;
 import org.mariotaku.twidere.fragment.DraftsFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
-import org.mariotaku.twidere.fragment.UserFragment;
+import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
 
@@ -40,9 +40,8 @@ public class LinkHandlerActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		Uri data = getIntent().getData();
-		setUiOptions(data);
+		setWindowFeatureAndUiOptions(data);
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		if (data != null) {
@@ -81,7 +80,7 @@ public class LinkHandlerActivity extends BaseActivity {
 					break;
 				}
 				case CODE_USER: {
-					fragment = new UserFragment();
+					fragment = new UserProfileFragment();
 					String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 					bundle = new Bundle();
@@ -159,7 +158,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		}
 	}
 
-	private void setUiOptions(Uri uri) {
+	private void setWindowFeatureAndUiOptions(Uri uri) {
 		if (uri == null) return;
 		switch (URI_MATCHER.match(uri)) {
 			case CODE_STATUS: {
@@ -167,14 +166,17 @@ public class LinkHandlerActivity extends BaseActivity {
 				break;
 			}
 			case CODE_USER: {
+				requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 				setWindowUiOptions(getWindow(), 0);
 				break;
 			}
 			case CODE_CONVERSATION: {
+				requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 				setWindowUiOptions(getWindow(), 0);
 				break;
 			}
 			case CODE_SEARCH: {
+				requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 				setWindowUiOptions(getWindow(), 0);
 				break;
 			}

@@ -48,7 +48,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 	private Uri mImageUri;
 	private StatusComposeEditText mEditText;
 	private TextView mTextCount;
-	private ImageButton mSendButton, mSelectAccount;
+	private ImageButton mSendButton;
 	private boolean mIsImageAttached, mIsPhotoAttached;
 	private long[] mAccountIds;
 	private ServiceInterface mInterface;
@@ -123,9 +123,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		mEditText = (StatusComposeEditText) view.findViewById(R.id.edit_text);
 		mTextCount = (TextView) view.findViewById(R.id.text_count);
 		mSendButton = (ImageButton) view.findViewById(R.id.send);
-		mSelectAccount = (ImageButton) view.findViewById(R.id.select_account);
 		mSendButton.setOnClickListener(this);
-		mSelectAccount.setOnClickListener(this);
 		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
 		final LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
@@ -208,13 +206,6 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 					getSherlockActivity().finish();
 				}
 				break;
-			case R.id.select_account:
-				Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
-				Bundle bundle = new Bundle();
-				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
-				intent.putExtras(bundle);
-				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
-				break;
 		}
 
 	}
@@ -275,6 +266,14 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 				builder.scheme(SCHEME_TWIDERE);
 				builder.authority(AUTHORITY_DRAFTS);
 				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+				break;
+			}
+			case MENU_SELECT_ACCOUNT: {
+				Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
+				Bundle bundle = new Bundle();
+				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
 			}
 		}

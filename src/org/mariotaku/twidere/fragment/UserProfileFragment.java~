@@ -12,6 +12,7 @@ import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,34 +41,91 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private TextView mNameView, mScreenNameView, mBioView, mLocationView, mWebView;
 	private ProgressBar mProgress;
 	private Button mFollowButton;
-
+	
 	private UserProfileActionAdapter mAdapter;
 	private ListView mListView;
 	private UserInfoTask mUserInfoTask;
 	private View mHeaderView;
 	private long mAccountId;
-	private boolean mIsFollowing;
-
-	private User mUser = null;
-
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	
+	private abstract class UserAction {
+		public abstract String getName();
+		public abstract String getSummary();
+		public abstract void execute();
+		@Override
+		public String toString() {
+			return getName();
+		}
+	}
+	
+	private class ViewStatusesAction extends UserAction {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
-			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
-				getFollowInfo();
-			}
+		public String getName() {
+			return getString(R.string.tweets);
 		}
-	};
 
+		@Override
+		public String getSummary() {
+			if (mUser == null) return null;
+			return String.valueOf(mUser.getStatusesCount());
+		}
+
+		@Override
+		public void execute() {
+			
+			
+		}
+		
+	}
+	private class ViewFollowingAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.following);
+		}
+
+		@Override
+		public String getSummary() {
+			if (mUser == null) return null;
+			return String.valueOf(mUser.getFriendsCount());
+		}
+
+		@Override
+		public void execute() {
+			
+			
+		}
+		
+	}
+	private class ViewFollowersAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.followers);
+		}
+
+		@Override
+		public String getSummary() {
+			if (mUser == null) return null;
+			return String.valueOf(mUser.getFollowersCount());
+		}
+
+		@Override
+		public void execute() {
+			
+			
+		}
+		
+	}
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		if (getArguments() != null) {
 			mAccountId = getArguments().getLong(INTENT_KEY_ACCOUNT_ID);
 		}
-		mProfileImageLoader = ((TwidereApplication) getSherlockActivity().getApplication()).getListProfileImageLoader();
+		mProfileImageLoader = ((TwidereApplication)getSherlockActivity().getApplication()).getListProfileImageLoader();
 		mAdapter = new UserProfileActionAdapter(getSherlockActivity());
 		mAdapter.add(new ViewStatusesAction());
 		mAdapter.add(new ViewFollowersAction());
@@ -78,25 +136,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mListView.setOnItemClickListener(this);
 		setListAdapter(mAdapter);
 		getUserInfo();
-
-	}
-
-	@Override
-	public void onClick(View view) {
-		switch (view.getId()) {
-			case R.id.follow: {
-				if (mUser != null) {
-					ServiceInterface service = ServiceInterface.getInstance(getSherlockActivity());
-					if (mIsFollowing) {
-						service.destroyFriendship(mAccountId, mUser.getId());
-					} else {
-						service.createFriendship(mAccountId, mUser.getId());
-					}
-				}
-				break;
-			}
-		}
-
+		getFollowInfo();
+		
 	}
 
 	@Override
@@ -112,45 +153,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowIndicator = mHeaderView.findViewById(R.id.follow_indicator);
 		mProgress = (ProgressBar) mHeaderView.findViewById(R.id.progress);
 		return super.onCreateView(inflater, container, savedInstanceState);
-	}
-
-	@Override
-	public void onDestroyView() {
-		mUser = null;
-		super.onDestroyView();
-	}
-
-	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		UserAction action = mAdapter.findItem(id);
-		if (action != null) {
-			action.execute();
-		}
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		IntentFilter filter = new IntentFilter(BROADCAST_FRIENDSHIP_CHANGED);
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
-		}
-	}
-
-	@Override
-	public void onStop() {
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().unregisterReceiver(mStatusReceiver);
-		}
-		super.onStop();
-	}
-
-	private void getFollowInfo() {
-		if (mFollowInfoTask != null) {
-			mFollowInfoTask.cancel(true);
-		}
-		mFollowInfoTask = new FollowInfoTask();
-		mFollowInfoTask.execute();
 	}
 
 	private void getUserInfo() {
@@ -173,102 +175,83 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mUserInfoTask.execute();
 		}
 	}
+	
+	@Override
+	public void onDestroyView() {
+		mUser = null;
+		super.onDestroyView();
+	}
 
-	private class FollowInfoTask extends AsyncTask<Void, Void, Response<Boolean>> {
+	private class UserProfileActionAdapter extends ArrayAdapter<UserAction> {
 
-		@Override
-		protected Response<Boolean> doInBackground(Void... params) {
-			return isFollowing();
+		public UserProfileActionAdapter(Context context) {
+			super(context, android.R.layout.simple_list_item_2, android.R.id.text1);
 		}
 
 		@Override
-		protected void onPostExecute(Response<Boolean> result) {
-			mIsFollowing = false;
-			if (result.exception == null) {
-				mFollowIndicator.setVisibility(result.value == null ? View.GONE : View.VISIBLE);
-				if (result.value != null) {
-					mIsFollowing = result.value;
-					mFollowButton.setVisibility(View.VISIBLE);
-					mFollowButton.setText(result.value ? R.string.unfollow : R.string.follow);
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View view = super.getView(position, convertView, parent);
+			TextView summary_view = (TextView) view.findViewById(android.R.id.text2);
+			String summary = getItem(position).getSummary();
+			summary_view.setText(summary != null ? summary : "");
+			return view;
+		}
+		
+		public UserAction findItem(long id) {
+			for (int i = 0; i < getCount(); i++) {
+				if (id == getItemId(i)) {
+					return getItem(i);
 				}
-			} else {
-				Utils.showErrorToast(getSherlockActivity(), result.exception, true);
 			}
-			mProgress.setVisibility(View.GONE);
-			super.onPostExecute(result);
-			mFollowInfoTask = null;
+			return null;
 		}
-
-		@Override
-		protected void onPreExecute() {
-			mFollowIndicator.setVisibility(View.VISIBLE);
-			mFollowButton.setVisibility(View.GONE);
-			mProgress.setVisibility(View.VISIBLE);
-			super.onPreExecute();
-		}
-
-		private Response<Boolean> isFollowing() {
-			if (mUser == null) return new Response<Boolean>(null, null);
-			if (mAccountId == mUser.getId()) return new Response<Boolean>(null, null);
-			Twitter twitter = getTwitterInstance(getSherlockActivity(), mAccountId, false);
-			try {
-				Relationship result = twitter.showFriendship(mAccountId, mUser.getId());
-				return new Response<Boolean>(result.isSourceFollowingTarget(), null);
-			} catch (TwitterException e) {
-				return new Response<Boolean>(null, e);
-			}
-		}
+		
 	}
 
-	private class Response<T> {
-		public final T value;
-		public final TwitterException exception;
-
-		public Response(T value, TwitterException exception) {
-			this.value = value;
-			this.exception = exception;
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		UserAction action = mAdapter.findItem(id);
+		if (action != null) {
+			action.execute();
 		}
 	}
-
-	private abstract class UserAction {
-		public abstract void execute();
-
-		public abstract String getName();
-
-		public abstract String getSummary();
-
-		@Override
-		public String toString() {
-			return getName();
-		}
-	}
-
+	
+	private User mUser = null;
+	
 	private class UserInfoTask extends AsyncTask<Void, Void, Response<User>> {
 
 		private final Twitter twitter;
 		private final long user_id;
 		private final String screen_name;
-
+		
 		private UserInfoTask(Context context, long account_id, long user_id, String screen_name) {
 			twitter = Utils.getTwitterInstance(context, account_id, true);
 			this.user_id = user_id;
 			this.screen_name = screen_name;
 		}
-
+		
 		UserInfoTask(Context context, long account_id, long user_id) {
 			this(context, account_id, user_id, null);
 		}
-
+		
 		UserInfoTask(Context context, long account_id, String screen_name) {
 			this(context, account_id, -1, screen_name);
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+			super.onPreExecute();
 		}
 
 		@Override
 		protected Response<User> doInBackground(Void... args) {
 			try {
-				if (user_id != -1)
+				if (user_id != -1) {
 					return new Response<User>(twitter.showUser(user_id), null);
-				else if (screen_name != null) return new Response<User>(twitter.showUser(screen_name), null);
+				} else if (screen_name != null) {
+					return new Response<User>(twitter.showUser(screen_name), null);
+				}
 			} catch (TwitterException e) {
 				return new Response<User>(null, e);
 			}
@@ -290,100 +273,111 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			} else {
 				Utils.showErrorToast(getSherlockActivity(), result.exception, true);
 			}
-			getFollowInfo();
 			super.onPostExecute(result);
+		}
+		
+	}
+	
+	private void getFollowInfo() {
+		if (mFollowInfoTask != null) {
+			mFollowInfoTask.cancel(true);
+		}
+		mFollowInfoTask = new FollowInfoTask();
+		mFollowInfoTask.execute();
+	}
+	
+	private class FollowInfoTask extends AsyncTask<Void, Void, Response<Boolean>> {
+
+		@Override
+		protected Response<Boolean> doInBackground(Void... params) {
+			return isFollowing();
+		}
+
+		@Override
+		protected void onPostExecute(Response<Boolean> result) {
+			if (result.exception == null) {
+				mFollowIndicator.setVisibility(result.value == null || result.value ? View.GONE : View.VISIBLE);
+				if (result.value != null) {
+					mFollowButton.setVisibility(View.VISIBLE);
+					mFollowButton.setVisibility(result.value ? View.GONE : View.VISIBLE);
+				}
+				mProgress.setVisibility(View.GONE);
+			} else {
+				Utils.showErrorToast(getSherlockActivity(), result.exception, true);
+			}
+			super.onPostExecute(result);
+			mFollowInfoTask = null;
 		}
 
 		@Override
 		protected void onPreExecute() {
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+			mFollowIndicator.setVisibility(View.VISIBLE);
+			mFollowButton.setVisibility(View.GONE);
+			mProgress.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
 
-	}
-
-	private class UserProfileActionAdapter extends ArrayAdapter<UserAction> {
-
-		public UserProfileActionAdapter(Context context) {
-			super(context, android.R.layout.simple_list_item_2, android.R.id.text1);
-		}
-
-		public UserAction findItem(long id) {
-			for (int i = 0; i < getCount(); i++) {
-				if (id == getItemId(i)) return getItem(i);
+		
+		private Response<Boolean> isFollowing() {
+			if (mUser == null) return new Response<Boolean>(null, null);
+			if (mAccountId == mUser.getId()) return new Response<Boolean>(null, null);
+			Twitter twitter = getTwitterInstance(getSherlockActivity(), mAccountId, false);
+			try {
+				Relationship result = twitter.showFriendship(mAccountId, mUser.getId());
+				return new Response<Boolean>(result.isSourceFollowingTarget(), null);
+			} catch (TwitterException e) {
+				return new Response<Boolean>(null, e);
 			}
-			return null;
 		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = super.getView(position, convertView, parent);
-			TextView summary_view = (TextView) view.findViewById(android.R.id.text2);
-			String summary = getItem(position).getSummary();
-			summary_view.setText(summary != null ? summary : "");
-			return view;
-		}
-
-	}
-
-	private class ViewFollowersAction extends UserAction {
-
-		@Override
-		public void execute() {
-
-		}
-
-		@Override
-		public String getName() {
-			return getString(R.string.followers);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getFollowersCount());
-		}
-
-	}
-
-	private class ViewFollowingAction extends UserAction {
-
-		@Override
-		public void execute() {
-
-		}
-
-		@Override
-		public String getName() {
-			return getString(R.string.following);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getFriendsCount());
-		}
-
-	}
-
-	private class ViewStatusesAction extends UserAction {
-
-		@Override
-		public void execute() {
-
-		}
-
-		@Override
-		public String getName() {
-			return getString(R.string.tweets);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getStatusesCount());
-		}
-
 	}
 	
+	private class Response<T> {
+		public final T value;
+		public final TwitterException exception;
+		public Response(T value, TwitterException exception) {
+			this.value = value;
+			this.exception = exception;
+		}
+	}
+
+	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
+				getFollowInfo();
+			}
+		}
+	};
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		IntentFilter filter = new IntentFilter(BROADCAST_FRIENDSHIP_CHANGED);
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
+		}
+	}
+
+	@Override
+	public void onStop() {
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		}
+		super.onStop();
+	}
+	
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.follow: {
+				if (mUser != null) {
+					ServiceInterface.getInstance(getSherlockActivity()).createFriendship(mAccountId, mUser.getId());
+				}
+				break;
+			}
+		}
+		
+	}
 }
