@@ -109,6 +109,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mLocationView = (TextView) mHeaderView.findViewById(R.id.location);
 		mWebView = (TextView) mHeaderView.findViewById(R.id.web);
 		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
+		mFollowButton.setOnClickListener(this);
 		mFollowIndicator = mHeaderView.findViewById(R.id.follow_indicator);
 		mProgress = (ProgressBar) mHeaderView.findViewById(R.id.progress);
 		return super.onCreateView(inflater, container, savedInstanceState);

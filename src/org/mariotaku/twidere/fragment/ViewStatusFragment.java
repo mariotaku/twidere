@@ -8,6 +8,7 @@ import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.LinkHandlerActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -299,6 +300,14 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				cur.close();
 			}
 		}
+		if (mStatus == null) {
+			if (getSherlockActivity() instanceof LinkHandlerActivity) {
+				// Finish the activity
+				getSherlockActivity().finish();
+			} else {
+				// Maybe I'll remove this fragment here?
+			}
+		}
 	}
 
 	private void showFollowInfo() {
@@ -340,6 +349,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		}
 
 		private Response isAllFollowing() {
+			if (mStatus == null) return new Response(null, null);
 			if (Utils.isMyAccount(getSherlockActivity(), mStatus.user_id)) return new Response(true, null);
 			long[] ids = getActivatedAccounts(getSherlockActivity());
 			for (long id : ids) {
@@ -351,7 +361,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 					return new Response(null, e);
 				}
 			}
-			return new Response(true, null);
+			return new Response(null, null);
 		}
 
 		private class Response {
