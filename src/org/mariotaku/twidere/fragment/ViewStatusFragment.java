@@ -184,7 +184,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				if (isMyRetweet(getSherlockActivity(), mAccountId, mStatusId)) {
 					mServiceInterface.cancelRetweet(mAccountId, mStatusId);
 				} else {
-					mServiceInterface.retweetStatus(new long[] { mAccountId }, mStatusId);
+					long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id : mStatus.status_id;
+					mServiceInterface.retweetStatus(new long[] { mAccountId }, id_to_retweet);
 				}
 				break;
 			}

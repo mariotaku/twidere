@@ -86,13 +86,13 @@ public class TwidereService extends Service implements Constants {
 
 	public int getHomeTimeline(long[] account_ids, long[] max_ids) {
 		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
-		GetHomeTimelineTask task = new GetHomeTimelineTask(this, mAsyncTaskManager, account_ids, max_ids);
+		GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids);
 		return mGetHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public int getMentions(long[] account_ids, long[] max_ids) {
 		mAsyncTaskManager.cancel(mGetMentionsTaskId);
-		GetMentionsTask task = new GetMentionsTask(this, mAsyncTaskManager, account_ids, max_ids);
+		GetMentionsTask task = new GetMentionsTask(account_ids, max_ids);
 		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
@@ -128,6 +128,16 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
+	public int updateProfile(long account_id, String name, String url, String location, String description) {
+		UpdateProfileTask task = new UpdateProfileTask(account_id, name, url, location, description);
+		return mAsyncTaskManager.add(task, true);
+	}
+
+	public int updateProfileImage(long account_id, Uri image_uri) {
+		UpdateProfileImageTask task = new UpdateProfileImageTask(account_id, image_uri);
+		return mAsyncTaskManager.add(task, true);
+	}
+
 	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
 		UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to);
 		return mAsyncTaskManager.add(task, true);
@@ -156,7 +166,7 @@ public class TwidereService extends Service implements Constants {
 					return new StatusResponse(account_id, null, e);
 				}
 			}
-			return null;
+			return new StatusResponse(account_id, null, null);
 		}
 
 		@Override
@@ -283,7 +293,7 @@ public class TwidereService extends Service implements Constants {
 					return new UserResponse(null, e);
 				}
 			}
-			return null;
+			return new UserResponse(null, null);
 		}
 
 		@Override
@@ -390,7 +400,7 @@ public class TwidereService extends Service implements Constants {
 					return new UserResponse(null, e);
 				}
 			}
-			return null;
+			return new UserResponse(null, null);
 		}
 
 		@Override
@@ -433,7 +443,7 @@ public class TwidereService extends Service implements Constants {
 					return new StatusResponse(account_id, null, e);
 				}
 			}
-			return null;
+			return new StatusResponse(account_id, null, null);
 		}
 
 		@Override
@@ -457,11 +467,8 @@ public class TwidereService extends Service implements Constants {
 
 	private class GetHomeTimelineTask extends GetStatusesTask {
 
-		private Context context;
-
-		public GetHomeTimelineTask(Context context, AsyncTaskManager manager, long[] account_ids, long[] max_ids) {
-			super(context, manager, Statuses.CONTENT_URI, account_ids, max_ids);
-			this.context = context;
+		public GetHomeTimelineTask(long[] account_ids, long[] max_ids) {
+			super(TwidereService.this, mAsyncTaskManager, Statuses.CONTENT_URI, account_ids, max_ids);
 		}
 
 		@Override
@@ -477,7 +484,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(List<GetStatusesTask.AccountResponse> responses) {
 			super.onPostExecute(responses);
-			context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
+			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
 					responses.size() > 0));
 		}
 
@@ -485,11 +492,8 @@ public class TwidereService extends Service implements Constants {
 
 	private class GetMentionsTask extends GetStatusesTask {
 
-		private Context context;
-
-		public GetMentionsTask(Context context, AsyncTaskManager manager, long[] account_ids, long[] max_ids) {
-			super(context, manager, Mentions.CONTENT_URI, account_ids, max_ids);
-			this.context = context;
+		public GetMentionsTask(long[] account_ids, long[] max_ids) {
+			super(TwidereService.this, mAsyncTaskManager, Mentions.CONTENT_URI, account_ids, max_ids);
 		}
 
 		@Override
@@ -505,8 +509,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(List<GetStatusesTask.AccountResponse> responses) {
 			super.onPostExecute(responses);
-			context.sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
-					responses.size() > 0));
+			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, responses.size() > 0));
 		}
 
 	}
@@ -854,6 +857,16 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public int updateProfile(long account_id, String name, String url, String location, String description) {
+			return mService.get().updateProfile(account_id, name, url, location, description);
+		}
+
+		@Override
+		public int updateProfileImage(long account_id, Uri image_uri) {
+			return mService.get().updateProfileImage(account_id, image_uri);
+		}
+
+		@Override
 		public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to)
 				throws RemoteException {
 			return mService.get().updateStatus(account_ids, content, location, image_uri, in_reply_to);
@@ -872,6 +885,93 @@ public class TwidereService extends Service implements Constants {
 			this.status = status;
 			this.account_id = account_id;
 		}
+	}
+
+	private class UpdateProfileImageTask extends ManagedAsyncTask<UserResponse> {
+
+		private final long account_id;
+		private final Uri image_uri;
+
+		public UpdateProfileImageTask(long account_id, Uri image_uri) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.image_uri = image_uri;
+		}
+
+		@Override
+		protected UserResponse doInBackground(Object... params) {
+
+			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
+				try {
+					User user = twitter.updateProfileImage(new File(image_uri.getPath()));
+					return new UserResponse(user, null);
+				} catch (TwitterException e) {
+					return new UserResponse(null, e);
+				}
+			}
+			return new UserResponse(null, null);
+		}
+
+		@Override
+		protected void onPostExecute(UserResponse result) {
+			if (result != null && result.user != null) {
+				Toast.makeText(TwidereService.this, R.string.profile_image_update_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(TwidereService.this, result.exception, true);
+			}
+			Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
+			intent.putExtra(INTENT_KEY_USER_ID, account_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
+	}
+
+	private class UpdateProfileTask extends ManagedAsyncTask<UserResponse> {
+
+		private final long account_id;
+		private final String name, url, location, description;
+
+		public UpdateProfileTask(long account_id, String name, String url, String location, String description) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.name = name;
+			this.url = url;
+			this.location = location;
+			this.description = description;
+		}
+
+		@Override
+		protected UserResponse doInBackground(Object... params) {
+
+			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				try {
+					User user = twitter.updateProfile(name, url, location, description);
+					return new UserResponse(user, null);
+				} catch (TwitterException e) {
+					return new UserResponse(null, e);
+				}
+			}
+			return new UserResponse(null, null);
+		}
+
+		@Override
+		protected void onPostExecute(UserResponse result) {
+			if (result != null && result.user != null) {
+				Toast.makeText(TwidereService.this, R.string.profile_update_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(TwidereService.this, result.exception, true);
+			}
+			Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
+			intent.putExtra(INTENT_KEY_USER_ID, account_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
 	}
 
 	private class UpdateStatusTask extends ManagedAsyncTask<List<StatusResponse>> {

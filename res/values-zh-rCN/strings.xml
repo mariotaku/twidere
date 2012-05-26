@@ -164,8 +164,9 @@
 	<string name="send_all">全部发送</string>
 	<string name="delete_all">全部删除</string>
 	<string name="profile">资料</string>
-	<string name="bio">简介</string>
+	<string name="description">简介</string>
 	<string name="location">位置</string>
-	<string name="web">网址</string>
+	<string name="url">网址</string>
+	<string name="favorites">收藏</string>
 
 </resources>

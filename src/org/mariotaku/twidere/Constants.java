@@ -103,6 +103,7 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_MENTIONS_REFRESHED = INTENT_PACKAGE_PREFIX + "MENTIONS_REFRESHED";
 	public static final String BROADCAST_REFRESHSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "REFRESHSTATE_CHANGED";
 	public static final String BROADCAST_FRIENDSHIP_CHANGED = INTENT_PACKAGE_PREFIX + "FRIENDSHIP_CHANGED";
+	public static final String BROADCAST_PROFILE_UPDATED = INTENT_PACKAGE_PREFIX + "PROFILE_UPDATED";
 	public static final String BROADCAST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DATABASE_UPDATED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
@@ -154,7 +155,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_DRAFTS = R.id.drafts;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
-	public static final int REQUEST_ADD_IMAGE = 2;
+	public static final int REQUEST_PICK_IMAGE = 2;
 	public static final int REQUEST_SELECT_ACCOUNT = 3;
 	public static final int REQUEST_COMPOSE = 4;
 	public static final int REQUEST_EDIT_API = 5;

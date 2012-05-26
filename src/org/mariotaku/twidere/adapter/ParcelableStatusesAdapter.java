@@ -46,14 +46,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 		if (tag instanceof StatusViewHolder) {
 			holder = (StatusViewHolder) tag;
 		} else {
-			holder = new StatusViewHolder(view);
+			holder = new StatusViewHolder(view, mContext);
 			view.setTag(holder);
 		}
 
 		ParcelableStatus status = getItem(position);
 
-		final CharSequence retweeted_by = mDisplayName ? status.retweeted_by_name
-				: !isNullOrEmpty(status.retweeted_by_screen_name) ? "@" + status.retweeted_by_screen_name : null;
+		final CharSequence retweeted_by = mDisplayName ? status.retweeted_by_name : status.retweeted_by_screen_name;
 		final boolean is_last = position == getCount() - 1;
 		final boolean show_gap = status.is_gap && !is_last || mShowLastItemAsGap && is_last;
 
@@ -67,20 +66,19 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 		if (!show_gap) {
 
 			holder.text.setTextSize(mTextSize);
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					status.is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0);
-			holder.name.setText(mDisplayName ? status.name : !isNullOrEmpty(status.screen_name) ? "@"
-					+ status.screen_name : null);
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(
+					status.is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
+			holder.name.setText(mDisplayName ? status.name : status.screen_name);
 			holder.name.setTextSize(mTextSize * 1.05f);
 			holder.tweet_time.setText(formatToShortTimeString(mContext, status.status_timestamp));
-			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					getTypeIcon(status.is_favorite, status.location != null, status.has_media), 0);
+			holder.tweet_time.setCompoundDrawables(null, null,
+					getTypeIcon(mContext, status.is_favorite, status.location != null, status.has_media), null);
 			holder.tweet_time.setTextSize(mTextSize * 0.65f);
 			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
 			holder.reply_retweet_status.setTextSize(mTextSize * 0.65f);
 			if (status.is_retweet && !isNullOrEmpty(retweeted_by)) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by));
+				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by + (status.retweet_count > 1 ? " + " + (status.retweet_count - 1): "")));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tweet_stat_retweet,
 						0, 0, 0);
 			} else if (status.in_reply_to_status_id != -1 && !isNullOrEmpty(status.in_reply_to_screen_name)) {

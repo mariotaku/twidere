@@ -9,6 +9,7 @@
 		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
+		<item name="android:windowBackground">@drawable/background_holo_dark</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="Theme.Holo.Light.DarkActionBar">
@@ -21,6 +22,7 @@
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="actionBarStyle">@style/Widget.Twidere.ActionBar</item>
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
+		<item name="android:windowBackground">@drawable/background_holo_light</item>
 	</style>
 
 </resources>

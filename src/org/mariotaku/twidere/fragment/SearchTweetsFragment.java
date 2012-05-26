@@ -125,12 +125,13 @@ public class SearchTweetsFragment extends BaseListFragment implements LoaderCall
 
 	private static class TweetsAdapter extends ArrayAdapter<Tweet> {
 
-		private LazyImageLoader image_loader;
-
+		private final LazyImageLoader image_loader;
+		private final Context context;
 		private boolean mDisplayProfileImage;
 
 		public TweetsAdapter(Context context, LazyImageLoader image_loader) {
 			super(context, R.layout.status_list_item, R.id.text);
+			this.context = context;
 			this.image_loader = image_loader;
 		}
 
@@ -142,17 +143,17 @@ public class SearchTweetsFragment extends BaseListFragment implements LoaderCall
 			if (tag instanceof StatusViewHolder) {
 				holder = (StatusViewHolder) tag;
 			} else {
-				holder = new StatusViewHolder(view);
+				holder = new StatusViewHolder(view, context);
 				view.setTag(holder);
 			}
 			Tweet tweet = getItem(position);
 			boolean has_media = tweet.getMediaEntities() != null && tweet.getMediaEntities().length > 0;
 			boolean has_location = tweet.getGeoLocation() != null;
-			holder.name.setText("@" + tweet.getFromUser());
+			holder.name.setText(tweet.getFromUser());
 			holder.text.setText(tweet.getText());
 			holder.tweet_time.setText(formatToShortTimeString(getContext(), tweet.getCreatedAt().getTime()));
-			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					getTypeIcon(false, has_location, has_media), 0);
+			holder.tweet_time.setCompoundDrawables(null, null, getTypeIcon(context, false, has_location, has_media),
+					null);
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				image_loader.displayImage(parseURL(tweet.getProfileImageUrl()), holder.profile_image);

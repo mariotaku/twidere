@@ -153,6 +153,8 @@
 	<string name="unfavorite_success">Unfavorite success.</string>
 	<string name="follow_success">Follow success.</string>
 	<string name="unfollow_success">Unfollow success.</string>
+	<string name="profile_update_success">Profile update success.</string>
+	<string name="profile_image_update_success">Profile image update success.</string>
 	<string name="display_name">Display name</string>
 	<string name="display_name_summaryon">Display username of tweet.</string>
 	<string name="display_name_summaryoff">Display screen name (e.g. @username) of tweet</string>
@@ -164,8 +166,10 @@
 	<string name="send_all">Send all</string>
 	<string name="delete_all">Delete all</string>
 	<string name="profile">Profile</string>
-	<string name="bio">Bio</string>
+	<string name="description">Description</string>
 	<string name="location">Location</string>
-	<string name="web">Web</string>
+	<string name="url">URL</string>
+	<string name="favorites">Favorites</string>
+	<string name="name">Name</string>
 
 </resources>

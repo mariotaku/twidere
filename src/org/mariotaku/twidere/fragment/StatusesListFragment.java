@@ -7,9 +7,11 @@ import static org.mariotaku.twidere.util.Utils.getLastSortIds;
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
+import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.StatusesCursorAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -41,6 +43,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -71,6 +74,12 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 
 	public abstract Uri getContentUri();
 
+	public HomeActivity getHomeActivity() {
+		SherlockFragmentActivity activity = getSherlockActivity();
+		if (activity instanceof HomeActivity) return (HomeActivity) activity;
+		return null;
+	}
+
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 		if (mSelectedStatus != null) {
@@ -88,7 +97,12 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 					break;
 				}
 				case MENU_RETWEET: {
-					mServiceInterface.retweetStatus(new long[] { account_id }, status_id);
+					if (isMyRetweet(getSherlockActivity(), account_id, status_id)) {
+						mServiceInterface.cancelRetweet(account_id, status_id);
+					} else {
+						long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id : mSelectedStatus.status_id;
+						mServiceInterface.retweetStatus(new long[] { account_id }, id_to_retweet);
+					}
 					break;
 				}
 				case MENU_QUOTE: {
@@ -218,15 +232,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
-				Uri.Builder builder = new Uri.Builder();
-				builder.scheme(SCHEME_TWIDERE);
-				builder.authority(AUTHORITY_STATUS);
-				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
-				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
-				if (mActionMode != null) {
-					mActionMode.finish();
-				}
-				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+				showSatus(status);
 			}
 		}
 	}
@@ -372,5 +378,17 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 				break;
 		}
 		return -1;
+	}
+
+	private void showSatus(ParcelableStatus status) {
+		if (mActionMode != null) {
+			mActionMode.finish();
+		}
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme(SCHEME_TWIDERE);
+		builder.authority(AUTHORITY_STATUS);
+		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
+		builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
+		startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 	}
 }

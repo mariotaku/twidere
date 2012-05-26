@@ -88,6 +88,8 @@ public final class Utils implements Constants {
 
 	private static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 
+	private static Drawable ICON_STARRED, ICON_HAS_MEDIA, ICON_HAS_LOCATION;
+
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
 		long[] account_ids = getActivatedAccounts(context);
 		StringBuilder builder = new StringBuilder();
@@ -831,13 +833,25 @@ public final class Utils implements Constants {
 		return twitter;
 	}
 
-	public static int getTypeIcon(boolean is_fav, boolean has_location, boolean has_media) {
-		if (is_fav)
-			return R.drawable.ic_tweet_stat_starred;
-		else if (has_media)
-			return R.drawable.ic_tweet_stat_has_media;
-		else if (has_location) return R.drawable.ic_tweet_stat_has_location;
-		return 0;
+	public static Drawable getTypeIcon(Context context, boolean is_fav, boolean has_location, boolean has_media) {
+		Resources res = context.getResources();
+		if (is_fav) {
+			if (ICON_STARRED == null) {
+				ICON_STARRED = res.getDrawable(R.drawable.ic_tweet_stat_starred);
+			}
+			return ICON_STARRED;
+		} else if (has_media) {
+			if (ICON_HAS_MEDIA == null) {
+				ICON_HAS_MEDIA = res.getDrawable(R.drawable.ic_tweet_stat_has_media);
+			}
+			return ICON_HAS_MEDIA;
+		} else if (has_location) {
+			if (ICON_HAS_LOCATION == null) {
+				ICON_HAS_LOCATION = res.getDrawable(R.drawable.ic_tweet_stat_has_location);
+			}
+			return ICON_HAS_LOCATION;
+		}
+		return null;
 	}
 
 	public static boolean isMyAccount(Context context, long account_id) {

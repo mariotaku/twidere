@@ -12,6 +12,8 @@ interface ITwidereService {
 	int destroyFavorite(in long[] account_id, long status_id);
 	int createFriendship(long account_id, long user_id);
 	int destroyFriendship(long account_id, long user_id);
+	int updateProfile(long account_id, String name, String url, String location, String description);
+	int updateProfileImage(long account_id, in Uri image_uri);
 	boolean isHomeTimelineRefreshing();
 	boolean isMentionsRefreshing();
 	boolean hasActivatedTask();

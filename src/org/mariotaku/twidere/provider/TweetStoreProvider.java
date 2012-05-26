@@ -3,14 +3,10 @@ package org.mariotaku.twidere.provider;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.cursor.FavoriteCursor;
-import org.mariotaku.twidere.cursor.UserTimelineCursor;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
@@ -18,7 +14,6 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
-import twitter4j.Twitter;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -69,29 +64,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-
-		String account_id_string = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 		String table = getTableNameForContentUri(uri);
-
-		switch (getTableId(uri)) {
-			case URI_FAVORITES:
-				if (account_id_string != null) {
-					Twitter twitter = getTwitterInstance(getContext(), Long.parseLong(account_id_string), true);
-					return new FavoriteCursor(twitter, null, projection);
-				}
-				return null;
-			case URI_USER_TIMELINE:
-				String screen_name = uri.getLastPathSegment();
-				if (account_id_string != null) {
-					Twitter twitter = getTwitterInstance(getContext(), Long.valueOf(account_id_string), true);
-					return new UserTimelineCursor(twitter, screen_name, null, projection);
-				}
-				return null;
-			default:
-				break;
-		}
 		if (table == null) return null;
-
 		return database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
 	}
 

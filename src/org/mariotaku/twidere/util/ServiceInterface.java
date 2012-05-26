@@ -251,6 +251,28 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int updateProfile(long account_id, String name, String url, String location, String description) {
+		if (mService == null) return -1;
+		try {
+			return mService.updateProfile(account_id, name, url, location, description);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int updateProfileImage(long account_id, Uri image_uri) {
+		if (mService == null) return -1;
+		try {
+			return mService.updateProfileImage(account_id, image_uri);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
 		if (mService == null) return -1;
 		try {
