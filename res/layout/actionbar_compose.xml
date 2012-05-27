@@ -4,20 +4,24 @@
 	android:layout_height="match_parent"
 	android:gravity="center_vertical|right"
 	android:orientation="horizontal"
-	android:paddingLeft="4dp"
-	android:paddingRight="4dp">
+	android:paddingLeft="4dp">
 
 	<TextView
+		android:id="@+id/title"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:text="@string/filter"
+		android:text="@string/compose"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="@android:color/white"/>
 
-	<include
+	<ImageButton
+		android:id="@+id/send"
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		layout="@layout/actionbar_filter_toggle"/>
+		android:layout_height="match_parent"
+		android:background="@drawable/list_selector_holo_light"
+		android:contentDescription="@string/send"
+		android:minWidth="56dp"
+		android:src="@drawable/ic_menu_send"/>
 
 </LinearLayout>

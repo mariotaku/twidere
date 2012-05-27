@@ -18,7 +18,6 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -85,15 +84,18 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	private void onDatabaseUpdated(Uri uri) {
 		Context context = getContext();
 		switch (getTableId(uri)) {
-			case URI_ACCOUNTS:
+			case URI_ACCOUNTS: {
 				clearAccountColor();
 				context.sendBroadcast(new Intent(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED));
 				break;
+			}
+			case URI_DRAFTS: {
+				context.sendBroadcast(new Intent(BROADCAST_DRAFTS_DATABASE_UPDATED));
+				break;
+			}
 			default:
 				return;
 		}
-		SharedPreferences preferences = context.getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE);
-		preferences.edit().putLong(getTableNameForContentUri(uri), System.currentTimeMillis()).commit();
 		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
 	}
 

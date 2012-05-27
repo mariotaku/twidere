@@ -16,6 +16,8 @@
 
 package org.mariotaku.twidere.fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebView;
 
@@ -48,6 +50,7 @@ public class LicenseFragment extends WebViewFragment {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 			return true;
 		}
 	}

@@ -2,8 +2,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<string name="app_name">Twidere</string>
-	<string name="pull_down_to_update">Pull down to update</string>
-	<string name="release_to_update">Release to update</string>
 	<string name="loading">Loading…</string>
 	<string name="compose">Compose</string>
 	<string name="add_account">Add account</string>
@@ -12,6 +10,9 @@
 	<string name="add_location">Add location</string>
 	<string name="add_image">Add image</string>
 	<string name="take_photo">Take photo</string>
+	<string name="remove_location">Remove location</string>
+	<string name="remove_image">Remove image</string>
+	<string name="remove_photo">Remove photo</string>
 	<string name="tweet_hint">What\'s happening ?</string>
 	<string name="sign_up">Sign up</string>
 	<string name="sign_in">Sign in</string>
@@ -29,6 +30,7 @@
 	<string name="twip_o">twip O Mode</string>
 	<string name="advanced">Advanced</string>
 	<string name="save">Save</string>
+	<string name="edit">Edit</string>
 	<string name="test">Test</string>
 	<string name="login_to_twitter">Login to Twitter</string>
 	<string name="edit_api">Edit API</string>
@@ -171,5 +173,10 @@
 	<string name="url">URL</string>
 	<string name="favorites">Favorites</string>
 	<string name="name">Name</string>
+	<string name="refresh">Refresh</string>
+	<string name="delete_all_confirm">Are you sure to delete all unsent tweets?</string>
+	<string name="send_all_confirm">Are you sure to send all unsent tweets?</string>
+	<string name="delete_draft_confirm">Are you sure to send this unsent tweet?</string>
+	<string name="retry">Retry</string>
 
 </resources>

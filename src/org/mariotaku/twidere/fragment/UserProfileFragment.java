@@ -27,11 +27,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -54,8 +56,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private View mFollowIndicator;
 	private TextView mName, mScreenName;
 	private View mNameLayout;
-	private ProgressBar mProgress;
-	private Button mFollowButton;
+	private ProgressBar mProgress, mListProgress;
+	private Button mFollowButton, mRetryButton;
 
 	private UserProfileActionAdapter mAdapter;
 	private ListView mListView;
@@ -73,11 +75,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId && intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId
+						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					getFollowInfo();
 				}
-			} if (BROADCAST_PROFILE_UPDATED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId && intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+			}
+			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
+				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId
+						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					getUserInfo();
 				}
 			}
@@ -107,6 +112,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAdapter.add(new FollowersAction());
 		mAdapter.add(new FollowingAction());
 		mAdapter.add(new FavoritesAction());
+		mRetryButton.setOnClickListener(this);
 		setListAdapter(null);
 		mListView = getListView();
 		mListView.addHeaderView(mHeaderView, null, false);
@@ -131,6 +137,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				}
 				break;
 			}
+			case R.id.retry: {
+				getUserInfo();
+				break;
+			}
 		}
 
 	}
@@ -145,7 +155,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
 		mFollowIndicator = mHeaderView.findViewById(R.id.follow_indicator);
 		mProgress = (ProgressBar) mHeaderView.findViewById(R.id.progress);
-		return super.onCreateView(inflater, container, savedInstanceState);
+		View view = inflater.inflate(R.layout.user_profile, null, false);
+		mRetryButton = (Button) view.findViewById(R.id.retry);
+		mListProgress = (ProgressBar) view.findViewById(R.id.list_progress);
+		return view;
 	}
 
 	@Override
@@ -192,6 +205,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 		return false;
 	}
+
 
 	@Override
 	public void onStart() {
@@ -320,6 +334,26 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (mText != null) {
 				mEditText.setText(mText);
 			}
+			int limit = 140;
+			switch (mType) {
+				case TYPE_NAME: {
+					limit = 20;
+					break;
+				}
+				case TYPE_URL: {
+					limit = 100;
+					break;
+				}
+				case TYPE_LOCATION: {
+					limit = 30;
+					break;
+				}
+				case TYPE_DESCRIPTION: {
+					limit = 160;
+					break;
+				}
+			}
+			mEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(limit) });
 			layout.addView(mEditText, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT) {
 
 				{
@@ -335,6 +369,46 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();
+		}
+
+	}
+
+	private class FavoritesAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.favorites);
+		}
+
+		@Override
+		public String getSummary() {
+			if (mUser == null) return null;
+			return String.valueOf(mUser.getFavouritesCount());
+		}
+
+		@Override
+		public void onClick() {
+
+		}
+
+	}
+
+	private class FollowersAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.followers);
+		}
+
+		@Override
+		public String getSummary() {
+			if (mUser == null) return null;
+			return String.valueOf(mUser.getFollowersCount());
+		}
+
+		@Override
+		public void onClick() {
+
 		}
 
 	}
@@ -356,8 +430,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					mFollowButton.setVisibility(View.VISIBLE);
 					mFollowButton.setText(result.value ? R.string.unfollow : R.string.follow);
 				}
-			} else {
-				Utils.showErrorToast(getSherlockActivity(), result.exception, true);
 			}
 			mProgress.setVisibility(View.GONE);
 			super.onPostExecute(result);
@@ -383,6 +455,26 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				return new Response<Boolean>(null, e);
 			}
 		}
+	}
+
+	private class FollowingAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.following);
+		}
+
+		@Override
+		public String getSummary() {
+			if (mUser == null) return null;
+			return String.valueOf(mUser.getFriendsCount());
+		}
+
+		@Override
+		public void onClick() {
+
+		}
+
 	}
 
 	private class LocationAction extends UserAction {
@@ -422,6 +514,71 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			this.value = value;
 			this.exception = exception;
 		}
+	}
+
+	private class StatusesAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.tweets);
+		}
+
+		@Override
+		public String getSummary() {
+			if (mUser == null) return null;
+			return String.valueOf(mUser.getStatusesCount());
+		}
+
+		@Override
+		public void onClick() {
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			Fragment fragment = Fragment.instantiate(getSherlockActivity(), UserTimelineFragment.class.getName());
+			fragment.setArguments(getArguments());
+			int viewId = android.R.id.content;
+			if (getSherlockActivity() instanceof HomeActivity) {
+				viewId = R.id.dashboard;
+			}
+			ft.replace(viewId, fragment);
+			ft.addToBackStack(null);
+			ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+			ft.commit();
+		}
+
+	}
+
+	private class URLAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.url);
+		}
+
+		@Override
+		public String getSummary() {
+			if (mUser == null || mUser.getURL() == null) return null;
+			return String.valueOf(mUser.getURL());
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null) return;
+			URL url = mUser.getURL();
+			if (url != null) {
+				Uri uri = Uri.parse(String.valueOf(url));
+				startActivity(new Intent(Intent.ACTION_VIEW, uri));
+			}
+		}
+
+		@Override
+		public boolean onLongClick() {
+			if (mUser != null && mUser.getId() == mAccountId) {
+				mDialogFragment = new EditTextDialogFragment(getSummary(), getName(), TYPE_URL);
+				mDialogFragment.show(getFragmentManager(), "edit_url");
+				return true;
+			}
+			return false;
+		}
+
 	}
 
 	private abstract class UserAction {
@@ -491,8 +648,23 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				mName.setText(mUser.getName());
 				mScreenName.setText(mUser.getScreenName());
 				mProfileImageLoader.displayImage(mUser.getProfileImageURL(), mProfileImageView);
+				mRetryButton.setVisibility(View.GONE);
 			} else {
-				Utils.showErrorToast(getSherlockActivity(), result.exception, true);
+				mListProgress.setVisibility(View.GONE);
+				mListView.setVisibility(View.GONE);
+				mRetryButton.setVisibility(View.VISIBLE);
+			}
+			mFollowButton.setOnClickListener(mUser != null ? UserProfileFragment.this : null);
+			if (mUser != null && mUser.getId() == mAccountId) {
+				mProfileImageView.setOnClickListener(UserProfileFragment.this);
+				mProfileImageView.setOnLongClickListener(UserProfileFragment.this);
+				mNameLayout.setOnClickListener(UserProfileFragment.this);
+				mNameLayout.setOnLongClickListener(UserProfileFragment.this);
+			} else {
+				mProfileImageView.setOnClickListener(null);
+				mProfileImageView.setOnLongClickListener(null);
+				mNameLayout.setOnClickListener(null);
+				mNameLayout.setOnLongClickListener(null);
 			}
 			mFollowButton.setOnClickListener(mUser != null ? UserProfileFragment.this : null);
 			if (mUser != null && mUser.getId() == mAccountId) {
@@ -513,12 +685,22 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		protected void onPreExecute() {
 			setListShown(false);
+			mRetryButton.setVisibility(View.GONE);
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}
 
 	}
 
+	public void setListShown(boolean shown) {
+		int fade_in = android.R.anim.fade_in;
+		int fade_out = android.R.anim.fade_out;
+		mListProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
+		mListProgress.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), shown ? fade_out : fade_in));
+		mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
+		mListView.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), shown ? fade_in : fade_out));
+	}
+	
 	private class UserProfileActionAdapter extends ArrayAdapter<UserAction> {
 
 		public UserProfileActionAdapter(Context context) {
@@ -542,130 +724,4 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 	}
-
-	private class FavoritesAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.favorites);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getFavouritesCount());
-		}
-
-		@Override
-		public void onClick() {
-
-		}
-
-	}
-
-	private class FollowersAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.followers);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getFollowersCount());
-		}
-
-		@Override
-		public void onClick() {
-
-		}
-
-	}
-
-	private class FollowingAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.following);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getFriendsCount());
-		}
-
-		@Override
-		public void onClick() {
-
-		}
-
-	}
-
-	private class StatusesAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.tweets);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getStatusesCount());
-		}
-
-		@Override
-		public void onClick() {
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			Fragment fragment = Fragment.instantiate(getSherlockActivity(), UserTimelineFragment.class.getName());
-			fragment.setArguments(getArguments());
-			int viewId = android.R.id.content;
-			if (getSherlockActivity() instanceof HomeActivity) {
-				viewId = R.id.dashboard;
-			}
-			ft.replace(viewId, fragment);
-			ft.addToBackStack(null);
-			ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-			ft.commit();
-		}
-
-	}
-
-	private class URLAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.url);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null || mUser.getURL() == null) return null;
-			return String.valueOf(mUser.getURL());
-		}
-
-		@Override
-		public void onClick() {
-			if(mUser == null) return;
-			URL url = mUser.getURL();
-			if (url != null) {
-				Uri uri = Uri.parse(String.valueOf(url));
-				startActivity(new Intent(Intent.ACTION_VIEW, uri));
-			}
-		}
-
-		@Override
-		public boolean onLongClick() {
-			if (mUser != null && mUser.getId() == mAccountId) {
-				mDialogFragment = new EditTextDialogFragment(getSummary(), getName(), TYPE_URL);
-				mDialogFragment.show(getFragmentManager(), "edit_url");
-				return true;
-			}
-			return false;
-		}
-
-	}
-
 }

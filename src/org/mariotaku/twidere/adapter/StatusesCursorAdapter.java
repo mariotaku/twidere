@@ -38,26 +38,24 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		StatusViewHolder holder = (StatusViewHolder) view.getTag();
+		final StatusViewHolder holder = (StatusViewHolder) view.getTag();
 
-		long account_id = cursor.getLong(mIndices.account_id);
-		long status_timestamp = cursor.getLong(mIndices.status_timestamp);
-		long in_reply_to_status_id = cursor.getLong(mIndices.in_reply_to_status_id);
-		long retweet_count = cursor.getLong(mIndices.retweet_count);
-		boolean is_gap = cursor.getInt(mIndices.is_gap) == 1;
-		boolean is_retweet = cursor.getInt(mIndices.is_retweet) == 1;
-		boolean is_favorite = cursor.getInt(mIndices.is_favorite) == 1;
-		boolean is_protected = cursor.getInt(mIndices.is_protected) == 1;
-		boolean has_media = cursor.getInt(mIndices.has_media) == 1;
-		String retweeted_by_name = cursor.getString(mIndices.retweeted_by_name);
-		String retweeted_by_screen_name = cursor.getString(mIndices.retweeted_by_screen_name);
-		String text_plain = cursor.getString(mIndices.text_plain);
-		String name = cursor.getString(mIndices.name);
-		String screen_name = cursor.getString(mIndices.screen_name);
-		String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
-		GeoLocation location = getGeoLocationFromString(cursor.getString(mIndices.location));
-		URL profile_image_url = parseURL(cursor.getString(mIndices.profile_image_url));
-		final CharSequence retweeted_by = mDisplayName ? retweeted_by_name : retweeted_by_screen_name;
+		final long account_id = cursor.getLong(mIndices.account_id);
+		final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
+		final long in_reply_to_status_id = cursor.getLong(mIndices.in_reply_to_status_id);
+		final long retweet_count = cursor.getLong(mIndices.retweet_count);
+		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
+		final boolean is_retweet = cursor.getShort(mIndices.is_retweet) == 1;
+		final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
+		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
+		final boolean has_media = cursor.getShort(mIndices.has_media) == 1;
+		final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
+				.getString(mIndices.retweeted_by_screen_name);
+		final String text_plain = cursor.getString(mIndices.text_plain);
+		final String name = mDisplayName ? cursor.getString(mIndices.name) : cursor.getString(mIndices.screen_name);
+		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
+		final GeoLocation location = getGeoLocationFromString(cursor.getString(mIndices.location));
+		final URL profile_image_url = parseURL(cursor.getString(mIndices.profile_image_url));
 		final boolean is_last = cursor.getPosition() == getCount() - 1;
 		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last;
 
@@ -70,21 +68,23 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 
 		if (!show_gap) {
 
-			holder.text.setText(text_plain);
 			holder.text.setTextSize(mTextSize);
+			holder.name.setTextSize(mTextSize * 1.05f);
+			holder.tweet_time.setTextSize(mTextSize * 0.65f);
+			holder.reply_retweet_status.setTextSize(mTextSize * 0.65f);
+
+			holder.text.setText(text_plain);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(is_protected ? R.drawable.ic_tweet_stat_is_protected
 					: 0, 0, 0, 0);
-			holder.name.setText(mDisplayName ? name : screen_name);
-			holder.name.setTextSize(mTextSize * 1.05f);
+			holder.name.setText(name);
 			holder.tweet_time.setText(formatToShortTimeString(mContext, status_timestamp));
 			holder.tweet_time.setCompoundDrawables(null, null,
 					getTypeIcon(context, is_favorite, location != null, has_media), null);
-			holder.tweet_time.setTextSize(mTextSize * 0.65f);
 			holder.reply_retweet_status.setVisibility(in_reply_to_status_id != -1 || is_retweet ? View.VISIBLE
 					: View.GONE);
-			holder.reply_retweet_status.setTextSize(mTextSize * 0.65f);
 			if (is_retweet && !isNullOrEmpty(retweeted_by)) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by + (retweet_count > 1 ? " + " + (retweet_count - 1): "")));
+				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by
+						+ (retweet_count > 1 ? " + " + (retweet_count - 1) : "")));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tweet_stat_retweet,
 						0, 0, 0);
 			} else if (in_reply_to_status_id != -1 && !isNullOrEmpty(in_reply_to_screen_name)) {

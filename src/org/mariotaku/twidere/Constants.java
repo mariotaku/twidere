@@ -57,7 +57,6 @@ public interface Constants extends TwitterConstants {
 	public static final String OAUTH_VERIFIER = "oauth_verifier";
 
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
-	public static final String UPDATE_TIMESTAMP_NAME = "update_timestamp";
 
 	public static final String PREFERENCE_KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
 	public static final String PREFERENCE_KEY_LOAD_ITEM_LIMIT = "load_item_limit";
@@ -99,6 +98,7 @@ public interface Constants extends TwitterConstants {
 			+ "MENTIONS_DATABASE_UPDATED";
 	public static final String BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "ACCOUNT_LIST_DATABASE_UPDATED";
+	public static final String BROADCAST_DRAFTS_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DRAFTS_DATABASE_UPDATED";
 	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = INTENT_PACKAGE_PREFIX + "HOME_TIMELINE_REFRESHED";
 	public static final String BROADCAST_MENTIONS_REFRESHED = INTENT_PACKAGE_PREFIX + "MENTIONS_REFRESHED";
 	public static final String BROADCAST_REFRESHSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "REFRESHSTATE_CHANGED";
@@ -129,6 +129,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;
 	public static final int MENU_SEND = R.id.send;
+	public static final int MENU_EDIT = R.id.edit;
 	public static final int MENU_SELECT_ACCOUNT = R.id.select_account;
 	public static final int MENU_SETTINGS = R.id.settings;
 	public static final int MENU_ADD_LOCATION = R.id.add_location;
@@ -153,6 +154,8 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_SHARE = R.id.share;
 	public static final int MENU_DEBUG = R.id.debug;
 	public static final int MENU_DRAFTS = R.id.drafts;
+	public static final int MENU_DELETE_ALL = R.id.delete_all;
+	public static final int MENU_SEND_ALL = R.id.send_all;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

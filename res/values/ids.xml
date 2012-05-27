@@ -3,6 +3,7 @@
 
 	<item name="compose" type="id"/>
 	<item name="send" type="id"/>
+	<item name="edit" type="id"/>
 	<item name="settings" type="id"/>
 	<item name="select_account" type="id"/>
 	<item name="add_location" type="id"/>
@@ -29,5 +30,6 @@
 	<item name="drafts" type="id"/>
 	<item name="send_all" type="id"/>
 	<item name="delete_all" type="id"/>
+	<item name="refresh" type="id"/>
 
 </resources>

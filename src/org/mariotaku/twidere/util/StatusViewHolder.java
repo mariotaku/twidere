@@ -47,16 +47,16 @@ public class StatusViewHolder {
 		}
 	}
 
-	public void setShowAsGap(boolean is_gap) {
-		show_as_gap = is_gap;
-		content.setBackgroundDrawable(is_gap ? getGapIndicatorDrawable()
+	public void setShowAsGap(boolean show_gap) {
+		show_as_gap = show_gap;
+		content.setBackgroundDrawable(show_gap ? getGapIndicatorDrawable()
 				: account_color_enabled ? getColorIndicatorDrawable() : null);
-		profile_image.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		name.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		text.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		tweet_time.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		reply_retweet_status.setVisibility(is_gap ? View.GONE : View.VISIBLE);
-		gap_indicator.setVisibility(!is_gap ? View.GONE : View.VISIBLE);
+		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		text.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		tweet_time.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		reply_retweet_status.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
 
 	private Drawable getColorIndicatorDrawable() {

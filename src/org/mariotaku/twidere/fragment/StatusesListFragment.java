@@ -70,7 +70,6 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	private boolean mDisplayProfileImage, mDisplayName, mReachedBottom, mActivityFirstCreated;
 	private float mTextSize;
 	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
-	private long mLastUpdateTime;
 
 	public abstract Uri getContentUri();
 
@@ -100,7 +99,8 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 					if (isMyRetweet(getSherlockActivity(), account_id, status_id)) {
 						mServiceInterface.cancelRetweet(account_id, status_id);
 					} else {
-						long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id : mSelectedStatus.status_id;
+						long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
+								: mSelectedStatus.status_id;
 						mServiceInterface.retweetStatus(new long[] { account_id }, id_to_retweet);
 					}
 					break;
@@ -159,8 +159,6 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		mLastUpdateTime = getSherlockActivity().getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE)
-				.getLong(getTableNameForContentUri(getContentUri()), -1);
 		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
 		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
 				.getListProfileImageLoader();
@@ -324,7 +322,6 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 				mBusy = false;
 				break;
 		}
-
 	}
 
 	@Override
@@ -352,11 +349,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		};
 		mTicker.run();
 
-		long last_update_time = getSherlockActivity().getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE)
-				.getLong(getTableNameForContentUri(getContentUri()), -1);
-
-		if (!mActivityFirstCreated && mLastUpdateTime != last_update_time) {
-			mLastUpdateTime = last_update_time;
+		if (!mActivityFirstCreated) {
 			getLoaderManager().restartLoader(0, null, this);
 		}
 	}

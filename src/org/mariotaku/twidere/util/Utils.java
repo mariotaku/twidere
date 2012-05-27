@@ -975,19 +975,20 @@ public final class Utils implements Constants {
 
 	public static void notifyForUpdatedUri(Context context, Uri uri) {
 		switch (getTableId(uri)) {
-			case URI_STATUSES:
+			case URI_STATUSES: {
 				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
 						true));
 				break;
-			case URI_MENTIONS:
+			}
+			case URI_MENTIONS: {
 				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED)
 						.putExtra(INTENT_KEY_SUCCEED, true));
 				break;
-			default:
+			}
+			default: {
 				return;
+			}
 		}
-		SharedPreferences preferences = context.getSharedPreferences(UPDATE_TIMESTAMP_NAME, Context.MODE_PRIVATE);
-		preferences.edit().putLong(getTableNameForContentUri(uri), System.currentTimeMillis()).commit();
 		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
 	}
 

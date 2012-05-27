@@ -2,8 +2,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<string name="app_name">Twidere</string>
-	<string name="pull_down_to_update">下拉并释放以刷新…</string>
-	<string name="release_to_update">释放以刷新</string>
 	<string name="loading">正在载入…</string>
 	<string name="compose">撰写</string>
 	<string name="add_account">添加帐号</string>
@@ -12,6 +10,9 @@
 	<string name="add_location">添加位置</string>
 	<string name="add_image">添加图片</string>
 	<string name="take_photo">拍照</string>
+	<string name="remove_location">移除位置</string>
+	<string name="remove_image">移除图片</string>
+	<string name="remove_photo">移除相片</string>
 	<string name="tweet_hint">你在做什么？</string>
 	<string name="sign_up">注册</string>
 	<string name="sign_in">登录</string>
@@ -148,11 +149,13 @@
 	<string name="retweet_success">转推成功</string>
 	<string name="cancel_retweet_success">取消转推成功</string>
 	<string name="delete_success">删除成功</string>
-	<string name="send_success">发送成功</string>
-	<string name="favorite_success">收藏成功</string>
-	<string name="unfavorite_success">取消收藏成功</string>
+	<string name="send_success">推文已发送</string>
+	<string name="favorite_success">收藏了这条推文</string>
+	<string name="unfavorite_success">取消收藏了这条推文</string>
 	<string name="follow_success">关注成功</string>
 	<string name="unfollow_success">取消关注成功</string>
+	<string name="profile_update_success">个人资料已更新</string>
+	<string name="profile_image_update_success">个人资料图片已更新</string>
 	<string name="display_name">显示姓名</string>
 	<string name="display_name_summaryon">显示推文作者的姓名。</string>
 	<string name="display_name_summaryoff">显示推文作者的用户名（例如 @username）。</string>
@@ -168,5 +171,11 @@
 	<string name="location">位置</string>
 	<string name="url">网址</string>
 	<string name="favorites">收藏</string>
+	<string name="name">名字</string>
+	<string name="refresh">刷新</string>
+	<string name="delete_all_confirm">你确定删除所有未发送的推文？</string>
+	<string name="send_all_confirm">你确定发送所有未发送的推文？</string>
+	<string name="delete_draft_confirm">你确定删除这条未发送的推文？</string>
+	<string name="retry">重试</string>
 
 </resources>

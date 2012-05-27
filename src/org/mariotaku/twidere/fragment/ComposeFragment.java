@@ -32,9 +32,7 @@ import android.text.TextWatcher;
 import android.text.method.ArrowKeyMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,13 +40,12 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class ComposeFragment extends BaseFragment implements OnClickListener, TextWatcher, LocationListener {
+public class ComposeFragment extends BaseFragment implements TextWatcher, LocationListener {
 
 	private String mText;
 	private Uri mImageUri;
 	private StatusComposeEditText mEditText;
 	private TextView mTextCount;
-	private ImageButton mSendButton;
 	private boolean mIsImageAttached, mIsPhotoAttached;
 	private long[] mAccountIds;
 	private ServiceInterface mInterface;
@@ -122,8 +119,6 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		View view = getView();
 		mEditText = (StatusComposeEditText) view.findViewById(R.id.edit_text);
 		mTextCount = (TextView) view.findViewById(R.id.text_count);
-		mSendButton = (ImageButton) view.findViewById(R.id.send);
-		mSendButton.setOnClickListener(this);
 		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
 		final LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
@@ -143,7 +138,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		}
 		int length = mEditText.length();
 		mTextCount.setText(String.valueOf(length));
-		mSendButton.setEnabled(length > 0 && length <= 140);
+		getSendMenuItem().setEnabled(length > 0 && length <= 140);
 
 	}
 
@@ -194,23 +189,6 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 	}
 
 	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.send:
-				String content = mEditText != null ? mEditText.getText().toString() : null;
-				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
-				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation : null, mImageUri,
-						mInReplyToStatusId);
-				if (getSherlockActivity() instanceof ComposeActivity) {
-					getSherlockActivity().setResult(Activity.RESULT_OK);
-					getSherlockActivity().finish();
-				}
-				break;
-		}
-
-	}
-
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Tell the framework to try to keep this fragment around
@@ -240,6 +218,17 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				if (getSherlockActivity() instanceof ComposeActivity) {
+					getSherlockActivity().finish();
+				}
+				break;
+			}
+			case MENU_SEND: {
+				String content = mEditText != null ? mEditText.getText().toString() : null;
+				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation : null, mImageUri,
+						mInReplyToStatusId);
+				if (getSherlockActivity() instanceof ComposeActivity) {
+					getSherlockActivity().setResult(Activity.RESULT_OK);
 					getSherlockActivity().finish();
 				}
 				break;
@@ -283,23 +272,31 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		int activated_color = getResources().getColor(android.R.color.holo_blue_bright);
+		MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		if (mIsImageAttached && !mIsPhotoAttached) {
-			menu.findItem(MENU_ADD_IMAGE).getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemAddImage.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemAddImage.setTitle(R.string.remove_image);
 		} else {
-			menu.findItem(MENU_ADD_IMAGE).getIcon().clearColorFilter();
+			itemAddImage.getIcon().clearColorFilter();
+			itemAddImage.setTitle(R.string.add_image);
 		}
+		MenuItem itemTakePhoto = menu.findItem(MENU_TAKE_PHOTO);
 		if (!mIsImageAttached && mIsPhotoAttached) {
-			menu.findItem(MENU_TAKE_PHOTO).getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemTakePhoto.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemTakePhoto.setTitle(R.string.remove_photo);
 		} else {
-			menu.findItem(MENU_TAKE_PHOTO).getIcon().clearColorFilter();
+			itemTakePhoto.getIcon().clearColorFilter();
+			itemTakePhoto.setTitle(R.string.take_photo);
 		}
-
+		MenuItem itemAttachLocation = menu.findItem(MENU_ADD_LOCATION);
 		boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		if (attach_location && getLocation()) {
-			menu.findItem(MENU_ADD_LOCATION).getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemAttachLocation.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemAttachLocation.setTitle(R.string.remove_location);
 		} else {
 			mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false).commit();
-			menu.findItem(MENU_ADD_LOCATION).getIcon().clearColorFilter();
+			itemAttachLocation.getIcon().clearColorFilter();
+			itemAttachLocation.setTitle(R.string.add_location);
 		}
 		super.onPrepareOptionsMenu(menu);
 	}
@@ -335,7 +332,7 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 		if (s != null) {
 			int length = s.length();
 			mTextCount.setText(String.valueOf(length));
-			mSendButton.setEnabled(length > 0 && length <= 140);
+			getSendMenuItem().setEnabled(length > 0 && length <= 140);
 		}
 
 	}
@@ -356,6 +353,12 @@ public class ComposeFragment extends BaseFragment implements OnClickListener, Te
 			Toast.makeText(getSherlockActivity(), R.string.cannot_get_location, Toast.LENGTH_SHORT).show();
 		}
 		return provider != null;
+	}
+
+	private MenuItem getSendMenuItem() {
+		if (getSherlockActivity() instanceof ComposeActivity)
+			return ((ComposeActivity) getSherlockActivity()).getSendMenuItem();
+		return null;
 	}
 
 	private void pickImage() {

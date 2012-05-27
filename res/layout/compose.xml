@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:padding="8dp">
@@ -8,30 +8,20 @@
 		android:id="@+id/edit_text"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_toLeftOf="@+id/send"
 		android:gravity="top"
 		android:hint="@string/tweet_hint"
 		android:inputType="textLongMessage|textMultiLine"
 		android:scrollbars="vertical"/>
 
-	<ImageButton
-		android:id="@+id/send"
-		android:layout_width="64dip"
-		android:layout_height="64dip"
-		android:layout_alignParentRight="true"
-		android:layout_alignParentTop="true"
-		android:contentDescription="@string/send"
-		android:src="@drawable/ic_menu_send"/>
-
 	<TextView
 		android:id="@+id/text_count"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/send"
-		android:layout_alignParentBottom="true"
-		android:layout_alignParentRight="true"
+		android:layout_gravity="bottom|right"
+		android:alpha="0.5"
 		android:gravity="center"
+		android:padding="16dp"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-</RelativeLayout>
+</FrameLayout>

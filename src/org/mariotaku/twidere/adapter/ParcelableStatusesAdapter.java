@@ -78,7 +78,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
 			holder.reply_retweet_status.setTextSize(mTextSize * 0.65f);
 			if (status.is_retweet && !isNullOrEmpty(retweeted_by)) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by + (status.retweet_count > 1 ? " + " + (status.retweet_count - 1): "")));
+				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by
+						+ (status.retweet_count > 1 ? " + " + (status.retweet_count - 1) : "")));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tweet_stat_retweet,
 						0, 0, 0);
 			} else if (status.in_reply_to_status_id != -1 && !isNullOrEmpty(status.in_reply_to_screen_name)) {

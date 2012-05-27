@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -28,7 +29,7 @@ import android.widget.ListView;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
- * Inspired by <a url="https://github.com/thest1/LazyList">LazyList</a>, this
+ * Inspired by <a href="https://github.com/thest1/LazyList">LazyList</a>, this
  * class has extra features like image loading/caching image to
  * /mnt/sdcard/Android/data/[package name]/cache features.</br> </br> Requires
  * Android 2.2, you can modify {@link Context#getExternalCacheDir()} to other to
@@ -44,13 +45,13 @@ public class LazyImageLoader {
 	private final Map<ImageView, Object> mImageViews = Collections
 			.synchronizedMap(new WeakHashMap<ImageView, Object>());
 	private final ExecutorService mExecutorService;
-	private final int mFallbackRes;
+	private final Drawable mFallbackDrawable;
 	private final int mRequiredSize;
 
 	public LazyImageLoader(Context context, int fallback, int required_size) {
 		mFileCache = new FileCache(context);
 		mExecutorService = Executors.newFixedThreadPool(5);
-		mFallbackRes = fallback;
+		mFallbackDrawable = context.getResources().getDrawable(fallback);
 		mRequiredSize = required_size % 2 == 0 ? required_size : required_size + 1;
 	}
 
@@ -65,7 +66,7 @@ public class LazyImageLoader {
 	public void displayImage(File file, ImageView imageview) {
 		if (imageview == null) return;
 		if (file == null) {
-			imageview.setImageResource(mFallbackRes);
+			imageview.setImageDrawable(mFallbackDrawable);
 			return;
 		}
 		mImageViews.put(imageview, file);
@@ -74,14 +75,14 @@ public class LazyImageLoader {
 			imageview.setImageBitmap(bitmap);
 		} else {
 			queuePhoto(file, imageview);
-			imageview.setImageResource(mFallbackRes);
+			imageview.setImageDrawable(mFallbackDrawable);
 		}
 	}
 
 	public void displayImage(URL url, ImageView imageview) {
 		if (imageview == null) return;
 		if (url == null) {
-			imageview.setImageResource(mFallbackRes);
+			imageview.setImageDrawable(mFallbackDrawable);
 			return;
 		}
 		mImageViews.put(imageview, url);
@@ -90,7 +91,7 @@ public class LazyImageLoader {
 			imageview.setImageBitmap(bitmap);
 		} else {
 			queuePhoto(url, imageview);
-			imageview.setImageResource(mFallbackRes);
+			imageview.setImageDrawable(mFallbackDrawable);
 		}
 	}
 
@@ -134,105 +135,45 @@ public class LazyImageLoader {
 		return null;
 	}
 
-	private Bitmap getBitmapFromFile(File file, ImageView imageview) {
-		if (file == null) return null;
-		File f = mFileCache.getFile(file);
-
-		// from SD cache
-		Bitmap bitmap = decodeFile(f);
-
-		if (bitmap != null) return bitmap;
-		bitmap = decodeFile(file);
-		if (bitmap == null) return null;
-		try {
-			FileOutputStream fos = new FileOutputStream(f);
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fos);
-			fos.flush();
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// Storage state may changed, so call FileCache.init() again.
-			mFileCache.init();
-		} catch (IOException e) {
-			// e.printStackTrace();
-		}
-
-		return bitmap;
-
-	}
-
-	private Bitmap getBitmapFromWeb(URL url, ImageView imageview) {
-		if (url == null) return null;
-		File f = mFileCache.getFile(url);
-
-		// from SD cache
-		Bitmap b = decodeFile(f);
-		if (b != null) return b;
-
-		// from web
-		try {
-			Bitmap bitmap = null;
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setConnectTimeout(30000);
-			conn.setReadTimeout(30000);
-			conn.setInstanceFollowRedirects(true);
-			InputStream is = conn.getInputStream();
-			OutputStream os = new FileOutputStream(f);
-			copyStream(is, os);
-			os.close();
-			bitmap = decodeFile(f);
-			return bitmap;
-		} catch (FileNotFoundException e) {
-			// Storage state may changed, so call FileCache.init() again.
-			mFileCache.init();
-		} catch (IOException e) {
-			// e.printStackTrace();
-		}
-		return null;
-	}
-
 	private void queuePhoto(File file, ImageView imageview) {
-		LocalImageToLoad p = new LocalImageToLoad(file, imageview);
+		ImageToLoad<File> p = new ImageToLoad<File>(file, imageview);
 		mExecutorService.submit(new LocalImageLoader(p));
 	}
 
 	private void queuePhoto(URL url, ImageView imageview) {
-		WebImageToLoad p = new WebImageToLoad(url, imageview);
+		ImageToLoad<URL> p = new ImageToLoad<URL>(url, imageview);
 		mExecutorService.submit(new WebImageLoader(p));
 	}
 
-	boolean imageViewReused(LocalImageToLoad imagetoload) {
+	boolean imageViewReused(ImageToLoad<?> imagetoload) {
 		Object tag = mImageViews.get(imagetoload.imageview);
-		if (tag == null || !tag.equals(imagetoload.file)) return true;
+		if (tag == null || !tag.equals(imagetoload.source)) return true;
 		return false;
 	}
 
-	boolean imageViewReused(WebImageToLoad imagetoload) {
-		Object tag = mImageViews.get(imagetoload.imageview);
-		if (tag == null || !tag.equals(imagetoload.url)) return true;
-		return false;
-	}
+	// Used to display bitmap in the UI thread
+	private class BitmapDisplayer<Source> implements Runnable {
 
-	public class MemoryCache {
+		Bitmap bitmap;
+		ImageToLoad<Source> imagetoload;
 
-		private Map<Object, SoftReference<Bitmap>> mCache = Collections
-				.synchronizedMap(new HashMap<Object, SoftReference<Bitmap>>());
-
-		public void clear() {
-			mCache.clear();
+		public BitmapDisplayer(Bitmap b, ImageToLoad<Source> p) {
+			bitmap = b;
+			imagetoload = p;
 		}
 
-		public Bitmap get(Object tag) {
-			if (!mCache.containsKey(tag)) return null;
-			SoftReference<Bitmap> ref = mCache.get(tag);
-			return ref.get();
-		}
-
-		public void put(Object id, Bitmap bitmap) {
-			mCache.put(id, new SoftReference<Bitmap>(bitmap));
+		@Override
+		public final void run() {
+			if (imageViewReused(imagetoload)) return;
+			if (bitmap != null) {
+				imagetoload.imageview.setImageBitmap(bitmap);
+			} else {
+				imagetoload.imageview.setImageDrawable(mFallbackDrawable);
+			}
 		}
 	}
 
-	private class FileCache {
+	private static class FileCache {
 
 		private static final String CACHE_DIR_NAME = "thumbnails";
 
@@ -281,111 +222,124 @@ public class LazyImageLoader {
 
 	}
 
-	// Used to display bitmap in the UI thread
-	private class LocalBitmapDisplayer implements Runnable {
+	private abstract class ImageLoader<Source> implements Runnable {
+		private ImageToLoad<Source> imagetoload;
 
-		Bitmap bitmap;
-		LocalImageToLoad imagetoload;
-
-		public LocalBitmapDisplayer(Bitmap b, LocalImageToLoad p) {
-			bitmap = b;
-			imagetoload = p;
-		}
-
-		@Override
-		public void run() {
-			if (imageViewReused(imagetoload)) return;
-			if (bitmap != null) {
-				imagetoload.imageview.setImageBitmap(bitmap);
-			} else {
-				imagetoload.imageview.setImageResource(mFallbackRes);
-			}
-		}
-	}
-
-	private class LocalImageLoader implements Runnable {
-
-		LocalImageToLoad imagetoload;
-
-		LocalImageLoader(LocalImageToLoad imagetoload) {
+		public ImageLoader(ImageToLoad<Source> imagetoload) {
 			this.imagetoload = imagetoload;
 		}
 
+		public abstract Bitmap getBitmap(Source source, ImageView imageview);
+
 		@Override
 		public void run() {
-			if (imageViewReused(imagetoload) || imagetoload.file == null) return;
-			Bitmap bmp = getBitmapFromFile(imagetoload.file, imagetoload.imageview);
-			mMemoryCache.put(imagetoload.file, bmp);
+			if (imageViewReused(imagetoload) || imagetoload.source == null) return;
+			Bitmap bmp = getBitmap(imagetoload.source, imagetoload.imageview);
+			mMemoryCache.put(imagetoload.source, bmp);
 			if (imageViewReused(imagetoload)) return;
-			LocalBitmapDisplayer bd = new LocalBitmapDisplayer(bmp, imagetoload);
+			BitmapDisplayer<Source> bd = new BitmapDisplayer<Source>(bmp, imagetoload);
 			Activity a = (Activity) imagetoload.imageview.getContext();
 			a.runOnUiThread(bd);
 		}
 	}
 
-	private class LocalImageToLoad {
-
-		public File file;
+	private class ImageToLoad<Source> {
+		public Source source;
 		public ImageView imageview;
 
-		public LocalImageToLoad(File file, ImageView imageview) {
-			this.file = file;
+		public ImageToLoad(Source source, ImageView imageview) {
+			this.source = source;
 			this.imageview = imageview;
 		}
 	}
 
-	// Used to display bitmap in the UI thread
-	private class WebBitmapDisplayer implements Runnable {
+	private class LocalImageLoader extends ImageLoader<File> {
 
-		Bitmap bitmap;
-		WebImageToLoad imagetoload;
-
-		public WebBitmapDisplayer(Bitmap b, WebImageToLoad p) {
-			bitmap = b;
-			imagetoload = p;
+		public LocalImageLoader(ImageToLoad<File> imagetoload) {
+			super(imagetoload);
 		}
 
 		@Override
-		public void run() {
-			if (imageViewReused(imagetoload)) return;
-			if (bitmap != null) {
-				imagetoload.imageview.setImageBitmap(bitmap);
-			} else {
-				imagetoload.imageview.setImageResource(mFallbackRes);
+		public Bitmap getBitmap(File file, ImageView imageview) {
+			if (file == null) return null;
+			File f = mFileCache.getFile(file);
+
+			// from SD cache
+			Bitmap bitmap = decodeFile(f);
+
+			if (bitmap != null) return bitmap;
+			bitmap = decodeFile(file);
+			if (bitmap == null) return null;
+			try {
+				FileOutputStream fos = new FileOutputStream(f);
+				bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fos);
+				fos.flush();
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// Storage state may changed, so call FileCache.init() again.
+				mFileCache.init();
+			} catch (IOException e) {
 			}
+			return bitmap;
 		}
 	}
 
-	private class WebImageLoader implements Runnable {
+	private static class MemoryCache {
 
-		WebImageToLoad imagetoload;
+		private Map<Object, SoftReference<Bitmap>> mCache = Collections
+				.synchronizedMap(new HashMap<Object, SoftReference<Bitmap>>());
 
-		WebImageLoader(WebImageToLoad imagetoload) {
-			this.imagetoload = imagetoload;
+		public void clear() {
+			mCache.clear();
+		}
+
+		public Bitmap get(Object tag) {
+			if (!mCache.containsKey(tag)) return null;
+			SoftReference<Bitmap> ref = mCache.get(tag);
+			return ref.get();
+		}
+
+		public void put(Object id, Bitmap bitmap) {
+			mCache.put(id, new SoftReference<Bitmap>(bitmap));
+		}
+	}
+
+	private class WebImageLoader extends ImageLoader<URL> {
+
+		public WebImageLoader(ImageToLoad<URL> imagetoload) {
+			super(imagetoload);
 		}
 
 		@Override
-		public void run() {
-			if (imageViewReused(imagetoload) || imagetoload.url == null) return;
-			Bitmap bmp = getBitmapFromWeb(imagetoload.url, imagetoload.imageview);
-			mMemoryCache.put(imagetoload.url, bmp);
-			if (imageViewReused(imagetoload)) return;
-			WebBitmapDisplayer bd = new WebBitmapDisplayer(bmp, imagetoload);
-			Activity a = (Activity) imagetoload.imageview.getContext();
-			a.runOnUiThread(bd);
+		public Bitmap getBitmap(URL url, ImageView imageview) {
+			if (url == null) return null;
+			File f = mFileCache.getFile(url);
+
+			// from SD cache
+			Bitmap b = decodeFile(f);
+			if (b != null) return b;
+
+			// from web
+			try {
+				Bitmap bitmap = null;
+				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				conn.setConnectTimeout(30000);
+				conn.setReadTimeout(30000);
+				conn.setInstanceFollowRedirects(true);
+				InputStream is = conn.getInputStream();
+				OutputStream os = new FileOutputStream(f);
+				copyStream(is, os);
+				os.close();
+				bitmap = decodeFile(f);
+				return bitmap;
+			} catch (FileNotFoundException e) {
+				// Storage state may changed, so call FileCache.init() again.
+				mFileCache.init();
+			} catch (IOException e) {
+			}
+			return null;
 		}
-	}
 
-	// Task for the queue
-	private class WebImageToLoad {
-
-		public URL url;
-		public ImageView imageview;
-
-		public WebImageToLoad(URL url, ImageView imageview) {
-			this.url = url;
-			this.imageview = imageview;
-		}
 	}
 
 }

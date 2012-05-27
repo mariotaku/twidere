@@ -61,9 +61,9 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	private boolean mActivityFirstCreated;
 
 	private static final long INVALID_ID = -1;
-
+	
+	private Cursor mCursor;
 	private AccountsAdapter mAdapter;
-
 	private DeleteConfirmFragment mFragment = new DeleteConfirmFragment();
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -152,16 +152,14 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 		AdapterContextMenuInfo adapterinfo = (AdapterContextMenuInfo) menuInfo;
 
-		Object tag = adapterinfo.targetView.getTag();
-		if (tag instanceof ViewHolder) {
-			ViewHolder holder = (ViewHolder) tag;
-			mSelectedColor = holder.user_color;
-			mSelectedUserId = holder.user_id;
-			mSelectedScreenName = holder.username;
-			menu.setHeaderTitle(holder.username);
-		} else {
-			mSelectedUserId = INVALID_ID;
+		if (mCursor != null && adapterinfo.position >= 0 && adapterinfo.position < mCursor.getCount()) {
+			mCursor.moveToPosition(adapterinfo.position);
+			mSelectedColor = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.USER_COLOR));
+			mSelectedUserId = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
+			mSelectedScreenName = mCursor.getString(mCursor.getColumnIndexOrThrow(Accounts.USERNAME));
+			menu.setHeaderTitle(mSelectedScreenName);
 		}
+		
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
@@ -180,21 +178,23 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Object tag = v.getTag();
-		if (tag instanceof ViewHolder) {
-			ViewHolder holder = (ViewHolder) tag;
-			showDetails(holder.user_id);
+		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
+			mCursor.moveToPosition(position);
+			long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
+			showDetails(user_id);
 		}
 		super.onListItemClick(l, v, position, id);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
+		mCursor = null;
 		mAdapter.changeCursor(null);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		mCursor = data;
 		mAdapter.changeCursor(data);
 	}
 
@@ -256,9 +256,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 		public ImageView profile_image;
 		public View content;
-		public int user_color;
-		public String username;
-		public long user_id;
 
 		public ViewHolder(View view) {
 			profile_image = (ImageView) view.findViewById(android.R.id.icon);
@@ -286,9 +283,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		public void bindView(View view, Context context, Cursor cursor) {
 			int color = cursor.getInt(mUserColorIdx);
 			ViewHolder holder = (ViewHolder) view.getTag();
-			holder.user_color = color;
-			holder.user_id = cursor.getLong(mUserIdIdx);
-			holder.username = cursor.getString(mUsernameIdx);
 			holder.setAccountColor(color);
 			URL url = null;
 			try {
@@ -352,6 +346,5 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();
 		}
-
 	}
 }
