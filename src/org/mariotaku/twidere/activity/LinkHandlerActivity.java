@@ -1,7 +1,5 @@
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.setWindowUiOptions;
-
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.BaseFragment;
 import org.mariotaku.twidere.fragment.DraftsFragment;
@@ -18,11 +16,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
+import com.actionbarsherlock.ActionBarSherlock;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
 public class LinkHandlerActivity extends BaseActivity {
 
+	private ActionBarSherlock mSherlock;
+	
 	private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 	private static final int CODE_STATUS = 1;
 	private static final int CODE_USER = 2;
@@ -40,6 +41,7 @@ public class LinkHandlerActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		mSherlock = this.getSherlock();
 		Uri data = getIntent().getData();
 		setWindowFeatureAndUiOptions(data);
 		super.onCreate(savedInstanceState);
@@ -162,26 +164,22 @@ public class LinkHandlerActivity extends BaseActivity {
 		if (uri == null) return;
 		switch (URI_MATCHER.match(uri)) {
 			case CODE_STATUS: {
-				setWindowUiOptions(getWindow(), ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
+				mSherlock.setUiOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
 				break;
 			}
 			case CODE_USER: {
 				requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-				setWindowUiOptions(getWindow(), 0);
 				break;
 			}
 			case CODE_CONVERSATION: {
 				requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-				setWindowUiOptions(getWindow(), 0);
 				break;
 			}
 			case CODE_SEARCH: {
 				requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-				setWindowUiOptions(getWindow(), 0);
 				break;
 			}
 			case CODE_DRAFTS: {
-				setWindowUiOptions(getWindow(), 0);
 				break;
 			}
 			default:

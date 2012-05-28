@@ -297,6 +297,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			if (cur != null && cur.getCount() > 0) {
 				cur.moveToFirst();
 				mStatus = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
+				cur.close();
 				break;
 			}
 			if (cur != null) {

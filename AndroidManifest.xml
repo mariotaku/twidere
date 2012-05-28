@@ -222,8 +222,7 @@
 		</activity>
 		<activity
 			android:name=".activity.LinkHandlerActivity"
-			android:label="@string/link_handler"
-			android:uiOptions="splitActionBarWhenNarrow">
+			android:label="@string/link_handler">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>
 

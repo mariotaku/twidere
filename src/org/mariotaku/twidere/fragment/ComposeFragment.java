@@ -271,7 +271,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		int activated_color = getResources().getColor(android.R.color.holo_blue_bright);
+		int activated_color = getResources().getColor(R.color.holo_blue_bright);
 		MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		if (mIsImageAttached && !mIsPhotoAttached) {
 			itemAddImage.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
