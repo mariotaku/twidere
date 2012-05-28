@@ -61,7 +61,7 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 					break;
 				}
 				case MENU_RETWEET: {
-					mServiceInterface.retweetStatus(new long[] { account_id }, status_id);
+					mServiceInterface.retweetStatus(account_id, status_id);
 					break;
 				}
 				case MENU_QUOTE: {
@@ -91,9 +91,9 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 				}
 				case MENU_FAV: {
 					if (mSelectedStatus.is_favorite) {
-						mServiceInterface.destroyFavorite(new long[] { account_id }, status_id);
+						mServiceInterface.destroyFavorite(account_id, status_id);
 					} else {
-						mServiceInterface.createFavorite(new long[] { account_id }, status_id);
+						mServiceInterface.createFavorite(account_id, status_id);
 					}
 					break;
 				}

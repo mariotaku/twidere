@@ -206,7 +206,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		return false;
 	}
 
-
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -223,6 +222,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			getSherlockActivity().unregisterReceiver(mStatusReceiver);
 		}
 		super.onStop();
+	}
+
+	@Override
+	public void setListShown(boolean shown) {
+		int fade_in = android.R.anim.fade_in;
+		int fade_out = android.R.anim.fade_out;
+		mListProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
+		mListProgress.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), shown ? fade_out : fade_in));
+		mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
+		mListView.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), shown ? fade_in : fade_out));
 	}
 
 	private void getFollowInfo() {
@@ -692,15 +701,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	public void setListShown(boolean shown) {
-		int fade_in = android.R.anim.fade_in;
-		int fade_out = android.R.anim.fade_out;
-		mListProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
-		mListProgress.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), shown ? fade_out : fade_in));
-		mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
-		mListView.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), shown ? fade_in : fade_out));
-	}
-	
 	private class UserProfileActionAdapter extends ArrayAdapter<UserAction> {
 
 		public UserProfileActionAdapter(Context context) {

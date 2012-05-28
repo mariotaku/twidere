@@ -61,7 +61,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	private boolean mActivityFirstCreated;
 
 	private static final long INVALID_ID = -1;
-	
+
 	private Cursor mCursor;
 	private AccountsAdapter mAdapter;
 	private DeleteConfirmFragment mFragment = new DeleteConfirmFragment();
@@ -159,7 +159,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			mSelectedScreenName = mCursor.getString(mCursor.getColumnIndexOrThrow(Accounts.USERNAME));
 			menu.setHeaderTitle(mSelectedScreenName);
 		}
-		
+
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 

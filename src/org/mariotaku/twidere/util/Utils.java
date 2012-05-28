@@ -833,6 +833,28 @@ public final class Utils implements Constants {
 		return twitter;
 	}
 
+	public static Twitter getTwitterInstance(Context context, String account_username, boolean include_entities) {
+		return getTwitterInstance(context, account_username, include_entities, true);
+	}
+
+	public static Twitter getTwitterInstance(Context context, String account_username, boolean include_entities,
+			boolean include_rts) {
+		final StringBuilder where = new StringBuilder();
+		where.append(Accounts.USERNAME + " = " + account_username);
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
+				where.toString(), null, null);
+		long account_id = -1;
+		if (cur != null) {
+			if (cur.getCount() == 1) {
+				cur.moveToFirst();
+				account_id = cur.getLong(cur.getColumnIndex(Accounts.USER_ID));
+			}
+			cur.close();
+		}
+		if (account_id != -1) return getTwitterInstance(context, account_id, include_entities, include_rts);
+		return null;
+	}
+
 	public static Drawable getTypeIcon(Context context, boolean is_fav, boolean has_location, boolean has_media) {
 		Resources res = context.getResources();
 		if (is_fav) {

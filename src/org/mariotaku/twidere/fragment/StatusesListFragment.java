@@ -101,7 +101,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 					} else {
 						long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
 								: mSelectedStatus.status_id;
-						mServiceInterface.retweetStatus(new long[] { account_id }, id_to_retweet);
+						mServiceInterface.retweetStatus(account_id, id_to_retweet);
 					}
 					break;
 				}
@@ -132,9 +132,9 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 				}
 				case MENU_FAV: {
 					if (mSelectedStatus.is_favorite) {
-						mServiceInterface.destroyFavorite(new long[] { account_id }, status_id);
+						mServiceInterface.destroyFavorite(account_id, status_id);
 					} else {
-						mServiceInterface.createFavorite(new long[] { account_id }, status_id);
+						mServiceInterface.createFavorite(account_id, status_id);
 					}
 					break;
 				}
@@ -190,12 +190,12 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID, Statuses.USER_ID,
+		String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
 				Statuses.STATUS_TIMESTAMP, Statuses.TEXT_PLAIN, Statuses.NAME, Statuses.SCREEN_NAME,
-				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID, Statuses.IN_REPLY_TO_USER_ID,
-				Statuses.IN_REPLY_TO_SCREEN_NAME, Statuses.LOCATION, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID,
-				Statuses.RETWEETED_BY_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
-				Statuses.IS_RETWEET, Statuses.IS_FAVORITE, Statuses.HAS_MEDIA, Statuses.IS_PROTECTED, Statuses.IS_GAP };
+				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME,
+				Statuses.LOCATION, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID,
+				Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_RETWEET,
+				Statuses.IS_FAVORITE, Statuses.HAS_MEDIA, Statuses.IS_PROTECTED, Statuses.IS_GAP };
 		Uri uri = getContentUri();
 		String where = buildActivatedStatsWhereClause(getSherlockActivity(), null);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
@@ -330,10 +330,6 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		mTickerStopped = false;
 		mHandler = new Handler();
 
-		if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
-			mListView.onRefreshComplete();
-		}
-
 		mTicker = new Runnable() {
 
 			@Override
@@ -350,6 +346,9 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		mTicker.run();
 
 		if (!mActivityFirstCreated) {
+			if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
+				mListView.onRefreshComplete();
+			}
 			getLoaderManager().restartLoader(0, null, this);
 		}
 	}

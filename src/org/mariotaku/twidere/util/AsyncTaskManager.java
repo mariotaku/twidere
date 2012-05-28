@@ -3,6 +3,7 @@ package org.mariotaku.twidere.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.AsyncTask.Status;
 import android.util.SparseArray;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -72,7 +73,7 @@ public class AsyncTaskManager {
 
 	public boolean isExcuting(int hashCode) {
 		ManagedAsyncTask task = mTasks.get(hashCode);
-		if (task != null && !task.isCancelled()) return true;
+		if (task != null && task.getStatus() == Status.RUNNING) return true;
 		return false;
 	}
 

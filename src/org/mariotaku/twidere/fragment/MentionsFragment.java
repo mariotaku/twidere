@@ -15,11 +15,10 @@ public class MentionsFragment extends StatusesListFragment {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
-				mListView.onRefreshComplete();
-			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
+				mListView.onRefreshComplete();
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if ((MentionsFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
 				if (mListView != null) {

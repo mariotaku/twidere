@@ -101,10 +101,10 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int createFavorite(long[] account_ids, long status_id) {
+	public int createFavorite(long account_id, long status_id) {
 		if (mService == null) return -1;
 		try {
-			return mService.createFavorite(account_ids, status_id);
+			return mService.createFavorite(account_id, status_id);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -123,10 +123,10 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int destroyFavorite(long[] account_ids, long status_id) {
+	public int destroyFavorite(long account_id, long status_id) {
 		if (mService == null) return -1;
 		try {
-			return mService.destroyFavorite(account_ids, status_id);
+			return mService.destroyFavorite(account_id, status_id);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -228,10 +228,10 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int retweetStatus(long[] account_ids, long status_id) {
+	public int retweetStatus(long account_id, long status_id) {
 		if (mService == null) return -1;
 		try {
-			return mService.retweetStatus(account_ids, status_id);
+			return mService.retweetStatus(account_id, status_id);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

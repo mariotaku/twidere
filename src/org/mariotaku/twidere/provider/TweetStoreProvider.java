@@ -3,6 +3,7 @@ package org.mariotaku.twidere.provider;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			result = database.delete(table, selection, selectionArgs);
 		}
 		if (result > 0) {
-			onDatabaseUpdated(uri);
+			onDatabaseUpdated(uri, false);
 		}
 		return result;
 	}
@@ -51,7 +52,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
 		long row_id = database.insert(table, null, values);
-		onDatabaseUpdated(uri);
+		onDatabaseUpdated(uri, true);
 		return Uri.withAppendedPath(uri, String.valueOf(row_id));
 	}
 
@@ -76,12 +77,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			result = database.update(table, values, selection, selectionArgs);
 		}
 		if (result > 0) {
-			onDatabaseUpdated(uri);
+			onDatabaseUpdated(uri, false);
 		}
 		return result;
 	}
 
-	private void onDatabaseUpdated(Uri uri) {
+	private void onDatabaseUpdated(Uri uri, boolean is_insert) {
 		Context context = getContext();
 		switch (getTableId(uri)) {
 			case URI_ACCOUNTS: {
@@ -91,6 +92,20 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			}
 			case URI_DRAFTS: {
 				context.sendBroadcast(new Intent(BROADCAST_DRAFTS_DATABASE_UPDATED));
+				break;
+			}
+			case URI_STATUSES: {
+				if (!is_insert) {
+					context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(
+							INTENT_KEY_SUCCEED, true));
+				}
+				break;
+			}
+			case URI_MENTIONS: {
+				if (!is_insert) {
+					context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
+							true));
+				}
 				break;
 			}
 			default:

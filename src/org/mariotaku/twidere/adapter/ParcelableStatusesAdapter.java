@@ -71,7 +71,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 			holder.name.setText(mDisplayName ? status.name : status.screen_name);
 			holder.name.setTextSize(mTextSize * 1.05f);
 			holder.tweet_time.setText(formatToShortTimeString(mContext, status.status_timestamp));
-			holder.tweet_time.setCompoundDrawables(null, null,
+			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(null, null,
 					getTypeIcon(mContext, status.is_favorite, status.location != null, status.has_media), null);
 			holder.tweet_time.setTextSize(mTextSize * 0.65f);
 			holder.reply_retweet_status

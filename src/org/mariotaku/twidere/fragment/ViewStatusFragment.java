@@ -186,7 +186,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				} else {
 					long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
 							: mStatus.status_id;
-					mServiceInterface.retweetStatus(new long[] { mAccountId }, id_to_retweet);
+					mServiceInterface.retweetStatus(mAccountId, id_to_retweet);
 				}
 				break;
 			}
@@ -217,9 +217,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			}
 			case MENU_FAV: {
 				if (mStatus.is_favorite) {
-					mServiceInterface.destroyFavorite(new long[] { mAccountId }, mStatusId);
+					mServiceInterface.destroyFavorite(mAccountId, mStatusId);
 				} else {
-					mServiceInterface.createFavorite(new long[] { mAccountId }, mStatusId);
+					mServiceInterface.createFavorite(mAccountId, mStatusId);
 				}
 				break;
 			}

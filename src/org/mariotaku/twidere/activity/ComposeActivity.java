@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -27,6 +28,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, On
 	private ComposeFragment mFragment;
 	private ActionBar mActionBar;
 	private ImageButton mSendButton;
+	private TextView mTitle;
 	private MenuItem mSendMenuItem = new SendMenuItem();
 
 	public MenuItem getSendMenuItem() {
@@ -56,6 +58,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, On
 		mSendButton = (ImageButton) view.findViewById(R.id.send);
 		mSendButton.setOnClickListener(this);
 		mSendButton.setOnLongClickListener(this);
+		mTitle = (TextView) view.findViewById(R.id.title);
 
 		FragmentManager fm = getSupportFragmentManager();
 
@@ -108,6 +111,18 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, On
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void setTitle(CharSequence title) {
+		super.setTitle(title);
+		mTitle.setText(title);
+	}
+
+	@Override
+	public void setTitle(int titleId) {
+		super.setTitle(titleId);
+		mTitle.setText(titleId);
 	}
 
 	private class SendMenuItem implements MenuItem {
@@ -209,7 +224,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, On
 
 		@Override
 		public boolean isEnabled() {
-			return mSendButton.isEnabled();
+			return mSendButton.isClickable();
 		}
 
 		@Override
@@ -249,7 +264,9 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, On
 
 		@Override
 		public MenuItem setEnabled(boolean enabled) {
-			mSendButton.setEnabled(enabled);
+			mSendButton.setClickable(enabled);
+			mSendButton.setAlpha(enabled ? 0xFF : 0x80);
+			mSendButton.setOnClickListener(enabled ? ComposeActivity.this : null);
 			return this;
 		}
 

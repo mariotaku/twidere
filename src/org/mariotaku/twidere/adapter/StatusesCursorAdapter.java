@@ -78,7 +78,7 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 					: 0, 0, 0, 0);
 			holder.name.setText(name);
 			holder.tweet_time.setText(formatToShortTimeString(mContext, status_timestamp));
-			holder.tweet_time.setCompoundDrawables(null, null,
+			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(null, null,
 					getTypeIcon(context, is_favorite, location != null, has_media), null);
 			holder.reply_retweet_status.setVisibility(in_reply_to_status_id != -1 || is_retweet ? View.VISIBLE
 					: View.GONE);

@@ -65,38 +65,6 @@ public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<
 	};
 
 	@Override
-	public boolean onContextItemSelected(android.view.MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_SEND: {
-				sendDraft(mDraftItem);
-				break;
-			}
-			case MENU_EDIT: {
-				composeDraft(mDraftItem);
-				break;
-			}
-			case MENU_DELETE: {
-				mDeleteDraftConfirmFragment.show(getFragmentManager(), "delete_draft_confirm");
-				break;
-			}
-		}
-		return super.onContextItemSelected(item);
-	}
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		new android.view.MenuInflater(getSherlockActivity()).inflate(R.menu.context_draft, menu);
-		AdapterContextMenuInfo adapterinfo = (AdapterContextMenuInfo) menuInfo;
-		
-		if (mCursor != null && adapterinfo.position >= 0 && adapterinfo.position < mCursor.getCount()) {
-			mDraftItem = new DraftItem(mCursor, adapterinfo.position);
-			mCursor.moveToPosition(adapterinfo.position);
-			mSelectedId = mCursor.getLong(mCursor.getColumnIndex(Drafts._ID));
-		}
-		super.onCreateContextMenu(menu, v, menuInfo);
-	}
-
-	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mResolver = getSherlockActivity().getContentResolver();
@@ -123,6 +91,38 @@ public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public boolean onContextItemSelected(android.view.MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_SEND: {
+				sendDraft(mDraftItem);
+				break;
+			}
+			case MENU_EDIT: {
+				composeDraft(mDraftItem);
+				break;
+			}
+			case MENU_DELETE: {
+				mDeleteDraftConfirmFragment.show(getFragmentManager(), "delete_draft_confirm");
+				break;
+			}
+		}
+		return super.onContextItemSelected(item);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		new android.view.MenuInflater(getSherlockActivity()).inflate(R.menu.context_draft, menu);
+		AdapterContextMenuInfo adapterinfo = (AdapterContextMenuInfo) menuInfo;
+
+		if (mCursor != null && adapterinfo.position >= 0 && adapterinfo.position < mCursor.getCount()) {
+			mDraftItem = new DraftItem(mCursor, adapterinfo.position);
+			mCursor.moveToPosition(adapterinfo.position);
+			mSelectedId = mCursor.getLong(mCursor.getColumnIndex(Drafts._ID));
+		}
+		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
 	@Override
@@ -245,7 +245,7 @@ public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<
 			return builder.create();
 		}
 	}
-	
+
 	private class DeleteDraftConfirmFragment extends BaseDialogFragment implements OnClickListener {
 
 		@Override
