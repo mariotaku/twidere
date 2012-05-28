@@ -45,7 +45,7 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 		final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
 		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
 		final boolean has_media = cursor.getShort(mIndices.has_media) == 1;
-		final boolean has_location = isNullOrEmpty(cursor.getString(mIndices.location));
+		final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
 		
 		final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
 				.getString(mIndices.retweeted_by_screen_name);
