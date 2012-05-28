@@ -47,6 +47,7 @@ public interface Constants extends TwitterConstants {
 	public static final String QUERY_PARAM_TYPE = "type";
 	public static final String QUERY_PARAM_VALUE_USERS = "users";
 	public static final String QUERY_PARAM_VALUE_TWEETS = "tweets";
+	public static final String QUERY_PARAM_NOTIFY = "notify";
 
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
 

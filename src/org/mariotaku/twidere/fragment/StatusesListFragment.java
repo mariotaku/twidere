@@ -2,7 +2,7 @@ package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
 import static org.mariotaku.twidere.util.Utils.buildFilterWhereClause;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getLastSortIds;
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getTableId;
@@ -193,9 +193,9 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
 				Statuses.STATUS_TIMESTAMP, Statuses.TEXT_PLAIN, Statuses.NAME, Statuses.SCREEN_NAME,
 				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID, Statuses.IN_REPLY_TO_SCREEN_NAME,
-				Statuses.LOCATION, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID,
-				Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_RETWEET,
-				Statuses.IS_FAVORITE, Statuses.HAS_MEDIA, Statuses.IS_PROTECTED, Statuses.IS_GAP };
+				Statuses.LOCATION, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME,
+				Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_RETWEET, Statuses.IS_FAVORITE, Statuses.HAS_MEDIA,
+				Statuses.IS_PROTECTED, Statuses.IS_GAP };
 		Uri uri = getContentUri();
 		String where = buildActivatedStatsWhereClause(getSherlockActivity(), null);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
@@ -256,7 +256,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.changeCursor(data);
-		mAdapter.setShowAccountColor(getActivatedAccounts(getSherlockActivity()).length > 1);
+		mAdapter.setShowAccountColor(getActivatedAccountIds(getSherlockActivity()).length > 1);
 	}
 
 	@Override
@@ -267,7 +267,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 
 	@Override
 	public void onRefresh() {
-		long[] account_ids = getActivatedAccounts(getSherlockActivity());
+		long[] account_ids = getActivatedAccountIds(getSherlockActivity());
 		mRunningTaskId = getStatuses(account_ids, null);
 
 	}
@@ -303,7 +303,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 			}
 			if (mLoadMoreAutomatically && mReachedBottom) {
 				if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
-					mRunningTaskId = getStatuses(getActivatedAccounts(getSherlockActivity()),
+					mRunningTaskId = getStatuses(getActivatedAccountIds(getSherlockActivity()),
 							getLastSortIds(getSherlockActivity(), getContentUri()));
 				}
 			}

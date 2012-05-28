@@ -19,7 +19,6 @@ import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
 import twitter4j.GeoLocation;
-import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -27,7 +26,6 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.URLEntity;
 import twitter4j.User;
-import twitter4j.UserMentionEntity;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.TwipOModeAuthorization;
@@ -91,7 +89,7 @@ public final class Utils implements Constants {
 	private static Drawable ICON_STARRED, ICON_HAS_MEDIA, ICON_HAS_LOCATION;
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
-		long[] account_ids = getActivatedAccounts(context);
+		long[] account_ids = getActivatedAccountIds(context);
 		StringBuilder builder = new StringBuilder();
 		if (selection != null) {
 			builder.append(selection);
@@ -364,7 +362,7 @@ public final class Utils implements Constants {
 		return username;
 	}
 
-	public static long[] getActivatedAccounts(Context context) {
+	public static long[] getActivatedAccountIds(Context context) {
 		long[] accounts = new long[] {};
 		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
 				Accounts.IS_ACTIVATED + "=1", null, null);
@@ -507,7 +505,7 @@ public final class Utils implements Constants {
 	}
 
 	public static long[] getLastSortIds(Context context, Uri uri) {
-		long[] account_ids = getActivatedAccounts(context);
+		long[] account_ids = getActivatedAccountIds(context);
 		String[] cols = new String[] { Statuses.STATUS_ID };
 		ContentResolver resolver = context.getContentResolver();
 		long[] status_ids = new long[account_ids.length];
@@ -670,41 +668,6 @@ public final class Utils implements Constants {
 				} else if (url != null) {
 					text.setSpan(new URLSpan(url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
-			}
-		}
-		// Format mentioned users.
-		UserMentionEntity[] mentions = status.getUserMentionEntities();
-		if (mentions != null) {
-			for (UserMentionEntity mention : mentions) {
-				int start = mention.getStart();
-				int end = mention.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				Uri.Builder builder = new Uri.Builder();
-				builder.scheme(SCHEME_TWIDERE);
-				builder.authority(AUTHORITY_USER);
-				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, mention.getScreenName());
-				text.setSpan(new URLSpan(builder.build().toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			}
-		}
-		// Format hashtags.
-		HashtagEntity[] hashtags = status.getHashtagEntities();
-		if (hashtags != null) {
-			for (HashtagEntity hashtag : hashtags) {
-				int start = hashtag.getStart();
-				int end = hashtag.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				Uri.Builder builder = new Uri.Builder();
-				builder.scheme(SCHEME_TWIDERE);
-				builder.authority(AUTHORITY_SEARCH);
-				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-				builder.appendQueryParameter(QUERY_PARAM_QUERY, hashtag.getText());
-				builder.appendQueryParameter(QUERY_PARAM_TYPE, QUERY_PARAM_VALUE_TWEETS);
-				text.setSpan(new URLSpan(builder.build().toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
 		}
 		// Format media.
@@ -883,6 +846,13 @@ public final class Utils implements Constants {
 		return false;
 	}
 
+	public static boolean isMyActivatedAccount(Context context, long account_id) {
+		for (long id : getActivatedAccountIds(context)) {
+			if (id == account_id) return true;
+		}
+		return false;
+	}
+
 	public static boolean isMyRetweet(Context context, long account_id, long status_id) {
 		return account_id == getRetweetedByUserId(context, status_id);
 	}
@@ -1035,12 +1005,12 @@ public final class Utils implements Constants {
 	public static void setMenuForStatus(Context context, Menu menu, ParcelableStatus status) {
 		if (status == null) return;
 		int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
-		menu.findItem(R.id.delete_submenu).setVisible(isMyAccount(context, status.user_id));
+		menu.findItem(R.id.delete_submenu).setVisible(isMyActivatedAccount(context, status.user_id));
 		MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
 		itemRetweet.setVisible(!status.is_protected
-				&& (!isMyAccount(context, status.user_id) || getActivatedAccounts(context).length > 1));
+				&& (!isMyActivatedAccount(context, status.user_id) || getActivatedAccountIds(context).length > 1));
 		Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
-		if (isMyAccount(context, status.retweeted_by_id)) {
+		if (isMyActivatedAccount(context, status.retweeted_by_id)) {
 			iconRetweetSubMenu.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemRetweet.setTitle(R.string.cancel_retweet);
 		} else {

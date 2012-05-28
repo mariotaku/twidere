@@ -1,7 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 
 import java.io.File;
@@ -111,7 +111,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 			}
 			mAccountIds = activated_ids == null ? new long[] { mAccountId } : activated_ids;
 		} else {
-			mAccountIds = activated_ids == null ? getActivatedAccounts(getSherlockActivity()) : activated_ids;
+			mAccountIds = activated_ids == null ? getActivatedAccountIds(getSherlockActivity()) : activated_ids;
 			if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null) {
 				mText = bundle.getString(INTENT_KEY_TEXT);
 			}

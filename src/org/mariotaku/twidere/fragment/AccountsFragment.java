@@ -1,6 +1,6 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -271,7 +271,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 		private LazyImageLoader mImageLoader;
 
-		private int mUserColorIdx, mUserIdIdx, mProfileImageIdx, mUsernameIdx;
+		private int mUserColorIdx, mProfileImageIdx;
 
 		public AccountsAdapter(Context context, LazyImageLoader loader) {
 			super(context, R.layout.account_list_item, null, new String[] { Accounts.USERNAME },
@@ -300,8 +300,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			if (cursor != null) {
 				mUserColorIdx = cursor.getColumnIndexOrThrow(Accounts.USER_COLOR);
 				mProfileImageIdx = cursor.getColumnIndexOrThrow(Accounts.PROFILE_IMAGE_URL);
-				mUserIdIdx = cursor.getColumnIndexOrThrow(Accounts.USER_ID);
-				mUsernameIdx = cursor.getColumnIndexOrThrow(Accounts.USERNAME);
 			}
 		}
 
@@ -326,7 +324,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 					// previously deleted.
 					mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + "=" + mSelectedUserId, null);
 					mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + "=" + mSelectedUserId, null);
-					if (getActivatedAccounts(getSherlockActivity()).length > 0) {
+					if (getActivatedAccountIds(getSherlockActivity()).length > 0) {
 						AccountsFragment.this.getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 					} else {
 						getSherlockActivity().finish();

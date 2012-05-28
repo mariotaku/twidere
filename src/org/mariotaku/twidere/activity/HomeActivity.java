@@ -2,7 +2,7 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
@@ -90,7 +90,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 						}
 					}
 				} else if (resultCode == RESULT_CANCELED) {
-					if (getActivatedAccounts(this).length <= 0) {
+					if (getActivatedAccountIds(this).length <= 0) {
 						finish();
 					}
 				}
@@ -125,7 +125,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
 		mComposeButton = (ImageButton) findViewById(R.id.compose);
 		long[] account_ids = getAccountIds(this);
-		long[] activated_ids = getActivatedAccounts(this);
+		long[] activated_ids = getActivatedAccountIds(this);
 
 		if (account_ids.length <= 0) {
 			startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
@@ -232,6 +232,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	public void setPagingEnabled(boolean enabled) {
 		if (mIndicator != null) {
 			mIndicator.setPagingEnabled(enabled);
+			mIndicator.setEnabled(enabled);
 		}
 	}
 

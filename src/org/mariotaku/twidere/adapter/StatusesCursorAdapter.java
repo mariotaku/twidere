@@ -2,12 +2,9 @@ package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseURL;
-
-import java.net.URL;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -15,7 +12,6 @@ import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.StatusViewHolder;
 import org.mariotaku.twidere.util.StatusesCursorIndices;
 
-import twitter4j.GeoLocation;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -49,13 +45,14 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 		final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
 		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
 		final boolean has_media = cursor.getShort(mIndices.has_media) == 1;
+		final boolean has_location = isNullOrEmpty(cursor.getString(mIndices.location));
+		
 		final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
 				.getString(mIndices.retweeted_by_screen_name);
 		final String text_plain = cursor.getString(mIndices.text_plain);
 		final String name = mDisplayName ? cursor.getString(mIndices.name) : cursor.getString(mIndices.screen_name);
 		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
-		final GeoLocation location = getGeoLocationFromString(cursor.getString(mIndices.location));
-		final URL profile_image_url = parseURL(cursor.getString(mIndices.profile_image_url));
+		
 		final boolean is_last = cursor.getPosition() == getCount() - 1;
 		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last;
 
@@ -79,7 +76,7 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 			holder.name.setText(name);
 			holder.tweet_time.setText(formatToShortTimeString(mContext, status_timestamp));
 			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(null, null,
-					getTypeIcon(context, is_favorite, location != null, has_media), null);
+					getTypeIcon(context, is_favorite, has_location, has_media), null);
 			holder.reply_retweet_status.setVisibility(in_reply_to_status_id != -1 || is_retweet ? View.VISIBLE
 					: View.GONE);
 			if (is_retweet && !isNullOrEmpty(retweeted_by)) {
@@ -94,7 +91,7 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 			}
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				mImageLoader.displayImage(profile_image_url, holder.profile_image);
+				mImageLoader.displayImage(parseURL(cursor.getString(mIndices.profile_image_url)), holder.profile_image);
 			}
 		}
 

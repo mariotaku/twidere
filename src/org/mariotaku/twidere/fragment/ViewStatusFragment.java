@@ -1,9 +1,10 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
@@ -352,8 +353,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 
 		private Response isAllFollowing() {
 			if (mStatus == null) return new Response(null, null);
-			if (Utils.isMyAccount(getSherlockActivity(), mStatus.user_id)) return new Response(true, null);
-			long[] ids = getActivatedAccounts(getSherlockActivity());
+			if (isMyActivatedAccount(getSherlockActivity(), mStatus.user_id)) return new Response(true, null);
+			long[] ids = getActivatedAccountIds(getSherlockActivity());
 			for (long id : ids) {
 				Twitter twitter = getTwitterInstance(getSherlockActivity(), id, false);
 				try {

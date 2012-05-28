@@ -1,6 +1,6 @@
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.getActivatedAccounts;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
@@ -189,7 +189,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
 		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
 		setSupportProgressBarIndeterminateVisibility(false);
-		long[] account_ids = getActivatedAccounts(this);
+		long[] account_ids = getActivatedAccountIds(this);
 		boolean called_from_twidere = getPackageName().equals(getCallingPackage());
 		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0 && called_from_twidere);
 
@@ -247,7 +247,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				long[] account_ids = getActivatedAccounts(this);
+				long[] account_ids = getActivatedAccountIds(this);
 				boolean called_from_twidere = getPackageName().equals(getCallingPackage());
 				if (account_ids.length > 0 && called_from_twidere) {
 					finish();

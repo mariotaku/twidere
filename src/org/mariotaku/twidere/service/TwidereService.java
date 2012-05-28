@@ -586,6 +586,8 @@ public class TwidereService extends Service implements Constants {
 			protected Boolean doInBackground(Object... args) {
 				final ContentResolver resolver = context.getContentResolver();
 				boolean succeed = false;
+				Uri.Builder uribuilder = uri.buildUpon();
+				uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, "false");
 
 				for (AccountResponse response : responses) {
 					long account_id = response.account_id;
@@ -643,11 +645,11 @@ public class TwidereService extends Service implements Constants {
 							}
 						}
 						where.append(" )");
-						rows_deleted = resolver.delete(uri, where.toString(), null);
+						rows_deleted = resolver.delete(uribuilder.build(), where.toString(), null);
 					}
 
 					// Insert previously fetched items.
-					resolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
+					resolver.bulkInsert(uribuilder.build(), values_list.toArray(new ContentValues[values_list.size()]));
 
 					// No row deleted, so I will insert a gap.
 					final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
@@ -658,7 +660,7 @@ public class TwidereService extends Service implements Constants {
 						StringBuilder where = new StringBuilder();
 						where.append(Statuses.ACCOUNT_ID + "=" + account_id);
 						where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
-						resolver.update(uri, values, where.toString(), null);
+						resolver.update(uribuilder.build(), values, where.toString(), null);
 					}
 					succeed = true;
 				}
@@ -724,6 +726,7 @@ public class TwidereService extends Service implements Constants {
 					StringBuilder where = new StringBuilder();
 					where.append(Statuses.ACCOUNT_ID + " = " + user.getId());
 					where.append(" AND " + Statuses.STATUS_ID + " = " + retweeted_status.getId());
+					where.append(" OR " + Statuses.RETWEET_ID + " = " + retweeted_status.getId());
 					for (Uri uri : TweetStore.STATUSES_URIS) {
 						resolver.update(uri, values, where.toString(), null);
 					}

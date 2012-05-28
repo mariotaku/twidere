@@ -152,8 +152,8 @@ public class SearchTweetsFragment extends BaseListFragment implements LoaderCall
 			holder.name.setText(tweet.getFromUser());
 			holder.text.setText(tweet.getText());
 			holder.tweet_time.setText(formatToShortTimeString(getContext(), tweet.getCreatedAt().getTime()));
-			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(null, null, getTypeIcon(context, false, has_location, has_media),
-					null);
+			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(null, null,
+					getTypeIcon(context, false, has_location, has_media), null);
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				image_loader.displayImage(parseURL(tweet.getProfileImageUrl()), holder.profile_image);

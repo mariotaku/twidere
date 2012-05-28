@@ -83,6 +83,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	}
 
 	private void onDatabaseUpdated(Uri uri, boolean is_insert) {
+		if (uri == null || "false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) return;
 		Context context = getContext();
 		switch (getTableId(uri)) {
 			case URI_ACCOUNTS: {
