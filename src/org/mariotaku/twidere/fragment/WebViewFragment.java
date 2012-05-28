@@ -43,12 +43,6 @@ public class WebViewFragment extends BaseFragment {
 		return inflater.inflate(R.layout.webview, container, false);
 	}
 
-	@Override
-	public void onDestroy() {
-		// mWebview.clearCache(true);
-		super.onDestroy();
-	}
-
 	public final void setWebViewClient(WebViewClient client) {
 		mWebView.setWebViewClient(client);
 	}

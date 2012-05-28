@@ -161,11 +161,11 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	}
 
 	@Override
-	public void onDestroy() {
+	public void onDestroyView() {
 		if (mFollowInfoTask != null) {
 			mFollowInfoTask.cancel(true);
 		}
-		super.onDestroy();
+		super.onDestroyView();
 	}
 
 	@Override

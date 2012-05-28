@@ -160,11 +160,11 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 	}
 
 	@Override
-	public void onDestroy() {
+	public void onDestroyView() {
 		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
 			mShowConversationTask.cancel(true);
 		}
-		super.onDestroy();
+		super.onDestroyView();
 	}
 
 	@Override
