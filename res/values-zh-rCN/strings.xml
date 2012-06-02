@@ -67,6 +67,7 @@
 	<string name="unfav">取消收藏</string>
 	<string name="reply">回复</string>
 	<string name="share">分享</string>
+	<string name="share_via_twidere">通过 Twidere 分享</string>
 	<string name="view">查看</string>
 	<string name="view_image">图像</string>
 	<string name="view_media">媒体</string>

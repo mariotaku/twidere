@@ -18,6 +18,7 @@ public class StatusViewHolder {
 	private final Context context;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
+	private float text_size;
 
 	public StatusViewHolder(View view, Context context) {
 		this.context = context;
@@ -57,6 +58,16 @@ public class StatusViewHolder {
 		tweet_time.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		reply_retweet_status.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
+	}
+	
+	public void setTextSize(float text_size) {
+		if (this.text_size != text_size) {
+			this.text_size = text_size;
+			text.setTextSize(text_size);
+			name.setTextSize(text_size * 1.05f);
+			tweet_time.setTextSize(text_size * 0.65f);
+			reply_retweet_status.setTextSize(text_size * 0.65f);
+		}
 	}
 
 	private Drawable getColorIndicatorDrawable() {

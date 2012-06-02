@@ -3,24 +3,23 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ComposeFragment;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.ActionProvider;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.ActionProvider;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 
 public class ComposeActivity extends BaseActivity implements OnClickListener, OnLongClickListener {
 
@@ -48,7 +47,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, On
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mActionBar = getSupportActionBar();
+		mActionBar = getActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		mActionBar.setDisplayShowTitleEnabled(false);
@@ -65,10 +64,15 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, On
 		// Check to see if we have retained the worker fragment.
 		mFragment = (ComposeFragment) fm.findFragmentByTag(TAG_COMPOSE);
 
+		String action = getIntent().getAction();
 		// If not retained (or first time running), we need to create it.
 		if (mFragment == null) {
 			mFragment = new ComposeFragment();
-			mFragment.setArguments(getIntent().getExtras());
+			Bundle args = getIntent().getExtras() == null ? new Bundle() : getIntent().getExtras();
+			if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+				args.putBoolean(INTENT_KEY_IS_SHARE, true);
+			}
+			mFragment.setArguments(args);
 			fm.beginTransaction().replace(android.R.id.content, mFragment, TAG_COMPOSE).commit();
 		}
 	}

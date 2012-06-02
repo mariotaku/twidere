@@ -38,12 +38,12 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 
 		Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID);
-		mAdapter = new UsersAdapter(getSherlockActivity());
+		mAdapter = new UsersAdapter(getActivity());
 		mListView = getListView();
 		mListView.setOnItemClickListener(this);
 		setListAdapter(mAdapter);
@@ -52,12 +52,12 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 
 	@Override
 	public Loader<ResponseList<User>> onCreateLoader(int id, Bundle args) {
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		getActivity().setProgressBarIndeterminateVisibility(true);
 		if (args != null) {
 			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			int page = args.getInt(INTENT_KEY_PAGE);
 			String query = args.getString(INTENT_KEY_QUERY);
-			return new UserSearchLoader(getSherlockActivity(), account_id, query, page);
+			return new UserSearchLoader(getActivity(), account_id, query, page);
 		}
 		return null;
 	}
@@ -75,12 +75,12 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 
 	@Override
 	public void onLoaderReset(Loader<ResponseList<User>> loader) {
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+		getActivity().setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<ResponseList<User>> loader, ResponseList<User> data) {
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+		getActivity().setProgressBarIndeterminateVisibility(false);
 		if (data != null) {
 			mAdapter.addAll(data);
 		}

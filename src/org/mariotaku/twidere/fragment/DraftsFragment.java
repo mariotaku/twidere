@@ -27,16 +27,15 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 
 public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener {
 
@@ -67,12 +66,12 @@ public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mResolver = getSherlockActivity().getContentResolver();
-		mInterface = ServiceInterface.getInstance(getSherlockActivity());
-		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mResolver = getActivity().getContentResolver();
+		mInterface = ServiceInterface.getInstance(getActivity());
+		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		setHasOptionsMenu(true);
-		mAdapter = new DraftsAdapter(getSherlockActivity());
+		mAdapter = new DraftsAdapter(getActivity());
 		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView.setOnItemClickListener(this);
@@ -114,7 +113,7 @@ public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		new android.view.MenuInflater(getSherlockActivity()).inflate(R.menu.context_draft, menu);
+		new android.view.MenuInflater(getActivity()).inflate(R.menu.context_draft, menu);
 		AdapterContextMenuInfo adapterinfo = (AdapterContextMenuInfo) menuInfo;
 
 		if (mCursor != null && adapterinfo.position >= 0 && adapterinfo.position < mCursor.getCount()) {
@@ -129,7 +128,7 @@ public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri uri = Drafts.CONTENT_URI;
 		String[] cols = Drafts.COLUMNS;
-		return new CursorLoader(getSherlockActivity(), uri, cols, null, null, null);
+		return new CursorLoader(getActivity(), uri, cols, null, null, null);
 	}
 
 	@Override
@@ -193,16 +192,16 @@ public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<
 	@Override
 	public void onStart() {
 		IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
+		if (getActivity() != null) {
+			getActivity().registerReceiver(mStatusReceiver, filter);
 		}
 		super.onStart();
 	}
 
 	@Override
 	public void onStop() {
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		if (getActivity() != null) {
+			getActivity().unregisterReceiver(mStatusReceiver);
 		}
 		super.onStop();
 	}
@@ -237,7 +236,7 @@ public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(R.string.delete_all);
 			builder.setMessage(R.string.delete_all_confirm);
 			builder.setPositiveButton(android.R.string.ok, this);
@@ -261,7 +260,7 @@ public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(R.string.delete);
 			builder.setMessage(R.string.delete_draft_confirm);
 			builder.setPositiveButton(android.R.string.ok, this);
@@ -350,7 +349,7 @@ public class DraftsFragment extends BaseListFragment implements LoaderCallbacks<
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(R.string.send_all);
 			builder.setMessage(R.string.send_all_confirm);
 			builder.setPositiveButton(android.R.string.ok, this);

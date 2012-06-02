@@ -103,8 +103,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (getArguments() != null) {
 			mAccountId = getArguments().getLong(INTENT_KEY_ACCOUNT_ID);
 		}
-		mProfileImageLoader = ((TwidereApplication) getSherlockActivity().getApplication()).getListProfileImageLoader();
-		mAdapter = new UserProfileActionAdapter(getSherlockActivity());
+		mProfileImageLoader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		mAdapter = new UserProfileActionAdapter(getActivity());
 		mAdapter.add(new DescriptionAction());
 		mAdapter.add(new LocationAction());
 		mAdapter.add(new URLAction());
@@ -128,7 +128,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		switch (view.getId()) {
 			case R.id.follow: {
 				if (mUser != null) {
-					ServiceInterface service = ServiceInterface.getInstance(getSherlockActivity());
+					ServiceInterface service = ServiceInterface.getInstance(getActivity());
 					if (mIsFollowing) {
 						service.destroyFriendship(mAccountId, mUser.getId());
 					} else {
@@ -211,15 +211,15 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		super.onStart();
 		IntentFilter filter = new IntentFilter(BROADCAST_FRIENDSHIP_CHANGED);
 		filter.addAction(BROADCAST_PROFILE_UPDATED);
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
+		if (getActivity() != null) {
+			getActivity().registerReceiver(mStatusReceiver, filter);
 		}
 	}
 
 	@Override
 	public void onStop() {
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		if (getActivity() != null) {
+			getActivity().unregisterReceiver(mStatusReceiver);
 		}
 		super.onStop();
 	}
@@ -229,9 +229,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		int fade_in = android.R.anim.fade_in;
 		int fade_out = android.R.anim.fade_out;
 		mListProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
-		mListProgress.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), shown ? fade_out : fade_in));
+		mListProgress.startAnimation(AnimationUtils.loadAnimation(getActivity(), shown ? fade_out : fade_in));
 		mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
-		mListView.startAnimation(AnimationUtils.loadAnimation(getSherlockActivity(), shown ? fade_in : fade_out));
+		mListView.startAnimation(AnimationUtils.loadAnimation(getActivity(), shown ? fade_in : fade_out));
 	}
 
 	private void getFollowInfo() {
@@ -253,9 +253,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 			if (user_id == -1 && screen_name != null) {
-				mUserInfoTask = new UserInfoTask(getSherlockActivity(), account_id, screen_name);
+				mUserInfoTask = new UserInfoTask(getActivity(), account_id, screen_name);
 			} else {
-				mUserInfoTask = new UserInfoTask(getSherlockActivity(), account_id, user_id);
+				mUserInfoTask = new UserInfoTask(getActivity(), account_id, user_id);
 			}
 		}
 		if (mUserInfoTask != null) {
@@ -310,7 +310,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
 					mText = mEditText.getText().toString();
-					ServiceInterface service = ServiceInterface.getInstance(getSherlockActivity());
+					ServiceInterface service = ServiceInterface.getInstance(getActivity());
 					switch (mType) {
 						case TYPE_NAME: {
 							service.updateProfile(mAccountId, mText, null, null, null);
@@ -337,9 +337,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
-			FrameLayout layout = new FrameLayout(getSherlockActivity());
-			mEditText = new EditText(getSherlockActivity());
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			FrameLayout layout = new FrameLayout(getActivity());
+			mEditText = new EditText(getActivity());
 			if (mText != null) {
 				mEditText.setText(mText);
 			}
@@ -456,7 +456,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private Response<Boolean> isFollowing() {
 			if (mUser == null) return new Response<Boolean>(null, null);
 			if (mAccountId == mUser.getId()) return new Response<Boolean>(null, null);
-			Twitter twitter = getTwitterInstance(getSherlockActivity(), mAccountId, false);
+			Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 			try {
 				Relationship result = twitter.showFriendship(mAccountId, mUser.getId());
 				return new Response<Boolean>(result.isSourceFollowingTarget(), null);
@@ -541,10 +541,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public void onClick() {
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			Fragment fragment = Fragment.instantiate(getSherlockActivity(), UserTimelineFragment.class.getName());
+			Fragment fragment = Fragment.instantiate(getActivity(), UserTimelineFragment.class.getName());
 			fragment.setArguments(getArguments());
 			int viewId = android.R.id.content;
-			if (getSherlockActivity() instanceof HomeActivity) {
+			if (getActivity() instanceof HomeActivity) {
 				viewId = R.id.dashboard;
 			}
 			ft.replace(viewId, fragment);
@@ -643,13 +643,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		protected void onCancelled() {
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+			getActivity().setProgressBarIndeterminateVisibility(false);
 			super.onCancelled();
 		}
 
 		@Override
 		protected void onPostExecute(Response<User> result) {
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+			getActivity().setProgressBarIndeterminateVisibility(false);
 			if (result.value != null) {
 				setListShown(true);
 				mUser = result.value;
@@ -695,7 +695,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		protected void onPreExecute() {
 			setListShown(false);
 			mRetryButton.setVisibility(View.GONE);
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+			getActivity().setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}
 

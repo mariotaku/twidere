@@ -3,10 +3,9 @@ package org.mariotaku.twidere.fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.webkit.WebView;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 public class GoogleWebMapFragment extends WebViewFragment {
 
@@ -41,7 +40,7 @@ public class GoogleWebMapFragment extends WebViewFragment {
 
 		WebView webview = getWebView();
 		webview.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-		setWebViewClient(new MapWebViewClient(getSherlockActivity()));
+		setWebViewClient(new MapWebViewClient(getActivity()));
 		loadUrl(mUri.toString());
 
 		/** Allows JavaScript calls to access application resources **/
@@ -72,7 +71,7 @@ public class GoogleWebMapFragment extends WebViewFragment {
 
 	private class MapWebViewClient extends DefaultWebViewClient {
 
-		public MapWebViewClient(SherlockFragmentActivity activity) {
+		public MapWebViewClient(FragmentActivity activity) {
 			super(activity);
 		}
 

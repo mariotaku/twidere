@@ -13,8 +13,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
-
-import com.actionbarsherlock.view.MenuItem;
+import android.view.MenuItem;
 
 @SuppressWarnings("deprecation")
 public class SettingsActivity extends BasePreferenceActivity implements OnPreferenceChangeListener,
@@ -23,7 +22,7 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
 		addPreferencesFromResource(R.xml.settings);
 		findPreference(PREFERENCE_KEY_DARK_THEME).setOnPreferenceChangeListener(this);

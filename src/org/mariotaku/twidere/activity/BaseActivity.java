@@ -11,10 +11,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
+import android.support.v4.app.FragmentActivity;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
-public class BaseActivity extends SherlockFragmentActivity implements Constants, ActivityThemeChangeImpl {
+public class BaseActivity extends FragmentActivity implements Constants, ActivityThemeChangeImpl {
 
 	private int mThemeId;
 

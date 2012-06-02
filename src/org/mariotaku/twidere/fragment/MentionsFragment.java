@@ -17,6 +17,10 @@ public class MentionsFragment extends StatusesListFragment {
 			String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
+			} else if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
+				if (!intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+					mListView.onRefreshComplete();
+				}
 			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
 				mListView.onRefreshComplete();
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
@@ -39,15 +43,15 @@ public class MentionsFragment extends StatusesListFragment {
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
 		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
+		if (getActivity() != null) {
+			getActivity().registerReceiver(mStatusReceiver, filter);
 		}
 	}
 
 	@Override
 	public void onStop() {
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		if (getActivity() != null) {
+			getActivity().unregisterReceiver(mStatusReceiver);
 		}
 		super.onStop();
 	}

@@ -1,9 +1,12 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.activity.BaseActivity;
 
-import com.actionbarsherlock.app.SherlockListFragment;
+import android.support.v4.app.ListFragment;
 
-public class BaseListFragment extends SherlockListFragment implements Constants {
-
+public class BaseListFragment extends ListFragment implements Constants {
+	public BaseActivity getBaseActivity() {
+		return (BaseActivity) getActivity();
+	}
 }

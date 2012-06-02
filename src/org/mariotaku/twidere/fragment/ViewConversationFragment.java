@@ -24,6 +24,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.app.FragmentActivity;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -31,11 +35,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 
 public class ViewConversationFragment extends BaseListFragment implements OnScrollListener, OnItemClickListener,
 		OnItemLongClickListener, ActionMode.Callback {
@@ -123,8 +122,8 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
+		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		Bundle bundle = getArguments();
@@ -134,14 +133,13 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		long account_id = bundle.getLong(INTENT_KEY_ACCOUNT_ID, INVALID_ID);
 		long status_id = bundle.getLong(INTENT_KEY_STATUS_ID, INVALID_ID);
 
-		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getListProfileImageLoader();
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
 		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
 			mShowConversationTask.cancel(true);
 		}
-		mAdapter = new ParcelableStatusesAdapter(getSherlockActivity(), imageloader);
+		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
 		mStatusHandler = new StatusHandler(mAdapter, account_id);
-		mShowConversationTask = new ShowConversationTask(getSherlockActivity(), mStatusHandler, account_id, status_id);
+		mShowConversationTask = new ShowConversationTask(getActivity(), mStatusHandler, account_id, status_id);
 		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView.setOnScrollListener(this);
@@ -155,8 +153,13 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 	@Override
 	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.action_status, menu);
+		getActivity().getMenuInflater().inflate(R.menu.action_status, menu);
 		return true;
+	}
+
+	@Override
+	public void onDestroyActionMode(ActionMode mode) {
+
 	}
 
 	@Override
@@ -165,11 +168,6 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 			mShowConversationTask.cancel(true);
 		}
 		super.onDestroyView();
-	}
-
-	@Override
-	public void onDestroyActionMode(ActionMode mode) {
-
 	}
 
 	@Override
@@ -194,7 +192,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
 			mSelectedStatus = mAdapter.findItem(id);
-			getSherlockActivity().startActionMode(this);
+			getActivity().startActionMode(this);
 			return true;
 		}
 		return false;
@@ -202,7 +200,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 	@Override
 	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		setMenuForStatus(getSherlockActivity(), menu, mSelectedStatus);
+		setMenuForStatus(getActivity(), menu, mSelectedStatus);
 		return true;
 	}
 
@@ -273,12 +271,11 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 	private static class ShowConversationTask extends AsyncTask<Void, Void, TwitterException> {
 
-		private SherlockFragmentActivity mActivity;
+		private FragmentActivity mActivity;
 		private long mAccountId, mStatusId;
 		private StatusHandler mHandler;
 
-		public ShowConversationTask(SherlockFragmentActivity context, StatusHandler handler, long account_id,
-				long status_id) {
+		public ShowConversationTask(FragmentActivity context, StatusHandler handler, long account_id, long status_id) {
 			mActivity = context;
 			mHandler = handler;
 			mAccountId = account_id;
@@ -308,13 +305,13 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 			if (result != null) {
 
 			}
-			mActivity.setSupportProgressBarIndeterminateVisibility(false);
+			mActivity.setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);
 		}
 
 		@Override
 		protected void onPreExecute() {
-			mActivity.setSupportProgressBarIndeterminateVisibility(true);
+			mActivity.setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}
 

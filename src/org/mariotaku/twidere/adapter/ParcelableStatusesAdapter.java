@@ -65,18 +65,15 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 
 		if (!show_gap) {
 
-			holder.text.setTextSize(mTextSize);
+			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(
 					status.is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
 			holder.name.setText(mDisplayName ? status.name : status.screen_name);
-			holder.name.setTextSize(mTextSize * 1.05f);
 			holder.tweet_time.setText(formatToShortTimeString(mContext, status.status_timestamp));
 			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(null, null,
 					getTypeIcon(mContext, status.is_favorite, status.location != null, status.has_media), null);
-			holder.tweet_time.setTextSize(mTextSize * 0.65f);
 			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
-			holder.reply_retweet_status.setTextSize(mTextSize * 0.65f);
 			if (status.is_retweet && !isNullOrEmpty(retweeted_by)) {
 				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by
 						+ (status.retweet_count > 1 ? " + " + (status.retweet_count - 1) : "")));

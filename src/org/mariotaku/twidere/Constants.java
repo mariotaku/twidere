@@ -19,7 +19,7 @@ public interface Constants extends TwitterConstants {
 	public static final boolean MULTIPLE_ACCOUNTS_ENABLED = true;
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 12;
+	public static final int DATABASES_VERSION = 13;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -125,6 +125,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_REFRESH_ALL = "refresh_all";
 	public static final String INTENT_KEY_IDS = "ids";
 	public static final String INTENT_KEY_IS_QUOTE = "is_quote";
+	public static final String INTENT_KEY_IS_SHARE = "is_share";
 	public static final String INTENT_KEY_STATUS = "status";
 
 	public static final int MENU_HOME = android.R.id.home;

@@ -34,6 +34,9 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -42,10 +45,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 
 public class ViewStatusFragment extends BaseFragment implements OnClickListener {
 
@@ -69,7 +68,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			String action = intent.getAction();
 			if (BROADCAST_DATABASE_UPDATED.equals(action)) {
 				getStatus();
-				getSherlockActivity().invalidateOptionsMenu();
+				getActivity().invalidateOptionsMenu();
 			} else if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
 				showFollowInfo();
 			}
@@ -79,8 +78,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 
-		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
-		mResolver = getSherlockActivity().getContentResolver();
+		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
+		mResolver = getActivity().getContentResolver();
 		super.onActivityCreated(savedInstanceState);
 		Bundle bundle = getArguments();
 		if (bundle != null) {
@@ -124,7 +123,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				break;
 			}
 			case R.id.follow: {
-				ServiceInterface.getInstance(getSherlockActivity()).createFriendship(mAccountId, mStatus.user_id);
+				ServiceInterface.getInstance(getActivity()).createFriendship(mAccountId, mStatus.user_id);
 				break;
 			}
 			case R.id.in_reply_to: {
@@ -182,7 +181,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 				break;
 			}
 			case MENU_RETWEET: {
-				if (isMyRetweet(getSherlockActivity(), mAccountId, mStatusId)) {
+				if (isMyRetweet(getActivity(), mAccountId, mStatusId)) {
 					mServiceInterface.cancelRetweet(mAccountId, mStatusId);
 				} else {
 					long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
@@ -236,7 +235,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		setMenuForStatus(getSherlockActivity(), menu, mStatus);
+		setMenuForStatus(getActivity(), menu, mStatus);
 		super.onPrepareOptionsMenu(menu);
 	}
 
@@ -245,15 +244,15 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		super.onStart();
 		IntentFilter filter = new IntentFilter(BROADCAST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_FRIENDSHIP_CHANGED);
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
+		if (getActivity() != null) {
+			getActivity().registerReceiver(mStatusReceiver, filter);
 		}
 	}
 
 	@Override
 	public void onStop() {
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		if (getActivity() != null) {
+			getActivity().unregisterReceiver(mStatusReceiver);
 		}
 		super.onStop();
 	}
@@ -268,7 +267,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		}
 		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
 		boolean is_reply = mStatus.in_reply_to_status_id != -1;
-		String time = formatToLongTimeString(getSherlockActivity(), mStatus.status_timestamp);
+		String time = formatToLongTimeString(getActivity(), mStatus.status_timestamp);
 		mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, mStatus.source)));
 		mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
 		mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
@@ -278,8 +277,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		mViewMapButton.setVisibility(mStatus.location != null ? View.VISIBLE : View.GONE);
 		mViewMediaButton.setVisibility(mStatus.has_media ? View.VISIBLE : View.GONE);
 
-		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getListProfileImageLoader();
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
 		imageloader.displayImage(mStatus.profile_image_url, mProfileImageView);
 	}
 
@@ -305,9 +303,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			}
 		}
 		if (mStatus == null) {
-			if (getSherlockActivity() instanceof LinkHandlerActivity) {
+			if (getActivity() instanceof LinkHandlerActivity) {
 				// Finish the activity
-				getSherlockActivity().finish();
+				getActivity().finish();
 			} else {
 				// Maybe I'll remove this fragment here?
 			}
@@ -337,7 +335,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 					mFollowButton.setVisibility(result.value ? View.GONE : View.VISIBLE);
 				}
 			} else {
-				Utils.showErrorToast(getSherlockActivity(), result.exception, true);
+				Utils.showErrorToast(getActivity(), result.exception, true);
 			}
 			mProgress.setVisibility(View.GONE);
 			super.onPostExecute(result);
@@ -354,10 +352,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 
 		private Response isAllFollowing() {
 			if (mStatus == null) return new Response(null, null);
-			if (isMyActivatedAccount(getSherlockActivity(), mStatus.user_id)) return new Response(true, null);
-			long[] ids = getActivatedAccountIds(getSherlockActivity());
+			if (isMyActivatedAccount(getActivity(), mStatus.user_id)) return new Response(true, null);
+			long[] ids = getActivatedAccountIds(getActivity());
 			for (long id : ids) {
-				Twitter twitter = getTwitterInstance(getSherlockActivity(), id, false);
+				Twitter twitter = getTwitterInstance(getActivity(), id, false);
 				try {
 					Relationship result = twitter.showFriendship(id, mStatus.user_id);
 					if (!result.isSourceFollowingTarget()) return new Response(false, null);

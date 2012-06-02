@@ -1,12 +1,6 @@
 package org.mariotaku.twidere.service;
 
-import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
-import static org.mariotaku.twidere.util.Utils.getRetweetId;
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.makeCachedUsersContentValues;
-import static org.mariotaku.twidere.util.Utils.makeStatusesContentValues;
-import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
-import static org.mariotaku.twidere.util.Utils.showErrorToast;
+import static org.mariotaku.twidere.util.Utils.*;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -143,7 +137,7 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	private class CancelRetweetTask extends ManagedAsyncTask<StatusResponse> {
+	private class CancelRetweetTask extends ManagedAsyncTask<Void,Void,StatusResponse> {
 
 		private long account_id;
 		private long status_id, retweeted_id;
@@ -155,7 +149,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected StatusResponse doInBackground(Object... params) {
+		protected StatusResponse doInBackground(Void... params) {
 
 			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -205,7 +199,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CreateFavoriteTask extends ManagedAsyncTask<StatusResponse> {
+	private class CreateFavoriteTask extends ManagedAsyncTask<Void,Void,StatusResponse> {
 
 		private long account_id;
 
@@ -218,7 +212,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected StatusResponse doInBackground(Object... params) {
+		protected StatusResponse doInBackground(Void... params) {
 
 			if (account_id < 0) return new StatusResponse(account_id, null, null);
 
@@ -239,11 +233,17 @@ public class TwidereService extends Service implements Constants {
 			ContentResolver resolver = getContentResolver();
 
 			if (result.status != null) {
-				ContentValues values = new ContentValues();
+				final long status_id = result.status.getId();
+				final ContentValues values = new ContentValues();
 				values.put(Statuses.IS_FAVORITE, 1);
-				StringBuilder where = new StringBuilder();
+				final StringBuilder where = new StringBuilder();
 				where.append(Statuses.ACCOUNT_ID + " = " + result.account_id);
-				where.append(" AND " + Statuses.STATUS_ID + "=" + result.status.getId());
+				where.append(" AND ");
+				where.append("(");
+				where.append(Statuses.STATUS_ID + "=" + status_id);
+				where.append(" OR ");
+				where.append(Statuses.RETWEET_ID + "=" + status_id);
+				where.append(")");
 				for (Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.update(uri, values, where.toString(), null);
 				}
@@ -256,7 +256,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CreateFriendshipTask extends ManagedAsyncTask<UserResponse> {
+	private class CreateFriendshipTask extends ManagedAsyncTask<Void,Void,UserResponse> {
 
 		private long account_id;
 		private long user_id;
@@ -268,7 +268,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Object... params) {
+		protected UserResponse doInBackground(Void... params) {
 
 			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -298,7 +298,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyFavoriteTask extends ManagedAsyncTask<StatusResponse> {
+	private class DestroyFavoriteTask extends ManagedAsyncTask<Void,Void,StatusResponse> {
 
 		private long account_id;
 
@@ -311,7 +311,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected StatusResponse doInBackground(Object... params) {
+		protected StatusResponse doInBackground(Void... params) {
 
 			if (account_id < 0) {
 				new StatusResponse(account_id, null, null);
@@ -334,11 +334,17 @@ public class TwidereService extends Service implements Constants {
 			ContentResolver resolver = getContentResolver();
 
 			if (result.status != null) {
-				ContentValues values = new ContentValues();
+				final long status_id = result.status.getId();
+				final ContentValues values = new ContentValues();
 				values.put(Statuses.IS_FAVORITE, 0);
-				StringBuilder where = new StringBuilder();
-				where.append(Statuses.ACCOUNT_ID + "=" + result.account_id);
-				where.append(" AND " + Statuses.STATUS_ID + "=" + result.status.getId());
+				final StringBuilder where = new StringBuilder();
+				where.append(Statuses.ACCOUNT_ID + " = " + result.account_id);
+				where.append(" AND ");
+				where.append("(");
+				where.append(Statuses.STATUS_ID + "=" + status_id);
+				where.append(" OR ");
+				where.append(Statuses.RETWEET_ID + "=" + status_id);
+				where.append(")");
 				for (Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.update(uri, values, where.toString(), null);
 				}
@@ -352,7 +358,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyFriendshipTask extends ManagedAsyncTask<UserResponse> {
+	private class DestroyFriendshipTask extends ManagedAsyncTask<Void,Void,UserResponse> {
 
 		private long account_id;
 		private long user_id;
@@ -364,7 +370,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Object... params) {
+		protected UserResponse doInBackground(Void... params) {
 
 			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -394,7 +400,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyStatusTask extends ManagedAsyncTask<StatusResponse> {
+	private class DestroyStatusTask extends ManagedAsyncTask<Void,Void,StatusResponse> {
 
 		private long account_id;
 
@@ -407,7 +413,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected StatusResponse doInBackground(Object... params) {
+		protected StatusResponse doInBackground(Void... params) {
 
 			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -424,10 +430,11 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(StatusResponse result) {
 			if (result != null && result.status != null) {
-				ContentResolver resolver = getContentResolver();
-				StringBuilder where = new StringBuilder();
-				where.append(Statuses.ACCOUNT_ID + "=" + result.account_id);
-				where.append(" AND " + Statuses.STATUS_ID + " = " + result.status.getId());
+				final long status_id = result.status.getId();
+				final ContentResolver resolver = getContentResolver();
+				final StringBuilder where = new StringBuilder();
+				where.append(Statuses.STATUS_ID + " = " + status_id);
+				where.append(" OR " + Statuses.RETWEET_ID + " = " + status_id);
 				for (Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.delete(uri, where.toString(), null);
 				}
@@ -489,7 +496,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private static abstract class GetStatusesTask extends ManagedAsyncTask<List<GetStatusesTask.AccountResponse>> {
+	private static abstract class GetStatusesTask extends ManagedAsyncTask<Void,Void,List<GetStatusesTask.AccountResponse>> {
 
 		private long[] account_ids, max_ids;
 
@@ -512,7 +519,7 @@ public class TwidereService extends Service implements Constants {
 		public abstract Twitter getTwitter(Context context, long account_id, boolean include_entities);
 
 		@Override
-		protected List<AccountResponse> doInBackground(Object... params) {
+		protected List<AccountResponse> doInBackground(Void... params) {
 
 			List<AccountResponse> result = new ArrayList<AccountResponse>();
 
@@ -569,7 +576,7 @@ public class TwidereService extends Service implements Constants {
 			}
 		}
 
-		private static class StoreStatusTask extends ManagedAsyncTask<Boolean> {
+		private static class StoreStatusTask extends ManagedAsyncTask<Void,Void,Boolean> {
 
 			private final List<AccountResponse> responses;
 			private final Context context;
@@ -583,11 +590,10 @@ public class TwidereService extends Service implements Constants {
 			}
 
 			@Override
-			protected Boolean doInBackground(Object... args) {
+			protected Boolean doInBackground(Void... args) {
 				final ContentResolver resolver = context.getContentResolver();
 				boolean succeed = false;
-				Uri.Builder uribuilder = uri.buildUpon();
-				uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, "false");
+				Uri query_uri = buildQueryUri(uri, false);
 
 				for (AccountResponse response : responses) {
 					long account_id = response.account_id;
@@ -604,6 +610,7 @@ public class TwidereService extends Service implements Constants {
 					}
 					final List<ContentValues> values_list = new ArrayList<ContentValues>();
 					final List<Long> status_ids = new ArrayList<Long>();
+					final List<Long> retweet_ids = new ArrayList<Long>();
 
 					long min_id = -1;
 
@@ -619,37 +626,34 @@ public class TwidereService extends Service implements Constants {
 						resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + user_id, null);
 						resolver.insert(CachedUsers.CONTENT_URI, makeCachedUsersContentValues(user));
 
-						if (!status_ids.contains(status_id)) {
-							status_ids.add(status_id);
-							if (!status_ids.contains(retweet_id)) {
-								if (status_id < min_id || min_id == -1) {
-									min_id = status_id;
-								}
-								values_list.add(makeStatusesContentValues(status, account_id));
+						status_ids.add(status_id);
+						
+						if ((retweet_id <= 0 || !retweet_ids.contains(retweet_id)) && !retweet_ids.contains(status_id)) {
+							if (status_id < min_id || min_id == -1) {
+								min_id = status_id;
 							}
+							if (retweet_id > 0) retweet_ids.add(retweet_id);
+							values_list.add(makeStatusesContentValues(status, account_id));
 						}
+						
 					}
 					int rows_deleted = -1;
 
 					// Delete all rows conflicting before new data inserted.
 					{
 						StringBuilder where = new StringBuilder();
-						where.append(Statuses.STATUS_ID + " IN ( ");
-						for (int i = 0; i < status_ids.size(); i++) {
-							String id_string = String.valueOf(status_ids.get(i));
-							if (id_string != null) {
-								if (i > 0) {
-									where.append(", ");
-								}
-								where.append(id_string);
-							}
-						}
-						where.append(" )");
-						rows_deleted = resolver.delete(uribuilder.build(), where.toString(), null);
+						where.append(Statuses.ACCOUNT_ID + " = " + account_id);
+						where.append(" AND ");
+						where.append("(");
+						where.append(buildInWhereClause(Statuses.STATUS_ID, status_ids));
+						where.append(" OR ");
+						where.append(buildInWhereClause(Statuses.RETWEET_ID, status_ids));
+						where.append(")");
+						rows_deleted = resolver.delete(query_uri, where.toString(), null);
 					}
 
 					// Insert previously fetched items.
-					resolver.bulkInsert(uribuilder.build(), values_list.toArray(new ContentValues[values_list.size()]));
+					resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 					// No row deleted, so I will insert a gap.
 					final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
@@ -660,11 +664,27 @@ public class TwidereService extends Service implements Constants {
 						StringBuilder where = new StringBuilder();
 						where.append(Statuses.ACCOUNT_ID + "=" + account_id);
 						where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
-						resolver.update(uribuilder.build(), values, where.toString(), null);
+						resolver.update(query_uri, values, where.toString(), null);
 					}
 					succeed = true;
 				}
 				return succeed;
+			}
+			
+			private String buildInWhereClause(String column, List<Long> ids) {
+				StringBuilder builder = new StringBuilder();
+				builder.append(column + " IN ( ");
+					for (int i = 0; i < ids.size(); i++) {
+					String id_string = String.valueOf(ids.get(i));
+					if (id_string != null) {
+						if (i > 0) {
+							builder.append(", ");
+						}
+						builder.append(id_string);
+					}
+				}
+				builder.append(" )");
+				return builder.toString();
 			}
 
 			@Override
@@ -679,7 +699,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class RetweetStatusTask extends ManagedAsyncTask<StatusResponse> {
+	private class RetweetStatusTask extends ManagedAsyncTask<Void,Void,StatusResponse> {
 
 		private long account_id;
 
@@ -692,7 +712,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected StatusResponse doInBackground(Object... params) {
+		protected StatusResponse doInBackground(Void... params) {
 
 			if (account_id < 0) return new StatusResponse(account_id, null, null);
 
@@ -724,8 +744,7 @@ public class TwidereService extends Service implements Constants {
 					values.put(Statuses.RETWEET_COUNT, retweeted_status.getRetweetCount());
 					values.put(Statuses.IS_RETWEET, 1);
 					StringBuilder where = new StringBuilder();
-					where.append(Statuses.ACCOUNT_ID + " = " + user.getId());
-					where.append(" AND " + Statuses.STATUS_ID + " = " + retweeted_status.getId());
+					where.append(Statuses.STATUS_ID + " = " + retweeted_status.getId());
 					where.append(" OR " + Statuses.RETWEET_ID + " = " + retweeted_status.getId());
 					for (Uri uri : TweetStore.STATUSES_URIS) {
 						resolver.update(uri, values, where.toString(), null);
@@ -856,7 +875,7 @@ public class TwidereService extends Service implements Constants {
 		}
 	}
 
-	private class UpdateProfileImageTask extends ManagedAsyncTask<UserResponse> {
+	private class UpdateProfileImageTask extends ManagedAsyncTask<Void,Void,UserResponse> {
 
 		private final long account_id;
 		private final Uri image_uri;
@@ -868,7 +887,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Object... params) {
+		protected UserResponse doInBackground(Void... params) {
 
 			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
@@ -898,7 +917,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class UpdateProfileTask extends ManagedAsyncTask<UserResponse> {
+	private class UpdateProfileTask extends ManagedAsyncTask<Void,Void,UserResponse> {
 
 		private final long account_id;
 		private final String name, url, location, description;
@@ -913,7 +932,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Object... params) {
+		protected UserResponse doInBackground(Void... params) {
 
 			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -943,7 +962,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class UpdateStatusTask extends ManagedAsyncTask<List<StatusResponse>> {
+	private class UpdateStatusTask extends ManagedAsyncTask<Void,Void,List<StatusResponse>> {
 
 		private long[] account_ids;
 		private String content;
@@ -961,7 +980,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected List<StatusResponse> doInBackground(Object... params) {
+		protected List<StatusResponse> doInBackground(Void... params) {
 
 			if (account_ids == null) return null;
 

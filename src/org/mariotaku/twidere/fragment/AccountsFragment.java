@@ -80,10 +80,9 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getListProfileImageLoader();
-		mResolver = getSherlockActivity().getContentResolver();
-		mAdapter = new AccountsAdapter(getSherlockActivity(), imageloader);
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		mResolver = getActivity().getContentResolver();
+		mAdapter = new AccountsAdapter(getActivity(), imageloader);
 		getLoaderManager().initLoader(0, null, this);
 		mListView = getListView();
 		mListView.setOnCreateContextMenuListener(this);
@@ -110,9 +109,8 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public void onBackStackChanged() {
-		if (getSherlockActivity() instanceof HomeActivity) {
-			((HomeActivity) getSherlockActivity()).setPagingEnabled(mDetailFragment == null
-					|| !mDetailFragment.isAdded());
+		if (getActivity() instanceof HomeActivity) {
+			((HomeActivity) getActivity()).setPagingEnabled(mDetailFragment == null || !mDetailFragment.isAdded());
 		}
 
 	}
@@ -148,7 +146,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		new MenuInflater(getSherlockActivity()).inflate(R.menu.context_account, menu);
+		new MenuInflater(getActivity()).inflate(R.menu.context_account, menu);
 
 		AdapterContextMenuInfo adapterinfo = (AdapterContextMenuInfo) menuInfo;
 
@@ -167,7 +165,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri uri = Accounts.CONTENT_URI;
 		String[] cols = Accounts.COLUMNS;
-		return new CursorLoader(getSherlockActivity(), uri, cols, null, null, null);
+		return new CursorLoader(getActivity(), uri, cols, null, null, null);
 	}
 
 	@Override
@@ -199,7 +197,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_ADD_ACCOUNT:
 				startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
@@ -212,8 +210,8 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	public void onStart() {
 		super.onStart();
 		IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().registerReceiver(mStatusReceiver, filter);
+		if (getActivity() != null) {
+			getActivity().registerReceiver(mStatusReceiver, filter);
 		}
 		if (!mActivityFirstCreated) {
 			getLoaderManager().restartLoader(0, null, this);
@@ -222,8 +220,8 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public void onStop() {
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().unregisterReceiver(mStatusReceiver);
+		if (getActivity() != null) {
+			getActivity().unregisterReceiver(mStatusReceiver);
 		}
 		mActivityFirstCreated = false;
 		super.onStop();
@@ -235,11 +233,11 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	private void showDetails(long account_id) {
-		if (getSherlockActivity() instanceof HomeActivity) {
-			((HomeActivity) getSherlockActivity()).setPagingEnabled(false);
+		if (getActivity() instanceof HomeActivity) {
+			((HomeActivity) getActivity()).setPagingEnabled(false);
 		}
 		if (mDetailFragment == null) {
-			mDetailFragment = Fragment.instantiate(getSherlockActivity(), UserProfileFragment.class.getName(), null);
+			mDetailFragment = Fragment.instantiate(getActivity(), UserProfileFragment.class.getName(), null);
 		}
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		Bundle args = new Bundle();
@@ -324,10 +322,10 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 					// previously deleted.
 					mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + "=" + mSelectedUserId, null);
 					mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + "=" + mSelectedUserId, null);
-					if (getActivatedAccountIds(getSherlockActivity()).length > 0) {
+					if (getActivatedAccountIds(getActivity()).length > 0) {
 						AccountsFragment.this.getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 					} else {
-						getSherlockActivity().finish();
+						getActivity().finish();
 					}
 					break;
 				}
@@ -337,7 +335,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(R.string.delete_account);
 			builder.setMessage(getString(R.string.delete_account_desc, mSelectedScreenName));
 			builder.setPositiveButton(android.R.string.ok, this);

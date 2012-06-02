@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="Widget.Twidere.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
-		<item name="background">@drawable/bg_actionbar_light_theme</item>
+	<style name="Widget.Twidere.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
 		<item name="android:background">@drawable/bg_actionbar_light_theme</item>
 	</style>
 
-	<style name="Widget.Toggle.ActionBarView" parent="Widget.Holo.Light.Button.Toggle">
+	<style name="Widget.Toggle.ActionBarView" parent="android:Widget.Holo.Light.Button.Toggle">
 		<item name="android:textColor">@android:color/white</item>
 	</style>
 

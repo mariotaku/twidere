@@ -4,9 +4,8 @@ import org.mariotaku.twidere.R;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class AboutActivity extends BaseActivity {
 
@@ -14,12 +13,12 @@ public class AboutActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu_about, menu);
+		getMenuInflater().inflate(R.menu.menu_about, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 

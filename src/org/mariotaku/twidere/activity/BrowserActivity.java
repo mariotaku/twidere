@@ -23,10 +23,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
 import android.view.Window;
 import android.widget.Toast;
-
-import com.actionbarsherlock.view.Menu;
 
 public class BrowserActivity extends BaseActivity {
 
@@ -53,7 +52,7 @@ public class BrowserActivity extends BaseActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu_browser, menu);
+		getMenuInflater().inflate(R.menu.menu_browser, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 }

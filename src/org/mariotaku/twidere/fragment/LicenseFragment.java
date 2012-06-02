@@ -19,9 +19,8 @@ package org.mariotaku.twidere.fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.webkit.WebView;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 public class LicenseFragment extends WebViewFragment {
 
@@ -29,15 +28,15 @@ public class LicenseFragment extends WebViewFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		loadUrl("file:///android_asset/gpl-3.0-standalone.html");
-		setWebViewClient(new LicenseWebViewClient(getSherlockActivity()));
+		setWebViewClient(new LicenseWebViewClient(getActivity()));
 
 	}
 
 	private class LicenseWebViewClient extends DefaultWebViewClient {
 
-		private SherlockFragmentActivity mActivity;
+		private FragmentActivity mActivity;
 
-		public LicenseWebViewClient(SherlockFragmentActivity activity) {
+		public LicenseWebViewClient(FragmentActivity activity) {
 			super(activity);
 			mActivity = activity;
 		}

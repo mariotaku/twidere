@@ -56,12 +56,11 @@ import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.text.style.URLSpan;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 
 public final class Utils implements Constants {
 
@@ -88,6 +87,12 @@ public final class Utils implements Constants {
 
 	private static Drawable ICON_STARRED, ICON_HAS_MEDIA, ICON_HAS_LOCATION;
 
+	public static Uri buildQueryUri(Uri uri, boolean notify) {
+		Uri.Builder uribuilder = uri.buildUpon();
+		uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify));
+		return uribuilder.build();
+	}
+	
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
 		long[] account_ids = getActivatedAccountIds(context);
 		StringBuilder builder = new StringBuilder();
@@ -1007,24 +1012,28 @@ public final class Utils implements Constants {
 		int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
 		menu.findItem(R.id.delete_submenu).setVisible(isMyActivatedAccount(context, status.user_id));
 		MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
-		itemRetweet.setVisible(!status.is_protected
-				&& (!isMyActivatedAccount(context, status.user_id) || getActivatedAccountIds(context).length > 1));
-		Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
-		if (isMyActivatedAccount(context, status.retweeted_by_id)) {
-			iconRetweetSubMenu.setColorFilter(activated_color, Mode.MULTIPLY);
-			itemRetweet.setTitle(R.string.cancel_retweet);
-		} else {
-			iconRetweetSubMenu.clearColorFilter();
-			itemRetweet.setTitle(R.string.retweet);
+		if (itemRetweet != null) {
+			itemRetweet.setVisible(!status.is_protected
+					&& (!isMyActivatedAccount(context, status.user_id) || getActivatedAccountIds(context).length > 1));
+			Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
+			if (isMyActivatedAccount(context, status.retweeted_by_id)) {
+				iconRetweetSubMenu.setColorFilter(activated_color, Mode.MULTIPLY);
+				itemRetweet.setTitle(R.string.cancel_retweet);
+			} else {
+				iconRetweetSubMenu.clearColorFilter();
+				itemRetweet.setTitle(R.string.retweet);
+			}
 		}
 		MenuItem itemFav = menu.findItem(MENU_FAV);
-		Drawable iconFav = itemFav.getIcon();
-		if (status.is_favorite) {
-			iconFav.setColorFilter(activated_color, Mode.MULTIPLY);
-			itemFav.setTitle(R.string.unfav);
-		} else {
-			iconFav.clearColorFilter();
-			itemFav.setTitle(R.string.fav);
+		if (itemFav != null) {
+			Drawable iconFav = itemFav.getIcon();
+			if (status.is_favorite) {
+				iconFav.setColorFilter(activated_color, Mode.MULTIPLY);
+				itemFav.setTitle(R.string.unfav);
+			} else {
+				iconFav.clearColorFilter();
+				itemFav.setTitle(R.string.fav);
+			}
 		}
 	}
 

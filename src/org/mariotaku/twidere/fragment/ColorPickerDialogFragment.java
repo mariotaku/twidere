@@ -36,10 +36,10 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 		if (savedInstanceState != null) {
 			mInitialColor = savedInstanceState.getInt(Accounts.USER_COLOR, Color.WHITE);
 		}
-		if (getSherlockActivity() instanceof OnColorSelectedListener) {
-			mListener = (OnColorSelectedListener) getSherlockActivity();
+		if (getActivity() instanceof OnColorSelectedListener) {
+			mListener = (OnColorSelectedListener) getActivity();
 		}
-		mDialog = new ColorPickerDialog(getSherlockActivity(), mInitialColor);
+		mDialog = new ColorPickerDialog(getActivity(), mInitialColor);
 		return mDialog;
 	}
 

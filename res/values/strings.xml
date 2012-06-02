@@ -67,7 +67,8 @@
 	<string name="fav">Fav</string>
 	<string name="unfav">Unfav</string>
 	<string name="reply">Reply</string>
-	<string name="share">Share</string>
+	<string name="share">Share</string><string name="share_via_twidere">Share via Twidere</string>
+
 	<string name="view">View</string>
 	<string name="view_image">Image</string>
 	<string name="view_media">Media</string>

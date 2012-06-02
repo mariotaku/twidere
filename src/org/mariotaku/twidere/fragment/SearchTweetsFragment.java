@@ -39,12 +39,11 @@ public class SearchTweetsFragment extends BaseListFragment implements LoaderCall
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getListProfileImageLoader();
-		mAdapter = new TweetsAdapter(getSherlockActivity(), imageloader);
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		mAdapter = new TweetsAdapter(getActivity(), imageloader);
 		mListView = getListView();
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
@@ -52,23 +51,23 @@ public class SearchTweetsFragment extends BaseListFragment implements LoaderCall
 
 	@Override
 	public Loader<List<Tweet>> onCreateLoader(int id, Bundle args) {
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		getActivity().setProgressBarIndeterminateVisibility(true);
 		if (args != null) {
 			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			String query = args.getString(INTENT_KEY_QUERY);
-			return new TweetSearchLoader(getSherlockActivity(), account_id, new Query(query));
+			return new TweetSearchLoader(getActivity(), account_id, new Query(query));
 		}
 		return null;
 	}
 
 	@Override
 	public void onLoaderReset(Loader<List<Tweet>> loader) {
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+		getActivity().setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<List<Tweet>> loader, List<Tweet> data) {
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+		getActivity().setProgressBarIndeterminateVisibility(false);
 		mAdapter.clear();
 		if (data != null) {
 			for (Tweet tweet : data) {

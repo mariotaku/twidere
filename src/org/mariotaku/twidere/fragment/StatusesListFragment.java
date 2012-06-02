@@ -10,7 +10,10 @@ import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.StatusesCursorAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -34,6 +37,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -43,15 +47,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public abstract class StatusesListFragment extends BaseFragment implements OnRefreshListener, LoaderCallbacks<Cursor>,
-		OnScrollListener, OnItemClickListener, OnItemLongClickListener, ActionMode.Callback {
+		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
 	public ServiceInterface mServiceInterface;
 	public PullToRefreshListView mListView;
@@ -62,7 +62,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 
 	private Handler mHandler;
 	private Runnable mTicker;
-	private ActionMode mActionMode;
+	private PopupMenu mPopupMenu;
 
 	public ParcelableStatus mSelectedStatus;
 	private int mRunningTaskId;
@@ -74,13 +74,115 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	public abstract Uri getContentUri();
 
 	public HomeActivity getHomeActivity() {
-		SherlockFragmentActivity activity = getSherlockActivity();
+		BaseActivity activity = getBaseActivity();
 		if (activity instanceof HomeActivity) return (HomeActivity) activity;
 		return null;
 	}
 
 	@Override
-	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		mAsyncTaskManager = AsyncTaskManager.getInstance();
+		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mResolver = getActivity().getContentResolver();
+		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		mAdapter = new StatusesCursorAdapter(getActivity(), imageloader);
+		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
+		mListView.setOnRefreshListener(this);
+		ListView list = mListView.getRefreshableView();
+		list.setAdapter(mAdapter);
+		list.setOnScrollListener(this);
+		list.setOnItemClickListener(this);
+		list.setOnItemLongClickListener(this);
+		getLoaderManager().initLoader(0, null, this);
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mActivityFirstCreated = true;
+		// Tell the framework to try to keep this fragment around
+		// during a configuration change.
+		setRetainInstance(true);
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
+				Statuses.STATUS_TIMESTAMP, Statuses.TEXT_PLAIN, Statuses.NAME, Statuses.SCREEN_NAME,
+				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID, Statuses.IN_REPLY_TO_SCREEN_NAME,
+				Statuses.LOCATION, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME,
+				Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_RETWEET, Statuses.IS_FAVORITE, Statuses.HAS_MEDIA,
+				Statuses.IS_PROTECTED, Statuses.IS_GAP };
+		Uri uri = getContentUri();
+		String where = buildActivatedStatsWhereClause(getActivity(), null);
+		if (mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
+			String table = getTableNameForContentUri(uri);
+			where = buildFilterWhereClause(table, where);
+		}
+		return new CursorLoader(getActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.refreshable_list, container, false);
+	}
+
+	@Override
+	public void onDestroy() {
+		mActivityFirstCreated = true;
+		super.onDestroy();
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		Object tag = view.getTag();
+		if (tag instanceof StatusViewHolder) {
+			ParcelableStatus status = mAdapter.findItem(id);
+			StatusViewHolder holder = (StatusViewHolder) tag;
+			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
+				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
+			} else {
+				showSatus(status);
+			}
+		}
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+		Object tag = view.getTag();
+		if (tag instanceof StatusViewHolder) {
+			StatusViewHolder holder = (StatusViewHolder) tag;
+			if (holder.show_as_gap) return false;
+			mSelectedStatus = mAdapter.findItem(id);
+			mPopupMenu = new PopupMenu(getBaseActivity());
+			mPopupMenu.inflate(R.menu.action_status);
+			setMenuForStatus(getBaseActivity(), mPopupMenu.getMenu(), mSelectedStatus);
+			mPopupMenu.setOnMenuItemClickListener(this);
+			mPopupMenu.show(view);
+
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		mAdapter.changeCursor(null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		mAdapter.changeCursor(data);
+		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
 		if (mSelectedStatus != null) {
 			long status_id = mSelectedStatus.status_id;
 			String text_plain = mSelectedStatus.text_plain;
@@ -96,7 +198,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 					break;
 				}
 				case MENU_RETWEET: {
-					if (isMyRetweet(getSherlockActivity(), account_id, status_id)) {
+					if (isMyRetweet(getActivity(), account_id, status_id)) {
 						mServiceInterface.cancelRetweet(account_id, status_id);
 					} else {
 						long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
@@ -146,128 +248,12 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 					return false;
 			}
 		}
-		mode.finish();
-		return true;
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		mAsyncTaskManager = AsyncTaskManager.getInstance();
-		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mResolver = getSherlockActivity().getContentResolver();
-		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
-		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getListProfileImageLoader();
-		mAdapter = new StatusesCursorAdapter(getSherlockActivity(), imageloader);
-		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
-		mListView.setOnRefreshListener(this);
-		ListView list = mListView.getRefreshableView();
-		list.setAdapter(mAdapter);
-		list.setOnScrollListener(this);
-		list.setOnItemClickListener(this);
-		list.setOnItemLongClickListener(this);
-		getLoaderManager().initLoader(0, null, this);
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		mActivityFirstCreated = true;
-		// Tell the framework to try to keep this fragment around
-		// during a configuration change.
-		setRetainInstance(true);
-	}
-
-	@Override
-	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.action_status, menu);
-		return true;
-	}
-
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
-				Statuses.STATUS_TIMESTAMP, Statuses.TEXT_PLAIN, Statuses.NAME, Statuses.SCREEN_NAME,
-				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID, Statuses.IN_REPLY_TO_SCREEN_NAME,
-				Statuses.LOCATION, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME,
-				Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_RETWEET, Statuses.IS_FAVORITE, Statuses.HAS_MEDIA,
-				Statuses.IS_PROTECTED, Statuses.IS_GAP };
-		Uri uri = getContentUri();
-		String where = buildActivatedStatsWhereClause(getSherlockActivity(), null);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
-			String table = getTableNameForContentUri(uri);
-			where = buildFilterWhereClause(table, where);
-		}
-		return new CursorLoader(getSherlockActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.refreshable_list, container, false);
-	}
-
-	@Override
-	public void onDestroy() {
-		mActivityFirstCreated = true;
-		super.onDestroy();
-	}
-
-	@Override
-	public void onDestroyActionMode(ActionMode mode) {
-
-	}
-
-	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		Object tag = view.getTag();
-		if (tag instanceof StatusViewHolder) {
-			ParcelableStatus status = mAdapter.findItem(id);
-			StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
-				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
-			} else {
-				showSatus(status);
-			}
-		}
-	}
-
-	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
-		Object tag = view.getTag();
-		if (tag instanceof StatusViewHolder) {
-			StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder.show_as_gap) return false;
-			mSelectedStatus = mAdapter.findItem(id);
-			mActionMode = getSherlockActivity().startActionMode(this);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		mAdapter.changeCursor(null);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mAdapter.changeCursor(data);
-		mAdapter.setShowAccountColor(getActivatedAccountIds(getSherlockActivity()).length > 1);
-	}
-
-	@Override
-	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		setMenuForStatus(getSherlockActivity(), menu, mSelectedStatus);
 		return true;
 	}
 
 	@Override
 	public void onRefresh() {
-		long[] account_ids = getActivatedAccountIds(getSherlockActivity());
+		long[] account_ids = getActivatedAccountIds(getActivity());
 		mRunningTaskId = getStatuses(account_ids, null);
 
 	}
@@ -303,8 +289,8 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 			}
 			if (mLoadMoreAutomatically && mReachedBottom) {
 				if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
-					mRunningTaskId = getStatuses(getActivatedAccountIds(getSherlockActivity()),
-							getLastSortIds(getSherlockActivity(), getContentUri()));
+					mRunningTaskId = getStatuses(getActivatedAccountIds(getActivity()),
+							getLastSortIds(getActivity(), getContentUri()));
 				}
 			}
 		}
@@ -357,6 +343,9 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	public void onStop() {
 		mTickerStopped = true;
 		mActivityFirstCreated = false;
+		if (mPopupMenu != null) {
+			mPopupMenu.dismiss();
+		}
 		super.onStop();
 	}
 
@@ -373,9 +362,6 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	}
 
 	private void showSatus(ParcelableStatus status) {
-		if (mActionMode != null) {
-			mActionMode.finish();
-		}
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme(SCHEME_TWIDERE);
 		builder.authority(AUTHORITY_STATUS);

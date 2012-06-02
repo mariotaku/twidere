@@ -5,6 +5,8 @@ import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
 import java.util.List;
 
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -21,23 +23,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
 public class UserTimelineFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableStatus>>,
-		OnItemClickListener, OnItemLongClickListener, ActionMode.Callback {
+		OnItemClickListener, OnItemLongClickListener , OnMenuItemClickListener{
 
 	private SharedPreferences mPreferences;
 	private ServiceInterface mServiceInterface;
 	private ListView mListView;
 	private ParcelableStatusesAdapter mAdapter;
+	private PopupMenu mPopupMenu;
 
 	private boolean mDisplayProfileImage, mDisplayName;
 	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
@@ -45,7 +47,7 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 	private float mTextSize;
 
 	@Override
-	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+	public boolean onMenuItemClick(MenuItem item) {
 		if (mSelectedStatus != null) {
 			long status_id = mSelectedStatus.status_id;
 			String text_plain = mSelectedStatus.text_plain;
@@ -105,24 +107,22 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 					return false;
 			}
 		}
-		mode.finish();
 		return true;
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		getSherlockActivity().getContentResolver();
+		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		getActivity().getContentResolver();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		mServiceInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
+		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
-				.getListProfileImageLoader();
-		mAdapter = new ParcelableStatusesAdapter(getSherlockActivity(), imageloader);
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
 		mListView = getListView();
 		setListAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
@@ -130,29 +130,19 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 		getLoaderManager().initLoader(0, getArguments(), this);
 	}
 
-	@Override
-	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.action_status, menu);
-		return true;
-	}
 
 	@Override
 	public Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		getActivity().setProgressBarIndeterminateVisibility(true);
 		if (args != null) {
 			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 			if (user_id == -1 && screen_name != null)
-				return new UserTimelineLoader(getSherlockActivity(), account_id, screen_name);
-			return new UserTimelineLoader(getSherlockActivity(), account_id, user_id);
+				return new UserTimelineLoader(getActivity(), account_id, screen_name);
+			return new UserTimelineLoader(getActivity(), account_id, user_id);
 		}
 		return null;
-	}
-
-	@Override
-	public void onDestroyActionMode(ActionMode mode) {
-
 	}
 
 	@Override
@@ -186,7 +176,11 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
 			mSelectedStatus = mAdapter.findItem(id);
-			getSherlockActivity().startActionMode(this);
+			mPopupMenu = new PopupMenu(getBaseActivity());
+			mPopupMenu.inflate(R.menu.action_status);
+			setMenuForStatus(getBaseActivity(), mPopupMenu.getMenu(), mSelectedStatus);
+			mPopupMenu.setOnMenuItemClickListener(this);
+			mPopupMenu.show(view);
 			return true;
 		}
 		return false;
@@ -194,7 +188,7 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 
 	@Override
 	public void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+		getActivity().setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
@@ -205,13 +199,15 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 				mAdapter.add(status);
 			}
 		}
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+		getActivity().setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
-	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		setMenuForStatus(getSherlockActivity(), menu, mSelectedStatus);
-		return true;
+	public void onStop() {
+		if (mPopupMenu != null) {
+			mPopupMenu.dismiss();
+		}
+		super.onStop();
 	}
 
 	@Override

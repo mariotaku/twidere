@@ -14,6 +14,7 @@ import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ServiceInterface;
 
+import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -23,18 +24,17 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.ActionMode;
+import android.view.ActionMode.Callback;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.ActionMode.Callback;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.ExtendedViewPager;
 import com.viewpagerindicator.TabPageIndicator;
 
@@ -143,7 +143,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 			mInterface.getMentions(refreshed_ids, null);
 			mInterface.getMessages(refreshed_ids, null);
 		}
-		mActionBar = getSupportActionBar();
+		mActionBar = getActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		mActionBar.setDisplayShowHomeEnabled(home_display_icon);
@@ -168,7 +168,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu_home, menu);
+		getMenuInflater().inflate(R.menu.menu_home, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -244,7 +244,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		setSupportProgressBarIndeterminateVisibility(is_refresh);
 	}
 
-	@Override
 	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
 		mProgress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
 	}

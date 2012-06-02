@@ -9,12 +9,11 @@ import org.mariotaku.twidere.util.ActivityThemeChangeImpl;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-
-public class BasePreferenceActivity extends SherlockPreferenceActivity implements Constants, ActivityThemeChangeImpl {
+public class BasePreferenceActivity extends PreferenceActivity implements Constants, ActivityThemeChangeImpl {
 
 	private int mThemeId;
 

@@ -15,15 +15,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-
-import com.actionbarsherlock.ActionBarSherlock;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
+import android.view.MenuItem;
+import android.view.Window;
 
 public class LinkHandlerActivity extends BaseActivity {
 
-	private ActionBarSherlock mSherlock;
-	
 	private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 	private static final int CODE_STATUS = 1;
 	private static final int CODE_USER = 2;
@@ -41,11 +37,10 @@ public class LinkHandlerActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		mSherlock = this.getSherlock();
 		Uri data = getIntent().getData();
 		setWindowFeatureAndUiOptions(data);
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		if (data != null) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			setTitle(data);
@@ -164,7 +159,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		if (uri == null) return;
 		switch (URI_MATCHER.match(uri)) {
 			case CODE_STATUS: {
-				mSherlock.setUiOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
+				getWindow().setUiOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
 				break;
 			}
 			case CODE_USER: {

@@ -6,7 +6,7 @@
 	android:versionName="0.0.12">
 
 	<uses-sdk
-		android:minSdkVersion="8"
+		android:minSdkVersion="14"
 		android:targetSdkVersion="15"/>
 
 	<permission-group
@@ -69,11 +69,20 @@
 			android:label="@string/compose"
 			android:uiOptions="splitActionBarWhenNarrow"
 			android:windowSoftInputMode="adjustResize">
-			<intent-filter>
+			<intent-filter android:label="@string/compose">
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.COMPOSE"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+			<intent-filter android:label="@string/share_via_twidere">
+				<action android:name="android.intent.action.SEND"/>
+				<action android:name="android.intent.action.SEND_MULTIPLE"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+
+				<data android:mimeType="image/*"/>
+				<data android:mimeType="text/plain"/>
 			</intent-filter>
 		</activity>
 		<activity
@@ -90,7 +99,7 @@
 		<activity
 			android:name=".activity.SettingsActivity"
 			android:label="@string/settings"
-			android:theme="@style/Theme.Sherlock.Light.DarkActionBar">
+			android:theme="@style/Theme.Twidere.Light">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="android.intent.action.MANAGE_NETWORK_USAGE"/>
@@ -111,7 +120,7 @@
 		<activity
 			android:name=".activity.EditAPIActivity"
 			android:label="@string/edit_api"
-			android:theme="@style/Theme.Holo.Light.Dialog">
+			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.EDIT_API"/>
@@ -122,7 +131,7 @@
 		<activity
 			android:name=".activity.SelectAccountActivity"
 			android:label="@string/select_account"
-			android:theme="@style/Theme.Holo.Light.Dialog">
+			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.SELECT_ACCOUNT"/>
@@ -162,7 +171,7 @@
 		<activity
 			android:name=".activity.LicenseActivity"
 			android:label="@string/license"
-			android:theme="@style/Theme.Holo.Light.Dialog">
+			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.LICENSE"/>
@@ -202,7 +211,7 @@
 		<activity
 			android:name=".activity.SetColorActivity"
 			android:label="@string/set_color"
-			android:theme="@style/Theme.Holo.Light.Dialog">
+			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.SET_COLOR"/>

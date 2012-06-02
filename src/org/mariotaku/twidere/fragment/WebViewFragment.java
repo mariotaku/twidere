@@ -4,13 +4,12 @@ import org.mariotaku.twidere.R;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 public class WebViewFragment extends BaseFragment {
 
@@ -28,7 +27,7 @@ public class WebViewFragment extends BaseFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mWebView = (WebView) getView().findViewById(R.id.webview);
-		mWebView.setWebViewClient(new DefaultWebViewClient(getSherlockActivity()));
+		mWebView.setWebViewClient(new DefaultWebViewClient(getBaseActivity()));
 		mWebView.getSettings().setBuiltInZoomControls(true);
 		mWebView.getSettings().setJavaScriptEnabled(true);
 		Bundle bundle = getArguments();
@@ -49,22 +48,22 @@ public class WebViewFragment extends BaseFragment {
 
 	public static class DefaultWebViewClient extends WebViewClient {
 
-		private SherlockFragmentActivity mActivity;
+		private FragmentActivity mActivity;
 
-		public DefaultWebViewClient(SherlockFragmentActivity activity) {
+		public DefaultWebViewClient(FragmentActivity activity) {
 			mActivity = activity;
 		}
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
-			mActivity.setSupportProgressBarIndeterminateVisibility(false);
+			mActivity.setProgressBarIndeterminateVisibility(false);
 		}
 
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
-			mActivity.setSupportProgressBarIndeterminateVisibility(true);
+			mActivity.setProgressBarIndeterminateVisibility(true);
 		}
 
 		@Override

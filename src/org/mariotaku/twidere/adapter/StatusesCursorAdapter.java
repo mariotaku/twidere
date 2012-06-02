@@ -64,11 +64,8 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 		}
 
 		if (!show_gap) {
-
-			holder.text.setTextSize(mTextSize);
-			holder.name.setTextSize(mTextSize * 1.05f);
-			holder.tweet_time.setTextSize(mTextSize * 0.65f);
-			holder.reply_retweet_status.setTextSize(mTextSize * 0.65f);
+		
+			holder.setTextSize(mTextSize);
 
 			holder.text.setText(text_plain);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(is_protected ? R.drawable.ic_tweet_stat_is_protected

@@ -24,6 +24,9 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,9 +39,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.ExtendedViewPager;
 import com.viewpagerindicator.TabPageIndicator;
 
@@ -57,7 +57,7 @@ public class FilterFragment extends BaseFragment {
 		View view = getView();
 		mViewPager = (ExtendedViewPager) view.findViewById(R.id.pager);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		mAdapter = new TabsAdapter(getSherlockActivity(), getFragmentManager());
+		mAdapter = new TabsAdapter(getActivity(), getFragmentManager());
 		mAdapter.addTab(FilteredUsersFragment.class, null, getString(R.string.users), null);
 		mAdapter.addTab(FilteredKeywordsFragment.class, null, getString(R.string.keywords), null);
 		mAdapter.addTab(FilteredSourcesFragment.class, null, getString(R.string.sources), null);
@@ -102,7 +102,7 @@ public class FilterFragment extends BaseFragment {
 
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
-			mResolver = getSherlockActivity().getContentResolver();
+			mResolver = getActivity().getContentResolver();
 			super.onActivityCreated(savedInstanceState);
 			setHasOptionsMenu(true);
 			mAdapter = getFilterListAdapter();
@@ -115,7 +115,7 @@ public class FilterFragment extends BaseFragment {
 		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 			String[] cols = getContentColumns();
 			Uri uri = getContentUri();
-			return new CursorLoader(getSherlockActivity(), uri, cols, null, null, null);
+			return new CursorLoader(getActivity(), uri, cols, null, null, null);
 		}
 
 		@Override
@@ -128,7 +128,7 @@ public class FilterFragment extends BaseFragment {
 
 		@Override
 		public void onListItemClick(ListView l, View v, int position, long id) {
-			Toast.makeText(getSherlockActivity(), R.string.longclick_to_delete, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), R.string.longclick_to_delete, Toast.LENGTH_SHORT).show();
 			super.onListItemClick(l, v, position, id);
 		}
 
@@ -202,7 +202,7 @@ public class FilterFragment extends BaseFragment {
 							}
 						}
 						values.put(Filters.TEXT, text);
-						getSherlockActivity().getContentResolver().insert(mFragment.getContentUri(), values);
+						getActivity().getContentResolver().insert(mFragment.getContentUri(), values);
 						mFragment.getLoaderManager().restartLoader(0, null, mFragment);
 						break;
 				}
@@ -211,9 +211,9 @@ public class FilterFragment extends BaseFragment {
 
 			@Override
 			public Dialog onCreateDialog(Bundle savedInstanceState) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
-				FrameLayout layout = new FrameLayout(getSherlockActivity());
-				mEditText = new EditText(getSherlockActivity());
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				FrameLayout layout = new FrameLayout(getActivity());
+				mEditText = new EditText(getActivity());
 				mEditText.addTextChangedListener(this);
 				layout.addView(mEditText, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT) {
 
@@ -270,7 +270,7 @@ public class FilterFragment extends BaseFragment {
 
 		@Override
 		public FilterListAdapter getFilterListAdapter() {
-			return new FilteredKeywordsAdapter(getSherlockActivity());
+			return new FilteredKeywordsAdapter(getActivity());
 		}
 
 		private static class FilteredKeywordsAdapter extends FilterListAdapter {
@@ -314,7 +314,7 @@ public class FilterFragment extends BaseFragment {
 
 		@Override
 		public FilterListAdapter getFilterListAdapter() {
-			return new FilterListAdapter(getSherlockActivity());
+			return new FilterListAdapter(getActivity());
 		}
 
 	}
@@ -333,7 +333,7 @@ public class FilterFragment extends BaseFragment {
 
 		@Override
 		public FilterListAdapter getFilterListAdapter() {
-			return new FilterListAdapter(getSherlockActivity());
+			return new FilterListAdapter(getActivity());
 		}
 
 	}

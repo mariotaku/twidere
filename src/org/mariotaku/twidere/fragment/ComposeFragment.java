@@ -31,14 +31,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ArrowKeyMovementMethod;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 
 public class ComposeFragment extends BaseFragment implements TextWatcher, LocationListener {
 
@@ -68,9 +67,9 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		mLocationManager = (LocationManager) getSherlockActivity().getSystemService(Context.LOCATION_SERVICE);
-		mPreferences = getSherlockActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mInterface = ((TwidereApplication) getSherlockActivity().getApplication()).getServiceInterface();
+		mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
@@ -81,7 +80,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		mInReplyToName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_NAME) : null;
 		int text_selection_start = -1;
 		if (mInReplyToStatusId > -1) {
-			String account_username = getAccountUsername(getSherlockActivity(), mAccountId);
+			String account_username = getAccountUsername(getActivity(), mAccountId);
 
 			String[] mentions = getArguments() != null ? getArguments().getStringArray(INTENT_KEY_MENTIONS) : null;
 
@@ -107,23 +106,29 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 			boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 			String name = display_name ? mInReplyToName : mInReplyToScreenName;
 			if (name != null) {
-				getSherlockActivity().setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, name));
+				getActivity().setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, name));
 			}
 			mAccountIds = activated_ids == null ? new long[] { mAccountId } : activated_ids;
 		} else {
-			mAccountIds = activated_ids == null ? getActivatedAccountIds(getSherlockActivity()) : activated_ids;
-			if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null) {
-				mText = bundle.getString(INTENT_KEY_TEXT);
-			}
+			mAccountIds = activated_ids == null ? getActivatedAccountIds(getActivity()) : activated_ids;
+			if (bundle != null) {
+				if (bundle.getBoolean(INTENT_KEY_IS_SHARE, false)) {
+					getActivity().setTitle(R.string.share);
+					mText = String.valueOf(bundle.getCharSequence(Intent.EXTRA_TEXT));
+				}
+				if (bundle.getString(INTENT_KEY_TEXT) != null) {
+					mText = bundle.getString(INTENT_KEY_TEXT);
+				}
+			} 
 		}
 		View view = getView();
 		mEditText = (StatusComposeEditText) view.findViewById(R.id.edit_text);
 		mTextCount = (TextView) view.findViewById(R.id.text_count);
 		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
-		final LazyImageLoader imageloader = ((TwidereApplication) getSherlockActivity().getApplication())
+		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
 				.getListProfileImageLoader();
-		mEditText.setAdapter(new UserAutoCompleteAdapter(getSherlockActivity(), imageloader));
+		mEditText.setAdapter(new UserAutoCompleteAdapter(getActivity(), imageloader));
 		mEditText.setTokenizer(new ScreenNameTokenizer(mEditText));
 		if (mText != null) {
 			mEditText.setText(mText);
@@ -155,13 +160,13 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 					} else {
 						mIsPhotoAttached = false;
 					}
-					getSherlockActivity().invalidateOptionsMenu();
+					getActivity().invalidateOptionsMenu();
 				}
 				break;
 			case REQUEST_PICK_IMAGE:
 				if (resultCode == Activity.RESULT_OK) {
 					Uri uri = intent.getData();
-					File file = uri == null ? null : new File(getImagePathFromUri(getSherlockActivity(), uri));
+					File file = uri == null ? null : new File(getImagePathFromUri(getActivity(), uri));
 					if (file != null && file.exists()) {
 						mImageUri = uri;
 						mIsPhotoAttached = false;
@@ -169,7 +174,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 					} else {
 						mIsImageAttached = false;
 					}
-					getSherlockActivity().invalidateOptionsMenu();
+					getActivity().invalidateOptionsMenu();
 				}
 				break;
 			case REQUEST_SELECT_ACCOUNT:
@@ -217,8 +222,8 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				if (getSherlockActivity() instanceof ComposeActivity) {
-					getSherlockActivity().finish();
+				if (getActivity() instanceof ComposeActivity) {
+					getActivity().finish();
 				}
 				break;
 			}
@@ -227,9 +232,9 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation : null, mImageUri,
 						mInReplyToStatusId);
-				if (getSherlockActivity() instanceof ComposeActivity) {
-					getSherlockActivity().setResult(Activity.RESULT_OK);
-					getSherlockActivity().finish();
+				if (getActivity() instanceof ComposeActivity) {
+					getActivity().setResult(Activity.RESULT_OK);
+					getActivity().finish();
 				}
 				break;
 			}
@@ -247,7 +252,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 					getLocation();
 				}
 				mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, !attach_location).commit();
-				getSherlockActivity().invalidateOptionsMenu();
+				getActivity().invalidateOptionsMenu();
 				break;
 			}
 			case MENU_DRAFTS: {
@@ -350,14 +355,13 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		if (provider != null) {
 			mRecentLocation = mLocationManager.getLastKnownLocation(provider);
 		} else {
-			Toast.makeText(getSherlockActivity(), R.string.cannot_get_location, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), R.string.cannot_get_location, Toast.LENGTH_SHORT).show();
 		}
 		return provider != null;
 	}
 
 	private MenuItem getSendMenuItem() {
-		if (getSherlockActivity() instanceof ComposeActivity)
-			return ((ComposeActivity) getSherlockActivity()).getSendMenuItem();
+		if (getActivity() instanceof ComposeActivity) return ((ComposeActivity) getActivity()).getSendMenuItem();
 		return null;
 	}
 
@@ -368,8 +372,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 
 	private void takePhoto() {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		File file = new File(getSherlockActivity().getExternalCacheDir(), "tmp_photo_" + System.currentTimeMillis()
-				+ ".jpg");
+		File file = new File(getActivity().getExternalCacheDir(), "tmp_photo_" + System.currentTimeMillis() + ".jpg");
 		mImageUri = Uri.fromFile(file);
 		intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
 		startActivityForResult(intent, REQUEST_TAKE_PHOTO);

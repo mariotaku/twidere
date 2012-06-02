@@ -38,17 +38,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 
 public class TwitterLoginActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
@@ -188,10 +187,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mSigninSignup = (LinearLayout) findViewById(R.id.sign_in_sign_up);
 		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
 		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
-		setSupportProgressBarIndeterminateVisibility(false);
+		setProgressBarIndeterminateVisibility(false);
 		long[] account_ids = getActivatedAccountIds(this);
 		boolean called_from_twidere = getPackageName().equals(getCallingPackage());
-		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0 && called_from_twidere);
+		getActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0 && called_from_twidere);
 
 		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
 		if (bundle == null) {
@@ -228,7 +227,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu_login, menu);
+		getMenuInflater().inflate(R.menu.menu_login, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -374,7 +373,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 		@Override
 		protected void onPostExecute(Result result) {
-			setSupportProgressBarIndeterminateVisibility(false);
+			setProgressBarIndeterminateVisibility(false);
 			mTask = null;
 			mEditPassword.setEnabled(true);
 			mEditUsername.setEnabled(true);
@@ -387,7 +386,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			setSupportProgressBarIndeterminateVisibility(true);
+			setProgressBarIndeterminateVisibility(true);
 			mEditPassword.setEnabled(false);
 			mEditUsername.setEnabled(false);
 			mSignInButton.setEnabled(false);

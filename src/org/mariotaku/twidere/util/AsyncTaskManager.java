@@ -13,7 +13,7 @@ public class AsyncTaskManager {
 
 	private static AsyncTaskManager sInstance;
 
-	public int add(ManagedAsyncTask task, boolean exec, Object... params) {
+	public <T> int add(ManagedAsyncTask task, boolean exec, T... params) {
 		int hashCode = task.hashCode();
 		mTasks.put(hashCode, task);
 		if (exec) {
@@ -46,7 +46,7 @@ public class AsyncTaskManager {
 		mTasks.clear();
 	}
 
-	public boolean execute(int hashCode, Object... params) {
+	public <T> boolean execute(int hashCode, T... params) {
 		ManagedAsyncTask task = mTasks.get(hashCode);
 		if (task != null) {
 			task.execute(params);
@@ -55,8 +55,8 @@ public class AsyncTaskManager {
 		return false;
 	}
 
-	public List<ManagedAsyncTask<?>> getTaskList() {
-		List<ManagedAsyncTask<?>> list = new ArrayList<ManagedAsyncTask<?>>();
+	public List<ManagedAsyncTask<?,?,?>> getTaskList() {
+		List<ManagedAsyncTask<?,?,?>> list = new ArrayList<ManagedAsyncTask<?,?,?>>();
 
 		for (int i = 0; i < mTasks.size(); i++) {
 			ManagedAsyncTask task = mTasks.valueAt(i);
