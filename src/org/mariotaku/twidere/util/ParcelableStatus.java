@@ -189,7 +189,7 @@ public class ParcelableStatus implements Parcelable {
 			user_id = user.getId();
 			name = user.getName();
 			screen_name = user.getScreenName();
-			profile_image_url = user.getProfileImageURL();
+			profile_image_url = user.getProfileImageUrlHttps();
 			is_protected = user.isProtected();
 		}
 		final MediaEntity[] medias = status.getMediaEntities();

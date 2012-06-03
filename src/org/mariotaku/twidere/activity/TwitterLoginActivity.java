@@ -420,7 +420,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				return new Response(false, false, e);
 			}
 			if (!mUserColorSet) {
-				analyseUserProfileColor(user.getProfileImageURL().toString());
+				analyseUserProfileColor(user.getProfileImageUrlHttps().toString());
 			}
 			mLoggedId = user.getId();
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId)) return new Response(false, true, null);
@@ -508,7 +508,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			}
 
 			if (account_valid && user != null) {
-				String profile_image_url = user.getProfileImageURL().toString();
+				String profile_image_url = user.getProfileImageUrlHttps().toString();
 				if (!mUserColorSet) {
 					analyseUserProfileColor(profile_image_url);
 				}
@@ -556,7 +556,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			}
 
 			if (account_valid && user != null) {
-				String profile_image_url = parseString(user.getProfileImageURL());
+				String profile_image_url = parseString(user.getProfileImageUrlHttps());
 				if (!mUserColorSet) {
 					analyseUserProfileColor(profile_image_url);
 				}
@@ -587,7 +587,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				return new Response(false, false, false, Accounts.AUTH_TYPE_XAUTH, null, e);
 			}
 			if (!mUserColorSet) {
-				analyseUserProfileColor(user.getProfileImageURL().toString());
+				analyseUserProfileColor(user.getProfileImageUrlHttps().toString());
 			}
 
 			mLoggedId = user.getId();

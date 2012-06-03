@@ -8,10 +8,12 @@ import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
+import org.mariotaku.twidere.util.MethodsCompat;
 
 import android.content.UriMatcher;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -40,6 +42,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		Uri data = getIntent().getData();
 		setWindowFeatureAndUiOptions(data);
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.base_layout);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		if (data != null) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -159,19 +162,21 @@ public class LinkHandlerActivity extends BaseActivity {
 		if (uri == null) return;
 		switch (URI_MATCHER.match(uri)) {
 			case CODE_STATUS: {
-				getWindow().setUiOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+					new MethodsCompat().setUiOptions(getWindow(), ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
+				}
 				break;
 			}
 			case CODE_USER: {
-				requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+				//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 				break;
 			}
 			case CODE_CONVERSATION: {
-				requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+				//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 				break;
 			}
 			case CODE_SEARCH: {
-				requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+				//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 				break;
 			}
 			case CODE_DRAFTS: {

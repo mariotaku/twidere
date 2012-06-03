@@ -656,7 +656,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				getListView().invalidateViews();
 				mName.setText(mUser.getName());
 				mScreenName.setText(mUser.getScreenName());
-				mProfileImageLoader.displayImage(mUser.getProfileImageURL(), mProfileImageView);
+				mProfileImageLoader.displayImage(mUser.getProfileImageUrlHttps(), mProfileImageView);
 				mRetryButton.setVisibility(View.GONE);
 			} else {
 				mListProgress.setVisibility(View.GONE);

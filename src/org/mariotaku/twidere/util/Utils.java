@@ -898,7 +898,7 @@ public final class Utils implements Constants {
 		values.put(Accounts.AUTH_TYPE, auth_type);
 		values.put(Accounts.USER_ID, user.getId());
 		values.put(Accounts.USERNAME, user.getScreenName());
-		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
+		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageUrlHttps().toString());
 		values.put(Accounts.USER_COLOR, color);
 		values.put(Accounts.IS_ACTIVATED, 1);
 		if (rest_api_base != null) {
@@ -914,7 +914,7 @@ public final class Utils implements Constants {
 	public static ContentValues makeCachedUsersContentValues(User user) {
 		ContentValues values = new ContentValues();
 		values.put(CachedUsers.NAME, user.getName());
-		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
+		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageUrlHttps().toString());
 		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
 		values.put(CachedUsers.USER_ID, user.getId());
 
@@ -942,7 +942,7 @@ public final class Utils implements Constants {
 		final User user = status.getUser();
 		if (user != null) {
 			final long user_id = user.getId();
-			final String profile_image_url = user.getProfileImageURL().toString();
+			final String profile_image_url = user.getProfileImageUrlHttps().toString();
 			final String name = user.getName(), screen_name = user.getScreenName();
 			values.put(Statuses.USER_ID, user_id);
 			values.put(Statuses.NAME, name);
@@ -1000,11 +1000,17 @@ public final class Utils implements Constants {
 	public static void restartActivity(Activity activity, boolean animation) {
 		int enter_anim = animation ? android.R.anim.fade_in : 0;
 		int exit_anim = animation ? android.R.anim.fade_out : 0;
-		// activity.overridePendingTransition(enter_anim, exit_anim);
-		activity.getWindow().setWindowAnimations(exit_anim);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+			new MethodsCompat().overridePendingTransition(activity, enter_anim, exit_anim);
+		} else {
+			activity.getWindow().setWindowAnimations(0);
+		}
 		activity.finish();
-		// activity.overridePendingTransition(enter_anim, exit_anim);
-		activity.getWindow().setWindowAnimations(enter_anim);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+			new MethodsCompat().overridePendingTransition(activity, enter_anim, exit_anim);
+		} else {
+			activity.getWindow().setWindowAnimations(0);
+		}
 		activity.startActivity(activity.getIntent());
 	}
 

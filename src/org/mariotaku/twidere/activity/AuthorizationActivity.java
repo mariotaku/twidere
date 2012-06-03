@@ -50,7 +50,6 @@ public class AuthorizationActivity extends WebViewActivity {
 		mWebSettings.setLoadsImagesAutomatically(true);
 		mWebSettings.setJavaScriptEnabled(true);
 		mWebSettings.setBlockNetworkImage(false);
-		mWebSettings.setBlockNetworkLoads(false);
 		mWebSettings.setSaveFormData(true);
 		mWebSettings.setSavePassword(true);
 

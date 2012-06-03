@@ -17,9 +17,7 @@
 
 	<ImageButton
 		android:id="@+id/send"
-		android:layout_width="wrap_content"
-		android:layout_height="fill_parent"
-		android:background="@drawable/list_selector_holo_light"
+		style="?actionBarItemStyle"
 		android:contentDescription="@string/send"
 		android:minWidth="56dp"
 		android:src="@drawable/ic_menu_send"/>

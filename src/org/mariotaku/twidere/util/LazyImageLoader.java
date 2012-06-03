@@ -106,7 +106,7 @@ public class LazyImageLoader {
 				count = is.read(bytes, 0, buffer_size);
 			}
 		} catch (IOException e) {
-			// e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
@@ -132,6 +132,7 @@ public class LazyImageLoader {
 			o2.inSampleSize = scale / 2;
 			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
 		} catch (FileNotFoundException e) {
+			//e.printStackTrace();
 		}
 		return null;
 	}
@@ -211,11 +212,10 @@ public class LazyImageLoader {
 
 		public void init() {
 			/* Find the dir to save cached images. */
-			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)
-					&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-				mCacheDir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? new MethodsCompat()
-						.getExternalCacheDir(mContext) : new File("/sdcard/Android/data/" + mContext.getPackageName()
-						+ "/cache/");
+			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+				mCacheDir = new File(Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? new MethodsCompat()
+						.getExternalCacheDir(mContext) : new File(Environment.getExternalStorageDirectory().getPath() + "/Android/data/" + mContext.getPackageName()
+						+ "/cache/"), CACHE_DIR_NAME);
 			} else {
 				mCacheDir = new File(mContext.getCacheDir(), CACHE_DIR_NAME);
 			}
@@ -281,8 +281,10 @@ public class LazyImageLoader {
 				fos.close();
 			} catch (FileNotFoundException e) {
 				// Storage state may changed, so call FileCache.init() again.
+				//e.printStackTrace();
 				mFileCache.init();
 			} catch (IOException e) {
+				//e.printStackTrace();
 			}
 			return bitmap;
 		}
@@ -338,8 +340,10 @@ public class LazyImageLoader {
 				return bitmap;
 			} catch (FileNotFoundException e) {
 				// Storage state may changed, so call FileCache.init() again.
+				//e.printStackTrace();
 				mFileCache.init();
 			} catch (IOException e) {
+				//e.printStackTrace();
 			}
 			return null;
 		}

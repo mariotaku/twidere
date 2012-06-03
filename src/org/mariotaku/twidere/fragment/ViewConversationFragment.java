@@ -4,6 +4,7 @@ import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
+import org.mariotaku.actionbarcompat.app.ActionBarFragmentActivity;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
@@ -27,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
@@ -261,11 +263,11 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 	private static class ShowConversationTask extends AsyncTask<Void, Void, TwitterException> {
 
-		private BaseActivity mActivity;
+		private FragmentActivity mActivity;
 		private long mAccountId, mStatusId;
 		private StatusHandler mHandler;
 
-		public ShowConversationTask(BaseActivity context, StatusHandler handler, long account_id, long status_id) {
+		public ShowConversationTask(FragmentActivity context, StatusHandler handler, long account_id, long status_id) {
 			mActivity = context;
 			mHandler = handler;
 			mAccountId = account_id;
@@ -295,13 +297,17 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 			if (result != null) {
 
 			}
-			mActivity.setSupportProgressBarIndeterminateVisibility(false);
+			if (mActivity instanceof ActionBarFragmentActivity) {
+				((ActionBarFragmentActivity)mActivity).setSupportProgressBarIndeterminateVisibility(false);
+			}
 			super.onPostExecute(result);
 		}
 
 		@Override
 		protected void onPreExecute() {
-			mActivity.setSupportProgressBarIndeterminateVisibility(true);
+			if (mActivity instanceof ActionBarFragmentActivity) {
+				((ActionBarFragmentActivity)mActivity).setSupportProgressBarIndeterminateVisibility(true);
+			}
 			super.onPreExecute();
 		}
 

@@ -2,7 +2,7 @@
 <resources>
 
 	<style name="Widget.Twidere.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
-		<item name="android:background">@drawable/bg_actionbar_light_theme</item>
+		<item name="android:background">?actionBarBackground</item>
 	</style>
 
 	<style name="Widget.Toggle.ActionBarView" parent="android:Widget.Holo.Light.Button.Toggle">

@@ -381,7 +381,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 			File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? new MethodsCompat()
-					.getExternalCacheDir(getActivity()) : new File("/sdcard/Android/data/"
+					.getExternalCacheDir(getActivity()) : new File(Environment.getExternalStorageDirectory().getPath() + "/Android/data/"
 					+ getActivity().getPackageName() + "/cache/");
 			File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
 			mImageUri = Uri.fromFile(file);

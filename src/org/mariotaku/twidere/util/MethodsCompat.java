@@ -37,4 +37,10 @@ public class MethodsCompat {
 			window.setUiOptions(uiOptions);
 		}
 	}
+	
+	@TargetApi(5)
+	public void overridePendingTransition(Activity activity, int enter_anim, int exit_anim) {
+		activity.overridePendingTransition(enter_anim, exit_anim);
+		
+	}
 }

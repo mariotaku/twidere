@@ -81,8 +81,11 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 	@Override
 	public void onLoadFinished(Loader<ResponseList<User>> loader, ResponseList<User> data) {
 		setProgressBarIndeterminateVisibility(false);
+		mAdapter.clear();
 		if (data != null) {
-			mAdapter.addAll(data);
+			for (User user : data) {
+				mAdapter.add(user);
+			}
 		}
 	}
 
@@ -161,7 +164,7 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 			holder.bio.setText(user.getDescription());
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				mImageLoader.displayImage(user.getProfileImageURL(), holder.profile_image);
+				mImageLoader.displayImage(user.getProfileImageUrlHttps(), holder.profile_image);
 			}
 			return view;
 		}
