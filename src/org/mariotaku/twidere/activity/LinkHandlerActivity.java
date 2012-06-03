@@ -40,7 +40,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		Uri data = getIntent().getData();
 		setWindowFeatureAndUiOptions(data);
 		super.onCreate(savedInstanceState);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		if (data != null) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			setTitle(data);

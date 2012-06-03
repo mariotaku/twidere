@@ -11,6 +11,7 @@ import org.mariotaku.twidere.activity.ComposeActivity;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.MethodsCompat;
 import org.mariotaku.twidere.util.ScreenNameTokenizer;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.widget.StatusComposeEditText;
@@ -25,7 +26,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -73,13 +76,13 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
-		long[] activated_ids = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
+		mAccountIds = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
 		mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
 		mInReplyToStatusId = bundle != null ? bundle.getLong(INTENT_KEY_IN_REPLY_TO_ID) : -1;
 		mInReplyToScreenName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME) : null;
 		mInReplyToName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_NAME) : null;
 		int text_selection_start = -1;
-		if (mInReplyToStatusId > -1) {
+		if (mInReplyToStatusId > 0) {
 			String account_username = getAccountUsername(getActivity(), mAccountId);
 
 			String[] mentions = getArguments() != null ? getArguments().getStringArray(INTENT_KEY_MENTIONS) : null;
@@ -108,9 +111,13 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 			if (name != null) {
 				getActivity().setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, name));
 			}
-			mAccountIds = activated_ids == null ? new long[] { mAccountId } : activated_ids;
+			if (mAccountIds == null || mAccountIds.length == 0) {
+				mAccountIds = new long[] { mAccountId };
+			}
 		} else {
-			mAccountIds = activated_ids == null ? getActivatedAccountIds(getActivity()) : activated_ids;
+			if (mAccountIds == null || mAccountIds.length == 0) {
+				mAccountIds = getActivatedAccountIds(getActivity());
+			}
 			if (bundle != null) {
 				if (bundle.getBoolean(INTENT_KEY_IS_SHARE, false)) {
 					getActivity().setTitle(R.string.share);
@@ -119,7 +126,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 				if (bundle.getString(INTENT_KEY_TEXT) != null) {
 					mText = bundle.getString(INTENT_KEY_TEXT);
 				}
-			} 
+			}
 		}
 		View view = getView();
 		mEditText = (StatusComposeEditText) view.findViewById(R.id.edit_text);
@@ -160,7 +167,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 					} else {
 						mIsPhotoAttached = false;
 					}
-					getActivity().invalidateOptionsMenu();
+					getActionBarActivity().invalidateOptionsMenu();
 				}
 				break;
 			case REQUEST_PICK_IMAGE:
@@ -174,7 +181,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 					} else {
 						mIsImageAttached = false;
 					}
-					getActivity().invalidateOptionsMenu();
+					getActionBarActivity().invalidateOptionsMenu();
 				}
 				break;
 			case REQUEST_SELECT_ACCOUNT:
@@ -252,7 +259,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 					getLocation();
 				}
 				mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, !attach_location).commit();
-				getActivity().invalidateOptionsMenu();
+				getActionBarActivity().invalidateOptionsMenu();
 				break;
 			}
 			case MENU_DRAFTS: {
@@ -372,10 +379,14 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 
 	private void takePhoto() {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		File file = new File(getActivity().getExternalCacheDir(), "tmp_photo_" + System.currentTimeMillis() + ".jpg");
-		mImageUri = Uri.fromFile(file);
-		intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
-		startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-
+		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+			File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? new MethodsCompat()
+					.getExternalCacheDir(getActivity()) : new File("/sdcard/Android/data/"
+					+ getActivity().getPackageName() + "/cache/");
+			File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
+			mImageUri = Uri.fromFile(file);
+			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
+			startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+		}
 	}
 }

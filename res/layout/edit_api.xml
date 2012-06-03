@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
+	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:orientation="vertical">
 
 	<ScrollView
-		android:layout_width="match_parent"
+		android:layout_width="fill_parent"
 		android:layout_height="0dp"
 		android:layout_weight="1"
 		android:fadingEdgeLength="16dp">
 
 		<RelativeLayout
-			android:layout_width="match_parent"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:padding="16dip">
 
@@ -45,7 +45,7 @@
 
 			<HorizontalScrollView
 				android:id="@+id/auth_type_scroll"
-				android:layout_width="match_parent"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_alignParentLeft="true"
 				android:layout_alignParentRight="true"
@@ -54,7 +54,7 @@
 				<RadioGroup
 					android:id="@+id/auth_type"
 					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
+					android:layout_height="fill_parent"
 					android:orientation="horizontal">
 
 					<RadioButton
@@ -92,7 +92,7 @@
 
 			<TextView
 				android:id="@+id/advanced_api_config_label"
-				android:layout_width="match_parent"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_below="@+id/auth_type_scroll"
 				android:background="@drawable/list_selector_holo_light"
@@ -106,7 +106,7 @@
 
 			<ViewStub
 				android:id="@+id/stub_advanced_api_config"
-				android:layout_width="match_parent"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_below="@+id/advanced_api_config_label"
 				android:inflatedId="@+id/advanced_api_config"
@@ -116,14 +116,14 @@
 	</ScrollView>
 
 	<View
-		android:layout_width="match_parent"
+		android:layout_width="fill_parent"
 		android:layout_height="0.2dp"
 		android:background="#40808080"/>
 
 	<Button
 		android:id="@+id/save"
 		style="?android:attr/buttonStyleSmall"
-		android:layout_width="match_parent"
+		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
 		android:background="@drawable/list_selector_holo_light"

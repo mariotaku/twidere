@@ -49,14 +49,14 @@ public class AsyncTaskManager {
 	public <T> boolean execute(int hashCode, T... params) {
 		ManagedAsyncTask task = mTasks.get(hashCode);
 		if (task != null) {
-			task.execute(params);
+			task.execute(params == null || params.length == 0 ? null : params);
 			return true;
 		}
 		return false;
 	}
 
-	public List<ManagedAsyncTask<?,?,?>> getTaskList() {
-		List<ManagedAsyncTask<?,?,?>> list = new ArrayList<ManagedAsyncTask<?,?,?>>();
+	public List<ManagedAsyncTask<?, ?, ?>> getTaskList() {
+		List<ManagedAsyncTask<?, ?, ?>> list = new ArrayList<ManagedAsyncTask<?, ?, ?>>();
 
 		for (int i = 0; i < mTasks.size(); i++) {
 			ManagedAsyncTask task = mTasks.valueAt(i);

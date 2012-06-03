@@ -14,7 +14,7 @@
 
 		<org.mariotaku.preference.TextSizePreference
 			maxValue="24.0"
-			minValue="12.0"
+			minValue="14.0"
 			android:defaultValue="14.0"
 			android:key="text_size"
 			android:summary="@string/text_size_summary"
@@ -94,7 +94,7 @@
 		android:key="cat_api"
 		android:title="@string/api">
 		<CheckBoxPreference
-			android:defaultValue="false"
+			android:defaultValue="true"
 			android:key="gzip_compressing"
 			android:summary="@string/gzip_compressing_summary"
 			android:title="@string/gzip_compressing"/>

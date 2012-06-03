@@ -1,9 +1,9 @@
 package org.mariotaku.twidere.activity;
 
+import org.mariotaku.actionbarcompat.app.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ComposeFragment;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -47,7 +47,9 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, On
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mActionBar = getActionBar();
+		// Simple workaround for ActionBarCompat
+		setContentView(R.layout.base_layout);
+		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		mActionBar.setDisplayShowTitleEnabled(false);

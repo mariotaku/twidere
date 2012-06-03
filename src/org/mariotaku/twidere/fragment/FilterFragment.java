@@ -11,7 +11,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.DialogInterface.OnShowListener;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,10 +18,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.text.Editable;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,12 +26,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.viewpagerindicator.ExtendedViewPager;
@@ -98,14 +91,12 @@ public class FilterFragment extends BaseFragment {
 
 		public abstract Uri getContentUri();
 
-		public abstract FilterListAdapter getFilterListAdapter();
-
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			mResolver = getActivity().getContentResolver();
 			super.onActivityCreated(savedInstanceState);
 			setHasOptionsMenu(true);
-			mAdapter = getFilterListAdapter();
+			mAdapter = new FilterListAdapter(getActivity());
 			setListAdapter(mAdapter);
 			getListView().setOnItemLongClickListener(this);
 			getLoaderManager().initLoader(0, null, this);
@@ -164,8 +155,7 @@ public class FilterFragment extends BaseFragment {
 
 		}
 
-		private static class AddItemFragment extends BaseDialogFragment implements OnClickListener, TextWatcher,
-				OnShowListener {
+		private static class AddItemFragment extends BaseDialogFragment implements OnClickListener {
 
 			private BaseFilterListFragment mFragment;
 			private EditText mEditText;
@@ -175,32 +165,12 @@ public class FilterFragment extends BaseFragment {
 			}
 
 			@Override
-			public void afterTextChanged(Editable s) {
-
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-			}
-
-			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 					case DialogInterface.BUTTON_POSITIVE:
 						ContentValues values = new ContentValues();
+						if (mEditText.length() <= 0) return;
 						String text = mEditText.getText().toString();
-						if (mFragment instanceof FilteredKeywordsFragment) {
-							final CharSequence TAG_START = "<p>";
-							final CharSequence TAG_END = "</p>";
-							SpannableString tmp = new SpannableString(text);
-							String formatted = Html.toHtml(tmp);
-							if (formatted != null && formatted.contains(TAG_START) && formatted.contains(TAG_END)) {
-								int start = formatted.indexOf(TAG_START.toString()) + TAG_START.length();
-								int end = formatted.lastIndexOf(TAG_END.toString());
-								text = formatted.substring(start, end);
-							}
-						}
 						values.put(Filters.TEXT, text);
 						getActivity().getContentResolver().insert(mFragment.getContentUri(), values);
 						mFragment.getLoaderManager().restartLoader(0, null, mFragment);
@@ -214,8 +184,7 @@ public class FilterFragment extends BaseFragment {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				FrameLayout layout = new FrameLayout(getActivity());
 				mEditText = new EditText(getActivity());
-				mEditText.addTextChangedListener(this);
-				layout.addView(mEditText, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT) {
+				layout.addView(mEditText, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT) {
 
 					{
 						int margin = (int) (getResources().getDisplayMetrics().density * 16);
@@ -230,28 +199,7 @@ public class FilterFragment extends BaseFragment {
 				builder.setPositiveButton(android.R.string.ok, this);
 				builder.setNegativeButton(android.R.string.cancel, this);
 				AlertDialog dialog = builder.create();
-				dialog.setOnShowListener(this);
 				return dialog;
-			}
-
-			@Override
-			public void onShow(DialogInterface dialog) {
-				setOKButton(mEditText.length());
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				int length = s.toString().trim().length();
-				setOKButton(length);
-			}
-
-			private void setOKButton(int length) {
-				if (getDialog() instanceof AlertDialog) {
-					Button button = ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE);
-					if (button != null) {
-						button.setVisibility(length > 0 ? View.VISIBLE : View.INVISIBLE);
-					}
-				}
 			}
 		}
 	}
@@ -268,36 +216,6 @@ public class FilterFragment extends BaseFragment {
 			return Filters.Keywords.CONTENT_URI;
 		}
 
-		@Override
-		public FilterListAdapter getFilterListAdapter() {
-			return new FilteredKeywordsAdapter(getActivity());
-		}
-
-		private static class FilteredKeywordsAdapter extends FilterListAdapter {
-
-			private int mTextIdx;
-
-			public FilteredKeywordsAdapter(Context context) {
-				super(context);
-			}
-
-			@Override
-			public void bindView(View view, Context context, Cursor cursor) {
-				String text = cursor.getString(mTextIdx);
-				TextView tv = (TextView) view.findViewById(android.R.id.text1);
-				tv.setText(Html.fromHtml(text).toString());
-			}
-
-			@Override
-			public void changeCursor(Cursor cursor) {
-				super.changeCursor(cursor);
-				if (cursor != null) {
-					mTextIdx = cursor.getColumnIndexOrThrow(Filters.Keywords.TEXT);
-				}
-			}
-
-		}
-
 	}
 
 	public static class FilteredSourcesFragment extends BaseFilterListFragment {
@@ -312,11 +230,6 @@ public class FilterFragment extends BaseFragment {
 			return Filters.Sources.CONTENT_URI;
 		}
 
-		@Override
-		public FilterListAdapter getFilterListAdapter() {
-			return new FilterListAdapter(getActivity());
-		}
-
 	}
 
 	public static class FilteredUsersFragment extends BaseFilterListFragment {
@@ -329,11 +242,6 @@ public class FilterFragment extends BaseFragment {
 		@Override
 		public Uri getContentUri() {
 			return Filters.Users.CONTENT_URI;
-		}
-
-		@Override
-		public FilterListAdapter getFilterListAdapter() {
-			return new FilterListAdapter(getActivity());
 		}
 
 	}

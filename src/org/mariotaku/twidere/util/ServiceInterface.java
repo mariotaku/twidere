@@ -178,10 +178,10 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int getMessages(long[] account_ids, long[] max_ids) {
+	public int getMessages(long account_id, long max_id) {
 		if (mService == null) return -1;
 		try {
-			return mService.getMessages(account_ids, max_ids);
+			return mService.getMessages(account_id, max_id);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

@@ -1,13 +1,21 @@
 package org.mariotaku.twidere.util;
 
+import java.io.File;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Paint;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
 
 public class MethodsCompat {
+
+	@TargetApi(8)
+	public File getExternalCacheDir(Context context) {
+		return context.getExternalCacheDir();
+	}
 
 	@TargetApi(11)
 	public void recreate(Activity activity) {

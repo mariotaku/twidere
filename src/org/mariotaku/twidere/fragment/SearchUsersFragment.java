@@ -52,7 +52,7 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 
 	@Override
 	public Loader<ResponseList<User>> onCreateLoader(int id, Bundle args) {
-		getActivity().setProgressBarIndeterminateVisibility(true);
+		setProgressBarIndeterminateVisibility(true);
 		if (args != null) {
 			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			int page = args.getInt(INTENT_KEY_PAGE);
@@ -75,12 +75,12 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 
 	@Override
 	public void onLoaderReset(Loader<ResponseList<User>> loader) {
-		getActivity().setProgressBarIndeterminateVisibility(false);
+		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<ResponseList<User>> loader, ResponseList<User> data) {
-		getActivity().setProgressBarIndeterminateVisibility(false);
+		setProgressBarIndeterminateVisibility(false);
 		if (data != null) {
 			mAdapter.addAll(data);
 		}

@@ -4,6 +4,7 @@ import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 
+import org.mariotaku.actionbarcompat.app.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -14,7 +15,6 @@ import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ServiceInterface;
 
-import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -23,9 +23,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.view.ActionMode;
-import android.view.ActionMode.Callback;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,8 +45,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private ImageButton mComposeButton;
 	private ServiceInterface mInterface;
 	private TabPageIndicator mIndicator;
-
-	private ActionMode mActionMode;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -104,9 +99,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.compose:
-				if (mActionMode != null) {
-					mActionMode.finish();
-				}
 				startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				break;
 		}
@@ -141,16 +133,15 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 			long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			mInterface.getHomeTimeline(refreshed_ids, null);
 			mInterface.getMentions(refreshed_ids, null);
-			mInterface.getMessages(refreshed_ids, null);
 		}
-		mActionBar = getActionBar();
+		mActionBar = getSupportActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		mActionBar.setDisplayShowHomeEnabled(home_display_icon);
 		View view = mActionBar.getCustomView();
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		mAdapter = new HomeTabsAdapter(this, getSupportFragmentManager());
+		mAdapter = new TabsAdapter(this, getSupportFragmentManager());
 		mAdapter.addTab(HomeTimelineFragment.class, null, tab_display_label ? getString(R.string.home) : null,
 				R.drawable.ic_tab_home);
 		mAdapter.addTab(MentionsFragment.class, null, tab_display_label ? getString(R.string.mentions) : null,
@@ -244,33 +235,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		setSupportProgressBarIndeterminateVisibility(is_refresh);
 	}
 
+	@Override
 	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
 		mProgress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
 	}
 
-	@Override
-	public ActionMode startActionMode(Callback callback) {
-		ActionMode action_mode = super.startActionMode(callback);
-		mActionMode = action_mode;
-		return action_mode;
-	}
-
-	private class HomeTabsAdapter extends TabsAdapter {
-
-		private int mPosition;
-
-		public HomeTabsAdapter(Context context, FragmentManager fm) {
-			super(context, fm);
-		}
-
-		@Override
-		public void onPageSelected(int position) {
-			if (mPosition != position && mActionMode != null) {
-				mActionMode.finish();
-			}
-			mPosition = position;
-			super.onPageSelected(position);
-		}
-
-	}
 }

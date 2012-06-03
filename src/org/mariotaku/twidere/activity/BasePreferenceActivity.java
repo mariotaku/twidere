@@ -2,18 +2,19 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
+import org.mariotaku.actionbarcompat.app.ActionBarPreferenceActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.ActivityThemeChangeImpl;
+import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 
-public class BasePreferenceActivity extends PreferenceActivity implements Constants, ActivityThemeChangeImpl {
+public class BasePreferenceActivity extends ActionBarPreferenceActivity implements Constants,
+		ActivityThemeChangeInterface {
 
 	private int mThemeId;
 

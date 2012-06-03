@@ -363,7 +363,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				}
 			}
 			mEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(limit) });
-			layout.addView(mEditText, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT) {
+			layout.addView(mEditText, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT) {
 
 				{
 					int margin = (int) (getResources().getDisplayMetrics().density * 16);
@@ -643,13 +643,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		protected void onCancelled() {
-			getActivity().setProgressBarIndeterminateVisibility(false);
+			setProgressBarIndeterminateVisibility(false);
 			super.onCancelled();
 		}
 
 		@Override
 		protected void onPostExecute(Response<User> result) {
-			getActivity().setProgressBarIndeterminateVisibility(false);
+			setProgressBarIndeterminateVisibility(false);
 			if (result.value != null) {
 				setListShown(true);
 				mUser = result.value;
@@ -695,7 +695,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		protected void onPreExecute() {
 			setListShown(false);
 			mRetryButton.setVisibility(View.GONE);
-			getActivity().setProgressBarIndeterminateVisibility(true);
+			setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}
 

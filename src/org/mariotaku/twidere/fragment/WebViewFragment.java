@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.BaseActivity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -27,7 +28,7 @@ public class WebViewFragment extends BaseFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mWebView = (WebView) getView().findViewById(R.id.webview);
-		mWebView.setWebViewClient(new DefaultWebViewClient(getBaseActivity()));
+		mWebView.setWebViewClient(new DefaultWebViewClient(getActivity()));
 		mWebView.getSettings().setBuiltInZoomControls(true);
 		mWebView.getSettings().setJavaScriptEnabled(true);
 		Bundle bundle = getArguments();
@@ -57,13 +58,17 @@ public class WebViewFragment extends BaseFragment {
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
-			mActivity.setProgressBarIndeterminateVisibility(false);
+			if (mActivity instanceof BaseActivity) {
+				((BaseActivity) mActivity).setSupportProgressBarIndeterminateVisibility(false);
+			}
 		}
 
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
-			mActivity.setProgressBarIndeterminateVisibility(true);
+			if (mActivity instanceof BaseActivity) {
+				((BaseActivity) mActivity).setSupportProgressBarIndeterminateVisibility(true);
+			}
 		}
 
 		@Override

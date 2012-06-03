@@ -13,7 +13,6 @@ import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.StatusesCursorAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -33,6 +32,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -74,7 +74,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	public abstract Uri getContentUri();
 
 	public HomeActivity getHomeActivity() {
-		BaseActivity activity = getBaseActivity();
+		FragmentActivity activity = getActivity();
 		if (activity instanceof HomeActivity) return (HomeActivity) activity;
 		return null;
 	}
@@ -159,9 +159,9 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
 			mSelectedStatus = mAdapter.findItem(id);
-			mPopupMenu = new PopupMenu(getBaseActivity());
+			mPopupMenu = new PopupMenu(getActivity());
 			mPopupMenu.inflate(R.menu.action_status);
-			setMenuForStatus(getBaseActivity(), mPopupMenu.getMenu(), mSelectedStatus);
+			setMenuForStatus(getActivity(), mPopupMenu.getMenu(), mSelectedStatus);
 			mPopupMenu.setOnMenuItemClickListener(this);
 			mPopupMenu.show(view);
 

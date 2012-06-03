@@ -18,6 +18,7 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
+import twitter4j.DirectMessage;
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
@@ -87,12 +88,6 @@ public final class Utils implements Constants {
 
 	private static Drawable ICON_STARRED, ICON_HAS_MEDIA, ICON_HAS_LOCATION;
 
-	public static Uri buildQueryUri(Uri uri, boolean notify) {
-		Uri.Builder uribuilder = uri.buildUpon();
-		uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify));
-		return uribuilder.build();
-	}
-	
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
 		long[] account_ids = getActivatedAccountIds(context);
 		StringBuilder builder = new StringBuilder();
@@ -129,12 +124,6 @@ public final class Utils implements Constants {
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
-		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table);
-		builder.append(" WHERE " + table + "." + Statuses.NAME + " IN ( SELECT " + TABLE_FILTERED_USERS + "."
-				+ Filters.Users.TEXT + " FROM " + TABLE_FILTERED_USERS + " )");
-		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
-		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
-		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
 				+ TABLE_FILTERED_SOURCES);
 		builder.append(" WHERE " + table + "." + Statuses.SOURCE + " LIKE '%>'||" + TABLE_FILTERED_SOURCES + "."
@@ -144,13 +133,19 @@ public final class Utils implements Constants {
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
 				+ TABLE_FILTERED_KEYWORDS);
-		builder.append(" WHERE " + table + "." + Statuses.TEXT + " LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "."
+		builder.append(" WHERE " + table + "." + Statuses.TEXT_PLAIN + " LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "."
 				+ Filters.Keywords.TEXT + "||'%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" )");
 
 		return builder.toString();
+	}
+
+	public static Uri buildQueryUri(Uri uri, boolean notify) {
+		Uri.Builder uribuilder = uri.buildUpon();
+		uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify));
+		return uribuilder.build();
 	}
 
 	public static synchronized void cleanDatabasesByItemLimit(Context context) {
@@ -926,6 +921,10 @@ public final class Utils implements Constants {
 		return values;
 	}
 
+	public static ContentValues makeMessagesContentValues(DirectMessage message, long account_id) {
+		return null;
+	}
+
 	public static ContentValues makeStatusesContentValues(Status status, long account_id) {
 		if (status == null) return null;
 		final ContentValues values = new ContentValues();
@@ -1001,9 +1000,11 @@ public final class Utils implements Constants {
 	public static void restartActivity(Activity activity, boolean animation) {
 		int enter_anim = animation ? android.R.anim.fade_in : 0;
 		int exit_anim = animation ? android.R.anim.fade_out : 0;
-		activity.overridePendingTransition(enter_anim, exit_anim);
+		// activity.overridePendingTransition(enter_anim, exit_anim);
+		activity.getWindow().setWindowAnimations(exit_anim);
 		activity.finish();
-		activity.overridePendingTransition(enter_anim, exit_anim);
+		// activity.overridePendingTransition(enter_anim, exit_anim);
+		activity.getWindow().setWindowAnimations(enter_anim);
 		activity.startActivity(activity.getIntent());
 	}
 

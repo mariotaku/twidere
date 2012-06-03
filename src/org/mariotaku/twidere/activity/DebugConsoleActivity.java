@@ -1,6 +1,5 @@
 package org.mariotaku.twidere.activity;
 
-
 public class DebugConsoleActivity extends BaseActivity/*
 													 * implements
 													 * ActionBar.TabListener

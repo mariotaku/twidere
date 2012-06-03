@@ -2,7 +2,7 @@ package org.mariotaku.twidere.util;
 
 import android.os.Bundle;
 
-public interface ActivityThemeChangeImpl {
+public interface ActivityThemeChangeInterface {
 
 	public boolean isThemeChanged();
 

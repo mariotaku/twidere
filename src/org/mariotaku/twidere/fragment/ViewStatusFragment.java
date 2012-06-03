@@ -68,7 +68,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			String action = intent.getAction();
 			if (BROADCAST_DATABASE_UPDATED.equals(action)) {
 				getStatus();
-				getActivity().invalidateOptionsMenu();
+				getActionBarActivity().invalidateOptionsMenu();
 			} else if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
 				showFollowInfo();
 			}

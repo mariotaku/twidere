@@ -59,7 +59,7 @@ public class StatusViewHolder {
 		reply_retweet_status.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
-	
+
 	public void setTextSize(float text_size) {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;

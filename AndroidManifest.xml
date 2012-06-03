@@ -6,7 +6,7 @@
 	android:versionName="0.0.12">
 
 	<uses-sdk
-		android:minSdkVersion="14"
+		android:minSdkVersion="4"
 		android:targetSdkVersion="15"/>
 
 	<permission-group

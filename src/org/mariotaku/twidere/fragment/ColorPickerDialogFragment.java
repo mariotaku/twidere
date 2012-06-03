@@ -158,7 +158,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 
 			mColorPicker = new ColorPickerView(context);
 
-			mContentView.addView(mColorPicker, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+			mContentView.addView(mColorPicker, LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 
 			mContentView.setPadding(Math.round(mColorPicker.getDrawingOffset()), 0,
 					Math.round(mColorPicker.getDrawingOffset()), 0);

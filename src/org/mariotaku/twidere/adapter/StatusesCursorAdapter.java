@@ -46,13 +46,13 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
 		final boolean has_media = cursor.getShort(mIndices.has_media) == 1;
 		final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
-		
+
 		final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
 				.getString(mIndices.retweeted_by_screen_name);
 		final String text_plain = cursor.getString(mIndices.text_plain);
 		final String name = mDisplayName ? cursor.getString(mIndices.name) : cursor.getString(mIndices.screen_name);
 		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
-		
+
 		final boolean is_last = cursor.getPosition() == getCount() - 1;
 		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last;
 
@@ -64,7 +64,7 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 		}
 
 		if (!show_gap) {
-		
+
 			holder.setTextSize(mTextSize);
 
 			holder.text.setText(text_plain);

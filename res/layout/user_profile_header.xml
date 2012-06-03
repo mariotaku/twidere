@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/profile"
-	android:layout_width="match_parent"
+	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:gravity="center_vertical"
 	android:paddingBottom="8dp"
@@ -27,7 +27,7 @@
 
 	<LinearLayout
 		android:id="@+id/name_view"
-		android:layout_width="match_parent"
+		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_alignBottom="@+id/profile_image"
 		android:layout_alignTop="@+id/profile_image"

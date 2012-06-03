@@ -23,8 +23,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.view.ActionMode;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,7 +31,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 public class UserTimelineFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableStatus>>,
-		OnItemClickListener, OnItemLongClickListener , OnMenuItemClickListener{
+		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
 	private SharedPreferences mPreferences;
 	private ServiceInterface mServiceInterface;
@@ -45,6 +43,97 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
 	private ParcelableStatus mSelectedStatus;
 	private float mTextSize;
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		getActivity().getContentResolver();
+		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
+		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
+		mListView = getListView();
+		setListAdapter(mAdapter);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
+		getLoaderManager().initLoader(0, getArguments(), this);
+	}
+
+	@Override
+	public Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
+		setProgressBarIndeterminateVisibility(true);
+		if (args != null) {
+			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
+			long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+			String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+			if (user_id == -1 && screen_name != null)
+				return new UserTimelineLoader(getActivity(), account_id, screen_name);
+			return new UserTimelineLoader(getActivity(), account_id, user_id);
+		}
+		return null;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		Object tag = view.getTag();
+		if (tag instanceof StatusViewHolder) {
+			ParcelableStatus status = mAdapter.findItem(id);
+			StatusViewHolder holder = (StatusViewHolder) tag;
+			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
+				// getStatuses(new long[] { status.account_id }, new long[] {
+				// status.status_id });
+			} else {
+				Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(AUTHORITY_STATUS);
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
+				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
+				Intent intent = new Intent(Intent.ACTION_DEFAULT, builder.build());
+				Bundle bundle = new Bundle();
+				bundle.putParcelable(INTENT_KEY_STATUS, status);
+				intent.putExtras(bundle);
+				startActivity(intent);
+			}
+		}
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+		Object tag = view.getTag();
+		if (tag instanceof StatusViewHolder) {
+			StatusViewHolder holder = (StatusViewHolder) tag;
+			if (holder.show_as_gap) return false;
+			mSelectedStatus = mAdapter.findItem(id);
+			mPopupMenu = new PopupMenu(getActivity());
+			mPopupMenu.inflate(R.menu.action_status);
+			setMenuForStatus(getActivity(), mPopupMenu.getMenu(), mSelectedStatus);
+			mPopupMenu.setOnMenuItemClickListener(this);
+			mPopupMenu.show(view);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
+		setProgressBarIndeterminateVisibility(false);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
+		mAdapter.clear();
+		if (data != null) {
+			for (ParcelableStatus status : data) {
+				mAdapter.add(status);
+			}
+		}
+		setProgressBarIndeterminateVisibility(false);
+	}
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
@@ -111,106 +200,6 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		getActivity().getContentResolver();
-		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
-		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
-		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
-		mListView = getListView();
-		setListAdapter(mAdapter);
-		mListView.setOnItemClickListener(this);
-		mListView.setOnItemLongClickListener(this);
-		getLoaderManager().initLoader(0, getArguments(), this);
-	}
-
-
-	@Override
-	public Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
-		getActivity().setProgressBarIndeterminateVisibility(true);
-		if (args != null) {
-			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-			long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			if (user_id == -1 && screen_name != null)
-				return new UserTimelineLoader(getActivity(), account_id, screen_name);
-			return new UserTimelineLoader(getActivity(), account_id, user_id);
-		}
-		return null;
-	}
-
-	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		Object tag = view.getTag();
-		if (tag instanceof StatusViewHolder) {
-			ParcelableStatus status = mAdapter.findItem(id);
-			StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
-				// getStatuses(new long[] { status.account_id }, new long[] {
-				// status.status_id });
-			} else {
-				Uri.Builder builder = new Uri.Builder();
-				builder.scheme(SCHEME_TWIDERE);
-				builder.authority(AUTHORITY_STATUS);
-				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
-				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
-				Intent intent = new Intent(Intent.ACTION_DEFAULT, builder.build());
-				Bundle bundle = new Bundle();
-				bundle.putParcelable(INTENT_KEY_STATUS, status);
-				intent.putExtras(bundle);
-				startActivity(intent);
-			}
-		}
-	}
-
-	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
-		Object tag = view.getTag();
-		if (tag instanceof StatusViewHolder) {
-			StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder.show_as_gap) return false;
-			mSelectedStatus = mAdapter.findItem(id);
-			mPopupMenu = new PopupMenu(getBaseActivity());
-			mPopupMenu.inflate(R.menu.action_status);
-			setMenuForStatus(getBaseActivity(), mPopupMenu.getMenu(), mSelectedStatus);
-			mPopupMenu.setOnMenuItemClickListener(this);
-			mPopupMenu.show(view);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
-		getActivity().setProgressBarIndeterminateVisibility(false);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
-		mAdapter.clear();
-		if (data != null) {
-			for (ParcelableStatus status : data) {
-				mAdapter.add(status);
-			}
-		}
-		getActivity().setProgressBarIndeterminateVisibility(false);
-	}
-
-	@Override
-	public void onStop() {
-		if (mPopupMenu != null) {
-			mPopupMenu.dismiss();
-		}
-		super.onStop();
-	}
-
-	@Override
 	public void onResume() {
 		super.onResume();
 		boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
@@ -225,6 +214,14 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 			mTextSize = text_size;
 			mListView.invalidateViews();
 		}
+	}
+
+	@Override
+	public void onStop() {
+		if (mPopupMenu != null) {
+			mPopupMenu.dismiss();
+		}
+		super.onStop();
 	}
 
 }

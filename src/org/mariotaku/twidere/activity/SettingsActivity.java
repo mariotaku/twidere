@@ -22,7 +22,7 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
 		addPreferencesFromResource(R.xml.settings);
 		findPreference(PREFERENCE_KEY_DARK_THEME).setOnPreferenceChangeListener(this);

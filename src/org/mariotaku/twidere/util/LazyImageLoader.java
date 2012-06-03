@@ -22,6 +22,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -210,8 +211,11 @@ public class LazyImageLoader {
 
 		public void init() {
 			/* Find the dir to save cached images. */
-			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-				mCacheDir = new File(mContext.getExternalCacheDir(), CACHE_DIR_NAME);
+			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)
+					&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+				mCacheDir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? new MethodsCompat()
+						.getExternalCacheDir(mContext) : new File("/sdcard/Android/data/" + mContext.getPackageName()
+						+ "/cache/");
 			} else {
 				mCacheDir = new File(mContext.getCacheDir(), CACHE_DIR_NAME);
 			}

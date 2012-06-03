@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
 
 	<RelativeLayout
 		android:id="@+id/profile"
-		android:layout_width="match_parent"
+		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:background="@drawable/list_selector_holo_light"
 		android:padding="8dp">
@@ -72,8 +72,8 @@
 	</RelativeLayout>
 
 	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
 		android:layout_alignLeft="@+id/profile"
 		android:layout_alignParentBottom="true"
 		android:layout_below="@+id/profile"
@@ -81,7 +81,7 @@
 
 		<TextView
 			android:id="@+id/in_reply_to"
-			android:layout_width="match_parent"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:background="@drawable/list_selector_holo_light"
 			android:drawableLeft="@drawable/ic_tweet_stat_reply"
@@ -93,15 +93,15 @@
 
 		<FrameLayout
 			android:id="@+id/text_frame"
-			android:layout_width="match_parent"
+			android:layout_width="fill_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
 			android:padding="8dp">
 
 			<TextView
 				android:id="@+id/text"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
 				android:singleLine="false"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textIsSelectable="true"/>
@@ -130,7 +130,7 @@
 
 		<TextView
 			android:id="@+id/time_source"
-			android:layout_width="match_parent"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:padding="8dp"
 			android:text="@string/time_source"

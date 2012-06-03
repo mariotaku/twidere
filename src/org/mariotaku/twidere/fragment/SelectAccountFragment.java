@@ -24,7 +24,7 @@ public class SelectAccountFragment extends BaseListFragment implements Constants
 				: android.R.layout.simple_list_item_single_choice;
 		String[] cols = new String[] { Accounts.USERNAME };
 		int[] ids = new int[] { android.R.id.text1 };
-		mAdapter = new SimpleCursorAdapter(getBaseActivity(), layoutRes, null, cols, ids, 0);
+		mAdapter = new SimpleCursorAdapter(getActivity(), layoutRes, null, cols, ids, 0);
 		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView
@@ -36,7 +36,7 @@ public class SelectAccountFragment extends BaseListFragment implements Constants
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri uri = Accounts.CONTENT_URI;
 		String[] cols = new String[] { Accounts._ID, Accounts.USER_ID, Accounts.USERNAME, Accounts.IS_ACTIVATED };
-		return new CursorLoader(getBaseActivity(), uri, cols, null, null, null);
+		return new CursorLoader(getActivity(), uri, cols, null, null, null);
 	}
 
 	@Override

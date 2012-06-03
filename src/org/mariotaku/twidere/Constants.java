@@ -76,7 +76,7 @@ public interface Constants extends TwitterConstants {
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
-	public static final int PREFERENCE_DEFAULT_TEXT_SIZE = 12;
+	public static final float PREFERENCE_DEFAULT_TEXT_SIZE = 14.0f;
 
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 

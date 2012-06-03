@@ -51,7 +51,7 @@ public class SearchTweetsFragment extends BaseListFragment implements LoaderCall
 
 	@Override
 	public Loader<List<Tweet>> onCreateLoader(int id, Bundle args) {
-		getActivity().setProgressBarIndeterminateVisibility(true);
+		setProgressBarIndeterminateVisibility(true);
 		if (args != null) {
 			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			String query = args.getString(INTENT_KEY_QUERY);
@@ -62,12 +62,12 @@ public class SearchTweetsFragment extends BaseListFragment implements LoaderCall
 
 	@Override
 	public void onLoaderReset(Loader<List<Tweet>> loader) {
-		getActivity().setProgressBarIndeterminateVisibility(false);
+		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<List<Tweet>> loader, List<Tweet> data) {
-		getActivity().setProgressBarIndeterminateVisibility(false);
+		setProgressBarIndeterminateVisibility(false);
 		mAdapter.clear();
 		if (data != null) {
 			for (Tweet tweet : data) {
