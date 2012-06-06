@@ -8,6 +8,8 @@ import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
+import org.mariotaku.popupmenu.MenuBar;
+import org.mariotaku.popupmenu.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.LinkHandlerActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -46,7 +48,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class ViewStatusFragment extends BaseFragment implements OnClickListener {
+public class ViewStatusFragment extends BaseFragment implements OnClickListener,OnMenuItemClickListener {
 
 	private long mAccountId, mStatusId;
 
@@ -57,6 +59,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	private Button mFollowButton;
 	private ImageButton mViewMapButton, mViewMediaButton;
 	private View mProfileView, mFollowIndicator;
+	private MenuBar mMenuBar;
 	private ProgressBar mProgress;
 	private FollowInfoTask mFollowInfoTask;
 	private ParcelableStatus mStatus;
@@ -87,7 +90,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
 		}
 		getStatus();
-		setHasOptionsMenu(true);
 		View view = getView();
 		mNameView = (TextView) view.findViewById(R.id.name);
 		mScreenNameView = (TextView) view.findViewById(R.id.screen_name);
@@ -106,6 +108,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 		mViewMediaButton = (ImageButton) view.findViewById(R.id.view_media);
 		mViewMediaButton.setOnClickListener(this);
 		mProgress = (ProgressBar) view.findViewById(R.id.progress);
+		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
+		mMenuBar.setOnMenuItemClickListener(this);
 		displayStatus();
 		showFollowInfo();
 	}
@@ -149,12 +153,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_status, menu);
-		super.onCreateOptionsMenu(menu, inflater);
-	}
-
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.view_status, container, false);
 	}
@@ -168,7 +166,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onMenuItemClick(MenuItem item) {
 		String text_plain = mStatus.text_plain;
 		String screen_name = mStatus.screen_name;
 		String name = mStatus.name;
@@ -234,12 +232,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	}
 
 	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		setMenuForStatus(getActivity(), menu, mStatus);
-		super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
 	public void onStart() {
 		super.onStart();
 		IntentFilter filter = new IntentFilter(BROADCAST_DATABASE_UPDATED);
@@ -260,6 +252,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener 
 	private void displayStatus() {
 		if (mStatus == null) return;
 
+		mMenuBar.inflate(R.menu.menu_status);
+		setMenuForStatus(getActivity(), mMenuBar.getMenu(), mStatus);
+		mMenuBar.show();
+		
 		mNameView.setText(mStatus.name != null ? mStatus.name : "");
 		mScreenNameView.setText(mStatus.screen_name != null ? "@" + mStatus.screen_name : "");
 		if (mStatus.text != null) {

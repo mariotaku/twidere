@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.FrameLayout;
 
 public class FilterActivity extends BaseActivity implements OnCheckedChangeListener {
 
@@ -29,7 +30,7 @@ public class FilterActivity extends BaseActivity implements OnCheckedChangeListe
 		super.onCreate(savedInstanceState);
 		mPrefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		boolean filter_enabled = mPrefs.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false);
-		setContentView(R.layout.base_layout);
+		setContentView(new FrameLayout(this));
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setDisplayShowCustomEnabled(true);

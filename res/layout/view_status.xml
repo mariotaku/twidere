@@ -72,10 +72,11 @@
 	</RelativeLayout>
 
 	<LinearLayout
+		android:id="@+id/status_content"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
+		android:layout_above="@+id/menu_bar"
 		android:layout_alignLeft="@+id/profile"
-		android:layout_alignParentBottom="true"
 		android:layout_below="@+id/profile"
 		android:orientation="vertical">
 
@@ -136,5 +137,12 @@
 			android:text="@string/time_source"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</LinearLayout>
+
+	<org.mariotaku.popupmenu.MenuBar
+		android:id="@+id/menu_bar"
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:layout_alignParentBottom="true"
+		android:background="#80000000"/>
 
 </RelativeLayout>

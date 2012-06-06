@@ -6,6 +6,8 @@ import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 
 import java.io.File;
 
+import org.mariotaku.popupmenu.MenuBar;
+import org.mariotaku.popupmenu.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ComposeActivity;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
@@ -42,12 +44,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ComposeFragment extends BaseFragment implements TextWatcher, LocationListener {
+public class ComposeFragment extends BaseFragment implements TextWatcher, LocationListener, OnMenuItemClickListener {
 
 	private String mText;
 	private Uri mImageUri;
 	private StatusComposeEditText mEditText;
 	private TextView mTextCount;
+	private MenuBar mMenuBar;
 	private boolean mIsImageAttached, mIsPhotoAttached;
 	private long[] mAccountIds;
 	private ServiceInterface mInterface;
@@ -74,7 +77,6 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
 		mAccountIds = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
 		mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
@@ -131,6 +133,11 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		View view = getView();
 		mEditText = (StatusComposeEditText) view.findViewById(R.id.edit_text);
 		mTextCount = (TextView) view.findViewById(R.id.text_count);
+		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
+		mMenuBar.setOnMenuItemClickListener(this);
+		mMenuBar.inflate(R.menu.menu_compose);
+		setMenu(mMenuBar.getMenu());
+		mMenuBar.show();
 		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
 		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
@@ -151,6 +158,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		int length = mEditText.length();
 		mTextCount.setText(String.valueOf(length));
 		getSendMenuItem().setEnabled(length > 0 && length <= 140);
+		
 
 	}
 
@@ -167,7 +175,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 					} else {
 						mIsPhotoAttached = false;
 					}
-					getActionBarActivity().invalidateOptionsMenu();
+					setMenu(mMenuBar.getMenu());
 				}
 				break;
 			case REQUEST_PICK_IMAGE:
@@ -181,7 +189,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 					} else {
 						mIsImageAttached = false;
 					}
-					getActionBarActivity().invalidateOptionsMenu();
+					setMenu(mMenuBar.getMenu());
 				}
 				break;
 			case REQUEST_SELECT_ACCOUNT:
@@ -209,12 +217,6 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_compose, menu);
-		super.onCreateOptionsMenu(menu, inflater);
-	}
-
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.compose, container, false);
 	}
@@ -226,14 +228,8 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
-			case MENU_HOME: {
-				if (getActivity() instanceof ComposeActivity) {
-					getActivity().finish();
-				}
-				break;
-			}
 			case MENU_SEND: {
 				String content = mEditText != null ? mEditText.getText().toString() : null;
 				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
@@ -259,7 +255,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 					getLocation();
 				}
 				mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, !attach_location).commit();
-				getActionBarActivity().invalidateOptionsMenu();
+				setMenu(mMenuBar.getMenu());
 				break;
 			}
 			case MENU_DRAFTS: {
@@ -278,11 +274,10 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 				break;
 			}
 		}
-		return super.onOptionsItemSelected(item);
+		return true;
 	}
 
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
+	public void setMenu(Menu menu) {
 		int activated_color = getResources().getColor(R.color.holo_blue_bright);
 		MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		if (mIsImageAttached && !mIsPhotoAttached) {
@@ -310,7 +305,6 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 			itemAttachLocation.getIcon().clearColorFilter();
 			itemAttachLocation.setTitle(R.string.add_location);
 		}
-		super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override

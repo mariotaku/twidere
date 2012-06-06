@@ -10,7 +10,7 @@
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
-		<item name="android:popupBackground">@drawable/popup_holo_dark</item>
+		<item name="popupBackground">@drawable/popup_holo_dark</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="Theme.ActionBar.Light.DarkActionBar">
@@ -21,13 +21,13 @@
 		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
-		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
+		<item name="android:actionBarStyle">@style/Widget.Twidere.Light.ActionBar</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
-		<item name="android:popupBackground">@drawable/popup_holo_light</item>
+		<item name="popupBackground">@drawable/popup_holo_light</item>
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 	</style>
 
-	<style name="Theme.Twidere.Dialog" parent="android:Theme.Dialog">
+	<style name="Theme.Twidere.Dialog" parent="Theme.ActionBar.Dialog">
 		<item name="vpiCirclePageIndicatorStyle">@style/Widget.CirclePageIndicator</item>
 		<item name="vpiTitlePageIndicatorStyle">@style/Widget.TitlePageIndicator</item>
 		<item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
@@ -35,10 +35,10 @@
 		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
-		<item name="android:popupBackground">@drawable/popup_holo_dark</item>
+		<item name="popupBackground">@drawable/popup_holo_dark</item>
 	</style>
 
-	<style name="Theme.Twidere.Light.Dialog" parent="android:Theme.Dialog">
+	<style name="Theme.Twidere.Light.Dialog" parent="Theme.ActionBar.Light.Dialog">
 		<item name="vpiCirclePageIndicatorStyle">@style/Widget.CirclePageIndicator</item>
 		<item name="vpiTitlePageIndicatorStyle">@style/Widget.TitlePageIndicator</item>
 		<item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
@@ -46,7 +46,7 @@
 		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
-		<item name="android:popupBackground">@drawable/popup_holo_light</item>
+		<item name="popupBackground">@drawable/popup_holo_light</item>
 	</style>
 
 </resources>

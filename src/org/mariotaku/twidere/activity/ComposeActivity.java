@@ -17,6 +17,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ public class ComposeActivity extends BaseActivity implements OnClickListener, On
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Simple workaround for ActionBarCompat
-		setContentView(R.layout.base_layout);
+		setContentView(new FrameLayout(this));
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setDisplayShowCustomEnabled(true);

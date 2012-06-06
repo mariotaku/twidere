@@ -80,6 +80,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		getFragmentManager().addOnBackStackChangedListener(this);
 		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
 		mResolver = getActivity().getContentResolver();
 		mAdapter = new AccountsAdapter(getActivity(), imageloader);
@@ -87,7 +88,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		mListView = getListView();
 		mListView.setOnCreateContextMenuListener(this);
 		setListAdapter(mAdapter);
-		getFragmentManager().addOnBackStackChangedListener(this);
 	}
 
 	@Override
@@ -165,7 +165,8 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri uri = Accounts.CONTENT_URI;
 		String[] cols = Accounts.COLUMNS;
-		return new CursorLoader(getActivity(), uri, cols, null, null, null);
+		String where = Accounts.IS_ACTIVATED + " = 1"; 
+		return new CursorLoader(getActivity(), uri, cols, where, null, null);
 	}
 
 	@Override

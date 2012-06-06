@@ -109,11 +109,11 @@ public class UserTimelineFragment extends BaseListFragment implements LoaderCall
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
 			mSelectedStatus = mAdapter.findItem(id);
-			mPopupMenu = new PopupMenu(getActivity());
+			mPopupMenu = new PopupMenu(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_status);
 			setMenuForStatus(getActivity(), mPopupMenu.getMenu(), mSelectedStatus);
 			mPopupMenu.setOnMenuItemClickListener(this);
-			mPopupMenu.show(view);
+			mPopupMenu.show();
 			return true;
 		}
 		return false;

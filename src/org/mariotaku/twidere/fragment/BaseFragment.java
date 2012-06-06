@@ -5,6 +5,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.BaseActivity;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.support.v4.app.Fragment;
 
 public class BaseFragment extends Fragment implements Constants {
@@ -14,6 +15,14 @@ public class BaseFragment extends Fragment implements Constants {
 		if (activity instanceof BaseActivity) {
 			((BaseActivity) activity).setSupportProgressBarIndeterminateVisibility(visible);
 		}
+	}
+	
+	public ContentResolver getContentResolver() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			return activity.getContentResolver();
+		}
+		return null;
 	}
 	
 	public ActionBarFragmentActivity getActionBarActivity() {

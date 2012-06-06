@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
+	android:layout_width="300dp"
 	android:layout_height="wrap_content"
 	android:orientation="vertical">
 
@@ -96,7 +96,7 @@
 				android:layout_height="wrap_content"
 				android:layout_below="@+id/auth_type_scroll"
 				android:background="@drawable/list_selector_holo_light"
-				android:drawableLeft="@drawable/expander_ic_minimized"
+				android:drawableLeft="@drawable/expander_close_holo"
 				android:drawablePadding="4dp"
 				android:gravity="center_vertical"
 				android:paddingBottom="4dp"

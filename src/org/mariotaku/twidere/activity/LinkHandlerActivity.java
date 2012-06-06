@@ -19,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.FrameLayout;
 
 public class LinkHandlerActivity extends BaseActivity {
 
@@ -42,7 +43,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		Uri data = getIntent().getData();
 		setWindowFeatureAndUiOptions(data);
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.base_layout);
+		setContentView(new FrameLayout(this));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		if (data != null) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -162,9 +163,6 @@ public class LinkHandlerActivity extends BaseActivity {
 		if (uri == null) return;
 		switch (URI_MATCHER.match(uri)) {
 			case CODE_STATUS: {
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-					new MethodsCompat().setUiOptions(getWindow(), ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
-				}
 				break;
 			}
 			case CODE_USER: {

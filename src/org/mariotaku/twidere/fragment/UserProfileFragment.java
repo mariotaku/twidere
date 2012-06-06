@@ -1,12 +1,13 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.*;
 
 import java.net.URL;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.Utils;
@@ -18,6 +19,7 @@ import twitter4j.User;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +29,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +51,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener {
+		OnItemClickListener, OnItemLongClickListener, OnBackStackChangedListener {
 
 	private LazyImageLoader mProfileImageLoader;
 	private ImageView mProfileImageView;
@@ -66,6 +69,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private long mAccountId;
 	private boolean mIsFollowing;
 	private EditTextDialogFragment mDialogFragment;
+	private Fragment mDetailFragment;
 
 	private User mUser = null;
 
@@ -100,6 +104,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		getFragmentManager().addOnBackStackChangedListener(this);
 		if (getArguments() != null) {
 			mAccountId = getArguments().getLong(INTENT_KEY_ACCOUNT_ID);
 		}
@@ -161,6 +166,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		return view;
 	}
 
+	@Override
+	public void onBackStackChanged() {
+		if (getActivity() instanceof HomeActivity) {
+			((HomeActivity) getActivity()).setPagingEnabled(mDetailFragment == null || !mDetailFragment.isAdded());
+		}
+
+	}
+	
 	@Override
 	public void onDestroyView() {
 		mUser = null;
@@ -541,13 +554,15 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public void onClick() {
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			Fragment fragment = Fragment.instantiate(getActivity(), UserTimelineFragment.class.getName());
-			fragment.setArguments(getArguments());
+			if (!(mDetailFragment instanceof UserTimelineFragment)) {
+				mDetailFragment = Fragment.instantiate(getActivity(), UserTimelineFragment.class.getName());
+				mDetailFragment.setArguments(getArguments());
+			}
 			int viewId = android.R.id.content;
 			if (getActivity() instanceof HomeActivity) {
 				viewId = R.id.dashboard;
 			}
-			ft.replace(viewId, fragment);
+			ft.replace(viewId, mDetailFragment);
 			ft.addToBackStack(null);
 			ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 			ft.commit();
@@ -649,6 +664,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		protected void onPostExecute(Response<User> result) {
+			if (getActivity() == null) return;
 			setProgressBarIndeterminateVisibility(false);
 			if (result.value != null) {
 				setListShown(true);
@@ -658,6 +674,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				mScreenName.setText(mUser.getScreenName());
 				mProfileImageLoader.displayImage(mUser.getProfileImageUrlHttps(), mProfileImageView);
 				mRetryButton.setVisibility(View.GONE);
+				if (isMyAccount(getActivity(), mUser.getId())) {
+					ContentValues values = new ContentValues();
+					URL profile_image_url = mUser.getProfileImageUrlHttps();
+					if ((profile_image_url) != null) {
+						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url.toString());
+					}
+					values.put(Accounts.USERNAME, mUser.getScreenName());
+					String where = Accounts.USER_ID + " = " + mUser.getId();
+					getContentResolver().update(Accounts.CONTENT_URI, values, where, null);
+				}
 			} else {
 				mListProgress.setVisibility(View.GONE);
 				mListView.setVisibility(View.GONE);

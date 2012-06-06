@@ -34,8 +34,11 @@
 		<menu>
 			<item
 				android:id="@id/delete"
+				android:icon="@drawable/ic_menu_delete"
 				android:title="@string/delete"/>
-			<item android:title="@android:string/cancel"/>
+			<item
+				android:icon="@drawable/ic_menu_close_clear_cancel"
+				android:title="@android:string/cancel"/>
 		</menu>
 	</item>
 
