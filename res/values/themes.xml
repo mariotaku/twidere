@@ -10,7 +10,6 @@
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
-		<item name="popupBackground">@drawable/popup_holo_dark</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="Theme.ActionBar.Light.DarkActionBar">
@@ -23,7 +22,6 @@
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="android:actionBarStyle">@style/Widget.Twidere.Light.ActionBar</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
-		<item name="popupBackground">@drawable/popup_holo_light</item>
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 	</style>
 
@@ -35,7 +33,6 @@
 		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
-		<item name="popupBackground">@drawable/popup_holo_dark</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Dialog" parent="Theme.ActionBar.Light.Dialog">
@@ -46,7 +43,6 @@
 		<item name="vpiTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="vpiVerticalTabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
-		<item name="popupBackground">@drawable/popup_holo_light</item>
 	</style>
 
 </resources>

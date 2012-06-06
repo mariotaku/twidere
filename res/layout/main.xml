@@ -10,7 +10,7 @@
 		android:layerType="software"/>
 
 	<ImageButton
-		android:id="@+id/compose"
+		android:id="@+id/button_compose"
 		android:layout_width="56dp"
 		android:layout_height="56dp"
 		android:layout_gravity="bottom|right"

@@ -18,6 +18,19 @@ public class MethodsCompat {
 	}
 
 	@TargetApi(11)
+	public void invalidateOptionsMenu(Activity activity) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			activity.invalidateOptionsMenu();
+		}
+	}
+
+	@TargetApi(5)
+	public void overridePendingTransition(Activity activity, int enter_anim, int exit_anim) {
+		activity.overridePendingTransition(enter_anim, exit_anim);
+
+	}
+
+	@TargetApi(11)
 	public void recreate(Activity activity) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			activity.recreate();
@@ -36,11 +49,5 @@ public class MethodsCompat {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			window.setUiOptions(uiOptions);
 		}
-	}
-	
-	@TargetApi(5)
-	public void overridePendingTransition(Activity activity, int enter_anim, int exit_anim) {
-		activity.overridePendingTransition(enter_anim, exit_anim);
-		
 	}
 }

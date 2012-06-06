@@ -9,18 +9,16 @@ import android.support.v4.app.DialogFragment;
 
 public class BaseDialogFragment extends DialogFragment implements Constants {
 
+	public ActionBarFragmentActivity getActionBarActivity() {
+		Activity activity = getActivity();
+		if (activity instanceof ActionBarFragmentActivity) return (ActionBarFragmentActivity) activity;
+		return null;
+	}
+
 	public void setProgressBarIndeterminateVisibility(boolean visible) {
 		Activity activity = getActivity();
 		if (activity instanceof BaseActivity) {
 			((BaseActivity) activity).setSupportProgressBarIndeterminateVisibility(visible);
 		}
-	}
-	
-	public ActionBarFragmentActivity getActionBarActivity() {
-		Activity activity = getActivity();
-		if (activity instanceof ActionBarFragmentActivity) {
-			return (ActionBarFragmentActivity) activity;
-		}
-		return null;
 	}
 }

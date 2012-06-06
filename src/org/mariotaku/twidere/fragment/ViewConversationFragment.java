@@ -8,7 +8,6 @@ import org.mariotaku.actionbarcompat.app.ActionBarFragmentActivity;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -298,7 +297,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 			}
 			if (mActivity instanceof ActionBarFragmentActivity) {
-				((ActionBarFragmentActivity)mActivity).setSupportProgressBarIndeterminateVisibility(false);
+				((ActionBarFragmentActivity) mActivity).setSupportProgressBarIndeterminateVisibility(false);
 			}
 			super.onPostExecute(result);
 		}
@@ -306,7 +305,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		@Override
 		protected void onPreExecute() {
 			if (mActivity instanceof ActionBarFragmentActivity) {
-				((ActionBarFragmentActivity)mActivity).setSupportProgressBarIndeterminateVisibility(true);
+				((ActionBarFragmentActivity) mActivity).setSupportProgressBarIndeterminateVisibility(true);
 			}
 			super.onPreExecute();
 		}

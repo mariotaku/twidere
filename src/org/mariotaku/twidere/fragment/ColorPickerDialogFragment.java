@@ -148,6 +148,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 			return bm;
 		}
 
+		@SuppressWarnings("deprecation")
 		private void init(Context context, int color) {
 
 			// To fight color branding.

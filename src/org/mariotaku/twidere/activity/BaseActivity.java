@@ -48,6 +48,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		}
 	}
 
+	@Override
 	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
 
 	}

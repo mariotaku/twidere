@@ -35,6 +35,6 @@
 		android:id="@+id/menu_bar"
 		android:layout_width="match_parent"
 		android:layout_height="48dp"
-		android:background="#80000000"/>
+		android:background="?menuBarBackground"/>
 
 </LinearLayout>

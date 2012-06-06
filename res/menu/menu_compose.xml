@@ -17,14 +17,21 @@
 		android:showAsAction="always"
 		android:title="@string/add_image"/>
 	<item
-		android:id="@id/select_account"
-		android:icon="@drawable/ic_menu_accounts"
-		android:showAsAction="never"
-		android:title="@string/select_account"/>
-	<item
-		android:id="@id/drafts"
-		android:icon="@android:drawable/ic_menu_save"
-		android:showAsAction="never"
-		android:title="@string/drafts"/>
+		android:id="@+id/more"
+		android:icon="@drawable/ic_menu_more"
+		android:title="@string/more">
+		<menu>
+			<item
+				android:id="@id/select_account"
+				android:icon="@drawable/ic_menu_accounts"
+				android:showAsAction="never"
+				android:title="@string/select_account"/>
+			<item
+				android:id="@id/drafts"
+				android:icon="@drawable/ic_menu_save"
+				android:showAsAction="never"
+				android:title="@string/drafts"/>
+		</menu>
+	</item>
 
 </menu>

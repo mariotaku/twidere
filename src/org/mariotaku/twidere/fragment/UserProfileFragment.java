@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.*;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.isMyAccount;
 
 import java.net.URL;
 
@@ -28,8 +29,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
+import android.support.v4.app.FragmentTransaction;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -129,6 +130,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
+	public void onBackStackChanged() {
+		if (getActivity() instanceof HomeActivity) {
+			((HomeActivity) getActivity()).setPagingEnabled(mDetailFragment == null || !mDetailFragment.isAdded());
+		}
+
+	}
+
+	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.follow: {
@@ -166,14 +175,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		return view;
 	}
 
-	@Override
-	public void onBackStackChanged() {
-		if (getActivity() instanceof HomeActivity) {
-			((HomeActivity) getActivity()).setPagingEnabled(mDetailFragment == null || !mDetailFragment.isAdded());
-		}
-
-	}
-	
 	@Override
 	public void onDestroyView() {
 		mUser = null;
@@ -348,6 +349,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -653,7 +655,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			} catch (TwitterException e) {
 				return new Response<User>(null, e);
 			}
-			return null;
+			return new Response<User>(null, null);
 		}
 
 		@Override
@@ -664,8 +666,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		protected void onPostExecute(Response<User> result) {
-			if (getActivity() == null) return;
 			setProgressBarIndeterminateVisibility(false);
+			if (result == null) return;
+			if (getActivity() == null) return;
 			if (result.value != null) {
 				setListShown(true);
 				mUser = result.value;
@@ -677,7 +680,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				if (isMyAccount(getActivity(), mUser.getId())) {
 					ContentValues values = new ContentValues();
 					URL profile_image_url = mUser.getProfileImageUrlHttps();
-					if ((profile_image_url) != null) {
+					if (profile_image_url != null) {
 						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url.toString());
 					}
 					values.put(Accounts.USERNAME, mUser.getScreenName());

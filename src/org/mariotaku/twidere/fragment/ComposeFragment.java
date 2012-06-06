@@ -37,7 +37,6 @@ import android.text.TextWatcher;
 import android.text.method.ArrowKeyMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -158,7 +157,6 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		int length = mEditText.length();
 		mTextCount.setText(String.valueOf(length));
 		getSendMenuItem().setEnabled(length > 0 && length <= 140);
-		
 
 	}
 
@@ -277,34 +275,22 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		return true;
 	}
 
-	public void setMenu(Menu menu) {
-		int activated_color = getResources().getColor(R.color.holo_blue_bright);
-		MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
-		if (mIsImageAttached && !mIsPhotoAttached) {
-			itemAddImage.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
-			itemAddImage.setTitle(R.string.remove_image);
-		} else {
-			itemAddImage.getIcon().clearColorFilter();
-			itemAddImage.setTitle(R.string.add_image);
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_SEND: {
+				String content = mEditText != null ? mEditText.getText().toString() : null;
+				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation : null, mImageUri,
+						mInReplyToStatusId);
+				if (getActivity() instanceof ComposeActivity) {
+					getActivity().setResult(Activity.RESULT_OK);
+					getActivity().finish();
+				}
+				break;
+			}
 		}
-		MenuItem itemTakePhoto = menu.findItem(MENU_TAKE_PHOTO);
-		if (!mIsImageAttached && mIsPhotoAttached) {
-			itemTakePhoto.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
-			itemTakePhoto.setTitle(R.string.remove_photo);
-		} else {
-			itemTakePhoto.getIcon().clearColorFilter();
-			itemTakePhoto.setTitle(R.string.take_photo);
-		}
-		MenuItem itemAttachLocation = menu.findItem(MENU_ADD_LOCATION);
-		boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
-		if (attach_location && getLocation()) {
-			itemAttachLocation.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
-			itemAttachLocation.setTitle(R.string.remove_location);
-		} else {
-			mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false).commit();
-			itemAttachLocation.getIcon().clearColorFilter();
-			itemAttachLocation.setTitle(R.string.add_location);
-		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -343,6 +329,36 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 
 	}
 
+	public void setMenu(Menu menu) {
+		int activated_color = getResources().getColor(R.color.holo_blue_bright);
+		MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
+		if (mIsImageAttached && !mIsPhotoAttached) {
+			itemAddImage.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemAddImage.setTitle(R.string.remove_image);
+		} else {
+			itemAddImage.getIcon().clearColorFilter();
+			itemAddImage.setTitle(R.string.add_image);
+		}
+		MenuItem itemTakePhoto = menu.findItem(MENU_TAKE_PHOTO);
+		if (!mIsImageAttached && mIsPhotoAttached) {
+			itemTakePhoto.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemTakePhoto.setTitle(R.string.remove_photo);
+		} else {
+			itemTakePhoto.getIcon().clearColorFilter();
+			itemTakePhoto.setTitle(R.string.take_photo);
+		}
+		MenuItem itemAttachLocation = menu.findItem(MENU_ADD_LOCATION);
+		boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+		if (attach_location && getLocation()) {
+			itemAttachLocation.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemAttachLocation.setTitle(R.string.remove_location);
+		} else {
+			mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false).commit();
+			itemAttachLocation.getIcon().clearColorFilter();
+			itemAttachLocation.setTitle(R.string.add_location);
+		}
+	}
+
 	/**
 	 * The Location Manager manages location providers. This code searches for
 	 * the best provider of data (GPS, WiFi/cell phone tower lookup, some other
@@ -375,8 +391,8 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 			File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? new MethodsCompat()
-					.getExternalCacheDir(getActivity()) : new File(Environment.getExternalStorageDirectory().getPath() + "/Android/data/"
-					+ getActivity().getPackageName() + "/cache/");
+					.getExternalCacheDir(getActivity()) : new File(Environment.getExternalStorageDirectory().getPath()
+					+ "/Android/data/" + getActivity().getPackageName() + "/cache/");
 			File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
 			mImageUri = Uri.fromFile(file);
 			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);

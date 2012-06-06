@@ -362,11 +362,17 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	}
 
 	private void showSatus(ParcelableStatus status) {
-		Uri.Builder builder = new Uri.Builder();
-		builder.scheme(SCHEME_TWIDERE);
-		builder.authority(AUTHORITY_STATUS);
-		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
-		builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
-		startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		final long account_id = status.account_id, status_id = status.status_id;
+		FragmentActivity activity = getActivity();
+		if (activity instanceof HomeActivity && ((HomeActivity)activity).isDualPaneMode()) {
+			
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_STATUS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
 	}
 }

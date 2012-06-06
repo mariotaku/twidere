@@ -8,17 +8,13 @@ import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
-import org.mariotaku.twidere.util.MethodsCompat;
 
 import android.content.UriMatcher;
-import android.content.pm.ActivityInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
-import android.view.Window;
 import android.widget.FrameLayout;
 
 public class LinkHandlerActivity extends BaseActivity {
@@ -166,15 +162,15 @@ public class LinkHandlerActivity extends BaseActivity {
 				break;
 			}
 			case CODE_USER: {
-				//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+				// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 				break;
 			}
 			case CODE_CONVERSATION: {
-				//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+				// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 				break;
 			}
 			case CODE_SEARCH: {
-				//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+				// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 				break;
 			}
 			case CODE_DRAFTS: {

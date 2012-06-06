@@ -165,7 +165,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri uri = Accounts.CONTENT_URI;
 		String[] cols = Accounts.COLUMNS;
-		String where = Accounts.IS_ACTIVATED + " = 1"; 
+		String where = Accounts.IS_ACTIVATED + " = 1";
 		return new CursorLoader(getActivity(), uri, cols, where, null, null);
 	}
 

@@ -72,8 +72,8 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 				View inflated_view = findViewById(R.id.advanced_api_config);
 				if (stub_view != null) {
 					stub_view.setVisibility(View.VISIBLE);
-					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_open_holo,
-							0, 0, 0);
+					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_open_holo, 0,
+							0, 0);
 					mEditSearchBaseURL = (EditText) findViewById(R.id.search_base_url);
 					mEditSearchBaseURL.setText(mSearchBaseURL != null ? mSearchBaseURL : DEFAULT_SEARCH_BASE_URL);
 					mEditUploadBaseURL = (EditText) findViewById(R.id.upload_base_url);

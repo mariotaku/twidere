@@ -8,6 +8,8 @@ import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
+import java.util.regex.Pattern;
+
 import org.mariotaku.popupmenu.MenuBar;
 import org.mariotaku.popupmenu.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
@@ -16,11 +18,10 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.Linkify;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusesCursorIndices;
-import org.mariotaku.twidere.util.Utils;
-
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -35,9 +36,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,7 +50,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class ViewStatusFragment extends BaseFragment implements OnClickListener,OnMenuItemClickListener {
+public class ViewStatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener {
 
 	private long mAccountId, mStatusId;
 
@@ -71,7 +73,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			String action = intent.getAction();
 			if (BROADCAST_DATABASE_UPDATED.equals(action)) {
 				getStatus();
-				getActionBarActivity().invalidateOptionsMenu();
+				setMenuForStatus(getActivity(), mMenuBar.getMenu(), mStatus);
 			} else if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
 				showFollowInfo();
 			}
@@ -255,12 +257,16 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mMenuBar.inflate(R.menu.menu_status);
 		setMenuForStatus(getActivity(), mMenuBar.getMenu(), mStatus);
 		mMenuBar.show();
-		
+
 		mNameView.setText(mStatus.name != null ? mStatus.name : "");
 		mScreenNameView.setText(mStatus.screen_name != null ? "@" + mStatus.screen_name : "");
 		if (mStatus.text != null) {
 			mTextView.setText(mStatus.text);
 		}
+		Pattern mentions_pattern = Pattern.compile("@([A-Za-z0-9_]+)");
+		String mentions_scheme = "twidere://user?" + QUERY_PARAM_ACCOUNT_ID + "=" + mAccountId + "&"
+				+ QUERY_PARAM_SCREEN_NAME + "=";
+		Linkify.addLinks(mTextView, mentions_pattern, mentions_scheme);
 		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
 		boolean is_reply = mStatus.in_reply_to_status_id != -1;
 		String time = formatToLongTimeString(getActivity(), mStatus.status_timestamp);
@@ -277,6 +283,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		imageloader.displayImage(mStatus.profile_image_url, mProfileImageView);
 	}
 
+	
 	private void getStatus() {
 		ParcelableStatus status = getArguments().getParcelable(INTENT_KEY_STATUS);
 		if (status != null) {
@@ -330,8 +337,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				if (result.value != null) {
 					mFollowButton.setVisibility(result.value ? View.GONE : View.VISIBLE);
 				}
-			} else {
-				Utils.showErrorToast(getActivity(), result.exception, true);
 			}
 			mProgress.setVisibility(View.GONE);
 			super.onPostExecute(result);

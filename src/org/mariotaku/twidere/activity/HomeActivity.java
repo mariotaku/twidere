@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,7 +36,7 @@ import android.widget.ProgressBar;
 import com.viewpagerindicator.ExtendedViewPager;
 import com.viewpagerindicator.TabPageIndicator;
 
-public class HomeActivity extends BaseActivity implements OnClickListener {
+public class HomeActivity extends BaseActivity implements OnClickListener, OnBackStackChangedListener {
 
 	private ExtendedViewPager mViewPager;
 	private SharedPreferences mPreferences;
@@ -104,7 +105,21 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		}
 
 	}
+	
+	public boolean isDualPaneMode() {
+		return findViewById(R.id.left_pane) != null && findViewById(R.id.right_pane) != null;
+	}
 
+	private Pane mCurrentPane = Pane.RIGHT;
+	
+	public Pane getCurrentPane() {
+		return mCurrentPane;
+	}
+ 	
+	public static enum Pane {
+		LEFT,RIGHT;
+	}
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -115,7 +130,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
 		setContentView(R.layout.main);
 		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
-		mComposeButton = (ImageButton) findViewById(R.id.compose);
+		mComposeButton = (ImageButton) findViewById(R.id.button_compose);
 		long[] account_ids = getAccountIds(this);
 		long[] activated_ids = getActivatedAccountIds(this);
 
@@ -154,6 +169,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		mViewPager.setOffscreenPageLimit(3);
 		mComposeButton.setOnClickListener(this);
 		mIndicator.setViewPager(mViewPager);
+		getSupportFragmentManager().addOnBackStackChangedListener(this);
 
 	}
 
@@ -190,12 +206,17 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		final boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
 		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
-		menu.findItem(MENU_COMPOSE).setVisible(!bottom_actions);
-		mComposeButton.setVisibility(bottom_actions ? View.VISIBLE : View.GONE);
-		if (bottom_actions) {
-			FrameLayout.LayoutParams compose_lp = (FrameLayout.LayoutParams) mComposeButton.getLayoutParams();
-			compose_lp.gravity = Gravity.BOTTOM | (leftside_compose_button ? Gravity.LEFT : Gravity.RIGHT);
-			mComposeButton.setLayoutParams(compose_lp);
+		MenuItem composeItem = menu.findItem(MENU_COMPOSE);
+		if (composeItem != null) {
+			composeItem.setVisible(!bottom_actions);
+		}
+		if (mComposeButton != null) {
+			mComposeButton.setVisibility(bottom_actions ? View.VISIBLE : View.GONE);
+			if (bottom_actions) {
+				FrameLayout.LayoutParams compose_lp = (FrameLayout.LayoutParams) mComposeButton.getLayoutParams();
+				compose_lp.gravity = Gravity.BOTTOM | (leftside_compose_button ? Gravity.LEFT : Gravity.RIGHT);
+				mComposeButton.setLayoutParams(compose_lp);
+			}
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -203,7 +224,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		invalidateOptionsMenu();
+		invalidateSupportOptionsMenu();
 	}
 
 	@Override
@@ -238,6 +259,11 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	@Override
 	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
 		mProgress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+	}
+
+	@Override
+	public void onBackStackChanged() {
+		
 	}
 
 }
