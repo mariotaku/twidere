@@ -57,7 +57,7 @@ public class LinkHandlerActivity extends BaseActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
-				finish();
+				onBackPressed();
 				break;
 		}
 		return super.onOptionsItemSelected(item);

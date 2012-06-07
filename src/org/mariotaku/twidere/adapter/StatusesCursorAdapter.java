@@ -5,6 +5,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseURL;
+import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -55,7 +56,7 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 
 		final boolean is_last = cursor.getPosition() == getCount() - 1;
-		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last;
+		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1;
 
 		holder.setShowAsGap(show_gap);
 		holder.setAccountColorEnabled(mShowAccountColor);
@@ -109,7 +110,11 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 	@Override
 	public ParcelableStatus findItem(long id) {
 		for (int i = 0; i < getCount(); i++) {
-			if (getItemId(i) == id) return new ParcelableStatus(getItem(i), mIndices);
+			if (getItemId(i) == id) {
+				long account_id = getItem(i).getLong(mIndices.account_id);
+				long status_id = getItem(i).getLong(mIndices.status_id);
+				return findStatusInDatabases(mContext, account_id, status_id);
+			}
 		}
 		return null;
 	}

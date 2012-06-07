@@ -111,7 +111,8 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	@Override
 	public void onBackStackChanged() {
 		if (getActivity() instanceof HomeActivity) {
-			((HomeActivity) getActivity()).setPagingEnabled(mDetailFragment == null || !mDetailFragment.isAdded());
+			boolean is_displaying_details = mDetailFragment != null && mDetailFragment.isAdded();
+			((HomeActivity) getActivity()).setPagingEnabled(!is_displaying_details);
 		}
 
 	}

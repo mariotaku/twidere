@@ -36,7 +36,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public StatusesAdapterInterface getListAdapter() {
+	public StatusesCursorAdapter getListAdapter() {
 		return mAdapter;
 	}
 

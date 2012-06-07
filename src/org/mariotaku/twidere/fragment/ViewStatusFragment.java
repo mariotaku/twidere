@@ -5,9 +5,9 @@ import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
+import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 
 import org.mariotaku.popupmenu.MenuBar;
 import org.mariotaku.popupmenu.MenuBar.OnMenuItemClickListener;

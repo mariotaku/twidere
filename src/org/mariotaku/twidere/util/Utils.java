@@ -344,6 +344,25 @@ public final class Utils implements Constants {
 		return accounts;
 	}
 
+	public static String[] getAccountScreenNames(Context context) {
+		String[] accounts = new String[0];
+		String[] cols = new String[] { Accounts.USERNAME };
+		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, null, null, null);
+		if (cur != null) {
+			int idx = cur.getColumnIndexOrThrow(Accounts.USERNAME);
+			cur.moveToFirst();
+			accounts = new String[cur.getCount()];
+			int i = 0;
+			while (!cur.isAfterLast()) {
+				accounts[i] = cur.getString(idx);
+				i++;
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		return accounts;
+	}
+
 	public static String getAccountUsername(Context context, long account_id) {
 
 		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USERNAME },
@@ -361,8 +380,9 @@ public final class Utils implements Constants {
 
 	public static long[] getActivatedAccountIds(Context context) {
 		long[] accounts = new long[] {};
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
-				Accounts.IS_ACTIVATED + "=1", null, null);
+		String[] cols = new String[] { Accounts.USER_ID };
+		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1", null,
+				null);
 		if (cur != null) {
 			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
 			cur.moveToFirst();
@@ -370,6 +390,26 @@ public final class Utils implements Constants {
 			int i = 0;
 			while (!cur.isAfterLast()) {
 				accounts[i] = cur.getLong(idx);
+				i++;
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		return accounts;
+	}
+
+	public static String[] getActivatedAccountScreenNames(Context context) {
+		String[] accounts = new String[0];
+		String[] cols = new String[] { Accounts.USERNAME };
+		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1", null,
+				null);
+		if (cur != null) {
+			int idx = cur.getColumnIndexOrThrow(Accounts.USERNAME);
+			cur.moveToFirst();
+			accounts = new String[cur.getCount()];
+			int i = 0;
+			while (!cur.isAfterLast()) {
+				accounts[i] = cur.getString(idx);
 				i++;
 				cur.moveToNext();
 			}
@@ -866,8 +906,22 @@ public final class Utils implements Constants {
 		return false;
 	}
 
+	public static boolean isMyActivatedUserName(Context context, String screen_name) {
+		for (String account_user_name : getActivatedAccountScreenNames(context)) {
+			if (account_user_name.equalsIgnoreCase(screen_name)) return true;
+		}
+		return false;
+	}
+
 	public static boolean isMyRetweet(Context context, long account_id, long status_id) {
 		return account_id == getRetweetedByUserId(context, status_id);
+	}
+
+	public static boolean isMyUserName(Context context, String screen_name) {
+		for (String account_screen_name : getAccountScreenNames(context)) {
+			if (account_screen_name.equalsIgnoreCase(screen_name)) return true;
+		}
+		return false;
 	}
 
 	public static boolean isNullOrEmpty(CharSequence text) {
@@ -1030,6 +1084,22 @@ public final class Utils implements Constants {
 			activity.getWindow().setWindowAnimations(0);
 		}
 		activity.startActivity(activity.getIntent());
+	}
+	
+	public static ParcelableStatus findStatusInDatabases(Context context, long account_id, long status_id) {
+		final ContentResolver resolver = context.getContentResolver();
+		ParcelableStatus status = null;
+		String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = " + status_id;
+		for (Uri uri : STATUSES_URIS) {
+			Cursor cur = resolver.query(uri, Statuses.COLUMNS, where, null, null);
+			if (cur == null) continue;
+			if (cur.getCount() == 1) {
+				cur.moveToFirst();
+				status = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
+			}
+			cur.close();
+		}
+		return status;
 	}
 
 	public static void setMenuForStatus(Context context, Menu menu, ParcelableStatus status) {

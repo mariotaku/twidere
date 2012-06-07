@@ -1,6 +1,8 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
+import static org.mariotaku.twidere.util.Utils.isMyActivatedUserName;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 
 import java.net.URL;
@@ -106,8 +108,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getFragmentManager().addOnBackStackChangedListener(this);
-		if (getArguments() != null) {
-			mAccountId = getArguments().getLong(INTENT_KEY_ACCOUNT_ID);
+		Bundle args = getArguments();
+		long user_id = -1;
+		String screen_name = null;
+		if (args != null) {
+			mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID);
+			user_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		mProfileImageLoader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		mAdapter = new UserProfileActionAdapter(getActivity());
@@ -118,7 +125,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAdapter.add(new FollowersAction());
 		mAdapter.add(new FollowingAction());
 		mAdapter.add(new FavoritesAction());
-		mAdapter.add(new DirectMessagesAction());
+		if (user_id != -1 && isMyActivatedAccount(getActivity(), user_id) || screen_name != null
+				&& isMyActivatedUserName(getActivity(), screen_name)) {
+			mAdapter.add(new DirectMessagesAction());
+		}
 		mRetryButton.setOnClickListener(this);
 		setListAdapter(null);
 		mListView = getListView();
@@ -133,9 +143,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	@Override
 	public void onBackStackChanged() {
 		if (getActivity() instanceof HomeActivity) {
-			((HomeActivity) getActivity()).setPagingEnabled(mDetailFragment == null || !mDetailFragment.isAdded());
+			((HomeActivity) getActivity()).setPagingEnabled(!isAdded());
 		}
-
 	}
 
 	@Override
@@ -186,6 +195,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (mUserInfoTask != null) {
 			mUserInfoTask.cancel(true);
 		}
+		getFragmentManager().removeOnBackStackChangedListener(this);
 		super.onDestroyView();
 	}
 
@@ -323,7 +333,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public String getSummary() {
-			return null;
+			return "This feature is not implemented.";
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null) return;
+			Bundle bundle = new Bundle();
+			bundle.putLong(INTENT_KEY_ACCOUNT_ID, mUser.getId());
+			Intent intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
+			intent.putExtras(bundle);
+			startActivity(intent);
 		}
 
 	}
@@ -433,7 +453,19 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onClick() {
-
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			if (!(mDetailFragment instanceof UserFavoritesFragment)) {
+				mDetailFragment = Fragment.instantiate(getActivity(), UserFavoritesFragment.class.getName());
+				mDetailFragment.setArguments(getArguments());
+			}
+			int viewId = android.R.id.content;
+			if (getActivity() instanceof HomeActivity) {
+				viewId = R.id.dashboard;
+			}
+			ft.replace(viewId, mDetailFragment);
+			ft.addToBackStack(null);
+			ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+			ft.commit();
 		}
 
 	}

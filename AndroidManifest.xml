@@ -255,6 +255,16 @@
 					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".activity.DirectMessagesActivity"
+			android:label="@string/direct_messages">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.DIRECT_MESSAGES"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
 	</application>
 
 </manifest>

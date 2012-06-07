@@ -339,10 +339,12 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 	private void openStatus(ParcelableStatus status) {
 		final long account_id = status.account_id, status_id = status.status_id;
 		FragmentActivity activity = getActivity();
+		Bundle bundle = new Bundle();
+		bundle.putParcelable(INTENT_KEY_STATUS, status);
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			HomeActivity home_activity = (HomeActivity) activity;
 			Fragment fragment = new ViewStatusFragment();
-			Bundle args = new Bundle();
+			Bundle args = new Bundle(bundle);
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			args.putLong(INTENT_KEY_STATUS_ID, status_id);
 			fragment.setArguments(args);
@@ -353,7 +355,10 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 			builder.authority(AUTHORITY_STATUS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
-			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+			Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+
+			intent.putExtras(bundle);
+			startActivity(intent);
 		}
 	}
 }

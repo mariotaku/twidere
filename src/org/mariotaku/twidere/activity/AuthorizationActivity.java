@@ -19,13 +19,15 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-public class AuthorizationActivity extends WebViewActivity {
+public class AuthorizationActivity extends BaseActivity {
 
 	private Uri authUrl;
 
@@ -42,9 +44,11 @@ public class AuthorizationActivity extends WebViewActivity {
 			return;
 		}
 
-		mWebView = getWebView();
-		loadUrl(authUrl.toString());
-		setWebViewClient(new AuthorizationWebViewClient());
+		setContentView(R.layout.webview);
+		mWebView = (WebView) findViewById(R.id.webview);
+		mWebView.getSettings().setBuiltInZoomControls(true);
+		mWebView.loadUrl(authUrl.toString());
+		mWebView.setWebViewClient(new AuthorizationWebViewClient());
 		mWebView.setVerticalScrollBarEnabled(false);
 		mWebSettings = mWebView.getSettings();
 		mWebSettings.setLoadsImagesAutomatically(true);
@@ -55,7 +59,19 @@ public class AuthorizationActivity extends WebViewActivity {
 
 	}
 
-	private class AuthorizationWebViewClient extends DefaultWebViewClient {
+	private class AuthorizationWebViewClient extends WebViewClient {
+
+		@Override
+		public void onPageFinished(WebView view, String url) {
+			super.onPageFinished(view, url);
+			setSupportProgressBarIndeterminateVisibility(false);
+		}
+
+		@Override
+		public void onPageStarted(WebView view, String url, Bitmap favicon) {
+			super.onPageStarted(view, url, favicon);
+			setSupportProgressBarIndeterminateVisibility(true);
+		}
 
 		@Override
 		public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
