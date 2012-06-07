@@ -55,11 +55,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		OnItemClickListener, OnItemLongClickListener, OnBackStackChangedListener {
 
 	private LazyImageLoader mProfileImageLoader;
-	private ImageView mProfileImageView;
+	private ImageView mProfileImage;
 	private FollowInfoTask mFollowInfoTask;
 	private View mFollowIndicator;
 	private TextView mName, mScreenName;
-	private View mNameLayout;
+	private View mNameLayout, mProfileImageContainer;
 	private ProgressBar mProgress, mListProgress;
 	private Button mFollowButton, mRetryButton;
 
@@ -109,7 +109,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (getArguments() != null) {
 			mAccountId = getArguments().getLong(INTENT_KEY_ACCOUNT_ID);
 		}
-		mProfileImageLoader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		mProfileImageLoader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		mAdapter = new UserProfileActionAdapter(getActivity());
 		mAdapter.add(new DescriptionAction());
 		mAdapter.add(new LocationAction());
@@ -118,6 +118,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAdapter.add(new FollowersAction());
 		mAdapter.add(new FollowingAction());
 		mAdapter.add(new FavoritesAction());
+		mAdapter.add(new DirectMessagesAction());
 		mRetryButton.setOnClickListener(this);
 		setListAdapter(null);
 		mListView = getListView();
@@ -165,7 +166,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mNameLayout = mHeaderView.findViewById(R.id.name_view);
 		mName = (TextView) mHeaderView.findViewById(R.id.name);
 		mScreenName = (TextView) mHeaderView.findViewById(R.id.screen_name);
-		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
+		mProfileImage = (ImageView) mHeaderView.findViewById(R.id.profile_image);
+		mProfileImageContainer = mHeaderView.findViewById(R.id.profile_image_container);
 		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
 		mFollowIndicator = mHeaderView.findViewById(R.id.follow_indicator);
 		mProgress = (ProgressBar) mHeaderView.findViewById(R.id.progress);
@@ -263,13 +265,18 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mUserInfoTask = null;
 		Bundle args = getArguments();
 		if (args != null) {
-			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-			long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			if (user_id == -1 && screen_name != null) {
+			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
+			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+			if (user_id != -1) {
+				mUserInfoTask = new UserInfoTask(getActivity(), account_id, user_id);
+			} else if (screen_name != null) {
 				mUserInfoTask = new UserInfoTask(getActivity(), account_id, screen_name);
 			} else {
-				mUserInfoTask = new UserInfoTask(getActivity(), account_id, user_id);
+				mListProgress.setVisibility(View.GONE);
+				mListView.setVisibility(View.GONE);
+				mRetryButton.setVisibility(View.GONE);
+				return;
 			}
 		}
 		if (mUserInfoTask != null) {
@@ -303,6 +310,20 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				return true;
 			}
 			return false;
+		}
+
+	}
+
+	private class DirectMessagesAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.direct_messages);
+		}
+
+		@Override
+		public String getSummary() {
+			return null;
 		}
 
 	}
@@ -659,14 +680,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		@Override
-		protected void onCancelled() {
-			setProgressBarIndeterminateVisibility(false);
-			super.onCancelled();
-		}
-
-		@Override
 		protected void onPostExecute(Response<User> result) {
-			setProgressBarIndeterminateVisibility(false);
 			if (result == null) return;
 			if (getActivity() == null) return;
 			if (result.value != null) {
@@ -675,7 +689,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				getListView().invalidateViews();
 				mName.setText(mUser.getName());
 				mScreenName.setText(mUser.getScreenName());
-				mProfileImageLoader.displayImage(mUser.getProfileImageUrlHttps(), mProfileImageView);
+				mProfileImageLoader.displayImage(mUser.getProfileImageUrlHttps(), mProfileImage);
 				mRetryButton.setVisibility(View.GONE);
 				if (isMyAccount(getActivity(), mUser.getId())) {
 					ContentValues values = new ContentValues();
@@ -694,25 +708,25 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			mFollowButton.setOnClickListener(mUser != null ? UserProfileFragment.this : null);
 			if (mUser != null && mUser.getId() == mAccountId) {
-				mProfileImageView.setOnClickListener(UserProfileFragment.this);
-				mProfileImageView.setOnLongClickListener(UserProfileFragment.this);
+				mProfileImageContainer.setOnClickListener(UserProfileFragment.this);
+				mProfileImageContainer.setOnLongClickListener(UserProfileFragment.this);
 				mNameLayout.setOnClickListener(UserProfileFragment.this);
 				mNameLayout.setOnLongClickListener(UserProfileFragment.this);
 			} else {
-				mProfileImageView.setOnClickListener(null);
-				mProfileImageView.setOnLongClickListener(null);
+				mProfileImageContainer.setOnClickListener(null);
+				mProfileImageContainer.setOnLongClickListener(null);
 				mNameLayout.setOnClickListener(null);
 				mNameLayout.setOnLongClickListener(null);
 			}
 			mFollowButton.setOnClickListener(mUser != null ? UserProfileFragment.this : null);
 			if (mUser != null && mUser.getId() == mAccountId) {
-				mProfileImageView.setOnClickListener(UserProfileFragment.this);
-				mProfileImageView.setOnLongClickListener(UserProfileFragment.this);
+				mProfileImageContainer.setOnClickListener(UserProfileFragment.this);
+				mProfileImageContainer.setOnLongClickListener(UserProfileFragment.this);
 				mNameLayout.setOnClickListener(UserProfileFragment.this);
 				mNameLayout.setOnLongClickListener(UserProfileFragment.this);
 			} else {
-				mProfileImageView.setOnClickListener(null);
-				mProfileImageView.setOnLongClickListener(null);
+				mProfileImageContainer.setOnClickListener(null);
+				mProfileImageContainer.setOnLongClickListener(null);
 				mNameLayout.setOnClickListener(null);
 				mNameLayout.setOnLongClickListener(null);
 			}
@@ -724,7 +738,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		protected void onPreExecute() {
 			setListShown(false);
 			mRetryButton.setVisibility(View.GONE);
-			setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}
 

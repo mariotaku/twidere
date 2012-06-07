@@ -23,7 +23,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -48,11 +47,5 @@ public class BrowserActivity extends BaseActivity {
 		fragment.setArguments(bundle);
 		ft.replace(android.R.id.content, fragment);
 		ft.commit();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_browser, menu);
-		return super.onCreateOptionsMenu(menu);
 	}
 }

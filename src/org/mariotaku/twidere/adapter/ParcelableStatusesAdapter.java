@@ -9,13 +9,14 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.StatusViewHolder;
+import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
+public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface {
 
 	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
 	private final LazyImageLoader mImageLoader;
@@ -28,6 +29,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 		mImageLoader = loader;
 	}
 
+	@Override
 	public ParcelableStatus findItem(long id) {
 		for (int i = 0; i < getCount(); i++) {
 			if (getItemId(i) == id) return getItem(i);
@@ -94,22 +96,27 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> {
 		return view;
 	}
 
+	@Override
 	public void setDisplayName(boolean display) {
 		mDisplayName = display;
 	}
 
+	@Override
 	public void setDisplayProfileImage(boolean display) {
 		mDisplayProfileImage = display;
 	}
 
+	@Override
 	public void setShowAccountColor(boolean show) {
 		mShowAccountColor = show;
 	}
 
+	@Override
 	public void setShowLastItemAsGap(boolean gap) {
 		mShowLastItemAsGap = gap;
 	}
 
+	@Override
 	public void setStatusesTextSize(float text_size) {
 		mTextSize = text_size;
 	}

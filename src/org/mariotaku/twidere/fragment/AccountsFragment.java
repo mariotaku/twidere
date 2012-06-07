@@ -30,6 +30,7 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -81,7 +82,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getFragmentManager().addOnBackStackChangedListener(this);
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		mResolver = getActivity().getContentResolver();
 		mAdapter = new AccountsAdapter(getActivity(), imageloader);
 		getLoaderManager().initLoader(0, null, this);
@@ -120,7 +121,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		Intent intent;
 		switch (item.getItemId()) {
 			case MENU_VIEW:
-				showDetails(mSelectedUserId);
+				openUserProfile(mSelectedUserId);
 				break;
 			case MENU_SET_COLOR:
 				if (mSelectedUserId != INVALID_ID) {
@@ -180,7 +181,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
 			long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
-			showDetails(user_id);
+			openUserProfile(user_id);
 		}
 		super.onListItemClick(l, v, position, id);
 	}
@@ -233,10 +234,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		mFragment.show(ft, "delete_confirm");
 	}
 
-	private void showDetails(long account_id) {
-		if (getActivity() instanceof HomeActivity) {
-			((HomeActivity) getActivity()).setPagingEnabled(false);
-		}
+	private void openUserProfile(long account_id) {
 		if (mDetailFragment == null) {
 			mDetailFragment = Fragment.instantiate(getActivity(), UserProfileFragment.class.getName(), null);
 		}
@@ -245,10 +243,16 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 		args.putLong(INTENT_KEY_USER_ID, account_id);
 		mDetailFragment.setArguments(args);
-		ft.replace(R.id.dashboard, mDetailFragment);
-		ft.addToBackStack(null);
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-		ft.commit();
+		FragmentActivity activity = getActivity();
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			home_activity.showAtPane(home_activity.getCurrentPane(), mDetailFragment);
+		} else {
+			ft.replace(R.id.dashboard, mDetailFragment);
+			ft.addToBackStack(null);
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+			ft.commit();
+		}
 	}
 
 	public static class ViewHolder {

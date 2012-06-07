@@ -10,15 +10,15 @@ import android.app.Application;
 
 public class TwidereApplication extends Application implements Constants {
 
-	private LazyImageLoader mListProfileImageLoader;
+	private LazyImageLoader mProfileImageLoader;
 	private AsyncTaskManager mAsyncTaskManager = new AsyncTaskManager();
 
 	public AsyncTaskManager getAsyncTaskManager() {
 		return mAsyncTaskManager;
 	}
 
-	public LazyImageLoader getListProfileImageLoader() {
-		return mListProfileImageLoader;
+	public LazyImageLoader getProfileImageLoader() {
+		return mProfileImageLoader;
 	}
 
 	public ServiceInterface getServiceInterface() {
@@ -28,13 +28,13 @@ public class TwidereApplication extends Application implements Constants {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		mListProfileImageLoader = new LazyImageLoader(this, R.drawable.ic_profile_image_default, getResources()
+		mProfileImageLoader = new LazyImageLoader(this, R.drawable.ic_profile_image_default, getResources()
 				.getDimensionPixelSize(R.dimen.profile_image_size));
 	}
 
 	@Override
 	public void onLowMemory() {
-		mListProfileImageLoader.clearMemoryCache();
+		mProfileImageLoader.clearMemoryCache();
 		super.onLowMemory();
 	}
 

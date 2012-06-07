@@ -8,21 +8,27 @@
 	<FrameLayout
 		android:layout_width="0dp"
 		android:layout_height="fill_parent"
-		android:layout_weight="5">
+		android:layout_weight="6">
 
-		<com.viewpagerindicator.ExtendedViewPager
-			android:id="@+id/pager"
+		<FrameLayout
+			android:id="@+id/main"
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:layerType="software"/>
+			android:layout_height="fill_parent">
 
-		<ImageButton
-			android:id="@+id/button_compose"
-			android:layout_width="56dp"
-			android:layout_height="56dp"
-			android:layout_gravity="bottom|right"
-			android:contentDescription="@string/compose"
-			android:src="@drawable/ic_menu_compose"/>
+			<com.viewpagerindicator.ExtendedViewPager
+				android:id="@+id/pager"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:layerType="software"/>
+
+			<ImageButton
+				android:id="@+id/button_compose"
+				android:layout_width="56dp"
+				android:layout_height="56dp"
+				android:layout_gravity="bottom|right"
+				android:contentDescription="@string/compose"
+				android:src="@drawable/ic_menu_compose"/>
+		</FrameLayout>
 
 		<FrameLayout
 			android:id="@+id/left_pane"
@@ -31,17 +37,16 @@
 		</FrameLayout>
 	</FrameLayout>
 
+	<View
+		android:id="@+id/profile_divider_vertical"
+		android:layout_width="0.2dp"
+		android:layout_height="fill_parent"
+		android:background="#40808080"/>
+
 	<FrameLayout
 		android:id="@+id/right_pane"
 		android:layout_width="0dp"
 		android:layout_height="fill_parent"
-		android:layout_weight="4">
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:text="Stub!"/>
-	</FrameLayout>
+		android:layout_weight="5"/>
 
 </LinearLayout>

@@ -12,9 +12,11 @@
 		<menu>
 			<item
 				android:id="@id/retweet"
+				android:icon="@drawable/ic_menu_retweet"
 				android:title="@string/retweet"/>
 			<item
 				android:id="@id/quote"
+				android:icon="@drawable/ic_menu_quote"
 				android:title="@string/quote"/>
 		</menu>
 	</item>
@@ -33,12 +35,12 @@
 		android:visible="false">
 		<menu>
 			<item
+				android:icon="@drawable/ic_menu_close_clear_cancel"
+				android:title="@android:string/cancel"/>
+			<item
 				android:id="@id/delete"
 				android:icon="@drawable/ic_menu_delete"
 				android:title="@string/delete"/>
-			<item
-				android:icon="@drawable/ic_menu_close_clear_cancel"
-				android:title="@android:string/cancel"/>
 		</menu>
 	</item>
 

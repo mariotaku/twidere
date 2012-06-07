@@ -23,7 +23,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,6 +60,20 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		}
 
 	};
+
+	private int mCurrentPaneIdx = 1;
+
+	public static final int PANE_LEFT = R.id.left_pane, PANE_RIGHT = R.id.right_pane;
+
+	public static final int[] PANE_IDS = new int[] { PANE_LEFT, PANE_RIGHT };
+
+	public int getCurrentPane() {
+		return mCurrentPaneIdx;
+	}
+
+	public boolean isDualPaneMode() {
+		return findViewById(R.id.left_pane) != null && findViewById(R.id.right_pane) != null;
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -97,6 +113,11 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	}
 
 	@Override
+	public void onBackStackChanged() {
+
+	}
+
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.compose:
@@ -105,21 +126,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		}
 
 	}
-	
-	public boolean isDualPaneMode() {
-		return findViewById(R.id.left_pane) != null && findViewById(R.id.right_pane) != null;
-	}
 
-	private Pane mCurrentPane = Pane.RIGHT;
-	
-	public Pane getCurrentPane() {
-		return mCurrentPane;
-	}
- 	
-	public static enum Pane {
-		LEFT,RIGHT;
-	}
-	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -241,6 +248,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		super.onStop();
 	}
 
+	public void setCurrentPane(int pane) {
+		mCurrentPaneIdx = pane == 0 ? 0 : 1;
+	}
+
 	public void setPagingEnabled(boolean enabled) {
 		if (mIndicator != null) {
 			mIndicator.setPagingEnabled(enabled);
@@ -261,9 +272,23 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		mProgress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
 	}
 
-	@Override
-	public void onBackStackChanged() {
-		
+	public int showAtPane(int pane_idx, Fragment fragment) {
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		int pane = PANE_IDS[pane_idx];
+		switch (pane) {
+			case PANE_LEFT:
+			case PANE_RIGHT: {
+				ft.replace(pane, fragment);
+				break;
+			}
+			default: {
+				return pane_idx == 0 ? 0 : 1;
+			}
+		}
+		ft.addToBackStack(null);
+		ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+		ft.commit();
+		return pane_idx == 0 ? 1 : 0;
 	}
 
 }

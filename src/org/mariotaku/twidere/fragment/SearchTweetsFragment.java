@@ -42,7 +42,7 @@ public class SearchTweetsFragment extends BaseListFragment implements LoaderCall
 		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		mAdapter = new TweetsAdapter(getActivity(), imageloader);
 		mListView = getListView();
 		setListAdapter(mAdapter);

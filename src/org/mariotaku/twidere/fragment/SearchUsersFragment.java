@@ -143,7 +143,7 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 		public UsersAdapter(Context context) {
 			super(context, R.layout.user_list_item, R.id.bio);
 			TwidereApplication application = (TwidereApplication) context.getApplicationContext();
-			mImageLoader = application.getListProfileImageLoader();
+			mImageLoader = application.getProfileImageLoader();
 			application.getServiceInterface();
 		}
 

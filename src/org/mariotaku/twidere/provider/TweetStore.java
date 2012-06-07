@@ -234,6 +234,31 @@ public final class TweetStore implements Constants {
 
 	}
 
+	public static interface Messages extends BaseColumns {
+		public static final String CONTENT_PATH = "messages";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
+
+		/**
+		 * Account ID of the status.<br>
+		 * Type: TEXT
+		 */
+		public static final String ACCOUNT_ID = "account_id";
+
+		/**
+		 * Status content.<br>
+		 * Type: TEXT
+		 */
+		public static final String TEXT = "text";
+
+		public static final String STATE = "state";
+
+		public static final int STATE_INCOMING = 0;
+		public static final int STATE_OUTGOING = 1;
+		public static final int STATE_OUTGOING_UNSENT = 2;
+	}
+
 	public static interface Statuses extends BaseColumns {
 
 		public static final String CONTENT_PATH = "statuses";

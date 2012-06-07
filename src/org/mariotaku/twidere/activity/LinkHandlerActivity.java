@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.BaseFragment;
 import org.mariotaku.twidere.fragment.DraftsFragment;
@@ -67,10 +69,10 @@ public class LinkHandlerActivity extends BaseActivity {
 		if (uri != null) {
 			switch (URI_MATCHER.match(uri)) {
 				case CODE_STATUS: {
-					Bundle extras = getIntent().getExtras();
+					final Bundle extras = getIntent().getExtras();
 					fragment = new ViewStatusFragment();
-					String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
+					final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 					bundle = extras != null ? new Bundle(extras) : new Bundle();
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
@@ -78,31 +80,37 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_USER: {
 					fragment = new UserProfileFragment();
-					String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-					String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					bundle = new Bundle();
-					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
+					if (!isNullOrEmpty(param_screen_name)) {
+						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					}
+					if (!isNullOrEmpty(param_user_id)) {
+						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					}
 					break;
 				}
 				case CODE_CONVERSATION: {
 					fragment = new ViewConversationFragment();
-					String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
+					final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 					bundle = new Bundle();
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
 					break;
 				}
 				case CODE_SEARCH: {
-					String type = uri.getQueryParameter(QUERY_PARAM_TYPE);
+					final String type = uri.getQueryParameter(QUERY_PARAM_TYPE);
 					if (QUERY_PARAM_VALUE_TWEETS.equals(type)) {
 						fragment = new SearchTweetsFragment();
 					} else if (QUERY_PARAM_VALUE_USERS.equals(type)) {
 						fragment = new SearchUsersFragment();
 					}
-					String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
-					String query = uri.getQueryParameter(QUERY_PARAM_QUERY);
+					final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+					final String query = uri.getQueryParameter(QUERY_PARAM_QUERY);
 					bundle = new Bundle();
 					bundle.putString(INTENT_KEY_QUERY, query);
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));

@@ -16,6 +16,7 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Messages;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
 import twitter4j.DirectMessage;
@@ -149,38 +150,34 @@ public final class Utils implements Constants {
 	}
 
 	public static synchronized void cleanDatabasesByItemLimit(Context context) {
-		ContentResolver resolver = context.getContentResolver();
-		String[] cols = new String[0];
-		int item_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
+		final ContentResolver resolver = context.getContentResolver();
+		final int item_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 
 		for (long account_id : getAccountIds(context)) {
 			// Clean statuses.
 			for (Uri uri : STATUSES_URIS) {
-				Cursor cur = resolver.query(uri, cols, Statuses.ACCOUNT_ID + "=" + account_id, null,
-						Statuses.DEFAULT_SORT_ORDER);
-				if (cur != null && cur.getCount() > item_limit) {
-					cur.moveToPosition(item_limit - 1);
-					int _id = cur.getInt(cur.getColumnIndexOrThrow(Statuses._ID));
-					resolver.delete(uri, Statuses._ID + "<" + _id, null);
-				}
-				if (cur != null) {
-					cur.close();
-				}
+				String table = getTableNameForContentUri(uri);
+				StringBuilder where = new StringBuilder();
+				where.append(Statuses.ACCOUNT_ID + " = " + account_id);
+				where.append(" AND ");
+				where.append(Statuses._ID + " NOT IN (");
+				where.append(" SELECT " + Statuses._ID + " FROM " + table);
+				where.append(" WHERE " + Statuses.ACCOUNT_ID + " = " + account_id);
+				where.append(" ORDER BY " + Statuses.STATUS_ID + " DESC");
+				where.append(" LIMIT " + item_limit + ")");
+				resolver.delete(uri, where.toString(), null);
 			}
 		}
 		// Clean cached users.
 		{
 			Uri uri = CachedUsers.CONTENT_URI;
-			Cursor cur = resolver.query(uri, cols, null, null, null);
-			if (cur != null && cur.getCount() > item_limit * 4) {
-				cur.moveToPosition(item_limit - 1);
-				int _id = cur.getInt(cur.getColumnIndexOrThrow(Statuses._ID));
-				resolver.delete(uri, Statuses._ID + "<" + _id, null);
-			}
-			if (cur != null) {
-				cur.close();
-			}
+			String table = getTableNameForContentUri(uri);
+			StringBuilder where = new StringBuilder();
+			where.append(Statuses._ID + " NOT IN (");
+			where.append(" SELECT " + CachedUsers._ID + " FROM " + table);
+			where.append(" LIMIT " + item_limit * 8 + ")");
+			resolver.delete(uri, where.toString(), null);
 		}
 	}
 
@@ -572,6 +569,15 @@ public final class Utils implements Constants {
 		return null;
 	}
 
+	public static String getQuoteStatus(Context context, String screen_name, String text) {
+		String quote_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
+				PREFERENCE_KEY_QUOTE_FORMAT, PREFERENCE_DEFAULT_QUOTE_FORMAT);
+		if (!isNullOrEmpty(quote_format)) {
+			quote_format = PREFERENCE_DEFAULT_QUOTE_FORMAT;
+		}
+		return quote_format.replace(QUOTE_FORMAT_TEXT_PATTERN, '@' + screen_name + ':' + text);
+	}
+
 	/**
 	 * @deprecated
 	 */
@@ -725,6 +731,8 @@ public final class Utils implements Constants {
 				Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY);
+		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET);
 		Twitter twitter = null;
 		StringBuilder where = new StringBuilder();
 		where.append(Accounts.USER_ID + "=" + account_id);
@@ -774,8 +782,13 @@ public final class Utils implements Constants {
 				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
 					case Accounts.AUTH_TYPE_XAUTH:
-						cb.setOAuthConsumerKey(CONSUMER_KEY);
-						cb.setOAuthConsumerSecret(CONSUMER_SECRET);
+						if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
+							cb.setOAuthConsumerKey(CONSUMER_KEY);
+							cb.setOAuthConsumerSecret(CONSUMER_SECRET);
+						} else {
+							cb.setOAuthConsumerKey(consumer_key);
+							cb.setOAuthConsumerSecret(consumer_secret);
+						}
 						twitter = new TwitterFactory(cb.build()).getInstance(new AccessToken(cur.getString(cur
 								.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN)), cur.getString(cur
 								.getColumnIndexOrThrow(Accounts.TOKEN_SECRET))));
@@ -922,7 +935,12 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues makeMessagesContentValues(DirectMessage message, long account_id) {
-		return null;
+		ContentValues values = new ContentValues();
+		values.put(Messages.ACCOUNT_ID, account_id);
+		values.put(Messages.TEXT, message.getText());
+		values.put(Messages.STATE, message.getSenderId() == account_id ? Messages.STATE_OUTGOING
+				: Messages.STATE_INCOMING);
+		return values;
 	}
 
 	public static ContentValues makeStatusesContentValues(Status status, long account_id) {

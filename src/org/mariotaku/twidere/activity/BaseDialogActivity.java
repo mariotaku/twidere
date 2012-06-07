@@ -4,6 +4,7 @@ import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
 
 import android.content.Context;
@@ -16,6 +17,10 @@ import android.support.v4.app.FragmentActivity;
 public class BaseDialogActivity extends FragmentActivity implements Constants, ActivityThemeChangeInterface {
 
 	private int mThemeId;
+
+	public TwidereApplication getTwidereApplication() {
+		return (TwidereApplication) getApplication();
+	}
 
 	@Override
 	public boolean isThemeChanged() {

@@ -30,6 +30,7 @@
 	<string name="twip_o">twip O 模式</string>
 	<string name="advanced">高级</string>
 	<string name="save">保存</string>
+	<string name="edit">编辑</string>
 	<string name="test">测试</string>
 	<string name="login_to_twitter">登录到 Twitter</string>
 	<string name="edit_api">编辑 API</string>
@@ -159,7 +160,7 @@
 	<string name="profile_image_update_success">个人资料图片已更新</string>
 	<string name="display_name">显示姓名</string>
 	<string name="display_name_summaryon">显示推文作者的姓名。</string>
-	<string name="display_name_summaryoff">显示推文作者的用户名（例如 @username）。</string>
+	<string name="display_name_summaryoff">显示推文作者的用户名。</string>
 	<string name="text_size">文字尺寸</string>
 	<string name="text_size_summary">推文的文字尺寸。</string>
 	<string name="cannot_get_location">不能获得你的位置。</string>
@@ -178,5 +179,10 @@
 	<string name="send_all_confirm">你确定发送所有未发送的推文？</string>
 	<string name="delete_draft_confirm">你确定删除这条未发送的推文？</string>
 	<string name="retry">重试</string>
+	<string name="more">更多</string>
+	<string name="quote_format">引用格式</string>
+	<string name="quote_format_summary">设定推文引用的格式</string>
+	<string name="quote_format_message">\"[TEXT]\" 将被替换成要引用的推文</string>
+	<string name="direct_messages">私信</string>
 
 </resources>

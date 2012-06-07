@@ -3,25 +3,27 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
+import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
-import java.util.regex.Pattern;
-
 import org.mariotaku.popupmenu.MenuBar;
 import org.mariotaku.popupmenu.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.LinkHandlerActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.AutoLink;
+import org.mariotaku.twidere.util.AutoLink.OnLinkClickListener;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.Linkify;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusesCursorIndices;
+
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -34,11 +36,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.URLSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,7 +51,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class ViewStatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener {
+public class ViewStatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener,
+		OnLinkClickListener {
 
 	private long mAccountId, mStatusId;
 
@@ -120,12 +122,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.profile: {
-				Uri.Builder builder = new Uri.Builder();
-				builder.scheme(SCHEME_TWIDERE);
-				builder.authority(AUTHORITY_USER);
-				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, mStatus.screen_name);
-				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+				openUserProfile(mStatus.account_id, mStatus.user_id, null);
 				break;
 			}
 			case R.id.follow: {
@@ -133,12 +130,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				break;
 			}
 			case R.id.in_reply_to: {
-				Uri.Builder builder = new Uri.Builder();
-				builder.scheme(SCHEME_TWIDERE);
-				builder.authority(AUTHORITY_CONVERSATION);
-				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
-				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(mStatusId));
-				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+				openConversation(mStatus);
 				break;
 			}
 			case R.id.view_map: {
@@ -165,6 +157,17 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			mFollowInfoTask.cancel(true);
 		}
 		super.onDestroyView();
+	}
+
+	@Override
+	public void onLinkClick(String link, int type) {
+		switch (type) {
+			case AutoLink.LINK_TYPE_MENTIONS: {
+				openUserProfile(mStatus.account_id, -1, link);
+				break;
+			}
+		}
+
 	}
 
 	@Override
@@ -198,7 +201,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
 				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
 				bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
-				bundle.putString(INTENT_KEY_TEXT, "RT @" + screen_name + ": " + text_plain);
+				bundle.putString(INTENT_KEY_TEXT, getQuoteStatus(getActivity(), screen_name, text_plain));
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;
@@ -263,10 +266,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		if (mStatus.text != null) {
 			mTextView.setText(mStatus.text);
 		}
-		Pattern mentions_pattern = Pattern.compile("@([A-Za-z0-9_]+)");
-		String mentions_scheme = "twidere://user?" + QUERY_PARAM_ACCOUNT_ID + "=" + mAccountId + "&"
-				+ QUERY_PARAM_SCREEN_NAME + "=";
-		Linkify.addLinks(mTextView, mentions_pattern, mentions_scheme);
+		AutoLink linkify = new AutoLink(mTextView);
+		linkify.setmOnLinkClickListener(this);
+		linkify.addLinks(AutoLink.LINK_TYPE_MENTIONS);
+		linkify.addLinks(AutoLink.LINK_TYPE_HASHTAGS);
 		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
 		boolean is_reply = mStatus.in_reply_to_status_id != -1;
 		String time = formatToLongTimeString(getActivity(), mStatus.status_timestamp);
@@ -279,11 +282,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mViewMapButton.setVisibility(mStatus.location != null ? View.VISIBLE : View.GONE);
 		mViewMediaButton.setVisibility(mStatus.has_media ? View.VISIBLE : View.GONE);
 
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		imageloader.displayImage(mStatus.profile_image_url, mProfileImageView);
 	}
 
-	
 	private void getStatus() {
 		ParcelableStatus status = getArguments().getParcelable(INTENT_KEY_STATUS);
 		if (status != null) {
@@ -312,6 +314,57 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			} else {
 				// Maybe I'll remove this fragment here?
 			}
+		}
+	}
+
+	private void openConversation(ParcelableStatus status) {
+		final long account_id = status.account_id, status_id = status.status_id;
+		FragmentActivity activity = getActivity();
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new ViewConversationFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(INTENT_KEY_STATUS_ID, status_id);
+			fragment.setArguments(args);
+			home_activity.showAtPane(home_activity.getCurrentPane() == 0 ? 1 : 0, fragment);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_CONVERSATION);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
+			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(mStatusId));
+			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	private void openUserProfile(long account_id, long user_id, String screen_name) {
+		FragmentActivity activity = getActivity();
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new UserProfileFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (user_id != -1) {
+				args.putLong(INTENT_KEY_USER_ID, user_id);
+			}
+			if (screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			}
+			fragment.setArguments(args);
+			home_activity.showAtPane(home_activity.getCurrentPane(), fragment);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (user_id != -1) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
 

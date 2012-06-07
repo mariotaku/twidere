@@ -10,6 +10,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.StatusViewHolder;
+import org.mariotaku.twidere.util.StatusesAdapterInterface;
 import org.mariotaku.twidere.util.StatusesCursorIndices;
 
 import android.content.Context;
@@ -18,7 +19,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class StatusesCursorAdapter extends SimpleCursorAdapter {
+public class StatusesCursorAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface {
 
 	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
 	private final LazyImageLoader mImageLoader;
@@ -105,6 +106,7 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 		super.changeCursor(cursor);
 	}
 
+	@Override
 	public ParcelableStatus findItem(long id) {
 		for (int i = 0; i < getCount(); i++) {
 			if (getItemId(i) == id) return new ParcelableStatus(getItem(i), mIndices);
@@ -127,22 +129,27 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter {
 		return view;
 	}
 
+	@Override
 	public void setDisplayName(boolean display) {
 		mDisplayName = display;
 	}
 
+	@Override
 	public void setDisplayProfileImage(boolean display) {
 		mDisplayProfileImage = display;
 	}
 
+	@Override
 	public void setShowAccountColor(boolean show) {
 		mShowAccountColor = show;
 	}
 
+	@Override
 	public void setShowLastItemAsGap(boolean gap) {
 		mShowLastItemAsGap = gap;
 	}
 
+	@Override
 	public void setStatusesTextSize(float text_size) {
 		mTextSize = text_size;
 	}

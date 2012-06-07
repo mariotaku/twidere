@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
+import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
@@ -70,7 +71,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		long account_id = bundle.getLong(INTENT_KEY_ACCOUNT_ID, INVALID_ID);
 		long status_id = bundle.getLong(INTENT_KEY_STATUS_ID, INVALID_ID);
 
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
 			mShowConversationTask.cancel(true);
 		}
@@ -156,7 +157,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
 					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
 					bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
-					bundle.putString(INTENT_KEY_TEXT, "RT @" + screen_name + ": " + text_plain);
+					bundle.putString(INTENT_KEY_TEXT, getQuoteStatus(getActivity(), screen_name, text_plain));
 					intent.putExtras(bundle);
 					startActivity(intent);
 					break;

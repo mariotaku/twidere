@@ -5,6 +5,7 @@ import static org.mariotaku.twidere.util.Utils.restartActivity;
 import org.mariotaku.actionbarcompat.app.ActionBarPreferenceActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
 
 import android.content.Context;
@@ -17,6 +18,10 @@ public class BasePreferenceActivity extends ActionBarPreferenceActivity implemen
 		ActivityThemeChangeInterface {
 
 	private int mThemeId;
+
+	public TwidereApplication getTwidereApplication() {
+		return (TwidereApplication) getApplication();
+	}
 
 	@Override
 	public boolean isThemeChanged() {

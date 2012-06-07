@@ -10,7 +10,7 @@
 	<string name="add_location">添加位置</string>
 	<string name="add_image">添加圖片</string>
 	<string name="take_photo">拍照</string>
-		<string name="remove_location">移除位置</string>
+	<string name="remove_location">移除位置</string>
 	<string name="remove_image">移除圖片</string>
 	<string name="remove_photo">移除相片</string>
 	<string name="tweet_hint">你在做什麼？</string>
@@ -30,6 +30,7 @@
 	<string name="twip_o">twip O 模式</string>
 	<string name="advanced">高級</string>
 	<string name="save">保存</string>
+	<string name="edit">編輯</string>
 	<string name="test">測試</string>
 	<string name="login_to_twitter">登錄到 Twitter</string>
 	<string name="edit_api">編輯 API</string>
@@ -67,6 +68,7 @@
 	<string name="unfav">取消收藏</string>
 	<string name="reply">回覆</string>
 	<string name="share">分享</string>
+	<string name="share_via_twidere">通過 Twidere 分享</string>
 	<string name="view">查看</string>
 	<string name="view_image">圖像</string>
 	<string name="view_media">媒體</string>
@@ -158,7 +160,7 @@
 	<string name="profile_image_update_success">個人資料圖片已更新</string>
 	<string name="display_name">顯示姓名</string>
 	<string name="display_name_summaryon">顯示推文作者的姓名。</string>
-	<string name="display_name_summaryoff">顯示推文作者的用戶名（例如 @username）。</string>
+	<string name="display_name_summaryoff">顯示推文作者的用戶名。</string>
 	<string name="text_size">文字尺寸</string>
 	<string name="text_size_summary">推文的文字尺寸。</string>
 	<string name="cannot_get_location">不能獲得你的位置。</string>
@@ -177,5 +179,9 @@
 	<string name="send_all_confirm">你確定發送所有未發送的推文？</string>
 	<string name="delete_draft_confirm">你確定刪除這條未發送的推文？</string>
 	<string name="retry">重試</string>
+	<string name="more">更多</string>
+	<string name="quote_format">引用格式</string>
+	<string name="quote_format_summary">設定推文引用的格式</string>
+	<string name="quote_format_message">\"[TEXT]\" 將被替換成要引用的推文</string>
 
 </resources>

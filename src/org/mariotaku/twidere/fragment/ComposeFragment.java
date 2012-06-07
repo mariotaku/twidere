@@ -140,7 +140,7 @@ public class ComposeFragment extends BaseFragment implements TextWatcher, Locati
 		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
 		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
-				.getListProfileImageLoader();
+				.getProfileImageLoader();
 		mEditText.setAdapter(new UserAutoCompleteAdapter(getActivity(), imageloader));
 		mEditText.setTokenizer(new ScreenNameTokenizer(mEditText));
 		if (mText != null) {

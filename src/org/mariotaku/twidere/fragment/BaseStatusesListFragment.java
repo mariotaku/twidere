@@ -1,12 +1,9 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
-import static org.mariotaku.twidere.util.Utils.buildFilterWhereClause;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getLastSortIds;
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
-import static org.mariotaku.twidere.util.Utils.getTableId;
-import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
+import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
@@ -14,27 +11,23 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.adapter.StatusesCursorAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
-import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusViewHolder;
+import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -50,33 +43,56 @@ import android.widget.ListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public abstract class StatusesListFragment extends BaseFragment implements OnRefreshListener, LoaderCallbacks<Cursor>,
-		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
+public abstract class BaseStatusesListFragment<Data> extends BaseFragment implements OnRefreshListener,
+		LoaderCallbacks<Data>, OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
-	public ServiceInterface mServiceInterface;
-	public PullToRefreshListView mListView;
-	public ContentResolver mResolver;
+	private ServiceInterface mServiceInterface;
+	private PullToRefreshListView mListView;
+
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
-	private StatusesCursorAdapter mAdapter;
 
 	private Handler mHandler;
 	private Runnable mTicker;
+
 	private PopupMenu mPopupMenu;
 
-	public ParcelableStatus mSelectedStatus;
+	private ParcelableStatus mSelectedStatus;
 	private int mRunningTaskId;
 	private boolean mBusy, mTickerStopped;
+
 	private boolean mDisplayProfileImage, mDisplayName, mReachedBottom, mActivityFirstCreated;
 	private float mTextSize;
 	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
 
+	public AsyncTaskManager getAsyncTaskManager() {
+		return mAsyncTaskManager;
+	}
+
 	public abstract Uri getContentUri();
 
-	public HomeActivity getHomeActivity() {
-		FragmentActivity activity = getActivity();
-		if (activity instanceof HomeActivity) return (HomeActivity) activity;
-		return null;
+	public abstract StatusesAdapterInterface getListAdapter();
+
+	public final PullToRefreshListView getListView() {
+		return mListView;
+	}
+
+	public ParcelableStatus getSelectedStatus() {
+		return mSelectedStatus;
+	}
+
+	public ServiceInterface getServiceInterface() {
+		return mServiceInterface;
+	}
+
+	public SharedPreferences getSharedPreferences() {
+		return mPreferences;
+	}
+
+	public abstract int getStatuses(long[] account_ids, long[] max_ids);
+
+	public boolean isActivityFirstCreated() {
+		return mActivityFirstCreated;
 	}
 
 	@Override
@@ -84,21 +100,18 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		super.onActivityCreated(savedInstanceState);
 		mAsyncTaskManager = AsyncTaskManager.getInstance();
 		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mResolver = getActivity().getContentResolver();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getListProfileImageLoader();
-		mAdapter = new StatusesCursorAdapter(getActivity(), imageloader);
 		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
 		ListView list = mListView.getRefreshableView();
-		list.setAdapter(mAdapter);
+		list.setAdapter(getListAdapter());
 		list.setOnScrollListener(this);
 		list.setOnItemClickListener(this);
 		list.setOnItemLongClickListener(this);
-		getLoaderManager().initLoader(0, null, this);
+		getLoaderManager().initLoader(0, getArguments(), this);
 	}
 
 	@Override
@@ -111,21 +124,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
-				Statuses.STATUS_TIMESTAMP, Statuses.TEXT_PLAIN, Statuses.NAME, Statuses.SCREEN_NAME,
-				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID, Statuses.IN_REPLY_TO_SCREEN_NAME,
-				Statuses.LOCATION, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME,
-				Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_RETWEET, Statuses.IS_FAVORITE, Statuses.HAS_MEDIA,
-				Statuses.IS_PROTECTED, Statuses.IS_GAP };
-		Uri uri = getContentUri();
-		String where = buildActivatedStatsWhereClause(getActivity(), null);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
-			String table = getTableNameForContentUri(uri);
-			where = buildFilterWhereClause(table, where);
-		}
-		return new CursorLoader(getActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
-	}
+	public abstract Loader<Data> onCreateLoader(int id, Bundle args);
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -142,12 +141,12 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			ParcelableStatus status = mAdapter.findItem(id);
+			ParcelableStatus status = getListAdapter().findItem(id);
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
-				showSatus(status);
+				openStatus(status);
 			}
 		}
 	}
@@ -158,7 +157,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		if (tag instanceof StatusViewHolder) {
 			StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			mSelectedStatus = mAdapter.findItem(id);
+			mSelectedStatus = getListAdapter().findItem(id);
 			mPopupMenu = new PopupMenu(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_status);
 			setMenuForStatus(getActivity(), mPopupMenu.getMenu(), mSelectedStatus);
@@ -171,15 +170,10 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		mAdapter.changeCursor(null);
-	}
+	public abstract void onLoaderReset(Loader<Data> loader);
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mAdapter.changeCursor(data);
-		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
-	}
+	public abstract void onLoadFinished(Loader<Data> loader, Data data);
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
@@ -215,7 +209,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
 					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
 					bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
-					bundle.putString(INTENT_KEY_TEXT, "RT @" + screen_name + ": " + text_plain);
+					bundle.putString(INTENT_KEY_TEXT, getQuoteStatus(getActivity(), screen_name, text_plain));
 					intent.putExtras(bundle);
 					startActivity(intent);
 					break;
@@ -251,12 +245,10 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		return true;
 	}
 
-	@Override
-	public void onRefresh() {
-		long[] account_ids = getActivatedAccountIds(getActivity());
-		mRunningTaskId = getStatuses(account_ids, null);
+	public abstract void onPostStart();
 
-	}
+	@Override
+	public abstract void onRefresh();
 
 	@Override
 	public void onResume() {
@@ -265,10 +257,10 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_LOAD_MORE_AUTOMATICALLY, false);
-		mAdapter.setShowLastItemAsGap(!mLoadMoreAutomatically);
-		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayName(display_name);
-		mAdapter.setStatusesTextSize(text_size);
+		getListAdapter().setShowLastItemAsGap(!mLoadMoreAutomatically);
+		getListAdapter().setDisplayProfileImage(display_profile_image);
+		getListAdapter().setDisplayName(display_name);
+		getListAdapter().setStatusesTextSize(text_size);
 		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name || mTextSize != text_size) {
 			mDisplayProfileImage = display_profile_image;
 			mDisplayName = display_name;
@@ -331,12 +323,7 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		};
 		mTicker.run();
 
-		if (!mActivityFirstCreated) {
-			if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
-				mListView.onRefreshComplete();
-			}
-			getLoaderManager().restartLoader(0, null, this);
-		}
+		onPostStart();
 	}
 
 	@Override
@@ -349,23 +336,17 @@ public abstract class StatusesListFragment extends BaseFragment implements OnRef
 		super.onStop();
 	}
 
-	private int getStatuses(long[] account_ids, long[] max_ids) {
-		switch (getTableId(getContentUri())) {
-			case URI_STATUSES:
-				return mServiceInterface.getHomeTimeline(account_ids, max_ids);
-			case URI_MENTIONS:
-				return mServiceInterface.getMentions(account_ids, max_ids);
-			case URI_FAVORITES:
-				break;
-		}
-		return -1;
-	}
-
-	private void showSatus(ParcelableStatus status) {
+	private void openStatus(ParcelableStatus status) {
 		final long account_id = status.account_id, status_id = status.status_id;
 		FragmentActivity activity = getActivity();
-		if (activity instanceof HomeActivity && ((HomeActivity)activity).isDualPaneMode()) {
-			
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new ViewStatusFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(INTENT_KEY_STATUS_ID, status_id);
+			fragment.setArguments(args);
+			home_activity.showAtPane(home_activity.getCurrentPane(), fragment);
 		} else {
 			Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);

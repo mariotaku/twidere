@@ -23,6 +23,7 @@ import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Messages;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
@@ -527,8 +528,9 @@ public class TwidereService extends Service implements Constants {
 
 			AccountResponse result = new AccountResponse(account_id, max_id, null);
 
-			SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT) + 1;
+			final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			final int load_item_limit = prefs
+					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT) + 1;
 			Twitter twitter = getTwitterInstance(context, account_id, true);
 			if (twitter != null) {
 				try {
@@ -594,7 +596,7 @@ public class TwidereService extends Service implements Constants {
 
 				long account_id = response.account_id;
 				ResponseList<DirectMessage> statuses = response.responselist;
-				Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id, null, null);
+				Cursor cur = resolver.query(uri, new String[0], Messages.ACCOUNT_ID + " = " + account_id, null, null);
 				boolean no_items_before = false;
 				if (cur != null) {
 					no_items_before = cur.getCount() <= 0;
@@ -613,8 +615,6 @@ public class TwidereService extends Service implements Constants {
 					final User user = status.getSender();
 					final long user_id = user.getId();
 					final long status_id = status.getId();
-					resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + user_id, null);
-					resolver.insert(CachedUsers.CONTENT_URI, makeCachedUsersContentValues(user));
 
 					status_ids.add(status_id);
 

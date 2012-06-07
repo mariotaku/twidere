@@ -3,36 +3,32 @@
 	android:id="@+id/profile"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:gravity="center_vertical"
-	android:paddingBottom="8dp"
-	android:paddingTop="8dp">
+	android:gravity="center_vertical">
 
-	<org.mariotaku.twidere.widget.RoundCorneredImageView
-		android:id="@+id/profile_image"
-		android:layout_width="@dimen/profile_image_size"
-		android:layout_height="@dimen/profile_image_size"
-		android:layout_margin="8dp"
-		android:background="@drawable/list_selector_holo_light"
-		android:scaleType="fitCenter"
-		android:src="@drawable/ic_profile_image_default"/>
-
-	<View
-		android:id="@+id/profile_divider_vertical"
-		android:layout_width="0.2dp"
+	<FrameLayout
+		android:id="@+id/profile_image_container"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignBottom="@+id/profile_image"
-		android:layout_alignTop="@+id/profile_image"
-		android:layout_toRightOf="@+id/profile_image"
-		android:background="#40808080"/>
+		android:background="@drawable/list_selector_holo_light">
+
+		<org.mariotaku.twidere.widget.RoundCorneredImageView
+			android:id="@+id/profile_image"
+			android:layout_width="@dimen/profile_image_size"
+			android:layout_height="@dimen/profile_image_size"
+			android:layout_gravity="center"
+			android:layout_margin="8dp"
+			android:scaleType="fitCenter"
+			android:src="@drawable/ic_profile_image_default"/>
+	</FrameLayout>
 
 	<LinearLayout
 		android:id="@+id/name_view"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignBottom="@+id/profile_image"
-		android:layout_alignTop="@+id/profile_image"
+		android:layout_alignBottom="@+id/profile_image_container"
+		android:layout_alignTop="@+id/profile_image_container"
 		android:layout_toLeftOf="@+id/follow_indicator"
-		android:layout_toRightOf="@+id/profile_divider_vertical"
+		android:layout_toRightOf="@+id/profile_image_container"
 		android:background="@drawable/list_selector_holo_light"
 		android:gravity="center_vertical"
 		android:orientation="vertical"
@@ -59,9 +55,9 @@
 		android:id="@+id/follow_indicator"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignBottom="@+id/profile_image"
+		android:layout_alignBottom="@+id/profile_image_container"
 		android:layout_alignParentRight="true"
-		android:layout_alignTop="@+id/profile_image"
+		android:layout_alignTop="@+id/profile_image_container"
 		android:layout_margin="4dp"
 		android:visibility="gone">
 

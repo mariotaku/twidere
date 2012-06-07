@@ -160,7 +160,7 @@
 	<string name="profile_image_update_success">Profile image update success.</string>
 	<string name="display_name">Display name</string>
 	<string name="display_name_summaryon">Display username of tweet.</string>
-	<string name="display_name_summaryoff">Display screen name (e.g. @username) of tweet</string>
+	<string name="display_name_summaryoff">Display screen name of tweet</string>
 	<string name="text_size">Text size</string>
 	<string name="text_size_summary">Text size of statuses.</string>
 	<string name="cannot_get_location">Can\'t get your location.</string>
@@ -180,5 +180,9 @@
 	<string name="delete_draft_confirm">Are you sure to send this unsent tweet?</string>
 	<string name="retry">Retry</string>
 	<string name="more">More</string>
+	<string name="quote_format">Quote format</string>
+	<string name="quote_format_summary">Set quote format for tweets.</string>
+	<string name="quote_format_message">\"[TEXT]\" will be replaced with tweet to quote.</string>
+	<string name="direct_messages">Direct messages</string>
 
 </resources>

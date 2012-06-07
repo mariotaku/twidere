@@ -326,10 +326,12 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 	}
 
-	private void setAPI(ConfigurationBuilder cb) {
+	private ConfigurationBuilder setAPI(ConfigurationBuilder cb) {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY);
+		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET);
 		if (!isNullOrEmpty(mRestBaseURL)) {
 			cb.setRestBaseURL(mRestBaseURL);
 		}
@@ -348,10 +350,16 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		if (!isNullOrEmpty(mOAuthRequestTokenURL)) {
 			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
 		}
-		cb.setOAuthConsumerKey(CONSUMER_KEY);
-		cb.setOAuthConsumerSecret(CONSUMER_SECRET);
+		if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
+			cb.setOAuthConsumerKey(CONSUMER_KEY);
+			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
+		} else {
+			cb.setOAuthConsumerKey(consumer_key);
+			cb.setOAuthConsumerSecret(consumer_secret);
+		}
 		cb.setGZIPEnabled(enable_gzip_compressing);
 		cb.setIgnoreSSLError(ignore_ssl_error);
+		return cb;
 	}
 
 	private void setSignInButton() {

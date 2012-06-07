@@ -42,6 +42,7 @@ public interface Constants extends TwitterConstants {
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_STATUS_ID = "status_id";
+	public static final String QUERY_PARAM_USER_ID = "user_id";
 	public static final String QUERY_PARAM_SCREEN_NAME = "screen_name";
 	public static final String QUERY_PARAM_QUERY = "query";
 	public static final String QUERY_PARAM_TYPE = "type";
@@ -64,6 +65,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_TEXT_SIZE = "text_size";
 	public static final String PREFERENCE_KEY_DARK_THEME = "dark_theme";
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
+	public static final String PREFERENCE_KEY_CLEAR_CACHE = "clear_cache";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
 	public static final String PREFERENCE_KEY_DISPLAY_NAME = "display_name";
 	public static final String PREFERENCE_KEY_COMPOSE_BUTTON = "bottom_compose_button";
@@ -73,10 +75,16 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_GZIP_COMPRESSING = "gzip_compressing";
 	public static final String PREFERENCE_KEY_IGNORE_SSL_ERROR = "ignore_ssl_error";
 	public static final String PREFERENCE_LOAD_MORE_AUTOMATICALLY = "load_more_automatically";
+	public static final String PREFERENCE_KEY_CONSUMER_KEY = "consumer_key";
+	public static final String PREFERENCE_KEY_CONSUMER_SECRET = "consumer_secret";
+	public static final String PREFERENCE_KEY_QUOTE_FORMAT = "quote_format";
 
+	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final float PREFERENCE_DEFAULT_TEXT_SIZE = 14.0f;
+
+	public static final String QUOTE_FORMAT_TEXT_PATTERN = "[TEXT]";
 
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 
@@ -115,6 +123,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_PAGE = "page";
 	public static final String INTENT_KEY_QUERY = "query";
 	public static final String INTENT_KEY_USER_ID = "user_id";
+	public static final String INTENT_KEY_MAX_ID = "max_id";
 	public static final String INTENT_KEY_STATUS_ID = "status_id";
 	public static final String INTENT_KEY_SCREEN_NAME = "screen_name";
 	public static final String INTENT_KEY_IN_REPLY_TO_ID = "in_reply_to_id";

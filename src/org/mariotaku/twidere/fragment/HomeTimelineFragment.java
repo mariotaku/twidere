@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 
-public class HomeTimelineFragment extends StatusesListFragment {
+public class HomeTimelineFragment extends CursorStatusesListFragment {
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -19,14 +19,14 @@ public class HomeTimelineFragment extends StatusesListFragment {
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
 				if (!intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
-					mListView.onRefreshComplete();
+					getListView().onRefreshComplete();
 				}
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
-				mListView.onRefreshComplete();
+				getListView().onRefreshComplete();
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if ((HomeTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
-				if (mListView != null) {
-					mListView.getRefreshableView().setSelection(0);
+				if (getListView() != null) {
+					getListView().getRefreshableView().setSelection(0);
 				}
 		}
 	};
