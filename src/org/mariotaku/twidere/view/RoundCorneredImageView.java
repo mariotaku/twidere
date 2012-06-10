@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.widget;
+package org.mariotaku.twidere.view;
 
 import static org.mariotaku.twidere.util.Utils.setViewLayerType;
 import android.content.Context;

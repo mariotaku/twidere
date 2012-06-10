@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.widget;
+package org.mariotaku.twidere.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

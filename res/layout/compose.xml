@@ -10,7 +10,7 @@
 		android:layout_weight="1"
 		android:padding="8dp">
 
-		<org.mariotaku.twidere.widget.StatusComposeEditText
+		<org.mariotaku.twidere.view.StatusComposeEditText
 			android:id="@+id/edit_text"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"

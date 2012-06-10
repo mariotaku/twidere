@@ -8,12 +8,14 @@ import org.mariotaku.actionbarcompat.app.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.fragment.DashboardFragment;
+import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.fragment.DiscoverFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.view.ExtendedViewPager;
+import org.mariotaku.twidere.view.TabPageIndicator;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -31,12 +33,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-
-import com.viewpagerindicator.ExtendedViewPager;
-import com.viewpagerindicator.TabPageIndicator;
 
 public class HomeActivity extends BaseActivity implements OnClickListener, OnBackStackChangedListener {
 
@@ -61,18 +61,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 	};
 
-	private int mCurrentPaneIdx = 1;
-
 	public static final int PANE_LEFT = R.id.left_pane, PANE_RIGHT = R.id.right_pane;
 
-	public static final int[] PANE_IDS = new int[] { PANE_LEFT, PANE_RIGHT };
-
-	public int getCurrentPane() {
-		return mCurrentPaneIdx;
-	}
-
 	public boolean isDualPaneMode() {
-		return findViewById(R.id.left_pane) != null && findViewById(R.id.right_pane) != null;
+		return findViewById(PANE_LEFT) instanceof ViewGroup && findViewById(PANE_RIGHT) instanceof ViewGroup;
 	}
 
 	@Override
@@ -170,7 +162,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 				R.drawable.ic_tab_connect);
 		mAdapter.addTab(DiscoverFragment.class, null, tab_display_label ? getString(R.string.discover) : null,
 				R.drawable.ic_tab_discover);
-		mAdapter.addTab(DashboardFragment.class, null, tab_display_label ? getString(R.string.me) : null,
+		mAdapter.addTab(AccountsFragment.class, null, tab_display_label ? getString(R.string.me) : null,
 				R.drawable.ic_tab_me);
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOffscreenPageLimit(3);
@@ -248,10 +240,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		super.onStop();
 	}
 
-	public void setCurrentPane(int pane) {
-		mCurrentPaneIdx = pane == 0 ? 0 : 1;
-	}
-
 	public void setPagingEnabled(boolean enabled) {
 		if (mIndicator != null) {
 			mIndicator.setPagingEnabled(enabled);
@@ -272,23 +260,20 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		mProgress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
 	}
 
-	public int showAtPane(int pane_idx, Fragment fragment) {
+	public void showAtPane(int pane, Fragment fragment, boolean addToBackStack) {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		int pane = PANE_IDS[pane_idx];
 		switch (pane) {
 			case PANE_LEFT:
 			case PANE_RIGHT: {
 				ft.replace(pane, fragment);
 				break;
 			}
-			default: {
-				return pane_idx == 0 ? 0 : 1;
-			}
 		}
-		ft.addToBackStack(null);
-		ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+		if (addToBackStack) {
+			ft.addToBackStack(null);
+		}
+		ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();
-		return pane_idx == 0 ? 1 : 0;
 	}
 
 }

@@ -10,7 +10,6 @@ import org.mariotaku.twidere.loader.UserTimelineLoader;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.content.Loader;
@@ -22,8 +21,10 @@ public class UserTimelineFragment extends BaseStatusesListFragment<List<Parcelab
 	private final List<ParcelableStatus> mData = new ArrayList<ParcelableStatus>();
 
 	@Override
-	public Uri getContentUri() {
-		return null;
+	public long[] getLastStatusIds() {
+		int last_idx = mAdapter.getCount() - 1;
+		long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).status_id : -1;
+		return last_id > 0 ? new long[] { last_id } : null;
 	}
 
 	@Override

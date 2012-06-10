@@ -1,178 +1,107 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.getTypeIcon;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.loader.TweetSearchLoader;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.StatusViewHolder;
+import org.mariotaku.twidere.util.ParcelableStatus;
 
-import twitter4j.Query;
-import twitter4j.Tweet;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.content.Loader;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
-public class SearchTweetsFragment extends BaseListFragment implements LoaderCallbacks<List<Tweet>> {
+public class SearchTweetsFragment extends BaseStatusesListFragment<List<ParcelableStatus>> implements
+		OnBackStackChangedListener {
 
-	private TweetsAdapter mAdapter;
-	private SharedPreferences mPreferences;
-	private boolean mDisplayProfileImage;
-	private boolean mDisplayName;
-	private ListView mListView;
+	private ParcelableStatusesAdapter mAdapter;
+	private final List<ParcelableStatus> mData = new ArrayList<ParcelableStatus>();
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
-		mAdapter = new TweetsAdapter(getActivity(), imageloader);
-		mListView = getListView();
-		setListAdapter(mAdapter);
-		getLoaderManager().initLoader(0, getArguments(), this);
+	public long[] getLastStatusIds() {
+		int last_idx = mAdapter.getCount() - 1;
+		long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).status_id : -1;
+		return last_id > 0 ? new long[] { last_id } : null;
 	}
 
 	@Override
-	public Loader<List<Tweet>> onCreateLoader(int id, Bundle args) {
+	public ParcelableStatusesAdapter getListAdapter() {
+		return mAdapter;
+	}
+
+	@Override
+	public int getStatuses(long[] account_ids, long[] max_ids) {
+		long max_id = max_ids != null && max_ids.length == 1 ? max_ids[0] : -1;
+		Bundle args = getArguments();
+		args.putLong(INTENT_KEY_MAX_ID, max_id);
+		getLoaderManager().restartLoader(0, args, this);
+		return -1;
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
+		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
+		super.onActivityCreated(savedInstanceState);
+		getFragmentManager().addOnBackStackChangedListener(this);
+	}
+
+	@Override
+	public void onBackStackChanged() {
+		if (getActivity() instanceof HomeActivity) {
+			((HomeActivity) getActivity()).setPagingEnabled(!isAdded());
+		}
+	}
+
+	@Override
+	public Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		if (args != null) {
-			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-			String query = args.getString(INTENT_KEY_QUERY);
-			return new TweetSearchLoader(getActivity(), account_id, new Query(query));
+			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
+			final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
+			final String query = args.getString(INTENT_KEY_QUERY);
+			if (query != null) return new TweetSearchLoader(getActivity(), account_id, query, max_id, mData);
+
 		}
 		return null;
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<Tweet>> loader) {
+	public void onDestroyView() {
+		mData.clear();
+		getFragmentManager().removeOnBackStackChangedListener(this);
+		super.onDestroyView();
+	}
+
+	@Override
+	public void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
+		getListView().onRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<Tweet>> loader, List<Tweet> data) {
-		setProgressBarIndeterminateVisibility(false);
+	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
 		mAdapter.clear();
 		if (data != null) {
-			for (Tweet tweet : data) {
-				mAdapter.add(tweet);
+			for (ParcelableStatus status : data) {
+				mAdapter.add(status);
 			}
 		}
+		getListView().onRefreshComplete();
+		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		mAdapter.setDisplayProfileImage(display_profile_image);
-		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name) {
-			mDisplayProfileImage = display_profile_image;
-			mDisplayName = display_name;
-			mListView.invalidateViews();
-		}
-	}
-
-	public static class TweetSearchLoader extends AsyncTaskLoader<List<Tweet>> {
-
-		private final Twitter mTwitter;
-		private final Query mQuery;
-
-		public TweetSearchLoader(Context context, long account_id, Query query) {
-			super(context);
-			mTwitter = getTwitterInstance(context, account_id, true);
-			mQuery = query;
-		}
-
-		@Override
-		public void deliverResult(List<Tweet> data) {
-			super.deliverResult(data);
-		}
-
-		@Override
-		public List<Tweet> loadInBackground() {
-			try {
-				return mTwitter.search(mQuery).getTweets();
-			} catch (TwitterException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		public void onStartLoading() {
-			forceLoad();
-		}
+	public void onPostStart() {
 
 	}
 
-	private static class TweetsAdapter extends ArrayAdapter<Tweet> {
-
-		private final LazyImageLoader image_loader;
-		private final Context context;
-		private boolean mDisplayProfileImage;
-
-		public TweetsAdapter(Context context, LazyImageLoader image_loader) {
-			super(context, R.layout.status_list_item, R.id.text);
-			this.context = context;
-			this.image_loader = image_loader;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = super.getView(position, convertView, parent);
-			Object tag = view.getTag();
-			StatusViewHolder holder = null;
-			if (tag instanceof StatusViewHolder) {
-				holder = (StatusViewHolder) tag;
-			} else {
-				holder = new StatusViewHolder(view, context);
-				view.setTag(holder);
-			}
-			Tweet tweet = getItem(position);
-			boolean has_media = tweet.getMediaEntities() != null && tweet.getMediaEntities().length > 0;
-			boolean has_location = tweet.getGeoLocation() != null;
-			holder.name.setText(tweet.getFromUser());
-			holder.text.setText(tweet.getText());
-			holder.tweet_time.setText(formatToShortTimeString(getContext(), tweet.getCreatedAt().getTime()));
-			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(null, null,
-					getTypeIcon(context, false, has_location, has_media), null);
-			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-			if (mDisplayProfileImage) {
-				image_loader.displayImage(parseURL(tweet.getProfileImageUrl()), holder.profile_image);
-			}
-			return view;
-		}
-
-		public URL parseURL(String url_string) {
-			try {
-				return new URL(url_string);
-			} catch (MalformedURLException e) {
-				// Do nothing.
-			}
-			return null;
-		}
-
-		public void setDisplayProfileImage(boolean display) {
-			mDisplayProfileImage = display;
-		}
-
+	@Override
+	public void onRefresh() {
+		getStatuses(null, null);
 	}
 
 }

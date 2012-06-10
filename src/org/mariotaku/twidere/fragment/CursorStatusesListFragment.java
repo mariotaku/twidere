@@ -3,6 +3,7 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
 import static org.mariotaku.twidere.util.Utils.buildFilterWhereClause;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getLastSortIds;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 
@@ -11,7 +12,6 @@ import org.mariotaku.twidere.adapter.StatusesCursorAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -24,15 +24,17 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	private StatusesCursorAdapter mAdapter;
 
-	private int mRunningTaskId;
-
-	@Override
 	public abstract Uri getContentUri();
 
 	public HomeActivity getHomeActivity() {
 		FragmentActivity activity = getActivity();
 		if (activity instanceof HomeActivity) return (HomeActivity) activity;
 		return null;
+	}
+
+	@Override
+	public long[] getLastStatusIds() {
+		return getLastSortIds(getActivity(), getContentUri());
 	}
 
 	@Override
@@ -92,9 +94,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	public void onPostStart() {
 		if (!isActivityFirstCreated()) {
-			if (!getAsyncTaskManager().isExcuting(mRunningTaskId)) {
-				getListView().onRefreshComplete();
-			}
 			getLoaderManager().restartLoader(0, null, this);
 		}
 	}
@@ -102,7 +101,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	public void onRefresh() {
 		long[] account_ids = getActivatedAccountIds(getActivity());
-		mRunningTaskId = getStatuses(account_ids, null);
+		getStatuses(account_ids, null);
 
 	}
 }

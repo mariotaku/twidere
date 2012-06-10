@@ -70,8 +70,6 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		setContentView(R.layout.select_account);
 		mListView = (ListView) findViewById(android.R.id.list);
 		mAddAccountButton = (Button) findViewById(R.id.add);
-		int layoutRes = MULTIPLE_ACCOUNTS_ENABLED ? android.R.layout.simple_list_item_multiple_choice
-				: android.R.layout.simple_list_item_single_choice;
 		String[] from = new String[] { Accounts.USERNAME };
 		int[] to = new int[] { android.R.id.text1 };
 		mCursor = getAccountsCursor();
@@ -79,11 +77,11 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 			finish();
 			return;
 		}
-		mAdapter = new SimpleCursorAdapter(this, layoutRes, mCursor, from, to, 0);
+		mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_multiple_choice, mCursor, from, to,
+				0);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
-		mListView
-				.setChoiceMode(MULTIPLE_ACCOUNTS_ENABLED ? ListView.CHOICE_MODE_MULTIPLE : ListView.CHOICE_MODE_SINGLE);
+		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		mAddAccountButton.setOnClickListener(this);
 
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();

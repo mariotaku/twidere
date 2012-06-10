@@ -3,6 +3,8 @@ package org.mariotaku.twidere.fragment;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.view.ExtendedViewPager;
+import org.mariotaku.twidere.view.TabPageIndicator;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -31,9 +33,6 @@ import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.viewpagerindicator.ExtendedViewPager;
-import com.viewpagerindicator.TabPageIndicator;
 
 public class FilterFragment extends BaseFragment {
 

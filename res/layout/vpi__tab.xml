@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+	style="?attr/tabStyle"
+	class="org.mariotaku.twidere.view.TabPageIndicator$TabView">
+
+	<ImageView
+		android:id="@android:id/icon"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:scaleType="center"/>
+
+	<TextView
+		android:id="@android:id/text1"
+		style="?attr/tabTextStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:ellipsize="marquee"
+		android:gravity="center"/>
+
+</view>

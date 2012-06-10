@@ -3,7 +3,7 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
-	<com.viewpagerindicator.ExtendedViewPager
+	<org.mariotaku.twidere.view.ExtendedViewPager
 		android:id="@+id/pager"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"

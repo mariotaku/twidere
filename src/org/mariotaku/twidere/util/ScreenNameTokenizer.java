@@ -1,6 +1,6 @@
 package org.mariotaku.twidere.util;
 
-import org.mariotaku.twidere.widget.StatusComposeEditText;
+import org.mariotaku.twidere.view.StatusComposeEditText;
 
 import android.text.SpannableString;
 import android.text.Spanned;

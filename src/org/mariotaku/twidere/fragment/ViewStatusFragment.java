@@ -5,9 +5,9 @@ import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
-import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 
 import org.mariotaku.popupmenu.MenuBar;
 import org.mariotaku.popupmenu.MenuBar.OnMenuItemClickListener;
@@ -327,7 +327,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			args.putLong(INTENT_KEY_STATUS_ID, status_id);
 			fragment.setArguments(args);
-			home_activity.showAtPane(home_activity.getCurrentPane() == 0 ? 1 : 0, fragment);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
 		} else {
 			Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -352,7 +352,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
-			home_activity.showAtPane(home_activity.getCurrentPane(), fragment);
+			home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
 		} else {
 			Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);

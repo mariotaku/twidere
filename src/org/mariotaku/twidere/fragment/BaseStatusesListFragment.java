@@ -1,7 +1,6 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getLastSortIds;
 import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
@@ -69,7 +68,7 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 		return mAsyncTaskManager;
 	}
 
-	public abstract Uri getContentUri();
+	public abstract long[] getLastStatusIds();
 
 	public abstract StatusesAdapterInterface getListAdapter();
 
@@ -279,10 +278,9 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 				mNotReachedBottomBefore = false;
 				return;
 			}
-			if (mLoadMoreAutomatically && mReachedBottom) {
+			if (mLoadMoreAutomatically && mReachedBottom && getListAdapter().getCount() > visibleItemCount) {
 				if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
-					mRunningTaskId = getStatuses(getActivatedAccountIds(getActivity()),
-							getLastSortIds(getActivity(), getContentUri()));
+					mRunningTaskId = getStatuses(getActivatedAccountIds(getActivity()), getLastStatusIds());
 				}
 			}
 		}
@@ -348,7 +346,7 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			args.putLong(INTENT_KEY_STATUS_ID, status_id);
 			fragment.setArguments(args);
-			home_activity.showAtPane(home_activity.getCurrentPane(), fragment);
+			home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
 		} else {
 			Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);

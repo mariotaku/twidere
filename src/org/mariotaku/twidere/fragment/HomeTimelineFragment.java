@@ -18,12 +18,12 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
-				if (!intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
+				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
+			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+				if (!getServiceInterface().isHomeTimelineRefreshing()){
 					getListView().onRefreshComplete();
 				}
-			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
-				getListView().onRefreshComplete();
-				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if ((HomeTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
 				if (getListView() != null) {
 					getListView().getRefreshableView().setSelection(0);
@@ -42,9 +42,13 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		IntentFilter filter = new IntentFilter(BROADCAST_HOME_TIMELINE_REFRESHED);
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
 		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		if (getActivity() != null) {
 			getActivity().registerReceiver(mStatusReceiver, filter);
+		}
+		if (!getServiceInterface().isHomeTimelineRefreshing()){
+			getListView().onRefreshComplete();
 		}
 	}
 

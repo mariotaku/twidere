@@ -57,7 +57,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		final CharSequence retweeted_by = mDisplayName ? status.retweeted_by_name : status.retweeted_by_screen_name;
 		final boolean is_last = position == getCount() - 1;
 		final boolean show_gap = status.is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1;
-		
+
 		holder.setShowAsGap(show_gap);
 		holder.setAccountColorEnabled(mShowAccountColor);
 

@@ -16,7 +16,7 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.MethodsCompat;
 import org.mariotaku.twidere.util.ScreenNameTokenizer;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.widget.StatusComposeEditText;
+import org.mariotaku.twidere.view.StatusComposeEditText;
 
 import android.app.Activity;
 import android.content.Context;

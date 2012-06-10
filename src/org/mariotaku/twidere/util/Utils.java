@@ -23,6 +23,7 @@ import twitter4j.DirectMessage;
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
+import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -185,6 +186,24 @@ public final class Utils implements Constants {
 		sAccountColors.clear();
 	}
 
+	public static ParcelableStatus findStatusInDatabases(Context context, long account_id, long status_id) {
+		final ContentResolver resolver = context.getContentResolver();
+		ParcelableStatus status = null;
+		String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = " + status_id;
+		for (Uri uri : STATUSES_URIS) {
+			Cursor cur = resolver.query(uri, Statuses.COLUMNS, where, null, null);
+			if (cur == null) {
+				continue;
+			}
+			if (cur.getCount() == 1) {
+				cur.moveToFirst();
+				status = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
+			}
+			cur.close();
+		}
+		return status;
+	}
+
 	/**
 	 * 
 	 * @param location
@@ -299,6 +318,21 @@ public final class Utils implements Constants {
 		return color;
 	}
 
+	public static long getAccountId(Context context, String username) {
+		long user_id = -1;
+
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
+				Accounts.USERNAME + " = ?", new String[] { username }, null);
+		if (cur == null) return user_id;
+
+		if (cur.getCount() > 0) {
+			cur.moveToFirst();
+			user_id = cur.getLong(cur.getColumnIndexOrThrow(Accounts.USER_ID));
+		}
+		cur.close();
+		return user_id;
+	}
+
 	/**
 	 * @deprecated
 	 */
@@ -365,15 +399,16 @@ public final class Utils implements Constants {
 
 	public static String getAccountUsername(Context context, long account_id) {
 
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USERNAME },
-				Accounts.USER_ID + "=" + account_id, null, null);
-		if (cur == null) return null;
-		if (cur.getCount() <= 0) {
-			cur.close();
-			return null;
+		String username = null;
+
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USERNAME },
+				Accounts.USER_ID + " = " + account_id, null, null);
+		if (cur == null) return username;
+
+		if (cur.getCount() > 0) {
+			cur.moveToFirst();
+			username = cur.getString(cur.getColumnIndex(Accounts.USERNAME));
 		}
-		cur.moveToFirst();
-		String username = cur.getString(cur.getColumnIndexOrThrow(Accounts.USERNAME));
 		cur.close();
 		return username;
 	}
@@ -612,7 +647,7 @@ public final class Utils implements Constants {
 	public static String getQuoteStatus(Context context, String screen_name, String text) {
 		String quote_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
 				PREFERENCE_KEY_QUOTE_FORMAT, PREFERENCE_DEFAULT_QUOTE_FORMAT);
-		if (!isNullOrEmpty(quote_format)) {
+		if (isNullOrEmpty(quote_format)) {
 			quote_format = PREFERENCE_DEFAULT_QUOTE_FORMAT;
 		}
 		return quote_format.replace(QUOTE_FORMAT_TEXT_PATTERN, '@' + screen_name + ':' + text);
@@ -718,6 +753,45 @@ public final class Utils implements Constants {
 		}
 		// Format media.
 		MediaEntity[] media = status.getMediaEntities();
+		if (media != null) {
+			for (MediaEntity media_item : media) {
+				int start = media_item.getStart();
+				int end = media_item.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				URL media_url = media_item.getMediaURL();
+				if (media_url != null) {
+					text.setSpan(new URLSpan(media_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+			}
+		}
+		return text;
+	}
+
+	public static Spanned getSpannedTweetText(Tweet tweet, long account_id) {
+		if (tweet == null || tweet.getText() == null) return new SpannableString("");
+		SpannableString text = new SpannableString(tweet.getText());
+		// Format links.
+		URLEntity[] urls = tweet.getURLEntities();
+		if (urls != null) {
+			for (URLEntity url_entity : urls) {
+				int start = url_entity.getStart();
+				int end = url_entity.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				URL expanded_url = url_entity.getExpandedURL();
+				URL url = url_entity.getURL();
+				if (expanded_url != null) {
+					text.setSpan(new URLSpan(expanded_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				} else if (url != null) {
+					text.setSpan(new URLSpan(url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+			}
+		}
+		// Format media.
+		MediaEntity[] media = tweet.getMediaEntities();
 		if (media != null) {
 			for (MediaEntity media_item : media) {
 				int start = media_item.getStart();
@@ -900,6 +974,7 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isMyActivatedAccount(Context context, long account_id) {
+		if (account_id <= 0) return false;
 		for (long id : getActivatedAccountIds(context)) {
 			if (id == account_id) return true;
 		}
@@ -907,6 +982,7 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isMyActivatedUserName(Context context, String screen_name) {
+		if (screen_name == null) return false;
 		for (String account_user_name : getActivatedAccountScreenNames(context)) {
 			if (account_user_name.equalsIgnoreCase(screen_name)) return true;
 		}
@@ -1084,22 +1160,6 @@ public final class Utils implements Constants {
 			activity.getWindow().setWindowAnimations(0);
 		}
 		activity.startActivity(activity.getIntent());
-	}
-	
-	public static ParcelableStatus findStatusInDatabases(Context context, long account_id, long status_id) {
-		final ContentResolver resolver = context.getContentResolver();
-		ParcelableStatus status = null;
-		String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = " + status_id;
-		for (Uri uri : STATUSES_URIS) {
-			Cursor cur = resolver.query(uri, Statuses.COLUMNS, where, null, null);
-			if (cur == null) continue;
-			if (cur.getCount() == 1) {
-				cur.moveToFirst();
-				status = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
-			}
-			cur.close();
-		}
-		return status;
 	}
 
 	public static void setMenuForStatus(Context context, Menu menu, ParcelableStatus status) {

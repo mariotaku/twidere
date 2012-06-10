@@ -4,7 +4,7 @@
 	android:layout_height="wrap_content"
 	android:padding="4dp">
 
-	<org.mariotaku.twidere.widget.RoundCorneredImageView
+	<org.mariotaku.twidere.view.RoundCorneredImageView
 		android:id="@+id/profile_image"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"
@@ -43,6 +43,7 @@
 		android:layout_alignBaseline="@+id/name"
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
+		android:layout_marginRight="4dp"
 		android:drawablePadding="2dp"
 		android:gravity="center_vertical|right"
 		android:textColor="?android:attr/textColorSecondary"/>

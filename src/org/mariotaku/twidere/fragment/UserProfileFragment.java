@@ -1,9 +1,10 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedUserName;
-import static org.mariotaku.twidere.util.Utils.isMyAccount;
+import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
 import java.net.URL;
 
@@ -19,6 +20,7 @@ import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -113,7 +115,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		String screen_name = null;
 		if (args != null) {
 			mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID);
-			user_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		mProfileImageLoader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
@@ -125,8 +127,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAdapter.add(new FollowersAction());
 		mAdapter.add(new FollowingAction());
 		mAdapter.add(new FavoritesAction());
-		if (user_id != -1 && isMyActivatedAccount(getActivity(), user_id) || screen_name != null
-				&& isMyActivatedUserName(getActivity(), screen_name)) {
+		if (isMyActivatedAccount(getActivity(), user_id) || isMyActivatedUserName(getActivity(), screen_name)) {
 			mAdapter.add(new DirectMessagesAction());
 		}
 		mRetryButton.setOnClickListener(this);
@@ -338,7 +339,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onClick() {
-			if (mUser == null) return;
+			if (mUser == null || !isMyActivatedAccount(getActivity(), mUser.getId())) return;
 			Bundle bundle = new Bundle();
 			bundle.putLong(INTENT_KEY_ACCOUNT_ID, mUser.getId());
 			Intent intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
@@ -453,18 +454,19 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onClick() {
+			Activity activity = getActivity();
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			if (!(mDetailFragment instanceof UserFavoritesFragment)) {
-				mDetailFragment = Fragment.instantiate(getActivity(), UserFavoritesFragment.class.getName());
+				mDetailFragment = Fragment.instantiate(activity, UserFavoritesFragment.class.getName());
 				mDetailFragment.setArguments(getArguments());
 			}
-			int viewId = android.R.id.content;
-			if (getActivity() instanceof HomeActivity) {
-				viewId = R.id.dashboard;
+			int layoutId = android.R.id.content;
+			if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+				layoutId = HomeActivity.PANE_LEFT;
 			}
-			ft.replace(viewId, mDetailFragment);
+			ft.replace(layoutId, mDetailFragment);
 			ft.addToBackStack(null);
-			ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+			ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.commit();
 		}
 
@@ -608,16 +610,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onClick() {
+			Activity activity = getActivity();
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			if (!(mDetailFragment instanceof UserTimelineFragment)) {
-				mDetailFragment = Fragment.instantiate(getActivity(), UserTimelineFragment.class.getName());
+				mDetailFragment = Fragment.instantiate(activity, UserTimelineFragment.class.getName());
 				mDetailFragment.setArguments(getArguments());
 			}
-			int viewId = android.R.id.content;
-			if (getActivity() instanceof HomeActivity) {
-				viewId = R.id.dashboard;
+			int layoutId = android.R.id.content;
+			if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+				layoutId = HomeActivity.PANE_LEFT;
 			}
-			ft.replace(viewId, mDetailFragment);
+			ft.replace(layoutId, mDetailFragment);
 			ft.addToBackStack(null);
 			ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 			ft.commit();
@@ -793,7 +796,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			View view = super.getView(position, convertView, parent);
 			TextView summary_view = (TextView) view.findViewById(android.R.id.text2);
 			String summary = getItem(position).getSummary();
-			summary_view.setText(summary != null ? summary : "");
+			summary_view.setText(summary);
+			summary_view.setVisibility(!isNullOrEmpty(summary) ? View.VISIBLE : View.GONE);
 			return view;
 		}
 

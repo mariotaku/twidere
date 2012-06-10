@@ -1,11 +1,11 @@
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseURL;
-import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.LazyImageLoader;

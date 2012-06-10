@@ -3,6 +3,7 @@ package org.mariotaku.twidere.service;
 import static org.mariotaku.twidere.util.Utils.buildQueryUri;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getRetweetId;
+import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.makeCachedUsersContentValues;
 import static org.mariotaku.twidere.util.Utils.makeMessagesContentValues;
@@ -58,6 +59,9 @@ public class TwidereService extends Service implements Constants {
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 
+	private boolean mStoreStatusesFinished = true,
+			mStoreMentionsFinished = true;
+
 	public int cancelRetweet(long account_id, long status_id) {
 		CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
@@ -109,11 +113,13 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public boolean isHomeTimelineRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetHomeTimelineTaskId);
+		return mAsyncTaskManager.isExcuting(mGetHomeTimelineTaskId)
+				|| !mStoreStatusesFinished;
 	}
 
 	public boolean isMentionsRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetMentionsTaskId);
+		return mAsyncTaskManager.isExcuting(mGetMentionsTaskId)
+				|| !mStoreMentionsFinished;
 	}
 
 	@Override
@@ -187,11 +193,11 @@ public class TwidereService extends Service implements Constants {
 					values.put(Statuses.RETWEETED_BY_NAME, "");
 					values.put(Statuses.RETWEETED_BY_SCREEN_NAME, "");
 					values.put(Statuses.IS_RETWEET, 0);
-					StringBuilder where = new StringBuilder();
-					where.append(Statuses.ACCOUNT_ID + "=" + result.account_id);
-					where.append(" AND " + Statuses.STATUS_ID + "=" + retweeted_status.getId());
+					String status_where = Statuses.STATUS_ID + " = " + result.status.getId();
+					String retweet_where = Statuses.STATUS_ID + " = " + retweeted_status.getId();
 					for (Uri uri : TweetStore.STATUSES_URIS) {
-						resolver.update(uri, values, where.toString(), null);
+						resolver.delete(uri, status_where, null);
+						resolver.update(uri, values, retweet_where, null);
 					}
 				}
 				Toast.makeText(TwidereService.this, R.string.cancel_retweet_success, Toast.LENGTH_SHORT).show();
@@ -530,7 +536,7 @@ public class TwidereService extends Service implements Constants {
 
 			final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final int load_item_limit = prefs
-					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT) + 1;
+					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 			Twitter twitter = getTwitterInstance(context, account_id, true);
 			if (twitter != null) {
 				try {
@@ -557,7 +563,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(AccountResponse responses) {
 			synchronized (this) {
-				manager.add(new StoreStatusTask(context, manager, responses, uri), true);
+				manager.add(new StoreMessagesTask(context, manager, responses, uri), true);
 			}
 			super.onPostExecute(responses);
 		}
@@ -575,13 +581,13 @@ public class TwidereService extends Service implements Constants {
 			}
 		}
 
-		private static class StoreStatusTask extends ManagedAsyncTask<Void, Void, Boolean> {
+		private static class StoreMessagesTask extends ManagedAsyncTask<Void, Void, Boolean> {
 
 			private final AccountResponse response;
 			private final Context context;
 			private final Uri uri;
 
-			public StoreStatusTask(Context context, AsyncTaskManager manager, AccountResponse result, Uri uri) {
+			public StoreMessagesTask(Context context, AsyncTaskManager manager, AccountResponse result, Uri uri) {
 				super(context, manager);
 				response = result;
 				this.context = context;
@@ -612,8 +618,6 @@ public class TwidereService extends Service implements Constants {
 					if (status == null) {
 						continue;
 					}
-					final User user = status.getSender();
-					final long user_id = user.getId();
 					final long status_id = status.getId();
 
 					status_ids.add(status_id);
@@ -685,8 +689,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private static abstract class GetStatusesTask extends
-			ManagedAsyncTask<Void, Void, List<GetStatusesTask.AccountResponse>> {
+	private abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<GetStatusesTask.AccountResponse>> {
 
 		private long[] account_ids, max_ids;
 
@@ -719,7 +722,7 @@ public class TwidereService extends Service implements Constants {
 
 			int idx = 0;
 			SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT) + 1;
+			int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 			for (long account_id : account_ids) {
 				Twitter twitter = getTwitter(context, account_id, true);
 				if (twitter != null) {
@@ -748,12 +751,27 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(List<AccountResponse> responses) {
 			synchronized (this) {
-				manager.add(new StoreStatusTask(context, manager, responses, uri), true);
+				manager.add(new StoreStatusesTask(context, manager, responses, uri), true);
 			}
 			super.onPostExecute(responses);
 		}
 
-		private static class AccountResponse {
+		@Override
+		protected void onPreExecute() {
+			switch (getTableId(uri)) {
+				case URI_STATUSES: {
+					mStoreStatusesFinished = false;
+					break;
+				}
+				case URI_MENTIONS: {
+					mStoreMentionsFinished = false;
+					break;
+				}
+			}
+			super.onPreExecute();
+		}
+
+		private class AccountResponse {
 
 			public final long account_id, max_id;
 			public final ResponseList<twitter4j.Status> responselist;
@@ -766,13 +784,13 @@ public class TwidereService extends Service implements Constants {
 			}
 		}
 
-		private static class StoreStatusTask extends ManagedAsyncTask<Void, Void, Boolean> {
+		private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, Boolean> {
 
 			private final List<AccountResponse> responses;
 			private final Context context;
 			private final Uri uri;
 
-			public StoreStatusTask(Context context, AsyncTaskManager manager, List<AccountResponse> result, Uri uri) {
+			public StoreStatusesTask(Context context, AsyncTaskManager manager, List<AccountResponse> result, Uri uri) {
 				super(context, manager);
 				responses = result;
 				this.context = context;
@@ -867,6 +885,16 @@ public class TwidereService extends Service implements Constants {
 			protected void onPostExecute(Boolean succeed) {
 				if (succeed) {
 					notifyForUpdatedUri(context, uri);
+				}
+				switch (getTableId(uri)) {
+					case URI_STATUSES: {
+						mStoreStatusesFinished = true;
+						break;
+					}
+					case URI_MENTIONS: {
+						mStoreMentionsFinished = true;
+						break;
+					}
 				}
 				super.onPostExecute(succeed);
 			}

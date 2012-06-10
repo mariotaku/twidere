@@ -3,6 +3,7 @@ package org.mariotaku.twidere.adapter;
 import java.util.ArrayList;
 
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.view.TitleProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +11,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-
-import com.viewpagerindicator.TitleProvider;
 
 public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider {
 
@@ -59,7 +58,9 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	@Override
 	public void onPageReselected(int position) {
 		String action = mTabsInfo.get(position).cls.getName() + HomeActivity.SHUFFIX_SCROLL_TO_TOP;
-		mContext.sendBroadcast(new Intent(action));
+		Intent intent = new Intent(action);
+		intent.setPackage(mContext.getPackageName());
+		mContext.sendBroadcast(intent);
 	}
 
 	@Override

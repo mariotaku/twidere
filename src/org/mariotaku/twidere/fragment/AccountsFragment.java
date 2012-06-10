@@ -39,6 +39,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -172,6 +173,11 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.accounts, null);
+	}
+
+	@Override
 	public void onDestroy() {
 		mActivityFirstCreated = true;
 		super.onDestroy();
@@ -236,23 +242,24 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	private void openUserProfile(long account_id) {
-		if (mDetailFragment == null) {
-			mDetailFragment = Fragment.instantiate(getActivity(), UserProfileFragment.class.getName(), null);
-		}
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		Bundle args = new Bundle();
-		args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-		args.putLong(INTENT_KEY_USER_ID, account_id);
-		mDetailFragment.setArguments(args);
 		FragmentActivity activity = getActivity();
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			if (mDetailFragment == null) {
+				mDetailFragment = Fragment.instantiate(getActivity(), UserProfileFragment.class.getName(), null);
+			}
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(INTENT_KEY_USER_ID, account_id);
+			mDetailFragment.setArguments(args);
 			HomeActivity home_activity = (HomeActivity) activity;
-			home_activity.showAtPane(home_activity.getCurrentPane(), mDetailFragment);
+			home_activity.showAtPane(HomeActivity.PANE_RIGHT, mDetailFragment, true);
 		} else {
-			ft.replace(R.id.dashboard, mDetailFragment);
-			ft.addToBackStack(null);
-			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-			ft.commit();
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(account_id));
+			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
 

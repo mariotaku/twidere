@@ -16,8 +16,6 @@ public interface Constants extends TwitterConstants {
 
 	public static final String CLIENT_URL = "https://github.com/mariotaku/twidere";
 
-	public static final boolean MULTIPLE_ACCOUNTS_ENABLED = true;
-
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 13;
 
@@ -41,6 +39,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_DRAFTS = "drafts";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
+	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
 	public static final String QUERY_PARAM_STATUS_ID = "status_id";
 	public static final String QUERY_PARAM_USER_ID = "user_id";
 	public static final String QUERY_PARAM_SCREEN_NAME = "screen_name";

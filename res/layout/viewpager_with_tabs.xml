@@ -8,10 +8,10 @@
 		android:id="@android:id/tabs"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		class="com.viewpagerindicator.TabPageIndicator"
+		class="org.mariotaku.twidere.view.TabPageIndicator"
 		android:background="?tabBackground"/>
 
-	<com.viewpagerindicator.ExtendedViewPager
+	<org.mariotaku.twidere.view.ExtendedViewPager
 		android:id="@+id/pager"
 		android:layout_width="fill_parent"
 		android:layout_height="0dp"

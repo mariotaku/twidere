@@ -329,7 +329,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 				case ADD_STATUS:
 					Object obj = msg.obj;
 					if (obj instanceof Status) {
-						mAdapter.add(new ParcelableStatus((Status) obj, mAccountId));
+						mAdapter.add(new ParcelableStatus((Status) obj, mAccountId, false));
 					}
 					break;
 			}

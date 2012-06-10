@@ -1,5 +1,6 @@
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
 import org.mariotaku.twidere.R;
@@ -72,19 +73,15 @@ public class LinkHandlerActivity extends BaseActivity {
 					final Bundle extras = getIntent().getExtras();
 					fragment = new ViewStatusFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 					bundle = extras != null ? new Bundle(extras) : new Bundle();
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
 					break;
 				}
 				case CODE_USER: {
 					fragment = new UserProfileFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-					final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					bundle = new Bundle();
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
 					if (!isNullOrEmpty(param_screen_name)) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
@@ -96,10 +93,8 @@ public class LinkHandlerActivity extends BaseActivity {
 				case CODE_CONVERSATION: {
 					fragment = new ViewConversationFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 					bundle = new Bundle();
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
 					break;
 				}
 				case CODE_SEARCH: {
@@ -109,11 +104,9 @@ public class LinkHandlerActivity extends BaseActivity {
 					} else if (QUERY_PARAM_VALUE_USERS.equals(type)) {
 						fragment = new SearchUsersFragment();
 					}
-					final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 					final String query = uri.getQueryParameter(QUERY_PARAM_QUERY);
 					bundle = new Bundle();
 					bundle.putString(INTENT_KEY_QUERY, query);
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
 					break;
 				}
 				case CODE_DRAFTS: {
@@ -121,6 +114,19 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				default:
 			}
+
+			if (bundle != null) {
+				final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+				if (param_account_id != null) {
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
+				} else {
+					final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
+					if (param_account_name != null) {
+						bundle.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
+					}
+				}
+			}
+
 			fragment.setArguments(bundle);
 		}
 		return fragment;

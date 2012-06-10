@@ -11,7 +11,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 
-public class UserTimelineLoader extends ParcelableStatusesLoader {
+public class UserTimelineLoader extends Twitter4JStatusLoader {
 
 	private final long mUserId;
 	private final String mUserScreenName;
@@ -36,11 +36,9 @@ public class UserTimelineLoader extends ParcelableStatusesLoader {
 	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
 		Twitter twitter = getTwitter();
 		if (twitter != null) {
-			if (mUserId != -1) {
+			if (mUserId != -1)
 				return twitter.getUserTimeline(mUserId, paging);
-			} else if (mUserScreenName != null) {
-				return twitter.getUserTimeline(mUserScreenName, paging);
-			}
+			else if (mUserScreenName != null) return twitter.getUserTimeline(mUserScreenName, paging);
 		}
 		return null;
 	}

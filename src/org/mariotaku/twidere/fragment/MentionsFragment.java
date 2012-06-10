@@ -18,12 +18,12 @@ public class MentionsFragment extends CursorStatusesListFragment {
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
-				if (!intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
+				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
+			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+				if (!getServiceInterface().isMentionsRefreshing()){
 					getListView().onRefreshComplete();
 				}
-			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
-				getListView().onRefreshComplete();
-				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if ((MentionsFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
 				if (getListView() != null) {
 					getListView().getRefreshableView().setSelection(0);
@@ -42,9 +42,13 @@ public class MentionsFragment extends CursorStatusesListFragment {
 		IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
 		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		if (getActivity() != null) {
 			getActivity().registerReceiver(mStatusReceiver, filter);
+		}
+		if (!getServiceInterface().isMentionsRefreshing()){
+			getListView().onRefreshComplete();
 		}
 	}
 

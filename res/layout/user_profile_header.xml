@@ -11,7 +11,7 @@
 		android:layout_height="wrap_content"
 		android:background="@drawable/list_selector_holo_light">
 
-		<org.mariotaku.twidere.widget.RoundCorneredImageView
+		<org.mariotaku.twidere.view.RoundCorneredImageView
 			android:id="@+id/profile_image"
 			android:layout_width="@dimen/profile_image_size"
 			android:layout_height="@dimen/profile_image_size"
