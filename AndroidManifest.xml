@@ -178,25 +178,6 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
-
-		<provider
-			android:name=".provider.TweetStoreProvider"
-			android:authorities="org.mariotaku.twidere.provider.TweetStore"
-			android:label="@string/label_tweetstore_provider"
-			android:readPermission="org.mariotaku.twidere.READ_DATABASES"
-			android:writePermission="org.mariotaku.twidere.WRITE_DATABASES">
-		</provider>
-
-		<service
-			android:name=".service.TwidereService"
-			android:label="@string/label_update_service">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.SERVICE"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</service>
-
 		<activity
 			android:name=".activity.FilterActivity"
 			android:label="@string/filter">
@@ -265,6 +246,24 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+
+		<provider
+			android:name=".provider.TweetStoreProvider"
+			android:authorities="org.mariotaku.twidere.provider.TweetStore"
+			android:label="@string/label_tweetstore_provider"
+			android:readPermission="org.mariotaku.twidere.READ_DATABASES"
+			android:writePermission="org.mariotaku.twidere.WRITE_DATABASES">
+		</provider>
+
+		<service
+			android:name=".service.TwidereService"
+			android:label="@string/label_update_service">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.SERVICE"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</service>
 	</application>
 
 </manifest>

@@ -188,6 +188,11 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case MENU_HOME:
+				if (isDualPaneMode()) {
+					getSupportFragmentManager().popBackStack();
+				}
+				break;
 			case MENU_COMPOSE:
 				startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				break;

@@ -5,6 +5,7 @@ import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedUserName;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.makeCachedUsersContentValues;
 
 import java.net.URL;
 
@@ -12,6 +13,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.Utils;
@@ -24,6 +26,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -715,10 +718,19 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		@Override
+		protected void onCancelled() {
+			setProgressBarIndeterminateVisibility(false);
+			super.onCancelled();
+		}
+
+		@Override
 		protected void onPostExecute(Response<User> result) {
 			if (result == null) return;
 			if (getActivity() == null) return;
 			if (result.value != null) {
+				ContentResolver resolver = getContentResolver();
+				resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + result.value.getId(), null);
+				resolver.insert(CachedUsers.CONTENT_URI, makeCachedUsersContentValues(result.value));
 				setListShown(true);
 				mUser = result.value;
 				getListView().invalidateViews();
@@ -766,6 +778,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				mNameLayout.setOnLongClickListener(null);
 			}
 			getFollowInfo();
+			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);
 		}
 
@@ -773,6 +786,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		protected void onPreExecute() {
 			setListShown(false);
 			mRetryButton.setVisibility(View.GONE);
+			setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}
 

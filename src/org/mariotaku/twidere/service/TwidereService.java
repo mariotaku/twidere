@@ -59,8 +59,7 @@ public class TwidereService extends Service implements Constants {
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 
-	private boolean mStoreStatusesFinished = true,
-			mStoreMentionsFinished = true;
+	private boolean mStoreStatusesFinished = true, mStoreMentionsFinished = true;
 
 	public int cancelRetweet(long account_id, long status_id) {
 		CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
@@ -113,13 +112,11 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public boolean isHomeTimelineRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetHomeTimelineTaskId)
-				|| !mStoreStatusesFinished;
+		return mAsyncTaskManager.isExcuting(mGetHomeTimelineTaskId) || !mStoreStatusesFinished;
 	}
 
 	public boolean isMentionsRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetMentionsTaskId)
-				|| !mStoreMentionsFinished;
+		return mAsyncTaskManager.isExcuting(mGetMentionsTaskId) || !mStoreMentionsFinished;
 	}
 
 	@Override
@@ -263,6 +260,10 @@ public class TwidereService extends Service implements Constants {
 				for (Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.update(uri, values, where.toString(), null);
 				}
+				Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
+				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
+				intent.putExtra(INTENT_KEY_FAVORITED, true);
+				sendBroadcast(intent);
 				Toast.makeText(TwidereService.this, R.string.favorite_success, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(TwidereService.this, result.exception, true);
@@ -364,6 +365,10 @@ public class TwidereService extends Service implements Constants {
 				for (Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.update(uri, values, where.toString(), null);
 				}
+				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
+				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
+				intent.putExtra(INTENT_KEY_FAVORITED, false);
+				sendBroadcast(intent);
 				Toast.makeText(TwidereService.this, R.string.unfavorite_success, Toast.LENGTH_SHORT).show();
 
 			} else {

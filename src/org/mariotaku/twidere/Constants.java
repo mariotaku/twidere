@@ -114,6 +114,7 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_FRIENDSHIP_CHANGED = INTENT_PACKAGE_PREFIX + "FRIENDSHIP_CHANGED";
 	public static final String BROADCAST_PROFILE_UPDATED = INTENT_PACKAGE_PREFIX + "PROFILE_UPDATED";
 	public static final String BROADCAST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DATABASE_UPDATED";
+	public static final String BROADCAST_FAVORITE_CHANGED = INTENT_PACKAGE_PREFIX + "FAVORITE_CHANGED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -136,6 +137,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_IS_QUOTE = "is_quote";
 	public static final String INTENT_KEY_IS_SHARE = "is_share";
 	public static final String INTENT_KEY_STATUS = "status";
+	public static final String INTENT_KEY_FAVORITED = "favorited";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_COMPOSE = R.id.compose;

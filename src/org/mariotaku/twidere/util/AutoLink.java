@@ -100,7 +100,7 @@ public class AutoLink {
 		return mOnLinkClickListener;
 	}
 
-	public void setmOnLinkClickListener(OnLinkClickListener listener) {
+	public void setOnLinkClickListener(OnLinkClickListener listener) {
 		mOnLinkClickListener = listener;
 	}
 

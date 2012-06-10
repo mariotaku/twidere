@@ -54,11 +54,6 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	}
 
 	@Override
-	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
-
-	}
-
-	@Override
 	public void setTheme() {
 		SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere

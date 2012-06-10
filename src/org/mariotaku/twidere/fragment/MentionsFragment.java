@@ -21,7 +21,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
-				if (!getServiceInterface().isMentionsRefreshing()){
+				if (!getServiceInterface().isMentionsRefreshing()) {
 					getListView().onRefreshComplete();
 				}
 			} else if ((MentionsFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
@@ -47,7 +47,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 		if (getActivity() != null) {
 			getActivity().registerReceiver(mStatusReceiver, filter);
 		}
-		if (!getServiceInterface().isMentionsRefreshing()){
+		if (!getServiceInterface().isMentionsRefreshing()) {
 			getListView().onRefreshComplete();
 		}
 	}

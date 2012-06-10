@@ -13,7 +13,6 @@ import org.mariotaku.popupmenu.MenuBar;
 import org.mariotaku.popupmenu.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.activity.LinkHandlerActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -66,6 +65,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	private MenuBar mMenuBar;
 	private ProgressBar mProgress;
 	private FollowInfoTask mFollowInfoTask;
+	private GetStatusTask mGetStatusTask;
 	private ParcelableStatus mStatus;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -73,14 +73,52 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			if (BROADCAST_DATABASE_UPDATED.equals(action)) {
-				getStatus();
-				setMenuForStatus(getActivity(), mMenuBar.getMenu(), mStatus);
-			} else if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
-				showFollowInfo();
+			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
+				showFollowInfo(true);
+			} else if (BROADCAST_FAVORITE_CHANGED.equals(action)) {
+				long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
+				if (status_id > 0 && status_id == mStatusId) {
+					getStatus(true);
+				}
 			}
 		}
 	};
+
+	private boolean mFollowInfoDisplayed = false;
+
+	public void displayStatus(ParcelableStatus status) {
+		if (status == null) return;
+		mStatus = status;
+
+		mMenuBar.inflate(R.menu.menu_status);
+		setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
+		mMenuBar.show();
+
+		mNameView.setText(status.name != null ? status.name : "");
+		mScreenNameView.setText(status.screen_name != null ? "@" + status.screen_name : "");
+		if (status.text != null) {
+			mTextView.setText(status.text);
+		}
+		AutoLink linkify = new AutoLink(mTextView);
+		linkify.setOnLinkClickListener(this);
+		linkify.addLinks(AutoLink.LINK_TYPE_MENTIONS);
+		linkify.addLinks(AutoLink.LINK_TYPE_HASHTAGS);
+		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
+		boolean is_reply = status.in_reply_to_status_id != -1;
+		String time = formatToLongTimeString(getActivity(), status.status_timestamp);
+		mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, status.source)));
+		mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
+		mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
+		if (is_reply) {
+			mInReplyToView.setText(getString(R.string.in_reply_to, status.in_reply_to_screen_name));
+		}
+		mViewMapButton.setVisibility(status.location != null ? View.VISIBLE : View.GONE);
+		mViewMediaButton.setVisibility(status.has_media ? View.VISIBLE : View.GONE);
+
+		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
+		imageloader.displayImage(status.profile_image_url, mProfileImageView);
+
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -93,7 +131,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
 		}
-		getStatus();
 		View view = getView();
 		mNameView = (TextView) view.findViewById(R.id.name);
 		mScreenNameView = (TextView) view.findViewById(R.id.screen_name);
@@ -114,12 +151,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mProgress = (ProgressBar) view.findViewById(R.id.progress);
 		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
 		mMenuBar.setOnMenuItemClickListener(this);
-		displayStatus();
-		showFollowInfo();
+		getStatus(false);
 	}
 
 	@Override
 	public void onClick(View view) {
+		if (mStatus == null) return;
 		switch (view.getId()) {
 			case R.id.profile: {
 				openUserProfile(mStatus.account_id, mStatus.user_id, null);
@@ -153,14 +190,19 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 	@Override
 	public void onDestroyView() {
+		if (mGetStatusTask != null) {
+			mGetStatusTask.cancel(true);
+		}
 		if (mFollowInfoTask != null) {
 			mFollowInfoTask.cancel(true);
 		}
+
 		super.onDestroyView();
 	}
 
 	@Override
 	public void onLinkClick(String link, int type) {
+		if (mStatus == null) return;
 		switch (type) {
 			case AutoLink.LINK_TYPE_MENTIONS: {
 				openUserProfile(mStatus.account_id, -1, link);
@@ -172,6 +214,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
+		if (mStatus == null) return false;
 		String text_plain = mStatus.text_plain;
 		String screen_name = mStatus.screen_name;
 		String name = mStatus.name;
@@ -239,8 +282,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	@Override
 	public void onStart() {
 		super.onStart();
-		IntentFilter filter = new IntentFilter(BROADCAST_DATABASE_UPDATED);
+		IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_FRIENDSHIP_CHANGED);
+		filter.addAction(BROADCAST_FAVORITE_CHANGED);
 		if (getActivity() != null) {
 			getActivity().registerReceiver(mStatusReceiver, filter);
 		}
@@ -254,67 +298,13 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		super.onStop();
 	}
 
-	private void displayStatus() {
-		if (mStatus == null) return;
-
-		mMenuBar.inflate(R.menu.menu_status);
-		setMenuForStatus(getActivity(), mMenuBar.getMenu(), mStatus);
-		mMenuBar.show();
-
-		mNameView.setText(mStatus.name != null ? mStatus.name : "");
-		mScreenNameView.setText(mStatus.screen_name != null ? "@" + mStatus.screen_name : "");
-		if (mStatus.text != null) {
-			mTextView.setText(mStatus.text);
+	private void getStatus(boolean omit_intent_extra) {
+		if (mGetStatusTask != null) {
+			mGetStatusTask.cancel(true);
 		}
-		AutoLink linkify = new AutoLink(mTextView);
-		linkify.setmOnLinkClickListener(this);
-		linkify.addLinks(AutoLink.LINK_TYPE_MENTIONS);
-		linkify.addLinks(AutoLink.LINK_TYPE_HASHTAGS);
-		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
-		boolean is_reply = mStatus.in_reply_to_status_id != -1;
-		String time = formatToLongTimeString(getActivity(), mStatus.status_timestamp);
-		mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, mStatus.source)));
-		mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
-		mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
-		if (is_reply) {
-			mInReplyToView.setText(getString(R.string.in_reply_to, mStatus.in_reply_to_screen_name));
-		}
-		mViewMapButton.setVisibility(mStatus.location != null ? View.VISIBLE : View.GONE);
-		mViewMediaButton.setVisibility(mStatus.has_media ? View.VISIBLE : View.GONE);
+		mGetStatusTask = new GetStatusTask(omit_intent_extra);
+		mGetStatusTask.execute();
 
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
-		imageloader.displayImage(mStatus.profile_image_url, mProfileImageView);
-	}
-
-	private void getStatus() {
-		ParcelableStatus status = getArguments().getParcelable(INTENT_KEY_STATUS);
-		if (status != null) {
-			mStatus = status;
-			return;
-		}
-		String[] cols = Statuses.COLUMNS;
-		String where = Statuses.STATUS_ID + "=" + mStatusId;
-
-		for (Uri uri : TweetStore.STATUSES_URIS) {
-			Cursor cur = mResolver.query(uri, cols, where, null, null);
-			if (cur != null && cur.getCount() > 0) {
-				cur.moveToFirst();
-				mStatus = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
-				cur.close();
-				break;
-			}
-			if (cur != null) {
-				cur.close();
-			}
-		}
-		if (mStatus == null) {
-			if (getActivity() instanceof LinkHandlerActivity) {
-				// Finish the activity
-				getActivity().finish();
-			} else {
-				// Maybe I'll remove this fragment here?
-			}
-		}
 	}
 
 	private void openConversation(ParcelableStatus status) {
@@ -368,7 +358,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		}
 	}
 
-	private void showFollowInfo() {
+	private void showFollowInfo(boolean force) {
+		if (mFollowInfoDisplayed && !force) return;
 		if (mFollowInfoTask != null) {
 			mFollowInfoTask.cancel(true);
 		}
@@ -376,19 +367,20 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mFollowInfoTask.execute();
 	}
 
-	private class FollowInfoTask extends AsyncTask<Void, Void, FollowInfoTask.Response> {
+	private class FollowInfoTask extends AsyncTask<Void, Void, Response<Boolean>> {
 
 		@Override
-		protected Response doInBackground(Void... params) {
+		protected Response<Boolean> doInBackground(Void... params) {
 			return isAllFollowing();
 		}
 
 		@Override
-		protected void onPostExecute(Response result) {
+		protected void onPostExecute(Response<Boolean> result) {
 			if (result.exception == null) {
 				mFollowIndicator.setVisibility(result.value == null || result.value ? View.GONE : View.VISIBLE);
 				if (result.value != null) {
 					mFollowButton.setVisibility(result.value ? View.GONE : View.VISIBLE);
+					mFollowInfoDisplayed = true;
 				}
 			}
 			mProgress.setVisibility(View.GONE);
@@ -404,30 +396,92 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			super.onPreExecute();
 		}
 
-		private Response isAllFollowing() {
-			if (mStatus == null) return new Response(null, null);
-			if (isMyActivatedAccount(getActivity(), mStatus.user_id)) return new Response(true, null);
+		private Response<Boolean> isAllFollowing() {
+			if (mStatus == null) return new Response<Boolean>(null, null);
+			if (isMyActivatedAccount(getActivity(), mStatus.user_id)) return new Response<Boolean>(true, null);
 			long[] ids = getActivatedAccountIds(getActivity());
 			for (long id : ids) {
 				Twitter twitter = getTwitterInstance(getActivity(), id, false);
 				try {
 					Relationship result = twitter.showFriendship(id, mStatus.user_id);
-					if (!result.isSourceFollowingTarget()) return new Response(false, null);
+					if (!result.isSourceFollowingTarget()) return new Response<Boolean>(false, null);
 				} catch (TwitterException e) {
-					return new Response(null, e);
+					return new Response<Boolean>(null, e);
 				}
 			}
-			return new Response(null, null);
+			return new Response<Boolean>(null, null);
+		}
+	}
+
+	private class GetStatusTask extends AsyncTask<Void, Void, Response<ParcelableStatus>> {
+
+		private final boolean omit_intent_extra;
+
+		public GetStatusTask(boolean omit_intent_extra) {
+			this.omit_intent_extra = omit_intent_extra;
 		}
 
-		private class Response {
-			public final Boolean value;
-			public final TwitterException exception;
+		@Override
+		protected Response<ParcelableStatus> doInBackground(Void... params) {
+			ParcelableStatus status = null;
+			if (!omit_intent_extra) {
+				status = getArguments().getParcelable(INTENT_KEY_STATUS);
+				if (status != null) return new Response<ParcelableStatus>(status, null);
 
-			public Response(Boolean value, TwitterException exception) {
-				this.value = value;
-				this.exception = exception;
 			}
+			final String[] cols = Statuses.COLUMNS;
+			final String where = Statuses.STATUS_ID + " = " + mStatusId;
+
+			// Get status from databases.
+			for (Uri uri : TweetStore.STATUSES_URIS) {
+				if (status != null) return new Response<ParcelableStatus>(status, null);
+				Cursor cur = mResolver.query(uri, cols, where, null, null);
+				if (cur == null) {
+					break;
+				}
+
+				if (cur.getCount() > 0) {
+					cur.moveToFirst();
+					status = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
+				}
+				cur.close();
+			}
+
+			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
+			try {
+				return new Response<ParcelableStatus>(new ParcelableStatus(twitter.showStatus(mStatusId), mAccountId,
+						false), null);
+			} catch (TwitterException e) {
+				return new Response<ParcelableStatus>(null, e);
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Response<ParcelableStatus> result) {
+			if (result.value == null) {
+			} else {
+				displayStatus(result.value);
+				showFollowInfo(false);
+			}
+			setProgressBarIndeterminateVisibility(false);
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			setProgressBarIndeterminateVisibility(true);
+			super.onPreExecute();
+		}
+
+	}
+
+	private class Response<T> {
+		public final T value;
+		public final TwitterException exception;
+
+		public Response(T value, TwitterException exception) {
+			this.value = value;
+			this.exception = exception;
 		}
 	}
 

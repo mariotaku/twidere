@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.FrameLayout;
 
 public class LinkHandlerActivity extends BaseActivity {
@@ -40,7 +41,7 @@ public class LinkHandlerActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Uri data = getIntent().getData();
-		setWindowFeatureAndUiOptions(data);
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(new FrameLayout(this));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -163,31 +164,6 @@ public class LinkHandlerActivity extends BaseActivity {
 			}
 			case CODE_DRAFTS: {
 				setTitle(R.string.drafts);
-				break;
-			}
-			default:
-		}
-	}
-
-	private void setWindowFeatureAndUiOptions(Uri uri) {
-		if (uri == null) return;
-		switch (URI_MATCHER.match(uri)) {
-			case CODE_STATUS: {
-				break;
-			}
-			case CODE_USER: {
-				// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-				break;
-			}
-			case CODE_CONVERSATION: {
-				// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-				break;
-			}
-			case CODE_SEARCH: {
-				// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-				break;
-			}
-			case CODE_DRAFTS: {
 				break;
 			}
 			default:

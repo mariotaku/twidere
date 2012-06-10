@@ -14,8 +14,7 @@
 			android:id="@+id/profile_image"
 			android:layout_width="@dimen/profile_image_size"
 			android:layout_height="@dimen/profile_image_size"
-			android:scaleType="fitCenter"
-			android:src="@drawable/ic_profile_image_default"/>
+			android:scaleType="fitCenter"/>
 
 		<LinearLayout
 			android:layout_width="wrap_content"
@@ -88,7 +87,6 @@
 			android:drawableLeft="@drawable/ic_tweet_stat_reply"
 			android:drawablePadding="4dp"
 			android:padding="8dp"
-			android:text="@string/in_reply_to"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:visibility="gone"/>
 
@@ -118,14 +116,16 @@
 					android:layout_width="56dp"
 					android:layout_height="56dp"
 					android:contentDescription="@string/view_media"
-					android:src="@drawable/ic_menu_gallery"/>
+					android:src="@drawable/ic_menu_gallery"
+					android:visibility="gone"/>
 
 				<ImageButton
 					android:id="@+id/view_map"
 					android:layout_width="56dp"
 					android:layout_height="56dp"
 					android:contentDescription="@string/view_map"
-					android:src="@drawable/ic_menu_mapmode"/>
+					android:src="@drawable/ic_menu_mapmode"
+					android:visibility="gone"/>
 			</LinearLayout>
 		</FrameLayout>
 
@@ -134,7 +134,6 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:padding="8dp"
-			android:text="@string/time_source"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</LinearLayout>
 
