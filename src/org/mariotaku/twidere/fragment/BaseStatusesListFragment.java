@@ -333,6 +333,8 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 		}
 		super.onStop();
 	}
+	
+	private Fragment mDetailFragment;
 
 	private void openStatus(ParcelableStatus status) {
 		final long account_id = status.account_id, status_id = status.status_id;
@@ -341,12 +343,16 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 		bundle.putParcelable(INTENT_KEY_STATUS, status);
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new ViewStatusFragment();
-			Bundle args = new Bundle(bundle);
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putLong(INTENT_KEY_STATUS_ID, status_id);
-			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
+			if (mDetailFragment instanceof ViewStatusFragment && mDetailFragment.isAdded()) {
+				((ViewStatusFragment)mDetailFragment).displayStatus(status);
+			} else {
+				mDetailFragment = new ViewStatusFragment();
+				Bundle args = new Bundle(bundle);
+				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+				args.putLong(INTENT_KEY_STATUS_ID, status_id);
+				mDetailFragment.setArguments(args);
+				home_activity.showAtPane(HomeActivity.PANE_RIGHT, mDetailFragment, true);
+			}
 		} else {
 			Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);

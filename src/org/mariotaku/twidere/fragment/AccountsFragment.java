@@ -48,7 +48,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, OnBackStackChangedListener {
+public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>{
 
 	private ListView mListView;
 
@@ -82,7 +82,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		getFragmentManager().addOnBackStackChangedListener(this);
 		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		mResolver = getActivity().getContentResolver();
 		mAdapter = new AccountsAdapter(getActivity(), imageloader);
@@ -107,15 +106,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
-	}
-
-	@Override
-	public void onBackStackChanged() {
-		if (getActivity() instanceof HomeActivity) {
-			boolean is_displaying_details = mDetailFragment != null && mDetailFragment.isAdded();
-			((HomeActivity) getActivity()).setPagingEnabled(!is_displaying_details);
-		}
-
 	}
 
 	@Override

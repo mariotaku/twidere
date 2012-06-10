@@ -9,6 +9,7 @@ import org.mariotaku.actionbarcompat.app.ActionBarFragmentActivity;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -28,6 +29,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -100,16 +102,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		ParcelableStatus status = mAdapter.findItem(id);
-		Uri.Builder builder = new Uri.Builder();
-		builder.scheme(SCHEME_TWIDERE);
-		builder.authority(AUTHORITY_STATUS);
-		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
-		builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
-		Intent intent = new Intent(Intent.ACTION_DEFAULT, builder.build());
-		Bundle bundle = new Bundle();
-		bundle.putParcelable(INTENT_KEY_STATUS, status);
-		intent.putExtras(bundle);
-		startActivity(intent);
+		openStatus(status);
 	}
 
 	@Override
@@ -127,6 +120,37 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 			return true;
 		}
 		return false;
+	}
+
+	private Fragment mDetailFragment;
+	private void openStatus(ParcelableStatus status) {
+		final long account_id = status.account_id, status_id = status.status_id;
+		FragmentActivity activity = getActivity();
+		Bundle bundle = new Bundle();
+		bundle.putParcelable(INTENT_KEY_STATUS, status);
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			if (mDetailFragment instanceof ViewStatusFragment && mDetailFragment.isAdded()) {
+				((ViewStatusFragment)mDetailFragment).displayStatus(status);
+			} else {
+				mDetailFragment = new ViewStatusFragment();
+				Bundle args = new Bundle(bundle);
+				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+				args.putLong(INTENT_KEY_STATUS_ID, status_id);
+				mDetailFragment.setArguments(args);
+				home_activity.showAtPane(HomeActivity.PANE_RIGHT, mDetailFragment, true);
+			}
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_STATUS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+			Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+
+			intent.putExtras(bundle);
+			startActivity(intent);
+		}
 	}
 
 	@Override

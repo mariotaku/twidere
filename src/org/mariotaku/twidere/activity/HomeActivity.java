@@ -26,6 +26,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
@@ -106,7 +107,13 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 	@Override
 	public void onBackStackChanged() {
-
+		if (!isDualPaneMode()) return;
+		FragmentManager fm = getSupportFragmentManager();
+		Fragment fragment = fm.findFragmentById(PANE_LEFT);
+		View main_view = findViewById(R.id.main);
+		boolean left_pane_used = fragment != null && fragment.isAdded() ;
+		main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
+		setPagingEnabled(!left_pane_used);
 	}
 
 	@Override
@@ -184,14 +191,18 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		cleanDatabasesByItemLimit(this);
 		super.onDestroy();
 	}
+	
+	private void navigateToTop() {
+		if (isDualPaneMode()) {
+			getSupportFragmentManager().popBackStack();
+		}
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
-				if (isDualPaneMode()) {
-					getSupportFragmentManager().popBackStack();
-				}
+				navigateToTop();
 				break;
 			case MENU_COMPOSE:
 				startActivity(new Intent(INTENT_ACTION_COMPOSE));

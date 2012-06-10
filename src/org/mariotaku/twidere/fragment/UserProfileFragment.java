@@ -59,7 +59,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener, OnBackStackChangedListener {
+		OnItemClickListener, OnItemLongClickListener {
 
 	private LazyImageLoader mProfileImageLoader;
 	private ImageView mProfileImage;
@@ -112,7 +112,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		getFragmentManager().addOnBackStackChangedListener(this);
 		Bundle args = getArguments();
 		long user_id = -1;
 		String screen_name = null;
@@ -142,13 +141,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		setListAdapter(mAdapter);
 		getUserInfo();
 
-	}
-
-	@Override
-	public void onBackStackChanged() {
-		if (getActivity() instanceof HomeActivity) {
-			((HomeActivity) getActivity()).setPagingEnabled(!isAdded());
-		}
 	}
 
 	@Override
@@ -199,7 +191,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (mUserInfoTask != null) {
 			mUserInfoTask.cancel(true);
 		}
-		getFragmentManager().removeOnBackStackChangedListener(this);
 		super.onDestroyView();
 	}
 
