@@ -7,7 +7,7 @@ import twitter4j.User;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
-public class SearchUsersFragment extends BaseUsersListFragment {
+public class UserFollowersFragment extends BaseUsersListFragment {
 
 	@Override
 	public Loader<ResponseList<User>> newLoaderInstance() {

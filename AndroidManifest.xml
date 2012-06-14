@@ -52,7 +52,8 @@
 		android:theme="@style/Theme.Twidere.Light">
 		<activity
 			android:name=".activity.HomeActivity"
-			android:label="@string/app_name">
+			android:label="@string/app_name"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 
@@ -180,7 +181,8 @@
 		</activity>
 		<activity
 			android:name=".activity.FilterActivity"
-			android:label="@string/filter">
+			android:label="@string/filter"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.FILTERS"/>
@@ -254,6 +256,25 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</service>
+
+		<activity
+			android:name=".activity.ImageViewActivity"
+			android:label="@string/view_image"
+			android:theme="@android:style/Theme.Translucent.NoTitleBar">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.VIEW_IMAGES"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+
+				<data
+					android:host="*"
+					android:scheme="http"/>
+				<data
+					android:host="*"
+					android:scheme="https"/>
+			</intent-filter>
+		</activity>
 	</application>
 
 </manifest>

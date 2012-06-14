@@ -33,7 +33,7 @@ import android.widget.TextView;
  * This widget implements the dynamic action bar tab behavior that can change
  * across different configurations or circumstances.
  */
-public class TabPageIndicator extends HorizontalScrollView implements PageIndicator {
+public class TabPageIndicator extends HorizontalScrollView implements ExtendedViewPager.OnPageChangeListener {
 
 	private Runnable mTabSelector;
 	private int mCurrentItem;
@@ -80,7 +80,6 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 				ViewGroup.LayoutParams.FILL_PARENT));
 	}
 
-	@Override
 	public void notifyDataSetChanged() {
 		mTabLayout.removeAllViews();
 		mAdapter = (TitleProvider) mViewPager.getAdapter();
@@ -171,7 +170,6 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 		}
 	}
 
-	@Override
 	public void setCurrentItem(int item) {
 		if (mViewPager == null) throw new IllegalStateException("ViewPager has not been bound.");
 		mCurrentItem = item;
@@ -188,18 +186,15 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 		}
 	}
 
-	@Override
 	public void setOnPageChangeListener(ExtendedViewPager.OnPageChangeListener listener) {
 		mListener = listener;
 	}
 
-	@Override
 	public void setPagingEnabled(boolean enabled) {
 		mViewPager.setPagingEnabled(enabled);
 		mPagingEnabled = enabled;
 	}
 
-	@Override
 	public void setViewPager(ExtendedViewPager pager) {
 		final PagerAdapter adapter = pager.getAdapter();
 		if (adapter == null) throw new IllegalStateException("ViewPager does not have adapter instance.");
@@ -211,7 +206,6 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 		notifyDataSetChanged();
 	}
 
-	@Override
 	public void setViewPager(ExtendedViewPager pager, int initialPosition) {
 		setViewPager(pager);
 		setCurrentItem(initialPosition);
@@ -327,5 +321,31 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 						heightMeasureSpec);
 			}
 		}
+	}
+
+	/**
+	 * A TitleProvider provides the title to display according to a view.
+	 */
+	public interface TitleProvider {
+
+		/**
+		 * Returns the icon of the view at position
+		 * 
+		 * @param position
+		 * @return
+		 */
+		public Integer getIcon(int position);
+
+		/**
+		 * Returns the title of the view at position
+		 * 
+		 * @param position
+		 * @return
+		 */
+		public String getTitle(int position);
+
+		public void onPageReselected(int position);
+
+		public void onPageSelected(int position);
 	}
 }

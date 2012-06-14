@@ -3,7 +3,7 @@ package org.mariotaku.twidere.adapter;
 import java.util.ArrayList;
 
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.view.TitleProvider;
+import org.mariotaku.twidere.view.TabPageIndicator.TitleProvider;
 
 import android.content.Context;
 import android.content.Intent;

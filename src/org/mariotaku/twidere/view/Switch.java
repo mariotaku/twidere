@@ -176,12 +176,12 @@ public class Switch extends CompoundButton {
 		return mTextOn;
 	}
 
-//	@Override
-//	public void jumpDrawablesToCurrentState() {
-//		super.jumpDrawablesToCurrentState();
-//		mThumbDrawable.jumpToCurrentState();
-//		mTrackDrawable.jumpToCurrentState();
-//	}
+	// @Override
+	// public void jumpDrawablesToCurrentState() {
+	// super.jumpDrawablesToCurrentState();
+	// mThumbDrawable.jumpToCurrentState();
+	// mTrackDrawable.jumpToCurrentState();
+	// }
 
 	@Override
 	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -243,25 +243,25 @@ public class Switch extends CompoundButton {
 		}
 	}
 
-//	@Override
-//	public void onPopulateAccessibilityEvent(AccessibilityEvent event) {
-//		super.onPopulateAccessibilityEvent(event);
-//		if (isChecked()) {
-//			CharSequence text = mOnLayout.getText();
-//			if (TextUtils.isEmpty(text)) {
-//				//text = mContext.getString(R.string.switch_on);
-//				text = "ON";
-//			}
-//			event.getText().add(text);
-//		} else {
-//			CharSequence text = mOffLayout.getText();
-//			if (TextUtils.isEmpty(text)) {
-//				//text = mContext.getString(R.string.switch_off);
-//				text = "OFF";
-//			}
-//			event.getText().add(text);
-//		}
-//	}
+	// @Override
+	// public void onPopulateAccessibilityEvent(AccessibilityEvent event) {
+	// super.onPopulateAccessibilityEvent(event);
+	// if (isChecked()) {
+	// CharSequence text = mOnLayout.getText();
+	// if (TextUtils.isEmpty(text)) {
+	// //text = mContext.getString(R.string.switch_on);
+	// text = "ON";
+	// }
+	// event.getText().add(text);
+	// } else {
+	// CharSequence text = mOffLayout.getText();
+	// if (TextUtils.isEmpty(text)) {
+	// //text = mContext.getString(R.string.switch_off);
+	// text = "OFF";
+	// }
+	// event.getText().add(text);
+	// }
+	// }
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
@@ -579,7 +579,6 @@ public class Switch extends CompoundButton {
 		return new StaticLayout(text, mTextPaint, (int) Math.ceil(Layout.getDesiredWidth(text, mTextPaint)),
 				Layout.Alignment.ALIGN_NORMAL, 1.f, 0, true);
 	}
-
 
 	/**
 	 * Called from onTouchEvent to end a drag operation.

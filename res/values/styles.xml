@@ -40,9 +40,9 @@
 		<item name="thumb">@drawable/switch_inner_holo_light</item>
 	</style>
 
-	<style name="TextAppearance.Holo.Widget.Switch" parent="android:TextAppearance.Large">
+	<style name="TextAppearance.Holo.Widget.Switch" parent="android:TextAppearance.Small">
 		<item name="textColor">@android:color/white</item>
-		<item name="textSize">12sp</item>
+		<item name="textSize">14sp</item>
 	</style>
 
 </resources>

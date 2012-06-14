@@ -32,11 +32,11 @@
 
 	<ProgressBar
 		android:id="@android:id/progress"
-		style="?android:attr/progressBarStyleSmall"
+		style="?actionBarIndeterminateProgressStyle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
-		android:layout_margin="4dp"
+		android:layout_marginRight="2dp"
 		android:layout_weight="0"/>
 
 </LinearLayout>

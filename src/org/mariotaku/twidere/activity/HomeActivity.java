@@ -13,6 +13,7 @@ import org.mariotaku.twidere.fragment.DiscoverFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.ExceptionHandler;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
@@ -40,7 +41,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 public class HomeActivity extends BaseActivity implements OnClickListener, OnBackStackChangedListener {
-
+	
 	private ExtendedViewPager mViewPager;
 	private SharedPreferences mPreferences;
 	private ActionBar mActionBar;
