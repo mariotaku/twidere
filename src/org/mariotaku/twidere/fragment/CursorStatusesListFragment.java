@@ -11,7 +11,7 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.StatusesCursorAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ProfileImageLoader;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -57,7 +57,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
+		final ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
 				.getProfileImageLoader();
 		mAdapter = new StatusesCursorAdapter(getActivity(), imageloader);
 		super.onActivityCreated(savedInstanceState);
@@ -67,10 +67,10 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		final String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
 				Statuses.STATUS_TIMESTAMP, Statuses.TEXT_PLAIN, Statuses.NAME, Statuses.SCREEN_NAME,
-				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID, Statuses.IN_REPLY_TO_SCREEN_NAME,
-				Statuses.LOCATION, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME,
-				Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_RETWEET, Statuses.IS_FAVORITE, Statuses.HAS_MEDIA,
-				Statuses.IS_PROTECTED, Statuses.IS_GAP };
+				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME, Statuses.LOCATION,
+				Statuses.RETWEET_COUNT, Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME,
+				Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_FAVORITE, Statuses.HAS_MEDIA, Statuses.IS_PROTECTED,
+				Statuses.IS_GAP };
 		final Uri uri = getContentUri();
 		String where = buildActivatedStatsWhereClause(getActivity(), null);
 		if (getSharedPreferences().getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {

@@ -200,16 +200,6 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.DebugConsoleActivity"
-			android:label="@string/debug">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<action android:name="org.mariotaku.twidere.DEBUG"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
 			android:name=".activity.LinkHandlerActivity"
 			android:label="@string/link_handler"
 			android:windowSoftInputMode="adjustResize">

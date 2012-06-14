@@ -6,7 +6,7 @@ import java.net.URL;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ProfileImageLoader;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -21,11 +21,11 @@ import android.widget.TextView;
 public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 
 	private ContentResolver mResolver;
-	private LazyImageLoader mImageLoader;
+	private ProfileImageLoader mImageLoader;
 
 	private int mNameIdx, mProfileImageUrlIdx, mScreenNameIdx;
 
-	public UserAutoCompleteAdapter(Context context, LazyImageLoader imageloader) {
+	public UserAutoCompleteAdapter(Context context, ProfileImageLoader imageloader) {
 		super(context, R.layout.user_autocomplete_list_item, null, new String[0], new int[0], 0);
 		mResolver = context.getContentResolver();
 		mImageLoader = imageloader;
@@ -35,7 +35,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 	public void bindView(View view, Context context, Cursor cursor) {
 		ViewHolder holder = (ViewHolder) view.getTag();
 		holder.name_view.setText(cursor.getString(mNameIdx));
-		holder.screenname_view.setText("@" + cursor.getString(mScreenNameIdx));
+		holder.screenname_view.setText(cursor.getString(mScreenNameIdx));
 		try {
 			mImageLoader.displayImage(new URL(cursor.getString(mProfileImageUrlIdx)), holder.profile_image_view);
 		} catch (MalformedURLException e) {

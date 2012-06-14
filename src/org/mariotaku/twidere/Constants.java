@@ -97,7 +97,6 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_ABOUT = INTENT_PACKAGE_PREFIX + "ABOUT";
 	public static final String INTENT_ACTION_EDIT_API = INTENT_PACKAGE_PREFIX + "EDIT_API";
 	public static final String INTENT_ACTION_SET_COLOR = INTENT_PACKAGE_PREFIX + "SET_COLOR";
-	public static final String INTENT_ACTION_DEBUG = INTENT_PACKAGE_PREFIX + "DEBUG";
 	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_PACKAGE_PREFIX + "TWITTER_LOGIN";
 	public static final String INTENT_ACTION_DIRECT_MESSAGES = INTENT_PACKAGE_PREFIX + "DIRECT_MESSAGES";
 

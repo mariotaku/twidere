@@ -61,7 +61,6 @@ import android.text.format.Time;
 import android.text.style.URLSpan;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -195,7 +194,7 @@ public final class Utils implements Constants {
 			if (cur == null) {
 				continue;
 			}
-			if (cur.getCount() == 1) {
+			if (cur.getCount() > 0) {
 				cur.moveToFirst();
 				status = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
 			}
@@ -1189,12 +1188,6 @@ public final class Utils implements Constants {
 				iconFav.clearColorFilter();
 				itemFav.setTitle(R.string.fav);
 			}
-		}
-	}
-
-	public static void setViewLayerType(View view, int layerType, Paint paint) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			new MethodsCompat().setLayerType(view, layerType, paint);
 		}
 	}
 

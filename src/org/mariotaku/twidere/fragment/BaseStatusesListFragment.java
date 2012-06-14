@@ -64,6 +64,8 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 	private float mTextSize;
 	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
 
+	private Fragment mDetailFragment;
+
 	public AsyncTaskManager getAsyncTaskManager() {
 		return mAsyncTaskManager;
 	}
@@ -333,8 +335,6 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 		}
 		super.onStop();
 	}
-	
-	private Fragment mDetailFragment;
 
 	private void openStatus(ParcelableStatus status) {
 		final long account_id = status.account_id, status_id = status.status_id;
@@ -344,7 +344,7 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			HomeActivity home_activity = (HomeActivity) activity;
 			if (mDetailFragment instanceof ViewStatusFragment && mDetailFragment.isAdded()) {
-				((ViewStatusFragment)mDetailFragment).displayStatus(status);
+				((ViewStatusFragment) mDetailFragment).displayStatus(status);
 			} else {
 				mDetailFragment = new ViewStatusFragment();
 				Bundle args = new Bundle(bundle);

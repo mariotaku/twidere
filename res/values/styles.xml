@@ -1,12 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<style name="Widget.Twidere.ActionBar" parent="android:Widget.Holo.ActionBar">
+		<item name="android:background">?actionBarBackground</item>
+		<item name="android:indeterminateProgressStyle">?actionBarIndeterminateProgressStyle</item>
+	</style>
+
 	<style name="Widget.Twidere.Light.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
-		<item name="android:background">@drawable/bg_actionbar_light_theme</item>
+		<item name="android:background">?actionBarBackground</item>
+		<item name="android:indeterminateProgressStyle">?actionBarIndeterminateProgressStyle</item>
 	</style>
 
 	<style name="Widget.Toggle.ActionBarView" parent="android:Widget.Holo.Light.Button.Toggle">
 		<item name="android:textColor">@android:color/white</item>
+	</style>
+
+	<style name="Widget.Holo.ProgressBar.Small" parent="android:Widget.ProgressBar.Small">
+		<item name="android:indeterminateDrawable">@drawable/progress_small_holo</item>
+		<item name="android:minWidth">16dip</item>
+		<item name="android:padding">4dip</item>
+		<item name="android:maxWidth">16dip</item>
+		<item name="android:minHeight">16dip</item>
+		<item name="android:maxHeight">16dip</item>
+	</style>
+
+	<style name="Widget.Holo.CompoundButton.Switch" parent="android:Widget.CompoundButton">
+		<item name="track">@drawable/switch_track_holo_dark</item>
+		<item name="thumb">@drawable/switch_inner_holo_dark</item>
+		<item name="switchTextAppearance">@style/TextAppearance.Holo.Widget.Switch</item>
+		<item name="textOn">@string/capital_on</item>
+		<item name="textOff">@string/capital_off</item>
+		<item name="thumbTextPadding">12dip</item>
+		<item name="switchMinWidth">96dip</item>
+		<item name="switchPadding">16dip</item>
+	</style>
+
+	<style name="Widget.Holo.Light.CompoundButton.Switch" parent="Widget.Holo.CompoundButton.Switch">
+		<item name="track">@drawable/switch_track_holo_light</item>
+		<item name="thumb">@drawable/switch_inner_holo_light</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Widget.Switch" parent="android:TextAppearance.Large">
+		<item name="textColor">@android:color/white</item>
+		<item name="textSize">12sp</item>
 	</style>
 
 </resources>

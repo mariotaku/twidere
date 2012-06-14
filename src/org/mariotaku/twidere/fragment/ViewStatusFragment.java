@@ -18,8 +18,8 @@ import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AutoLink;
 import org.mariotaku.twidere.util.AutoLink.OnLinkClickListener;
-import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
+import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusesCursorIndices;
 
@@ -115,7 +115,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mViewMapButton.setVisibility(status.location != null ? View.VISIBLE : View.GONE);
 		mViewMediaButton.setVisibility(status.has_media ? View.VISIBLE : View.GONE);
 
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
+		ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		imageloader.displayImage(status.profile_image_url, mProfileImageView);
 
 	}
@@ -206,6 +206,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		switch (type) {
 			case AutoLink.LINK_TYPE_MENTIONS: {
 				openUserProfile(mStatus.account_id, -1, link);
+				break;
+			}
+			case AutoLink.LINK_TYPE_HASHTAGS: {
+				openTweetSearch(mStatus.account_id, link);
 				break;
 			}
 		}
@@ -324,6 +328,31 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			builder.authority(AUTHORITY_CONVERSATION);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(mStatusId));
+			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	private void openTweetSearch(long account_id, String query) {
+		FragmentActivity activity = getActivity();
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new SearchTweetsFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (query != null) {
+				args.putString(INTENT_KEY_QUERY, query);
+			}
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_SEARCH);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_TYPE, QUERY_PARAM_VALUE_TWEETS);
+			if (query != null) {
+				builder.appendQueryParameter(QUERY_PARAM_QUERY, query);
+			}
 			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}

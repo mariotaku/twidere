@@ -16,10 +16,9 @@
 
 package org.mariotaku.twidere.view;
 
-import static org.mariotaku.twidere.util.Utils.setViewLayerType;
-
 import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -34,6 +33,7 @@ import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Shader.TileMode;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -732,7 +732,9 @@ public class ColorPickerView extends View {
 
 	private void init() {
 
-		setViewLayerType(this, View.LAYER_TYPE_SOFTWARE, new Paint());
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			SetLayerTypeAccessor.setLayerType(this, View.LAYER_TYPE_SOFTWARE, new Paint());
+		}
 		mDensity = getContext().getResources().getDisplayMetrics().density;
 		PALETTE_CIRCLE_TRACKER_RADIUS *= mDensity;
 		RECTANGLE_TRACKER_OFFSET *= mDensity;
@@ -942,5 +944,15 @@ public class ColorPickerView extends View {
 	public interface OnColorChangedListener {
 
 		public void onColorChanged(int color);
+	}
+
+	private static class SetLayerTypeAccessor {
+
+		@TargetApi(11)
+		public static void setLayerType(View view, int layerType, Paint paint) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				view.setLayerType(layerType, paint);
+			}
+		}
 	}
 }

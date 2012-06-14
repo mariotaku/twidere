@@ -41,9 +41,6 @@
 	<string name="error_occurred">發生錯誤，請重試。</string>
 	<string name="error_already_logged_in">你已經登錄。</string>
 	<string name="no_account_selected">你必須至少選擇一個帳號。</string>
-	<string name="error_connectivity_error">錯誤：連接性錯誤，請檢查你的網絡狀態。</string>
-	<string name="error_server_error">錯誤：伺服器發生錯誤，它可能宕機了。</string>
-	<string name="error_bad_address">錯誤：錯誤的地址，你可能輸入了無效的API地址。</string>
 	<string name="error_no_permission">錯誤：你沒有權限訪問twitter，應用程序的密鑰可能是無效的。</string>
 	<string name="error_unknown_error">錯誤：未知錯誤，這很可能是個bug。</string>
 	<string name="error_message">錯誤：<xliff:g id="message">%s</xliff:g></string>
@@ -183,5 +180,7 @@
 	<string name="quote_format">引用格式</string>
 	<string name="quote_format_summary">設定推文引用的格式</string>
 	<string name="quote_format_message">\"[TEXT]\" 將被替換成要引用的推文</string>
+	<string name="capital_on">開啓</string>
+	<string name="capital_off">關閉</string>
 
 </resources>

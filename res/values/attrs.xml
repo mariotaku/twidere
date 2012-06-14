@@ -20,6 +20,33 @@
 
 	<declare-styleable name="Twidere">
 		<attr name="tabBackground" format="reference"/>
+		<attr name="switchStyle" format="reference"/>
+	</declare-styleable>
+	<declare-styleable name="Switch">
+
+		<!-- Drawable to use as the "thumb" that switches back and forth. -->
+		<attr name="thumb" format="reference"/>
+		<!-- Drawable to use as the "track" that the switch thumb slides within. -->
+		<attr name="track" format="reference"/>
+		<!-- Text to use when the switch is in the checked/"on" state. -->
+		<attr name="textOn" format="reference|string"/>
+		<!-- Text to use when the switch is in the unchecked/"off" state. -->
+		<attr name="textOff" format="reference|string"/>
+		<!-- Amount of padding on either side of text within the switch thumb. -->
+		<attr name="thumbTextPadding" format="dimension"/>
+		<!-- TextAppearance style for text displayed on the switch thumb. -->
+		<attr name="switchTextAppearance" format="reference"/>
+		<!-- Minimum width for the switch component -->
+		<attr name="switchMinWidth" format="dimension"/>
+		<!-- Minimum space between the switch and caption text -->
+		<attr name="switchPadding" format="dimension"/>
+	</declare-styleable>
+	<declare-styleable name="TextAppearance">
+
+		<!-- Text color. -->
+		<attr name="textColor" format="reference"/>
+		<!-- Size of the text. Recommended dimension type for text is "sp" for scaled-pixels (example: 15sp). -->
+		<attr name="textSize" format="dimension"/>
 	</declare-styleable>
 
 </resources>

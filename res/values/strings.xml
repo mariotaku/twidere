@@ -41,10 +41,6 @@
 	<string name="error_occurred">An error occurred, please try again.</string>
 	<string name="error_already_logged_in">You are already logged in.</string>
 	<string name="no_account_selected">You must select one account or more.</string>
-	<string name="error_connectivity_error">Error: Connectivity error, please check your network state.</string>
-	<string name="error_server_error">Error: Server error occurred, the server may down.</string>
-	<string name="error_bad_address">Error: Bad address, you may entered an invalid API address.</string>
-	<string name="error_no_permission">Error: You have no permission to access twitter, the application key may invalid.</string>
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
 	<string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
 	<string name="select_account">Select account</string>
@@ -184,5 +180,7 @@
 	<string name="quote_format_summary">Set quote format for tweets.</string>
 	<string name="quote_format_message">\"[TEXT]\" will be replaced with tweet to quote.</string>
 	<string name="direct_messages">Direct messages</string>
+	<string name="capital_on">ON</string>
+	<string name="capital_off">OFF</string>
 
 </resources>

@@ -14,7 +14,7 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.Utils;
 
@@ -36,7 +36,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
@@ -61,7 +60,7 @@ import android.widget.TextView;
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
 		OnItemClickListener, OnItemLongClickListener {
 
-	private LazyImageLoader mProfileImageLoader;
+	private ProfileImageLoader mProfileImageLoader;
 	private ImageView mProfileImage;
 	private FollowInfoTask mFollowInfoTask;
 	private View mFollowIndicator;

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="pull_to_refresh_pull_label">下拉并释放以刷新…</string>
+	<string name="pull_to_refresh_release_label">释放以刷新…</string>
+	<string name="pull_to_refresh_tap_label">点击刷新…</string>
+	<string name="pull_to_refresh_refreshing_label">载入中…</string>
+
+</resources>

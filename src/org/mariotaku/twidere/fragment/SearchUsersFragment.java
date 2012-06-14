@@ -4,7 +4,7 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.UserViewHolder;
 
 import twitter4j.ResponseList;
@@ -137,7 +137,7 @@ public class SearchUsersFragment extends BaseListFragment implements LoaderCallb
 
 	private static class UsersAdapter extends ArrayAdapter<User> {
 
-		private final LazyImageLoader mImageLoader;
+		private final ProfileImageLoader mImageLoader;
 		private boolean mDisplayProfileImage;
 
 		public UsersAdapter(Context context) {

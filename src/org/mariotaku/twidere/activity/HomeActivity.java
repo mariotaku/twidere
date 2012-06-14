@@ -56,13 +56,15 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
-				setRefreshState();
+				setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 			}
 		}
 
 	};
 
 	public static final int PANE_LEFT = R.id.left_pane, PANE_RIGHT = R.id.right_pane;
+
+	private boolean mProgressBarIndeterminateVisible = false;
 
 	public boolean isDualPaneMode() {
 		return findViewById(PANE_LEFT) instanceof ViewGroup && findViewById(PANE_RIGHT) instanceof ViewGroup;
@@ -111,7 +113,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		FragmentManager fm = getSupportFragmentManager();
 		Fragment fragment = fm.findFragmentById(PANE_LEFT);
 		View main_view = findViewById(R.id.main);
-		boolean left_pane_used = fragment != null && fragment.isAdded() ;
+		boolean left_pane_used = fragment != null && fragment.isAdded();
 		main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
 		setPagingEnabled(!left_pane_used);
 	}
@@ -191,12 +193,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		cleanDatabasesByItemLimit(this);
 		super.onDestroy();
 	}
-	
-	private void navigateToTop() {
-		if (isDualPaneMode()) {
-			getSupportFragmentManager().popBackStack();
-		}
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -245,7 +241,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	public void onStart() {
 		super.onStart();
-		setRefreshState();
+		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
 	}
@@ -263,17 +259,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		}
 	}
 
-	public void setRefreshState() {
-		boolean is_refresh = false;
-		if (mInterface != null) {
-			is_refresh = mInterface.hasActivatedTask();
-		}
-		setSupportProgressBarIndeterminateVisibility(is_refresh);
-	}
-
 	@Override
 	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
-		mProgress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+		mProgressBarIndeterminateVisible = visible;
+		mProgress.setVisibility(visible || mInterface.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
 	}
 
 	public void showAtPane(int pane, Fragment fragment, boolean addToBackStack) {
@@ -290,6 +279,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		}
 		ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();
+	}
+
+	private void navigateToTop() {
+		if (isDualPaneMode()) {
+			getSupportFragmentManager().popBackStack();
+		}
 	}
 
 }

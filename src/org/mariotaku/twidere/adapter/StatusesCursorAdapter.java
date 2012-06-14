@@ -8,8 +8,8 @@ import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
+import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.StatusViewHolder;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 import org.mariotaku.twidere.util.StatusesCursorIndices;
@@ -23,12 +23,12 @@ import android.view.ViewGroup;
 public class StatusesCursorAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface {
 
 	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
-	private final LazyImageLoader mImageLoader;
+	private final ProfileImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
 	private StatusesCursorIndices mIndices;
 
-	public StatusesCursorAdapter(Context context, LazyImageLoader loader) {
+	public StatusesCursorAdapter(Context context, ProfileImageLoader loader) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
 		mImageLoader = loader;
@@ -38,22 +38,23 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 	public void bindView(View view, Context context, Cursor cursor) {
 		final StatusViewHolder holder = (StatusViewHolder) view.getTag();
 
-		final long account_id = cursor.getLong(mIndices.account_id);
-		final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
-		final long in_reply_to_status_id = cursor.getLong(mIndices.in_reply_to_status_id);
-		final long retweet_count = cursor.getLong(mIndices.retweet_count);
-		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
-		final boolean is_retweet = cursor.getShort(mIndices.is_retweet) == 1;
-		final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
-		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
-		final boolean has_media = cursor.getShort(mIndices.has_media) == 1;
-		final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
-
 		final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
 				.getString(mIndices.retweeted_by_screen_name);
 		final String text_plain = cursor.getString(mIndices.text_plain);
 		final String name = mDisplayName ? cursor.getString(mIndices.name) : cursor.getString(mIndices.screen_name);
 		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
+
+		final long account_id = cursor.getLong(mIndices.account_id);
+		final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
+		final long retweet_count = cursor.getLong(mIndices.retweet_count);
+
+		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
+		final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
+		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
+		final boolean has_media = cursor.getShort(mIndices.has_media) == 1;
+		final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
+		final boolean is_retweet = !isNullOrEmpty(retweeted_by);
+		final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name);
 
 		final boolean is_last = cursor.getPosition() == getCount() - 1;
 		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1;
@@ -76,14 +77,14 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 			holder.tweet_time.setText(formatToShortTimeString(mContext, status_timestamp));
 			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(null, null,
 					getTypeIcon(context, is_favorite, has_location, has_media), null);
-			holder.reply_retweet_status.setVisibility(in_reply_to_status_id != -1 || is_retweet ? View.VISIBLE
-					: View.GONE);
-			if (is_retweet && !isNullOrEmpty(retweeted_by)) {
+
+			holder.reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
+			if (is_retweet) {
 				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by
 						+ (retweet_count > 1 ? " + " + (retweet_count - 1) : "")));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tweet_stat_retweet,
 						0, 0, 0);
-			} else if (in_reply_to_status_id != -1 && !isNullOrEmpty(in_reply_to_screen_name)) {
+			} else if (is_reply) {
 				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to, in_reply_to_screen_name));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tweet_stat_reply, 0,
 						0, 0);

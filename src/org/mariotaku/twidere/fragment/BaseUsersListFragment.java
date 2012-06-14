@@ -11,7 +11,6 @@ import java.util.List;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ParcelableStatus;
@@ -20,16 +19,12 @@ import org.mariotaku.twidere.util.StatusViewHolder;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import twitter4j.User;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -47,7 +42,8 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public abstract class BaseUsersListFragment extends BaseFragment implements OnRefreshListener,
-		LoaderCallbacks<List<User>>, OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
+		LoaderCallbacks<List<User>>, OnScrollListener, OnItemClickListener, OnItemLongClickListener,
+		OnMenuItemClickListener {
 
 	private ServiceInterface mServiceInterface;
 	private PullToRefreshListView mListView;
@@ -149,7 +145,7 @@ public abstract class BaseUsersListFragment extends BaseFragment implements OnRe
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getUsers(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
-				//openUserProfile(status);
+				// openUserProfile(status);
 			}
 		}
 	}
@@ -339,27 +335,31 @@ public abstract class BaseUsersListFragment extends BaseFragment implements OnRe
 	}
 
 	private void openUserProfile(User status) {
-//		final long account_id = status.account_id, status_id = status.status_id;
-//		FragmentActivity activity = getActivity();
-//		Bundle bundle = new Bundle();
-//		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-//			HomeActivity home_activity = (HomeActivity) activity;
-//			Fragment fragment = new ViewStatusFragment();
-//			Bundle args = new Bundle(bundle);
-//			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-//			args.putLong(INTENT_KEY_STATUS_ID, status_id);
-//			fragment.setArguments(args);
-//			home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
-//		} else {
-//			Uri.Builder builder = new Uri.Builder();
-//			builder.scheme(SCHEME_TWIDERE);
-//			builder.authority(AUTHORITY_STATUS);
-//			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-//			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
-//			Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-//
-//			intent.putExtras(bundle);
-//			startActivity(intent);
-//		}
+		// final long account_id = status.account_id, status_id =
+		// status.status_id;
+		// FragmentActivity activity = getActivity();
+		// Bundle bundle = new Bundle();
+		// if (activity instanceof HomeActivity && ((HomeActivity)
+		// activity).isDualPaneMode()) {
+		// HomeActivity home_activity = (HomeActivity) activity;
+		// Fragment fragment = new ViewStatusFragment();
+		// Bundle args = new Bundle(bundle);
+		// args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+		// args.putLong(INTENT_KEY_STATUS_ID, status_id);
+		// fragment.setArguments(args);
+		// home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
+		// } else {
+		// Uri.Builder builder = new Uri.Builder();
+		// builder.scheme(SCHEME_TWIDERE);
+		// builder.authority(AUTHORITY_STATUS);
+		// builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID,
+		// String.valueOf(account_id));
+		// builder.appendQueryParameter(QUERY_PARAM_STATUS_ID,
+		// String.valueOf(status_id));
+		// Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+		//
+		// intent.putExtras(bundle);
+		// startActivity(intent);
+		// }
 	}
 }

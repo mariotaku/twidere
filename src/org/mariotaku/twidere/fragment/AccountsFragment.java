@@ -12,7 +12,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ProfileImageLoader;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -31,7 +31,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -48,7 +47,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>{
+public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor> {
 
 	private ListView mListView;
 
@@ -82,7 +81,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
+		ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		mResolver = getActivity().getContentResolver();
 		mAdapter = new AccountsAdapter(getActivity(), imageloader);
 		getLoaderManager().initLoader(0, null, this);
@@ -270,11 +269,11 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	private static class AccountsAdapter extends SimpleCursorAdapter {
 
-		private LazyImageLoader mImageLoader;
+		private ProfileImageLoader mImageLoader;
 
 		private int mUserColorIdx, mProfileImageIdx;
 
-		public AccountsAdapter(Context context, LazyImageLoader loader) {
+		public AccountsAdapter(Context context, ProfileImageLoader loader) {
 			super(context, R.layout.account_list_item, null, new String[] { Accounts.USERNAME },
 					new int[] { android.R.id.text1 }, 0);
 			mImageLoader = loader;

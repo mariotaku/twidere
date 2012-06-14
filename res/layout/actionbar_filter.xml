@@ -15,9 +15,9 @@
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="@android:color/white"/>
 
-	<include
+	<org.mariotaku.twidere.view.Switch
+		android:id="@+id/toggle"
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		layout="@layout/actionbar_filter_toggle"/>
+		android:layout_height="wrap_content"/>
 
 </LinearLayout>

@@ -3,19 +3,16 @@ package org.mariotaku.twidere.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.UserFavoritesLoader;
-import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
+import org.mariotaku.twidere.util.ProfileImageLoader;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.content.Loader;
 
-public class UserFavoritesFragment extends BaseStatusesListFragment<List<ParcelableStatus>> 
-		{
+public class UserFavoritesFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
 	private ParcelableStatusesAdapter mAdapter;
 	private final List<ParcelableStatus> mData = new ArrayList<ParcelableStatus>();
@@ -43,7 +40,7 @@ public class UserFavoritesFragment extends BaseStatusesListFragment<List<Parcela
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
+		ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
 		super.onActivityCreated(savedInstanceState);
 	}

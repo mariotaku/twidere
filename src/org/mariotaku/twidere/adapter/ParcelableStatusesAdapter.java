@@ -6,8 +6,8 @@ import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ParcelableStatus;
+import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.StatusViewHolder;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
@@ -19,11 +19,11 @@ import android.widget.ArrayAdapter;
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface {
 
 	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
-	private final LazyImageLoader mImageLoader;
+	private final ProfileImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
 
-	public ParcelableStatusesAdapter(Context context, LazyImageLoader loader) {
+	public ParcelableStatusesAdapter(Context context, ProfileImageLoader loader) {
 		super(context, R.layout.status_list_item, R.id.text);
 		mContext = context;
 		mImageLoader = loader;
