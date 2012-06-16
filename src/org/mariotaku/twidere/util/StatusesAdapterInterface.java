@@ -6,6 +6,8 @@ public interface StatusesAdapterInterface extends ListAdapter {
 
 	public ParcelableStatus findItem(long id);
 
+	public void notifyDataSetChanged();
+
 	public void setDisplayName(boolean display);
 
 	public void setDisplayProfileImage(boolean display);
@@ -14,5 +16,6 @@ public interface StatusesAdapterInterface extends ListAdapter {
 
 	public void setShowLastItemAsGap(boolean gap);
 
-	public void setStatusesTextSize(float text_size);
+	public void setTextSize(float text_size);
+
 }

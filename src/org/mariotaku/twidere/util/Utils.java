@@ -11,6 +11,12 @@ import java.util.regex.Pattern;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.fragment.SearchTweetsFragment;
+import org.mariotaku.twidere.fragment.UserFavoritesFragment;
+import org.mariotaku.twidere.fragment.UserProfileFragment;
+import org.mariotaku.twidere.fragment.UserTimelineFragment;
+import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -52,7 +58,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -87,7 +95,9 @@ public final class Utils implements Constants {
 
 	private static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 
-	private static Drawable ICON_STARRED, ICON_HAS_MEDIA, ICON_HAS_LOCATION;
+	private Utils() {
+
+	}
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
 		long[] account_ids = getActivatedAccountIds(context);
@@ -944,25 +954,20 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static Drawable getTypeIcon(Context context, boolean is_fav, boolean has_location, boolean has_media) {
-		Resources res = context.getResources();
-		if (is_fav) {
-			if (ICON_STARRED == null) {
-				ICON_STARRED = res.getDrawable(R.drawable.ic_tweet_stat_starred);
-			}
-			return ICON_STARRED;
-		} else if (has_media) {
-			if (ICON_HAS_MEDIA == null) {
-				ICON_HAS_MEDIA = res.getDrawable(R.drawable.ic_tweet_stat_has_media);
-			}
-			return ICON_HAS_MEDIA;
-		} else if (has_location) {
-			if (ICON_HAS_LOCATION == null) {
-				ICON_HAS_LOCATION = res.getDrawable(R.drawable.ic_tweet_stat_has_location);
-			}
-			return ICON_HAS_LOCATION;
+	public static int getTypeIcon(boolean is_fav, boolean has_location, boolean has_media) {
+		if (is_fav)
+			return R.drawable.ic_tweet_stat_starred;
+		else if (has_media)
+			return R.drawable.ic_tweet_stat_has_media;
+		else if (has_location) return R.drawable.ic_tweet_stat_has_location;
+		return 0;
+	}
+
+	public static int indexOfArray(long[] array, long value) {
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] == value) return i;
 		}
-		return null;
+		return -1;
 	}
 
 	public static boolean isMyAccount(Context context, long account_id) {
@@ -1040,7 +1045,7 @@ public final class Utils implements Constants {
 		values.put(Accounts.AUTH_TYPE, auth_type);
 		values.put(Accounts.USER_ID, user.getId());
 		values.put(Accounts.USERNAME, user.getScreenName());
-		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageUrlHttps().toString());
+		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 		values.put(Accounts.USER_COLOR, color);
 		values.put(Accounts.IS_ACTIVATED, 1);
 		if (rest_api_base != null) {
@@ -1056,7 +1061,7 @@ public final class Utils implements Constants {
 	public static ContentValues makeCachedUsersContentValues(User user) {
 		ContentValues values = new ContentValues();
 		values.put(CachedUsers.NAME, user.getName());
-		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageUrlHttps().toString());
+		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
 		values.put(CachedUsers.USER_ID, user.getId());
 
@@ -1089,7 +1094,7 @@ public final class Utils implements Constants {
 		final User user = status.getUser();
 		if (user != null) {
 			final long user_id = user.getId();
-			final String profile_image_url = user.getProfileImageUrlHttps().toString();
+			final String profile_image_url = user.getProfileImageURL().toString();
 			final String name = user.getName(), screen_name = user.getScreenName();
 			values.put(Statuses.USER_ID, user_id);
 			values.put(Statuses.NAME, name);
@@ -1133,6 +1138,138 @@ public final class Utils implements Constants {
 			}
 		}
 		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
+	}
+
+	public static void openConversation(Activity activity, long account_id, long status_id) {
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new ViewConversationFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(INTENT_KEY_STATUS_ID, status_id);
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_CONVERSATION);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	public static void openTweetSearch(Activity activity, long account_id, String query) {
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new SearchTweetsFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (query != null) {
+				args.putString(INTENT_KEY_QUERY, query);
+			}
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_SEARCH);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_TYPE, QUERY_PARAM_VALUE_TWEETS);
+			if (query != null) {
+				builder.appendQueryParameter(QUERY_PARAM_QUERY, query);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	public static void openUserFavorites(Activity activity, long account_id, long user_id, String screen_name) {
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new UserFavoritesFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (user_id != -1) {
+				args.putLong(INTENT_KEY_USER_ID, user_id);
+			}
+			if (screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			}
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER_FAVORITES);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (user_id != -1) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+
+	}
+
+	public static void openUserProfile(Activity activity, long account_id, long user_id, String screen_name) {
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new UserProfileFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (user_id != -1) {
+				args.putLong(INTENT_KEY_USER_ID, user_id);
+			}
+			if (screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			}
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (user_id != -1) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	public static void openUserTimeline(Activity activity, long account_id, long user_id, String screen_name) {
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new UserTimelineFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (user_id != -1) {
+				args.putLong(INTENT_KEY_USER_ID, user_id);
+			}
+			if (screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			}
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER_TIMELINE);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (user_id != -1) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+
 	}
 
 	public static URL parseURL(String url_string) {

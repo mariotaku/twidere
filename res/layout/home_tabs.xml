@@ -32,11 +32,10 @@
 
 	<ProgressBar
 		android:id="@android:id/progress"
-		style="?actionBarIndeterminateProgressStyle"
+		style="@style/Widget.Holo.ProgressBar.Small"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
-		android:layout_marginRight="2dp"
 		android:layout_weight="0"/>
 
 </LinearLayout>

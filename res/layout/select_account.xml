@@ -24,6 +24,7 @@
 		android:background="@drawable/list_selector_holo_light"
 		android:gravity="center"
 		android:minHeight="48dp"
+		android:onClick="onClick"
 		android:text="@string/add_account"/>
 
 </LinearLayout>

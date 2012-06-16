@@ -1,8 +1,9 @@
 package org.mariotaku.twidere.fragment;
 
+import java.util.List;
+
 import org.mariotaku.twidere.adapter.UsersAdapter;
 
-import twitter4j.ResponseList;
 import twitter4j.User;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +17,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public abstract class BaseUsersListFragment extends BaseListFragment implements LoaderCallbacks<ResponseList<User>>,
+public abstract class BaseUsersListFragment extends BaseListFragment implements LoaderCallbacks<List<User>>,
 		OnItemClickListener {
 
 	private UsersAdapter mAdapter;
@@ -25,7 +26,7 @@ public abstract class BaseUsersListFragment extends BaseListFragment implements 
 	private ListView mListView;
 	private long mAccountId;
 
-	public abstract Loader<ResponseList<User>> newLoaderInstance();
+	public abstract Loader<List<User>> newLoaderInstance();
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public abstract class BaseUsersListFragment extends BaseListFragment implements 
 	}
 
 	@Override
-	public Loader<ResponseList<User>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<User>> onCreateLoader(int id, Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		return newLoaderInstance();
 	}
@@ -60,12 +61,12 @@ public abstract class BaseUsersListFragment extends BaseListFragment implements 
 	}
 
 	@Override
-	public void onLoaderReset(Loader<ResponseList<User>> loader) {
+	public void onLoaderReset(Loader<List<User>> loader) {
 		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<ResponseList<User>> loader, ResponseList<User> data) {
+	public void onLoadFinished(Loader<List<User>> loader, List<User> data) {
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.clear();
 		if (data != null) {

@@ -196,7 +196,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayName(display_name);
-		mAdapter.setStatusesTextSize(text_size);
+		mAdapter.setTextSize(text_size);
 		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name || mTextSize != text_size) {
 			mDisplayProfileImage = display_profile_image;
 			mDisplayName = display_name;

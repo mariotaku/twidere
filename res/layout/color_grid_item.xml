@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="102dip"
-	android:layout_height="102dip"
+	android:layout_width="96dip"
+	android:layout_height="96dip"
 	android:layout_gravity="center"
 	android:padding="8dip">
 

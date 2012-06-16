@@ -49,15 +49,11 @@ public class UserTimelineFragment extends BaseStatusesListFragment<List<Parcelab
 	public Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		if (args != null) {
-			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
+			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			if (user_id != -1)
-				return new UserTimelineLoader(getActivity(), account_id, user_id, max_id, mData);
-			else if (screen_name != null)
-				return new UserTimelineLoader(getActivity(), account_id, screen_name, max_id, mData);
-
+			return new UserTimelineLoader(getActivity(), account_id, user_id, screen_name, max_id, mData);
 		}
 		return null;
 	}

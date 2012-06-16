@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="14"
+	android:versionCode="15"
 	android:versionName="0.0.13">
 
 	<uses-sdk
@@ -215,6 +215,12 @@
 					android:host="user"
 					android:scheme="twidere"/>
 				<data
+					android:host="user_timeline"
+					android:scheme="twidere"/>
+				<data
+					android:host="user_favorites"
+					android:scheme="twidere"/>
+				<data
 					android:host="status"
 					android:scheme="twidere"/>
 				<data
@@ -238,6 +244,19 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".activity.ImageViewActivity"
+			android:label="@string/view_image"
+			android:theme="@style/Theme.Twidere.ImageViewer">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+
+				<data android:scheme="http"/>
+				<data android:scheme="https"/>
+			</intent-filter>
+		</activity>
 
 		<provider
 			android:name=".provider.TweetStoreProvider"
@@ -256,25 +275,6 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</service>
-
-		<activity
-			android:name=".activity.ImageViewActivity"
-			android:label="@string/view_image"
-			android:theme="@android:style/Theme.Translucent.NoTitleBar">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<action android:name="org.mariotaku.twidere.VIEW_IMAGES"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-
-				<data
-					android:host="*"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:scheme="https"/>
-			</intent-filter>
-		</activity>
 	</application>
 
 </manifest>

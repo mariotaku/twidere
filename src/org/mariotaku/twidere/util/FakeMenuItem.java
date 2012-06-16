@@ -1,5 +1,6 @@
 package org.mariotaku.twidere.util;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -21,6 +22,7 @@ public class FakeMenuItem implements MenuItem {
 
 	private OnLongClickListener mLongClickListener = new OnLongClickListener() {
 
+		@TargetApi(14)
 		@Override
 		public boolean onLongClick(View v) {
 			Toast t = Toast.makeText(view.getContext(), getTitle(), Toast.LENGTH_SHORT);
@@ -67,6 +69,7 @@ public class FakeMenuItem implements MenuItem {
 		return false;
 	}
 
+	@TargetApi(14)
 	@Override
 	public ActionProvider getActionProvider() {
 		return null;
@@ -92,6 +95,7 @@ public class FakeMenuItem implements MenuItem {
 		return view.getDrawable();
 	}
 
+	@TargetApi(14)
 	@Override
 	public Intent getIntent() {
 		return new Intent();
@@ -162,6 +166,7 @@ public class FakeMenuItem implements MenuItem {
 		return view.getVisibility() == View.VISIBLE;
 	}
 
+	@TargetApi(14)
 	@Override
 	public MenuItem setActionProvider(ActionProvider actionProvider) {
 		return this;
@@ -182,6 +187,7 @@ public class FakeMenuItem implements MenuItem {
 		return this;
 	}
 
+	@TargetApi(14)
 	@Override
 	public MenuItem setCheckable(boolean checkable) {
 		return this;
@@ -222,6 +228,7 @@ public class FakeMenuItem implements MenuItem {
 		return this;
 	}
 
+	@TargetApi(14)
 	@Override
 	public MenuItem setOnActionExpandListener(OnActionExpandListener listener) {
 		return this;

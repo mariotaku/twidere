@@ -11,7 +11,7 @@ public class MapActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		Fragment fragment = Fragment.instantiate(this, GoogleWebMapFragment.class.getName());

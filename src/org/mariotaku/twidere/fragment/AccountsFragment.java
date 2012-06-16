@@ -1,27 +1,25 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.BaseActivity;
-import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -29,25 +27,21 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor> {
+public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemLongClickListener,
+		OnMenuItemClickListener {
 
 	private ListView mListView;
 
@@ -55,17 +49,16 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	private long mSelectedUserId;
 
-	private String mSelectedScreenName;
 	private ContentResolver mResolver;
 
-	private Fragment mDetailFragment;
+	private PopupMenu mPopupMenu;
+
 	private boolean mActivityFirstCreated;
 
 	private static final long INVALID_ID = -1;
 
 	private Cursor mCursor;
 	private AccountsAdapter mAdapter;
-	private DeleteConfirmFragment mFragment = new DeleteConfirmFragment();
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -86,7 +79,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		mAdapter = new AccountsAdapter(getActivity(), imageloader);
 		getLoaderManager().initLoader(0, null, this);
 		mListView = getListView();
-		mListView.setOnCreateContextMenuListener(this);
+		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
 	}
 
@@ -108,49 +101,9 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		Intent intent;
-		switch (item.getItemId()) {
-			case MENU_VIEW:
-				openUserProfile(mSelectedUserId);
-				break;
-			case MENU_SET_COLOR:
-				if (mSelectedUserId != INVALID_ID) {
-					intent = new Intent(INTENT_ACTION_SET_COLOR);
-					Bundle bundle = new Bundle();
-					bundle.putInt(Accounts.USER_COLOR, mSelectedColor);
-					intent.putExtras(bundle);
-					startActivityForResult(intent, REQUEST_SET_COLOR);
-				}
-				break;
-			case MENU_DELETE:
-				confirmDelection();
-				break;
-		}
-		return super.onContextItemSelected(item);
-	}
-
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		mActivityFirstCreated = true;
 		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		new MenuInflater(getActivity()).inflate(R.menu.context_account, menu);
-
-		AdapterContextMenuInfo adapterinfo = (AdapterContextMenuInfo) menuInfo;
-
-		if (mCursor != null && adapterinfo.position >= 0 && adapterinfo.position < mCursor.getCount()) {
-			mCursor.moveToPosition(adapterinfo.position);
-			mSelectedColor = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.USER_COLOR));
-			mSelectedUserId = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
-			mSelectedScreenName = mCursor.getString(mCursor.getColumnIndexOrThrow(Accounts.USERNAME));
-			menu.setHeaderTitle(mSelectedScreenName);
-		}
-
-		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
 	@Override
@@ -173,11 +126,26 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
+	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
+			mCursor.moveToPosition(position);
+			mSelectedColor = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.USER_COLOR));
+			mSelectedUserId = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
+			mPopupMenu = new PopupMenu(getActivity(), view);
+			mPopupMenu.inflate(R.menu.context_account);
+			mPopupMenu.setOnMenuItemClickListener(this);
+			mPopupMenu.show();
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
 			long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
-			openUserProfile(user_id);
+			openUserProfile(getActivity(), user_id, user_id, null);
 		}
 		super.onListItemClick(l, v, position, id);
 	}
@@ -192,6 +160,40 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mCursor = data;
 		mAdapter.changeCursor(data);
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_VIEW: {
+				openUserProfile(getActivity(), mSelectedUserId, mSelectedUserId, null);
+				break;
+			}
+			case MENU_SET_COLOR: {
+				if (mSelectedUserId != INVALID_ID) {
+					final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
+					Bundle bundle = new Bundle();
+					bundle.putInt(Accounts.USER_COLOR, mSelectedColor);
+					intent.putExtras(bundle);
+					startActivityForResult(intent, REQUEST_SET_COLOR);
+				}
+				break;
+			}
+			case MENU_DELETE: {
+				mResolver.delete(Accounts.CONTENT_URI, Accounts.USER_ID + " = " + mSelectedUserId, null);
+				// Also delete tweets related to the account we previously
+				// deleted.
+				mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + " = " + mSelectedUserId, null);
+				mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + " = " + mSelectedUserId, null);
+				if (getActivatedAccountIds(getActivity()).length > 0) {
+					AccountsFragment.this.getLoaderManager().restartLoader(0, null, AccountsFragment.this);
+				} else {
+					getActivity().finish();
+				}
+				break;
+			}
+		}
+		return super.onContextItemSelected(item);
 	}
 
 	@Override
@@ -223,33 +225,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 		mActivityFirstCreated = false;
 		super.onStop();
-	}
-
-	private void confirmDelection() {
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		mFragment.show(ft, "delete_confirm");
-	}
-
-	private void openUserProfile(long account_id) {
-		FragmentActivity activity = getActivity();
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			if (mDetailFragment == null) {
-				mDetailFragment = Fragment.instantiate(getActivity(), UserProfileFragment.class.getName(), null);
-			}
-			Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putLong(INTENT_KEY_USER_ID, account_id);
-			mDetailFragment.setArguments(args);
-			HomeActivity home_activity = (HomeActivity) activity;
-			home_activity.showAtPane(HomeActivity.PANE_RIGHT, mDetailFragment, true);
-		} else {
-			Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_USER);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(account_id));
-			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
 	}
 
 	public static class ViewHolder {
@@ -310,39 +285,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			ViewHolder viewholder = new ViewHolder(view);
 			view.setTag(viewholder);
 			return view;
-		}
-	}
-
-	private class DeleteConfirmFragment extends BaseDialogFragment implements OnClickListener {
-
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			switch (which) {
-				case DialogInterface.BUTTON_POSITIVE: {
-					mResolver.delete(Accounts.CONTENT_URI, Accounts.USER_ID + "=" + mSelectedUserId, null);
-					// Also delete tweets related to the account we
-					// previously deleted.
-					mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + "=" + mSelectedUserId, null);
-					mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + "=" + mSelectedUserId, null);
-					if (getActivatedAccountIds(getActivity()).length > 0) {
-						AccountsFragment.this.getLoaderManager().restartLoader(0, null, AccountsFragment.this);
-					} else {
-						getActivity().finish();
-					}
-					break;
-				}
-			}
-
-		}
-
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setTitle(R.string.delete_account);
-			builder.setMessage(getString(R.string.delete_account_desc, mSelectedScreenName));
-			builder.setPositiveButton(android.R.string.ok, this);
-			builder.setNegativeButton(android.R.string.cancel, this);
-			return builder.create();
 		}
 	}
 }

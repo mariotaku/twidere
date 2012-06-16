@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="DuplicateIds" severity="error" />
-    <issue id="MissingTranslation" severity="warning" />
+    <issue id="ExtraTranslation" severity="error" />
+    <issue id="MissingTranslation" severity="informational" />
     <issue id="SdCardPath" severity="error" />
 </lint>

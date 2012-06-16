@@ -57,6 +57,7 @@
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
 					android:minHeight="48dp"
+					android:onClick="onClick"
 					android:text="@string/sign_in"/>
 
 				<Button
@@ -65,6 +66,7 @@
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
 					android:minHeight="48dp"
+					android:onClick="onClick"
 					android:text="@string/sign_up"/>
 			</LinearLayout>
 		</RelativeLayout>
@@ -72,8 +74,11 @@
 
 	<ImageButton
 		android:id="@+id/set_color"
-		android:layout_width="48dp"
-		android:layout_height="48dp"
-		android:layout_gravity="bottom|right"/>
+		android:layout_width="56dp"
+		android:layout_height="56dp"
+		android:layout_gravity="bottom|right"
+		android:contentDescription="@string/set_color"
+		android:onClick="onClick"
+		android:src="@drawable/ic_menu_color_palette"/>
 
 </FrameLayout>

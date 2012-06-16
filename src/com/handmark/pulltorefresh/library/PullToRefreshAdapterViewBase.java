@@ -81,6 +81,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 * 
 	 * @param newEmptyView - Empty View to be used
 	 */
+	@SuppressWarnings("deprecation")
 	public final void setEmptyView(View newEmptyView) {
 		// If we already have an Empty View, remove it
 		if (null != mEmptyView) {
@@ -116,6 +117,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		mOnScrollListener = listener;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void addRefreshableView(Context context, T refreshableView) {
 		mRefreshableViewHolder = new FrameLayout(context);

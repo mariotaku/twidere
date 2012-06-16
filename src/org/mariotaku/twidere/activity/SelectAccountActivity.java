@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,7 +26,6 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	private SimpleCursorAdapter mAdapter;
 	private Cursor mCursor;
 	private List<Long> mActivatedUsersId = new ArrayList<Long>();
-	private Button mAddAccountButton;
 
 	public Cursor getAccountsCursor() {
 		Uri uri = Accounts.CONTENT_URI;
@@ -69,7 +67,6 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.select_account);
 		mListView = (ListView) findViewById(android.R.id.list);
-		mAddAccountButton = (Button) findViewById(R.id.add);
 		String[] from = new String[] { Accounts.USERNAME };
 		int[] to = new int[] { android.R.id.text1 };
 		mCursor = getAccountsCursor();
@@ -82,7 +79,6 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
 		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		mAddAccountButton.setOnClickListener(this);
 
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		long[] activated_ids = bundle != null ? bundle.getLongArray(Constants.INTENT_KEY_IDS) : null;

@@ -18,6 +18,7 @@ package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.R;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -575,6 +576,7 @@ public class Switch extends CompoundButton {
 		return x > thumbLeft && x < thumbRight && y > thumbTop && y < thumbBottom;
 	}
 
+	@SuppressLint("FloatMath")
 	private Layout makeLayout(CharSequence text) {
 		return new StaticLayout(text, mTextPaint, (int) Math.ceil(Layout.getDesiredWidth(text, mTextPaint)),
 				Layout.Alignment.ALIGN_NORMAL, 1.f, 0, true);

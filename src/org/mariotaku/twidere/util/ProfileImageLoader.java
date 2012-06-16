@@ -11,9 +11,10 @@ import java.lang.ref.SoftReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -71,7 +72,7 @@ public class ProfileImageLoader {
 			return;
 		}
 		mImageViews.put(imageview, url);
-		Bitmap bitmap = mMemoryCache.get(url);
+		final Bitmap bitmap = mMemoryCache.get(url);
 		if (bitmap != null) {
 			imageview.setImageBitmap(bitmap);
 		} else {
@@ -114,7 +115,14 @@ public class ProfileImageLoader {
 			// decode with inSampleSize
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale / 2;
-			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+			Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+			if (bitmap == null) {
+				// The file is corrupted, so we remove it from cache.
+				if (f.isFile()) {
+					f.delete();
+				}
+			}
+			return bitmap;
 		} catch (FileNotFoundException e) {
 			// e.printStackTrace();
 		}
@@ -122,7 +130,7 @@ public class ProfileImageLoader {
 	}
 
 	private void queuePhoto(URL url, ImageView imageview) {
-		ImageToLoad p = new ImageToLoad(url, imageview);
+		final ImageToLoad p = new ImageToLoad(url, imageview);
 		mExecutorService.submit(new ImageLoader(p));
 	}
 
@@ -275,23 +283,62 @@ public class ProfileImageLoader {
 
 	private static class MemoryCache {
 
-		private final Map<URL, SoftReference<Bitmap>> mCache = Collections
-				.synchronizedMap(new HashMap<URL, SoftReference<Bitmap>>());
+		private static final int MAX_CACHE_CAPACITY = 40;
+
+		private final Map<URL, SoftReference<Bitmap>> mSoftCache = new ConcurrentHashMap<URL, SoftReference<Bitmap>>();
+
+		private final Map<URL, Bitmap> mHardCache = new LinkedHashMap<URL, Bitmap>(MAX_CACHE_CAPACITY / 2, 0.75f, true) {
+
+			private static final long serialVersionUID = 1347795807259717646L;
+
+			@Override
+			protected boolean removeEldestEntry(LinkedHashMap.Entry<URL, Bitmap> eldest) {
+				// Moves the last used item in the hard cache to the soft cache.
+				if (size() > MAX_CACHE_CAPACITY) {
+					mSoftCache.put(eldest.getKey(), new SoftReference<Bitmap>(eldest.getValue()));
+					return true;
+				} else
+					return false;
+			}
+		};
 
 		public void clear() {
-			mCache.clear();
+			mHardCache.clear();
+			mSoftCache.clear();
 		}
 
 		public Bitmap get(final URL url) {
-			if (!mCache.containsKey(url)) return null;
-			final SoftReference<Bitmap> ref = mCache.get(url);
-			return ref.get();
+			synchronized (mHardCache) {
+				final Bitmap bitmap = mHardCache.get(url);
+				if (bitmap != null) {
+					// Put bitmap on top of cache so it's purged last.
+					mHardCache.remove(url);
+					mHardCache.put(url, bitmap);
+					return bitmap;
+				}
+			}
+
+			final SoftReference<Bitmap> bitmapRef = mSoftCache.get(url);
+			if (bitmapRef != null) {
+				final Bitmap bitmap = bitmapRef.get();
+				if (bitmap != null)
+					return bitmap;
+				else {
+					// Must have been collected by the Garbage Collector
+					// so we remove the bucket from the cache.
+					mSoftCache.remove(url);
+				}
+			}
+
+			// Could not locate the bitmap in any of the caches, so we return
+			// null.
+			return null;
+
 		}
 
 		public void put(final URL url, final Bitmap bitmap) {
 			if (url == null || bitmap == null) return;
-			mCache.remove(url);
-			mCache.put(url, new SoftReference<Bitmap>(bitmap));
+			mHardCache.put(url, bitmap);
 		}
 	}
 

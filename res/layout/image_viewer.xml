@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<org.mariotaku.twidere.view.ImageViewer
+		android:id="@+id/image_viewer"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"/>
+
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="48dp">
+
+		<ImageButton
+			android:id="@+id/close"
+			android:layout_width="64dp"
+			android:layout_height="48dp"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:background="@drawable/btn_image_viewer_left"
+			android:onClick="onClick"
+			android:src="@drawable/ic_menu_close_clear_cancel"/>
+
+		<FrameLayout
+			android:id="@+id/progress_refresh"
+			android:layout_width="64dp"
+			android:layout_height="48dp"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentTop="true"
+			android:background="@drawable/btn_image_viewer_right"
+			android:onClick="onClick">
+
+			<ProgressBar
+				android:id="@+id/progress"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:indeterminateDrawable="@drawable/progress_medium_holo"
+				android:indeterminateOnly="true"/>
+
+			<ImageView
+				android:id="@id/refresh"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:contentDescription="@string/refresh"
+				android:src="@drawable/ic_menu_refresh"/>
+		</FrameLayout>
+	</RelativeLayout>
+
+</FrameLayout>

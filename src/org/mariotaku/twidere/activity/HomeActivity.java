@@ -13,7 +13,6 @@ import org.mariotaku.twidere.fragment.DiscoverFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.util.ExceptionHandler;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
@@ -41,7 +40,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 public class HomeActivity extends BaseActivity implements OnClickListener, OnBackStackChangedListener {
-	
+
 	private ExtendedViewPager mViewPager;
 	private SharedPreferences mPreferences;
 	private ActionBar mActionBar;
@@ -153,10 +152,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		}
 
 		Bundle bundle = getIntent().getExtras();
-		if (bundle != null && bundle.getLongArray(INTENT_KEY_IDS) != null) {
+		if (bundle != null) {
 			long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
-			mInterface.getHomeTimeline(refreshed_ids, null);
-			mInterface.getMentions(refreshed_ids, null);
+			if (refreshed_ids != null) {
+				mInterface.getHomeTimeline(refreshed_ids, null);
+				mInterface.getMentions(refreshed_ids, null);
+			}
 		}
 		mActionBar = getSupportActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
@@ -280,6 +281,19 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		}
 		ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		Bundle bundle = intent.getExtras();
+		if (bundle != null) {
+			long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
+			if (refreshed_ids != null) {
+				mInterface.getHomeTimeline(refreshed_ids, null);
+				mInterface.getMentions(refreshed_ids, null);
+			}
+		}
+		super.onNewIntent(intent);
 	}
 
 	private void navigateToTop() {

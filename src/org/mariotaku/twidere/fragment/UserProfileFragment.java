@@ -10,7 +10,6 @@ import static org.mariotaku.twidere.util.Utils.makeCachedUsersContentValues;
 import java.net.URL;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -22,7 +21,7 @@ import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import android.app.Activity;
+import twitter4j.conf.Configuration;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -35,8 +34,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,7 +73,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private long mAccountId;
 	private boolean mIsFollowing;
 	private EditTextDialogFragment mDialogFragment;
-	private Fragment mDetailFragment;
 
 	private User mUser = null;
 
@@ -131,6 +127,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (isMyActivatedAccount(getActivity(), user_id) || isMyActivatedUserName(getActivity(), screen_name)) {
 			mAdapter.add(new DirectMessagesAction());
 		}
+		mProfileImageContainer.setOnClickListener(this);
+		mProfileImageContainer.setOnLongClickListener(this);
+		mNameLayout.setOnClickListener(this);
+		mNameLayout.setOnLongClickListener(this);
 		mRetryButton.setOnClickListener(this);
 		setListAdapter(null);
 		mListView = getListView();
@@ -158,6 +158,23 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			case R.id.retry: {
 				getUserInfo();
+				break;
+			}
+			case R.id.name_view: {
+				if (mUser != null) {
+				}
+				break;
+			}
+			case R.id.profile_image_container: {
+				final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
+				if (twitter != null) {
+					Configuration conf = twitter.getConfiguration();
+					Uri uri = Uri.parse(conf.getRestBaseURL() + "/users/profile_image?screen_name="
+							+ mUser.getScreenName() + "&size=original");
+					Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, uri);
+					intent.setPackage(getActivity().getPackageName());
+					startActivity(intent);
+				}
 				break;
 			}
 		}
@@ -447,20 +464,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onClick() {
-			Activity activity = getActivity();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			if (!(mDetailFragment instanceof UserFavoritesFragment)) {
-				mDetailFragment = Fragment.instantiate(activity, UserFavoritesFragment.class.getName());
-				mDetailFragment.setArguments(getArguments());
-			}
-			int layoutId = android.R.id.content;
-			if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-				layoutId = HomeActivity.PANE_LEFT;
-			}
-			ft.replace(layoutId, mDetailFragment);
-			ft.addToBackStack(null);
-			ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			ft.commit();
+			if (mUser == null) return;
+			Utils.openUserFavorites(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
 	}
@@ -603,20 +608,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onClick() {
-			Activity activity = getActivity();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			if (!(mDetailFragment instanceof UserTimelineFragment)) {
-				mDetailFragment = Fragment.instantiate(activity, UserTimelineFragment.class.getName());
-				mDetailFragment.setArguments(getArguments());
-			}
-			int layoutId = android.R.id.content;
-			if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-				layoutId = HomeActivity.PANE_LEFT;
-			}
-			ft.replace(layoutId, mDetailFragment);
-			ft.addToBackStack(null);
-			ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-			ft.commit();
+			if (mUser == null) return;
+			Utils.openUserTimeline(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
 	}
@@ -726,11 +719,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				getListView().invalidateViews();
 				mName.setText(mUser.getName());
 				mScreenName.setText(mUser.getScreenName());
-				mProfileImageLoader.displayImage(mUser.getProfileImageUrlHttps(), mProfileImage);
+				mProfileImageLoader.displayImage(mUser.getProfileImageURL(), mProfileImage);
 				mRetryButton.setVisibility(View.GONE);
 				if (isMyAccount(getActivity(), mUser.getId())) {
 					ContentValues values = new ContentValues();
-					URL profile_image_url = mUser.getProfileImageUrlHttps();
+					URL profile_image_url = mUser.getProfileImageURL();
 					if (profile_image_url != null) {
 						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url.toString());
 					}
@@ -744,29 +737,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				mRetryButton.setVisibility(View.VISIBLE);
 			}
 			mFollowButton.setOnClickListener(mUser != null ? UserProfileFragment.this : null);
-			if (mUser != null && mUser.getId() == mAccountId) {
-				mProfileImageContainer.setOnClickListener(UserProfileFragment.this);
-				mProfileImageContainer.setOnLongClickListener(UserProfileFragment.this);
-				mNameLayout.setOnClickListener(UserProfileFragment.this);
-				mNameLayout.setOnLongClickListener(UserProfileFragment.this);
-			} else {
-				mProfileImageContainer.setOnClickListener(null);
-				mProfileImageContainer.setOnLongClickListener(null);
-				mNameLayout.setOnClickListener(null);
-				mNameLayout.setOnLongClickListener(null);
-			}
-			mFollowButton.setOnClickListener(mUser != null ? UserProfileFragment.this : null);
-			if (mUser != null && mUser.getId() == mAccountId) {
-				mProfileImageContainer.setOnClickListener(UserProfileFragment.this);
-				mProfileImageContainer.setOnLongClickListener(UserProfileFragment.this);
-				mNameLayout.setOnClickListener(UserProfileFragment.this);
-				mNameLayout.setOnLongClickListener(UserProfileFragment.this);
-			} else {
-				mProfileImageContainer.setOnClickListener(null);
-				mProfileImageContainer.setOnLongClickListener(null);
-				mNameLayout.setOnClickListener(null);
-				mNameLayout.setOnLongClickListener(null);
-			}
 			getFollowInfo();
 			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);

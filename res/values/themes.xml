@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="Theme.Twidere" parent="Theme.ActionBar">
+	<style name="Theme.Twidere" parent="Theme.Holo">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="switchStyle">@style/Widget.Holo.CompoundButton.Switch</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
-		<item name="actionBarIndeterminateProgressStyle">@style/Widget.Holo.ProgressBar.Small</item>
 	</style>
 
-	<style name="Theme.Twidere.Light" parent="Theme.ActionBar.Light.DarkActionBar">
+	<style name="Theme.Twidere.Light" parent="Theme.Holo.Light.DarkActionBar">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="switchStyle">@style/Widget.Holo.Light.CompoundButton.Switch</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
-		<item name="actionBarIndeterminateProgressStyle">@style/Widget.Holo.ProgressBar.Small</item>
 	</style>
 
-	<style name="Theme.Twidere.Dialog" parent="Theme.ActionBar.Dialog">
+	<style name="Theme.Twidere.ImageViewer" parent="android:Theme.Translucent.NoTitleBar">
+		<item name="android:windowBackground">@drawable/image_viewer_background</item>
+		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
+	</style>
+
+	<style name="Theme.Twidere.Dialog" parent="Theme.Holo.Dialog">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="switchStyle">@style/Widget.Holo.CompoundButton.Switch</item>
 	</style>
 
-	<style name="Theme.Twidere.Light.Dialog" parent="Theme.ActionBar.Light.Dialog">
+	<style name="Theme.Twidere.Light.Dialog" parent="Theme.Holo.Light.Dialog">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>

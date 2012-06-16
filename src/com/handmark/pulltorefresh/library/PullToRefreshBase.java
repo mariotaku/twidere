@@ -435,6 +435,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		mShowViewWhileRefreshing = showView;
 	}
 
+	@SuppressWarnings("deprecation")
 	protected void addRefreshableView(Context context, T refreshableView) {
 		addView(refreshableView, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
 	}
@@ -577,6 +578,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void init(Context context, AttributeSet attrs) {
 
 		setOrientation(LinearLayout.VERTICAL);
@@ -659,6 +661,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void measureView(View child) {
 		ViewGroup.LayoutParams p = child.getLayoutParams();
 		if (p == null) {

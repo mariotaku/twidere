@@ -146,7 +146,7 @@ public class ParcelableStatus implements Parcelable {
 		user_id = user != null ? user.getId() : -1;
 		name = user != null ? user.getName() : null;
 		screen_name = user != null ? user.getScreenName() : null;
-		profile_image_url = user != null ? user.getProfileImageUrlHttps() : null;
+		profile_image_url = user != null ? user.getProfileImageURL() : null;
 		is_protected = user != null ? user.isProtected() : false;
 		final MediaEntity[] medias = status.getMediaEntities();
 

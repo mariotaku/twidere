@@ -66,6 +66,8 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 
 	private Fragment mDetailFragment;
 
+	private static final long TICKER_DURATION = 5000L;
+
 	public AsyncTaskManager getAsyncTaskManager() {
 		return mAsyncTaskManager;
 	}
@@ -261,7 +263,7 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 		getListAdapter().setShowLastItemAsGap(!mLoadMoreAutomatically);
 		getListAdapter().setDisplayProfileImage(display_profile_image);
 		getListAdapter().setDisplayName(display_name);
-		getListAdapter().setStatusesTextSize(text_size);
+		getListAdapter().setTextSize(text_size);
 		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name || mTextSize != text_size) {
 			mDisplayProfileImage = display_profile_image;
 			mDisplayName = display_name;
@@ -314,10 +316,10 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 			public void run() {
 				if (mTickerStopped) return;
 				if (mListView != null && !mBusy) {
-					mListView.getRefreshableView().invalidateViews();
+					getListAdapter().notifyDataSetChanged();
 				}
 				final long now = SystemClock.uptimeMillis();
-				final long next = now + 1000 - now % 1000;
+				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
 				mHandler.postAtTime(mTicker, next);
 			}
 		};

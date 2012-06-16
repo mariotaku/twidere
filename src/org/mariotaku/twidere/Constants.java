@@ -33,6 +33,8 @@ public interface Constants extends TwitterConstants {
 	public static final String PROTOCOL_TWIDERE = SCHEME_TWIDERE + "://";
 
 	public static final String AUTHORITY_USER = "user";
+	public static final String AUTHORITY_USER_TIMELINE = "user_timeline";
+	public static final String AUTHORITY_USER_FAVORITES = "user_favorites";
 	public static final String AUTHORITY_STATUS = "status";
 	public static final String AUTHORITY_CONVERSATION = "conversation";
 	public static final String AUTHORITY_SEARCH = "search";
@@ -93,6 +95,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_SETTINGS = INTENT_PACKAGE_PREFIX + "SETTINGS";
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_PACKAGE_PREFIX + "SELECT_ACCOUNT";
 	public static final String INTENT_ACTION_VIEW_MAP = INTENT_PACKAGE_PREFIX + "VIEW_MAP";
+	public static final String INTENT_ACTION_VIEW_IMAGE = INTENT_PACKAGE_PREFIX + "VIEW_IMAGE";
 	public static final String INTENT_ACTION_FILTERS = INTENT_PACKAGE_PREFIX + "FILTERS";
 	public static final String INTENT_ACTION_ABOUT = INTENT_PACKAGE_PREFIX + "ABOUT";
 	public static final String INTENT_ACTION_EDIT_API = INTENT_PACKAGE_PREFIX + "EDIT_API";

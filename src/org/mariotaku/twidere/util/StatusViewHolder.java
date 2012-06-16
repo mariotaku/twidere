@@ -14,14 +14,11 @@ public class StatusViewHolder {
 	public final ImageView profile_image;
 	public final TextView name, text, tweet_time, reply_retweet_status;
 	private final View content, gap_indicator;
-	private static Drawable GAP_INDICATOR;
-	private final Context context;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
 
 	public StatusViewHolder(View view, Context context) {
-		this.context = context;
 		content = view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
@@ -44,14 +41,14 @@ public class StatusViewHolder {
 	public void setAccountColorEnabled(boolean enabled) {
 		account_color_enabled = enabled;
 		if (!show_as_gap) {
-			content.setBackgroundDrawable(enabled ? getColorIndicatorDrawable() : null);
+			content.setBackgroundResource(enabled ? R.drawable.ic_label_color : 0);
 		}
 	}
 
 	public void setShowAsGap(boolean show_gap) {
 		show_as_gap = show_gap;
-		content.setBackgroundDrawable(show_gap ? getGapIndicatorDrawable()
-				: account_color_enabled ? getColorIndicatorDrawable() : null);
+		content.setBackgroundResource(show_gap ? R.drawable.ic_list_gap
+				: account_color_enabled ? R.drawable.ic_label_color : 0);
 		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		text.setVisibility(show_gap ? View.GONE : View.VISIBLE);
@@ -68,16 +65,5 @@ public class StatusViewHolder {
 			tweet_time.setTextSize(text_size * 0.65f);
 			reply_retweet_status.setTextSize(text_size * 0.65f);
 		}
-	}
-
-	private Drawable getColorIndicatorDrawable() {
-		return context.getResources().getDrawable(R.drawable.ic_label_color);
-	}
-
-	private Drawable getGapIndicatorDrawable() {
-		if (GAP_INDICATOR == null) {
-			GAP_INDICATOR = context.getResources().getDrawable(R.drawable.ic_list_gap);
-		}
-		return GAP_INDICATOR;
 	}
 }

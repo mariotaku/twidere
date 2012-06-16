@@ -42,6 +42,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -176,7 +177,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.twitter_login);
 		mEditUsername = (EditText) findViewById(R.id.username);
@@ -188,8 +189,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
 		setSupportProgressBarIndeterminateVisibility(false);
 		long[] account_ids = getActivatedAccountIds(this);
-		boolean called_from_twidere = getPackageName().equals(getCallingPackage());
-		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0 && called_from_twidere);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0);
 
 		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
 		if (bundle == null) {
@@ -208,9 +208,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mUsername = bundle.getString(Accounts.USERNAME);
 		mPassword = bundle.getString(Accounts.PASSWORD);
 		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
-		mSignInButton.setOnClickListener(this);
-		mSignUpButton.setOnClickListener(this);
-		mSetColorButton.setOnClickListener(this);
 		mUsernamePassword.setVisibility(mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
 		mSigninSignup.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
 				: LinearLayout.HORIZONTAL);
@@ -246,8 +243,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				long[] account_ids = getActivatedAccountIds(this);
-				boolean called_from_twidere = getPackageName().equals(getCallingPackage());
-				if (account_ids.length > 0 && called_from_twidere) {
+				if (account_ids.length > 0) {
 					finish();
 				}
 				break;
@@ -371,7 +367,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		if (mUserColorSet) {
 			mSetColorButton.setImageBitmap(getColorPreviewBitmap(this, mUserColor));
 		} else {
-			mSetColorButton.setImageResource(android.R.color.transparent);
+			mSetColorButton.setImageResource(R.drawable.ic_menu_color_palette);
 		}
 
 	}
@@ -428,7 +424,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				return new Response(false, false, e);
 			}
 			if (!mUserColorSet) {
-				analyseUserProfileColor(user.getProfileImageUrlHttps().toString());
+				analyseUserProfileColor(user.getProfileImageURL().toString());
 			}
 			mLoggedId = user.getId();
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId)) return new Response(false, true, null);
@@ -516,7 +512,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			}
 
 			if (account_valid && user != null) {
-				String profile_image_url = user.getProfileImageUrlHttps().toString();
+				String profile_image_url = user.getProfileImageURL().toString();
 				if (!mUserColorSet) {
 					analyseUserProfileColor(profile_image_url);
 				}
@@ -564,7 +560,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			}
 
 			if (account_valid && user != null) {
-				String profile_image_url = parseString(user.getProfileImageUrlHttps());
+				String profile_image_url = parseString(user.getProfileImageURL());
 				if (!mUserColorSet) {
 					analyseUserProfileColor(profile_image_url);
 				}
@@ -595,7 +591,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				return new Response(false, false, false, Accounts.AUTH_TYPE_XAUTH, null, e);
 			}
 			if (!mUserColorSet) {
-				analyseUserProfileColor(user.getProfileImageUrlHttps().toString());
+				analyseUserProfileColor(user.getProfileImageURL().toString());
 			}
 
 			mLoggedId = user.getId();

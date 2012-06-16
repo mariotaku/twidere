@@ -8,7 +8,9 @@ import org.mariotaku.twidere.fragment.BaseFragment;
 import org.mariotaku.twidere.fragment.DraftsFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
+import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
+import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
 
@@ -26,13 +28,17 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 	private static final int CODE_STATUS = 1;
 	private static final int CODE_USER = 2;
-	private static final int CODE_CONVERSATION = 3;
-	private static final int CODE_SEARCH = 4;
-	private static final int CODE_DRAFTS = 5;
+	private static final int CODE_USER_TIMELINE = 3;
+	private static final int CODE_USER_FAVORITES = 4;
+	private static final int CODE_CONVERSATION = 5;
+	private static final int CODE_SEARCH = 6;
+	private static final int CODE_DRAFTS = 7;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
 		URI_MATCHER.addURI(AUTHORITY_USER, null, CODE_USER);
+		URI_MATCHER.addURI(AUTHORITY_USER_TIMELINE, null, CODE_USER_TIMELINE);
+		URI_MATCHER.addURI(AUTHORITY_USER_FAVORITES, null, CODE_USER_FAVORITES);
 		URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, CODE_CONVERSATION);
 		URI_MATCHER.addURI(AUTHORITY_SEARCH, null, CODE_SEARCH);
 		URI_MATCHER.addURI(AUTHORITY_DRAFTS, null, CODE_DRAFTS);
@@ -80,6 +86,32 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_USER: {
 					fragment = new UserProfileFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					bundle = new Bundle();
+					if (!isNullOrEmpty(param_screen_name)) {
+						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					}
+					if (!isNullOrEmpty(param_user_id)) {
+						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					}
+					break;
+				}
+				case CODE_USER_TIMELINE: {
+					fragment = new UserTimelineFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					bundle = new Bundle();
+					if (!isNullOrEmpty(param_screen_name)) {
+						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					}
+					if (!isNullOrEmpty(param_user_id)) {
+						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					}
+					break;
+				}
+				case CODE_USER_FAVORITES: {
+					fragment = new UserFavoritesFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					bundle = new Bundle();
@@ -152,6 +184,14 @@ public class LinkHandlerActivity extends BaseActivity {
 			}
 			case CODE_USER: {
 				setTitle(R.string.view_user_profile);
+				break;
+			}
+			case CODE_USER_TIMELINE: {
+				setTitle(R.string.tweets);
+				break;
+			}
+			case CODE_USER_FAVORITES: {
+				setTitle(R.string.favorites);
 				break;
 			}
 			case CODE_CONVERSATION: {

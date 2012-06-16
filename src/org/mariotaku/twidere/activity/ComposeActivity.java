@@ -293,7 +293,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		int length = mEditText != null ? mEditText.length() : 0;
-		mTextCount.setText(String.valueOf(length));
+		if (mTextCount != null) {
+			mTextCount.setText(String.valueOf(length));
+		}
 		MenuItem sendItem = menu.findItem(MENU_SEND);
 		sendItem.setEnabled(length > 0 && length <= 140);
 		return super.onPrepareOptionsMenu(menu);

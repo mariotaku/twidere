@@ -6,16 +6,17 @@ import android.util.Log;
 
 public class ExceptionHandler implements UncaughtExceptionHandler {
 
+	private static ExceptionHandler sInstance;
+
 	@Override
 	public void uncaughtException(Thread thread, Throwable ex) {
 		Log.e("Twidere", "Uncaught exception", ex);
 	}
 
-	
-	private static ExceptionHandler sInstance;
-	
 	public static ExceptionHandler getInstance() {
-		if (sInstance == null) sInstance = new ExceptionHandler();
+		if (sInstance == null) {
+			sInstance = new ExceptionHandler();
+		}
 		return sInstance;
 	}
 }

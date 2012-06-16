@@ -27,7 +27,7 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 		addPreferencesFromResource(R.xml.settings);
 		findPreference(PREFERENCE_KEY_DARK_THEME).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_KEY_CLEAR_DATABASES).setOnPreferenceClickListener(this);
-		// findPreference(PREFERENCE_KEY_CLEAR_CACHE).setOnPreferenceClickListener(this);
+		findPreference(PREFERENCE_KEY_CLEAR_CACHE).setOnPreferenceClickListener(this);
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 			resolver.delete(Statuses.CONTENT_URI, null, null);
 			resolver.delete(Mentions.CONTENT_URI, null, null);
 		} else if (PREFERENCE_KEY_CLEAR_CACHE.equals(preference.getKey())) {
-			getTwidereApplication().getProfileImageLoader().clearFileCache();
+			getTwidereApplication().clearCache();
 		}
 		return true;
 	}

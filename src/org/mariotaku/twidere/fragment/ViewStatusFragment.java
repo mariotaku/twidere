@@ -12,7 +12,6 @@ import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import org.mariotaku.popupmenu.MenuBar;
 import org.mariotaku.popupmenu.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -22,6 +21,7 @@ import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusesCursorIndices;
+import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -35,8 +35,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -103,8 +101,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		linkify.setOnLinkClickListener(this);
 		linkify.addLinks(AutoLink.LINK_TYPE_MENTIONS);
 		linkify.addLinks(AutoLink.LINK_TYPE_HASHTAGS);
+		linkify.addLinks(AutoLink.LINK_TYPE_IMAGES);
+		linkify.addLinks(AutoLink.LINK_TYPE_LINKS);
 		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
-		boolean is_reply = status.in_reply_to_status_id != -1;
+		boolean is_reply = status.in_reply_to_status_id > 0;
 		String time = formatToLongTimeString(getActivity(), status.status_timestamp);
 		mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, status.source)));
 		mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -159,7 +159,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		if (mStatus == null) return;
 		switch (view.getId()) {
 			case R.id.profile: {
-				openUserProfile(mStatus.account_id, mStatus.user_id, null);
+				Utils.openUserProfile(getActivity(), mStatus.account_id, mStatus.user_id, null);
 				break;
 			}
 			case R.id.follow: {
@@ -167,7 +167,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				break;
 			}
 			case R.id.in_reply_to: {
-				openConversation(mStatus);
+				Utils.openConversation(getActivity(), mStatus.account_id, mStatus.status_id);
 				break;
 			}
 			case R.id.view_map: {
@@ -205,11 +205,22 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		if (mStatus == null) return;
 		switch (type) {
 			case AutoLink.LINK_TYPE_MENTIONS: {
-				openUserProfile(mStatus.account_id, -1, link);
+				Utils.openUserProfile(getActivity(), mStatus.account_id, -1, link);
 				break;
 			}
 			case AutoLink.LINK_TYPE_HASHTAGS: {
-				openTweetSearch(mStatus.account_id, link);
+				Utils.openTweetSearch(getActivity(), mStatus.account_id, link);
+				break;
+			}
+			case AutoLink.LINK_TYPE_IMAGES: {
+				Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
+				intent.setPackage(getActivity().getPackageName());
+				startActivity(intent);
+				break;
+			}
+			case AutoLink.LINK_TYPE_LINKS: {
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+				startActivity(intent);
 				break;
 			}
 		}
@@ -309,82 +320,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mGetStatusTask = new GetStatusTask(omit_intent_extra);
 		mGetStatusTask.execute();
 
-	}
-
-	private void openConversation(ParcelableStatus status) {
-		final long account_id = status.account_id, status_id = status.status_id;
-		FragmentActivity activity = getActivity();
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new ViewConversationFragment();
-			Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putLong(INTENT_KEY_STATUS_ID, status_id);
-			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
-		} else {
-			Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_CONVERSATION);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
-			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(mStatusId));
-			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-
-	private void openTweetSearch(long account_id, String query) {
-		FragmentActivity activity = getActivity();
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new SearchTweetsFragment();
-			Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			if (query != null) {
-				args.putString(INTENT_KEY_QUERY, query);
-			}
-			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
-		} else {
-			Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_SEARCH);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			builder.appendQueryParameter(QUERY_PARAM_TYPE, QUERY_PARAM_VALUE_TWEETS);
-			if (query != null) {
-				builder.appendQueryParameter(QUERY_PARAM_QUERY, query);
-			}
-			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-
-	private void openUserProfile(long account_id, long user_id, String screen_name) {
-		FragmentActivity activity = getActivity();
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new UserProfileFragment();
-			Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			if (user_id != -1) {
-				args.putLong(INTENT_KEY_USER_ID, user_id);
-			}
-			if (screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			}
-			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
-		} else {
-			Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_USER);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (user_id != -1) {
-				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
-			}
-			if (screen_name != null) {
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
-			}
-			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
 	}
 
 	private void showFollowInfo(boolean force) {

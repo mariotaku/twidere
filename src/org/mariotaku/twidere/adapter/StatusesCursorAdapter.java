@@ -53,8 +53,9 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
 		final boolean has_media = cursor.getShort(mIndices.has_media) == 1;
 		final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
-		final boolean is_retweet = !isNullOrEmpty(retweeted_by);
-		final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name);
+		final boolean is_retweet = !isNullOrEmpty(retweeted_by) && cursor.getShort(mIndices.is_retweet) == 1;
+		final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name)
+				&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
 
 		final boolean is_last = cursor.getPosition() == getCount() - 1;
 		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1;
@@ -75,8 +76,8 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 					: 0, 0, 0, 0);
 			holder.name.setText(name);
 			holder.tweet_time.setText(formatToShortTimeString(mContext, status_timestamp));
-			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(null, null,
-					getTypeIcon(context, is_favorite, has_location, has_media), null);
+			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+					getTypeIcon(is_favorite, has_location, has_media), 0);
 
 			holder.reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
 			if (is_retweet) {
@@ -156,7 +157,7 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setStatusesTextSize(float text_size) {
+	public void setTextSize(float text_size) {
 		mTextSize = text_size;
 	}
 

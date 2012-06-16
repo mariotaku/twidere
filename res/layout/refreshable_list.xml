@@ -3,4 +3,4 @@
 	android:id="@+id/refreshable_list"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:layerType="hardware"/>
+	android:layerType="software"/>

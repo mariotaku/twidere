@@ -15,10 +15,14 @@
 		<item name="android:textColor">@android:color/white</item>
 	</style>
 
+	<style name="Animation.ImageViewer" parent="android:Animation">
+		<item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+		<item name="android:windowExitAnimation">@android:anim/fade_out</item>
+	</style>
+
 	<style name="Widget.Holo.ProgressBar.Small" parent="android:Widget.ProgressBar.Small">
 		<item name="android:indeterminateDrawable">@drawable/progress_small_holo</item>
 		<item name="android:minWidth">16dip</item>
-		<item name="android:padding">4dip</item>
 		<item name="android:maxWidth">16dip</item>
 		<item name="android:minHeight">16dip</item>
 		<item name="android:maxHeight">16dip</item>
@@ -41,7 +45,7 @@
 	</style>
 
 	<style name="TextAppearance.Holo.Widget.Switch" parent="android:TextAppearance.Small">
-		<item name="textColor">@android:color/white</item>
+		<item name="textColor">?android:attr/textColorSecondary</item>
 		<item name="textSize">14sp</item>
 	</style>
 
