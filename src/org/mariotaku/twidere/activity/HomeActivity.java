@@ -122,6 +122,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.compose:
+			case R.id.button_compose:
 				startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				break;
 		}

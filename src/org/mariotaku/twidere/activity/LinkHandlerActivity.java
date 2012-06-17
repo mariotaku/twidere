@@ -8,7 +8,10 @@ import org.mariotaku.twidere.fragment.BaseFragment;
 import org.mariotaku.twidere.fragment.DraftsFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
+import org.mariotaku.twidere.fragment.UserBlocksFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
+import org.mariotaku.twidere.fragment.UserFollowersFragment;
+import org.mariotaku.twidere.fragment.UserFriendsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
@@ -30,15 +33,21 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final int CODE_USER = 2;
 	private static final int CODE_USER_TIMELINE = 3;
 	private static final int CODE_USER_FAVORITES = 4;
-	private static final int CODE_CONVERSATION = 5;
-	private static final int CODE_SEARCH = 6;
-	private static final int CODE_DRAFTS = 7;
+	private static final int CODE_USER_FOLLOWERS = 5;
+	private static final int CODE_USER_FOLLOWING = 6;
+	private static final int CODE_USER_BLOCKS = 7;
+	private static final int CODE_CONVERSATION = 8;
+	private static final int CODE_SEARCH = 9;
+	private static final int CODE_DRAFTS = 10;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
 		URI_MATCHER.addURI(AUTHORITY_USER, null, CODE_USER);
 		URI_MATCHER.addURI(AUTHORITY_USER_TIMELINE, null, CODE_USER_TIMELINE);
+		URI_MATCHER.addURI(AUTHORITY_USER_FOLLOWERS, null, CODE_USER_FOLLOWERS);
+		URI_MATCHER.addURI(AUTHORITY_USER_FOLLOWING, null, CODE_USER_FOLLOWING);
 		URI_MATCHER.addURI(AUTHORITY_USER_FAVORITES, null, CODE_USER_FAVORITES);
+		URI_MATCHER.addURI(AUTHORITY_USER_BLOCKS, null, CODE_USER_BLOCKS);
 		URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, CODE_CONVERSATION);
 		URI_MATCHER.addURI(AUTHORITY_SEARCH, null, CODE_SEARCH);
 		URI_MATCHER.addURI(AUTHORITY_DRAFTS, null, CODE_DRAFTS);
@@ -50,6 +59,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(new FrameLayout(this));
+		setSupportProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		if (data != null) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -72,15 +82,17 @@ public class LinkHandlerActivity extends BaseActivity {
 	}
 
 	private Fragment getFragment(Uri uri) {
-		Bundle bundle = null;
+		final Bundle extras = getIntent().getExtras();
 		Fragment fragment = new BaseFragment();
 		if (uri != null) {
+			final Bundle bundle = new Bundle();
 			switch (URI_MATCHER.match(uri)) {
 				case CODE_STATUS: {
-					final Bundle extras = getIntent().getExtras();
 					fragment = new ViewStatusFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					bundle = extras != null ? new Bundle(extras) : new Bundle();
+					if (extras != null) {
+						bundle.putAll(extras);
+					}
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
 					break;
 				}
@@ -88,7 +100,6 @@ public class LinkHandlerActivity extends BaseActivity {
 					fragment = new UserProfileFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					bundle = new Bundle();
 					if (!isNullOrEmpty(param_screen_name)) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
@@ -101,7 +112,6 @@ public class LinkHandlerActivity extends BaseActivity {
 					fragment = new UserTimelineFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					bundle = new Bundle();
 					if (!isNullOrEmpty(param_screen_name)) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
@@ -114,7 +124,6 @@ public class LinkHandlerActivity extends BaseActivity {
 					fragment = new UserFavoritesFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					bundle = new Bundle();
 					if (!isNullOrEmpty(param_screen_name)) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
@@ -123,10 +132,37 @@ public class LinkHandlerActivity extends BaseActivity {
 					}
 					break;
 				}
+				case CODE_USER_FOLLOWERS: {
+					fragment = new UserFollowersFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					if (!isNullOrEmpty(param_screen_name)) {
+						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					}
+					if (!isNullOrEmpty(param_user_id)) {
+						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					}
+					break;
+				}
+				case CODE_USER_FOLLOWING: {
+					fragment = new UserFriendsFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					if (!isNullOrEmpty(param_screen_name)) {
+						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					}
+					if (!isNullOrEmpty(param_user_id)) {
+						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					}
+					break;
+				}
+				case CODE_USER_BLOCKS: {
+					fragment = new UserBlocksFragment();
+					break;
+				}
 				case CODE_CONVERSATION: {
 					fragment = new ViewConversationFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					bundle = new Bundle();
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
 					break;
 				}
@@ -138,28 +174,27 @@ public class LinkHandlerActivity extends BaseActivity {
 						fragment = new SearchUsersFragment();
 					}
 					final String query = uri.getQueryParameter(QUERY_PARAM_QUERY);
-					bundle = new Bundle();
 					bundle.putString(INTENT_KEY_QUERY, query);
 					break;
 				}
 				case CODE_DRAFTS: {
 					fragment = new DraftsFragment();
+					break;
 				}
-				default:
-			}
-
-			if (bundle != null) {
-				final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
-				if (param_account_id != null) {
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
-				} else {
-					final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
-					if (param_account_name != null) {
-						bundle.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
-					}
+				default: {
+					break;
 				}
 			}
 
+			final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+			if (param_account_id != null) {
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
+			} else {
+				final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
+				if (param_account_name != null) {
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
+				}
+			}
 			fragment.setArguments(bundle);
 		}
 		return fragment;
@@ -194,6 +229,18 @@ public class LinkHandlerActivity extends BaseActivity {
 				setTitle(R.string.favorites);
 				break;
 			}
+			case CODE_USER_FOLLOWERS: {
+				setTitle(R.string.followers);
+				break;
+			}
+			case CODE_USER_FOLLOWING: {
+				setTitle(R.string.following);
+				break;
+			}
+			case CODE_USER_BLOCKS: {
+				setTitle(R.string.blocked_users);
+				break;
+			}
 			case CODE_CONVERSATION: {
 				setTitle(R.string.view_conversation);
 				break;
@@ -209,4 +256,5 @@ public class LinkHandlerActivity extends BaseActivity {
 			default:
 		}
 	}
+
 }

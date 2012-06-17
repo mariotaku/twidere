@@ -6,6 +6,11 @@ import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedUserName;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeCachedUsersContentValues;
+import static org.mariotaku.twidere.util.Utils.openUserBlocks;
+import static org.mariotaku.twidere.util.Utils.openUserFavorites;
+import static org.mariotaku.twidere.util.Utils.openUserFollowers;
+import static org.mariotaku.twidere.util.Utils.openUserFollowing;
+import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 
 import java.net.URL;
 
@@ -15,7 +20,6 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -125,6 +129,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAdapter.add(new FollowingAction());
 		mAdapter.add(new FavoritesAction());
 		if (isMyActivatedAccount(getActivity(), user_id) || isMyActivatedUserName(getActivity(), screen_name)) {
+			mAdapter.add(new UserBlocksAction());
 			mAdapter.add(new DirectMessagesAction());
 		}
 		mProfileImageContainer.setOnClickListener(this);
@@ -465,7 +470,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public void onClick() {
 			if (mUser == null) return;
-			Utils.openUserFavorites(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
+			openUserFavorites(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
 	}
@@ -485,7 +490,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onClick() {
-
+			if (mUser == null) return;
+			openUserFollowers(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
 	}
@@ -549,7 +555,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onClick() {
-
+			if (mUser == null) return;
+			openUserFollowing(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
 	}
@@ -609,7 +616,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public void onClick() {
 			if (mUser == null) return;
-			Utils.openUserTimeline(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
+			openUserTimeline(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
 	}
@@ -668,6 +675,26 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
+	private class UserBlocksAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.blocked_users);
+		}
+
+		@Override
+		public String getSummary() {
+			return null;
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null) return;
+			openUserBlocks(getActivity(), mAccountId);
+		}
+
+	}
+
 	private class UserInfoTask extends AsyncTask<Void, Void, Response<User>> {
 
 		private final Twitter twitter;
@@ -675,7 +702,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private final String screen_name;
 
 		private UserInfoTask(Context context, long account_id, long user_id, String screen_name) {
-			twitter = Utils.getTwitterInstance(context, account_id, true);
+			twitter = getTwitterInstance(context, account_id, true);
 			this.user_id = user_id;
 			this.screen_name = screen_name;
 		}

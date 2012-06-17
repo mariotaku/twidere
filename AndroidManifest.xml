@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="15"
-	android:versionName="0.0.13">
+	android:versionCode="16"
+	android:versionName="0.0.14">
 
 	<uses-sdk
 		android:minSdkVersion="4"
@@ -221,6 +221,15 @@
 					android:host="user_favorites"
 					android:scheme="twidere"/>
 				<data
+					android:host="user_followers"
+					android:scheme="twidere"/>
+				<data
+					android:host="user_following"
+					android:scheme="twidere"/>
+				<data
+					android:host="user_blocks"
+					android:scheme="twidere"/>
+				<data
 					android:host="status"
 					android:scheme="twidere"/>
 				<data
@@ -245,7 +254,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.ImageViewActivity"
+			android:name=".activity.ImageViewerActivity"
 			android:label="@string/view_image"
 			android:theme="@style/Theme.Twidere.ImageViewer">
 			<intent-filter>

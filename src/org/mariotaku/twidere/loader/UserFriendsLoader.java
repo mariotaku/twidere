@@ -8,12 +8,12 @@ import twitter4j.IDs;
 import twitter4j.TwitterException;
 import android.content.Context;
 
-public class UserFollowersLoader extends IDsUsersLoader {
+public class UserFriendsLoader extends IDsUsersLoader {
 
 	private final long mUserId;
 	private final String mScreenName;
 
-	public UserFollowersLoader(Context context, long account_id, long user_id, String screen_name, long max_id,
+	public UserFriendsLoader(Context context, long account_id, long user_id, String screen_name, long max_id,
 			List<ParcelableUser> users_list) {
 		super(context, account_id, max_id, users_list);
 		mUserId = user_id;
@@ -23,8 +23,8 @@ public class UserFollowersLoader extends IDsUsersLoader {
 	@Override
 	public IDs getIDs() throws TwitterException {
 		if (mUserId > 0)
-			return getTwitter().getFollowersIDs(mUserId, -1);
-		else if (mScreenName != null) return getTwitter().getFollowersIDs(mScreenName, -1);
+			return getTwitter().getFriendsIDs(mUserId, -1);
+		else if (mScreenName != null) return getTwitter().getFriendsIDs(mScreenName, -1);
 		return null;
 	}
 

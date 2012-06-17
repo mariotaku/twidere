@@ -83,11 +83,6 @@
 	<string name="about_summary">關於 Twidere</string>
 	<string name="license">開源許可</string>
 	<string name="license_summary">Twidere 以 GPLv3 許可發佈。</string>
-	<string name="proxy">代理伺服器</string>
-	<string name="proxy_summary">為API，地圖/圖片查看器等啟用代理伺服器。</string>
-	<string name="http_proxy">HTTP 代理</string>
-	<string name="http_proxy_username">HTTP 代理的用戶名</string>
-	<string name="http_proxy_password">HTTP 代理的密碼</string>
 	<string name="api">API</string>
 	<string name="consumer_key">Consumer key</string>
 	<string name="consumer_key_summary">OAuth/xAuth 所需的 Consumer key，留空則使用預設。</string>
@@ -143,7 +138,6 @@
 	<string name="quote">引用</string>
 	<string name="add_rule">添加規則</string>
 	<string name="longclick_to_delete">長按以刪除</string>
-	<string name="debug">Debug</string>
 	<string name="retweet_success">轉推成功</string>
 	<string name="cancel_retweet_success">取消轉推成功</string>
 	<string name="delete_success">刪除成功</string>
@@ -179,7 +173,9 @@
 	<string name="quote_format">引用格式</string>
 	<string name="quote_format_summary">設定推文引用的格式</string>
 	<string name="quote_format_message">\"[TEXT]\" 將被替換成要引用的推文</string>
-	<string name="capital_on">開啓</string>
+	<string name="direct_messages">私信</string>
+	<string name="capital_on">開啟</string>
 	<string name="capital_off">關閉</string>
+	<string name="blocked_users">屏蔽的用戶</string>
 
 </resources>

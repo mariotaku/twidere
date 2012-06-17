@@ -83,11 +83,6 @@
 	<string name="about_summary">ツイデレについて</string>
 	<string name="license">オープンソースライセンス</string>
 	<string name="license_summary">ツイデレ は GPLv3 ライセンスの下で提供されています。</string>
-	<string name="proxy">プロキシサーバー</string>
-	<string name="proxy_summary">API、マップ、イメージビューを使う時、プロキシサーバー越しを利用</string>
-	<string name="http_proxy">HTTP プロキシ</string>
-	<string name="http_proxy_username">HTTP プロキシのユーザー名</string>
-	<string name="http_proxy_password">HTTP プロキシのパスワード</string>
 	<string name="api">API</string>
 	<string name="consumer_key">Consumer key</string>
 	<string name="consumer_key_summary">Consumer key for OAuth/xAuth, leave blank for default.</string>
@@ -143,7 +138,6 @@
 	<string name="quote">引用</string>
 	<string name="add_rule">ルールを追加</string>
 	<string name="longclick_to_delete">長押して削除</string>
-	<string name="debug">デバッグ</string>
 	<string name="retweet_success">リツイートしました</string>
 	<string name="cancel_retweet_success">リツイートを削除しました</string>
 	<string name="delete_success">削除しました</string>
@@ -155,8 +149,8 @@
 	<string name="profile_update_success">プロフィールを更新しました</string>
 	<string name="profile_image_update_success">プロフィール画像を更新しました</string>
 	<string name="display_name">名前を表示</string>
-	<string name="display_name_summaryon">ツイート</string>
-	<string name="display_name_summaryoff">ツイートのユーザー名を表示する。</string>
+	<string name="display_name_summaryon">名前を表示する</string>
+	<string name="display_name_summaryoff">ユーザー名を表示する。</string>
 	<string name="text_size">フォントサイズ</string>
 	<string name="text_size_summary">ツイートのフォントサイズ</string>
 	<string name="cannot_get_location">位置情報が取得できません</string>
@@ -180,5 +174,8 @@
 	<string name="quote_format_summary">ツイートの引用形式を設定</string>
 	<string name="quote_format_message">\"[TEXT]\" は引用するツイートに書き換えられる</string>
 	<string name="direct_messages">ダイレクトメッセージ</string>
+	<string name="capital_on">ON</string>
+	<string name="capital_off">OFF</string>
+	<string name="blocked_users">ブロックしたユーザー</string>
 
 </resources>

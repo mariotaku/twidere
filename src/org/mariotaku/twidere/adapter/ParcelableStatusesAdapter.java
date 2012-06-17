@@ -98,27 +98,42 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 	@Override
 	public void setDisplayName(boolean display) {
-		mDisplayName = display;
+		if (display != mDisplayName) {
+			mDisplayName = display;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override
 	public void setDisplayProfileImage(boolean display) {
-		mDisplayProfileImage = display;
+		if (display != mDisplayProfileImage) {
+			mDisplayProfileImage = display;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override
 	public void setShowAccountColor(boolean show) {
-		mShowAccountColor = show;
+		if (show != mShowAccountColor) {
+			mShowAccountColor = show;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override
 	public void setShowLastItemAsGap(boolean gap) {
-		mShowLastItemAsGap = gap;
+		if (gap != mShowLastItemAsGap) {
+			mShowLastItemAsGap = gap;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override
 	public void setTextSize(float text_size) {
-		mTextSize = text_size;
+		if (text_size != mTextSize) {
+			mTextSize = text_size;
+			notifyDataSetChanged();
+		}
 	}
 
 }

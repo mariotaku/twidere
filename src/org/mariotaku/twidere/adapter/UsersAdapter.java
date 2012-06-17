@@ -2,30 +2,30 @@ package org.mariotaku.twidere.adapter;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.BaseAdapterInterface;
+import org.mariotaku.twidere.util.ParcelableUser;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.UserViewHolder;
 
-import twitter4j.User;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-public class UsersAdapter extends ArrayAdapter<User> {
+public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
 
 	private final ProfileImageLoader mImageLoader;
-	private boolean mDisplayProfileImage;
+	private boolean mDisplayProfileImage, mShowLastItemAsGap, mDisplayName;
 	private float mTextSize;
-	private boolean mShowLastAsGap;
 
 	public UsersAdapter(Context context) {
-		super(context, R.layout.user_list_item, R.id.bio);
+		super(context, R.layout.user_list_item, R.id.description);
 		TwidereApplication application = (TwidereApplication) context.getApplicationContext();
 		mImageLoader = application.getProfileImageLoader();
 		application.getServiceInterface();
 	}
 
-	public User findItem(long id) {
+	public ParcelableUser findItem(long id) {
 		for (int i = 0; i < getCount(); i++) {
 			if (getItemId(i) == id) return getItem(i);
 		}
@@ -43,32 +43,56 @@ public class UsersAdapter extends ArrayAdapter<User> {
 			holder = new UserViewHolder(view);
 			view.setTag(holder);
 		}
-		boolean show_gap = mShowLastAsGap && position == getCount() - 1;
+		boolean show_gap = mShowLastItemAsGap && position == getCount() - 1;
+		holder.setShowAsGap(show_gap);
 		if (!show_gap) {
-			final User user = getItem(position);
+			final ParcelableUser user = getItem(position);
 			holder.setTextSize(mTextSize);
 
-			holder.screen_name.setText(user.getScreenName());
-			holder.user_name.setText(user.getName());
-			holder.bio.setText(user.getDescription());
+			holder.name.setText(mDisplayName ? user.name : user.screen_name);
+			holder.location.setText(user.location);
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				mImageLoader.displayImage(user.getProfileImageURL(), holder.profile_image);
+				mImageLoader.displayImage(user.profile_image_url, holder.profile_image);
 			}
 		}
 		return view;
 	}
 
+	public boolean isGap(int position) {
+		return mShowLastItemAsGap && position == getCount() - 1;
+	}
+
+	@Override
+	public void setDisplayName(boolean display) {
+		if (display != mDisplayName) {
+			mDisplayName = display;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
 	public void setDisplayProfileImage(boolean display) {
-		mDisplayProfileImage = display;
+		if (display != mDisplayProfileImage) {
+			mDisplayProfileImage = display;
+			notifyDataSetChanged();
+		}
 	}
 
-	public void setShowLastAsGap(boolean show_gap) {
-		mShowLastAsGap = show_gap;
+	@Override
+	public void setShowLastItemAsGap(boolean gap) {
+		if (gap != mShowLastItemAsGap) {
+			mShowLastItemAsGap = gap;
+			notifyDataSetChanged();
+		}
 	}
 
+	@Override
 	public void setTextSize(float text_size) {
-		mTextSize = text_size;
+		if (text_size != mTextSize) {
+			mTextSize = text_size;
+			notifyDataSetChanged();
+		}
 	}
 
 }

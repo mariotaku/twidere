@@ -41,7 +41,6 @@
 	<string name="error_occurred">发生错误，请重试。</string>
 	<string name="error_already_logged_in">你已经登录。</string>
 	<string name="no_account_selected">你必须至少选择一个帐号。</string>
-	<string name="error_no_permission">错误：你没有权限访问twitter，应用程序的密钥可能是无效的。</string>
 	<string name="error_unknown_error">错误：未知错误，这很可能是个bug。</string>
 	<string name="error_message">错误：<xliff:g id="message">%s</xliff:g></string>
 	<string name="select_account">选择帐号</string>
@@ -84,11 +83,6 @@
 	<string name="about_summary">关于 Twidere</string>
 	<string name="license">开源许可</string>
 	<string name="license_summary">Twidere 以 GPLv3 许可发布。</string>
-	<string name="proxy">代理服务器</string>
-	<string name="proxy_summary">为API，地图/图片查看器等启用代理服务器。</string>
-	<string name="http_proxy">HTTP 代理</string>
-	<string name="http_proxy_username">HTTP 代理的用户名</string>
-	<string name="http_proxy_password">HTTP 代理的密码</string>
 	<string name="api">API</string>
 	<string name="consumer_key">Consumer key</string>
 	<string name="consumer_key_summary">OAuth/xAuth 所需的 Consumer key，留空则使用默认。</string>
@@ -144,7 +138,6 @@
 	<string name="quote">引用</string>
 	<string name="add_rule">添加规则</string>
 	<string name="longclick_to_delete">长按以删除</string>
-	<string name="debug">Debug</string>
 	<string name="retweet_success">转推成功</string>
 	<string name="cancel_retweet_success">取消转推成功</string>
 	<string name="delete_success">删除成功</string>
@@ -183,5 +176,6 @@
 	<string name="direct_messages">私信</string>
 	<string name="capital_on">开启</string>
 	<string name="capital_off">关闭</string>
+	<string name="blocked_users">屏蔽的用户</string>
 
 </resources>

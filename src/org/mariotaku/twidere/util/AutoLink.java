@@ -84,7 +84,7 @@ public class AutoLink {
 	 * areas, and the movement method for the text is changed to
 	 * LinkMovementMethod.
 	 * 
-	 * @param text TextView whose text is to be marked-up with links
+	 * @param description TextView whose text is to be marked-up with links
 	 * @param pattern Regex pattern to be used for finding links
 	 * @param scheme Url scheme string (eg <code>http://</code> to be prepended
 	 *            to the url of links that do not have a scheme specified in the
@@ -146,7 +146,7 @@ public class AutoLink {
 	/**
 	 * Applies a regex to a Spannable turning the matches into links.
 	 * 
-	 * @param text Spannable whose text is to be marked-up with links
+	 * @param description Spannable whose text is to be marked-up with links
 	 * @param pattern Regex pattern to be used for finding links
 	 * @param scheme Url scheme string (eg <code>http://</code> to be prepended
 	 *            to the url of links that do not have a scheme specified in the

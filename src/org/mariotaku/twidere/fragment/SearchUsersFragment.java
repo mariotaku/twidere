@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.loader.UserSearchLoader;
+import org.mariotaku.twidere.util.ParcelableUser;
 
-import twitter4j.User;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
 public class SearchUsersFragment extends BaseUsersListFragment {
 
-	private final List<User> mUserResultList = new ArrayList<User>();
+	private final List<ParcelableUser> mUserResultList = new ArrayList<ParcelableUser>();
 
 	@Override
-	public Loader<List<User>> newLoaderInstance() {
+	public Loader<List<ParcelableUser>> newLoaderInstance() {
 		final Bundle args = getArguments();
 		if (args != null) {
 			long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);

@@ -58,11 +58,11 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 
 	private ParcelableStatus mSelectedStatus;
 	private int mRunningTaskId;
-	private boolean mBusy, mTickerStopped;
 
-	private boolean mDisplayProfileImage, mDisplayName, mReachedBottom, mActivityFirstCreated;
-	private float mTextSize;
-	private boolean mLoadMoreAutomatically, mNotReachedBottomBefore = true;
+	private boolean mLoadMoreAutomatically;
+
+	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mActivityFirstCreated,
+			mNotReachedBottomBefore = true;
 
 	private Fragment mDetailFragment;
 
@@ -103,9 +103,6 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 		super.onActivityCreated(savedInstanceState);
 		mAsyncTaskManager = AsyncTaskManager.getInstance();
 		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
 		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
@@ -256,20 +253,15 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 	@Override
 	public void onResume() {
 		super.onResume();
-		boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		StatusesAdapterInterface adapter = getListAdapter();
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_LOAD_MORE_AUTOMATICALLY, false);
-		getListAdapter().setShowLastItemAsGap(!mLoadMoreAutomatically);
-		getListAdapter().setDisplayProfileImage(display_profile_image);
-		getListAdapter().setDisplayName(display_name);
-		getListAdapter().setTextSize(text_size);
-		if (mDisplayProfileImage != display_profile_image || mDisplayName != display_name || mTextSize != text_size) {
-			mDisplayProfileImage = display_profile_image;
-			mDisplayName = display_name;
-			mTextSize = text_size;
-			mListView.getRefreshableView().invalidateViews();
-		}
+		adapter.setDisplayProfileImage(display_profile_image);
+		adapter.setDisplayName(display_name);
+		adapter.setTextSize(text_size);
+		adapter.setShowLastItemAsGap(mLoadMoreAutomatically);
 	}
 
 	@Override

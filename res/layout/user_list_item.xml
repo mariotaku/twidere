@@ -1,53 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/content"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:padding="4dip">
+	android:padding="4dp">
 
 	<org.mariotaku.twidere.view.RoundCorneredImageView
 		android:id="@+id/profile_image"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"
-		android:layerType="software"
 		android:scaleType="fitCenter"/>
 
 	<TextView
-		android:id="@+id/user_name"
+		android:id="@+id/name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignTop="@+id/profile_image"
+		android:layout_alignParentTop="true"
 		android:layout_alignWithParentIfMissing="true"
+		android:layout_marginLeft="4dp"
+		android:layout_toLeftOf="@+id/location"
 		android:layout_toRightOf="@+id/profile_image"
-		android:paddingLeft="4dip"
-		android:paddingRight="4dip"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorPrimary"
 		android:textStyle="bold"/>
 
 	<TextView
-		android:id="@+id/screen_name"
+		android:id="@+id/description"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignBaseline="@+id/user_name"
-		android:layout_alignRight="@+id/bio"
+		android:layout_alignLeft="@+id/name"
+		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_toRightOf="@+id/user_name"
-		android:singleLine="true"
-		android:textColor="?android:attr/textColorSecondary"
-		android:textSize="12sp"/>
+		android:layout_below="@+id/name"
+		android:paddingBottom="2dp"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="?android:attr/textColorSecondary"/>
 
 	<TextView
-		android:id="@+id/bio"
+		android:id="@+id/location"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_alignBaseline="@+id/name"
+		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/user_name"
-		android:layout_toRightOf="@+id/profile_image"
-		android:paddingLeft="4dip"
-		android:paddingRight="4dip"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="?android:attr/textColorPrimary"/>
+		android:layout_marginRight="4dp"
+		android:drawablePadding="2dp"
+		android:gravity="center_vertical|right"
+		android:textColor="?android:attr/textColorSecondary"/>
+
+	<TextView
+		android:id="@+id/list_gap_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:text="@string/tap_to_load_more"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="#606060"
+		android:textStyle="bold"
+		android:visibility="gone"/>
 
 </RelativeLayout>

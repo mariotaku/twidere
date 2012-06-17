@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+	<plurals name="Nminutes">
+		<item quantity="one">1 min</item>
+		<item quantity="other"><xliff:g id="minutes">%d</xliff:g> min</item>
+	</plurals>
+	<plurals name="Nhours">
+		<item quantity="one">1 hr</item>
+		<item quantity="other"><xliff:g id="minutes">%d</xliff:g> hrs</item>
+	</plurals>
+	<plurals name="Ndays">
+		<item quantity="one">1 day</item>
+		<item quantity="other"><xliff:g id="minutes">%d</xliff:g> days</item>
+	</plurals>
+	<plurals name="Nmonths">
+		<item quantity="one">1 month</item>
+		<item quantity="other"><xliff:g id="minutes">%d</xliff:g> months</item>
+	</plurals>
+	<plurals name="Nyears">
+		<item quantity="one">1 year</item>
+		<item quantity="other"><xliff:g id="minutes">%d</xliff:g> years</item>
+	</plurals>
+
+</resources>

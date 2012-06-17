@@ -177,13 +177,6 @@ public class Switch extends CompoundButton {
 		return mTextOn;
 	}
 
-	// @Override
-	// public void jumpDrawablesToCurrentState() {
-	// super.jumpDrawablesToCurrentState();
-	// mThumbDrawable.jumpToCurrentState();
-	// mTrackDrawable.jumpToCurrentState();
-	// }
-
 	@Override
 	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -243,26 +236,6 @@ public class Switch extends CompoundButton {
 			setMeasuredDimension(getMeasuredWidth(), switchHeight);
 		}
 	}
-
-	// @Override
-	// public void onPopulateAccessibilityEvent(AccessibilityEvent event) {
-	// super.onPopulateAccessibilityEvent(event);
-	// if (isChecked()) {
-	// CharSequence text = mOnLayout.getText();
-	// if (TextUtils.isEmpty(text)) {
-	// //text = mContext.getString(R.string.switch_on);
-	// text = "ON";
-	// }
-	// event.getText().add(text);
-	// } else {
-	// CharSequence text = mOffLayout.getText();
-	// if (TextUtils.isEmpty(text)) {
-	// //text = mContext.getString(R.string.switch_off);
-	// text = "OFF";
-	// }
-	// event.getText().add(text);
-	// }
-	// }
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {

@@ -13,7 +13,10 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
+import org.mariotaku.twidere.fragment.UserBlocksFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
+import org.mariotaku.twidere.fragment.UserFollowersFragment;
+import org.mariotaku.twidere.fragment.UserFriendsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
@@ -1183,6 +1186,23 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void openUserBlocks(Activity activity, long account_id) {
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new UserBlocksFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER_BLOCKS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
 	public static void openUserFavorites(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			HomeActivity home_activity = (HomeActivity) activity;
@@ -1201,6 +1221,66 @@ public final class Utils implements Constants {
 			Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_FAVORITES);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (user_id != -1) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+
+	}
+
+	public static void openUserFollowers(Activity activity, long account_id, long user_id, String screen_name) {
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new UserFollowersFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (user_id != -1) {
+				args.putLong(INTENT_KEY_USER_ID, user_id);
+			}
+			if (screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			}
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER_FOLLOWERS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (user_id != -1) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+
+	}
+
+	public static void openUserFollowing(Activity activity, long account_id, long user_id, String screen_name) {
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			HomeActivity home_activity = (HomeActivity) activity;
+			Fragment fragment = new UserFriendsFragment();
+			Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (user_id != -1) {
+				args.putLong(INTENT_KEY_USER_ID, user_id);
+			}
+			if (screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			}
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER_FOLLOWING);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			if (user_id != -1) {
 				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));

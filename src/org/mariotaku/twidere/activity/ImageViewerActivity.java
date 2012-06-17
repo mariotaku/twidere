@@ -46,7 +46,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class ImageViewActivity extends FragmentActivity implements OnClickListener {
+public class ImageViewerActivity extends FragmentActivity implements OnClickListener {
 
 	private ImageViewer mImageView;
 	private ImageLoader mImageLoader;
@@ -59,7 +59,7 @@ public class ImageViewActivity extends FragmentActivity implements OnClickListen
 				onBackPressed();
 				break;
 			}
-			case R.id.progress_refresh: {
+			case R.id.refresh: {
 				if (mImageLoader == null || mImageLoader.getStatus() != Status.RUNNING) {
 					loadImage();
 				}
@@ -112,10 +112,10 @@ public class ImageViewActivity extends FragmentActivity implements OnClickListen
 
 		private final URL url;
 		private final ImageViewer image_view;
-		private final ImageViewActivity activity;
+		private final ImageViewerActivity activity;
 		private File mCacheDir;
 
-		public ImageLoader(URL url, ImageViewer image_view, ImageViewActivity activity) {
+		public ImageLoader(URL url, ImageViewer image_view, ImageViewerActivity activity) {
 			this.url = url;
 			this.image_view = image_view;
 			this.activity = activity;
@@ -172,14 +172,14 @@ public class ImageViewActivity extends FragmentActivity implements OnClickListen
 							.setBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.broken_image));
 				}
 			}
-			activity.mRefresh.setVisibility(View.VISIBLE);
+			// activity.mRefresh.setVisibility(View.VISIBLE);
 			activity.mProgress.setVisibility(View.INVISIBLE);
 			super.onPostExecute(result);
 		}
 
 		@Override
 		protected void onPreExecute() {
-			activity.mRefresh.setVisibility(View.INVISIBLE);
+			// activity.mRefresh.setVisibility(View.INVISIBLE);
 			activity.mProgress.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
