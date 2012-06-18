@@ -2,8 +2,8 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<string name="app_name">ツイデレ</string>
-	<string name="loading">読込中…</string>
-	<string name="compose">コンポーズ</string>
+	<string name="loading">読み込み中…</string>
+	<string name="compose">ツイートする…</string>
 	<string name="add_account">アカウントを追加</string>
 	<string name="settings">設定</string>
 	<string name="send">送信</string>
@@ -13,15 +13,15 @@
 	<string name="remove_location">位置情報を削除</string>
 	<string name="remove_image">画像を削除</string>
 	<string name="remove_photo">写真を削除</string>
-	<string name="tweet_hint">今何をしていますか？</string>
+	<string name="tweet_hint">ツイートする…</string>
 	<string name="sign_up">新規登録</string>
 	<string name="sign_in">ログイン</string>
 	<string name="rest_base_url">REST Base URL</string>
-	<string name="search_base_url">Search Base URL</string>
-	<string name="upload_base_url">Upload Base URL</string>
+	<string name="search_base_url">検索Base URL</string>
+	<string name="upload_base_url">アップロードBase URL</string>
 	<string name="oauth_access_token_url">OAuth Access Token URL</string>
-	<string name="oauth_authentication_url">OAuth Authentication URL</string>
-	<string name="oauth_authorization_url">OAuth Authorization URL</string>
+	<string name="oauth_authentication_url">OAuth認証 URL</string>
+	<string name="oauth_authorization_url">OAuth許可 URL</string>
 	<string name="oauth_request_token_url">OAuth Request Token URL</string>
 	<string name="auth_type">認証タイプ</string>
 	<string name="oauth">OAuth</string>
@@ -46,7 +46,7 @@
 	<string name="select_account">アカウントを選択</string>
 	<string name="username">ユーザー名かメイルアドレス</string>
 	<string name="password">パスワード</string>
-	<string name="label_tweetstore_provider">Twidere データベース・ストレージ</string>
+	<string name="label_tweetstore_provider">ツイデレのデータベース・ストレージ</string>
 	<string name="label_update_service">タイムライン更新サービス</string>
 	<string name="label_permission_group_access_twidere">ツイデレ アプリ　をアクセス</string>
 	<string name="label_permission_read_databases">データベースの読み込み</string>
@@ -58,7 +58,7 @@
 	<string name="tap_to_load_more">タップしてツイートを読み込む</string>
 	<string name="go_to_my_profile_page">マイ・プロフィール</string>
 	<string name="delete">削除</string>
-	<string name="retweet">リツィート</string>
+	<string name="retweet">リツイート</string>
 	<string name="cancel_retweet">リツイートをキャンセル</string>
 	<string name="fav">お気に入りに登録</string>
 	<string name="unfav">お気に入り削除</string>
@@ -85,21 +85,21 @@
 	<string name="license_summary">ツイデレ は GPLv3 ライセンスの下で提供されています。</string>
 	<string name="api">API</string>
 	<string name="consumer_key">Consumer key</string>
-	<string name="consumer_key_summary">Consumer key for OAuth/xAuth, leave blank for default.</string>
+	<string name="consumer_key_summary">OAuth/xAuth用のConsumer key。空白のままにして置くとデフォルト値が適用。</string>
 	<string name="consumer_secret">Consumer secret</string>
-	<string name="consumer_secret_summary">Consumer secret for OAuth/xAuth, leave blank for default.</string>
-	<string name="warn_expert_only">Be attention! Wrong consumer key/secret will make connection errors!</string>
+	<string name="consumer_secret_summary">OAuth/xAuth用のConsumer secret。空白のままにして置くとデフォルト値が適用。</string>
+	<string name="warn_expert_only">ご注意ください! 間違ったconsumer key/secretは接続エラーを起こすかもしれません。</string>
 	<string name="ignore_ssl_error">SSLエラーを無視</string>
-	<string name="ignore_ssl_error_summary">Ignore SSL Error, enable this if you are having problem with custom API server.</string>
+	<string name="ignore_ssl_error_summary">SSLエラーを無視する。カスタムAPIサーバーに問題がある場合、有効にしてみましょう。</string>
 	<string name="gzip_compressing">GZip 圧縮</string>
 	<string name="gzip_compressing_summary">全てのAPIリクエストを圧縮します。</string>
 	<string name="storage">ストレージ</string>
 	<string name="database_item_limit">アイテム制限</string>
-	<string name="database_item_limit_summary">Upper limit of item stored in databases for each account, set to a smaller value to save space and increase loading speed.</string>
+	<string name="database_item_limit_summary">各アカウントのデータベースに格納されているアイテムの上限。もっと小さな値に設定すると、領域を節約して読み込み速度を上げることができる。</string>
 	<string name="clear_cache">カッシュを消去</string>
 	<string name="clear_cache_summary">プロフィール画像のカッシュを消去</string>
 	<string name="clear_databases">データベースをクリア</string>
-	<string name="clear_databases_summary">Clear all tweets, profiles, messages. Your accounts credentials won\'t loss.</string>
+	<string name="clear_databases_summary">データを完全に消去する。ご心配なく、あなたのアカウント情報は失いません。</string>
 	<string name="look_and_feel">テーマ</string>
 	<string name="dark_theme">ダークテーマを適用</string>
 	<string name="dark_theme_summary">ツイデレにダークテーマを適用する</string>
@@ -176,10 +176,10 @@
 	<string name="capital_on">ON</string>
 	<string name="capital_off">OFF</string>
 	<string name="blocked_users">ブロックしたユーザー</string>
-	<string name="set_as_default">Set as default</string>
-	<string name="default_account">Default account</string>
-	<string name="search_users">Search Users</string>
-	<string name="search_tweets">Search Tweets</string>
-	<string name="created_at">Created at</string>
+	<string name="set_as_default">デフォルトとして設定</string>
+	<string name="default_account">デフォルトアカウント</string>
+	<string name="search_users">ユーザーを検索</string>
+	<string name="search_tweets">ツイートを検索</string>
+	<string name="created_at">作成日</string>
 
 </resources>

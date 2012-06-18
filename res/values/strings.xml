@@ -181,5 +181,6 @@
 	<string name="search_users">Search Users</string>
 	<string name="search_tweets">Search Tweets</string>
 	<string name="created_at">Created at</string>
+	<string name="set_default_account_hint">Please set a default account (Long click an item - Set as default).</string>
 
 </resources>

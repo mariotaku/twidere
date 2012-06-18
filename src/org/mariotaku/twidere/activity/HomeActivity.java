@@ -58,6 +58,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class HomeActivity extends BaseActivity implements OnClickListener, OnBackStackChangedListener {
 
@@ -93,10 +94,13 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			if (activated_ids.length == 1) {
 				mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
 				mIndicator.setPagingEnabled(true);
-			} else {
+			} else if (activated_ids.length > 1) {
 				mViewPager.setCurrentItem(mAdapter.getCount() - 1, false);
 				mIndicator.setPagingEnabled(false);
+				Toast.makeText(this, R.string.set_default_account_hint, Toast.LENGTH_LONG).show();
 			}
+		} else {
+			mIndicator.setPagingEnabled(true);
 		}
 	}
 

@@ -36,7 +36,7 @@
 			android:title="Rieya">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="https://twitter.com/#!/Rieya"/>
+				android:data="http://rieya.me"/>
 		</PreferenceScreen>
 		<PreferenceScreen
 			android:summary="Icon designer for 0.0.7 version"

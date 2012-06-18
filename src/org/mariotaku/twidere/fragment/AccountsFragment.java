@@ -7,6 +7,7 @@ import static org.mariotaku.twidere.util.Utils.parseURL;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
@@ -66,6 +67,9 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, AccountsFragment.this);
+				if (getActivity() instanceof HomeActivity) {
+					((HomeActivity)getActivity()).checkDefaultAccountSet();
+				}
 			}
 		}
 	};
@@ -186,6 +190,9 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				if (mSelectedUserId != INVALID_ID) {
 					mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, mSelectedUserId).commit();
 					mAdapter.notifyDataSetChanged();
+					if (getActivity() instanceof HomeActivity) {
+						((HomeActivity)getActivity()).checkDefaultAccountSet();
+					}
 				}
 				break;
 			}
@@ -196,7 +203,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + " = " + mSelectedUserId, null);
 				mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + " = " + mSelectedUserId, null);
 				if (getActivatedAccountIds(getActivity()).length > 0) {
-					AccountsFragment.this.getLoaderManager().restartLoader(0, null, AccountsFragment.this);
+					getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 				} else {
 					getActivity().finish();
 				}
