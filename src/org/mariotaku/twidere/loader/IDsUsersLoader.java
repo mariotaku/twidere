@@ -1,10 +1,9 @@
 package org.mariotaku.twidere.loader;
 
-import static org.mariotaku.twidere.util.Utils.indexOfArray;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ParcelableUser;
 
 import twitter4j.IDs;
@@ -41,7 +40,7 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 			if (mIDs == null) return null;
 		}
 		final long[] ids = mIDs.getIDs();
-		final int max_id_idx = mMaxId > 0 ? indexOfArray(ids, mMaxId) : 0;
+		final int max_id_idx = mMaxId > 0 ? ArrayUtils.indexOf(ids, mMaxId) : 0;
 		final int count = max_id_idx + load_item_limit < ids.length ? max_id_idx + load_item_limit : ids.length
 				- max_id_idx;
 
@@ -54,7 +53,7 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		final ResponseList<User> users = twitter.lookupUsers(ids_to_load);
 		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();
 		for (User user : users) {
-			int position = indexOfArray(mIDs.getIDs(), user.getId());
+			int position = ArrayUtils.indexOf(mIDs.getIDs(), user.getId());
 			result.add(new ParcelableUser(user, mAccountId, position));
 		}
 		return result;

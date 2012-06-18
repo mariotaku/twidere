@@ -124,7 +124,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	public void onActivityCreated(Bundle savedInstanceState) {
 
 		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
-		mResolver = getActivity().getContentResolver();
+		mResolver = getContentResolver();
 		super.onActivityCreated(savedInstanceState);
 		Bundle bundle = getArguments();
 		if (bundle != null) {

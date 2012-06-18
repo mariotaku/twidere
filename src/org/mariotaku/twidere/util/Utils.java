@@ -966,13 +966,6 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
-	public static int indexOfArray(long[] array, long value) {
-		for (int i = 0; i < array.length; i++) {
-			if (array[i] == value) return i;
-		}
-		return -1;
-	}
-
 	public static boolean isMyAccount(Context context, long account_id) {
 		for (long id : getAccountIds(context)) {
 			if (id == account_id) return true;

@@ -250,10 +250,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				break;
 			}
 			case MENU_DRAFTS: {
-				Uri.Builder builder = new Uri.Builder();
-				builder.scheme(SCHEME_TWIDERE);
-				builder.authority(AUTHORITY_DRAFTS);
-				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+				startActivity(new Intent(INTENT_ACTION_DRAFTS));
 				break;
 			}
 			case MENU_SELECT_ACCOUNT: {

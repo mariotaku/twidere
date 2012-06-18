@@ -14,9 +14,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider {
 
-	private ArrayList<TabInfo> mTabsInfo = new ArrayList<TabInfo>();
+	private final ArrayList<TabInfo> mTabsInfo = new ArrayList<TabInfo>();
 
-	private Context mContext;
+	private final Context mContext;
 
 	public TabsAdapter(Context context, FragmentManager fm) {
 		super(fm);

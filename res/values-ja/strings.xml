@@ -155,7 +155,6 @@
 	<string name="text_size_summary">ツイートのフォントサイズ</string>
 	<string name="cannot_get_location">位置情報が取得できません</string>
 	<string name="drafts">下書き</string>
-	<string name="search">検索</string>
 	<string name="send_all">全てを送信</string>
 	<string name="delete_all">すべてを削除</string>
 	<string name="profile">プロフィール</string>
@@ -177,5 +176,10 @@
 	<string name="capital_on">ON</string>
 	<string name="capital_off">OFF</string>
 	<string name="blocked_users">ブロックしたユーザー</string>
+	<string name="set_as_default">Set as default</string>
+	<string name="default_account">Default account</string>
+	<string name="search_users">Search Users</string>
+	<string name="search_tweets">Search Tweets</string>
+	<string name="created_at">Created at</string>
 
 </resources>

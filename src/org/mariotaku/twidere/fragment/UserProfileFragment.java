@@ -124,6 +124,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAdapter.add(new DescriptionAction());
 		mAdapter.add(new LocationAction());
 		mAdapter.add(new URLAction());
+		mAdapter.add(new CreatedDateAction());
 		mAdapter.add(new StatusesAction());
 		mAdapter.add(new FollowersAction());
 		mAdapter.add(new FollowingAction());
@@ -308,6 +309,22 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (mUserInfoTask != null) {
 			mUserInfoTask.execute();
 		}
+	}
+
+	private class CreatedDateAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.created_at);
+		}
+
+		@SuppressWarnings("deprecation")
+		@Override
+		public String getSummary() {
+			if (mUser == null) return null;
+			return String.valueOf(mUser.getCreatedAt().toLocaleString());
+		}
+
 	}
 
 	private class DescriptionAction extends UserAction {
@@ -659,7 +676,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private abstract class UserAction {
 		public abstract String getName();
 
-		public abstract String getSummary();
+		public String getSummary() {
+			return null;
+		}
 
 		public void onClick() {
 
@@ -680,11 +699,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public String getName() {
 			return getString(R.string.blocked_users);
-		}
-
-		@Override
-		public String getSummary() {
-			return null;
 		}
 
 		@Override
@@ -782,7 +796,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private class UserProfileActionAdapter extends ArrayAdapter<UserAction> {
 
 		public UserProfileActionAdapter(Context context) {
-			super(context, android.R.layout.simple_list_item_2, android.R.id.text1);
+			super(context, R.layout.two_line_list_item, android.R.id.text1);
 		}
 
 		public UserAction findItem(long id) {

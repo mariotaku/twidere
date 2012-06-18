@@ -14,8 +14,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 
-public class BasePreferenceActivity extends ActionBarPreferenceActivity implements Constants,
-		ActivityThemeChangeInterface {
+class BasePreferenceActivity extends ActionBarPreferenceActivity implements Constants, ActivityThemeChangeInterface {
 
 	private int mThemeId;
 

@@ -23,7 +23,7 @@ public class ParcelableUser implements Parcelable {
 	};
 
 	public final long account_id, user_id, created_at;
-	
+
 	public final int position;
 
 	public final boolean is_protected;

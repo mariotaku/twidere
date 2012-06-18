@@ -155,7 +155,6 @@
 	<string name="text_size_summary">推文的文字尺寸。</string>
 	<string name="cannot_get_location">不能獲得你的位置。</string>
 	<string name="drafts">草稿</string>
-	<string name="search">搜索</string>
 	<string name="send_all">全部發送</string>
 	<string name="delete_all">全部刪除</string>
 	<string name="profile">資料</string>
@@ -177,5 +176,10 @@
 	<string name="capital_on">開啟</string>
 	<string name="capital_off">關閉</string>
 	<string name="blocked_users">屏蔽的用戶</string>
+	<string name="set_as_default">設置為預設</string>
+	<string name="default_account">預設帳號</string>
+	<string name="search_users">搜索用戶</string>
+	<string name="search_tweets">搜索推文</string>
+	<string name="created_at">創建日期</string>
 
 </resources>

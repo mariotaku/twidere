@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="16"
-	android:versionName="0.0.14">
+	android:versionCode="18"
+	android:versionName="@string/app_version">
 
 	<uses-sdk
 		android:minSdkVersion="4"
@@ -238,9 +238,6 @@
 				<data
 					android:host="search"
 					android:scheme="twidere"/>
-				<data
-					android:host="drafts"
-					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>
 		<activity
@@ -254,8 +251,19 @@
 			</intent-filter>
 		</activity>
 		<activity
+			android:name=".activity.DraftsActivity"
+			android:label="@string/drafts">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.DRAFTS"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
 			android:name=".activity.ImageViewerActivity"
 			android:label="@string/view_image"
+			android:process=":image_viewer"
 			android:theme="@style/Theme.Twidere.ImageViewer">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>
@@ -277,6 +285,7 @@
 
 		<service
 			android:name=".service.TwidereService"
+			android:exported="false"
 			android:label="@string/label_update_service">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SERVICE"/>

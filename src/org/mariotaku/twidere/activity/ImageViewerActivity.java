@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2010-2012 Geometer Plus <contact@geometerplus.com>
+ * Twidere - Twitter client for Android
+ * 
+ * Copyright (C) 2012  Mariotaku Lee <mariotaku.lee@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -12,9 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.activity;
@@ -50,7 +50,7 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 
 	private ImageViewer mImageView;
 	private ImageLoader mImageLoader;
-	private View mRefresh, mProgress;
+	private View mProgress;
 
 	@Override
 	public void onClick(View view) {
@@ -73,7 +73,6 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 		setContentView(R.layout.image_viewer);
 		mImageView = (ImageViewer) findViewById(R.id.image_viewer);
 		mProgress = findViewById(R.id.progress);
-		mRefresh = findViewById(R.id.refresh);
 		loadImage();
 	}
 
@@ -209,7 +208,7 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 					o2.inSampleSize = o.inSampleSize;
 					bitmap = BitmapFactory.decodeFile(f.getPath(), o2);
 				} catch (OutOfMemoryError e) {
-					o.inSampleSize *= 2;
+					o.inSampleSize++;
 					continue;
 				}
 				if (bitmap == null) {

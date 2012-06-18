@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:title="ABOUT TWIDERE">
+		<Preference
+			android:summary="@string/app_version"
+			android:title="@string/app_name"/>
+
+		<PreferenceScreen
+			android:summary="Mariotaku Lee"
+			android:title="Developer">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://twitter.com/#!/mariotaku"/>
+		</PreferenceScreen>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="TRANSLATORS">
+		<PreferenceScreen
+			android:summary="Luigi Van"
+			android:title="日本語">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="http://about.me/fdb713"/>
+		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="Cem Uluer"
+			android:title="Deutsch">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="http://zettahub.de"/>
+		</PreferenceScreen>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="SPECIAL THANKS TO">
+		<PreferenceScreen
+			android:summary="Icon designer for 0.0.6 version"
+			android:title="Rieya">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://twitter.com/#!/Rieya"/>
+		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="Icon designer for 0.0.7 version"
+			android:title="ilovinheart">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://twitter.com/#!/ilovinheart"/>
+		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="Adjusted icon for 0.0.13 version and above"
+			android:title="lordfriend">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://twitter.com/#!/lordfriend"/>
+		</PreferenceScreen>
+	</PreferenceCategory>
+
+</PreferenceScreen>

@@ -14,7 +14,7 @@ import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.FragmentActivity;
 
-public class BaseDialogActivity extends FragmentActivity implements Constants, ActivityThemeChangeInterface {
+class BaseDialogActivity extends FragmentActivity implements Constants, ActivityThemeChangeInterface {
 
 	private int mThemeId;
 

@@ -15,6 +15,7 @@
 		android:layout_height="56dp"
 		android:layout_gravity="bottom|right"
 		android:contentDescription="@string/compose"
+		android:onClick="onClick"
 		android:src="@drawable/ic_menu_compose"/>
 
 </FrameLayout>

@@ -30,15 +30,29 @@
 		android:layerType="software"
 		android:scaleType="fitCenter"/>
 
-	<TextView
-		android:id="@android:id/text1"
+	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerVertical="true"
 		android:layout_toRightOf="@android:id/icon"
-		android:gravity="center"
-		android:padding="8dip"
-		android:singleLine="true"
-		android:textAppearance="?android:attr/textAppearanceLarge"/>
+		android:gravity="center_vertical"
+		android:orientation="vertical"
+		android:padding="4dip">
+
+		<TextView
+			android:id="@android:id/text1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+		<TextView
+			android:id="@android:id/text2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:text="@string/default_account"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+	</LinearLayout>
 
 </RelativeLayout>

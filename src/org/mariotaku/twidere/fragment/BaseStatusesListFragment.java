@@ -42,8 +42,8 @@ import android.widget.ListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public abstract class BaseStatusesListFragment<Data> extends BaseFragment implements OnRefreshListener,
-		LoaderCallbacks<Data>, OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
+abstract class BaseStatusesListFragment<Data> extends BaseFragment implements OnRefreshListener, LoaderCallbacks<Data>,
+		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
 	private ServiceInterface mServiceInterface;
 	private PullToRefreshListView mListView;
@@ -102,7 +102,7 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mAsyncTaskManager = AsyncTaskManager.getInstance();
-		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
 		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
@@ -261,7 +261,7 @@ public abstract class BaseStatusesListFragment<Data> extends BaseFragment implem
 		adapter.setDisplayProfileImage(display_profile_image);
 		adapter.setDisplayName(display_name);
 		adapter.setTextSize(text_size);
-		adapter.setShowLastItemAsGap(mLoadMoreAutomatically);
+		adapter.setShowLastItemAsGap(!mLoadMoreAutomatically);
 	}
 
 	@Override

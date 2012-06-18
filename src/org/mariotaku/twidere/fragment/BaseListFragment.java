@@ -6,9 +6,10 @@ import org.mariotaku.twidere.activity.BaseActivity;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.SharedPreferences;
 import android.support.v4.app.ListFragment;
 
-public class BaseListFragment extends ListFragment implements Constants {
+class BaseListFragment extends ListFragment implements Constants {
 
 	public ActionBarFragmentActivity getActionBarActivity() {
 		Activity activity = getActivity();
@@ -19,6 +20,12 @@ public class BaseListFragment extends ListFragment implements Constants {
 	public ContentResolver getContentResolver() {
 		Activity activity = getActivity();
 		if (activity != null) return activity.getContentResolver();
+		return null;
+	}
+
+	public SharedPreferences getSharedPreferences(String name, int mode) {
+		Activity activity = getActivity();
+		if (activity != null) return activity.getSharedPreferences(name, mode);
 		return null;
 	}
 

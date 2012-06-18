@@ -14,7 +14,7 @@
 		android:id="@+id/name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignParentTop="true"
+		android:layout_alignTop="@+id/profile_image"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_marginLeft="4dp"
 		android:layout_toLeftOf="@+id/location"

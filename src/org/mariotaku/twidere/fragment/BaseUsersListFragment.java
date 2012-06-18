@@ -22,7 +22,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public abstract class BaseUsersListFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableUser>>,
+abstract class BaseUsersListFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableUser>>,
 		OnItemClickListener, OnScrollListener {
 
 	private UsersAdapter mAdapter;
@@ -38,7 +38,7 @@ public abstract class BaseUsersListFragment extends BaseListFragment implements 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID);
@@ -51,16 +51,6 @@ public abstract class BaseUsersListFragment extends BaseListFragment implements 
 		mListView.setOnScrollListener(this);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
-	}
-
-	private static class SetLayerTypeAccessor {
-
-		@TargetApi(11)
-		public static void setLayerType(View view, int layerType, Paint paint) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				view.setLayerType(layerType, paint);
-			}
-		}
 	}
 
 	@Override
@@ -137,7 +127,7 @@ public abstract class BaseUsersListFragment extends BaseListFragment implements 
 			if (mLoadMoreAutomatically && mReachedBottom && count > visibleItemCount && count - 1 > 0) {
 				final Bundle args = getArguments();
 				if (args != null) {
-					args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count -1 ).user_id);
+					args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).user_id);
 				}
 				if (!getLoaderManager().hasRunningLoaders()) {
 					getLoaderManager().restartLoader(0, args, this);
@@ -149,6 +139,16 @@ public abstract class BaseUsersListFragment extends BaseListFragment implements 
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	}
+
+	private static class SetLayerTypeAccessor {
+
+		@TargetApi(11)
+		public static void setLayerType(View view, int layerType, Paint paint) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				view.setLayerType(layerType, paint);
+			}
+		}
 	}
 
 }

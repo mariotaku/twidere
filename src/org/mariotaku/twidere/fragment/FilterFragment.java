@@ -20,6 +20,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -92,7 +93,7 @@ public class FilterFragment extends BaseFragment {
 
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
-			mResolver = getActivity().getContentResolver();
+			mResolver = getContentResolver();
 			super.onActivityCreated(savedInstanceState);
 			setHasOptionsMenu(true);
 			mAdapter = new FilterListAdapter(getActivity());
@@ -171,7 +172,7 @@ public class FilterFragment extends BaseFragment {
 						if (mEditText.length() <= 0) return;
 						String text = mEditText.getText().toString();
 						values.put(Filters.TEXT, text);
-						getActivity().getContentResolver().insert(mFragment.getContentUri(), values);
+						getContentResolver().insert(mFragment.getContentUri(), values);
 						mFragment.getLoaderManager().restartLoader(0, null, mFragment);
 						break;
 				}
@@ -181,8 +182,8 @@ public class FilterFragment extends BaseFragment {
 			@SuppressWarnings("deprecation")
 			@Override
 			public Dialog onCreateDialog(Bundle savedInstanceState) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				FrameLayout layout = new FrameLayout(getActivity());
+				final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				final FrameLayout layout = new FrameLayout(getActivity());
 				mEditText = new EditText(getActivity());
 				layout.addView(mEditText, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT) {
 
@@ -192,14 +193,14 @@ public class FilterFragment extends BaseFragment {
 						leftMargin = margin;
 						rightMargin = margin;
 						topMargin = margin;
+						gravity = Gravity.CENTER;
 					}
 				});
 				builder.setTitle(R.string.add_rule);
 				builder.setView(layout);
 				builder.setPositiveButton(android.R.string.ok, this);
 				builder.setNegativeButton(android.R.string.cancel, this);
-				AlertDialog dialog = builder.create();
-				return dialog;
+				return builder.create();
 			}
 		}
 	}

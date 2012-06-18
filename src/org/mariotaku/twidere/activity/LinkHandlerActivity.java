@@ -4,8 +4,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.BaseFragment;
-import org.mariotaku.twidere.fragment.DraftsFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
@@ -38,7 +36,6 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final int CODE_USER_BLOCKS = 7;
 	private static final int CODE_CONVERSATION = 8;
 	private static final int CODE_SEARCH = 9;
-	private static final int CODE_DRAFTS = 10;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
@@ -50,7 +47,6 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_USER_BLOCKS, null, CODE_USER_BLOCKS);
 		URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, CODE_CONVERSATION);
 		URI_MATCHER.addURI(AUTHORITY_SEARCH, null, CODE_SEARCH);
-		URI_MATCHER.addURI(AUTHORITY_DRAFTS, null, CODE_DRAFTS);
 	}
 
 	@Override
@@ -63,7 +59,6 @@ public class LinkHandlerActivity extends BaseActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		if (data != null) {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			setTitle(data);
 			ft.replace(android.R.id.content, getFragment(data));
 			ft.commit();
 		} else {
@@ -83,11 +78,12 @@ public class LinkHandlerActivity extends BaseActivity {
 
 	private Fragment getFragment(Uri uri) {
 		final Bundle extras = getIntent().getExtras();
-		Fragment fragment = new BaseFragment();
+		Fragment fragment = new Fragment();
 		if (uri != null) {
 			final Bundle bundle = new Bundle();
 			switch (URI_MATCHER.match(uri)) {
 				case CODE_STATUS: {
+					setTitle(R.string.view_status);
 					fragment = new ViewStatusFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
 					if (extras != null) {
@@ -97,6 +93,7 @@ public class LinkHandlerActivity extends BaseActivity {
 					break;
 				}
 				case CODE_USER: {
+					setTitle(R.string.view_user_profile);
 					fragment = new UserProfileFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
@@ -109,6 +106,7 @@ public class LinkHandlerActivity extends BaseActivity {
 					break;
 				}
 				case CODE_USER_TIMELINE: {
+					setTitle(R.string.tweets);
 					fragment = new UserTimelineFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
@@ -121,6 +119,7 @@ public class LinkHandlerActivity extends BaseActivity {
 					break;
 				}
 				case CODE_USER_FAVORITES: {
+					setTitle(R.string.favorites);
 					fragment = new UserFavoritesFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
@@ -133,6 +132,7 @@ public class LinkHandlerActivity extends BaseActivity {
 					break;
 				}
 				case CODE_USER_FOLLOWERS: {
+					setTitle(R.string.followers);
 					fragment = new UserFollowersFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
@@ -145,6 +145,7 @@ public class LinkHandlerActivity extends BaseActivity {
 					break;
 				}
 				case CODE_USER_FOLLOWING: {
+					setTitle(R.string.following);
 					fragment = new UserFriendsFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
@@ -157,10 +158,12 @@ public class LinkHandlerActivity extends BaseActivity {
 					break;
 				}
 				case CODE_USER_BLOCKS: {
+					setTitle(R.string.blocked_users);
 					fragment = new UserBlocksFragment();
 					break;
 				}
 				case CODE_CONVERSATION: {
+					setTitle(R.string.view_conversation);
 					fragment = new ViewConversationFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
@@ -169,16 +172,14 @@ public class LinkHandlerActivity extends BaseActivity {
 				case CODE_SEARCH: {
 					final String type = uri.getQueryParameter(QUERY_PARAM_TYPE);
 					if (QUERY_PARAM_VALUE_TWEETS.equals(type)) {
+						setTitle(R.string.search_tweets);
 						fragment = new SearchTweetsFragment();
 					} else if (QUERY_PARAM_VALUE_USERS.equals(type)) {
+						setTitle(R.string.search_users);
 						fragment = new SearchUsersFragment();
 					}
 					final String query = uri.getQueryParameter(QUERY_PARAM_QUERY);
 					bundle.putString(INTENT_KEY_QUERY, query);
-					break;
-				}
-				case CODE_DRAFTS: {
-					fragment = new DraftsFragment();
 					break;
 				}
 				default: {
@@ -208,53 +209,6 @@ public class LinkHandlerActivity extends BaseActivity {
 			// Wrong number format? Ignore them.
 		}
 		return -1;
-	}
-
-	private void setTitle(Uri uri) {
-		if (uri == null) return;
-		switch (URI_MATCHER.match(uri)) {
-			case CODE_STATUS: {
-				setTitle(R.string.view_status);
-				break;
-			}
-			case CODE_USER: {
-				setTitle(R.string.view_user_profile);
-				break;
-			}
-			case CODE_USER_TIMELINE: {
-				setTitle(R.string.tweets);
-				break;
-			}
-			case CODE_USER_FAVORITES: {
-				setTitle(R.string.favorites);
-				break;
-			}
-			case CODE_USER_FOLLOWERS: {
-				setTitle(R.string.followers);
-				break;
-			}
-			case CODE_USER_FOLLOWING: {
-				setTitle(R.string.following);
-				break;
-			}
-			case CODE_USER_BLOCKS: {
-				setTitle(R.string.blocked_users);
-				break;
-			}
-			case CODE_CONVERSATION: {
-				setTitle(R.string.view_conversation);
-				break;
-			}
-			case CODE_SEARCH: {
-				setTitle(R.string.search);
-				break;
-			}
-			case CODE_DRAFTS: {
-				setTitle(R.string.drafts);
-				break;
-			}
-			default:
-		}
 	}
 
 }

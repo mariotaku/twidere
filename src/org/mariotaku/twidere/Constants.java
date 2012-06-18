@@ -1,3 +1,22 @@
+/*
+ * Twidere - Twitter client for Android
+ * 
+ * Copyright (C) 2012  Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -41,7 +60,6 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_STATUS = "status";
 	public static final String AUTHORITY_CONVERSATION = "conversation";
 	public static final String AUTHORITY_SEARCH = "search";
-	public static final String AUTHORITY_DRAFTS = "drafts";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -82,6 +100,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_CONSUMER_KEY = "consumer_key";
 	public static final String PREFERENCE_KEY_CONSUMER_SECRET = "consumer_secret";
 	public static final String PREFERENCE_KEY_QUOTE_FORMAT = "quote_format";
+	public static final String PREFERENCE_KEY_DEFAULT_ACCOUNT_ID = "default_account_id";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
@@ -104,6 +123,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_EDIT_API = INTENT_PACKAGE_PREFIX + "EDIT_API";
 	public static final String INTENT_ACTION_SET_COLOR = INTENT_PACKAGE_PREFIX + "SET_COLOR";
 	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_PACKAGE_PREFIX + "TWITTER_LOGIN";
+	public static final String INTENT_ACTION_DRAFTS = INTENT_PACKAGE_PREFIX + "DRAFTS";
 	public static final String INTENT_ACTION_DIRECT_MESSAGES = INTENT_PACKAGE_PREFIX + "DIRECT_MESSAGES";
 
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
@@ -170,10 +190,10 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_RETWEET = R.id.retweet;
 	public static final int MENU_QUOTE = R.id.quote;
 	public static final int MENU_SHARE = R.id.share;
-	public static final int MENU_DEBUG = R.id.debug;
 	public static final int MENU_DRAFTS = R.id.drafts;
 	public static final int MENU_DELETE_ALL = R.id.delete_all;
 	public static final int MENU_SEND_ALL = R.id.send_all;
+	public static final int MENU_SET_AS_DEFAULT = R.id.set_as_default;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
