@@ -13,7 +13,7 @@
 	<string name="remove_location">Ort entfernen</string>
 	<string name="remove_image">Bild entfernen</string>
 	<string name="remove_photo">Foto entfernen</string>
-	<string name="tweet_hint">Was machst Du gerade?</string>
+	<string name="tweet_hint">Schreibe etwas...</string>
 	<string name="sign_up">Registrieren</string>
 	<string name="sign_in">Einloggen</string>
 	<string name="rest_base_url">REST Base URL</string>
@@ -48,11 +48,11 @@
 	<string name="password">Passwort</string>
 	<string name="label_tweetstore_provider">Twidere Datenbank Anbieter</string>
 	<string name="label_update_service">Timeline Update Service</string>
-	<string name="label_permission_group_access_twidere">Greife auf Twidere Applikation zu</string>
+	<string name="label_permission_group_access_twidere">Greife auf Twidere zu</string>
 	<string name="label_permission_read_databases">Lese Twidere Datenbank aus</string>
 	<string name="label_permission_write_databases">Schreibe in die Twidere Datenbank</string>
-	<string name="description_permission_read_databases">Lese Tweets, Entwürfe, Accounts, Direktnachrichten etc von Datenbank.</string>
-	<string name="description_permission_write_databases">Schreibe Tweets, Entwürfe, Accounts, Direktnachrichten etc zur Datenbank.</string>
+	<string name="description_permission_read_databases">Lese Tweets, Entwürfe, Accounts, Direktnachrichten etc. von Datenbank.</string>
+	<string name="description_permission_write_databases">Schreibe Tweets, Entwürfe, Accounts, Direktnachrichten etc. zur Datenbank.</string>
 	<string name="open_in_browser">Im Browser öffnen</string>
 	<string name="just_now">Gerade</string>
 	<string name="tap_to_load_more">Weitere Tweets laden</string>
@@ -77,7 +77,7 @@
 	<string name="pick_from_gallery">Wähle aus Galerie</string>
 	<string name="pick_from_map">Wähle aus Karte</string>
 	<string name="tweets">Tweets</string>
-	<string name="followers">Followers</string>
+	<string name="followers">Follower</string>
 	<string name="following">Following</string>
 	<string name="about">Über</string>
 	<string name="about_summary">Über Twidere</string>
@@ -88,7 +88,7 @@
 	<string name="consumer_key_summary">Benutzerschlüssel für OAuth/xAuth, freilassen für Standart.</string>
 	<string name="consumer_secret">Benutzergeheimnis</string>
 	<string name="consumer_secret_summary">Benutzergeheimnis für OAuth/xAuth, freilassen für Standart.</string>
-	<string name="warn_expert_only">Achtung! Falsche Benutzerschlüssel/-geheimnis könnte Verbindungsfehler verursachen.</string>
+	<string name="warn_expert_only">Achtung! Falsche Benutzerschlüssel/-geheimnis könnten Verbindungsfehler verursachen.</string>
 	<string name="ignore_ssl_error">Ignoriere SSL Fehler</string>
 	<string name="ignore_ssl_error_summary">Ignoriere SSL Fehler, aktiviere es, wenn Du Probleme mit der Custom-API hast.</string>
 	<string name="gzip_compressing">GZip Komprimierung</string>
@@ -101,10 +101,10 @@
 	<string name="clear_databases">Lösche Datenbank</string>
 	<string name="clear_databases_summary">Lösche alle Tweets, Profile, Nachrichten. Deine Account-Anmeldedaten gehen nicht verloren</string>
 	<string name="look_and_feel">Aussehen</string>
-	<string name="dark_theme">Benutze dunkeles Theme</string>
-	<string name="dark_theme_summary">Benutze das dunkele Theme für Twidere.</string>
+	<string name="dark_theme">Benutze dunkles Theme</string>
+	<string name="dark_theme_summary">Benutze das dunkle Theme für Twidere.</string>
 	<string name="display_profile_image">Zeige Profilbilder</string>
-	<string name="display_profile_image_summary">Zeige Profilbilder, deaktiviere es um Geschwindigkeit zu erhöhen und Datenverbrauch zu verringern</string>
+	<string name="display_profile_image_summary">Zeige Profilbilder, deaktiviere es, um Geschwindigkeit zu erhöhen und Datenverbrauch zu verringern</string>
 	<string name="in_reply_to">Als Antwort auf <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="retweeted_by">Retweeted von <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="reply_to">Antworten <xliff:g id="user_name">%s</xliff:g></string>
@@ -123,8 +123,8 @@
 	<string name="customize">Anpassen</string>
 	<string name="set_color">Lege Farbe fest</string>
 	<string name="pick_color">Wähle Farbe</string>
-	<string name="follow">Follow</string>
-	<string name="unfollow">Unfollow</string>
+	<string name="follow">Folgen</string>
+	<string name="unfollow">Entfolgen</string>
 	<string name="delete_account">Account löschen</string>
 	<string name="delete_account_desc">Dein Account wird gelöscht, bist Du dir sicher? <xliff:g id="user_name">%s</xliff:g> ?</string>
 	<string name="bottom_compose_button">Tweet-Button unten</string>
@@ -144,8 +144,8 @@
 	<string name="send_success">Senden erfolgreich</string>
 	<string name="favorite_success">Favorisieren erfolgreich.</string>
 	<string name="unfavorite_success">Unfavorite erfolgreich.</string>
-	<string name="follow_success">Follow erfolgreich.</string>
-	<string name="unfollow_success">Unfollow erfolgreich.</string>
+	<string name="follow_success">Folgen erfolgreich.</string>
+	<string name="unfollow_success">Entfolgen erfolgreich.</string>
 	<string name="profile_update_success">Profil-Update erfolgreich.</string>
 	<string name="profile_image_update_success">Profilbild-Update erfolgreich.</string>
 	<string name="display_name">Zeige Name</string>
@@ -175,11 +175,11 @@
 	<string name="direct_messages">Direktnachrichten</string>
 	<string name="capital_on">AN</string>
 	<string name="capital_off">AUS</string>
-	<string name="set_as_default">Set as default</string>
-	<string name="default_account">Default account</string>
-	<string name="blocked_users">Blocked users</string>
-	<string name="search_users">Search Users</string>
-	<string name="search_tweets">Search Tweets</string>
-	<string name="created_at">Created at</string>
+	<string name="set_as_default">Als Standart setzen</string>
+	<string name="default_account">Standart Account</string>
+	<string name="blocked_users">Blockierte Benutzer</string>
+	<string name="search_users">Suche Benutzer</string>
+	<string name="search_tweets">Suche Tweets</string>
+	<string name="created_at">Erstellt am</string>
 
 </resources>
