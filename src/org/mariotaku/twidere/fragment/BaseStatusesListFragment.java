@@ -106,7 +106,7 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
 		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
 		mListView.setOnRefreshListener(this);
-		ListView list = mListView.getRefreshableView();
+		final ListView list = mListView.getRefreshableView();
 		list.setAdapter(getListAdapter());
 		list.setOnScrollListener(this);
 		list.setOnItemClickListener(this);
@@ -139,10 +139,10 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		Object tag = view.getTag();
+		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			ParcelableStatus status = getListAdapter().findItem(id);
-			StatusViewHolder holder = (StatusViewHolder) tag;
+			final ParcelableStatus status = getListAdapter().findItem(id);
+			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
@@ -153,12 +153,12 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
-		Object tag = view.getTag();
+		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			StatusViewHolder holder = (StatusViewHolder) tag;
+			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
 			mSelectedStatus = getListAdapter().findItem(id);
-			mPopupMenu = new PopupMenu(getActivity(), view);
+			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_status);
 			setMenuForStatus(getActivity(), mPopupMenu.getMenu(), mSelectedStatus);
 			mPopupMenu.setOnMenuItemClickListener(this);
@@ -178,14 +178,14 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 		if (mSelectedStatus != null) {
-			long status_id = mSelectedStatus.status_id;
-			String text_plain = mSelectedStatus.text_plain;
-			String screen_name = mSelectedStatus.screen_name;
-			String name = mSelectedStatus.name;
-			long account_id = mSelectedStatus.account_id;
+			final long status_id = mSelectedStatus.status_id;
+			final String text_plain = mSelectedStatus.text_plain;
+			final String screen_name = mSelectedStatus.screen_name;
+			final String name = mSelectedStatus.name;
+			final long account_id = mSelectedStatus.account_id;
 			switch (item.getItemId()) {
 				case MENU_SHARE: {
-					Intent intent = new Intent(Intent.ACTION_SEND);
+					final Intent intent = new Intent(Intent.ACTION_SEND);
 					intent.setType("text/plain");
 					intent.putExtra(Intent.EXTRA_TEXT, "@" + screen_name + ": " + text_plain);
 					startActivity(Intent.createChooser(intent, getString(R.string.share)));
@@ -195,15 +195,15 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 					if (isMyRetweet(getActivity(), account_id, status_id)) {
 						mServiceInterface.cancelRetweet(account_id, status_id);
 					} else {
-						long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
+						final long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
 								: mSelectedStatus.status_id;
 						mServiceInterface.retweetStatus(account_id, id_to_retweet);
 					}
 					break;
 				}
 				case MENU_QUOTE: {
-					Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-					Bundle bundle = new Bundle();
+					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					final Bundle bundle = new Bundle();
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
 					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
@@ -215,8 +215,8 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 					break;
 				}
 				case MENU_REPLY: {
-					Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-					Bundle bundle = new Bundle();
+					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					final Bundle bundle = new Bundle();
 					bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text_plain, false, true));
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
@@ -253,7 +253,7 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 	@Override
 	public void onResume() {
 		super.onResume();
-		StatusesAdapterInterface adapter = getListAdapter();
+		final StatusesAdapterInterface adapter = getListAdapter();
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
@@ -266,7 +266,8 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount && totalItemCount >= visibleItemCount;
+		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
+				&& totalItemCount >= visibleItemCount;
 
 		if (mReachedBottom != reached) {
 			mReachedBottom = reached;
@@ -332,28 +333,28 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 
 	private void openStatus(ParcelableStatus status) {
 		final long account_id = status.account_id, status_id = status.status_id;
-		FragmentActivity activity = getActivity();
-		Bundle bundle = new Bundle();
+		final FragmentActivity activity = getActivity();
+		final Bundle bundle = new Bundle();
 		bundle.putParcelable(INTENT_KEY_STATUS, status);
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
+			final HomeActivity home_activity = (HomeActivity) activity;
 			if (mDetailFragment instanceof ViewStatusFragment && mDetailFragment.isAdded()) {
 				((ViewStatusFragment) mDetailFragment).displayStatus(status);
 			} else {
 				mDetailFragment = new ViewStatusFragment();
-				Bundle args = new Bundle(bundle);
+				final Bundle args = new Bundle(bundle);
 				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 				args.putLong(INTENT_KEY_STATUS_ID, status_id);
 				mDetailFragment.setArguments(args);
 				home_activity.showAtPane(HomeActivity.PANE_RIGHT, mDetailFragment, true);
 			}
 		} else {
-			Uri.Builder builder = new Uri.Builder();
+			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_STATUS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
-			Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 
 			intent.putExtras(bundle);
 			startActivity(intent);

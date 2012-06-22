@@ -9,8 +9,8 @@ import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
-import org.mariotaku.popupmenu.MenuBar;
-import org.mariotaku.popupmenu.MenuBar.OnMenuItemClickListener;
+import org.mariotaku.menubar.MenuBar;
+import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
@@ -70,11 +70,11 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
+			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
 				showFollowInfo(true);
 			} else if (BROADCAST_FAVORITE_CHANGED.equals(action)) {
-				long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
+				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
 				if (status_id > 0 && status_id == mStatusId) {
 					getStatus(true);
 				}
@@ -97,15 +97,15 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		if (status.text != null) {
 			mTextView.setText(status.text);
 		}
-		AutoLink linkify = new AutoLink(mTextView);
+		final AutoLink linkify = new AutoLink(mTextView);
 		linkify.setOnLinkClickListener(this);
 		linkify.addLinks(AutoLink.LINK_TYPE_MENTIONS);
 		linkify.addLinks(AutoLink.LINK_TYPE_HASHTAGS);
 		linkify.addLinks(AutoLink.LINK_TYPE_IMAGES);
 		linkify.addLinks(AutoLink.LINK_TYPE_LINKS);
 		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
-		boolean is_reply = status.in_reply_to_status_id > 0;
-		String time = formatToLongTimeString(getActivity(), status.status_timestamp);
+		final boolean is_reply = status.in_reply_to_status_id > 0;
+		final String time = formatToLongTimeString(getActivity(), status.status_timestamp);
 		mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, status.source)));
 		mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
 		mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
@@ -115,7 +115,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mViewMapButton.setVisibility(status.location != null ? View.VISIBLE : View.GONE);
 		mViewMediaButton.setVisibility(status.has_media ? View.VISIBLE : View.GONE);
 
-		ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
+		final ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
+				.getProfileImageLoader();
 		imageloader.displayImage(status.profile_image_url, mProfileImageView);
 
 	}
@@ -126,12 +127,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
 		mResolver = getContentResolver();
 		super.onActivityCreated(savedInstanceState);
-		Bundle bundle = getArguments();
+		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
 		}
-		View view = getView();
+		final View view = getView();
 		mNameView = (TextView) view.findViewById(R.id.name);
 		mScreenNameView = (TextView) view.findViewById(R.id.screen_name);
 		mTextView = (TextView) view.findViewById(R.id.text);
@@ -172,7 +173,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			}
 			case R.id.view_map: {
 				if (mStatus.location != null) {
-					Bundle bundle = new Bundle();
+					final Bundle bundle = new Bundle();
 					bundle.putDouble(INTENT_KEY_LATITUDE, mStatus.location.getLatitude());
 					bundle.putDouble(INTENT_KEY_LONGITUDE, mStatus.location.getLongitude());
 					startActivity(new Intent(INTENT_ACTION_VIEW_MAP).putExtras(bundle));
@@ -213,13 +214,13 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				break;
 			}
 			case AutoLink.LINK_TYPE_IMAGES: {
-				Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
+				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
 				intent.setPackage(getActivity().getPackageName());
 				startActivity(intent);
 				break;
 			}
 			case AutoLink.LINK_TYPE_LINKS: {
-				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+				final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
 				startActivity(intent);
 				break;
 			}
@@ -230,12 +231,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 		if (mStatus == null) return false;
-		String text_plain = mStatus.text_plain;
-		String screen_name = mStatus.screen_name;
-		String name = mStatus.name;
+		final String text_plain = mStatus.text_plain;
+		final String screen_name = mStatus.screen_name;
+		final String name = mStatus.name;
 		switch (item.getItemId()) {
 			case MENU_SHARE: {
-				Intent intent = new Intent(Intent.ACTION_SEND);
+				final Intent intent = new Intent(Intent.ACTION_SEND);
 				intent.setType("text/plain");
 				intent.putExtra(Intent.EXTRA_TEXT, "@" + mStatus.screen_name + ": " + text_plain);
 				startActivity(Intent.createChooser(intent, getString(R.string.share)));
@@ -245,15 +246,15 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				if (isMyRetweet(getActivity(), mAccountId, mStatusId)) {
 					mServiceInterface.cancelRetweet(mAccountId, mStatusId);
 				} else {
-					long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
+					final long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
 							: mStatus.status_id;
 					mServiceInterface.retweetStatus(mAccountId, id_to_retweet);
 				}
 				break;
 			}
 			case MENU_QUOTE: {
-				Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-				Bundle bundle = new Bundle();
+				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Bundle bundle = new Bundle();
 				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatusId);
 				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
@@ -265,8 +266,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				break;
 			}
 			case MENU_REPLY: {
-				Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-				Bundle bundle = new Bundle();
+				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Bundle bundle = new Bundle();
 				bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text_plain, false, true));
 				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatusId);
@@ -297,7 +298,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	@Override
 	public void onStart() {
 		super.onStart();
-		IntentFilter filter = new IntentFilter();
+		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_FRIENDSHIP_CHANGED);
 		filter.addAction(BROADCAST_FAVORITE_CHANGED);
 		if (getActivity() != null) {
@@ -363,13 +364,13 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		private Response<Boolean> isAllFollowing() {
 			if (mStatus == null) return new Response<Boolean>(null, null);
 			if (isMyActivatedAccount(getActivity(), mStatus.user_id)) return new Response<Boolean>(true, null);
-			long[] ids = getActivatedAccountIds(getActivity());
-			for (long id : ids) {
-				Twitter twitter = getTwitterInstance(getActivity(), id, false);
+			final long[] ids = getActivatedAccountIds(getActivity());
+			for (final long id : ids) {
+				final Twitter twitter = getTwitterInstance(getActivity(), id, false);
 				try {
-					Relationship result = twitter.showFriendship(id, mStatus.user_id);
+					final Relationship result = twitter.showFriendship(id, mStatus.user_id);
 					if (!result.isSourceFollowingTarget()) return new Response<Boolean>(false, null);
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					return new Response<Boolean>(null, e);
 				}
 			}
@@ -397,9 +398,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			final String where = Statuses.STATUS_ID + " = " + mStatusId;
 
 			// Get status from databases.
-			for (Uri uri : TweetStore.STATUSES_URIS) {
+			for (final Uri uri : TweetStore.STATUSES_URIS) {
 				if (status != null) return new Response<ParcelableStatus>(status, null);
-				Cursor cur = mResolver.query(uri, cols, where, null, null);
+				final Cursor cur = mResolver.query(uri, cols, where, null, null);
 				if (cur == null) {
 					break;
 				}
@@ -415,7 +416,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			try {
 				return new Response<ParcelableStatus>(new ParcelableStatus(twitter.showStatus(mStatusId), mAccountId,
 						false), null);
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return new Response<ParcelableStatus>(null, e);
 			}
 		}

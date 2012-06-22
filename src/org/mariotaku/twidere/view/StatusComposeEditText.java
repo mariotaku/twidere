@@ -26,7 +26,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView {
 
 	@Override
 	public void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
-		String string = text.toString();
+		final String string = text.toString();
 		if (!mIsAtSignEntered) {
 			mIsAtSignEntered = string.endsWith("@");
 		} else {

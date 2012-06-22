@@ -51,7 +51,7 @@ public class ParcelableStatus implements Parcelable {
 
 		@Override
 		public int compare(ParcelableStatus object1, ParcelableStatus object2) {
-			long diff = object2.status_timestamp - object1.status_timestamp;
+			final long diff = object2.status_timestamp - object1.status_timestamp;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 			return (int) diff;
@@ -62,7 +62,7 @@ public class ParcelableStatus implements Parcelable {
 
 		@Override
 		public int compare(ParcelableStatus object1, ParcelableStatus object2) {
-			long diff = object2.status_id - object1.status_id;
+			final long diff = object2.status_id - object1.status_id;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 			return (int) diff;

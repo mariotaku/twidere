@@ -31,9 +31,9 @@ public class WebViewFragment extends BaseFragment {
 		mWebView.setWebViewClient(new DefaultWebViewClient(getActivity()));
 		mWebView.getSettings().setBuiltInZoomControls(true);
 		mWebView.getSettings().setJavaScriptEnabled(true);
-		Bundle bundle = getArguments();
+		final Bundle bundle = getArguments();
 		if (bundle != null) {
-			String url = bundle.getString(INTENT_KEY_URI);
+			final String url = bundle.getString(INTENT_KEY_URI);
 			loadUrl(url);
 		}
 	}

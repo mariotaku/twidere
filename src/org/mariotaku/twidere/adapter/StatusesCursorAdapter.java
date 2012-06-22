@@ -113,8 +113,8 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 	public ParcelableStatus findItem(long id) {
 		for (int i = 0; i < getCount(); i++) {
 			if (getItemId(i) == id) {
-				long account_id = getItem(i).getLong(mIndices.account_id);
-				long status_id = getItem(i).getLong(mIndices.status_id);
+				final long account_id = getItem(i).getLong(mIndices.account_id);
+				final long status_id = getItem(i).getLong(mIndices.status_id);
 				return findStatusInDatabases(mContext, account_id, status_id);
 			}
 		}
@@ -128,8 +128,8 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		View view = super.newView(context, cursor, parent);
-		Object tag = view.getTag();
+		final View view = super.newView(context, cursor, parent);
+		final Object tag = view.getTag();
 		if (!(tag instanceof StatusViewHolder)) {
 			view.setTag(new StatusViewHolder(view, context));
 		}

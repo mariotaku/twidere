@@ -14,7 +14,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
+			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
@@ -39,7 +39,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		IntentFilter filter = new IntentFilter(BROADCAST_HOME_TIMELINE_REFRESHED);
+		final IntentFilter filter = new IntentFilter(BROADCAST_HOME_TIMELINE_REFRESHED);
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);

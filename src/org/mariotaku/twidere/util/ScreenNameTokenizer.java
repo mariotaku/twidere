@@ -22,7 +22,7 @@ public class ScreenNameTokenizer implements Tokenizer {
 	@Override
 	public int findTokenEnd(CharSequence text, int cursor) {
 		int i = cursor;
-		int len = text.length();
+		final int len = text.length();
 
 		while (i < len) {
 			if (text.charAt(i) == ' ')
@@ -57,13 +57,13 @@ public class ScreenNameTokenizer implements Tokenizer {
 			i--;
 		}
 
-		boolean at_sign_entered = mEditText.isAtSignEntered();
+		final boolean at_sign_entered = mEditText.isAtSignEntered();
 
 		if (i > 0 && text.charAt(i - 1) == ' ')
 			return at_sign_entered ? text : "@" + text;
 		else {
 			if (text instanceof Spanned) {
-				SpannableString sp = new SpannableString(at_sign_entered ? text : "@" + text);
+				final SpannableString sp = new SpannableString(at_sign_entered ? text : "@" + text);
 				TextUtils.copySpansFrom((Spanned) text, 0, text.length(), Object.class, sp, 0);
 				return sp;
 			} else

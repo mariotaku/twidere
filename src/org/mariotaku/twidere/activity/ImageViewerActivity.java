@@ -89,7 +89,7 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 		if (mImageLoader != null && mImageLoader.getStatus() == Status.RUNNING) {
 			mImageLoader.cancel(true);
 		}
-		Uri uri = getIntent().getData();
+		final Uri uri = getIntent().getData();
 		if (uri == null) {
 			finish();
 			return;
@@ -97,7 +97,7 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 		URL url;
 		try {
 			url = new URL(uri.toString());
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			finish();
 			return;
 		}
@@ -128,21 +128,21 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 			if (mCacheDir == null || !mCacheDir.exists()) {
 				init();
 			}
-			File f = new File(mCacheDir, getURLFilename(url));
+			final File f = new File(mCacheDir, getURLFilename(url));
 
 			// from SD cache
-			Bitmap b = decodeFile(f);
+			final Bitmap b = decodeFile(f);
 			if (b != null) return b;
 
 			// from web
 			try {
 				Bitmap bitmap = null;
-				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 				conn.setConnectTimeout(30000);
 				conn.setReadTimeout(30000);
 				conn.setInstanceFollowRedirects(true);
-				InputStream is = conn.getInputStream();
-				OutputStream os = new FileOutputStream(f);
+				final InputStream is = conn.getInputStream();
+				final OutputStream os = new FileOutputStream(f);
 				copyStream(is, os);
 				os.close();
 				bitmap = decodeFile(f);
@@ -153,9 +153,9 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 					}
 				}
 				return bitmap;
-			} catch (FileNotFoundException e) {
+			} catch (final FileNotFoundException e) {
 				init();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				// e.printStackTrace();
 			}
 			return null;
@@ -186,13 +186,13 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 		private void copyStream(InputStream is, OutputStream os) {
 			final int buffer_size = 1024;
 			try {
-				byte[] bytes = new byte[buffer_size];
+				final byte[] bytes = new byte[buffer_size];
 				int count = is.read(bytes, 0, buffer_size);
 				while (count != -1) {
 					os.write(bytes, 0, count);
 					count = is.read(bytes, 0, buffer_size);
 				}
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				// e.printStackTrace();
 			}
 		}
@@ -207,7 +207,7 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 					final BitmapFactory.Options o2 = new BitmapFactory.Options();
 					o2.inSampleSize = o.inSampleSize;
 					bitmap = BitmapFactory.decodeFile(f.getPath(), o2);
-				} catch (OutOfMemoryError e) {
+				} catch (final OutOfMemoryError e) {
 					o.inSampleSize++;
 					continue;
 				}

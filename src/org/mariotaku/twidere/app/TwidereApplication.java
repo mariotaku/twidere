@@ -72,13 +72,13 @@ public class TwidereApplication extends Application implements Constants {
 							+ "/cache/") : null;
 
 			if (external_cache_dir != null) {
-				for (File file : external_cache_dir.listFiles((FileFilter) null)) {
+				for (final File file : external_cache_dir.listFiles((FileFilter) null)) {
 					deleteRecursive(file);
 				}
 			}
 			final File internal_cache_dir = context.getCacheDir();
 			if (internal_cache_dir != null) {
-				for (File file : internal_cache_dir.listFiles((FileFilter) null)) {
+				for (final File file : internal_cache_dir.listFiles((FileFilter) null)) {
 					deleteRecursive(file);
 				}
 			}
@@ -87,7 +87,7 @@ public class TwidereApplication extends Application implements Constants {
 
 		private void deleteRecursive(File f) {
 			if (f.isDirectory()) {
-				for (File c : f.listFiles()) {
+				for (final File c : f.listFiles()) {
 					deleteRecursive(c);
 				}
 			}

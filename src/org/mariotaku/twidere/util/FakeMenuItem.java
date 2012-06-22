@@ -25,7 +25,7 @@ public class FakeMenuItem implements MenuItem {
 		@TargetApi(14)
 		@Override
 		public boolean onLongClick(View v) {
-			Toast t = Toast.makeText(view.getContext(), getTitle(), Toast.LENGTH_SHORT);
+			final Toast t = Toast.makeText(view.getContext(), getTitle(), Toast.LENGTH_SHORT);
 
 			final int[] screenPos = new int[2];
 			final Rect displayFrame = new Rect();

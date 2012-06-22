@@ -42,7 +42,7 @@ public class RoundCorneredImageView extends ImageView {
 	}
 
 	private void createPath() {
-		float density = getResources().getDisplayMetrics().density;
+		final float density = getResources().getDisplayMetrics().density;
 		mPath.reset();
 		mPath.addRoundRect(new RectF(0, 0, getWidth(), getHeight()), 4 * density, 4 * density, Path.Direction.CW);
 	}
@@ -57,9 +57,7 @@ public class RoundCorneredImageView extends ImageView {
 
 		@TargetApi(11)
 		public static void setLayerType(View view, int layerType, Paint paint) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				view.setLayerType(layerType, paint);
-			}
+			view.setLayerType(layerType, paint);
 		}
 	}
 }

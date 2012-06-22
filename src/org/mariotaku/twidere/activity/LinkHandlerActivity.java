@@ -51,14 +51,14 @@ public class LinkHandlerActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Uri data = getIntent().getData();
+		final Uri data = getIntent().getData();
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(new FrameLayout(this));
 		setSupportProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		if (data != null) {
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(android.R.id.content, getFragment(data));
 			ft.commit();
 		} else {
@@ -205,7 +205,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		if (source == null) return -1;
 		try {
 			return Long.parseLong(source);
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			// Wrong number format? Ignore them.
 		}
 		return -1;

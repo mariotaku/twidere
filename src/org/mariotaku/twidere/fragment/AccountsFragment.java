@@ -12,6 +12,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 
 import android.app.Activity;
@@ -64,11 +65,11 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
+			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 				if (getActivity() instanceof HomeActivity) {
-					((HomeActivity)getActivity()).checkDefaultAccountSet();
+					((HomeActivity) getActivity()).checkDefaultAccountSet();
 				}
 			}
 		}
@@ -79,7 +80,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
+		final ProfileImageLoader imageloader = ((TwidereApplication) getApplication()).getProfileImageLoader();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = getContentResolver();
 		mAdapter = new AccountsAdapter(getActivity(), imageloader);
@@ -94,10 +95,10 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
 				if (resultCode == Activity.RESULT_OK) if (data != null && data.getExtras() != null) {
-					int color = data.getIntExtra(Accounts.USER_COLOR, Color.WHITE);
-					ContentValues values = new ContentValues();
+					final int color = data.getIntExtra(Accounts.USER_COLOR, Color.WHITE);
+					final ContentValues values = new ContentValues();
 					values.put(Accounts.USER_COLOR, color);
-					String where = Accounts.USER_ID + "=" + mSelectedUserId;
+					final String where = Accounts.USER_ID + "=" + mSelectedUserId;
 					mResolver.update(Accounts.CONTENT_URI, values, where, null);
 					getLoaderManager().restartLoader(0, null, this);
 				}
@@ -115,9 +116,9 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Uri uri = Accounts.CONTENT_URI;
-		String[] cols = Accounts.COLUMNS;
-		String where = Accounts.IS_ACTIVATED + " = 1";
+		final Uri uri = Accounts.CONTENT_URI;
+		final String[] cols = Accounts.COLUMNS;
+		final String where = Accounts.IS_ACTIVATED + " = 1";
 		return new CursorLoader(getActivity(), uri, cols, where, null, null);
 	}
 
@@ -134,11 +135,11 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
-		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
+		if (isDefaultAccountValid() && mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
 			mSelectedColor = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.USER_COLOR));
 			mSelectedUserId = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
-			mPopupMenu = new PopupMenu(getActivity(), view);
+			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 			mPopupMenu.inflate(R.menu.context_account);
 			mPopupMenu.setOnMenuItemClickListener(this);
 			mPopupMenu.show();
@@ -151,8 +152,12 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
-			long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
-			openUserProfile(getActivity(), user_id, user_id, null);
+			final long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
+			if (isDefaultAccountValid()) {
+				openUserProfile(getActivity(), user_id, user_id, null);
+			} else {
+				setDefaultAccount(user_id);
+			}
 		}
 		super.onListItemClick(l, v, position, id);
 	}
@@ -171,29 +176,22 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
+		if (mSelectedUserId == INVALID_ID) return false;
 		switch (item.getItemId()) {
 			case MENU_VIEW: {
 				openUserProfile(getActivity(), mSelectedUserId, mSelectedUserId, null);
 				break;
 			}
 			case MENU_SET_COLOR: {
-				if (mSelectedUserId != INVALID_ID) {
-					final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
-					Bundle bundle = new Bundle();
-					bundle.putInt(Accounts.USER_COLOR, mSelectedColor);
-					intent.putExtras(bundle);
-					startActivityForResult(intent, REQUEST_SET_COLOR);
-				}
+				final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
+				final Bundle bundle = new Bundle();
+				bundle.putInt(Accounts.USER_COLOR, mSelectedColor);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}
 			case MENU_SET_AS_DEFAULT: {
-				if (mSelectedUserId != INVALID_ID) {
-					mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, mSelectedUserId).commit();
-					mAdapter.notifyDataSetChanged();
-					if (getActivity() instanceof HomeActivity) {
-						((HomeActivity)getActivity()).checkDefaultAccountSet();
-					}
-				}
+				setDefaultAccount(mSelectedUserId);
 				break;
 			}
 			case MENU_DELETE: {
@@ -214,22 +212,10 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_ADD_ACCOUNT:
-				startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
-				break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
 	public void onStart() {
 		super.onStart();
-		IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		if (getActivity() != null) {
-			getActivity().registerReceiver(mStatusReceiver, filter);
-		}
+		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		registerReceiver(mStatusReceiver, filter);
 		if (!mActivityFirstCreated) {
 			getLoaderManager().restartLoader(0, null, this);
 		}
@@ -237,14 +223,27 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public void onStop() {
-		if (getActivity() != null) {
-			getActivity().unregisterReceiver(mStatusReceiver);
-		}
+		unregisterReceiver(mStatusReceiver);
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
 		mActivityFirstCreated = false;
 		super.onStop();
+	}
+
+	private boolean isDefaultAccountValid() {
+		final long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
+		if (default_account_id == -1) return false;
+		final long[] activated_ids = getActivatedAccountIds(getActivity());
+		return ArrayUtils.contains(activated_ids, default_account_id);
+	}
+
+	private void setDefaultAccount(long account_id) {
+		mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, account_id).commit();
+		mAdapter.notifyDataSetChanged();
+		if (getActivity() instanceof HomeActivity) {
+			((HomeActivity) getActivity()).checkDefaultAccountSet();
+		}
 	}
 
 	public static class ViewHolder {
@@ -283,8 +282,8 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
-			int color = cursor.getInt(mUserColorIdx);
-			ViewHolder holder = (ViewHolder) view.getTag();
+			final int color = cursor.getInt(mUserColorIdx);
+			final ViewHolder holder = (ViewHolder) view.getTag();
 			holder.setAccountColor(color);
 			holder.setIsDefault(mDefaultAccountId != -1 && mDefaultAccountId == cursor.getLong(mUserIdIdx));
 			mImageLoader.displayImage(parseURL(cursor.getString(mProfileImageIdx)), holder.profile_image);

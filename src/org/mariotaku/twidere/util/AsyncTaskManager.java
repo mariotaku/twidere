@@ -14,7 +14,7 @@ public class AsyncTaskManager {
 	private static AsyncTaskManager sInstance;
 
 	public <T> int add(ManagedAsyncTask task, boolean exec, T... params) {
-		int hashCode = task.hashCode();
+		final int hashCode = task.hashCode();
 		mTasks.put(hashCode, task);
 		if (exec) {
 			execute(hashCode);
@@ -27,7 +27,7 @@ public class AsyncTaskManager {
 	}
 
 	public boolean cancel(int hashCode, boolean mayInterruptIfRunning) {
-		ManagedAsyncTask task = mTasks.get(hashCode);
+		final ManagedAsyncTask task = mTasks.get(hashCode);
 		if (task != null) {
 			task.cancel(mayInterruptIfRunning);
 			mTasks.remove(hashCode);
@@ -47,7 +47,7 @@ public class AsyncTaskManager {
 	}
 
 	public <T> boolean execute(int hashCode, T... params) {
-		ManagedAsyncTask task = mTasks.get(hashCode);
+		final ManagedAsyncTask task = mTasks.get(hashCode);
 		if (task != null) {
 			task.execute(params == null || params.length == 0 ? null : params);
 			return true;
@@ -56,10 +56,10 @@ public class AsyncTaskManager {
 	}
 
 	public List<ManagedAsyncTask<?, ?, ?>> getTaskList() {
-		List<ManagedAsyncTask<?, ?, ?>> list = new ArrayList<ManagedAsyncTask<?, ?, ?>>();
+		final List<ManagedAsyncTask<?, ?, ?>> list = new ArrayList<ManagedAsyncTask<?, ?, ?>>();
 
 		for (int i = 0; i < mTasks.size(); i++) {
-			ManagedAsyncTask task = mTasks.valueAt(i);
+			final ManagedAsyncTask task = mTasks.valueAt(i);
 			if (task != null) {
 				list.add(task);
 			}
@@ -72,7 +72,7 @@ public class AsyncTaskManager {
 	}
 
 	public boolean isExcuting(int hashCode) {
-		ManagedAsyncTask task = mTasks.get(hashCode);
+		final ManagedAsyncTask task = mTasks.get(hashCode);
 		if (task != null && task.getStatus() == Status.RUNNING) return true;
 		return false;
 	}

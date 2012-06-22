@@ -129,7 +129,7 @@ public class Switch extends CompoundButton {
 
 		mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
 
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Switch, defStyle, 0);
+		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Switch, defStyle, 0);
 
 		mThumbDrawable = a.getDrawable(R.styleable.Switch_thumb);
 		mTrackDrawable = a.getDrawable(R.styleable.Switch_track);
@@ -139,13 +139,13 @@ public class Switch extends CompoundButton {
 		mSwitchMinWidth = a.getDimensionPixelSize(R.styleable.Switch_switchMinWidth, 0);
 		mSwitchPadding = a.getDimensionPixelSize(R.styleable.Switch_switchPadding, 0);
 
-		int appearance = a.getResourceId(R.styleable.Switch_switchTextAppearance, 0);
+		final int appearance = a.getResourceId(R.styleable.Switch_switchTextAppearance, 0);
 		if (appearance != 0) {
 			setSwitchTextAppearance(context, appearance);
 		}
 		a.recycle();
 
-		ViewConfiguration config = ViewConfiguration.get(context);
+		final ViewConfiguration config = ViewConfiguration.get(context);
 		mTouchSlop = config.getScaledTouchSlop();
 		mMinFlingVelocity = config.getScaledMinimumFlingVelocity();
 
@@ -275,7 +275,7 @@ public class Switch extends CompoundButton {
 					case TOUCH_MODE_DRAGGING: {
 						final float x = ev.getX();
 						final float dx = x - mTouchX;
-						float newPos = Math.max(0, Math.min(mThumbPosition + dx, getThumbScrollRange()));
+						final float newPos = Math.max(0, Math.min(mThumbPosition + dx, getThumbScrollRange()));
 						if (newPos != mThumbPosition) {
 							mThumbPosition = newPos;
 							mTouchX = x;
@@ -314,7 +314,7 @@ public class Switch extends CompoundButton {
 	 * from the specified TextAppearance resource.
 	 */
 	public void setSwitchTextAppearance(Context context, int resid) {
-		TypedArray appearance = context.obtainStyledAttributes(resid, R.styleable.TextAppearance);
+		final TypedArray appearance = context.obtainStyledAttributes(resid, R.styleable.TextAppearance);
 
 		ColorStateList colors;
 		int ts;
@@ -374,8 +374,8 @@ public class Switch extends CompoundButton {
 
 			setSwitchTypeface(tf);
 			// now compute what (if any) algorithmic styling is needed
-			int typefaceStyle = tf != null ? tf.getStyle() : 0;
-			int need = style & ~typefaceStyle;
+			final int typefaceStyle = tf != null ? tf.getStyle() : 0;
+			final int need = style & ~typefaceStyle;
 			mTextPaint.setFakeBoldText((need & Typeface.BOLD) != 0);
 			mTextPaint.setTextSkewX((need & Typeface.ITALIC) != 0 ? -0.25f : 0);
 		} else {
@@ -405,7 +405,7 @@ public class Switch extends CompoundButton {
 	protected void drawableStateChanged() {
 		super.drawableStateChanged();
 
-		int[] myDrawableState = getDrawableState();
+		final int[] myDrawableState = getDrawableState();
 
 		// Set the state of the Drawable
 		// Drawable may be null when checked state is set from XML, from super
@@ -434,10 +434,10 @@ public class Switch extends CompoundButton {
 		super.onDraw(canvas);
 
 		// Draw the switch
-		int switchLeft = mSwitchLeft;
-		int switchTop = mSwitchTop;
-		int switchRight = mSwitchRight;
-		int switchBottom = mSwitchBottom;
+		final int switchLeft = mSwitchLeft;
+		final int switchTop = mSwitchTop;
+		final int switchRight = mSwitchRight;
+		final int switchBottom = mSwitchBottom;
 
 		mTrackDrawable.setBounds(switchLeft, switchTop, switchRight, switchBottom);
 		mTrackDrawable.draw(canvas);
@@ -445,16 +445,16 @@ public class Switch extends CompoundButton {
 		canvas.save();
 
 		mTrackDrawable.getPadding(mTempRect);
-		int switchInnerLeft = switchLeft + mTempRect.left;
-		int switchInnerTop = switchTop + mTempRect.top;
-		int switchInnerRight = switchRight - mTempRect.right;
-		int switchInnerBottom = switchBottom - mTempRect.bottom;
+		final int switchInnerLeft = switchLeft + mTempRect.left;
+		final int switchInnerTop = switchTop + mTempRect.top;
+		final int switchInnerRight = switchRight - mTempRect.right;
+		final int switchInnerBottom = switchBottom - mTempRect.bottom;
 		canvas.clipRect(switchInnerLeft, switchTop, switchInnerRight, switchBottom);
 
 		mThumbDrawable.getPadding(mTempRect);
 		final int thumbPos = (int) (mThumbPosition + 0.5f);
-		int thumbLeft = switchInnerLeft - mTempRect.left + thumbPos;
-		int thumbRight = switchInnerLeft + thumbPos + mThumbWidth + mTempRect.right;
+		final int thumbLeft = switchInnerLeft - mTempRect.left + thumbPos;
+		final int thumbRight = switchInnerLeft + thumbPos + mThumbWidth + mTempRect.right;
 
 		mThumbDrawable.setBounds(thumbLeft, switchTop, thumbRight, switchBottom);
 		mThumbDrawable.draw(canvas);
@@ -465,7 +465,7 @@ public class Switch extends CompoundButton {
 		}
 		mTextPaint.drawableState = getDrawableState();
 
-		Layout switchText = getTargetCheckedState() ? mOnLayout : mOffLayout;
+		final Layout switchText = getTargetCheckedState() ? mOnLayout : mOffLayout;
 
 		canvas.translate((thumbLeft + thumbRight) / 2 - switchText.getWidth() / 2, (switchInnerTop + switchInnerBottom)
 				/ 2 - switchText.getHeight() / 2);
@@ -480,8 +480,8 @@ public class Switch extends CompoundButton {
 
 		mThumbPosition = isChecked() ? getThumbScrollRange() : 0;
 
-		int switchRight = getWidth() - getPaddingRight();
-		int switchLeft = switchRight - mSwitchWidth;
+		final int switchRight = getWidth() - getPaddingRight();
+		final int switchLeft = switchRight - mSwitchWidth;
 		int switchTop = 0;
 		int switchBottom = 0;
 		switch (getGravity() & Gravity.VERTICAL_GRAVITY_MASK) {
@@ -521,7 +521,7 @@ public class Switch extends CompoundButton {
 	}
 
 	private void cancelSuperTouch(MotionEvent ev) {
-		MotionEvent cancel = MotionEvent.obtain(ev);
+		final MotionEvent cancel = MotionEvent.obtain(ev);
 		cancel.setAction(MotionEvent.ACTION_CANCEL);
 		super.onTouchEvent(cancel);
 		cancel.recycle();
@@ -565,14 +565,14 @@ public class Switch extends CompoundButton {
 		mTouchMode = TOUCH_MODE_IDLE;
 		// Up and not canceled, also checks the switch has not been disabled
 		// during the drag
-		boolean commitChange = ev.getAction() == MotionEvent.ACTION_UP && isEnabled();
+		final boolean commitChange = ev.getAction() == MotionEvent.ACTION_UP && isEnabled();
 
 		cancelSuperTouch(ev);
 
 		if (commitChange) {
 			boolean newState;
 			mVelocityTracker.computeCurrentVelocity(1000);
-			float xvel = mVelocityTracker.getXVelocity();
+			final float xvel = mVelocityTracker.getXVelocity();
 			if (Math.abs(xvel) > mMinFlingVelocity) {
 				newState = xvel > 0;
 			} else {

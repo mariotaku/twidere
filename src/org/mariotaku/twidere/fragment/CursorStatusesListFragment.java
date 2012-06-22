@@ -27,7 +27,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	public abstract Uri getContentUri();
 
 	public HomeActivity getHomeActivity() {
-		FragmentActivity activity = getActivity();
+		final FragmentActivity activity = getActivity();
 		if (activity instanceof HomeActivity) return (HomeActivity) activity;
 		return null;
 	}
@@ -74,7 +74,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		final Uri uri = getContentUri();
 		String where = buildActivatedStatsWhereClause(getActivity(), null);
 		if (getSharedPreferences().getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
-			String table = getTableNameForContentUri(uri);
+			final String table = getTableNameForContentUri(uri);
 			where = buildFilterWhereClause(table, where);
 		}
 		return new CursorLoader(getActivity(), uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
@@ -100,7 +100,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onRefresh() {
-		long[] account_ids = getActivatedAccountIds(getActivity());
+		final long[] account_ids = getActivatedAccountIds(getActivity());
 		getStatuses(account_ids, null);
 
 	}

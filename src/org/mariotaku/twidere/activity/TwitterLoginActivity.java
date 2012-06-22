@@ -104,7 +104,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						mOAuthRequestTokenURL = bundle.getString(Accounts.OAUTH_REQUEST_TOKEN_URL);
 
 						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
-						boolean hide_username_password = mAuthType == Accounts.AUTH_TYPE_OAUTH
+						final boolean hide_username_password = mAuthType == Accounts.AUTH_TYPE_OAUTH
 								|| mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
 						findViewById(R.id.username_password).setVisibility(
 								hide_username_password ? View.GONE : View.VISIBLE);
@@ -122,7 +122,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						bundle = data.getExtras();
 					}
 					if (bundle != null) {
-						String oauth_verifier = bundle.getString(OAUTH_VERIFIER);
+						final String oauth_verifier = bundle.getString(OAUTH_VERIFIER);
 						if (oauth_verifier != null && mRequestToken != null) {
 							if (mTask != null) {
 								mTask.cancel(true);
@@ -151,7 +151,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.sign_up: {
-				Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(TWITTER_SIGNUP_URL));
+				final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(TWITTER_SIGNUP_URL));
 				startActivity(intent);
 				break;
 			}
@@ -165,8 +165,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				break;
 			}
 			case R.id.set_color: {
-				Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
-				Bundle bundle = new Bundle();
+				final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
+				final Bundle bundle = new Bundle();
 				bundle.putInt(Accounts.USER_COLOR, mUserColor);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
@@ -188,7 +188,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
 		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
 		setSupportProgressBarIndeterminateVisibility(false);
-		long[] account_ids = getActivatedAccountIds(this);
+		final long[] account_ids = getActivatedAccountIds(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0);
 
 		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
@@ -242,7 +242,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				long[] account_ids = getActivatedAccountIds(this);
+				final long[] account_ids = getActivatedAccountIds(this);
 				if (account_ids.length > 0) {
 					finish();
 				}
@@ -256,7 +256,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			case MENU_EDIT_API: {
 				if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED) return false;
 				intent = new Intent(INTENT_ACTION_EDIT_API);
-				Bundle bundle = new Bundle();
+				final Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 				bundle.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 				bundle.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
@@ -297,15 +297,15 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	private void analyseUserProfileColor(String url_string) {
 		try {
-			URL url = new URL(url_string);
-			InputStream is = url.openConnection().getInputStream();
-			Bitmap bm = BitmapFactory.decodeStream(is);
+			final URL url = new URL(url_string);
+			final InputStream is = url.openConnection().getInputStream();
+			final Bitmap bm = BitmapFactory.decodeStream(is);
 			mUserColor = ColorAnalyser.analyse(bm);
 			mUserColorSet = true;
 			return;
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		mUserColorSet = false;
@@ -420,7 +420,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			try {
 				accessToken = twitter.getOAuthAccessToken(requestToken, oauthVerifier);
 				user = twitter.showUser(accessToken.getUserId());
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return new Response(false, false, e);
 			}
 			if (!mUserColorSet) {
@@ -428,7 +428,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			}
 			mLoggedId = user.getId();
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId)) return new Response(false, true, null);
-			ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
+			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
 					mSearchBaseURL, null, Accounts.AUTH_TYPE_OAUTH);
 			resolver.insert(Accounts.CONTENT_URI, values);
 			return new Response(true, false, null);
@@ -437,8 +437,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		@Override
 		protected void onPostExecute(Response result) {
 			if (result.succeed) {
-				Intent intent = new Intent(INTENT_ACTION_HOME);
-				Bundle bundle = new Bundle();
+				final Intent intent = new Intent(INTENT_ACTION_HOME);
+				final Bundle bundle = new Bundle();
 				bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
 				intent.putExtras(bundle);
 				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -476,8 +476,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		protected void onPostExecute(Response result) {
 
 			if (result.succeed) {
-				Intent intent = new Intent(INTENT_ACTION_HOME);
-				Bundle bundle = new Bundle();
+				final Intent intent = new Intent(INTENT_ACTION_HOME);
+				final Bundle bundle = new Bundle();
 				bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
 				intent.putExtras(bundle);
 				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -485,7 +485,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				finish();
 			} else if (result.open_browser) {
 				mRequestToken = result.request_token;
-				Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
+				final Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
 				startActivityForResult(new Intent(Intent.ACTION_DEFAULT, uri, getApplicationContext(),
 						AuthorizationActivity.class), REQUEST_GOTO_AUTHORIZATION);
 			} else if (result.already_logged_in) {
@@ -501,18 +501,19 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
 
-			Twitter twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(mUsername, mPassword));
+			final Twitter twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(mUsername,
+					mPassword));
 			boolean account_valid = false;
 			User user = null;
 			try {
 				account_valid = twitter.test();
 				user = twitter.verifyCredentials();
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return new Response(false, false, false, Accounts.AUTH_TYPE_BASIC, null, e);
 			}
 
 			if (account_valid && user != null) {
-				String profile_image_url = user.getProfileImageURL().toString();
+				final String profile_image_url = user.getProfileImageURL().toString();
 				if (!mUserColorSet) {
 					analyseUserProfileColor(profile_image_url);
 				}
@@ -520,8 +521,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				mLoggedId = user.getId();
 				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
-				ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL, mSearchBaseURL,
-						mPassword, Accounts.AUTH_TYPE_BASIC);
+				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL,
+						mSearchBaseURL, mPassword, Accounts.AUTH_TYPE_BASIC);
 				resolver.insert(Accounts.CONTENT_URI, values);
 				return new Response(false, false, true, Accounts.AUTH_TYPE_BASIC, null, null);
 
@@ -532,11 +533,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		private Response authOAuth() {
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
-			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+			final Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			RequestToken requestToken = null;
 			try {
 				requestToken = twitter.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return new Response(false, false, false, Accounts.AUTH_TYPE_OAUTH, null, e);
 			}
 			if (requestToken != null)
@@ -549,18 +550,18 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
 
-			Twitter twitter = new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
+			final Twitter twitter = new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
 			boolean account_valid = false;
 			User user = null;
 			try {
 				account_valid = twitter.test();
 				user = twitter.verifyCredentials();
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return new Response(false, false, false, Accounts.AUTH_TYPE_TWIP_O_MODE, null, e);
 			}
 
 			if (account_valid && user != null) {
-				String profile_image_url = parseString(user.getProfileImageURL());
+				final String profile_image_url = parseString(user.getProfileImageURL());
 				if (!mUserColorSet) {
 					analyseUserProfileColor(profile_image_url);
 				}
@@ -568,8 +569,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				mLoggedId = user.getId();
 				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
-				ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL, mSearchBaseURL,
-						null, Accounts.AUTH_TYPE_TWIP_O_MODE);
+				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL,
+						mSearchBaseURL, null, Accounts.AUTH_TYPE_TWIP_O_MODE);
 				resolver.insert(Accounts.CONTENT_URI, values);
 				return new Response(false, false, true, Accounts.AUTH_TYPE_TWIP_O_MODE, null, null);
 
@@ -581,13 +582,13 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
-			Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+			final Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 			AccessToken accessToken = null;
 			User user = null;
 			try {
 				accessToken = twitter.getOAuthAccessToken(mUsername, mPassword);
 				user = twitter.showUser(accessToken.getUserId());
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return new Response(false, false, false, Accounts.AUTH_TYPE_XAUTH, null, e);
 			}
 			if (!mUserColorSet) {
@@ -597,7 +598,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			mLoggedId = user.getId();
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 				return new Response(false, true, false, Accounts.AUTH_TYPE_XAUTH, null, null);
-			ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
+			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
 					mSearchBaseURL, null, Accounts.AUTH_TYPE_XAUTH);
 			resolver.insert(Accounts.CONTENT_URI, values);
 			return new Response(false, false, true, Accounts.AUTH_TYPE_XAUTH, null, null);

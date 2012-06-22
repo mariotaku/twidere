@@ -76,8 +76,8 @@ public class AlphaPatternDrawable extends Drawable {
 
 		super.onBoundsChange(bounds);
 
-		int height = bounds.height();
-		int width = bounds.width();
+		final int height = bounds.height();
+		final int width = bounds.width();
 
 		numRectanglesHorizontal = (int) Math.ceil(width / mRectangleSize);
 		numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
@@ -97,9 +97,9 @@ public class AlphaPatternDrawable extends Drawable {
 		if (getBounds().width() <= 0 || getBounds().height() <= 0) return;
 
 		mBitmap = Bitmap.createBitmap(getBounds().width(), getBounds().height(), Config.ARGB_8888);
-		Canvas canvas = new Canvas(mBitmap);
+		final Canvas canvas = new Canvas(mBitmap);
 
-		Rect r = new Rect();
+		final Rect r = new Rect();
 		boolean verticalStartWhite = true;
 		for (int i = 0; i <= numRectanglesVertical; i++) {
 
@@ -111,7 +111,7 @@ public class AlphaPatternDrawable extends Drawable {
 				r.bottom = r.top + mRectangleSize;
 				r.right = r.left + mRectangleSize;
 
-				Paint paint = new Paint();
+				final Paint paint = new Paint();
 				paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
 				canvas.drawRect(r, paint);
 

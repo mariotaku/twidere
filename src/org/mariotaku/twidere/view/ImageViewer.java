@@ -199,8 +199,8 @@ public class ImageViewer extends View {
 	}
 
 	private boolean onSingleTouchEvent(MotionEvent event) {
-		int x = (int) event.getX();
-		int y = (int) event.getY();
+		final int x = (int) event.getX();
+		final int y = (int) event.getY();
 
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_UP:
@@ -281,7 +281,7 @@ public class ImageViewer extends View {
 			final int pointer_count = event.getPointerCount();
 			final float diffX = event.getX(0) - event.getX(1), diffY = event.getY(0) - event.getY(1);
 
-			int x = (int) ((event.getX(0) + event.getX(1)) / 2);
+			final int x = (int) ((event.getX(0) + event.getX(1)) / 2);
 			int y = (int) ((event.getY(0) + event.getY(1)) / 2);
 
 			for (int i = 0; i < pointer_count; i++) {

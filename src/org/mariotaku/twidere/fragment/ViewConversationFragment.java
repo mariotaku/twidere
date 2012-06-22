@@ -5,7 +5,7 @@ import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
-import org.mariotaku.actionbarcompat.app.ActionBarFragmentActivity;
+import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
@@ -72,10 +72,11 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		if (bundle == null) {
 			bundle = new Bundle();
 		}
-		long account_id = bundle.getLong(INTENT_KEY_ACCOUNT_ID, INVALID_ID);
-		long status_id = bundle.getLong(INTENT_KEY_STATUS_ID, INVALID_ID);
+		final long account_id = bundle.getLong(INTENT_KEY_ACCOUNT_ID, INVALID_ID);
+		final long status_id = bundle.getLong(INTENT_KEY_STATUS_ID, INVALID_ID);
 
-		ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
+		final ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
+				.getProfileImageLoader();
 		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
 			mShowConversationTask.cancel(true);
 		}
@@ -103,18 +104,18 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		ParcelableStatus status = mAdapter.findItem(id);
+		final ParcelableStatus status = mAdapter.findItem(id);
 		openStatus(status);
 	}
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
-		Object tag = view.getTag();
+		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			StatusViewHolder holder = (StatusViewHolder) tag;
+			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
 			mSelectedStatus = mAdapter.findItem(id);
-			mPopupMenu = new PopupMenu(getActivity(), view);
+			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_status);
 			setMenuForStatus(getActivity(), mPopupMenu.getMenu(), mSelectedStatus);
 			mPopupMenu.setOnMenuItemClickListener(this);
@@ -127,14 +128,14 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 		if (mSelectedStatus != null) {
-			long status_id = mSelectedStatus.status_id;
-			String text_plain = mSelectedStatus.text_plain;
-			String screen_name = mSelectedStatus.screen_name;
-			String name = mSelectedStatus.name;
-			long account_id = mSelectedStatus.account_id;
+			final long status_id = mSelectedStatus.status_id;
+			final String text_plain = mSelectedStatus.text_plain;
+			final String screen_name = mSelectedStatus.screen_name;
+			final String name = mSelectedStatus.name;
+			final long account_id = mSelectedStatus.account_id;
 			switch (item.getItemId()) {
 				case MENU_SHARE: {
-					Intent intent = new Intent(Intent.ACTION_SEND);
+					final Intent intent = new Intent(Intent.ACTION_SEND);
 					intent.setType("text/plain");
 					intent.putExtra(Intent.EXTRA_TEXT, "@" + screen_name + ": " + text_plain);
 					startActivity(Intent.createChooser(intent, getString(R.string.share)));
@@ -145,8 +146,8 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 					break;
 				}
 				case MENU_QUOTE: {
-					Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-					Bundle bundle = new Bundle();
+					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					final Bundle bundle = new Bundle();
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
 					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
@@ -158,8 +159,8 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 					break;
 				}
 				case MENU_REPLY: {
-					Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-					Bundle bundle = new Bundle();
+					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					final Bundle bundle = new Bundle();
 					bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text_plain, false, true));
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
@@ -191,9 +192,9 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 	@Override
 	public void onResume() {
 		super.onResume();
-		boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayName(display_name);
 		mAdapter.setTextSize(text_size);
@@ -258,28 +259,28 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 	private void openStatus(ParcelableStatus status) {
 		final long account_id = status.account_id, status_id = status.status_id;
-		FragmentActivity activity = getActivity();
-		Bundle bundle = new Bundle();
+		final FragmentActivity activity = getActivity();
+		final Bundle bundle = new Bundle();
 		bundle.putParcelable(INTENT_KEY_STATUS, status);
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
+			final HomeActivity home_activity = (HomeActivity) activity;
 			if (mDetailFragment instanceof ViewStatusFragment && mDetailFragment.isAdded()) {
 				((ViewStatusFragment) mDetailFragment).displayStatus(status);
 			} else {
 				mDetailFragment = new ViewStatusFragment();
-				Bundle args = new Bundle(bundle);
+				final Bundle args = new Bundle(bundle);
 				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 				args.putLong(INTENT_KEY_STATUS_ID, status_id);
 				mDetailFragment.setArguments(args);
 				home_activity.showAtPane(HomeActivity.PANE_RIGHT, mDetailFragment, true);
 			}
 		} else {
-			Uri.Builder builder = new Uri.Builder();
+			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_STATUS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
-			Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 
 			intent.putExtras(bundle);
 			startActivity(intent);
@@ -301,7 +302,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 		@Override
 		protected TwitterException doInBackground(Void... params) {
-			Twitter twitter = getTwitterInstance(mActivity, mAccountId, true);
+			final Twitter twitter = getTwitterInstance(mActivity, mAccountId, true);
 			try {
 				twitter4j.Status status = twitter.showStatus(mStatusId);
 				mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, status));
@@ -311,7 +312,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 					mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, status));
 					in_reply_to_id = status.getInReplyToStatusId();
 				}
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return e;
 			}
 			return null;
@@ -352,7 +353,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case ADD_STATUS:
-					Object obj = msg.obj;
+					final Object obj = msg.obj;
 					if (obj instanceof Status) {
 						mAdapter.add(new ParcelableStatus((Status) obj, mAccountId, false));
 					}

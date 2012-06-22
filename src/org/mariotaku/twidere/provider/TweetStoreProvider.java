@@ -31,7 +31,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		String table = getTableNameForContentUri(uri);
+		final String table = getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
 			result = database.delete(table, selection, selectionArgs);
@@ -49,9 +49,9 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		String table = getTableNameForContentUri(uri);
+		final String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
-		long row_id = database.insert(table, null, values);
+		final long row_id = database.insert(table, null, values);
 		onDatabaseUpdated(uri, true);
 		return Uri.withAppendedPath(uri, String.valueOf(row_id));
 	}
@@ -64,14 +64,14 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-		String table = getTableNameForContentUri(uri);
+		final String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
 		return database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
 	}
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-		String table = getTableNameForContentUri(uri);
+		final String table = getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
 			result = database.update(table, values, selection, selectionArgs);
@@ -84,7 +84,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	private void onDatabaseUpdated(Uri uri, boolean is_insert) {
 		if (uri == null || "false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) return;
-		Context context = getContext();
+		final Context context = getContext();
 		switch (getTableId(uri)) {
 			case URI_ACCOUNTS: {
 				clearAccountColor();
@@ -160,7 +160,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			if (tableName == null || columns == null || types == null || types.length != columns.length
 					|| types.length == 0)
 				throw new IllegalArgumentException("Invalid parameters for creating table " + tableName);
-			StringBuilder stringBuilder = new StringBuilder(create_if_not_exists ? "CREATE TABLE IF NOT EXISTS "
+			final StringBuilder stringBuilder = new StringBuilder(create_if_not_exists ? "CREATE TABLE IF NOT EXISTS "
 					: "CREATE TABLE ");
 
 			stringBuilder.append(tableName);
@@ -175,8 +175,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		}
 
 		private int getTypeInt(String type) {
-			int idx = type.contains("(") ? type.indexOf("(") : type.indexOf(" ");
-			String type_main = idx > -1 ? type.substring(0, idx) : type;
+			final int idx = type.contains("(") ? type.indexOf("(") : type.indexOf(" ");
+			final String type_main = idx > -1 ? type.substring(0, idx) : type;
 			if ("NULL".equalsIgnoreCase(type_main))
 				return FIELD_TYPE_NULL;
 			else if ("INTEGER".equalsIgnoreCase(type_main))
@@ -191,12 +191,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 		private String getTypeString(SQLiteDatabase db, String table, String column) {
 
-			String sql = "SELECT typeof(" + column + ") FROM " + table;
-			Cursor cur = db.rawQuery(sql, null);
+			final String sql = "SELECT typeof(" + column + ") FROM " + table;
+			final Cursor cur = db.rawQuery(sql, null);
 			if (cur == null) return null;
 
 			cur.moveToFirst();
-			String type = cur.getString(0);
+			final String type = cur.getString(0);
 			cur.close();
 			return type;
 
@@ -214,17 +214,17 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		}
 
 		private boolean isColumnContained(String[] cols, String col) {
-			for (String tmp_col : cols)
+			for (final String tmp_col : cols)
 				if (col.equals(tmp_col)) return true;
 			return false;
 		}
 
 		private boolean isTypeCompatible(String old_type, String new_type) {
 			if (old_type != null && new_type != null) {
-				int old_idx = old_type.contains("(") ? old_type.indexOf("(") : old_type.indexOf(" ");
-				int new_idx = new_type.contains("(") ? new_type.indexOf("(") : new_type.indexOf(" ");
-				String old_type_main = old_idx > -1 ? old_type.substring(0, old_idx) : old_type;
-				String new_type_main = new_idx > -1 ? new_type.substring(0, new_idx) : new_type;
+				final int old_idx = old_type.contains("(") ? old_type.indexOf("(") : old_type.indexOf(" ");
+				final int new_idx = new_type.contains("(") ? new_type.indexOf("(") : new_type.indexOf(" ");
+				final String old_type_main = old_idx > -1 ? old_type.substring(0, old_idx) : old_type;
+				final String new_type_main = new_idx > -1 ? new_type.substring(0, new_idx) : new_type;
 				return old_type_main.equalsIgnoreCase(new_type_main);
 			}
 			return false;
@@ -239,26 +239,26 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			db.execSQL(createTable(table, new_cols, new_types, true));
 
 			// We need to get all data from old table.
-			Cursor cur = db.query(table, null, null, null, null, null, null);
+			final Cursor cur = db.query(table, null, null, null, null, null, null);
 			cur.moveToFirst();
-			String[] old_cols = cur.getColumnNames();
+			final String[] old_cols = cur.getColumnNames();
 
-			List<ContentValues> values_list = new ArrayList<ContentValues>();
+			final List<ContentValues> values_list = new ArrayList<ContentValues>();
 
 			while (!cur.isAfterLast()) {
-				ContentValues values = new ContentValues();
+				final ContentValues values = new ContentValues();
 				for (int i = 0; i < new_cols.length; i++) {
-					String new_col = new_cols[i];
-					String new_type = new_types[i];
+					final String new_col = new_cols[i];
+					final String new_type = new_types[i];
 					if (BaseColumns._ID.equals(new_col)) {
 						continue;
 					}
 
-					int idx = cur.getColumnIndex(new_col);
+					final int idx = cur.getColumnIndex(new_col);
 
 					if (isColumnContained(old_cols, new_col)) {
-						String old_type = getTypeString(db, table, new_col);
-						boolean compatible = isTypeCompatible(old_type, new_type);
+						final String old_type = getTypeString(db, table, new_col);
+						final boolean compatible = isTypeCompatible(old_type, new_type);
 						if (compatible && idx > -1) {
 							switch (getTypeInt(new_type)) {
 								case FIELD_TYPE_INTEGER:
@@ -291,7 +291,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			db.execSQL(createTable(table, new_cols, new_types, false));
 
 			// Now, insert all data backuped into new table.
-			for (ContentValues values : values_list) {
+			for (final ContentValues values : values_list) {
 				db.insert(table, null, values);
 			}
 		}

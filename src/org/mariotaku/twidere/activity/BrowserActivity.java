@@ -40,9 +40,9 @@ public class BrowserActivity extends BaseActivity {
 			finish();
 			return;
 		}
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		Fragment fragment = Fragment.instantiate(this, WebViewFragment.class.getName());
-		Bundle bundle = new Bundle();
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final Fragment fragment = Fragment.instantiate(this, WebViewFragment.class.getName());
+		final Bundle bundle = new Bundle();
 		bundle.putString(INTENT_KEY_URI, mUri.toString());
 		fragment.setArguments(bundle);
 		ft.replace(android.R.id.content, fragment);

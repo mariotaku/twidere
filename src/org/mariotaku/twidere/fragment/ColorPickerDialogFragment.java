@@ -106,16 +106,16 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 
 		private Bitmap getPreviewBitmap(int color) {
 
-			float density = getContext().getResources().getDisplayMetrics().density;
-			int width = (int) (32 * density), height = (int) (32 * density);
+			final float density = getContext().getResources().getDisplayMetrics().density;
+			final int width = (int) (32 * density), height = (int) (32 * density);
 
-			Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-			Canvas canvas = new Canvas(bm);
+			final Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+			final Canvas canvas = new Canvas(bm);
 
-			int rectrangle_size = (int) (density * 5);
-			int numRectanglesHorizontal = (int) Math.ceil(width / rectrangle_size);
-			int numRectanglesVertical = (int) Math.ceil(height / rectrangle_size);
-			Rect r = new Rect();
+			final int rectrangle_size = (int) (density * 5);
+			final int numRectanglesHorizontal = (int) Math.ceil(width / rectrangle_size);
+			final int numRectanglesVertical = (int) Math.ceil(height / rectrangle_size);
+			final Rect r = new Rect();
 			boolean verticalStartWhite = true;
 			for (int i = 0; i <= numRectanglesVertical; i++) {
 
@@ -126,7 +126,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 					r.left = j * rectrangle_size;
 					r.bottom = r.top + rectrangle_size;
 					r.right = r.left + rectrangle_size;
-					Paint paint = new Paint();
+					final Paint paint = new Paint();
 					paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
 
 					canvas.drawRect(r, paint);
@@ -138,11 +138,11 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 
 			}
 			canvas.drawColor(color);
-			Paint paint = new Paint();
+			final Paint paint = new Paint();
 			paint.setColor(Color.WHITE);
 			paint.setStrokeWidth(2.0f);
-			float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0, height, width,
-					height };
+			final float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0, height,
+					width, height };
 			canvas.drawLines(points, paint);
 
 			return bm;
@@ -154,7 +154,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 			// To fight color branding.
 			getWindow().setFormat(PixelFormat.RGBA_8888);
 
-			LinearLayout mContentView = new LinearLayout(context);
+			final LinearLayout mContentView = new LinearLayout(context);
 			mContentView.setGravity(Gravity.CENTER);
 
 			mColorPicker = new ColorPickerView(context);

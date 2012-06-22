@@ -26,14 +26,14 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 	}
 
 	public boolean containsStatus(long status_id) {
-		for (ParcelableStatus status : mData) {
+		for (final ParcelableStatus status : mData) {
 			if (status.status_id == status_id) return true;
 		}
 		return false;
 	}
 
 	public boolean deleteStatus(long status_id) {
-		for (ParcelableStatus status : mData) {
+		for (final ParcelableStatus status : mData) {
 			if (status.status_id == status_id) return mData.remove(status);
 		}
 		return false;

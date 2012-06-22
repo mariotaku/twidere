@@ -31,7 +31,7 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 	</FrameLayout>
 
-	<org.mariotaku.popupmenu.MenuBar
+	<org.mariotaku.menubar.MenuBar
 		android:id="@+id/menu_bar"
 		android:layout_width="fill_parent"
 		android:layout_height="48dp"

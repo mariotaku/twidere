@@ -41,11 +41,11 @@ public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<Parcela
 		List<ParcelableUser> list_loaded = null;
 		try {
 			list_loaded = getUsers();
-		} catch (TwitterException e) {
+		} catch (final TwitterException e) {
 			e.printStackTrace();
 		}
 		if (list_loaded != null) {
-			for (ParcelableUser user : list_loaded) {
+			for (final ParcelableUser user : list_loaded) {
 				if (!hasId(user.user_id)) {
 					mUsersList.add(user);
 				}
@@ -61,7 +61,7 @@ public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<Parcela
 	}
 
 	private boolean hasId(long id) {
-		for (ParcelableUser user : mUsersList) {
+		for (final ParcelableUser user : mUsersList) {
 			if (user.user_id == id) return true;
 		}
 		return false;

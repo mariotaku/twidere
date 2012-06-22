@@ -45,10 +45,10 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 		if (PREFERENCE_KEY_DARK_THEME.equals(preference.getKey())) {
 			boolean show_anim = false;
 			try {
-				float transition_animation = Settings.System.getFloat(getContentResolver(),
+				final float transition_animation = Settings.System.getFloat(getContentResolver(),
 						Settings.System.TRANSITION_ANIMATION_SCALE);
 				show_anim = transition_animation > 0.0;
-			} catch (SettingNotFoundException e) {
+			} catch (final SettingNotFoundException e) {
 				e.printStackTrace();
 			}
 			restartActivity(this, show_anim);
@@ -59,7 +59,7 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
 		if (PREFERENCE_KEY_CLEAR_DATABASES.equals(preference.getKey())) {
-			ContentResolver resolver = getContentResolver();
+			final ContentResolver resolver = getContentResolver();
 			resolver.delete(Statuses.CONTENT_URI, null, null);
 			resolver.delete(Mentions.CONTENT_URI, null, null);
 		} else if (PREFERENCE_KEY_CLEAR_CACHE.equals(preference.getKey())) {

@@ -36,7 +36,7 @@ public class ParcelableUser implements Parcelable {
 
 		@Override
 		public int compare(ParcelableUser object1, ParcelableUser object2) {
-			long diff = object1.position - object2.position;
+			final long diff = object1.position - object2.position;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 			return (int) diff;

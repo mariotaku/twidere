@@ -46,19 +46,19 @@ public class ColorAnalyser {
 
 		int color = 0;
 
-		HashMap<Float, Integer> colorsMap = new HashMap<Float, Integer>();
-		ArrayList<Float> colorsScore = new ArrayList<Float>();
+		final HashMap<Float, Integer> colorsMap = new HashMap<Float, Integer>();
+		final ArrayList<Float> colorsScore = new ArrayList<Float>();
 
-		Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, false);
+		final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, false);
 
 		for (int y = 0; y < resized.getHeight(); y++) {
 			for (int x = 0; x < resized.getWidth(); x++) {
-				int temp_color = resized.getPixel(x, y);
+				final int temp_color = resized.getPixel(x, y);
 				color = Color.argb(0xFF, Color.red(temp_color), Color.green(temp_color), Color.blue(temp_color));
-				float[] hsv = new float[3];
+				final float[] hsv = new float[3];
 				Color.colorToHSV(color, hsv);
 
-				float score = (hsv[1] * hsv[1] + 0.001f) * (hsv[2] * hsv[2]);
+				final float score = (hsv[1] * hsv[1] + 0.001f) * (hsv[2] * hsv[2]);
 
 				colorsMap.put(score, color);
 				colorsScore.add(score);
@@ -88,19 +88,19 @@ public class ColorAnalyser {
 
 		int color = 0;
 
-		HashMap<Float, Integer> colorsMap = new HashMap<Float, Integer>();
-		ArrayList<Float> colorsScore = new ArrayList<Float>();
+		final HashMap<Float, Integer> colorsMap = new HashMap<Float, Integer>();
+		final ArrayList<Float> colorsScore = new ArrayList<Float>();
 
-		Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, false);
+		final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, false);
 
 		for (int y = 0; y < resized.getHeight(); y++) {
 			for (int x = 0; x < resized.getWidth(); x++) {
-				int temp_color = resized.getPixel(x, y);
+				final int temp_color = resized.getPixel(x, y);
 				color = Color.argb(0xFF, Color.red(temp_color), Color.green(temp_color), Color.blue(temp_color));
-				float[] hsv = new float[3];
+				final float[] hsv = new float[3];
 				Color.colorToHSV(color, hsv);
 
-				float score = (hsv[1] * hsv[1] + 0.001f) * (hsv[2] * hsv[2]);
+				final float score = (hsv[1] * hsv[1] + 0.001f) * (hsv[2] * hsv[2]);
 
 				colorsMap.put(score, color);
 				colorsScore.add(score);

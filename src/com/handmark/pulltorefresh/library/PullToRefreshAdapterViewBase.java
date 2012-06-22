@@ -93,7 +93,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			// target for Touch Events
 			newEmptyView.setClickable(true);
 
-			ViewParent newEmptyViewParent = newEmptyView.getParent();
+			final ViewParent newEmptyViewParent = newEmptyView.getParent();
 			if (null != newEmptyViewParent && newEmptyViewParent instanceof ViewGroup) {
 				((ViewGroup) newEmptyViewParent).removeView(newEmptyView);
 			}

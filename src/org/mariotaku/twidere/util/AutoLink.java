@@ -103,10 +103,10 @@ public class AutoLink {
 			}
 			case LINK_TYPE_IMAGES: {
 				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
-				for (URLSpan span : spans) {
-					int start = string.getSpanStart(span);
-					int end = string.getSpanEnd(span);
-					String url = span.getURL();
+				for (final URLSpan span : spans) {
+					final int start = string.getSpanStart(span);
+					final int end = string.getSpanEnd(span);
+					final String url = span.getURL();
 					if (url.matches(PATTERN_IMAGES.pattern())) {
 						string.removeSpan(span);
 					}
@@ -115,11 +115,11 @@ public class AutoLink {
 				break;
 			}
 			case LINK_TYPE_LINKS: {
-				ArrayList<LinkSpec> links = new ArrayList<LinkSpec>();
+				final ArrayList<LinkSpec> links = new ArrayList<LinkSpec>();
 				gatherLinks(links, string, Patterns.WEB_URL, new String[] { "http://", "https://", "rtsp://" },
 						sUrlMatchFilter, null);
-				for (LinkSpec link : links) {
-					URLSpan[] spans = string.getSpans(link.start, link.end, URLSpan.class);
+				for (final LinkSpec link : links) {
+					final URLSpan[] spans = string.getSpans(link.start, link.end, URLSpan.class);
 					if (spans == null || spans.length <= 0) {
 						applyLink(link.url, link.start, link.end, string, type);
 					}
@@ -154,15 +154,15 @@ public class AutoLink {
 	 */
 	private final boolean addLinks(Spannable spannable, Pattern pattern, int type) {
 		boolean hasMatches = false;
-		Matcher matcher = pattern.matcher(spannable);
+		final Matcher matcher = pattern.matcher(spannable);
 
 		while (matcher.find()) {
-			int start = matcher.start();
-			int end = matcher.end();
-			boolean allowed = true;
+			final int start = matcher.start();
+			final int end = matcher.end();
+			final boolean allowed = true;
 
 			if (allowed) {
-				String url = matcher.group(0);
+				final String url = matcher.group(0);
 
 				applyLink(url, start, end, spannable, type);
 				hasMatches = true;
@@ -173,13 +173,13 @@ public class AutoLink {
 	}
 
 	private final void applyLink(String url, int start, int end, Spannable text, int type) {
-		LinkSpan span = new LinkSpan(url, type, mOnLinkClickListener);
+		final LinkSpan span = new LinkSpan(url, type, mOnLinkClickListener);
 
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 
 	private static final void addLinkMovementMethod(TextView t) {
-		MovementMethod m = t.getMovementMethod();
+		final MovementMethod m = t.getMovementMethod();
 
 		if (m == null || !(m instanceof LinkMovementMethod)) {
 			if (t.getLinksClickable()) {
@@ -190,15 +190,15 @@ public class AutoLink {
 
 	private static final void gatherLinks(ArrayList<LinkSpec> links, Spannable s, Pattern pattern, String[] schemes,
 			MatchFilter matchFilter, TransformFilter transformFilter) {
-		Matcher m = pattern.matcher(s);
+		final Matcher m = pattern.matcher(s);
 
 		while (m.find()) {
-			int start = m.start();
-			int end = m.end();
+			final int start = m.start();
+			final int end = m.end();
 
 			if (matchFilter == null || matchFilter.acceptMatch(s, start, end)) {
-				LinkSpec spec = new LinkSpec();
-				String url = makeUrl(m.group(0), schemes, m, transformFilter);
+				final LinkSpec spec = new LinkSpec();
+				final String url = makeUrl(m.group(0), schemes, m, transformFilter);
 
 				spec.url = url;
 				spec.start = start;

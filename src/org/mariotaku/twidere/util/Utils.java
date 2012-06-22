@@ -103,8 +103,8 @@ public final class Utils implements Constants {
 	}
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
-		long[] account_ids = getActivatedAccountIds(context);
-		StringBuilder builder = new StringBuilder();
+		final long[] account_ids = getActivatedAccountIds(context);
+		final StringBuilder builder = new StringBuilder();
 		if (selection != null) {
 			builder.append(selection);
 			builder.append(" AND ");
@@ -112,7 +112,7 @@ public final class Utils implements Constants {
 
 		builder.append(Statuses.ACCOUNT_ID + " IN ( ");
 		for (int i = 0; i < account_ids.length; i++) {
-			String id_string = String.valueOf(account_ids[i]);
+			final String id_string = String.valueOf(account_ids[i]);
 			if (id_string != null) {
 				if (i > 0) {
 					builder.append(", ");
@@ -126,7 +126,7 @@ public final class Utils implements Constants {
 	}
 
 	public static String buildFilterWhereClause(String table, String selection) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		if (selection != null) {
 			builder.append(selection);
 			builder.append(" AND ");
@@ -157,7 +157,7 @@ public final class Utils implements Constants {
 	}
 
 	public static Uri buildQueryUri(Uri uri, boolean notify) {
-		Uri.Builder uribuilder = uri.buildUpon();
+		final Uri.Builder uribuilder = uri.buildUpon();
 		uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify));
 		return uribuilder.build();
 	}
@@ -167,11 +167,11 @@ public final class Utils implements Constants {
 		final int item_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 
-		for (long account_id : getAccountIds(context)) {
+		for (final long account_id : getAccountIds(context)) {
 			// Clean statuses.
-			for (Uri uri : STATUSES_URIS) {
-				String table = getTableNameForContentUri(uri);
-				StringBuilder where = new StringBuilder();
+			for (final Uri uri : STATUSES_URIS) {
+				final String table = getTableNameForContentUri(uri);
+				final StringBuilder where = new StringBuilder();
 				where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 				where.append(" AND ");
 				where.append(Statuses._ID + " NOT IN (");
@@ -184,9 +184,9 @@ public final class Utils implements Constants {
 		}
 		// Clean cached users.
 		{
-			Uri uri = CachedUsers.CONTENT_URI;
-			String table = getTableNameForContentUri(uri);
-			StringBuilder where = new StringBuilder();
+			final Uri uri = CachedUsers.CONTENT_URI;
+			final String table = getTableNameForContentUri(uri);
+			final StringBuilder where = new StringBuilder();
 			where.append(Statuses._ID + " NOT IN (");
 			where.append(" SELECT " + CachedUsers._ID + " FROM " + table);
 			where.append(" LIMIT " + item_limit * 8 + ")");
@@ -201,9 +201,10 @@ public final class Utils implements Constants {
 	public static ParcelableStatus findStatusInDatabases(Context context, long account_id, long status_id) {
 		final ContentResolver resolver = context.getContentResolver();
 		ParcelableStatus status = null;
-		String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = " + status_id;
-		for (Uri uri : STATUSES_URIS) {
-			Cursor cur = resolver.query(uri, Statuses.COLUMNS, where, null, null);
+		final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = "
+				+ status_id;
+		for (final Uri uri : STATUSES_URIS) {
+			final Cursor cur = resolver.query(uri, Statuses.COLUMNS, where, null, null);
 			if (cur == null) {
 				continue;
 			}
@@ -228,9 +229,9 @@ public final class Utils implements Constants {
 	}
 
 	public static String formatTimeStampString(Context context, long timestamp) {
-		Time then = new Time();
+		final Time then = new Time();
 		then.set(timestamp);
-		Time now = new Time();
+		final Time now = new Time();
 		now.setToNow();
 
 		int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_CAP_AMPM;
@@ -252,9 +253,9 @@ public final class Utils implements Constants {
 	}
 
 	public static String formatToLongTimeString(Context context, long timestamp) {
-		Time then = new Time();
+		final Time then = new Time();
 		then.set(timestamp);
-		Time now = new Time();
+		final Time now = new Time();
 		now.setToNow();
 
 		int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_CAP_AMPM;
@@ -271,19 +272,19 @@ public final class Utils implements Constants {
 		now.setToNow();
 		if (then.before(now)) {
 
-			int year_diff = now.year - then.year;
+			final int year_diff = now.year - then.year;
 
-			int month_diff = (year_diff > 0 ? 12 : 0) + now.month - then.month;
+			final int month_diff = (year_diff > 0 ? 12 : 0) + now.month - then.month;
 			if (year_diff < 1) {
-				int day_diff = (month_diff > 0 ? then.getActualMaximum(Time.MONTH_DAY) : 0) + now.monthDay
+				final int day_diff = (month_diff > 0 ? then.getActualMaximum(Time.MONTH_DAY) : 0) + now.monthDay
 						- then.monthDay;
 				if (month_diff < 1) {
 					if (day_diff >= then.getActualMaximum(Time.MONTH_DAY))
 						return res.getQuantityString(R.plurals.Nmonths, month_diff, month_diff);
-					int hour_diff = (day_diff > 0 ? 24 : 0) + now.hour - then.hour;
+					final int hour_diff = (day_diff > 0 ? 24 : 0) + now.hour - then.hour;
 					if (day_diff < 1) {
 						if (hour_diff >= 24) return res.getQuantityString(R.plurals.Ndays, day_diff, day_diff);
-						int minute_diff = (hour_diff > 0 ? 60 : 0) + now.minute - then.minute;
+						final int minute_diff = (hour_diff > 0 ? 60 : 0) + now.minute - then.minute;
 						if (hour_diff < 1) {
 							if (minute_diff >= 60)
 								return res.getQuantityString(R.plurals.Nhours, hour_diff, hour_diff);
@@ -315,8 +316,8 @@ public final class Utils implements Constants {
 
 		Integer color = sAccountColors.get(account_id);
 		if (color == null) {
-			Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_COLOR },
-					Accounts.USER_ID + "=" + account_id, null, null);
+			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+					new String[] { Accounts.USER_COLOR }, Accounts.USER_ID + "=" + account_id, null, null);
 			if (cur == null) return Color.TRANSPARENT;
 			if (cur.getCount() <= 0) {
 				cur.close();
@@ -351,17 +352,17 @@ public final class Utils implements Constants {
 	@Deprecated
 	public static long getAccountIdForStatusId(Context context, long status_id) {
 
-		String[] cols = new String[] { Statuses.ACCOUNT_ID };
-		String where = Statuses.STATUS_ID + " = " + status_id;
+		final String[] cols = new String[] { Statuses.ACCOUNT_ID };
+		final String where = Statuses.STATUS_ID + " = " + status_id;
 
-		for (Uri uri : STATUSES_URIS) {
-			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
+		for (final Uri uri : STATUSES_URIS) {
+			final Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
 			if (cur == null) {
 				continue;
 			}
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				long id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.ACCOUNT_ID));
+				final long id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.ACCOUNT_ID));
 				cur.close();
 				return id;
 			}
@@ -373,10 +374,10 @@ public final class Utils implements Constants {
 	public static long[] getAccountIds(Context context) {
 		long[] accounts = new long[] {};
 		if (context == null) return accounts;
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID }, null,
-				null, null);
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
+				null, null, null);
 		if (cur != null) {
-			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			final int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
 			cur.moveToFirst();
 			accounts = new long[cur.getCount()];
 			int i = 0;
@@ -392,10 +393,10 @@ public final class Utils implements Constants {
 
 	public static String[] getAccountScreenNames(Context context) {
 		String[] accounts = new String[0];
-		String[] cols = new String[] { Accounts.USERNAME };
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, null, null, null);
+		final String[] cols = new String[] { Accounts.USERNAME };
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, null, null, null);
 		if (cur != null) {
-			int idx = cur.getColumnIndexOrThrow(Accounts.USERNAME);
+			final int idx = cur.getColumnIndexOrThrow(Accounts.USERNAME);
 			cur.moveToFirst();
 			accounts = new String[cur.getCount()];
 			int i = 0;
@@ -427,11 +428,11 @@ public final class Utils implements Constants {
 
 	public static long[] getActivatedAccountIds(Context context) {
 		long[] accounts = new long[] {};
-		String[] cols = new String[] { Accounts.USER_ID };
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1", null,
-				null);
+		final String[] cols = new String[] { Accounts.USER_ID };
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1",
+				null, null);
 		if (cur != null) {
-			int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			final int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
 			cur.moveToFirst();
 			accounts = new long[cur.getCount()];
 			int i = 0;
@@ -447,11 +448,11 @@ public final class Utils implements Constants {
 
 	public static String[] getActivatedAccountScreenNames(Context context) {
 		String[] accounts = new String[0];
-		String[] cols = new String[] { Accounts.USERNAME };
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1", null,
-				null);
+		final String[] cols = new String[] { Accounts.USERNAME };
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1",
+				null, null);
 		if (cur != null) {
-			int idx = cur.getColumnIndexOrThrow(Accounts.USERNAME);
+			final int idx = cur.getColumnIndexOrThrow(Accounts.USERNAME);
 			cur.moveToFirst();
 			accounts = new String[cur.getCount()];
 			int i = 0;
@@ -467,16 +468,16 @@ public final class Utils implements Constants {
 
 	public static Bitmap getColorPreviewBitmap(Context context, int color) {
 
-		float density = context.getResources().getDisplayMetrics().density;
-		int width = (int) (32 * density), height = (int) (32 * density);
+		final float density = context.getResources().getDisplayMetrics().density;
+		final int width = (int) (32 * density), height = (int) (32 * density);
 
-		Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-		Canvas canvas = new Canvas(bm);
+		final Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+		final Canvas canvas = new Canvas(bm);
 
-		int rectrangle_size = (int) (density * 5);
-		int numRectanglesHorizontal = (int) Math.ceil(width / rectrangle_size);
-		int numRectanglesVertical = (int) Math.ceil(height / rectrangle_size);
-		Rect r = new Rect();
+		final int rectrangle_size = (int) (density * 5);
+		final int numRectanglesHorizontal = (int) Math.ceil(width / rectrangle_size);
+		final int numRectanglesVertical = (int) Math.ceil(height / rectrangle_size);
+		final Rect r = new Rect();
 		boolean verticalStartWhite = true;
 		for (int i = 0; i <= numRectanglesVertical; i++) {
 
@@ -487,7 +488,7 @@ public final class Utils implements Constants {
 				r.left = j * rectrangle_size;
 				r.bottom = r.top + rectrangle_size;
 				r.right = r.left + rectrangle_size;
-				Paint paint = new Paint();
+				final Paint paint = new Paint();
 				paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
 
 				canvas.drawRect(r, paint);
@@ -499,11 +500,11 @@ public final class Utils implements Constants {
 
 		}
 		canvas.drawColor(color);
-		Paint paint = new Paint();
+		final Paint paint = new Paint();
 		paint.setColor(Color.WHITE);
 		paint.setStrokeWidth(2.0f);
-		float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0, height, width,
-				height };
+		final float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0, height,
+				width, height };
 		canvas.drawLines(points, paint);
 
 		return bm;
@@ -515,7 +516,7 @@ public final class Utils implements Constants {
 	@Deprecated
 	public static int getErrorCode(TwitterException e) {
 		if (e == null) return RESULT_UNKNOWN_ERROR;
-		int status_code = e.getStatusCode();
+		final int status_code = e.getStatusCode();
 		if (status_code == -1)
 			return RESULT_CONNECTIVITY_ERROR;
 		else if (status_code >= 401 && status_code < 404)
@@ -530,11 +531,11 @@ public final class Utils implements Constants {
 
 	public static GeoLocation getGeoLocationFromString(String location) {
 		if (location == null) return null;
-		String[] longlat = location.split(",");
+		final String[] longlat = location.split(",");
 		if (longlat == null || longlat.length != 2) return null;
 		try {
 			return new GeoLocation(Double.valueOf(longlat[0]), Double.valueOf(longlat[1]));
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			return null;
 		}
 	}
@@ -545,14 +546,14 @@ public final class Utils implements Constants {
 		final Matcher matcher = pattern.matcher(text);
 		final List<URL> image_links = new ArrayList<URL>();
 		while (matcher.find()) {
-			String link_string = matcher.group(1);
+			final String link_string = matcher.group(1);
 			if (link_string == null) {
 				continue;
 			}
 			URL link = null;
 			try {
 				link = new URL(link_string);
-			} catch (MalformedURLException e) {
+			} catch (final MalformedURLException e) {
 
 			}
 			if (link == null) {
@@ -568,20 +569,20 @@ public final class Utils implements Constants {
 	public static String getImagePathFromUri(Context context, Uri uri) {
 		if (uri == null) return null;
 
-		String media_uri_start = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString();
+		final String media_uri_start = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString();
 
 		if (uri.toString().startsWith(media_uri_start)) {
 
-			String[] proj = { MediaStore.Images.Media.DATA };
-			Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
+			final String[] proj = { MediaStore.Images.Media.DATA };
+			final Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
 
 			if (cursor == null || cursor.getCount() <= 0) return null;
 
-			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			final int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 
 			cursor.moveToFirst();
 
-			String path = cursor.getString(column_index);
+			final String path = cursor.getString(column_index);
 			cursor.close();
 			return path;
 		} else if (uri.getScheme().equals("file")) return uri.getPath();
@@ -589,14 +590,14 @@ public final class Utils implements Constants {
 	}
 
 	public static long[] getLastSortIds(Context context, Uri uri) {
-		long[] account_ids = getActivatedAccountIds(context);
-		String[] cols = new String[] { Statuses.STATUS_ID };
-		ContentResolver resolver = context.getContentResolver();
-		long[] status_ids = new long[account_ids.length];
+		final long[] account_ids = getActivatedAccountIds(context);
+		final String[] cols = new String[] { Statuses.STATUS_ID };
+		final ContentResolver resolver = context.getContentResolver();
+		final long[] status_ids = new long[account_ids.length];
 		int idx = 0;
-		for (long account_id : account_ids) {
-			String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			Cursor cur = resolver.query(uri, cols, where, null, Statuses.STATUS_ID);
+		for (final long account_id : account_ids) {
+			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
+			final Cursor cur = resolver.query(uri, cols, where, null, Statuses.STATUS_ID);
 			if (cur == null) {
 				continue;
 			}
@@ -613,16 +614,16 @@ public final class Utils implements Constants {
 
 	public static String[] getMentionedNames(CharSequence user_name, CharSequence text, boolean at_sign,
 			boolean include_author) {
-		Pattern pattern = Pattern.compile("(?<!\\w)(@(\\w+))", Pattern.MULTILINE);
-		Matcher matcher = pattern.matcher(text);
-		List<String> mentions = new ArrayList<String>();
+		final Pattern pattern = Pattern.compile("(?<!\\w)(@(\\w+))", Pattern.MULTILINE);
+		final Matcher matcher = pattern.matcher(text);
+		final List<String> mentions = new ArrayList<String>();
 
 		if (include_author) {
 			mentions.add((at_sign ? "@" : "") + user_name);
 		}
 
 		while (matcher.find()) {
-			String mention = matcher.group(at_sign ? 1 : 2);
+			final String mention = matcher.group(at_sign ? 1 : 2);
 			if (mentions.contains(mention)) {
 				continue;
 			}
@@ -637,17 +638,17 @@ public final class Utils implements Constants {
 	@Deprecated
 	public static String getNameForStatusId(Context context, long status_id) {
 
-		String[] cols = new String[] { Statuses.NAME };
-		String where = Statuses.STATUS_ID + " = " + status_id;
+		final String[] cols = new String[] { Statuses.NAME };
+		final String where = Statuses.STATUS_ID + " = " + status_id;
 
-		for (Uri uri : STATUSES_URIS) {
-			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
+		for (final Uri uri : STATUSES_URIS) {
+			final Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
 			if (cur == null) {
 				continue;
 			}
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				String name = cur.getString(cur.getColumnIndexOrThrow(Statuses.NAME));
+				final String name = cur.getString(cur.getColumnIndexOrThrow(Statuses.NAME));
 				cur.close();
 				return name;
 			}
@@ -670,17 +671,17 @@ public final class Utils implements Constants {
 	 */
 	@Deprecated
 	public static long getRetweetedByUserId(Context context, long status_id) {
-		String[] cols = new String[] { Statuses.RETWEETED_BY_ID };
-		String where = Statuses.STATUS_ID + "=" + status_id;
+		final String[] cols = new String[] { Statuses.RETWEETED_BY_ID };
+		final String where = Statuses.STATUS_ID + "=" + status_id;
 
-		for (Uri uri : STATUSES_URIS) {
-			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
+		for (final Uri uri : STATUSES_URIS) {
+			final Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
 			if (cur == null) {
 				continue;
 			}
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				long retweeted_by_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.RETWEETED_BY_ID));
+				final long retweeted_by_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.RETWEETED_BY_ID));
 				cur.close();
 				return retweeted_by_id;
 			}
@@ -690,16 +691,16 @@ public final class Utils implements Constants {
 	}
 
 	public static long getRetweetId(Context context, long status_id) {
-		String[] cols = new String[] { Statuses.RETWEET_ID };
-		String where = Statuses.STATUS_ID + "=" + status_id;
-		for (Uri uri : STATUSES_URIS) {
-			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
+		final String[] cols = new String[] { Statuses.RETWEET_ID };
+		final String where = Statuses.STATUS_ID + "=" + status_id;
+		for (final Uri uri : STATUSES_URIS) {
+			final Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
 			if (cur == null) {
 				continue;
 			}
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				long retweet_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.RETWEET_ID));
+				final long retweet_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.RETWEET_ID));
 				cur.close();
 				return retweet_id;
 			}
@@ -710,17 +711,17 @@ public final class Utils implements Constants {
 
 	@Deprecated
 	public static String getScreenNameForStatusId(Context context, long status_id) {
-		String[] cols = new String[] { Statuses.SCREEN_NAME };
-		String where = Statuses.STATUS_ID + " = " + status_id;
+		final String[] cols = new String[] { Statuses.SCREEN_NAME };
+		final String where = Statuses.STATUS_ID + " = " + status_id;
 
-		for (Uri uri : STATUSES_URIS) {
-			Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
+		for (final Uri uri : STATUSES_URIS) {
+			final Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
 			if (cur == null) {
 				continue;
 			}
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				String name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
+				final String name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
 				cur.close();
 				return name;
 			}
@@ -733,10 +734,10 @@ public final class Utils implements Constants {
 		if (text == null) return "";
 		final CharSequence TAG_START = "<p>";
 		final CharSequence TAG_END = "</p>";
-		String formatted = Html.toHtml(text);
+		final String formatted = Html.toHtml(text);
 		if (formatted != null && formatted.contains(TAG_START) && formatted.contains(TAG_END)) {
-			int start = formatted.indexOf(TAG_START.toString()) + TAG_START.length();
-			int end = formatted.lastIndexOf(TAG_END.toString());
+			final int start = formatted.indexOf(TAG_START.toString()) + TAG_START.length();
+			final int end = formatted.lastIndexOf(TAG_END.toString());
 			return formatted.substring(start, end);
 		}
 		return formatted;
@@ -744,18 +745,18 @@ public final class Utils implements Constants {
 
 	public static Spanned getSpannedStatusText(Status status, long account_id) {
 		if (status == null || status.getText() == null) return new SpannableString("");
-		SpannableString text = new SpannableString(status.getText());
+		final SpannableString text = new SpannableString(status.getText());
 		// Format links.
-		URLEntity[] urls = status.getURLEntities();
+		final URLEntity[] urls = status.getURLEntities();
 		if (urls != null) {
-			for (URLEntity url_entity : urls) {
-				int start = url_entity.getStart();
-				int end = url_entity.getEnd();
+			for (final URLEntity url_entity : urls) {
+				final int start = url_entity.getStart();
+				final int end = url_entity.getEnd();
 				if (start < 0 || end > text.length()) {
 					continue;
 				}
-				URL expanded_url = url_entity.getExpandedURL();
-				URL url = url_entity.getURL();
+				final URL expanded_url = url_entity.getExpandedURL();
+				final URL url = url_entity.getURL();
 				if (expanded_url != null) {
 					text.setSpan(new URLSpan(expanded_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				} else if (url != null) {
@@ -764,15 +765,15 @@ public final class Utils implements Constants {
 			}
 		}
 		// Format media.
-		MediaEntity[] media = status.getMediaEntities();
+		final MediaEntity[] media = status.getMediaEntities();
 		if (media != null) {
-			for (MediaEntity media_item : media) {
-				int start = media_item.getStart();
-				int end = media_item.getEnd();
+			for (final MediaEntity media_item : media) {
+				final int start = media_item.getStart();
+				final int end = media_item.getEnd();
 				if (start < 0 || end > text.length()) {
 					continue;
 				}
-				URL media_url = media_item.getMediaURL();
+				final URL media_url = media_item.getMediaURL();
 				if (media_url != null) {
 					text.setSpan(new URLSpan(media_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
@@ -783,18 +784,18 @@ public final class Utils implements Constants {
 
 	public static Spanned getSpannedTweetText(Tweet tweet, long account_id) {
 		if (tweet == null || tweet.getText() == null) return new SpannableString("");
-		SpannableString text = new SpannableString(tweet.getText());
+		final SpannableString text = new SpannableString(tweet.getText());
 		// Format links.
-		URLEntity[] urls = tweet.getURLEntities();
+		final URLEntity[] urls = tweet.getURLEntities();
 		if (urls != null) {
-			for (URLEntity url_entity : urls) {
-				int start = url_entity.getStart();
-				int end = url_entity.getEnd();
+			for (final URLEntity url_entity : urls) {
+				final int start = url_entity.getStart();
+				final int end = url_entity.getEnd();
 				if (start < 0 || end > text.length()) {
 					continue;
 				}
-				URL expanded_url = url_entity.getExpandedURL();
-				URL url = url_entity.getURL();
+				final URL expanded_url = url_entity.getExpandedURL();
+				final URL url = url_entity.getURL();
 				if (expanded_url != null) {
 					text.setSpan(new URLSpan(expanded_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				} else if (url != null) {
@@ -803,15 +804,15 @@ public final class Utils implements Constants {
 			}
 		}
 		// Format media.
-		MediaEntity[] media = tweet.getMediaEntities();
+		final MediaEntity[] media = tweet.getMediaEntities();
 		if (media != null) {
-			for (MediaEntity media_item : media) {
-				int start = media_item.getStart();
-				int end = media_item.getEnd();
+			for (final MediaEntity media_item : media) {
+				final int start = media_item.getStart();
+				final int end = media_item.getEnd();
 				if (start < 0 || end > text.length()) {
 					continue;
 				}
-				URL media_url = media_item.getMediaURL();
+				final URL media_url = media_item.getMediaURL();
 				if (media_url != null) {
 					text.setSpan(new URLSpan(media_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
@@ -860,26 +861,26 @@ public final class Utils implements Constants {
 		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY);
 		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET);
 		Twitter twitter = null;
-		StringBuilder where = new StringBuilder();
+		final StringBuilder where = new StringBuilder();
 		where.append(Accounts.USER_ID + "=" + account_id);
-		Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS, where.toString(), null,
-				null);
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS, where.toString(),
+				null, null);
 		if (cur != null) {
 			if (cur.getCount() == 1) {
 				cur.moveToFirst();
-				ConfigurationBuilder cb = new ConfigurationBuilder();
+				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
-				String rest_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_BASE_URL));
-				String search_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_BASE_URL));
-				String upload_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.UPLOAD_BASE_URL));
-				String oauth_access_token_url = cur.getString(cur
+				final String rest_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_BASE_URL));
+				final String search_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_BASE_URL));
+				final String upload_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.UPLOAD_BASE_URL));
+				final String oauth_access_token_url = cur.getString(cur
 						.getColumnIndexOrThrow(Accounts.OAUTH_ACCESS_TOKEN_URL));
-				String oauth_authentication_url = cur.getString(cur
+				final String oauth_authentication_url = cur.getString(cur
 						.getColumnIndexOrThrow(Accounts.OAUTH_AUTHENTICATION_URL));
-				String oauth_authorization_url = cur.getString(cur
+				final String oauth_authorization_url = cur.getString(cur
 						.getColumnIndexOrThrow(Accounts.OAUTH_AUTHORIZATION_URL));
-				String oauth_request_token_url = cur.getString(cur
+				final String oauth_request_token_url = cur.getString(cur
 						.getColumnIndexOrThrow(Accounts.OAUTH_REQUEST_TOKEN_URL));
 				if (!isNullOrEmpty(rest_base_url)) {
 					cb.setRestBaseURL(rest_base_url);
@@ -967,7 +968,7 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isMyAccount(Context context, long account_id) {
-		for (long id : getAccountIds(context)) {
+		for (final long id : getAccountIds(context)) {
 			if (id == account_id) return true;
 		}
 		return false;
@@ -975,7 +976,7 @@ public final class Utils implements Constants {
 
 	public static boolean isMyActivatedAccount(Context context, long account_id) {
 		if (account_id <= 0) return false;
-		for (long id : getActivatedAccountIds(context)) {
+		for (final long id : getActivatedAccountIds(context)) {
 			if (id == account_id) return true;
 		}
 		return false;
@@ -983,7 +984,7 @@ public final class Utils implements Constants {
 
 	public static boolean isMyActivatedUserName(Context context, String screen_name) {
 		if (screen_name == null) return false;
-		for (String account_user_name : getActivatedAccountScreenNames(context)) {
+		for (final String account_user_name : getActivatedAccountScreenNames(context)) {
 			if (account_user_name.equalsIgnoreCase(screen_name)) return true;
 		}
 		return false;
@@ -994,7 +995,7 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isMyUserName(Context context, String screen_name) {
-		for (String account_screen_name : getAccountScreenNames(context)) {
+		for (final String account_screen_name : getAccountScreenNames(context)) {
 			if (account_screen_name.equalsIgnoreCase(screen_name)) return true;
 		}
 		return false;
@@ -1005,9 +1006,9 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isUserLoggedIn(Context context, long account_id) {
-		long[] ids = getAccountIds(context);
+		final long[] ids = getAccountIds(context);
 		if (ids == null) return false;
-		for (long id : ids) {
+		for (final long id : ids) {
 			if (id == account_id) return true;
 		}
 		return false;
@@ -1016,7 +1017,7 @@ public final class Utils implements Constants {
 	public static ContentValues makeAccountContentValues(int color, AccessToken access_token, User user,
 			String rest_api_base, String search_api_base, String basic_password, int auth_type) {
 		if (user == null) throw new IllegalArgumentException("User can't be null!");
-		ContentValues values = new ContentValues();
+		final ContentValues values = new ContentValues();
 		switch (auth_type) {
 			case Accounts.AUTH_TYPE_TWIP_O_MODE: {
 				break;
@@ -1055,7 +1056,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues makeCachedUsersContentValues(User user) {
-		ContentValues values = new ContentValues();
+		final ContentValues values = new ContentValues();
 		values.put(CachedUsers.NAME, user.getName());
 		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
@@ -1065,7 +1066,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues makeMessagesContentValues(DirectMessage message, long account_id) {
-		ContentValues values = new ContentValues();
+		final ContentValues values = new ContentValues();
 		values.put(Messages.ACCOUNT_ID, account_id);
 		values.put(Messages.TEXT, message.getText());
 		values.put(Messages.STATE, message.getSenderId() == account_id ? Messages.STATE_OUTGOING
@@ -1138,15 +1139,15 @@ public final class Utils implements Constants {
 
 	public static void openConversation(Activity activity, long account_id, long status_id) {
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new ViewConversationFragment();
-			Bundle args = new Bundle();
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new ViewConversationFragment();
+			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			args.putLong(INTENT_KEY_STATUS_ID, status_id);
 			fragment.setArguments(args);
 			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
 		} else {
-			Uri.Builder builder = new Uri.Builder();
+			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_CONVERSATION);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
@@ -1157,9 +1158,9 @@ public final class Utils implements Constants {
 
 	public static void openTweetSearch(Activity activity, long account_id, String query) {
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new SearchTweetsFragment();
-			Bundle args = new Bundle();
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new SearchTweetsFragment();
+			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			if (query != null) {
 				args.putString(INTENT_KEY_QUERY, query);
@@ -1167,7 +1168,7 @@ public final class Utils implements Constants {
 			fragment.setArguments(args);
 			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
 		} else {
-			Uri.Builder builder = new Uri.Builder();
+			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_SEARCH);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
@@ -1181,14 +1182,14 @@ public final class Utils implements Constants {
 
 	public static void openUserBlocks(Activity activity, long account_id) {
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new UserBlocksFragment();
-			Bundle args = new Bundle();
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new UserBlocksFragment();
+			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			fragment.setArguments(args);
 			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
 		} else {
-			Uri.Builder builder = new Uri.Builder();
+			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_BLOCKS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
@@ -1198,9 +1199,9 @@ public final class Utils implements Constants {
 
 	public static void openUserFavorites(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new UserFavoritesFragment();
-			Bundle args = new Bundle();
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new UserFavoritesFragment();
+			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			if (user_id != -1) {
 				args.putLong(INTENT_KEY_USER_ID, user_id);
@@ -1211,7 +1212,7 @@ public final class Utils implements Constants {
 			fragment.setArguments(args);
 			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
 		} else {
-			Uri.Builder builder = new Uri.Builder();
+			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_FAVORITES);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
@@ -1228,9 +1229,9 @@ public final class Utils implements Constants {
 
 	public static void openUserFollowers(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new UserFollowersFragment();
-			Bundle args = new Bundle();
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new UserFollowersFragment();
+			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			if (user_id != -1) {
 				args.putLong(INTENT_KEY_USER_ID, user_id);
@@ -1241,7 +1242,7 @@ public final class Utils implements Constants {
 			fragment.setArguments(args);
 			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
 		} else {
-			Uri.Builder builder = new Uri.Builder();
+			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_FOLLOWERS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
@@ -1258,9 +1259,9 @@ public final class Utils implements Constants {
 
 	public static void openUserFollowing(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new UserFriendsFragment();
-			Bundle args = new Bundle();
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new UserFriendsFragment();
+			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			if (user_id != -1) {
 				args.putLong(INTENT_KEY_USER_ID, user_id);
@@ -1271,7 +1272,7 @@ public final class Utils implements Constants {
 			fragment.setArguments(args);
 			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
 		} else {
-			Uri.Builder builder = new Uri.Builder();
+			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_FOLLOWING);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
@@ -1288,9 +1289,9 @@ public final class Utils implements Constants {
 
 	public static void openUserProfile(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new UserProfileFragment();
-			Bundle args = new Bundle();
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new UserProfileFragment();
+			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			if (user_id != -1) {
 				args.putLong(INTENT_KEY_USER_ID, user_id);
@@ -1301,7 +1302,7 @@ public final class Utils implements Constants {
 			fragment.setArguments(args);
 			home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
 		} else {
-			Uri.Builder builder = new Uri.Builder();
+			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
@@ -1317,9 +1318,9 @@ public final class Utils implements Constants {
 
 	public static void openUserTimeline(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			HomeActivity home_activity = (HomeActivity) activity;
-			Fragment fragment = new UserTimelineFragment();
-			Bundle args = new Bundle();
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new UserTimelineFragment();
+			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			if (user_id != -1) {
 				args.putLong(INTENT_KEY_USER_ID, user_id);
@@ -1330,7 +1331,7 @@ public final class Utils implements Constants {
 			fragment.setArguments(args);
 			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
 		} else {
-			Uri.Builder builder = new Uri.Builder();
+			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_TIMELINE);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
@@ -1348,15 +1349,15 @@ public final class Utils implements Constants {
 	public static URL parseURL(String url_string) {
 		try {
 			return new URL(url_string);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			// This should not happen.
 		}
 		return null;
 	}
 
 	public static void restartActivity(Activity activity, boolean animation) {
-		int enter_anim = animation ? android.R.anim.fade_in : 0;
-		int exit_anim = animation ? android.R.anim.fade_out : 0;
+		final int enter_anim = animation ? android.R.anim.fade_in : 0;
+		final int exit_anim = animation ? android.R.anim.fade_out : 0;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
 			new MethodsCompat().overridePendingTransition(activity, enter_anim, exit_anim);
 		} else {
@@ -1372,14 +1373,14 @@ public final class Utils implements Constants {
 	}
 
 	public static void setMenuForStatus(Context context, Menu menu, ParcelableStatus status) {
-		if (status == null) return;
-		int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
+		if (context == null || menu == null || status == null) return;
+		final int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
 		menu.findItem(R.id.delete_submenu).setVisible(isMyActivatedAccount(context, status.user_id));
-		MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
+		final MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
 		if (itemRetweet != null) {
 			itemRetweet.setVisible(!status.is_protected
 					&& (!isMyActivatedAccount(context, status.user_id) || getActivatedAccountIds(context).length > 1));
-			Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
+			final Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
 			if (isMyActivatedAccount(context, status.retweeted_by_id)) {
 				iconRetweetSubMenu.setColorFilter(activated_color, Mode.MULTIPLY);
 				itemRetweet.setTitle(R.string.cancel_retweet);
@@ -1388,9 +1389,9 @@ public final class Utils implements Constants {
 				itemRetweet.setTitle(R.string.retweet);
 			}
 		}
-		MenuItem itemFav = menu.findItem(MENU_FAV);
+		final MenuItem itemFav = menu.findItem(MENU_FAV);
 		if (itemFav != null) {
-			Drawable iconFav = itemFav.getIcon();
+			final Drawable iconFav = itemFav.getIcon();
 			if (status.is_favorite) {
 				iconFav.setColorFilter(activated_color, Mode.MULTIPLY);
 				itemFav.setTitle(R.string.unfav);
@@ -1408,19 +1409,19 @@ public final class Utils implements Constants {
 	}
 
 	public static void showErrorToast(Context context, Exception e, boolean long_message) {
-		String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
+		final String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
 				.getString(R.string.error_unknown_error);
-		int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
-		Toast toast = Toast.makeText(context, message, length);
+		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
+		final Toast toast = Toast.makeText(context, message, length);
 		toast.show();
 	}
 
 	public static void showErrorToast(Context context, long account_id, String operation, Exception e,
 			boolean long_message) {
-		String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
+		final String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
 				.getString(R.string.error_unknown_error);
-		int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
-		Toast toast = Toast.makeText(context, message, length);
+		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
+		final Toast toast = Toast.makeText(context, message, length);
 		toast.show();
 	}
 

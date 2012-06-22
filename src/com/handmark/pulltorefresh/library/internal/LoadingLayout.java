@@ -36,7 +36,8 @@ public class LoadingLayout extends FrameLayout {
 	public LoadingLayout(Context context, final int mode, String releaseLabel, String pullLabel,
 			String refreshingLabel, TypedArray attrs) {
 		super(context);
-		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
+		final ViewGroup header = (ViewGroup) LayoutInflater.from(context)
+				.inflate(R.layout.pull_to_refresh_header, this);
 		mHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
 		mHeaderImage = (ImageView) header.findViewById(R.id.pull_to_refresh_image);
 		mHeaderProgress = (ProgressBar) header.findViewById(R.id.pull_to_refresh_progress);

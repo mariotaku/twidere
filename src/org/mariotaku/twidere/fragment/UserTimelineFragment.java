@@ -19,8 +19,8 @@ public class UserTimelineFragment extends BaseStatusesListFragment<List<Parcelab
 
 	@Override
 	public long[] getLastStatusIds() {
-		int last_idx = mAdapter.getCount() - 1;
-		long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).status_id : -1;
+		final int last_idx = mAdapter.getCount() - 1;
+		final long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).status_id : -1;
 		return last_id > 0 ? new long[] { last_id } : null;
 	}
 
@@ -31,8 +31,8 @@ public class UserTimelineFragment extends BaseStatusesListFragment<List<Parcelab
 
 	@Override
 	public int getStatuses(long[] account_ids, long[] max_ids) {
-		long max_id = max_ids != null && max_ids.length == 1 ? max_ids[0] : -1;
-		Bundle args = getArguments();
+		final long max_id = max_ids != null && max_ids.length == 1 ? max_ids[0] : -1;
+		final Bundle args = getArguments();
 		args.putLong(INTENT_KEY_MAX_ID, max_id);
 		getLoaderManager().restartLoader(0, args, this);
 		return -1;
@@ -40,7 +40,8 @@ public class UserTimelineFragment extends BaseStatusesListFragment<List<Parcelab
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
+		final ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
+				.getProfileImageLoader();
 		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
 		super.onActivityCreated(savedInstanceState);
 	}
@@ -74,7 +75,7 @@ public class UserTimelineFragment extends BaseStatusesListFragment<List<Parcelab
 	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
 		mAdapter.clear();
 		if (data != null) {
-			for (ParcelableStatus status : data) {
+			for (final ParcelableStatus status : data) {
 				mAdapter.add(status);
 			}
 		}

@@ -40,9 +40,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
-		View view = super.getView(position, convertView, parent);
+		final View view = super.getView(position, convertView, parent);
 
-		Object tag = view.getTag();
+		final Object tag = view.getTag();
 		StatusViewHolder holder = null;
 
 		if (tag instanceof StatusViewHolder) {
@@ -52,7 +52,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			view.setTag(holder);
 		}
 
-		ParcelableStatus status = getItem(position);
+		final ParcelableStatus status = getItem(position);
 
 		final CharSequence retweeted_by = mDisplayName ? status.retweeted_by_name : status.retweeted_by_screen_name;
 		final boolean is_last = position == getCount() - 1;

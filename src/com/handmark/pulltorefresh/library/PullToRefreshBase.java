@@ -493,7 +493,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	@Override
 	protected void onRestoreInstanceState(Parcelable state) {
 		if (state instanceof Bundle) {
-			Bundle bundle = (Bundle) state;
+			final Bundle bundle = (Bundle) state;
 
 			final int viewState = bundle.getInt(STATE_STATE, PULL_TO_REFRESH);
 			mMode = bundle.getInt(STATE_MODE, MODE_PULL_DOWN_TO_REFRESH);
@@ -516,7 +516,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	@Override
 	protected Parcelable onSaveInstanceState() {
-		Bundle bundle = new Bundle();
+		final Bundle bundle = new Bundle();
 		bundle.putInt(STATE_STATE, mState);
 		bundle.putInt(STATE_MODE, mMode);
 		bundle.putInt(STATE_CURRENT_MODE, mCurrentMode);
@@ -597,9 +597,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		addRefreshableView(context, mRefreshableView);
 
 		// Loading View Strings
-		String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
-		String refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
-		String releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
+		final String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
+		final String refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
+		final String releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
 
 		// Add Loading Views
 		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
@@ -668,8 +668,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 		}
 
-		int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0, p.width);
-		int lpHeight = p.height;
+		final int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0, p.width);
+		final int lpHeight = p.height;
 		int childHeightSpec;
 		if (lpHeight > 0) {
 			childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, MeasureSpec.EXACTLY);

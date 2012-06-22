@@ -46,11 +46,11 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 		setContentView(R.layout.set_color);
 		mColorsGrid = (GridView) findViewById(R.id.colors_grid);
 
-		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
+		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 
 		mCustomizedColor = bundle != null ? bundle.getInt(Accounts.USER_COLOR, Color.WHITE) : Color.WHITE;
 
-		Resources res = getResources();
+		final Resources res = getResources();
 		mColors.add(res.getColor(R.color.holo_red_dark));
 		mColors.add(res.getColor(R.color.holo_red_light));
 		mColors.add(res.getColor(R.color.holo_orange_dark));
@@ -88,8 +88,8 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 	}
 
 	private void finishSelecting(int color) {
-		Intent intent = new Intent();
-		Bundle bundle = new Bundle();
+		final Intent intent = new Intent();
+		final Bundle bundle = new Bundle();
 		bundle.putInt(Accounts.USER_COLOR, color);
 		intent.putExtras(bundle);
 		setResult(RESULT_OK, intent);
@@ -97,7 +97,7 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 	}
 
 	private void showDialog() {
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		mFragment.setInitialColor(mCustomizedColor);
 		mFragment.show(ft, "dialog");
 	}
@@ -113,8 +113,8 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = getLayoutInflater().inflate(R.layout.color_grid_item, parent, false);
-			ImageView color = (ImageView) view.findViewById(R.id.color);
+			final View view = getLayoutInflater().inflate(R.layout.color_grid_item, parent, false);
+			final ImageView color = (ImageView) view.findViewById(R.id.color);
 			color.setImageBitmap(getColorPreviewBitmap(mContext, getItem(position)));
 			if (position == getCount() - 1) {
 				view.findViewById(R.id.text).setVisibility(View.VISIBLE);

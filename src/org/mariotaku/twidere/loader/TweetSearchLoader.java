@@ -22,7 +22,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 
 		@Override
 		public int compare(Tweet object1, Tweet object2) {
-			long diff = object2.getId() - object1.getId();
+			final long diff = object2.getId() - object1.getId();
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 			return (int) diff;
@@ -42,7 +42,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		final Twitter twitter = getTwitter();
 		List<Tweet> tweets = null;
 		try {
-			Query query = new Query(mQuery);
+			final Query query = new Query(mQuery);
 			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
 					Context.MODE_PRIVATE);
 			final int load_item_limit = prefs
@@ -52,7 +52,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 				query.setMaxId(mMaxId);
 			}
 			tweets = twitter != null ? twitter.search(query).getTweets() : null;
-		} catch (TwitterException e) {
+		} catch (final TwitterException e) {
 			e.printStackTrace();
 		}
 		if (tweets != null) {
@@ -60,7 +60,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 			boolean insert_gap = false;
 			for (int i = 0; i < tweets.size(); i++) {
 				final Tweet status = tweets.get(i);
-				boolean list_modified = deleteStatus(status.getId());
+				final boolean list_modified = deleteStatus(status.getId());
 				if (!insert_gap) {
 					insert_gap = list_modified;
 				}

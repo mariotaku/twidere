@@ -21,7 +21,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
 		@Override
 		public int compare(Status object1, Status object2) {
-			long diff = object2.getId() - object1.getId();
+			final long diff = object2.getId() - object1.getId();
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 			return (int) diff;
@@ -41,7 +41,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		final long account_id = getAccountId();
 		ResponseList<Status> statuses = null;
 		try {
-			Paging paging = new Paging();
+			final Paging paging = new Paging();
 			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
 					Context.MODE_PRIVATE);
 			final int load_item_limit = prefs
@@ -51,7 +51,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 				paging.setMaxId(mMaxId);
 			}
 			statuses = getStatuses(paging);
-		} catch (TwitterException e) {
+		} catch (final TwitterException e) {
 			e.printStackTrace();
 		}
 		if (statuses != null) {

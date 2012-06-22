@@ -45,7 +45,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	@Override
 	public Fragment getItem(int position) {
-		Fragment fragment = Fragment.instantiate(mContext, mTabsInfo.get(position).cls.getName());
+		final Fragment fragment = Fragment.instantiate(mContext, mTabsInfo.get(position).cls.getName());
 		fragment.setArguments(mTabsInfo.get(position).args);
 		return fragment;
 	}
@@ -57,8 +57,8 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	@Override
 	public void onPageReselected(int position) {
-		String action = mTabsInfo.get(position).cls.getName() + HomeActivity.SHUFFIX_SCROLL_TO_TOP;
-		Intent intent = new Intent(action);
+		final String action = mTabsInfo.get(position).cls.getName() + HomeActivity.SHUFFIX_SCROLL_TO_TOP;
+		final Intent intent = new Intent(action);
 		intent.setPackage(mContext.getPackageName());
 		mContext.sendBroadcast(intent);
 	}

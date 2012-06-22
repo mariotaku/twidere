@@ -54,7 +54,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		switch (v.getId()) {
 			case R.id.save: {
 				saveEditedText();
-				Bundle bundle = new Bundle();
+				final Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 				bundle.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 				bundle.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
@@ -68,8 +68,8 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 				break;
 			}
 			case R.id.advanced_api_config_label: {
-				View stub_view = findViewById(R.id.stub_advanced_api_config);
-				View inflated_view = findViewById(R.id.advanced_api_config);
+				final View stub_view = findViewById(R.id.stub_advanced_api_config);
+				final View inflated_view = findViewById(R.id.advanced_api_config);
 				if (stub_view != null) {
 					stub_view.setVisibility(View.VISIBLE);
 					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_open_holo, 0,
@@ -91,8 +91,9 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 					mEditoAuthRequestTokenURL.setText(mOAuthRequestTokenURL != null ? mOAuthRequestTokenURL
 							: DEFAULT_OAUTH_REQUEST_TOKEN_URL);
 				} else if (inflated_view != null) {
-					boolean is_visible = inflated_view.getVisibility() == View.VISIBLE;
-					int compound_res = is_visible ? R.drawable.expander_close_holo : R.drawable.expander_open_holo;
+					final boolean is_visible = inflated_view.getVisibility() == View.VISIBLE;
+					final int compound_res = is_visible ? R.drawable.expander_close_holo
+							: R.drawable.expander_open_holo;
 					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(compound_res, 0, 0, 0);
 					inflated_view.setVisibility(is_visible ? View.GONE : View.VISIBLE);
 				}
@@ -153,43 +154,43 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 
 	private void saveEditedText() {
 		if (mEditRestBaseURL != null) {
-			Editable ed = mEditRestBaseURL.getText();
+			final Editable ed = mEditRestBaseURL.getText();
 			if (ed != null) {
 				mRestBaseURL = ed.toString();
 			}
 		}
 		if (mEditSearchBaseURL != null) {
-			Editable ed = mEditSearchBaseURL.getText();
+			final Editable ed = mEditSearchBaseURL.getText();
 			if (ed != null) {
 				mSearchBaseURL = ed.toString();
 			}
 		}
 		if (mEditUploadBaseURL != null) {
-			Editable ed = mEditUploadBaseURL.getText();
+			final Editable ed = mEditUploadBaseURL.getText();
 			if (ed != null) {
 				mUploadBaseURL = ed.toString();
 			}
 		}
 		if (mEditoAuthAccessTokenURL != null) {
-			Editable ed = mEditoAuthAccessTokenURL.getText();
+			final Editable ed = mEditoAuthAccessTokenURL.getText();
 			if (ed != null) {
 				mOAuthAccessTokenURL = ed.toString();
 			}
 		}
 		if (mEditoAuthenticationURL != null) {
-			Editable ed = mEditoAuthenticationURL.getText();
+			final Editable ed = mEditoAuthenticationURL.getText();
 			if (ed != null) {
 				mOAuthAuthenticationURL = ed.toString();
 			}
 		}
 		if (mEditoAuthorizationURL != null) {
-			Editable ed = mEditoAuthorizationURL.getText();
+			final Editable ed = mEditoAuthorizationURL.getText();
 			if (ed != null) {
 				mOAuthAuthorizationURL = ed.toString();
 			}
 		}
 		if (mEditoAuthRequestTokenURL != null) {
-			Editable ed = mEditoAuthRequestTokenURL.getText();
+			final Editable ed = mEditoAuthRequestTokenURL.getText();
 			if (ed != null) {
 				mOAuthRequestTokenURL = ed.toString();
 			}

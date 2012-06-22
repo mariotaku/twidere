@@ -28,8 +28,8 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	private List<Long> mActivatedUsersId = new ArrayList<Long>();
 
 	public Cursor getAccountsCursor() {
-		Uri uri = Accounts.CONTENT_URI;
-		String[] cols = new String[] { Accounts._ID, Accounts.USER_ID, Accounts.USERNAME, Accounts.IS_ACTIVATED };
+		final Uri uri = Accounts.CONTENT_URI;
+		final String[] cols = new String[] { Accounts._ID, Accounts.USER_ID, Accounts.USERNAME, Accounts.IS_ACTIVATED };
 		return getContentResolver().query(uri, cols, null, null, null);
 	}
 
@@ -39,10 +39,10 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 			Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
 			return;
 		}
-		Bundle bundle = new Bundle();
-		long[] ids = new long[mActivatedUsersId.size()];
+		final Bundle bundle = new Bundle();
+		final long[] ids = new long[mActivatedUsersId.size()];
 		int i = 0;
-		for (Long id_long : mActivatedUsersId) {
+		for (final Long id_long : mActivatedUsersId) {
 			ids[i] = id_long;
 			i++;
 		}
@@ -67,8 +67,8 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.select_account);
 		mListView = (ListView) findViewById(android.R.id.list);
-		String[] from = new String[] { Accounts.USERNAME };
-		int[] to = new int[] { android.R.id.text1 };
+		final String[] from = new String[] { Accounts.USERNAME };
+		final int[] to = new int[] { android.R.id.text1 };
 		mCursor = getAccountsCursor();
 		if (mCursor == null) {
 			finish();
@@ -80,14 +80,14 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		mListView.setOnItemClickListener(this);
 		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
-		long[] activated_ids = bundle != null ? bundle.getLongArray(Constants.INTENT_KEY_IDS) : null;
+		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
+		final long[] activated_ids = bundle != null ? bundle.getLongArray(Constants.INTENT_KEY_IDS) : null;
 		mActivatedUsersId.clear();
 		if (activated_ids == null) {
 			mCursor.moveToFirst();
 			while (!mCursor.isAfterLast()) {
-				boolean is_activated = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.IS_ACTIVATED)) == 1;
-				long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
+				final boolean is_activated = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.IS_ACTIVATED)) == 1;
+				final long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
 				if (is_activated) {
 					mActivatedUsersId.add(user_id);
 				}
@@ -95,10 +95,10 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 				mCursor.moveToNext();
 			}
 		} else {
-			for (long id : activated_ids) {
+			for (final long id : activated_ids) {
 				mCursor.moveToFirst();
 				while (!mCursor.isAfterLast()) {
-					long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
+					final long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
 					if (id == user_id) {
 						mListView.setItemChecked(mCursor.getPosition(), true);
 						mActivatedUsersId.add(user_id);
@@ -119,16 +119,16 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		int choise_mode = mListView.getChoiceMode();
+		final int choise_mode = mListView.getChoiceMode();
 		if (choise_mode == ListView.CHOICE_MODE_NONE) return;
 
 		if (choise_mode == ListView.CHOICE_MODE_SINGLE) {
 			mActivatedUsersId.clear();
 		}
-		SparseBooleanArray checkedpositions = mListView.getCheckedItemPositions();
-		boolean checked = checkedpositions.get(position, false);
+		final SparseBooleanArray checkedpositions = mListView.getCheckedItemPositions();
+		final boolean checked = checkedpositions.get(position, false);
 		mCursor.moveToPosition(position);
-		long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
+		final long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
 		if (!checked) {
 			if (mActivatedUsersId.contains(user_id)) {
 				mActivatedUsersId.remove(user_id);
@@ -140,7 +140,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		long[] ids = new long[mActivatedUsersId.size()];
+		final long[] ids = new long[mActivatedUsersId.size()];
 		for (int i = 0; i < mActivatedUsersId.size(); i++) {
 			ids[i] = mActivatedUsersId.get(i);
 		}

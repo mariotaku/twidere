@@ -62,44 +62,44 @@ public class TwidereService extends Service implements Constants {
 	private boolean mStoreStatusesFinished = true, mStoreMentionsFinished = true;
 
 	public int cancelRetweet(long account_id, long status_id) {
-		CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
+		final CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int createFavorite(long account_id, long status_id) {
-		CreateFavoriteTask task = new CreateFavoriteTask(account_id, status_id);
+		final CreateFavoriteTask task = new CreateFavoriteTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int createFriendship(long account_id, long user_id) {
-		CreateFriendshipTask task = new CreateFriendshipTask(account_id, user_id);
+		final CreateFriendshipTask task = new CreateFriendshipTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int destroyFavorite(long account_ids, long status_id) {
-		DestroyFavoriteTask task = new DestroyFavoriteTask(account_ids, status_id);
+		final DestroyFavoriteTask task = new DestroyFavoriteTask(account_ids, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int destroyFriendship(long account_id, long user_id) {
-		DestroyFriendshipTask task = new DestroyFriendshipTask(account_id, user_id);
+		final DestroyFriendshipTask task = new DestroyFriendshipTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int destroyStatus(long account_id, long status_id) {
-		DestroyStatusTask task = new DestroyStatusTask(account_id, status_id);
+		final DestroyStatusTask task = new DestroyStatusTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int getHomeTimeline(long[] account_ids, long[] max_ids) {
 		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
-		GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids);
+		final GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids);
 		return mGetHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public int getMentions(long[] account_ids, long[] max_ids) {
 		mAsyncTaskManager.cancel(mGetMentionsTaskId);
-		GetMentionsTask task = new GetMentionsTask(account_ids, max_ids);
+		final GetMentionsTask task = new GetMentionsTask(account_ids, max_ids);
 		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
@@ -131,22 +131,22 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public int retweetStatus(long account_id, long status_id) {
-		RetweetStatusTask task = new RetweetStatusTask(account_id, status_id);
+		final RetweetStatusTask task = new RetweetStatusTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int updateProfile(long account_id, String name, String url, String location, String description) {
-		UpdateProfileTask task = new UpdateProfileTask(account_id, name, url, location, description);
+		final UpdateProfileTask task = new UpdateProfileTask(account_id, name, url, location, description);
 		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int updateProfileImage(long account_id, Uri image_uri) {
-		UpdateProfileImageTask task = new UpdateProfileImageTask(account_id, image_uri);
+		final UpdateProfileImageTask task = new UpdateProfileImageTask(account_id, image_uri);
 		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
-		UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to);
+		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -164,12 +164,12 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected StatusResponse doInBackground(Void... params) {
 
-			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
-					twitter4j.Status status = twitter.destroyStatus(retweeted_id);
+					final twitter4j.Status status = twitter.destroyStatus(retweeted_id);
 					return new StatusResponse(account_id, status, null);
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					return new StatusResponse(account_id, null, e);
 				}
 			}
@@ -179,20 +179,20 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(StatusResponse result) {
 			if (result != null && result.status != null) {
-				ContentResolver resolver = getContentResolver();
-				User user = result.status.getUser();
-				twitter4j.Status retweeted_status = result.status.getRetweetedStatus();
+				final ContentResolver resolver = getContentResolver();
+				final User user = result.status.getUser();
+				final twitter4j.Status retweeted_status = result.status.getRetweetedStatus();
 				if (user != null && retweeted_status != null) {
-					ContentValues values = new ContentValues();
+					final ContentValues values = new ContentValues();
 					values.put(Statuses.RETWEET_COUNT, result.status.getRetweetCount());
 					values.put(Statuses.RETWEET_ID, -1);
 					values.put(Statuses.RETWEETED_BY_ID, -1);
 					values.put(Statuses.RETWEETED_BY_NAME, "");
 					values.put(Statuses.RETWEETED_BY_SCREEN_NAME, "");
 					values.put(Statuses.IS_RETWEET, 0);
-					String status_where = Statuses.STATUS_ID + " = " + result.status.getId();
-					String retweet_where = Statuses.STATUS_ID + " = " + retweeted_status.getId();
-					for (Uri uri : TweetStore.STATUSES_URIS) {
+					final String status_where = Statuses.STATUS_ID + " = " + result.status.getId();
+					final String retweet_where = Statuses.STATUS_ID + " = " + retweeted_status.getId();
+					for (final Uri uri : TweetStore.STATUSES_URIS) {
 						resolver.delete(uri, status_where, null);
 						resolver.update(uri, values, retweet_where, null);
 					}
@@ -229,12 +229,12 @@ public class TwidereService extends Service implements Constants {
 
 			if (account_id < 0) return new StatusResponse(account_id, null, null);
 
-			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
-					twitter4j.Status status = twitter.createFavorite(status_id);
+					final twitter4j.Status status = twitter.createFavorite(status_id);
 					return new StatusResponse(account_id, status, null);
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					return new StatusResponse(account_id, null, e);
 				}
 			}
@@ -243,7 +243,7 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(StatusResponse result) {
-			ContentResolver resolver = getContentResolver();
+			final ContentResolver resolver = getContentResolver();
 
 			if (result.status != null) {
 				final long status_id = result.status.getId();
@@ -257,10 +257,10 @@ public class TwidereService extends Service implements Constants {
 				where.append(" OR ");
 				where.append(Statuses.RETWEET_ID + "=" + status_id);
 				where.append(")");
-				for (Uri uri : TweetStore.STATUSES_URIS) {
+				for (final Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.update(uri, values, where.toString(), null);
 				}
-				Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
+				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_FAVORITED, true);
 				sendBroadcast(intent);
@@ -287,12 +287,12 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected UserResponse doInBackground(Void... params) {
 
-			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
-					User user = twitter.createFriendship(user_id);
+					final User user = twitter.createFriendship(user_id);
 					return new UserResponse(user, null);
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					return new UserResponse(null, e);
 				}
 			}
@@ -306,7 +306,7 @@ public class TwidereService extends Service implements Constants {
 			} else {
 				showErrorToast(TwidereService.this, result.exception, true);
 			}
-			Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
+			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
 			sendBroadcast(intent);
@@ -334,12 +334,12 @@ public class TwidereService extends Service implements Constants {
 				new StatusResponse(account_id, null, null);
 			}
 
-			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
-					twitter4j.Status status = twitter.destroyFavorite(status_id);
+					final twitter4j.Status status = twitter.destroyFavorite(status_id);
 					return new StatusResponse(account_id, status, null);
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					return new StatusResponse(account_id, null, e);
 				}
 			}
@@ -348,7 +348,7 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(StatusResponse result) {
-			ContentResolver resolver = getContentResolver();
+			final ContentResolver resolver = getContentResolver();
 
 			if (result.status != null) {
 				final long status_id = result.status.getId();
@@ -362,7 +362,7 @@ public class TwidereService extends Service implements Constants {
 				where.append(" OR ");
 				where.append(Statuses.RETWEET_ID + "=" + status_id);
 				where.append(")");
-				for (Uri uri : TweetStore.STATUSES_URIS) {
+				for (final Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.update(uri, values, where.toString(), null);
 				}
 				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
@@ -393,12 +393,12 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected UserResponse doInBackground(Void... params) {
 
-			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
-					User user = twitter.destroyFriendship(user_id);
+					final User user = twitter.destroyFriendship(user_id);
 					return new UserResponse(user, null);
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					return new UserResponse(null, e);
 				}
 			}
@@ -412,7 +412,7 @@ public class TwidereService extends Service implements Constants {
 			} else {
 				showErrorToast(TwidereService.this, result.exception, true);
 			}
-			Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
+			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
 			sendBroadcast(intent);
@@ -436,12 +436,12 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected StatusResponse doInBackground(Void... params) {
 
-			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
-					twitter4j.Status status = twitter.destroyStatus(status_id);
+					final twitter4j.Status status = twitter.destroyStatus(status_id);
 					return new StatusResponse(account_id, status, null);
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					return new StatusResponse(account_id, null, e);
 				}
 			}
@@ -456,7 +456,7 @@ public class TwidereService extends Service implements Constants {
 				final StringBuilder where = new StringBuilder();
 				where.append(Statuses.STATUS_ID + " = " + status_id);
 				where.append(" OR " + Statuses.RETWEET_ID + " = " + status_id);
-				for (Uri uri : TweetStore.STATUSES_URIS) {
+				for (final Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.delete(uri, where.toString(), null);
 				}
 				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
@@ -542,15 +542,15 @@ public class TwidereService extends Service implements Constants {
 			final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final int load_item_limit = prefs
 					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-			Twitter twitter = getTwitterInstance(context, account_id, true);
+			final Twitter twitter = getTwitterInstance(context, account_id, true);
 			if (twitter != null) {
 				try {
-					Paging paging = new Paging();
+					final Paging paging = new Paging();
 					paging.setCount(load_item_limit);
 					if (max_id > 0) {
 						paging.setMaxId(max_id);
 					}
-					ResponseList<DirectMessage> statuses = twitter.getDirectMessages(paging);
+					final ResponseList<DirectMessage> statuses = twitter.getDirectMessages(paging);
 					if (statuses != null) {
 						statuses.addAll(twitter.getSentDirectMessages(paging));
 					}
@@ -558,7 +558,7 @@ public class TwidereService extends Service implements Constants {
 					if (statuses != null) {
 						result = new AccountResponse(account_id, max_id, statuses);
 					}
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					e.printStackTrace();
 				}
 			}
@@ -603,11 +603,12 @@ public class TwidereService extends Service implements Constants {
 			protected Boolean doInBackground(Void... args) {
 				final ContentResolver resolver = context.getContentResolver();
 				boolean succeed = false;
-				Uri query_uri = buildQueryUri(uri, false);
+				final Uri query_uri = buildQueryUri(uri, false);
 
-				long account_id = response.account_id;
-				ResponseList<DirectMessage> statuses = response.responselist;
-				Cursor cur = resolver.query(uri, new String[0], Messages.ACCOUNT_ID + " = " + account_id, null, null);
+				final long account_id = response.account_id;
+				final ResponseList<DirectMessage> statuses = response.responselist;
+				final Cursor cur = resolver.query(uri, new String[0], Messages.ACCOUNT_ID + " = " + account_id, null,
+						null);
 				boolean no_items_before = false;
 				if (cur != null) {
 					no_items_before = cur.getCount() <= 0;
@@ -619,7 +620,7 @@ public class TwidereService extends Service implements Constants {
 
 				long min_id = -1;
 
-				for (DirectMessage status : statuses) {
+				for (final DirectMessage status : statuses) {
 					if (status == null) {
 						continue;
 					}
@@ -637,7 +638,7 @@ public class TwidereService extends Service implements Constants {
 
 				// Delete all rows conflicting before new data inserted.
 				{
-					StringBuilder where = new StringBuilder();
+					final StringBuilder where = new StringBuilder();
 					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 					where.append(" AND ");
 					where.append("(");
@@ -655,9 +656,9 @@ public class TwidereService extends Service implements Constants {
 				final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
 						|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
 				if (insert_gap) {
-					ContentValues values = new ContentValues();
+					final ContentValues values = new ContentValues();
 					values.put(Statuses.IS_GAP, 1);
-					StringBuilder where = new StringBuilder();
+					final StringBuilder where = new StringBuilder();
 					where.append(Statuses.ACCOUNT_ID + "=" + account_id);
 					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
 					resolver.update(query_uri, values, where.toString(), null);
@@ -675,10 +676,10 @@ public class TwidereService extends Service implements Constants {
 			}
 
 			private String buildInWhereClause(String column, List<Long> ids) {
-				StringBuilder builder = new StringBuilder();
+				final StringBuilder builder = new StringBuilder();
 				builder.append(column + " IN ( ");
 				for (int i = 0; i < ids.size(); i++) {
-					String id_string = String.valueOf(ids.get(i));
+					final String id_string = String.valueOf(ids.get(i));
 					if (id_string != null) {
 						if (i > 0) {
 							builder.append(", ");
@@ -719,32 +720,33 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected List<AccountResponse> doInBackground(Void... params) {
 
-			List<AccountResponse> result = new ArrayList<AccountResponse>();
+			final List<AccountResponse> result = new ArrayList<AccountResponse>();
 
 			if (account_ids == null) return result;
 
-			boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
+			final boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
 
 			int idx = 0;
-			SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-			for (long account_id : account_ids) {
-				Twitter twitter = getTwitter(context, account_id, true);
+			final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			final int load_item_limit = prefs
+					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
+			for (final long account_id : account_ids) {
+				final Twitter twitter = getTwitter(context, account_id, true);
 				if (twitter != null) {
 					try {
-						Paging paging = new Paging();
+						final Paging paging = new Paging();
 						paging.setCount(load_item_limit);
 						long max_id = -1;
 						if (max_ids_valid && max_ids[idx] > 0) {
 							max_id = max_ids[idx];
 							paging.setMaxId(max_id);
 						}
-						ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
+						final ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
 
 						if (statuses != null) {
 							result.add(new AccountResponse(account_id, max_id, statuses));
 						}
-					} catch (TwitterException e) {
+					} catch (final TwitterException e) {
 						e.printStackTrace();
 					}
 				}
@@ -806,13 +808,13 @@ public class TwidereService extends Service implements Constants {
 			protected Boolean doInBackground(Void... args) {
 				final ContentResolver resolver = context.getContentResolver();
 				boolean succeed = false;
-				Uri query_uri = buildQueryUri(uri, false);
+				final Uri query_uri = buildQueryUri(uri, false);
 
-				for (AccountResponse response : responses) {
-					long account_id = response.account_id;
-					ResponseList<twitter4j.Status> statuses = response.responselist;
-					Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id, null,
-							null);
+				for (final AccountResponse response : responses) {
+					final long account_id = response.account_id;
+					final ResponseList<twitter4j.Status> statuses = response.responselist;
+					final Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id,
+							null, null);
 					boolean no_items_before = false;
 					if (cur != null) {
 						no_items_before = cur.getCount() <= 0;
@@ -827,7 +829,7 @@ public class TwidereService extends Service implements Constants {
 
 					long min_id = -1;
 
-					for (twitter4j.Status status : statuses) {
+					for (final twitter4j.Status status : statuses) {
 						if (status == null) {
 							continue;
 						}
@@ -856,7 +858,7 @@ public class TwidereService extends Service implements Constants {
 
 					// Delete all rows conflicting before new data inserted.
 					{
-						StringBuilder where = new StringBuilder();
+						final StringBuilder where = new StringBuilder();
 						where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 						where.append(" AND ");
 						where.append("(");
@@ -874,9 +876,9 @@ public class TwidereService extends Service implements Constants {
 					final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
 							|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
 					if (insert_gap) {
-						ContentValues values = new ContentValues();
+						final ContentValues values = new ContentValues();
 						values.put(Statuses.IS_GAP, 1);
-						StringBuilder where = new StringBuilder();
+						final StringBuilder where = new StringBuilder();
 						where.append(Statuses.ACCOUNT_ID + "=" + account_id);
 						where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
 						resolver.update(query_uri, values, where.toString(), null);
@@ -905,10 +907,10 @@ public class TwidereService extends Service implements Constants {
 			}
 
 			private String buildInWhereClause(String column, List<Long> ids) {
-				StringBuilder builder = new StringBuilder();
+				final StringBuilder builder = new StringBuilder();
 				builder.append(column + " IN ( ");
 				for (int i = 0; i < ids.size(); i++) {
-					String id_string = String.valueOf(ids.get(i));
+					final String id_string = String.valueOf(ids.get(i));
 					if (id_string != null) {
 						if (i > 0) {
 							builder.append(", ");
@@ -941,12 +943,12 @@ public class TwidereService extends Service implements Constants {
 
 			if (account_id < 0) return new StatusResponse(account_id, null, null);
 
-			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
-					twitter4j.Status status = twitter.retweetStatus(status_id);
+					final twitter4j.Status status = twitter.retweetStatus(status_id);
 					return new StatusResponse(account_id, status, null);
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					return new StatusResponse(account_id, null, e);
 				}
 			}
@@ -955,23 +957,23 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(StatusResponse result) {
-			ContentResolver resolver = getContentResolver();
+			final ContentResolver resolver = getContentResolver();
 
 			if (result.status != null) {
-				User user = result.status.getUser();
-				twitter4j.Status retweeted_status = result.status.getRetweetedStatus();
+				final User user = result.status.getUser();
+				final twitter4j.Status retweeted_status = result.status.getRetweetedStatus();
 				if (user != null && retweeted_status != null) {
-					ContentValues values = new ContentValues();
+					final ContentValues values = new ContentValues();
 					values.put(Statuses.RETWEET_ID, result.status.getId());
 					values.put(Statuses.RETWEETED_BY_ID, user.getId());
 					values.put(Statuses.RETWEETED_BY_NAME, user.getName());
 					values.put(Statuses.RETWEETED_BY_SCREEN_NAME, user.getScreenName());
 					values.put(Statuses.RETWEET_COUNT, retweeted_status.getRetweetCount());
 					values.put(Statuses.IS_RETWEET, 1);
-					StringBuilder where = new StringBuilder();
+					final StringBuilder where = new StringBuilder();
 					where.append(Statuses.STATUS_ID + " = " + retweeted_status.getId());
 					where.append(" OR " + Statuses.RETWEET_ID + " = " + retweeted_status.getId());
-					for (Uri uri : TweetStore.STATUSES_URIS) {
+					for (final Uri uri : TweetStore.STATUSES_URIS) {
 						resolver.update(uri, values, where.toString(), null);
 					}
 				}
@@ -1114,12 +1116,12 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected UserResponse doInBackground(Void... params) {
 
-			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
 				try {
-					User user = twitter.updateProfileImage(new File(image_uri.getPath()));
+					final User user = twitter.updateProfileImage(new File(image_uri.getPath()));
 					return new UserResponse(user, null);
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					return new UserResponse(null, e);
 				}
 			}
@@ -1133,7 +1135,7 @@ public class TwidereService extends Service implements Constants {
 			} else {
 				showErrorToast(TwidereService.this, result.exception, true);
 			}
-			Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
+			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
 			sendBroadcast(intent);
@@ -1159,12 +1161,12 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected UserResponse doInBackground(Void... params) {
 
-			Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
-					User user = twitter.updateProfile(name, url, location, description);
+					final User user = twitter.updateProfile(name, url, location, description);
 					return new UserResponse(user, null);
-				} catch (TwitterException e) {
+				} catch (final TwitterException e) {
 					return new UserResponse(null, e);
 				}
 			}
@@ -1178,7 +1180,7 @@ public class TwidereService extends Service implements Constants {
 			} else {
 				showErrorToast(TwidereService.this, result.exception, true);
 			}
-			Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
+			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
 			sendBroadcast(intent);
@@ -1211,21 +1213,21 @@ public class TwidereService extends Service implements Constants {
 
 			final List<StatusResponse> result = new ArrayList<StatusResponse>();
 
-			for (long account_id : account_ids) {
-				Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			for (final long account_id : account_ids) {
+				final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
-						StatusUpdate status = new StatusUpdate(content);
+						final StatusUpdate status = new StatusUpdate(content);
 						status.setInReplyToStatusId(in_reply_to);
 						if (location != null) {
 							status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
 						}
-						String image_path = getImagePathFromUri(TwidereService.this, image_uri);
+						final String image_path = getImagePathFromUri(TwidereService.this, image_uri);
 						if (image_path != null) {
 							status.setMedia(new File(image_path));
 						}
 						result.add(new StatusResponse(account_id, twitter.updateStatus(status), null));
-					} catch (TwitterException e) {
+					} catch (final TwitterException e) {
 						e.printStackTrace();
 						result.add(new StatusResponse(account_id, null, e));
 					}
@@ -1239,9 +1241,9 @@ public class TwidereService extends Service implements Constants {
 
 			boolean succeed = false;
 			TwitterException exception = null;
-			List<Long> failed_account_ids = new ArrayList<Long>();
+			final List<Long> failed_account_ids = new ArrayList<Long>();
 
-			for (StatusResponse response : result) {
+			for (final StatusResponse response : result) {
 				if (response.status != null) {
 					succeed = true;
 					break;
@@ -1254,9 +1256,9 @@ public class TwidereService extends Service implements Constants {
 				Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(TwidereService.this, exception, true);
-				StringBuilder ids_builder = new StringBuilder();
+				final StringBuilder ids_builder = new StringBuilder();
 				for (int i = 0; i < failed_account_ids.size(); i++) {
-					String id_string = String.valueOf(failed_account_ids.get(i));
+					final String id_string = String.valueOf(failed_account_ids.get(i));
 					if (id_string != null) {
 						if (i > 0) {
 							ids_builder.append(';');
@@ -1264,14 +1266,14 @@ public class TwidereService extends Service implements Constants {
 						ids_builder.append(id_string);
 					}
 				}
-				ContentValues values = new ContentValues();
+				final ContentValues values = new ContentValues();
 				values.put(Drafts.ACCOUNT_IDS, ids_builder.toString());
 				values.put(Drafts.IN_REPLY_TO_STATUS_ID, in_reply_to);
 				values.put(Drafts.TEXT, content);
 				if (image_uri != null) {
 					values.put(Drafts.MEDIA_URI, image_uri.toString());
 				}
-				ContentResolver resolver = getContentResolver();
+				final ContentResolver resolver = getContentResolver();
 				resolver.insert(Drafts.CONTENT_URI, values);
 			}
 			super.onPostExecute(result);

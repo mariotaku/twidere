@@ -44,7 +44,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		@Override
 		public void onClick(View view) {
 			if (!mPagingEnabled) return;
-			TabView tabView = (TabView) view;
+			final TabView tabView = (TabView) view;
 			if (mCurrentItem == tabView.getIndex()) {
 				mAdapter.onPageReselected(mCurrentItem);
 			}
@@ -85,8 +85,8 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		mAdapter = (TitleProvider) mViewPager.getAdapter();
 		final int count = ((PagerAdapter) mAdapter).getCount();
 		for (int i = 0; i < count; i++) {
-			String title = mAdapter.getTitle(i);
-			Integer icon = mAdapter.getIcon(i);
+			final String title = mAdapter.getTitle(i);
+			final Integer icon = mAdapter.getIcon(i);
 			if (title != null && icon != null) {
 				addTab(title, icon, i);
 			} else if (title == null && icon != null) {
@@ -171,7 +171,8 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 	}
 
 	public void setCurrentItem(int item) {
-		if (mViewPager == null) throw new IllegalStateException("ViewPager has not been bound.");
+		if (mViewPager == null) return;
+		// throw new IllegalStateException("ViewPager has not been bound.");
 		mCurrentItem = item;
 		mViewPager.setCurrentItem(item);
 		mSelectedTabIndex = item;
@@ -197,7 +198,8 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 
 	public void setViewPager(ExtendedViewPager pager) {
 		final PagerAdapter adapter = pager.getAdapter();
-		if (adapter == null) throw new IllegalStateException("ViewPager does not have adapter instance.");
+		if (adapter == null) return;
+		// throw new IllegalStateException("ViewPager has not been bound.");
 		if (!(adapter instanceof TitleProvider))
 			throw new IllegalStateException(
 					"ViewPager adapter must implement TitleProvider to be used with TitlePageIndicator.");
@@ -278,11 +280,11 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			mParent = parent;
 			mIndex = index;
 
-			ImageView imageView = (ImageView) findViewById(android.R.id.icon);
+			final ImageView imageView = (ImageView) findViewById(android.R.id.icon);
 			imageView.setVisibility(View.VISIBLE);
 			imageView.setImageResource(icon);
 
-			TextView textView = (TextView) findViewById(android.R.id.text1);
+			final TextView textView = (TextView) findViewById(android.R.id.text1);
 			textView.setVisibility(View.GONE);
 		}
 
@@ -290,10 +292,10 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			mParent = parent;
 			mIndex = index;
 
-			ImageView imageView = (ImageView) findViewById(android.R.id.icon);
+			final ImageView imageView = (ImageView) findViewById(android.R.id.icon);
 			imageView.setVisibility(View.GONE);
 
-			TextView textView = (TextView) findViewById(android.R.id.text1);
+			final TextView textView = (TextView) findViewById(android.R.id.text1);
 			textView.setVisibility(View.VISIBLE);
 			textView.setText(text);
 		}
@@ -302,11 +304,11 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			mParent = parent;
 			mIndex = index;
 
-			ImageView imageView = (ImageView) findViewById(android.R.id.icon);
+			final ImageView imageView = (ImageView) findViewById(android.R.id.icon);
 			imageView.setVisibility(View.VISIBLE);
 			imageView.setImageResource(icon);
 
-			TextView textView = (TextView) findViewById(android.R.id.text1);
+			final TextView textView = (TextView) findViewById(android.R.id.text1);
 			textView.setVisibility(View.VISIBLE);
 			textView.setText(text);
 		}

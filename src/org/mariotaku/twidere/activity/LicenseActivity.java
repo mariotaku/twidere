@@ -27,8 +27,8 @@ public class LicenseActivity extends BaseDialogActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		Fragment fragment = Fragment.instantiate(this, LicenseFragment.class.getName());
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final Fragment fragment = Fragment.instantiate(this, LicenseFragment.class.getName());
 		ft.replace(android.R.id.content, fragment);
 		ft.commit();
 	}

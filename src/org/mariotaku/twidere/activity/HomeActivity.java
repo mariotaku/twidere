@@ -23,7 +23,7 @@ import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 
-import org.mariotaku.actionbarcompat.app.ActionBar;
+import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -75,7 +75,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
+			final String action = intent.getAction();
 			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 			}
@@ -87,20 +87,27 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 	private boolean mProgressBarIndeterminateVisible = false;
 
+	private boolean mIsNavigateToDefaultAccount = false;
+
 	public void checkDefaultAccountSet() {
-		long[] activated_ids = getActivatedAccountIds(this);
-		long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
+		final long[] activated_ids = getActivatedAccountIds(this);
+		final long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
 		if (default_account_id == -1 || !ArrayUtils.contains(activated_ids, default_account_id)) {
 			if (activated_ids.length == 1) {
 				mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
 				mIndicator.setPagingEnabled(true);
+				mIsNavigateToDefaultAccount = false;
 			} else if (activated_ids.length > 1) {
 				mViewPager.setCurrentItem(mAdapter.getCount() - 1, false);
 				mIndicator.setPagingEnabled(false);
-				Toast.makeText(this, R.string.set_default_account_hint, Toast.LENGTH_LONG).show();
+				if (!mIsNavigateToDefaultAccount) {
+					Toast.makeText(this, R.string.set_default_account_hint, Toast.LENGTH_LONG).show();
+				}
+				mIsNavigateToDefaultAccount = true;
 			}
 		} else {
 			mIndicator.setPagingEnabled(true);
+			mIsNavigateToDefaultAccount = false;
 		}
 	}
 
@@ -110,7 +117,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		ContentResolver resolver = getContentResolver();
+		final ContentResolver resolver = getContentResolver();
 		ContentValues values;
 		switch (requestCode) {
 			case REQUEST_SELECT_ACCOUNT: {
@@ -118,19 +125,19 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 					if (intent == null || intent.getExtras() == null) {
 						break;
 					}
-					Bundle bundle = intent.getExtras();
+					final Bundle bundle = intent.getExtras();
 					if (bundle == null) {
 						break;
 					}
-					long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
+					final long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
 					if (account_ids != null) {
 						values = new ContentValues();
 						values.put(Accounts.IS_ACTIVATED, 0);
 						resolver.update(Accounts.CONTENT_URI, values, null, null);
 						values = new ContentValues();
 						values.put(Accounts.IS_ACTIVATED, 1);
-						for (long account_id : account_ids) {
-							String where = Accounts.USER_ID + " = " + account_id;
+						for (final long account_id : account_ids) {
+							final String where = Accounts.USER_ID + " = " + account_id;
 							resolver.update(Accounts.CONTENT_URI, values, where, null);
 						}
 					}
@@ -151,10 +158,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	public void onBackStackChanged() {
 		if (!isDualPaneMode()) return;
-		FragmentManager fm = getSupportFragmentManager();
-		Fragment fragment = fm.findFragmentById(PANE_LEFT);
-		View main_view = findViewById(R.id.main);
-		boolean left_pane_used = fragment != null && fragment.isAdded();
+		final FragmentManager fm = getSupportFragmentManager();
+		final Fragment fragment = fm.findFragmentById(PANE_LEFT);
+		final View main_view = findViewById(R.id.main);
+		final boolean left_pane_used = fragment != null && fragment.isAdded();
 		main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
 		setPagingEnabled(!left_pane_used);
 	}
@@ -176,12 +183,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
-		boolean home_display_icon = getResources().getBoolean(R.bool.home_display_icon);
-		boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
+		final boolean home_display_icon = getResources().getBoolean(R.bool.home_display_icon);
+		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
 		setContentView(R.layout.main);
 		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
 		mComposeButton = (ImageButton) findViewById(R.id.button_compose);
-		long[] account_ids = getAccountIds(this);
+		final long[] account_ids = getAccountIds(this);
 
 		if (account_ids.length <= 0) {
 			startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
@@ -189,9 +196,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			return;
 		}
 
-		Bundle bundle = getIntent().getExtras();
+		final Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
-			long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
+			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null) {
 				mInterface.getHomeTimeline(refreshed_ids, null);
 				mInterface.getMentions(refreshed_ids, null);
@@ -199,9 +206,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		}
 		mActionBar = getSupportActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
+		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		mActionBar.setDisplayShowHomeEnabled(home_display_icon);
-		View view = mActionBar.getCustomView();
+		final View view = mActionBar.getCustomView();
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mAdapter = new TabsAdapter(this, getSupportFragmentManager());
@@ -229,6 +237,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_home, menu);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	public void onDefaultAccountSet() {
+		mIsNavigateToDefaultAccount = false;
 	}
 
 	@Override
@@ -261,14 +273,14 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		final boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
 		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
-		MenuItem composeItem = menu.findItem(MENU_COMPOSE);
+		final MenuItem composeItem = menu.findItem(MENU_COMPOSE);
 		if (composeItem != null) {
 			composeItem.setVisible(!bottom_actions);
 		}
 		if (mComposeButton != null) {
 			mComposeButton.setVisibility(bottom_actions ? View.VISIBLE : View.GONE);
 			if (bottom_actions) {
-				FrameLayout.LayoutParams compose_lp = (FrameLayout.LayoutParams) mComposeButton.getLayoutParams();
+				final FrameLayout.LayoutParams compose_lp = (FrameLayout.LayoutParams) mComposeButton.getLayoutParams();
 				compose_lp.gravity = Gravity.BOTTOM | (leftside_compose_button ? Gravity.LEFT : Gravity.RIGHT);
 				mComposeButton.setLayoutParams(compose_lp);
 			}
@@ -286,7 +298,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	public void onStart() {
 		super.onStart();
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
-		IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
 	}
 
@@ -310,7 +322,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	}
 
 	public void showAtPane(int pane, Fragment fragment, boolean addToBackStack) {
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		switch (pane) {
 			case PANE_LEFT:
 			case PANE_RIGHT: {
@@ -327,9 +339,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 	@Override
 	protected void onNewIntent(Intent intent) {
-		Bundle bundle = intent.getExtras();
+		final Bundle bundle = intent.getExtras();
 		if (bundle != null) {
-			long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
+			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null) {
 				mInterface.getHomeTimeline(refreshed_ids, null);
 				mInterface.getMentions(refreshed_ids, null);

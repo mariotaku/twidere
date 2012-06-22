@@ -81,21 +81,21 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	@SuppressWarnings("deprecation")
 	@Override
 	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
-		ListView lv = new InternalListView(context, attrs);
+		final ListView lv = new InternalListView(context, attrs);
 
 		final int mode = getMode();
 
 		// Loading View Strings
-		String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
-		String refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
-		String releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
+		final String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
+		final String refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
+		final String releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
 
 		// Get Styles from attrs
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
+		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
 		// Add Loading Views
 		if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
-			FrameLayout frame = new FrameLayout(context);
+			final FrameLayout frame = new FrameLayout(context);
 			mHeaderLoadingView = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
 					refreshingLabel, a);
 			frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
@@ -135,7 +135,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// If we're not showing the Refreshing view, or the list is empty, then
 		// the header/footer views won't show so we use the
 		// normal method
-		ListAdapter adapter = mRefreshableView.getAdapter();
+		final ListAdapter adapter = mRefreshableView.getAdapter();
 		if (!getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
 			super.resetHeader();
 			return;
@@ -185,7 +185,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// If we're not showing the Refreshing view, or the list is empty, then
 		// the header/footer views won't show so we use the
 		// normal method
-		ListAdapter adapter = mRefreshableView.getAdapter();
+		final ListAdapter adapter = mRefreshableView.getAdapter();
 		if (!getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
 			super.setRefreshingInternal(doScroll);
 			return;

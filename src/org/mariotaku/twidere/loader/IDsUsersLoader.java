@@ -52,8 +52,8 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		}
 		final ResponseList<User> users = twitter.lookupUsers(ids_to_load);
 		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();
-		for (User user : users) {
-			int position = ArrayUtils.indexOf(mIDs.getIDs(), user.getId());
+		for (final User user : users) {
+			final int position = ArrayUtils.indexOf(mIDs.getIDs(), user.getId());
 			result.add(new ParcelableUser(user, mAccountId, position));
 		}
 		return result;

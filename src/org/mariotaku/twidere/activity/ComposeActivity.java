@@ -6,9 +6,9 @@ import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 
 import java.io.File;
 
-import org.mariotaku.actionbarcompat.app.ActionBar;
-import org.mariotaku.popupmenu.MenuBar;
-import org.mariotaku.popupmenu.MenuBar.OnMenuItemClickListener;
+import org.mariotaku.actionbarcompat.ActionBar;
+import org.mariotaku.menubar.MenuBar;
+import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -76,7 +76,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		switch (requestCode) {
 			case REQUEST_TAKE_PHOTO:
 				if (resultCode == Activity.RESULT_OK) {
-					File file = new File(mImageUri.getPath());
+					final File file = new File(mImageUri.getPath());
 					if (file.exists()) {
 						mIsImageAttached = false;
 						mIsPhotoAttached = true;
@@ -88,8 +88,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				break;
 			case REQUEST_PICK_IMAGE:
 				if (resultCode == Activity.RESULT_OK) {
-					Uri uri = intent.getData();
-					File file = uri == null ? null : new File(getImagePathFromUri(this, uri));
+					final Uri uri = intent.getData();
+					final File file = uri == null ? null : new File(getImagePathFromUri(this, uri));
 					if (file != null && file.exists()) {
 						mImageUri = uri;
 						mIsPhotoAttached = false;
@@ -102,11 +102,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				break;
 			case REQUEST_SELECT_ACCOUNT:
 				if (resultCode == Activity.RESULT_OK) {
-					Bundle bundle = intent.getExtras();
+					final Bundle bundle = intent.getExtras();
 					if (bundle == null) {
 						break;
 					}
-					long[] user_ids = bundle.getLongArray(INTENT_KEY_IDS);
+					final long[] user_ids = bundle.getLongArray(INTENT_KEY_IDS);
 					if (user_ids != null) {
 						mAccountIds = user_ids;
 					}
@@ -126,7 +126,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 
-		Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
+		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		mAccountIds = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
 		mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
 		mInReplyToStatusId = bundle != null ? bundle.getLong(INTENT_KEY_IN_REPLY_TO_ID) : -1;
@@ -134,17 +134,17 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mInReplyToName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_NAME) : null;
 		int text_selection_start = -1;
 		if (mInReplyToStatusId > 0) {
-			String account_username = getAccountUsername(this, mAccountId);
+			final String account_username = getAccountUsername(this, mAccountId);
 
-			String[] mentions = getIntent().getExtras() != null ? getIntent().getExtras().getStringArray(
+			final String[] mentions = getIntent().getExtras() != null ? getIntent().getExtras().getStringArray(
 					INTENT_KEY_MENTIONS) : null;
 
 			if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null
 					&& (mentions == null || mentions.length < 1)) {
 				mText = bundle.getString(INTENT_KEY_TEXT);
 			} else if (mentions != null) {
-				StringBuilder builder = new StringBuilder();
-				for (String mention : mentions) {
+				final StringBuilder builder = new StringBuilder();
+				for (final String mention : mentions) {
 					if (mentions.length == 1 && mentions[0].equals(account_username)) {
 						builder.append('@' + account_username + ' ');
 					}
@@ -158,8 +158,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 			mIsQuote = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false;
 
-			boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-			String name = display_name ? mInReplyToName : mInReplyToScreenName;
+			final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+			final String name = display_name ? mInReplyToName : mInReplyToScreenName;
 			if (name != null) {
 				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, name));
 			}
@@ -222,8 +222,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_SEND: {
-				String content = mEditText != null ? mEditText.getText().toString() : null;
-				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+				final String content = mEditText != null ? mEditText.getText().toString() : null;
+				final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation : null, mImageUri,
 						mInReplyToStatusId);
 				if (this instanceof ComposeActivity) {
@@ -241,7 +241,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				break;
 			}
 			case MENU_ADD_LOCATION: {
-				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+				final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 				if (!attach_location) {
 					getLocation();
 				}
@@ -254,8 +254,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				break;
 			}
 			case MENU_SELECT_ACCOUNT: {
-				Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
-				Bundle bundle = new Bundle();
+				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
+				final Bundle bundle = new Bundle();
 				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
@@ -273,8 +273,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				break;
 			}
 			case MENU_SEND: {
-				String content = mEditText != null ? mEditText.getText().toString() : null;
-				boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+				final String content = mEditText != null ? mEditText.getText().toString() : null;
+				final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation : null, mImageUri,
 						mInReplyToStatusId);
 				if (this instanceof ComposeActivity) {
@@ -289,11 +289,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		int length = mEditText != null ? mEditText.length() : 0;
+		final int length = mEditText != null ? mEditText.length() : 0;
 		if (mTextCount != null) {
 			mTextCount.setText(String.valueOf(length));
 		}
-		MenuItem sendItem = menu.findItem(MENU_SEND);
+		final MenuItem sendItem = menu.findItem(MENU_SEND);
 		sendItem.setEnabled(length > 0 && length <= 140);
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -335,9 +335,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	 * mechanism) and finds the last known location.
 	 **/
 	private boolean getLocation() {
-		Criteria criteria = new Criteria();
+		final Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		String provider = mLocationManager.getBestProvider(criteria, true);
+		final String provider = mLocationManager.getBestProvider(criteria, true);
 
 		if (provider != null) {
 			mRecentLocation = mLocationManager.getLastKnownLocation(provider);
@@ -348,13 +348,13 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	private void pickImage() {
-		Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		final Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(i, REQUEST_PICK_IMAGE);
 	}
 
 	private void setMenu(Menu menu) {
-		int activated_color = getResources().getColor(R.color.holo_blue_bright);
-		MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
+		final int activated_color = getResources().getColor(R.color.holo_blue_bright);
+		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		if (mIsImageAttached && !mIsPhotoAttached) {
 			itemAddImage.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAddImage.setTitle(R.string.remove_image);
@@ -362,7 +362,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			itemAddImage.getIcon().clearColorFilter();
 			itemAddImage.setTitle(R.string.add_image);
 		}
-		MenuItem itemTakePhoto = menu.findItem(MENU_TAKE_PHOTO);
+		final MenuItem itemTakePhoto = menu.findItem(MENU_TAKE_PHOTO);
 		if (!mIsImageAttached && mIsPhotoAttached) {
 			itemTakePhoto.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
 			itemTakePhoto.setTitle(R.string.remove_photo);
@@ -370,8 +370,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			itemTakePhoto.getIcon().clearColorFilter();
 			itemTakePhoto.setTitle(R.string.take_photo);
 		}
-		MenuItem itemAttachLocation = menu.findItem(MENU_ADD_LOCATION);
-		boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+		final MenuItem itemAttachLocation = menu.findItem(MENU_ADD_LOCATION);
+		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		if (attach_location && getLocation()) {
 			itemAttachLocation.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAttachLocation.setTitle(R.string.remove_location);
@@ -383,12 +383,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	private void takePhoto() {
-		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-			File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
+			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
 					.getExternalCacheDir(this) : new File(Environment.getExternalStorageDirectory().getPath()
 					+ "/Android/data/" + getPackageName() + "/cache/");
-			File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
+			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
 			mImageUri = Uri.fromFile(file);
 			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
 			startActivityForResult(intent, REQUEST_TAKE_PHOTO);

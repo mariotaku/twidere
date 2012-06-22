@@ -84,13 +84,13 @@ public class ProfileImageLoader {
 	private void copyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
 		try {
-			byte[] bytes = new byte[buffer_size];
+			final byte[] bytes = new byte[buffer_size];
 			int count = is.read(bytes, 0, buffer_size);
 			while (count != -1) {
 				os.write(bytes, 0, count);
 				count = is.read(bytes, 0, buffer_size);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// e.printStackTrace();
 		}
 	}
@@ -99,7 +99,7 @@ public class ProfileImageLoader {
 	private Bitmap decodeFile(File f) {
 		try {
 			// decode image size
-			BitmapFactory.Options options = new BitmapFactory.Options();
+			final BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inJustDecodeBounds = true;
 			BitmapFactory.decodeStream(new FileInputStream(f), null, options);
 
@@ -113,9 +113,9 @@ public class ProfileImageLoader {
 			}
 
 			// decode with inSampleSize
-			BitmapFactory.Options o2 = new BitmapFactory.Options();
+			final BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale / 2;
-			Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+			final Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
 			if (bitmap == null) {
 				// The file is corrupted, so we remove it from cache.
 				if (f.isFile()) {
@@ -123,7 +123,7 @@ public class ProfileImageLoader {
 				}
 			}
 			return bitmap;
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			// e.printStackTrace();
 		}
 		return null;
@@ -135,7 +135,7 @@ public class ProfileImageLoader {
 	}
 
 	boolean imageViewReused(ImageToLoad imagetoload) {
-		Object tag = mImageViews.get(imagetoload.imageview);
+		final Object tag = mImageViews.get(imagetoload.imageview);
 		if (tag == null || !tag.equals(imagetoload.source)) return true;
 		return false;
 	}
@@ -176,9 +176,9 @@ public class ProfileImageLoader {
 
 		public void clear() {
 			if (mCacheDir == null) return;
-			File[] files = mCacheDir.listFiles();
+			final File[] files = mCacheDir.listFiles();
 			if (files == null) return;
-			for (File f : files) {
+			for (final File f : files) {
 				f.delete();
 			}
 		}
@@ -230,30 +230,30 @@ public class ProfileImageLoader {
 
 		public Bitmap getBitmap(URL url, ImageView imageview) {
 			if (url == null) return null;
-			File f = mFileCache.getFile(url);
+			final File f = mFileCache.getFile(url);
 
 			// from SD cache
-			Bitmap b = decodeFile(f);
+			final Bitmap b = decodeFile(f);
 			if (b != null) return b;
 
 			// from web
 			try {
 				Bitmap bitmap = null;
-				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 				conn.setConnectTimeout(30000);
 				conn.setReadTimeout(30000);
 				conn.setInstanceFollowRedirects(true);
-				InputStream is = conn.getInputStream();
-				OutputStream os = new FileOutputStream(f);
+				final InputStream is = conn.getInputStream();
+				final OutputStream os = new FileOutputStream(f);
 				copyStream(is, os);
 				os.close();
 				bitmap = decodeFile(f);
 				return bitmap;
-			} catch (FileNotFoundException e) {
+			} catch (final FileNotFoundException e) {
 				// Storage state may changed, so call FileCache.init() again.
 				// e.printStackTrace();
 				mFileCache.init();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				// e.printStackTrace();
 			}
 			return null;

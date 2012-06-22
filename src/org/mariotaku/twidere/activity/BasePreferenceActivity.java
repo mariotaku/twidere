@@ -2,7 +2,7 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
-import org.mariotaku.actionbarcompat.app.ActionBarPreferenceActivity;
+import org.mariotaku.actionbarcompat.ActionBarPreferenceActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -24,8 +24,8 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 
 	@Override
 	public boolean isThemeChanged() {
-		SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere
 				: R.style.Theme_Twidere_Light;
 		return new_theme_id != mThemeId;
 	}
@@ -42,10 +42,10 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 		if (isThemeChanged()) {
 			boolean show_anim = false;
 			try {
-				float transition_animation = Settings.System.getFloat(getContentResolver(),
+				final float transition_animation = Settings.System.getFloat(getContentResolver(),
 						Settings.System.TRANSITION_ANIMATION_SCALE);
 				show_anim = transition_animation > 0.0;
-			} catch (SettingNotFoundException e) {
+			} catch (final SettingNotFoundException e) {
 				e.printStackTrace();
 			}
 			restartActivity(this, show_anim);
@@ -54,7 +54,7 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 
 	@Override
 	public void setTheme() {
-		SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere
 				: R.style.Theme_Twidere_Light;
 		setTheme(mThemeId);

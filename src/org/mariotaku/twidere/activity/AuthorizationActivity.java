@@ -82,20 +82,20 @@ public class AuthorizationActivity extends BaseActivity {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			Uri uri = Uri.parse(url);
+			final Uri uri = Uri.parse(url);
 			if (uri.getHost().equals(authUrl.getHost()))
 				return false;
 			else if (url.startsWith(DEFAULT_OAUTH_CALLBACK)) {
-				String oauth_verifier = uri.getQueryParameter(OAUTH_VERIFIER);
+				final String oauth_verifier = uri.getQueryParameter(OAUTH_VERIFIER);
 				if (oauth_verifier != null) {
-					Bundle bundle = new Bundle();
+					final Bundle bundle = new Bundle();
 					bundle.putString(OAUTH_VERIFIER, oauth_verifier);
 					setResult(RESULT_OK, new Intent().putExtras(bundle));
 					finish();
 				}
 				return true;
 			}
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+			final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 			startActivity(intent);
 			finish();
 			return true;

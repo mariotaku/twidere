@@ -195,11 +195,11 @@ public class Patterns {
 	 *         concatenated together
 	 */
 	public static final String concatGroups(Matcher matcher) {
-		StringBuilder b = new StringBuilder();
+		final StringBuilder b = new StringBuilder();
 		final int numGroups = matcher.groupCount();
 
 		for (int i = 1; i <= numGroups; i++) {
-			String s = matcher.group(i);
+			final String s = matcher.group(i);
 
 			System.err.println("Group(" + i + ") : " + s);
 
@@ -221,11 +221,11 @@ public class Patterns {
 	 * @return A String comprising all of the digits and plus in the match
 	 */
 	public static final String digitsAndPlusOnly(Matcher matcher) {
-		StringBuilder buffer = new StringBuilder();
-		String matchingRegion = matcher.group();
+		final StringBuilder buffer = new StringBuilder();
+		final String matchingRegion = matcher.group();
 
 		for (int i = 0, size = matchingRegion.length(); i < size; i++) {
-			char character = matchingRegion.charAt(i);
+			final char character = matchingRegion.charAt(i);
 
 			if (character == '+' || Character.isDigit(character)) {
 				buffer.append(character);

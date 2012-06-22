@@ -29,14 +29,14 @@ public class ServiceInterface implements Constants, ITwidereService {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
+			final String action = intent.getAction();
 			if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
-				for (StateListener listener : mStateListeners)
+				for (final StateListener listener : mStateListeners)
 					if (listener != null) {
 						listener.onHomeTimelineRefreshed();
 					}
 			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
-				for (StateListener listener : mStateListeners)
+				for (final StateListener listener : mStateListeners)
 					if (listener != null) {
 						listener.onMentionsRefreshed();
 					}
@@ -52,7 +52,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		@Override
 		public void onServiceConnected(ComponentName service, IBinder obj) {
 			mService = ITwidereService.Stub.asInterface(obj);
-			IntentFilter filter = new IntentFilter() {
+			final IntentFilter filter = new IntentFilter() {
 
 				{
 					addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
@@ -94,7 +94,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.cancelRetweet(account_id, status_id);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -105,7 +105,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.createFavorite(account_id, status_id);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -116,7 +116,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.createFriendship(account_id, user_id);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -127,7 +127,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.destroyFavorite(account_id, status_id);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -138,7 +138,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.destroyFriendship(account_id, user_id);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -149,7 +149,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.destroyStatus(account_id, status_id);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -160,7 +160,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.getHomeTimeline(account_ids, max_ids);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -171,7 +171,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.getMentions(account_ids, max_ids);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -182,7 +182,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.getMessages(account_id, max_id);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -193,7 +193,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return false;
 		try {
 			return mService.hasActivatedTask();
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -204,7 +204,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return false;
 		try {
 			return mService.isHomeTimelineRefreshing();
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -215,7 +215,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return false;
 		try {
 			return mService.isMentionsRefreshing();
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -232,7 +232,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.retweetStatus(account_id, status_id);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -243,7 +243,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return false;
 		try {
 			return mService.test();
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			// Maybe service died, so we return false value to let
 			// ServiceInterface restart the service.
 		}
@@ -255,7 +255,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.updateProfile(account_id, name, url, location, description);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -266,7 +266,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.updateProfileImage(account_id, image_uri);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;
@@ -277,7 +277,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.updateStatus(account_ids, content, location, image_uri, in_reply_to);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return -1;

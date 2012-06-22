@@ -31,7 +31,7 @@ public class StatusViewHolder {
 
 	public void setAccountColor(int color) {
 		if (!show_as_gap && account_color_enabled) {
-			Drawable background = content.getBackground();
+			final Drawable background = content.getBackground();
 			if (background != null) {
 				background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 			}

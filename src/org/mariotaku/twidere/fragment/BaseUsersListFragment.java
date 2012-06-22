@@ -1,18 +1,21 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
-
 import java.util.List;
 
+import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.UsersAdapter;
 import org.mariotaku.twidere.util.ParcelableUser;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.View;
@@ -32,6 +35,8 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 	private long mAccountId;
 
 	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true;
+
+	private Fragment mDetailFragment;
 
 	public abstract Loader<List<ParcelableUser>> newLoaderInstance();
 
@@ -80,7 +85,7 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 				getLoaderManager().restartLoader(0, args, this);
 			}
 		} else {
-			openUserProfile(getActivity(), mAccountId, user.user_id, user.screen_name);
+			openUserProfile(user.user_id, user.screen_name);
 		}
 	}
 
@@ -94,7 +99,7 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.clear();
 		if (data != null) {
-			for (ParcelableUser user : data) {
+			for (final ParcelableUser user : data) {
 				mAdapter.add(user);
 			}
 		}
@@ -115,7 +120,8 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount && totalItemCount >= visibleItemCount;
+		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
+				&& totalItemCount >= visibleItemCount;
 
 		if (mReachedBottom != reached) {
 			mReachedBottom = reached;
@@ -123,7 +129,7 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 				mNotReachedBottomBefore = false;
 				return;
 			}
-			int count = mAdapter.getCount();
+			final int count = mAdapter.getCount();
 			if (mLoadMoreAutomatically && mReachedBottom && count > visibleItemCount && count - 1 > 0) {
 				final Bundle args = getArguments();
 				if (args != null) {
@@ -141,13 +147,37 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 	}
 
+	private void openUserProfile(long user_id, String screen_name) {
+		final FragmentActivity activity = getActivity();
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			final HomeActivity home_activity = (HomeActivity) activity;
+			if (mDetailFragment instanceof UserProfileFragment && mDetailFragment.isAdded()) {
+				((UserProfileFragment) mDetailFragment).getUserInfo(mAccountId, user_id, screen_name);
+			} else {
+				mDetailFragment = new UserProfileFragment();
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+				args.putLong(INTENT_KEY_USER_ID, user_id);
+				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				mDetailFragment.setArguments(args);
+				home_activity.showAtPane(HomeActivity.PANE_RIGHT, mDetailFragment, true);
+			}
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
+			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
 	private static class SetLayerTypeAccessor {
 
 		@TargetApi(11)
 		public static void setLayerType(View view, int layerType, Paint paint) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				view.setLayerType(layerType, paint);
-			}
+			view.setLayerType(layerType, paint);
 		}
 	}
 

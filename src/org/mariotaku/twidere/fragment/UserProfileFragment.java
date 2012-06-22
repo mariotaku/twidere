@@ -62,10 +62,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		OnItemClickListener, OnItemLongClickListener {
 
 	private ProfileImageLoader mProfileImageLoader;
-	private ImageView mProfileImage;
+	private ImageView mProfileImageView;
 	private FollowInfoTask mFollowInfoTask;
 	private View mFollowIndicator;
-	private TextView mName, mScreenName;
+	private TextView mNameView, mScreenNameView;
 	private View mNameLayout, mProfileImageContainer;
 	private ProgressBar mProgress, mListProgress;
 	private Button mFollowButton, mRetryButton;
@@ -84,7 +84,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
+			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
 				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
@@ -94,7 +94,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
 				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
-					getUserInfo();
+					reloadUserInfo();
 				}
 			}
 		}
@@ -108,14 +108,67 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private static final int TYPE_DESCRIPTION = 4;
 
+	private long mUserId;
+
+	private String mScreenName;
+
+	public void changeUser(long account_id, User user) {
+		if (user == null || !isMyActivatedAccount(getActivity(), account_id)) return;
+		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
+			mUserInfoTask.cancel(true);
+		}
+		mUserInfoTask = null;
+		mRetryButton.setVisibility(View.GONE);
+		mAccountId = account_id;
+		mUserId = user.getId();
+		mScreenName = user.getScreenName();
+		mNameView.setText(user.getName());
+		mScreenNameView.setText(user.getScreenName());
+		mProfileImageLoader.displayImage(user.getProfileImageURL(), mProfileImageView);
+		mUser = user;
+		mAdapter.notifyDataSetChanged();
+		getFollowInfo();
+	}
+
+	public void getUserInfo(long account_id, long user_id, String screen_name) {
+		mAccountId = account_id;
+		mUserId = user_id;
+		mScreenName = screen_name;
+		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
+			mUserInfoTask.cancel(true);
+		}
+		mUserInfoTask = null;
+		if (!isMyActivatedAccount(getActivity(), mAccountId)) {
+			mListProgress.setVisibility(View.GONE);
+			mListView.setVisibility(View.GONE);
+			mRetryButton.setVisibility(View.GONE);
+			return;
+		}
+
+		if (user_id != -1) {
+			mUserInfoTask = new UserInfoTask(getActivity(), account_id, user_id);
+		} else if (screen_name != null) {
+			mUserInfoTask = new UserInfoTask(getActivity(), account_id, screen_name);
+		} else {
+			mListProgress.setVisibility(View.GONE);
+			mListView.setVisibility(View.GONE);
+			mRetryButton.setVisibility(View.GONE);
+			return;
+		}
+
+		if (mUserInfoTask != null) {
+			mUserInfoTask.execute();
+		}
+	}
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		Bundle args = getArguments();
-		long user_id = -1;
+		final Bundle args = getArguments();
+		long account_id = -1, user_id = -1;
 		String screen_name = null;
 		if (args != null) {
-			mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID);
+			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
@@ -144,7 +197,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
-		getUserInfo();
+		getUserInfo(account_id, user_id, screen_name);
 
 	}
 
@@ -153,7 +206,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		switch (view.getId()) {
 			case R.id.follow: {
 				if (mUser != null) {
-					ServiceInterface service = ServiceInterface.getInstance(getActivity());
+					final ServiceInterface service = ServiceInterface.getInstance(getActivity());
 					if (mIsFollowing) {
 						service.destroyFriendship(mAccountId, mUser.getId());
 					} else {
@@ -163,7 +216,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case R.id.retry: {
-				getUserInfo();
+				reloadUserInfo();
 				break;
 			}
 			case R.id.name_view: {
@@ -174,10 +227,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case R.id.profile_image_container: {
 				final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 				if (twitter != null) {
-					Configuration conf = twitter.getConfiguration();
-					Uri uri = Uri.parse(conf.getRestBaseURL() + "/users/profile_image?screen_name="
+					final Configuration conf = twitter.getConfiguration();
+					final Uri uri = Uri.parse(conf.getRestBaseURL() + "/users/profile_image?screen_name="
 							+ mUser.getScreenName() + "&size=original");
-					Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, uri);
+					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, uri);
 					intent.setPackage(getActivity().getPackageName());
 					startActivity(intent);
 				}
@@ -191,14 +244,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mHeaderView = inflater.inflate(R.layout.user_profile_header, null, false);
 		mNameLayout = mHeaderView.findViewById(R.id.name_view);
-		mName = (TextView) mHeaderView.findViewById(R.id.name);
-		mScreenName = (TextView) mHeaderView.findViewById(R.id.screen_name);
-		mProfileImage = (ImageView) mHeaderView.findViewById(R.id.profile_image);
+		mNameView = (TextView) mHeaderView.findViewById(R.id.name);
+		mScreenNameView = (TextView) mHeaderView.findViewById(R.id.screen_name);
+		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mProfileImageContainer = mHeaderView.findViewById(R.id.profile_image_container);
 		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
 		mFollowIndicator = mHeaderView.findViewById(R.id.follow_indicator);
 		mProgress = (ProgressBar) mHeaderView.findViewById(R.id.progress);
-		View view = inflater.inflate(R.layout.user_profile, null, false);
+		final View view = inflater.inflate(R.layout.user_profile, null, false);
 		mRetryButton = (Button) view.findViewById(R.id.retry);
 		mListProgress = (ProgressBar) view.findViewById(R.id.list_progress);
 		return view;
@@ -218,7 +271,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		UserAction action = mAdapter.findItem(id);
+		final UserAction action = mAdapter.findItem(id);
 		if (action != null) {
 			action.onClick();
 		}
@@ -226,7 +279,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
-		UserAction action = mAdapter.findItem(id);
+		final UserAction action = mAdapter.findItem(id);
 		if (action != null) return action.onLongClick();
 		return false;
 	}
@@ -252,7 +305,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	@Override
 	public void onStart() {
 		super.onStart();
-		IntentFilter filter = new IntentFilter(BROADCAST_FRIENDSHIP_CHANGED);
+		final IntentFilter filter = new IntentFilter(BROADCAST_FRIENDSHIP_CHANGED);
 		filter.addAction(BROADCAST_PROFILE_UPDATED);
 		if (getActivity() != null) {
 			getActivity().registerReceiver(mStatusReceiver, filter);
@@ -269,8 +322,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void setListShown(boolean shown) {
-		int fade_in = android.R.anim.fade_in;
-		int fade_out = android.R.anim.fade_out;
+		final int fade_in = android.R.anim.fade_in;
+		final int fade_out = android.R.anim.fade_out;
 		mListProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
 		mListProgress.startAnimation(AnimationUtils.loadAnimation(getActivity(), shown ? fade_out : fade_in));
 		mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
@@ -285,30 +338,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowInfoTask.execute();
 	}
 
-	private void getUserInfo() {
-		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
-			mUserInfoTask.cancel(true);
-		}
-		mUserInfoTask = null;
-		Bundle args = getArguments();
-		if (args != null) {
-			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			if (user_id != -1) {
-				mUserInfoTask = new UserInfoTask(getActivity(), account_id, user_id);
-			} else if (screen_name != null) {
-				mUserInfoTask = new UserInfoTask(getActivity(), account_id, screen_name);
-			} else {
-				mListProgress.setVisibility(View.GONE);
-				mListView.setVisibility(View.GONE);
-				mRetryButton.setVisibility(View.GONE);
-				return;
-			}
-		}
-		if (mUserInfoTask != null) {
-			mUserInfoTask.execute();
-		}
+	private void reloadUserInfo() {
+		getUserInfo(mAccountId, mUserId, mScreenName);
 	}
 
 	private class CreatedDateAction extends UserAction {
@@ -372,9 +403,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public void onClick() {
 			if (mUser == null || !isMyActivatedAccount(getActivity(), mUser.getId())) return;
-			Bundle bundle = new Bundle();
+			final Bundle bundle = new Bundle();
 			bundle.putLong(INTENT_KEY_ACCOUNT_ID, mUser.getId());
-			Intent intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
+			final Intent intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
 			intent.putExtras(bundle);
 			startActivity(intent);
 		}
@@ -398,7 +429,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
 					mText = mEditText.getText().toString();
-					ServiceInterface service = ServiceInterface.getInstance(getActivity());
+					final ServiceInterface service = ServiceInterface.getInstance(getActivity());
 					switch (mType) {
 						case TYPE_NAME: {
 							service.updateProfile(mAccountId, mText, null, null, null);
@@ -426,8 +457,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@SuppressWarnings("deprecation")
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			FrameLayout layout = new FrameLayout(getActivity());
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			final FrameLayout layout = new FrameLayout(getActivity());
 			mEditText = new EditText(getActivity());
 			if (mText != null) {
 				mEditText.setText(mText);
@@ -455,7 +486,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			layout.addView(mEditText, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT) {
 
 				{
-					int margin = (int) (getResources().getDisplayMetrics().density * 16);
+					final int margin = (int) (getResources().getDisplayMetrics().density * 16);
 					bottomMargin = margin;
 					leftMargin = margin;
 					rightMargin = margin;
@@ -547,11 +578,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private Response<Boolean> isFollowing() {
 			if (mUser == null) return new Response<Boolean>(null, null);
 			if (mAccountId == mUser.getId()) return new Response<Boolean>(null, null);
-			Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
+			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 			try {
-				Relationship result = twitter.showFriendship(mAccountId, mUser.getId());
+				final Relationship result = twitter.showFriendship(mAccountId, mUser.getId());
 				return new Response<Boolean>(result.isSourceFollowingTarget(), null);
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return new Response<Boolean>(null, e);
 			}
 		}
@@ -654,9 +685,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public void onClick() {
 			if (mUser == null) return;
-			URL url = mUser.getURL();
+			final URL url = mUser.getURL();
 			if (url != null) {
-				Uri uri = Uri.parse(String.valueOf(url));
+				final Uri uri = Uri.parse(String.valueOf(url));
 				startActivity(new Intent(Intent.ACTION_VIEW, uri));
 			}
 		}
@@ -735,7 +766,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				if (user_id != -1)
 					return new Response<User>(twitter.showUser(user_id), null);
 				else if (screen_name != null) return new Response<User>(twitter.showUser(screen_name), null);
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return new Response<User>(null, e);
 			}
 			return new Response<User>(null, null);
@@ -752,24 +783,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (result == null) return;
 			if (getActivity() == null) return;
 			if (result.value != null) {
-				ContentResolver resolver = getContentResolver();
+				final User user = result.value;
+				final ContentResolver resolver = getContentResolver();
 				resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + result.value.getId(), null);
 				resolver.insert(CachedUsers.CONTENT_URI, makeCachedUsersContentValues(result.value));
 				setListShown(true);
-				mUser = result.value;
-				getListView().invalidateViews();
-				mName.setText(mUser.getName());
-				mScreenName.setText(mUser.getScreenName());
-				mProfileImageLoader.displayImage(mUser.getProfileImageURL(), mProfileImage);
+				changeUser(mAccountId, user);
 				mRetryButton.setVisibility(View.GONE);
 				if (isMyAccount(getActivity(), mUser.getId())) {
-					ContentValues values = new ContentValues();
-					URL profile_image_url = mUser.getProfileImageURL();
+					final ContentValues values = new ContentValues();
+					final URL profile_image_url = user.getProfileImageURL();
 					if (profile_image_url != null) {
 						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url.toString());
 					}
 					values.put(Accounts.USERNAME, mUser.getScreenName());
-					String where = Accounts.USER_ID + " = " + mUser.getId();
+					final String where = Accounts.USER_ID + " = " + mUser.getId();
 					getContentResolver().update(Accounts.CONTENT_URI, values, where, null);
 				}
 			} else {
@@ -778,7 +806,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				mRetryButton.setVisibility(View.VISIBLE);
 			}
 			mFollowButton.setOnClickListener(mUser != null ? UserProfileFragment.this : null);
-			getFollowInfo();
 			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);
 		}
@@ -808,9 +835,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = super.getView(position, convertView, parent);
-			TextView summary_view = (TextView) view.findViewById(android.R.id.text2);
-			String summary = getItem(position).getSummary();
+			final View view = super.getView(position, convertView, parent);
+			final TextView summary_view = (TextView) view.findViewById(android.R.id.text2);
+			final String summary = getItem(position).getSummary();
 			summary_view.setText(summary);
 			summary_view.setVisibility(!isNullOrEmpty(summary) ? View.VISIBLE : View.GONE);
 			return view;

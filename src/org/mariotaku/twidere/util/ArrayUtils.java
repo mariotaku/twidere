@@ -6,7 +6,7 @@ public final class ArrayUtils {
 	}
 
 	public static boolean contains(long[] array, long value) {
-		for (long item : array) {
+		for (final long item : array) {
 			if (item == value) return true;
 		}
 		return false;

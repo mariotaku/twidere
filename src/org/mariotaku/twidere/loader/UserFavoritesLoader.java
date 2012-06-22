@@ -34,7 +34,7 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 
 	@Override
 	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
-		Twitter twitter = getTwitter();
+		final Twitter twitter = getTwitter();
 		if (twitter != null) {
 			if (mUserId != -1)
 				return twitter.getFavorites(String.valueOf(mUserId), paging);

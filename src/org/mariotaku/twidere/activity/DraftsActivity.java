@@ -49,7 +49,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
+			final String action = intent.getAction();
 			if (BROADCAST_DRAFTS_DATABASE_UPDATED.equals(action)) {
 				getSupportLoaderManager().restartLoader(0, null, DraftsActivity.this);
 			}
@@ -90,8 +90,8 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Uri uri = Drafts.CONTENT_URI;
-		String[] cols = Drafts.COLUMNS;
+		final Uri uri = Drafts.CONTENT_URI;
+		final String[] cols = Drafts.COLUMNS;
 		return new CursorLoader(this, uri, cols, null, null, null);
 	}
 
@@ -105,7 +105,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		if (mCursor != null) {
 			mSelectedId = id;
-			DraftItem draft = new DraftItem(mCursor, position);
+			final DraftItem draft = new DraftItem(mCursor, position);
 			composeDraft(draft);
 		}
 	}
@@ -118,7 +118,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 			mSelectedId = mCursor.getLong(mCursor.getColumnIndex(Drafts._ID));
 		}
 
-		mPopupMenu = new PopupMenu(this, view);
+		mPopupMenu = PopupMenu.getInstance(this, view);
 		mPopupMenu.inflate(R.menu.context_draft);
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
@@ -173,7 +173,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 					}
 				}
 				mResolver.delete(Drafts.CONTENT_URI, null, null);
-				for (DraftItem draft : drafts) {
+				for (final DraftItem draft : drafts) {
 					sendDraft(draft);
 				}
 				break;
@@ -189,7 +189,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	@Override
 	public void onResume() {
 		super.onResume();
-		float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mAdapter.setTextSize(text_size);
 		if (mTextSize != text_size) {
 			mTextSize = text_size;
@@ -199,7 +199,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 
 	@Override
 	public void onStart() {
-		IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
+		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
 		super.onStart();
 	}
@@ -214,8 +214,8 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	}
 
 	private void composeDraft(DraftItem draft) {
-		Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-		Bundle bundle = new Bundle();
+		final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+		final Bundle bundle = new Bundle();
 		bundle.putString(INTENT_KEY_TEXT, draft.text);
 		bundle.putLongArray(INTENT_KEY_IDS, draft.account_ids);
 		bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, draft.in_reply_to_status_id);
@@ -224,7 +224,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	}
 
 	private void sendDraft(DraftItem draft) {
-		Uri uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
+		final Uri uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
 		mInterface.updateStatus(draft.account_ids, draft.text, null, uri, draft.in_reply_to_status_id);
 	}
 
@@ -238,15 +238,15 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 			mCursor.moveToPosition(position);
 			text = mCursor.getString(mCursor.getColumnIndex(Drafts.TEXT));
 			media_uri = mCursor.getString(mCursor.getColumnIndex(Drafts.MEDIA_URI));
-			String account_ids_string = mCursor.getString(mCursor.getColumnIndex(Drafts.ACCOUNT_IDS));
+			final String account_ids_string = mCursor.getString(mCursor.getColumnIndex(Drafts.ACCOUNT_IDS));
 			in_reply_to_status_id = mCursor.getLong(mCursor.getColumnIndex(Drafts.IN_REPLY_TO_STATUS_ID));
 			if (account_ids_string != null) {
-				String[] ids_string_array = account_ids_string.split(";");
-				List<Long> ids_list = new ArrayList<Long>();
-				for (String id_string : ids_string_array) {
+				final String[] ids_string_array = account_ids_string.split(";");
+				final List<Long> ids_list = new ArrayList<Long>();
+				for (final String id_string : ids_string_array) {
 					try {
 						ids_list.add(Long.parseLong(id_string));
-					} catch (NumberFormatException e) {
+					} catch (final NumberFormatException e) {
 						// Ignore.
 					}
 				}

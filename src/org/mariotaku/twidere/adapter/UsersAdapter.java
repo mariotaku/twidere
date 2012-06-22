@@ -20,7 +20,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 
 	public UsersAdapter(Context context) {
 		super(context, R.layout.user_list_item, R.id.description);
-		TwidereApplication application = (TwidereApplication) context.getApplicationContext();
+		final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
 		mImageLoader = application.getProfileImageLoader();
 		application.getServiceInterface();
 	}
@@ -34,8 +34,8 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View view = super.getView(position, convertView, parent);
-		Object tag = view.getTag();
+		final View view = super.getView(position, convertView, parent);
+		final Object tag = view.getTag();
 		UserViewHolder holder = null;
 		if (tag instanceof UserViewHolder) {
 			holder = (UserViewHolder) tag;
@@ -43,7 +43,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			holder = new UserViewHolder(view);
 			view.setTag(holder);
 		}
-		boolean show_gap = mShowLastItemAsGap && position == getCount() - 1;
+		final boolean show_gap = mShowLastItemAsGap && position == getCount() - 1;
 		holder.setShowAsGap(show_gap);
 		if (!show_gap) {
 			final ParcelableUser user = getItem(position);

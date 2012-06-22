@@ -3,11 +3,35 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
-	<Spinner
-		android:id="@+id/spinner"
-		android:layout_width="wrap_content"
+	<LinearLayout
+		android:id="@+id/trending_header"
+		android:layout_width="fill_parent"
 		android:layout_height="48dp"
 		android:layout_alignParentLeft="true"
-		android:layout_alignParentTop="true"/>
+		android:layout_alignParentTop="true"
+		android:background="#80000000"
+		android:orientation="horizontal">
+
+		<Spinner
+			android:id="@+id/trending_catgories"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:layout_weight="0"/>
+
+		<View
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:layout_weight="1"/>
+
+		<ImageButton
+			android:id="@+id/trending_refresh"
+			android:layout_width="48dp"
+			android:layout_height="fill_parent"
+			android:layout_weight="0"
+			android:background="@drawable/item_background_holo_dark"
+			android:contentDescription="@string/refresh"
+			android:src="@drawable/ic_menu_refresh"/>
+	</LinearLayout>
 
 </RelativeLayout>

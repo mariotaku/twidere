@@ -28,7 +28,7 @@ public class GoogleWebMapFragment extends WebViewFragment {
 	 * mechanism) and finds the last known location.
 	 **/
 	private void getLocation() {
-		Bundle bundle = getArguments();
+		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			latitude = bundle.getDouble(INTENT_KEY_LATITUDE, 0.0);
 			longitude = bundle.getDouble(INTENT_KEY_LONGITUDE, 0.0);
@@ -38,7 +38,7 @@ public class GoogleWebMapFragment extends WebViewFragment {
 	/** Sets up the WebView object and loads the URL of the page **/
 	private void setupWebView() {
 
-		WebView webview = getWebView();
+		final WebView webview = getWebView();
 		webview.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 		setWebViewClient(new MapWebViewClient(getActivity()));
 		loadUrl(mUri.toString());
@@ -77,10 +77,10 @@ public class GoogleWebMapFragment extends WebViewFragment {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			Uri uri = Uri.parse(url);
+			final Uri uri = Uri.parse(url);
 			if (uri.getScheme().equals(mUri.getScheme())) return false;
 
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+			final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 			startActivity(intent);
 			return true;
 		}

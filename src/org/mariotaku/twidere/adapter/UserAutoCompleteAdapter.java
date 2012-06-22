@@ -33,12 +33,12 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		ViewHolder holder = (ViewHolder) view.getTag();
+		final ViewHolder holder = (ViewHolder) view.getTag();
 		holder.name_view.setText(cursor.getString(mNameIdx));
 		holder.screenname_view.setText(cursor.getString(mScreenNameIdx));
 		try {
 			mImageLoader.displayImage(new URL(cursor.getString(mProfileImageUrlIdx)), holder.profile_image_view);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 
 		}
 		super.bindView(view, context, cursor);
@@ -62,9 +62,9 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		View view = super.newView(context, cursor, parent);
+		final View view = super.newView(context, cursor, parent);
 		if (!(view.getTag() instanceof ViewHolder)) {
-			ViewHolder holder = new ViewHolder(view);
+			final ViewHolder holder = new ViewHolder(view);
 			view.setTag(holder);
 		}
 		return view;
@@ -72,9 +72,9 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 
 	@Override
 	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
-		FilterQueryProvider filter = getFilterQueryProvider();
+		final FilterQueryProvider filter = getFilterQueryProvider();
 		if (filter != null) return filter.runQuery(constraint);
-		StringBuilder where = new StringBuilder();
+		final StringBuilder where = new StringBuilder();
 		where.append(CachedUsers.NAME + " LIKE '%" + constraint + "%'");
 		where.append(" OR " + CachedUsers.SCREEN_NAME + " LIKE '%" + constraint + "%'");
 		return mResolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, where.toString(), null, null);

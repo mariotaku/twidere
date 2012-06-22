@@ -13,8 +13,8 @@ public class MapActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		Fragment fragment = Fragment.instantiate(this, GoogleWebMapFragment.class.getName());
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final Fragment fragment = Fragment.instantiate(this, GoogleWebMapFragment.class.getName());
 		fragment.setArguments(getIntent().getExtras());
 		ft.replace(android.R.id.content, fragment);
 		ft.commit();
