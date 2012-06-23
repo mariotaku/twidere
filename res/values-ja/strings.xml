@@ -13,7 +13,7 @@
 	<string name="remove_location">位置情報を削除</string>
 	<string name="remove_image">画像を削除</string>
 	<string name="remove_photo">写真を削除</string>
-	<string name="tweet_hint">べっ、別にあんたにツイートして欲しいわけじゃないんだからねっ！</string>
+	<string name="tweet_hint">何をしていますか？</string>
 	<string name="sign_up">新規登録</string>
 	<string name="sign_in">ログイン</string>
 	<string name="rest_base_url">REST Base URL</string>
