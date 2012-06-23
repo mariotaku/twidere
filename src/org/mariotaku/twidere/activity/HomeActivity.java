@@ -253,18 +253,26 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case MENU_HOME:
+			case MENU_HOME: {
 				navigateToTop();
 				break;
-			case MENU_COMPOSE:
+			}
+			case MENU_COMPOSE: {
 				startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				break;
-			case MENU_SELECT_ACCOUNT:
+			}
+			case MENU_SEARCH: {
+				onSearchRequested();
+				break;
+			}
+			case MENU_SELECT_ACCOUNT: {
 				startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
 				break;
-			case MENU_SETTINGS:
+			}
+			case MENU_SETTINGS: {
 				startActivity(new Intent(INTENT_ACTION_SETTINGS));
 				break;
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}

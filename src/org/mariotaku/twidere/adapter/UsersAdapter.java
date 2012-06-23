@@ -50,7 +50,6 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			holder.setTextSize(mTextSize);
 
 			holder.name.setText(mDisplayName ? user.name : user.screen_name);
-			holder.location.setText(user.location);
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				mImageLoader.displayImage(user.profile_image_url, holder.profile_image);

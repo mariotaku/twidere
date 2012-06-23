@@ -2,12 +2,25 @@ package org.mariotaku.twidere.util;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -79,6 +92,42 @@ public final class Utils implements Constants {
 
 	private static UriMatcher CONTENT_PROVIDER_URI_MATCHER;
 
+	private static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new HostnameVerifier() {
+		@Override
+		public boolean verify(String hostname, SSLSession session) {
+			return true;
+		}
+	};
+
+	private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] { new X509TrustManager() {
+		@Override
+		public void checkClientTrusted(X509Certificate[] chain, String authType) {
+		}
+
+		@Override
+		public void checkServerTrusted(X509Certificate[] chain, String authType) {
+		}
+
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return new X509Certificate[] {};
+		}
+	} };
+
+	private static final SSLSocketFactory IGNORE_ERROR_SSL_FACTORY;
+
+	static {
+		SSLSocketFactory factory = null;
+		try {
+			final SSLContext sc = SSLContext.getInstance("TLS");
+			sc.init(null, TRUST_ALL_CERTS, new SecureRandom());
+			factory = sc.getSocketFactory();
+		} catch (final KeyManagementException e) {
+		} catch (final NoSuchAlgorithmException e) {
+		}
+		IGNORE_ERROR_SSL_FACTORY = factory;
+	}
+
 	static {
 		CONTENT_PROVIDER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
@@ -92,8 +141,8 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, URI_FILTERED_SOURCES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
 	}
-	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 
+	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 	private static final String IMAGE_URL_PATTERN = "href=\\s*[\\\"'](http(s?):\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp))[\\\"']\\s*";
 
 	private static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
@@ -508,6 +557,20 @@ public final class Utils implements Constants {
 		canvas.drawLines(points, paint);
 
 		return bm;
+	}
+
+	public static long getDefaultAccountId(Context context) {
+		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+				Context.MODE_PRIVATE);
+		return preferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
+	}
+
+	public static Twitter getDefaultTwitterInstance(Context context, boolean include_entities) {
+		return getDefaultTwitterInstance(context, include_entities, true);
+	}
+
+	public static Twitter getDefaultTwitterInstance(Context context, boolean include_entities, boolean include_rts) {
+		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, include_rts);
 	}
 
 	/**
@@ -1370,6 +1433,15 @@ public final class Utils implements Constants {
 			activity.getWindow().setWindowAnimations(0);
 		}
 		activity.startActivity(activity.getIntent());
+	}
+
+	public static void setIgnoreSSLError(URLConnection conn) {
+		if (conn instanceof HttpsURLConnection) {
+			((HttpsURLConnection) conn).setHostnameVerifier(ALLOW_ALL_HOSTNAME_VERIFIER);
+			if (IGNORE_ERROR_SSL_FACTORY != null) {
+				((HttpsURLConnection) conn).setSSLSocketFactory(IGNORE_ERROR_SSL_FACTORY);
+			}
+		}
 	}
 
 	public static void setMenuForStatus(Context context, Menu menu, ParcelableStatus status) {

@@ -165,6 +165,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_FAVORITED = "favorited";
 
 	public static final int MENU_HOME = android.R.id.home;
+	public static final int MENU_SEARCH = R.id.search;
 	public static final int MENU_COMPOSE = R.id.compose;
 	public static final int MENU_SEND = R.id.send;
 	public static final int MENU_EDIT = R.id.edit;

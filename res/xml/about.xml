@@ -11,7 +11,7 @@
 			android:title="Developer">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="https://twitter.com/#!/mariotaku"/>
+				android:data="twidere://user?user_id=57610574"/>
 		</PreferenceScreen>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="TRANSLATORS">
@@ -28,6 +28,13 @@
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="http://zettahub.de"/>
+		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="Marc Plano-Lesay"
+			android:title="Français">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://twitter.com/#!/marcpl31"/>
 		</PreferenceScreen>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="SPECIAL THANKS TO">

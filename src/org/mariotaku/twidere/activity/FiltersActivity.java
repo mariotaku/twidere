@@ -5,6 +5,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.FiltersFragment.FilteredKeywordsFragment;
 import org.mariotaku.twidere.fragment.FiltersFragment.FilteredSourcesFragment;
 import org.mariotaku.twidere.fragment.FiltersFragment.FilteredUsersFragment;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -60,23 +61,25 @@ public class FiltersActivity extends BaseActivity implements OnCheckedChangeList
 		mSpinner.setOnItemSelectedListener(this);
 	}
 
-	private static class TabSpec {
-		public final Class<? extends Fragment> cls;
-		public final String name;
-		public TabSpec(Class<? extends Fragment> cls, String name) {
-			this.cls = cls;
-			this.name = name;
-		}
-		
-		public String toString() {
-			return name;
-		}
-	}
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_filter, menu);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		final Fragment fragment = Fragment.instantiate(this, mAdapter.getItem(position).cls.getName());
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.replace(android.R.id.content, fragment);
+		ft.commit();
+
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -91,19 +94,19 @@ public class FiltersActivity extends BaseActivity implements OnCheckedChangeList
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-		final Fragment fragment = Fragment.instantiate(this, mAdapter.getItem(position).cls.getName());
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(android.R.id.content, fragment);
-		ft.commit();
-		
-	}
+	private static class TabSpec {
+		public final Class<? extends Fragment> cls;
+		public final String name;
 
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-		// TODO Auto-generated method stub
-		
+		public TabSpec(Class<? extends Fragment> cls, String name) {
+			this.cls = cls;
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 
 }

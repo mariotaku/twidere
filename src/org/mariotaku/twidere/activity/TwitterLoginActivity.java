@@ -5,12 +5,14 @@ import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
+import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -296,9 +298,15 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	private void analyseUserProfileColor(String url_string) {
+		final boolean ignore_ssl_error = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(
+				PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 		try {
 			final URL url = new URL(url_string);
-			final InputStream is = url.openConnection().getInputStream();
+			final URLConnection conn = url.openConnection();
+			final InputStream is = conn.getInputStream();
+			if (ignore_ssl_error) {
+				setIgnoreSSLError(conn);
+			}
 			final Bitmap bm = BitmapFactory.decodeStream(is);
 			mUserColor = ColorAnalyser.analyse(bm);
 			mUserColorSet = true;

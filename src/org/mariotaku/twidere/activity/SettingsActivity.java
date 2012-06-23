@@ -3,6 +3,8 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.provider.RecentSearchProvider;
+import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
@@ -11,6 +13,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.provider.SearchRecentSuggestions;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.view.MenuItem;
@@ -60,8 +63,12 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 	public boolean onPreferenceClick(Preference preference) {
 		if (PREFERENCE_KEY_CLEAR_DATABASES.equals(preference.getKey())) {
 			final ContentResolver resolver = getContentResolver();
+			final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+					RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
 			resolver.delete(Statuses.CONTENT_URI, null, null);
 			resolver.delete(Mentions.CONTENT_URI, null, null);
+			resolver.delete(CachedUsers.CONTENT_URI, null, null);
+			suggestions.clearHistory();
 		} else if (PREFERENCE_KEY_CLEAR_CACHE.equals(preference.getKey())) {
 			getTwidereApplication().clearCache();
 		}

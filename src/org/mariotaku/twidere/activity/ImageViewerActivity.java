@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.ImageViewer;
 
@@ -46,7 +49,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class ImageViewerActivity extends FragmentActivity implements OnClickListener {
+public class ImageViewerActivity extends FragmentActivity implements Constants, OnClickListener {
 
 	private ImageViewer mImageView;
 	private ImageLoader mImageLoader;
@@ -112,12 +115,15 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 		private final URL url;
 		private final ImageViewer image_view;
 		private final ImageViewerActivity activity;
+		private final boolean ignore_ssl_error;
 		private File mCacheDir;
 
 		public ImageLoader(URL url, ImageViewer image_view, ImageViewerActivity activity) {
 			this.url = url;
 			this.image_view = image_view;
 			this.activity = activity;
+			ignore_ssl_error = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(
+					PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			init();
 		}
 
@@ -138,6 +144,9 @@ public class ImageViewerActivity extends FragmentActivity implements OnClickList
 			try {
 				Bitmap bitmap = null;
 				final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				if (ignore_ssl_error) {
+					setIgnoreSSLError(conn);
+				}
 				conn.setConnectTimeout(30000);
 				conn.setReadTimeout(30000);
 				conn.setInstanceFollowRedirects(true);

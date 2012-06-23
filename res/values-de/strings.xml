@@ -175,11 +175,15 @@
 	<string name="direct_messages">Direktnachrichten</string>
 	<string name="capital_on">AN</string>
 	<string name="capital_off">AUS</string>
+	<string name="blocked_users">Blockierte Benutzer</string>
 	<string name="set_as_default">Als Standart setzen</string>
 	<string name="default_account">Standart Account</string>
-	<string name="blocked_users">Blockierte Benutzer</string>
 	<string name="search_users">Suche Benutzer</string>
 	<string name="search_tweets">Suche Tweets</string>
 	<string name="created_at">Erstellt am</string>
+	<string name="set_default_account_hint">Please set a default account.</string>
+	<string name="daily_trends">Daily trends</string>
+	<string name="weekly_trends">Weekly trends</string>
+	<string name="search_hint">Search tweets or users</string>
 
 </resources>

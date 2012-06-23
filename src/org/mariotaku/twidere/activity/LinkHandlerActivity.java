@@ -1,6 +1,8 @@
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.getAccountId;
+import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
+import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
 import org.mariotaku.twidere.R;
@@ -14,10 +16,19 @@ import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
+import org.mariotaku.twidere.provider.RecentSearchProvider;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.SearchManager;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
@@ -49,18 +60,43 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_SEARCH, null, CODE_SEARCH);
 	}
 
+	private Fragment mFragment;
+
+	private final DialogFragment mSearchTypeFragment = new SearchTypeFragment();
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		final Uri data = getIntent().getData();
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(new FrameLayout(this));
 		setSupportProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		if (data != null) {
-			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(android.R.id.content, getFragment(data));
-			ft.commit();
+		final Intent intent = getIntent();
+		final Uri data = intent.getData();
+		final String action = intent.getAction();
+		final long account_id = getDefaultAccountId(this);
+		if (Intent.ACTION_SEARCH.equals(action) && isMyAccount(this, account_id)) {
+			final String query = intent.getStringExtra(SearchManager.QUERY);
+			final Bundle args = new Bundle();
+			args.putString(INTENT_KEY_QUERY, query);
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			mSearchTypeFragment.setArguments(args);
+			mSearchTypeFragment.show(getSupportFragmentManager(), null);
+			setTitle(getString(android.R.string.search_go) + " | " + query);
+			final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+					RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
+			suggestions.saveRecentQuery(query, null);
+		} else if (data != null) {
+			if (setFragment(data)) {
+				if (mFragment != null) {
+					final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+					ft.replace(android.R.id.content, mFragment);
+					ft.commit();
+					return;
+				} else {
+					finish();
+				}
+			}
 		} else {
 			finish();
 		}
@@ -76,11 +112,38 @@ public class LinkHandlerActivity extends BaseActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private Fragment getFragment(Uri uri) {
+	private long parseLong(String source) {
+		if (source == null) return -1;
+		try {
+			return Long.parseLong(source);
+		} catch (final NumberFormatException e) {
+			// Wrong number format? Ignore them.
+		}
+		return -1;
+	}
+
+	private boolean setFragment(Uri uri) {
 		final Bundle extras = getIntent().getExtras();
-		Fragment fragment = new Fragment();
+		Fragment fragment = null;
 		if (uri != null) {
 			final Bundle bundle = new Bundle();
+			final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+			if (param_account_id != null) {
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
+			} else {
+				final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
+				if (param_account_name != null) {
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
+				} else {
+					final long account_id = getDefaultAccountId(this);
+					if (isMyAccount(this, account_id)) {
+						bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					} else {
+						finish();
+						return false;
+					}
+				}
+			}
 			switch (URI_MATCHER.match(uri)) {
 				case CODE_STATUS: {
 					setTitle(R.string.view_status);
@@ -171,44 +234,90 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_SEARCH: {
 					final String type = uri.getQueryParameter(QUERY_PARAM_TYPE);
+					final String query = uri.getQueryParameter(QUERY_PARAM_QUERY);
+					if (query == null) {
+						finish();
+						return false;
+					}
+					bundle.putString(INTENT_KEY_QUERY, query);
+					final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+							RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
+					suggestions.saveRecentQuery(query, null);
 					if (QUERY_PARAM_VALUE_TWEETS.equals(type)) {
-						setTitle(R.string.search_tweets);
+						setTitle(getString(R.string.search_tweets) + " | " + query);
 						fragment = new SearchTweetsFragment();
 					} else if (QUERY_PARAM_VALUE_USERS.equals(type)) {
-						setTitle(R.string.search_users);
+						setTitle(getString(R.string.search_users) + " | " + query);
 						fragment = new SearchUsersFragment();
+					} else {
+						setTitle(getString(android.R.string.search_go) + " | " + query);
+						mSearchTypeFragment.setArguments(bundle);
+						mSearchTypeFragment.show(getSupportFragmentManager(), null);
+						return false;
 					}
-					final String query = uri.getQueryParameter(QUERY_PARAM_QUERY);
-					bundle.putString(INTENT_KEY_QUERY, query);
 					break;
 				}
 				default: {
 					break;
 				}
 			}
-
-			final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
-			if (param_account_id != null) {
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
-			} else {
-				final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
-				if (param_account_name != null) {
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
-				}
+			if (fragment != null) {
+				fragment.setArguments(bundle);
 			}
-			fragment.setArguments(bundle);
 		}
-		return fragment;
+		mFragment = fragment;
+		return true;
 	}
 
-	private long parseLong(String source) {
-		if (source == null) return -1;
-		try {
-			return Long.parseLong(source);
-		} catch (final NumberFormatException e) {
-			// Wrong number format? Ignore them.
-		}
-		return -1;
-	}
+	private class SearchTypeFragment extends DialogFragment {
 
+		private static final int ITEM_TYPE_TWEETS = 0;
+		private static final int ITEM_TYPE_USERS = 1;
+
+		@Override
+		public void onCancel(DialogInterface dialog) {
+			final Activity activity = getActivity();
+			if (activity != null) {
+				activity.finish();
+			}
+			super.onCancel(dialog);
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final CharSequence[] items = new CharSequence[] { getString(R.string.search_tweets),
+					getString(R.string.search_users) };
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			final Bundle args = new Bundle(getArguments());
+			final String query = args.getString(INTENT_KEY_QUERY);
+			builder.setTitle(getString(android.R.string.search_go) + " " + query);
+			builder.setItems(items, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int item) {
+
+					Fragment fragment = null;
+					switch (item) {
+						case ITEM_TYPE_TWEETS: {
+							setTitle(getString(R.string.search_tweets) + " | " + query);
+							fragment = new SearchTweetsFragment();
+							break;
+						}
+						case ITEM_TYPE_USERS: {
+							setTitle(getString(R.string.search_users) + " | " + query);
+							fragment = new SearchUsersFragment();
+							break;
+						}
+					}
+					if (fragment != null) {
+						fragment.setArguments(args);
+						final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+						ft.replace(android.R.id.content, fragment);
+						ft.commit();
+					}
+				}
+			});
+			return builder.create();
+		}
+
+	}
 }
