@@ -48,11 +48,11 @@
 	<string name="password">Mot de passe</string>
 	<string name="label_tweetstore_provider">Fournisseur de base de données de Twidere</string>
 	<string name="label_update_service">Service de mise à jour de la timeline update</string>
-	<string name="label_permission_group_access_twidere">Access Twidere application</string>
-	<string name="label_permission_read_databases">Read Twidere databases</string>
-	<string name="label_permission_write_databases">Write Twidere databases</string>
-	<string name="description_permission_read_databases">Read tweets, drafts, accounts, direct messages etc from databases.</string>
-	<string name="description_permission_write_databases">Write tweets, drafts, accounts, direct messages etc to databases.</string>
+	<string name="label_permission_group_access_twidere">Accès aux données de Twidere</string>
+	<string name="label_permission_read_databases">Lire les bases de données de Twidere</string>
+	<string name="label_permission_write_databases">Écrire les bases de données de Twidere</string>
+	<string name="description_permission_read_databases">Lire les tweets, brouillons, comptes, DM etc des bases de données.</string>
+	<string name="description_permission_write_databases">Écrire tweets, brouillons, comptes, DM etc dans les bases de données.</string>
 	<string name="open_in_browser">Ouvrir dans un navigateur</string>
 	<string name="just_now">À l\'instant</string>
 	<string name="tap_to_load_more">Touchez pour charger plus</string>
@@ -104,7 +104,7 @@
 	<string name="dark_theme">Utiliser un thème sombre</string>
 	<string name="dark_theme_summary">Utiliser un thème sombre pour Twidere.</string>
 	<string name="display_profile_image">Afficher les images de profil</string>
-	<string name="display_profile_image_summary">Affiche les images de profils, le désactiver augmentera la vitesse de défilement et réduira l'utilisation de bande passante.</string>
+	<string name="display_profile_image_summary">Affiche les images de profils, le désactiver augmentera la vitesse de défilement et réduira l\'utilisation de bande passante.</string>
 	<string name="in_reply_to">En réponse à <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="retweeted_by">Retweeté par <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="reply_to">Répondre à <xliff:g id="user_name">%s</xliff:g></string>
@@ -128,13 +128,13 @@
 	<string name="delete_account">Supprimer le compte</string>
 	<string name="delete_account_desc">Êtes-vous sûr de vouloir supprimer le compte <xliff:g id="user_name">%s</xliff:g> ?</string>
 	<string name="bottom_compose_button">Bouton Écrire en bas</string>
-	<string name="bottom_compose_button_summary">Put the compose button in the bottom, you can enable this if your screen is large.</string>
-	<string name="leftside_compose_button">Leftside compose button</string>
-	<string name="leftside_compose_button_summary">Put the compose button on the left.</string>
-	<string name="load_item_limit">Load item limit</string>
-	<string name="load_item_limit_summary">Set items limit per load.</string>
-	<string name="load_more_automatically">Load more content automatically</string>
-	<string name="load_more_automatically_summary">Load more content (e.g. photo, map, statuses etc) automatically</string>
+	<string name="bottom_compose_button_summary">Déplacer le bouton Écrire en bas.</string>
+	<string name="leftside_compose_button">Bouton Écrire à gauche</string>
+	<string name="leftside_compose_button_summary">Déplacer le bouton Écrire à gauche.</string>
+	<string name="load_item_limit">Limite de chargement</string>
+	<string name="load_item_limit_summary">Nombre de tweets par chargement.</string>
+	<string name="load_more_automatically">Charger plus de contenu automatiquement</string>
+	<string name="load_more_automatically_summary">Charger plus de contenu (photos, cartes, status etc) automatiquement</string>
 	<string name="quote">Citer</string>
 	<string name="add_rule">Ajouter une règle</string>
 	<string name="longclick_to_delete">Appui long pour supprimer.</string>
