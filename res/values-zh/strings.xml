@@ -72,7 +72,6 @@
 	<string name="view_status">推文</string>
 	<string name="view_conversation">對話</string>
 	<string name="view_user_profile">用戶資料</string>
-	<string name="link_handler">處理連結</string>
 	<string name="browser">瀏覽器</string>
 	<string name="pick_from_gallery">從圖庫中選取</string>
 	<string name="pick_from_map">從地圖上選取</string>

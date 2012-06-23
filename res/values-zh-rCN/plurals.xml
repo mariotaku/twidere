@@ -2,23 +2,18 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<plurals name="Nminutes">
-		<item quantity="one">一分钟</item>
 		<item quantity="other"><xliff:g id="minutes">%d</xliff:g> 分钟</item>
 	</plurals>
 	<plurals name="Nhours">
-		<item quantity="one">一小时</item>
 		<item quantity="other"><xliff:g id="minutes">%d</xliff:g> 小时</item>
 	</plurals>
 	<plurals name="Ndays">
-		<item quantity="one">一天</item>
 		<item quantity="other"><xliff:g id="minutes">%d</xliff:g> 天</item>
 	</plurals>
 	<plurals name="Nmonths">
-		<item quantity="one">一个月</item>
 		<item quantity="other"><xliff:g id="minutes">%d</xliff:g> 个月</item>
 	</plurals>
 	<plurals name="Nyears">
-		<item quantity="one">一年</item>
 		<item quantity="other"><xliff:g id="minutes">%d</xliff:g> 年</item>
 	</plurals>
 

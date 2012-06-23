@@ -101,6 +101,8 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_CONSUMER_SECRET = "consumer_secret";
 	public static final String PREFERENCE_KEY_QUOTE_FORMAT = "quote_format";
 	public static final String PREFERENCE_KEY_DEFAULT_ACCOUNT_ID = "default_account_id";
+	public static final String PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID = "saved_home_timeline_id";
+	public static final String PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID = "saved_mentions_list_id";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;

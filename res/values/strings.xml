@@ -72,7 +72,6 @@
 	<string name="view_status">View tweet</string>
 	<string name="view_conversation">Conversation</string>
 	<string name="view_user_profile">User profile</string>
-	<string name="link_handler">Link handler</string>
 	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Pick from gallery</string>
 	<string name="pick_from_map">Pick from map</string>

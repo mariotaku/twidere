@@ -72,7 +72,6 @@
 	<string name="view_status">Voir le tweet</string>
 	<string name="view_conversation">Conversation</string>
 	<string name="view_user_profile">Profil de l\'utilisateur</string>
-	<string name="link_handler">Gestionnaire des liens</string>
 	<string name="browser">Navigateur</string>
 	<string name="pick_from_gallery">Choisir dans la galerie</string>
 	<string name="pick_from_map">Sélectionner sur la carte</string>
@@ -185,5 +184,5 @@
 	<string name="daily_trends">Daily trends</string>
 	<string name="weekly_trends">Weekly trends</string>
 	<string name="search_hint">Search tweets or users</string>
-	
+
 </resources>

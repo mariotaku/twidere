@@ -13,7 +13,7 @@
 	<string name="remove_location">Ort entfernen</string>
 	<string name="remove_image">Bild entfernen</string>
 	<string name="remove_photo">Foto entfernen</string>
-	<string name="tweet_hint">Schreibe etwas...</string>
+	<string name="tweet_hint">Schreibe etwas…</string>
 	<string name="sign_up">Registrieren</string>
 	<string name="sign_in">Einloggen</string>
 	<string name="rest_base_url">REST Base URL</string>
@@ -72,7 +72,6 @@
 	<string name="view_status">Tweet</string>
 	<string name="view_conversation">Konversation</string>
 	<string name="view_user_profile">Benutzerprofil</string>
-	<string name="link_handler">Link handler</string>
 	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Wähle aus Galerie</string>
 	<string name="pick_from_map">Wähle aus Karte</string>

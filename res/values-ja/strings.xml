@@ -72,7 +72,6 @@
 	<string name="view_status">ツイート</string>
 	<string name="view_conversation">会話</string>
 	<string name="view_user_profile">ユーザープロフィール</string>
-	<string name="link_handler">リンクを処理</string>
 	<string name="browser">ブラウザ</string>
 	<string name="pick_from_gallery">ギャラリーから選択</string>
 	<string name="pick_from_map">地図から選択</string>

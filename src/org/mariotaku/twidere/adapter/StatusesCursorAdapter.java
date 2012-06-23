@@ -120,6 +120,22 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 		}
 		return null;
 	}
+	
+	public long findItemIdByPosition(int position) {
+		if (position >= 0 && position < getCount()) {
+			return getItem(position).getLong(mIndices.status_id);
+		}
+		return -1;
+	}
+	
+	public int findItemPositionByStatusId(long status_id) {
+		for (int i = 0; i < getCount(); i++) {
+			if (getItem(i).getLong(mIndices.status_id) == status_id) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
 	@Override
 	public Cursor getItem(int position) {
