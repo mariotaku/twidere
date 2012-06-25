@@ -71,6 +71,8 @@ public class UserTimelineFragment extends BaseStatusesListFragment<List<Parcelab
 		setProgressBarIndeterminateVisibility(false);
 	}
 
+	private boolean isAllItemsLoaded = false;
+	
 	@Override
 	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
 		mAdapter.clear();
@@ -78,6 +80,10 @@ public class UserTimelineFragment extends BaseStatusesListFragment<List<Parcelab
 			for (final ParcelableStatus status : data) {
 				mAdapter.add(status);
 			}
+		}
+		if (loader instanceof UserTimelineLoader) {
+			int total = ((UserTimelineLoader) loader).getTotalItemsCount();
+			isAllItemsLoaded = total != -1 && total == mAdapter.getCount();
 		}
 		getListView().onRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
@@ -91,6 +97,11 @@ public class UserTimelineFragment extends BaseStatusesListFragment<List<Parcelab
 	@Override
 	public void onRefresh() {
 		getStatuses(null, null);
+	}
+
+	@Override
+	public boolean mustShowLastAsGap() {
+		return !isAllItemsLoaded;
 	}
 
 }

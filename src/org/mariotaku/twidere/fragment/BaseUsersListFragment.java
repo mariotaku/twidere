@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.UsersAdapter;
+import org.mariotaku.twidere.loader.IDsUsersLoader;
 import org.mariotaku.twidere.util.ParcelableUser;
 
 import android.annotation.TargetApi;
@@ -103,8 +104,15 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 				mAdapter.add(user);
 			}
 		}
+		if (loader instanceof IDsUsersLoader) {
+			final long[] ids = ((IDsUsersLoader) loader).getIDsArray();
+			mAllItemsLoaded = ids != null && ids.length == mAdapter.getCount();
+			mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
+		}
 	}
 
+	private boolean mAllItemsLoaded = false;
+	
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -115,7 +123,7 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setDisplayName(display_name);
-		mAdapter.setShowLastItemAsGap(!mLoadMoreAutomatically);
+		mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
 	}
 
 	@Override

@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 
 import java.io.File;
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.mariotaku.twidere.Constants;
@@ -97,14 +97,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			finish();
 			return;
 		}
-		URL url;
-		try {
-			url = new URL(uri.toString());
-		} catch (final MalformedURLException e) {
-			finish();
-			return;
-		}
-		mImageLoader = new ImageLoader(url, mImageView, this);
+		mImageLoader = new ImageLoader(uri, mImageView, this);
 		mImageLoader.execute();
 	}
 
@@ -112,14 +105,14 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private static final String CACHE_DIR_NAME = "cached_images";
 
-		private final URL url;
+		private final Uri uri;
 		private final ImageViewer image_view;
 		private final ImageViewerActivity activity;
 		private final boolean ignore_ssl_error;
 		private File mCacheDir;
 
-		public ImageLoader(URL url, ImageViewer image_view, ImageViewerActivity activity) {
-			this.url = url;
+		public ImageLoader(Uri uri, ImageViewer image_view, ImageViewerActivity activity) {
+			this.uri = uri;
 			this.image_view = image_view;
 			this.activity = activity;
 			ignore_ssl_error = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(
@@ -130,43 +123,48 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		@Override
 		protected Bitmap doInBackground(Void... args) {
 
-			if (url == null) return null;
-			if (mCacheDir == null || !mCacheDir.exists()) {
-				init();
-			}
-			final File f = new File(mCacheDir, getURLFilename(url));
-
-			// from SD cache
-			final Bitmap b = decodeFile(f);
-			if (b != null) return b;
-
-			// from web
-			try {
-				Bitmap bitmap = null;
-				final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-				if (ignore_ssl_error) {
-					setIgnoreSSLError(conn);
+			if (uri == null) return null;
+			final String scheme = uri.getScheme();
+			if ("http".equals(scheme) || "https".equals(scheme)) {
+				final URL url = parseURL(uri.toString());
+				if (url == null) return null;
+				if (mCacheDir == null || !mCacheDir.exists()) {
+					init();
 				}
-				conn.setConnectTimeout(30000);
-				conn.setReadTimeout(30000);
-				conn.setInstanceFollowRedirects(true);
-				final InputStream is = conn.getInputStream();
-				final OutputStream os = new FileOutputStream(f);
-				copyStream(is, os);
-				os.close();
-				bitmap = decodeFile(f);
-				if (bitmap == null) {
-					// The file is corrupted, so we remove it from cache.
-					if (f.isFile()) {
-						f.delete();
+				final File f = new File(mCacheDir, getURLFilename(url));
+
+				// from SD cache
+				final Bitmap b = decodeFile(f);
+				if (b != null) return b;
+
+				// from web
+				try {
+					Bitmap bitmap = null;
+					final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+					if (ignore_ssl_error) {
+						setIgnoreSSLError(conn);
 					}
+					conn.setConnectTimeout(30000);
+					conn.setReadTimeout(30000);
+					conn.setInstanceFollowRedirects(true);
+					final InputStream is = conn.getInputStream();
+					final OutputStream os = new FileOutputStream(f);
+					copyStream(is, os);
+					os.close();
+					bitmap = decodeFile(f);
+					if (bitmap == null) {
+						// The file is corrupted, so we remove it from cache.
+						if (f.isFile()) {
+							f.delete();
+						}
+					}
+					return bitmap;
+				} catch (final FileNotFoundException e) {
+					init();
+				} catch (final IOException e) {
+					// e.printStackTrace();
 				}
-				return bitmap;
-			} catch (final FileNotFoundException e) {
-				init();
-			} catch (final IOException e) {
-				// e.printStackTrace();
-			}
+			} else if ("file".equals(scheme)) return decodeFile(new File(uri.getPath()));
 			return null;
 		}
 

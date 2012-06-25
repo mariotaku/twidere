@@ -74,6 +74,7 @@
 		<activity
 			android:name=".activity.ComposeActivity"
 			android:label="@string/compose"
+			android:launchMode="singleTop"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter android:label="@string/compose">
 				<action android:name="android.intent.action.MAIN"/>
@@ -282,6 +283,7 @@
 
 				<category android:name="android.intent.category.DEFAULT"/>
 
+				<data android:scheme="file"/>
 				<data android:scheme="http"/>
 				<data android:scheme="https"/>
 			</intent-filter>

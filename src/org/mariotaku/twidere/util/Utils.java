@@ -952,7 +952,7 @@ public final class Utils implements Constants {
 					cb.setSearchBaseURL(search_base_url);
 				}
 				if (!isNullOrEmpty(upload_base_url)) {
-					// Do nothing.
+					cb.setUploadBaseURL(upload_base_url);
 				}
 				if (!isNullOrEmpty(oauth_access_token_url)) {
 					cb.setOAuthAccessTokenURL(oauth_access_token_url);

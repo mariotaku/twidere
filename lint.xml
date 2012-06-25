@@ -2,6 +2,11 @@
 <lint>
     <issue id="DuplicateIds" severity="error" />
     <issue id="ExtraTranslation" severity="error" />
+    <issue id="MissingPrefix" severity="error" />
     <issue id="MissingTranslation" severity="informational" />
+    <issue id="NamespaceTypo" severity="error" />
+    <issue id="NestedScrolling" severity="error" />
+    <issue id="PxUsage" severity="error" />
+    <issue id="ScrollViewCount" severity="error" />
     <issue id="SdCardPath" severity="error" />
 </lint>

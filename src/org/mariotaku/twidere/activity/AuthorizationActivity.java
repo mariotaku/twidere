@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -36,6 +37,7 @@ public class AuthorizationActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		authUrl = getIntent().getData();
 		if (authUrl == null) {

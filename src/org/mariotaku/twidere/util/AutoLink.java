@@ -1,17 +1,20 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Twidere - Twitter client for Android
+ * 
+ * Copyright (C) 2012  Mariotaku Lee <mariotaku.lee@gmail.com>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.util;
@@ -19,6 +22,8 @@ package org.mariotaku.twidere.util;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.twitter.Regex;
 
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -50,10 +55,17 @@ public class AutoLink {
 	public static final int LINK_TYPE_HASHTAGS = 2;
 	public static final int LINK_TYPE_IMAGES = 3;
 	public static final int LINK_TYPE_LINKS = 4;
+	public static final int LINK_TYPE_INSTAGRAM = 5;
 
-	private static final Pattern PATTERN_MENTIONS = Pattern.compile("@([A-Za-z0-9_]+)");
-	private static final Pattern PATTERN_HASHTAGS = Pattern.compile("#([A-Za-z0-9_]+)");
-	private static final Pattern PATTERN_IMAGES = Pattern.compile("http(s?):\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp)");
+	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_MENTIONS, LINK_TYPE_HASHTAGS, LINK_TYPE_IMAGES,
+			LINK_TYPE_LINKS, LINK_TYPE_INSTAGRAM
+
+	};
+
+	private static final Pattern PATTERN_IMAGES = Pattern.compile("http(s?):\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp)",
+			Pattern.CASE_INSENSITIVE);
+	private static final Pattern PATTERN_INSTAGRAM = Pattern.compile(
+			"http(s?):\\/\\/(instagr\\.am|instagram\\.com)\\/p\\/([_\\-\\d\\w]+)(\\/?)", Pattern.CASE_INSENSITIVE);
 
 	private final TextView view;
 
@@ -78,6 +90,12 @@ public class AutoLink {
 		this.view = view;
 	}
 
+	public final void addAllLinks() {
+		for (final int type : ALL_LINK_TYPES) {
+			addLinks(type);
+		}
+	}
+
 	/**
 	 * Applies a regex to the text of a TextView turning the matches into links.
 	 * If links are found then UrlSpans are applied to the link text match
@@ -94,11 +112,11 @@ public class AutoLink {
 		final SpannableString string = SpannableString.valueOf(view.getText());
 		switch (type) {
 			case LINK_TYPE_MENTIONS: {
-				addLinks(string, PATTERN_MENTIONS, type);
+				addMentionLinks(string);
 				break;
 			}
 			case LINK_TYPE_HASHTAGS: {
-				addLinks(string, PATTERN_HASHTAGS, type);
+				addHashtagLinks(string);
 				break;
 			}
 			case LINK_TYPE_IMAGES: {
@@ -109,8 +127,22 @@ public class AutoLink {
 					final String url = span.getURL();
 					if (url.matches(PATTERN_IMAGES.pattern())) {
 						string.removeSpan(span);
+						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
 					}
-					applyLink(url, start, end, string, type);
+				}
+				break;
+			}
+			case LINK_TYPE_INSTAGRAM: {
+				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
+				for (final URLSpan span : spans) {
+					final int start = string.getSpanStart(span);
+					final int end = string.getSpanEnd(span);
+					final String url = span.getURL();
+					if (url.matches(PATTERN_INSTAGRAM.pattern())) {
+						string.removeSpan(span);
+						final String suffix = url.endsWith("/") ? "media/?size=l" : "/media/?size=l";
+						applyLink(url + suffix, start, end, string, LINK_TYPE_IMAGES);
+					}
 				}
 				break;
 			}
@@ -121,7 +153,7 @@ public class AutoLink {
 				for (final LinkSpec link : links) {
 					final URLSpan[] spans = string.getSpans(link.start, link.end, URLSpan.class);
 					if (spans == null || spans.length <= 0) {
-						applyLink(link.url, link.start, link.end, string, type);
+						applyLink(link.url, link.start, link.end, string, LINK_TYPE_LINKS);
 					}
 				}
 			}
@@ -152,21 +184,33 @@ public class AutoLink {
 	 *            to the url of links that do not have a scheme specified in the
 	 *            link text
 	 */
-	private final boolean addLinks(Spannable spannable, Pattern pattern, int type) {
+	private final boolean addMentionLinks(Spannable spannable) {
 		boolean hasMatches = false;
-		final Matcher matcher = pattern.matcher(spannable);
+		final Matcher matcher = Regex.VALID_MENTION_OR_LIST.matcher(spannable);
 
 		while (matcher.find()) {
-			final int start = matcher.start();
-			final int end = matcher.end();
-			final boolean allowed = true;
+			final int start = matcher.start(Regex.VALID_MENTION_OR_LIST_GROUP_AT);
+			final int end = matcher.end(Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
+			final String url = matcher.group(Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
 
-			if (allowed) {
-				final String url = matcher.group(0);
+			applyLink(url, start, end, spannable, LINK_TYPE_MENTIONS);
+			hasMatches = true;
+		}
 
-				applyLink(url, start, end, spannable, type);
-				hasMatches = true;
-			}
+		return hasMatches;
+	}
+	
+	private final boolean addHashtagLinks(Spannable spannable) {
+		boolean hasMatches = false;
+		final Matcher matcher = Regex.VALID_HASHTAG.matcher(spannable);
+
+		while (matcher.find()) {
+			final int start = matcher.start(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
+			final int end = matcher.end(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
+			final String url = matcher.group(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
+
+			applyLink(url, start, end, spannable, LINK_TYPE_HASHTAGS);
+			hasMatches = true;
 		}
 
 		return hasMatches;

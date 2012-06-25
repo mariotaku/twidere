@@ -50,13 +50,11 @@ public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<Parcela
 					mUsersList.add(user);
 				}
 			}
-		} else {
-			return null;
 		}
 		Collections.sort(mUsersList, ParcelableUser.POSITION_COMPARATOR);
 		return mUsersList;
 	}
-
+	
 	@Override
 	public void onStartLoading() {
 		forceLoad();

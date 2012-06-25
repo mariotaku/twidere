@@ -7,7 +7,7 @@
 		android:id="@+id/profile"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:background="@drawable/list_selector_holo_light"
+		android:background="@drawable/item_background_holo_light"
 		android:padding="8dp">
 
 		<org.mariotaku.twidere.view.RoundCorneredImageView
@@ -83,7 +83,7 @@
 			android:id="@+id/in_reply_to"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:background="@drawable/list_selector_holo_light"
+			android:background="@drawable/item_background_holo_light"
 			android:drawableLeft="@drawable/ic_tweet_stat_reply"
 			android:drawablePadding="4dp"
 			android:padding="8dp"

@@ -1,5 +1,6 @@
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
@@ -12,8 +13,11 @@ import static org.mariotaku.twidere.util.Utils.openUserFollowers;
 import static org.mariotaku.twidere.util.Utils.openUserFollowing;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 
+import java.io.File;
 import java.net.URL;
 
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -26,6 +30,8 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -37,9 +43,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -59,7 +69,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener {
+		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
 	private ProfileImageLoader mProfileImageLoader;
 	private ImageView mProfileImageView;
@@ -77,6 +87,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private long mAccountId;
 	private boolean mIsFollowing;
 	private EditTextDialogFragment mDialogFragment;
+	private Uri mImageUri;
 
 	private User mUser = null;
 
@@ -88,7 +99,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
 				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
-					getFollowInfo();
+					showFollowInfo(true);
 				}
 			}
 			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
@@ -112,6 +123,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private String mScreenName;
 
+	private ServiceInterface mService;
+
+	private PopupMenu mPopupMenu;
+
+	private boolean mFollowInfoDisplayed = false;
+
 	public void changeUser(long account_id, User user) {
 		if (user == null || !isMyActivatedAccount(getActivity(), account_id)) return;
 		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
@@ -127,7 +144,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mProfileImageLoader.displayImage(user.getProfileImageURL(), mProfileImageView);
 		mUser = user;
 		mAdapter.notifyDataSetChanged();
-		getFollowInfo();
+		showFollowInfo(false);
 	}
 
 	public void getUserInfo(long account_id, long user_id, String screen_name) {
@@ -163,6 +180,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+		mService = ServiceInterface.getInstance(getActivity());
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
@@ -198,6 +216,32 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
 		getUserInfo(account_id, user_id, screen_name);
+
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		switch (requestCode) {
+			case REQUEST_TAKE_PHOTO: {
+				if (resultCode == Activity.RESULT_OK) {
+					final File file = new File(mImageUri.getPath());
+					if (file.exists()) {
+						mService.updateProfileImage(mUser.getId(), mImageUri, true);
+					}
+				}
+				break;
+			}
+			case REQUEST_PICK_IMAGE: {
+				if (resultCode == Activity.RESULT_OK) {
+					final Uri uri = intent.getData();
+					final File file = uri == null ? null : new File(getImagePathFromUri(getActivity(), uri));
+					if (file != null && file.exists()) {
+						mService.updateProfileImage(mUser.getId(), Uri.fromFile(file), false);
+					}
+				}
+				break;
+			}
+		}
 
 	}
 
@@ -288,14 +332,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	public boolean onLongClick(View view) {
 		switch (view.getId()) {
 			case R.id.name_view: {
-				if (mUser != null && mUser.getId() == mAccountId) {
+				if (mUser != null && isMyAccount(getActivity(), mUser.getId())) {
 					mDialogFragment = new EditTextDialogFragment(mUser.getName(), getString(R.string.name), TYPE_NAME);
 					mDialogFragment.show(getFragmentManager(), "edit_name");
 					return true;
 				}
 				break;
 			}
-			case R.id.profile_image: {
+			case R.id.profile_image_container: {
+				if (mUser != null && isMyAccount(getActivity(), mUser.getId())) {
+					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+					mPopupMenu.inflate(R.menu.context_profile_image);
+					mPopupMenu.setOnMenuItemClickListener(this);
+					mPopupMenu.show();
+					return true;
+				}
 				break;
 			}
 		}
@@ -303,20 +354,31 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_TAKE_PHOTO: {
+				takePhoto();
+				break;
+			}
+			case MENU_ADD_IMAGE: {
+				pickImage();
+				break;
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_FRIENDSHIP_CHANGED);
 		filter.addAction(BROADCAST_PROFILE_UPDATED);
-		if (getActivity() != null) {
-			getActivity().registerReceiver(mStatusReceiver, filter);
-		}
+		registerReceiver(mStatusReceiver, filter);
 	}
 
 	@Override
 	public void onStop() {
-		if (getActivity() != null) {
-			getActivity().unregisterReceiver(mStatusReceiver);
-		}
+		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
 
@@ -330,7 +392,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mListView.startAnimation(AnimationUtils.loadAnimation(getActivity(), shown ? fade_in : fade_out));
 	}
 
-	private void getFollowInfo() {
+	private void pickImage() {
+		final Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(i, REQUEST_PICK_IMAGE);
+	}
+
+	private void reloadUserInfo() {
+		getUserInfo(mAccountId, mUserId, mScreenName);
+	}
+
+	private void showFollowInfo(boolean force) {
+		if (mFollowInfoDisplayed && !force) return;
 		if (mFollowInfoTask != null) {
 			mFollowInfoTask.cancel(true);
 		}
@@ -338,8 +410,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowInfoTask.execute();
 	}
 
-	private void reloadUserInfo() {
-		getUserInfo(mAccountId, mUserId, mScreenName);
+	private void takePhoto() {
+		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
+					.getExternalCacheDir(getActivity()) : new File(Environment.getExternalStorageDirectory().getPath()
+					+ "/Android/data/" + getActivity().getPackageName() + "/cache/");
+			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
+			mImageUri = Uri.fromFile(file);
+			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
+			startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+		}
 	}
 
 	private class CreatedDateAction extends UserAction {
@@ -378,7 +459,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public boolean onLongClick() {
-			if (mUser != null && mUser.getId() == mAccountId) {
+			if (mUser != null && isMyAccount(getActivity(), mUser.getId())) {
 				mDialogFragment = new EditTextDialogFragment(getSummary(), getName(), TYPE_DESCRIPTION);
 				mDialogFragment.show(getFragmentManager(), "edit_description");
 				return true;
@@ -429,22 +510,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
 					mText = mEditText.getText().toString();
-					final ServiceInterface service = ServiceInterface.getInstance(getActivity());
 					switch (mType) {
 						case TYPE_NAME: {
-							service.updateProfile(mAccountId, mText, null, null, null);
+							mService.updateProfile(mAccountId, mText, null, null, null);
 							break;
 						}
 						case TYPE_URL: {
-							service.updateProfile(mAccountId, null, mText, null, null);
+							mService.updateProfile(mAccountId, null, mText, null, null);
 							break;
 						}
 						case TYPE_LOCATION: {
-							service.updateProfile(mAccountId, null, null, mText, null);
+							mService.updateProfile(mAccountId, null, null, mText, null);
 							break;
 						}
 						case TYPE_DESCRIPTION: {
-							service.updateProfile(mAccountId, null, null, null, mText);
+							mService.updateProfile(mAccountId, null, null, null, mText);
 							break;
 						}
 					}
@@ -560,6 +640,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					mIsFollowing = result.value;
 					mFollowButton.setVisibility(View.VISIBLE);
 					mFollowButton.setText(result.value ? R.string.unfollow : R.string.follow);
+					mFollowInfoDisplayed = true;
 				}
 			}
 			mProgress.setVisibility(View.GONE);
@@ -609,6 +690,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
+	private static class GetExternalCacheDirAccessor {
+
+		@TargetApi(8)
+		public static File getExternalCacheDir(Context context) {
+			return context.getExternalCacheDir();
+		}
+	}
+
 	private class LocationAction extends UserAction {
 
 		@Override
@@ -629,7 +718,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public boolean onLongClick() {
-			if (mUser != null && mUser.getId() == mAccountId) {
+			if (mUser != null && isMyAccount(getActivity(), mUser.getId())) {
 				mDialogFragment = new EditTextDialogFragment(getSummary(), getName(), TYPE_LOCATION);
 				mDialogFragment.show(getFragmentManager(), "edit_location");
 				return true;
@@ -694,7 +783,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public boolean onLongClick() {
-			if (mUser != null && mUser.getId() == mAccountId) {
+			if (mUser != null && isMyAccount(getActivity(), mUser.getId())) {
 				mDialogFragment = new EditTextDialogFragment(getSummary(), getName(), TYPE_URL);
 				mDialogFragment.show(getFragmentManager(), "edit_url");
 				return true;

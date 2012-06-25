@@ -342,6 +342,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		if (!isNullOrEmpty(mSearchBaseURL)) {
 			cb.setSearchBaseURL(mSearchBaseURL);
 		}
+		if (!isNullOrEmpty(mUploadBaseURL)) {
+			cb.setUploadBaseURL(mUploadBaseURL);
+		}
 		if (!isNullOrEmpty(mOAuthAccessTokenURL)) {
 			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
 		}

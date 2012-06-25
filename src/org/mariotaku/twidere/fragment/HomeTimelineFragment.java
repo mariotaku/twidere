@@ -16,7 +16,7 @@ import android.widget.ListView;
 public class HomeTimelineFragment extends CursorStatusesListFragment {
 
 	private SharedPreferences mPreferences;
-	
+
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -39,6 +39,11 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 	};
 
 	@Override
+	public Uri getContentUri() {
+		return Statuses.CONTENT_URI;
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
@@ -55,11 +60,6 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 				list.setSelection(position);
 			}
 		}
-	}
-
-	@Override
-	public Uri getContentUri() {
-		return Statuses.CONTENT_URI;
 	}
 
 	@Override
@@ -83,5 +83,10 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
 		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, status_id).commit();
 		super.onStop();
+	}
+
+	@Override
+	public boolean mustShowLastAsGap() {
+		return false;
 	}
 }

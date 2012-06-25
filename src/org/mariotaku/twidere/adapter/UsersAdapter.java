@@ -48,8 +48,8 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		if (!show_gap) {
 			final ParcelableUser user = getItem(position);
 			holder.setTextSize(mTextSize);
-
 			holder.name.setText(mDisplayName ? user.name : user.screen_name);
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(user.is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				mImageLoader.displayImage(user.profile_image_url, holder.profile_image);

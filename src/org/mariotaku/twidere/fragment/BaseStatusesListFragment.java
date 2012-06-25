@@ -261,8 +261,10 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 		adapter.setDisplayProfileImage(display_profile_image);
 		adapter.setDisplayName(display_name);
 		adapter.setTextSize(text_size);
-		adapter.setShowLastItemAsGap(!mLoadMoreAutomatically);
+		adapter.setShowLastItemAsGap(!mLoadMoreAutomatically||mustShowLastAsGap());
 	}
+	
+	public abstract boolean mustShowLastAsGap();
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {

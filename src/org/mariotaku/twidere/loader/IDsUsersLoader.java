@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.loader;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.util.ArrayUtils;
@@ -24,6 +25,10 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		mAccountId = account_id;
 		mMaxId = max_id;
 	}
+	
+	public long[] getIDsArray() {
+		return mIDs != null ? mIDs.getIDs() : null;
+	}
 
 	public abstract IDs getIDs() throws TwitterException;
 
@@ -41,9 +46,10 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		}
 		final long[] ids = mIDs.getIDs();
 		final int max_id_idx = mMaxId > 0 ? ArrayUtils.indexOf(ids, mMaxId) : 0;
-		final int count = max_id_idx + load_item_limit < ids.length ? max_id_idx + load_item_limit : ids.length
+		if (max_id_idx < 0) return null;
+		if (max_id_idx == ids.length - 1) return Collections.emptyList();
+		final int count = max_id_idx + load_item_limit < ids.length ? load_item_limit : ids.length
 				- max_id_idx;
-
 		final long[] ids_to_load = new long[count];
 		int temp_idx = max_id_idx;
 		for (int i = 0; i < ids_to_load.length; i++) {

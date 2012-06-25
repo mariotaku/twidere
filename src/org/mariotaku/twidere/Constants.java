@@ -103,6 +103,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_DEFAULT_ACCOUNT_ID = "default_account_id";
 	public static final String PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID = "saved_home_timeline_id";
 	public static final String PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID = "saved_mentions_list_id";
+	public static final String PREFERENCE_KEY_SAVED_TAB_POSITION = "saved_tab_position";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
@@ -150,6 +151,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_ACCOUNT_ID = "account_id";
 	public static final String INTENT_KEY_PAGE = "page";
 	public static final String INTENT_KEY_QUERY = "query";
+	public static final String INTENT_KEY_QUERY_TYPE = "query_type";
 	public static final String INTENT_KEY_USER_ID = "user_id";
 	public static final String INTENT_KEY_MAX_ID = "max_id";
 	public static final String INTENT_KEY_STATUS_ID = "status_id";

@@ -45,17 +45,6 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 	}
 
 	@Override
-	public void changeCursor(Cursor cursor) {
-		super.changeCursor(cursor);
-		if (cursor != null) {
-			mNameIdx = cursor.getColumnIndexOrThrow(CachedUsers.NAME);
-			mProfileImageUrlIdx = cursor.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
-			mScreenNameIdx = cursor.getColumnIndexOrThrow(CachedUsers.SCREEN_NAME);
-		}
-
-	}
-
-	@Override
 	public CharSequence convertToString(Cursor cursor) {
 		return cursor.getString(mScreenNameIdx);
 	}
@@ -78,6 +67,16 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 		where.append(CachedUsers.NAME + " LIKE '%" + constraint + "%'");
 		where.append(" OR " + CachedUsers.SCREEN_NAME + " LIKE '%" + constraint + "%'");
 		return mResolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, where.toString(), null, null);
+	}
+
+	@Override
+	public Cursor swapCursor(Cursor cursor) {
+		if (cursor != null) {
+			mNameIdx = cursor.getColumnIndexOrThrow(CachedUsers.NAME);
+			mProfileImageUrlIdx = cursor.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
+			mScreenNameIdx = cursor.getColumnIndexOrThrow(CachedUsers.SCREEN_NAME);
+		}
+		return super.swapCursor(cursor);
 	}
 
 	private static class ViewHolder {

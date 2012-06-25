@@ -56,7 +56,6 @@
 	<string name="open_in_browser">ブラウザで開く</string>
 	<string name="just_now">たった今</string>
 	<string name="tap_to_load_more">タップしてツイートを読み込む</string>
-	<string name="go_to_my_profile_page">マイ・プロフィール</string>
 	<string name="delete">削除</string>
 	<string name="retweet">リツイート</string>
 	<string name="cancel_retweet">リツイートをキャンセル</string>
@@ -74,7 +73,6 @@
 	<string name="view_user_profile">ユーザープロフィール</string>
 	<string name="browser">ブラウザ</string>
 	<string name="pick_from_gallery">ギャラリーから選択</string>
-	<string name="pick_from_map">地図から選択</string>
 	<string name="tweets">ツイート</string>
 	<string name="followers">フォロワー</string>
 	<string name="following">フォロー</string>
@@ -111,10 +109,6 @@
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g><xliff:g id="source">%2$s</xliff:g>から</string>
 	<string name="filter">フィルター</string>
 	<string name="filter_summary">見たくないユーザー、ソースまた特定キーワードの含むツイートを隠す。</string>
-	<string name="filter_enabled">フィルターを有効化</string>
-	<string name="filter_disabled">フィルターを無効化</string>
-	<string name="enable">有効にする</string>
-	<string name="disable">無効にする</string>
 	<string name="users">ユーザー</string>
 	<string name="keywords">キーワード</string>
 	<string name="sources">ソース</string>
@@ -124,8 +118,6 @@
 	<string name="pick_color">色を選択</string>
 	<string name="follow">フォロー</string>
 	<string name="unfollow">アンフォロー</string>
-	<string name="delete_account">アカウントを削除</string>
-	<string name="delete_account_desc">本当にこのアカウントを削除しますか？ <xliff:g id="user_name">%s</xliff:g> ？</string>
 	<string name="bottom_compose_button">つぶやきボタンを下に置く</string>
 	<string name="bottom_compose_button_summary">つぶやきボタンを下に置く。携帯を片手でうまく使えない場合すごく役立つ。</string>
 	<string name="leftside_compose_button">つぶやきボタンを左に置く</string>
@@ -163,9 +155,6 @@
 	<string name="favorites">お気に入り</string>
 	<string name="name">名前</string>
 	<string name="refresh">再読込</string>
-	<string name="delete_all_confirm">本当にすべての下書きを削除しますか？</string>
-	<string name="send_all_confirm">本当にすべての下書きを送信しますか？</string>
-	<string name="delete_draft_confirm">本当にこの下書きを削除しますか？</string>
 	<string name="retry">再試行</string>
 	<string name="more">もっと</string>
 	<string name="quote_format">引用形式</string>

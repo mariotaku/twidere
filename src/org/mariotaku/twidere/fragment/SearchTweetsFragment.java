@@ -93,4 +93,9 @@ public class SearchTweetsFragment extends BaseStatusesListFragment<List<Parcelab
 		getStatuses(null, null);
 	}
 
+	@Override
+	public boolean mustShowLastAsGap() {
+		return false;
+	}
+
 }

@@ -3,9 +3,11 @@
 
 	<item
 		android:id="@id/send"
+		android:icon="@drawable/ic_menu_send"
 		android:title="@string/send"/>
 	<item
 		android:id="@id/edit"
+		android:icon="@drawable/ic_menu_edit"
 		android:title="@string/edit"/>
 	<item
 		android:icon="@drawable/ic_menu_delete"

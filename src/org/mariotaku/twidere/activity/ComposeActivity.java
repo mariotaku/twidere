@@ -17,17 +17,22 @@ import org.mariotaku.twidere.util.ScreenNameTokenizer;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.view.StatusComposeEditText;
 
+import com.twitter.Validator;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff.Mode;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,18 +42,26 @@ import android.text.TextWatcher;
 import android.text.method.ArrowKeyMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener {
+public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
+		OnClickListener, OnLongClickListener {
 
 	private ActionBar mActionBar;
+
+	private static final int THUMBNAIL_SIZE = 36;
 
 	private String mText;
 
 	private Uri mImageUri;
 	private StatusComposeEditText mEditText;
 	private TextView mTextCount;
+	private ImageView mImageThumbnailPreview;
 	private MenuBar mMenuBar;
 	private boolean mIsImageAttached, mIsPhotoAttached;
 	private long[] mAccountIds;
@@ -59,6 +72,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private long mInReplyToStatusId = -1, mAccountId = -1;
 	private String mInReplyToScreenName, mInReplyToName;
 	private boolean mIsQuote;
+	private final Validator mValidator = new Validator();
+
+	private AttachedImageThumbnailTask mAttachedImageThumbnailTask;
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -80,6 +96,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					if (file.exists()) {
 						mIsImageAttached = false;
 						mIsPhotoAttached = true;
+						mImageThumbnailPreview.setVisibility(View.VISIBLE);
+						reloadAttachedImageThumbnail(file);
 					} else {
 						mIsPhotoAttached = false;
 					}
@@ -91,9 +109,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					final Uri uri = intent.getData();
 					final File file = uri == null ? null : new File(getImagePathFromUri(this, uri));
 					if (file != null && file.exists()) {
-						mImageUri = uri;
+						mImageUri = Uri.fromFile(file);
 						mIsPhotoAttached = false;
 						mIsImageAttached = true;
+						mImageThumbnailPreview.setVisibility(View.VISIBLE);
+						reloadAttachedImageThumbnail(file);
 					} else {
 						mIsImageAttached = false;
 					}
@@ -112,6 +132,20 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					}
 				}
 				break;
+		}
+
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.image_thumbnail_preview: {
+				if (mImageUri != null) {
+					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, mImageUri);
+					startActivity(intent);
+				}
+				break;
+			}
 		}
 
 	}
@@ -182,6 +216,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		}
 		mEditText = (StatusComposeEditText) findViewById(R.id.edit_text);
 		mTextCount = (TextView) findViewById(R.id.text_count);
+		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
+		mImageThumbnailPreview.setOnClickListener(this);
+		mImageThumbnailPreview.setOnLongClickListener(this);
 		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);
 		mMenuBar.setOnMenuItemClickListener(this);
 		mMenuBar.inflate(R.menu.menu_compose);
@@ -219,19 +256,13 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	@Override
+	public boolean onLongClick(View view) {
+		return true;
+	}
+
+	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
-			case MENU_SEND: {
-				final String content = mEditText != null ? mEditText.getText().toString() : null;
-				final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
-				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation : null, mImageUri,
-						mInReplyToStatusId);
-				if (this instanceof ComposeActivity) {
-					setResult(Activity.RESULT_OK);
-					finish();
-				}
-				break;
-			}
 			case MENU_TAKE_PHOTO: {
 				takePhoto();
 				break;
@@ -273,11 +304,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				break;
 			}
 			case MENU_SEND: {
-				final String content = mEditText != null ? mEditText.getText().toString() : null;
-				final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
-				mInterface.updateStatus(mAccountIds, content, attach_location ? mRecentLocation : null, mImageUri,
-						mInReplyToStatusId);
-				if (this instanceof ComposeActivity) {
+				final String text = mEditText != null ? mEditText.getText().toString() : null;
+				if (mValidator.isValidTweet(text)) {
+					final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+					mInterface.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
+							mInReplyToStatusId, mIsPhotoAttached && !mIsImageAttached);
 					setResult(Activity.RESULT_OK);
 					finish();
 				}
@@ -289,12 +320,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		final int length = mEditText != null ? mEditText.length() : 0;
-		if (mTextCount != null) {
-			mTextCount.setText(String.valueOf(length));
+		final String text = mEditText != null ? String.valueOf(mEditText.getText()) : null;
+		if ( mTextCount != null) {
+			mTextCount.setText(String.valueOf(mValidator.getTweetLength(text)));
 		}
 		final MenuItem sendItem = menu.findItem(MENU_SEND);
-		sendItem.setEnabled(length > 0 && length <= 140);
+		sendItem.setEnabled(mValidator.isValidTweet(text));
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -352,6 +383,14 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		startActivityForResult(i, REQUEST_PICK_IMAGE);
 	}
 
+	private void reloadAttachedImageThumbnail(File file) {
+		if (mAttachedImageThumbnailTask != null && mAttachedImageThumbnailTask.getStatus() == AsyncTask.Status.RUNNING) {
+			mAttachedImageThumbnailTask.cancel(true);
+		}
+		mAttachedImageThumbnailTask = new AttachedImageThumbnailTask(file);
+		mAttachedImageThumbnailTask.execute();
+	}
+
 	private void setMenu(Menu menu) {
 		final int activated_color = getResources().getColor(R.color.holo_blue_bright);
 		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
@@ -393,6 +432,39 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
 			startActivityForResult(intent, REQUEST_TAKE_PHOTO);
 		}
+	}
+
+	private class AttachedImageThumbnailTask extends AsyncTask<Void, Void, Bitmap> {
+
+		private final File file;
+
+		public AttachedImageThumbnailTask(File file) {
+			this.file = file;
+		}
+
+		@Override
+		protected Bitmap doInBackground(Void... args) {
+			if (file != null && file.exists()) {
+				final int thumbnail_size_px = (int) (THUMBNAIL_SIZE * getResources().getDisplayMetrics().density);
+				final BitmapFactory.Options o = new BitmapFactory.Options();
+				o.inJustDecodeBounds = true;
+				BitmapFactory.decodeFile(file.getPath(), o);
+				final int tmp_width = o.outWidth;
+				final int tmp_height = o.outHeight;
+				if (tmp_width == 0 || tmp_height == 0) return null;
+				final BitmapFactory.Options o2 = new BitmapFactory.Options();
+				o2.inSampleSize = Math.round(Math.max(tmp_width, tmp_height) / thumbnail_size_px);
+				return BitmapFactory.decodeFile(file.getPath(), o2);
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			mImageThumbnailPreview.setImageBitmap(result);
+			super.onPostExecute(result);
+		}
+
 	}
 
 	private static class GetExternalCacheDirAccessor {

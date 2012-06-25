@@ -56,7 +56,6 @@
 	<string name="open_in_browser">Im Browser öffnen</string>
 	<string name="just_now">Gerade</string>
 	<string name="tap_to_load_more">Weitere Tweets laden</string>
-	<string name="go_to_my_profile_page">Gehe zu meiner Profilseite</string>
 	<string name="delete">Löschen</string>
 	<string name="retweet">Retweet</string>
 	<string name="cancel_retweet">Retweet abbrechen</string>
@@ -74,7 +73,6 @@
 	<string name="view_user_profile">Benutzerprofil</string>
 	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Wähle aus Galerie</string>
-	<string name="pick_from_map">Wähle aus Karte</string>
 	<string name="tweets">Tweets</string>
 	<string name="followers">Follower</string>
 	<string name="following">Following</string>
@@ -111,10 +109,6 @@
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
 	<string name="filter">Filter</string>
 	<string name="filter_summary">Verberge Tweets von anderen Benutzern / Quellen oder durch Stichworte</string>
-	<string name="filter_enabled">Filter ist aktiviert</string>
-	<string name="filter_disabled">Filter ist deaktiviert</string>
-	<string name="enable">aktiv</string>
-	<string name="disable">inaktiv</string>
 	<string name="users">Benutzer</string>
 	<string name="keywords">Stichwörter</string>
 	<string name="sources">Quellen</string>
@@ -124,8 +118,6 @@
 	<string name="pick_color">Wähle Farbe</string>
 	<string name="follow">Folgen</string>
 	<string name="unfollow">Entfolgen</string>
-	<string name="delete_account">Account löschen</string>
-	<string name="delete_account_desc">Dein Account wird gelöscht, bist Du dir sicher? <xliff:g id="user_name">%s</xliff:g> ?</string>
 	<string name="bottom_compose_button">Tweet-Button unten</string>
 	<string name="bottom_compose_button_summary">Setze den Tweet-Button nach unten, aktiviere es, wenn Dein Bildschirm groß ist.</string>
 	<string name="leftside_compose_button">Tweet-Button auf der linken Seite</string>
@@ -156,16 +148,12 @@
 	<string name="drafts">Entwürfe</string>
 	<string name="send_all">Sende alle</string>
 	<string name="delete_all">Lösche alle</string>
-	<string name="profile">Profil</string>
 	<string name="description">Beschreibung</string>
 	<string name="location">Ort</string>
 	<string name="url">URL</string>
 	<string name="favorites">Favoriten</string>
 	<string name="name">Name</string>
 	<string name="refresh">Aktualisieren</string>
-	<string name="delete_all_confirm">Bist Du dir sicher, alle nicht gesendeten Tweets zu löschen?</string>
-	<string name="send_all_confirm">Bist Du dir sicher, alle nicht gesendeten Tweets zu senden?</string>
-	<string name="delete_draft_confirm">Bist Du dir sicher, diesen nicht gesendeten Tweet zu senden?</string>
 	<string name="retry">Wiederholen</string>
 	<string name="more">Mehr</string>
 	<string name="quote_format">Zitat-Format</string>

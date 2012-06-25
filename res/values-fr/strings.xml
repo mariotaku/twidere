@@ -56,7 +56,6 @@
 	<string name="open_in_browser">Ouvrir dans un navigateur</string>
 	<string name="just_now">À l\'instant</string>
 	<string name="tap_to_load_more">Touchez pour charger plus</string>
-	<string name="go_to_my_profile_page">Aller à votre profil</string>
 	<string name="delete">Supprimer</string>
 	<string name="retweet">Retweeter</string>
 	<string name="cancel_retweet">Annuler le retweet</string>
@@ -74,7 +73,6 @@
 	<string name="view_user_profile">Profil de l\'utilisateur</string>
 	<string name="browser">Navigateur</string>
 	<string name="pick_from_gallery">Choisir dans la galerie</string>
-	<string name="pick_from_map">Sélectionner sur la carte</string>
 	<string name="tweets">Tweets</string>
 	<string name="followers">Followers</string>
 	<string name="following">Following</string>
@@ -111,10 +109,6 @@
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
 	<string name="filter">Filtrer</string>
 	<string name="filter_summary">Cacher les tweets de personnes/sources indésirables ou contenant certains mots-clés</string>
-	<string name="filter_enabled">Filtrage activé</string>
-	<string name="filter_disabled">Filtrage désactivé</string>
-	<string name="enable">Activer</string>
-	<string name="disable">Désactiver</string>
 	<string name="users">Utilisateurs</string>
 	<string name="keywords">Mots-clés</string>
 	<string name="sources">Sources</string>
@@ -124,8 +118,6 @@
 	<string name="pick_color">Choisir une couleur</string>
 	<string name="follow">Suivre</string>
 	<string name="unfollow">Ne plus suivre</string>
-	<string name="delete_account">Supprimer le compte</string>
-	<string name="delete_account_desc">Êtes-vous sûr de vouloir supprimer le compte <xliff:g id="user_name">%s</xliff:g> ?</string>
 	<string name="bottom_compose_button">Bouton Écrire en bas</string>
 	<string name="bottom_compose_button_summary">Déplacer le bouton Écrire en bas.</string>
 	<string name="leftside_compose_button">Bouton Écrire à gauche</string>
@@ -156,16 +148,12 @@
 	<string name="drafts">Brouillons</string>
 	<string name="send_all">Envoyer tout</string>
 	<string name="delete_all">Supprimer tout</string>
-	<string name="profile">Profil</string>
 	<string name="description">Description</string>
 	<string name="location">Emplacement</string>
 	<string name="url">URL</string>
 	<string name="favorites">Favoris</string>
 	<string name="name">Nom</string>
 	<string name="refresh">Rafraîchir</string>
-	<string name="delete_all_confirm">Êtes-vous sûr de vouloir supprimer tous vos tweets non-envoyés ?</string>
-	<string name="send_all_confirm">Êtes-vous sûr de vouloir envoyer tous vos tweets non-envoyés ?</string>
-	<string name="delete_draft_confirm">Êtes-vous sûr de vouloir envoyer ce tweet ?</string>
 	<string name="retry">Rééssayer</string>
 	<string name="more">Plus</string>
 	<string name="quote_format">Format de citation</string>

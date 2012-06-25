@@ -2,7 +2,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<string name="app_name">Twidere</string>
-	<string name="loading">Loading…</string>
 	<string name="compose">Compose</string>
 	<string name="add_account">Add account</string>
 	<string name="settings">Settings</string>
@@ -56,7 +55,6 @@
 	<string name="open_in_browser">Open in browser</string>
 	<string name="just_now">Just now</string>
 	<string name="tap_to_load_more">Tap to load more</string>
-	<string name="go_to_my_profile_page">Go to my profile page</string>
 	<string name="delete">Delete</string>
 	<string name="retweet">Retweet</string>
 	<string name="cancel_retweet">Cancel retweet</string>
@@ -74,7 +72,6 @@
 	<string name="view_user_profile">User profile</string>
 	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Pick from gallery</string>
-	<string name="pick_from_map">Pick from map</string>
 	<string name="tweets">Tweets</string>
 	<string name="followers">Followers</string>
 	<string name="following">Following</string>
@@ -111,10 +108,6 @@
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
 	<string name="filter">Filter</string>
 	<string name="filter_summary">Hide tweets from unwanted users / sources or contains specified keywords</string>
-	<string name="filter_enabled">Filter is enabled</string>
-	<string name="filter_disabled">Filter is disabled</string>
-	<string name="enable">Enable</string>
-	<string name="disable">Disable</string>
 	<string name="users">Users</string>
 	<string name="keywords">Keywords</string>
 	<string name="sources">Sources</string>
@@ -124,8 +117,6 @@
 	<string name="pick_color">Pick color</string>
 	<string name="follow">Follow</string>
 	<string name="unfollow">Unfollow</string>
-	<string name="delete_account">Delete account</string>
-	<string name="delete_account_desc">Are you sure to delete account <xliff:g id="user_name">%s</xliff:g> ?</string>
 	<string name="bottom_compose_button">Bottom compose button</string>
 	<string name="bottom_compose_button_summary">Put the compose button in the bottom, you can enable this if your screen is large.</string>
 	<string name="leftside_compose_button">Leftside compose button</string>
@@ -156,16 +147,12 @@
 	<string name="drafts">Drafts</string>
 	<string name="send_all">Send all</string>
 	<string name="delete_all">Delete all</string>
-	<string name="profile">Profile</string>
 	<string name="description">Description</string>
 	<string name="location">Location</string>
 	<string name="url">URL</string>
 	<string name="favorites">Favorites</string>
 	<string name="name">Name</string>
 	<string name="refresh">Refresh</string>
-	<string name="delete_all_confirm">Are you sure to delete all unsent tweets?</string>
-	<string name="send_all_confirm">Are you sure to send all unsent tweets?</string>
-	<string name="delete_draft_confirm">Are you sure to send this unsent tweet?</string>
 	<string name="retry">Retry</string>
 	<string name="more">More</string>
 	<string name="quote_format">Quote format</string>

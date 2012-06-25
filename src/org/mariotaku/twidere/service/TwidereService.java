@@ -140,13 +140,15 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int updateProfileImage(long account_id, Uri image_uri) {
-		final UpdateProfileImageTask task = new UpdateProfileImageTask(account_id, image_uri);
+	public int updateProfileImage(long account_id, Uri image_uri, boolean delete_image) {
+		final UpdateProfileImageTask task = new UpdateProfileImageTask(account_id, image_uri, delete_image);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
-		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to);
+	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to,
+			boolean delete_image) {
+		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to,
+				delete_image);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -1077,14 +1079,14 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		public int updateProfileImage(long account_id, Uri image_uri) {
-			return mService.get().updateProfileImage(account_id, image_uri);
+		public int updateProfileImage(long account_id, Uri image_uri, boolean delete_image) {
+			return mService.get().updateProfileImage(account_id, image_uri, delete_image);
 		}
 
 		@Override
-		public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to)
-				throws RemoteException {
-			return mService.get().updateStatus(account_ids, content, location, image_uri, in_reply_to);
+		public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to,
+				boolean delete_image) throws RemoteException {
+			return mService.get().updateStatus(account_ids, content, location, image_uri, in_reply_to, delete_image);
 
 		}
 
@@ -1106,11 +1108,13 @@ public class TwidereService extends Service implements Constants {
 
 		private final long account_id;
 		private final Uri image_uri;
+		private final boolean delete_image;
 
-		public UpdateProfileImageTask(long account_id, Uri image_uri) {
+		public UpdateProfileImageTask(long account_id, Uri image_uri, boolean delete_image) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.image_uri = image_uri;
+			this.delete_image = delete_image;
 		}
 
 		@Override
@@ -1132,6 +1136,9 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(UserResponse result) {
 			if (result != null && result.user != null) {
 				Toast.makeText(TwidereService.this, R.string.profile_image_update_success, Toast.LENGTH_SHORT).show();
+				if (delete_image) {
+					new File(image_uri.getPath()).delete();
+				}
 			} else {
 				showErrorToast(TwidereService.this, result.exception, true);
 			}
@@ -1196,14 +1203,17 @@ public class TwidereService extends Service implements Constants {
 		private Location location;
 		private Uri image_uri;
 		private long in_reply_to;
+		private boolean delete_image;
 
-		public UpdateStatusTask(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to) {
+		public UpdateStatusTask(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to,
+				boolean delete_image) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.content = content;
 			this.location = location;
 			this.image_uri = image_uri;
 			this.in_reply_to = in_reply_to;
+			this.delete_image = delete_image;
 		}
 
 		@Override
@@ -1224,7 +1234,10 @@ public class TwidereService extends Service implements Constants {
 						}
 						final String image_path = getImagePathFromUri(TwidereService.this, image_uri);
 						if (image_path != null) {
-							status.setMedia(new File(image_path));
+							final File image_file = new File(image_path);
+							if (image_file.exists()) {
+								status.setMedia(image_file);
+							}
 						}
 						result.add(new StatusResponse(account_id, twitter.updateStatus(status), null));
 					} catch (final TwitterException e) {
@@ -1254,6 +1267,12 @@ public class TwidereService extends Service implements Constants {
 			}
 			if (succeed) {
 				Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
+				if (image_uri != null && delete_image) {
+					final String path = getImagePathFromUri(TwidereService.this, image_uri);
+					if (path != null) {
+						new File(path).delete();
+					}
+				}
 			} else {
 				showErrorToast(TwidereService.this, exception, true);
 				final StringBuilder ids_builder = new StringBuilder();

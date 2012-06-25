@@ -21,7 +21,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
-		android:background="@drawable/list_selector_holo_light"
+		android:background="@drawable/item_background_holo_light"
 		android:gravity="center"
 		android:minHeight="48dp"
 		android:onClick="onClick"

@@ -42,6 +42,7 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 	private Spinner mTrendsSpinner;
 	private ArrayAdapter<TrendsCategory> mTrendsCategoriesAdapter;
 	private ImageButton mTrendsRefreshButton;
+	private View mContentView;
 
 	private static final int TRENDS_TYPE_DAILY = 1;
 	private static final int TRENDS_TYPE_WEEKLY = 2;
@@ -63,6 +64,10 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 		mInflater = getLayoutInflater(savedInstanceState);
 		mAccountId = getDefaultAccountId(getActivity());
 		mTwitter = getTwitterInstance(getActivity(), mAccountId, false);
+		if (mTwitter == null) {
+			mContentView.setVisibility(View.GONE);
+			return;
+		}
 		mTrendsAdapter = new TrendsAdapter();
 		mTrendsListView.setAdapter(mTrendsAdapter);
 		mTrendsListView.setOnItemClickListener(mOnTrendsClickListener);
@@ -88,6 +93,7 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.discover, null, false);
+		mContentView = view;
 		mTrendsListView = (ListView) view.findViewById(R.id.trends_list);
 		mTrendsLoadingProgress = (ProgressBar) view.findViewById(R.id.trends_progress);
 		mTrendsSpinner = (Spinner) view.findViewById(R.id.trends_spinner);

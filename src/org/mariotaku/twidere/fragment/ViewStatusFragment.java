@@ -72,7 +72,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
-				showFollowInfo(true);
+				if (mStatus != null && mStatus.user_id == intent.getLongExtra(INTENT_KEY_USER_ID, -1)
+						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+					showFollowInfo(true);
+				}
 			} else if (BROADCAST_FAVORITE_CHANGED.equals(action)) {
 				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
 				if (status_id > 0 && status_id == mStatusId) {
@@ -99,10 +102,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		}
 		final AutoLink linkify = new AutoLink(mTextView);
 		linkify.setOnLinkClickListener(this);
-		linkify.addLinks(AutoLink.LINK_TYPE_MENTIONS);
-		linkify.addLinks(AutoLink.LINK_TYPE_HASHTAGS);
-		linkify.addLinks(AutoLink.LINK_TYPE_IMAGES);
-		linkify.addLinks(AutoLink.LINK_TYPE_LINKS);
+		linkify.addAllLinks();
 		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
 		final boolean is_reply = status.in_reply_to_status_id > 0;
 		final String time = formatToLongTimeString(getActivity(), status.status_timestamp);
@@ -301,16 +301,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_FRIENDSHIP_CHANGED);
 		filter.addAction(BROADCAST_FAVORITE_CHANGED);
-		if (getActivity() != null) {
-			getActivity().registerReceiver(mStatusReceiver, filter);
-		}
+		registerReceiver(mStatusReceiver, filter);
 	}
 
 	@Override
 	public void onStop() {
-		if (getActivity() != null) {
-			getActivity().unregisterReceiver(mStatusReceiver);
-		}
+		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
 

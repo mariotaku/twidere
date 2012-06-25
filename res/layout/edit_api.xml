@@ -95,7 +95,7 @@
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_below="@+id/auth_type_scroll"
-				android:background="@drawable/list_selector_holo_light"
+				android:background="@drawable/item_background_holo_light"
 				android:drawableLeft="@drawable/expander_close_holo"
 				android:drawablePadding="4dp"
 				android:gravity="center_vertical"
@@ -126,7 +126,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
-		android:background="@drawable/list_selector_holo_light"
+		android:background="@drawable/item_background_holo_light"
 		android:gravity="center"
 		android:minHeight="48dp"
 		android:text="@android:string/ok"/>

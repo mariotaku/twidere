@@ -16,7 +16,7 @@ import android.widget.ListView;
 public class MentionsFragment extends CursorStatusesListFragment {
 
 	private SharedPreferences mPreferences;
-	
+
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -44,21 +44,6 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
-		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
-		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
-		registerReceiver(mStatusReceiver, filter);
-		if (!getServiceInterface().isMentionsRefreshing()) {
-			getListView().onRefreshComplete();
-		}
-	}
-	
-
-	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
@@ -78,11 +63,30 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	}
 
 	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
+		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
+		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
+		registerReceiver(mStatusReceiver, filter);
+		if (!getServiceInterface().isMentionsRefreshing()) {
+			getListView().onRefreshComplete();
+		}
+	}
+
+	@Override
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		final int first_visible_position = getListView().getRefreshableView().getFirstVisiblePosition();
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
 		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
 		super.onStop();
+	}
+
+	@Override
+	public boolean mustShowLastAsGap() {
+		return false;
 	}
 }

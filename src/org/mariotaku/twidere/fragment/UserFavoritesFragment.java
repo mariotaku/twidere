@@ -75,6 +75,8 @@ public class UserFavoritesFragment extends BaseStatusesListFragment<List<Parcela
 		setProgressBarIndeterminateVisibility(false);
 	}
 
+	private boolean isAllItemsLoaded = false;
+	
 	@Override
 	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
 		mAdapter.clear();
@@ -82,6 +84,10 @@ public class UserFavoritesFragment extends BaseStatusesListFragment<List<Parcela
 			for (final ParcelableStatus status : data) {
 				mAdapter.add(status);
 			}
+		}
+		if (loader instanceof UserFavoritesLoader) {
+			int total = ((UserFavoritesLoader) loader).getTotalItemsCount();
+			isAllItemsLoaded = total != -1 && total == mAdapter.getCount();
 		}
 		getListView().onRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
@@ -95,6 +101,11 @@ public class UserFavoritesFragment extends BaseStatusesListFragment<List<Parcela
 	@Override
 	public void onRefresh() {
 		getStatuses(null, null);
+	}
+
+	@Override
+	public boolean mustShowLastAsGap() {
+		return !isAllItemsLoaded;
 	}
 
 }

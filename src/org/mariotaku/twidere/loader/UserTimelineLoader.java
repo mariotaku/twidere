@@ -15,6 +15,7 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 
 	private final long mUserId;
 	private final String mUserScreenName;
+	private int mTotalItemsCount;
 
 	public UserTimelineLoader(Context context, long account_id, long user_id, String user_screenname, long max_id,
 			List<ParcelableStatus> data) {
@@ -22,13 +23,25 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 		mUserId = user_id;
 		mUserScreenName = user_screenname;
 	}
+	
+	public int getTotalItemsCount() {
+		return mTotalItemsCount;
+	}
 
 	@Override
 	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
 		if (twitter != null) {
-			if (mUserId != -1)
+			if (mUserId != -1) {
+				if (mTotalItemsCount == -1) {
+					try {
+						mTotalItemsCount = twitter.showUser(mUserId).getStatusesCount();
+					} catch (TwitterException e) {
+						mTotalItemsCount = -1;
+					}
+				}
 				return twitter.getUserTimeline(mUserId, paging);
+			}
 			else if (mUserScreenName != null) return twitter.getUserTimeline(mUserScreenName, paging);
 		}
 		return null;

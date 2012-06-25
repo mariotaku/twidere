@@ -127,13 +127,13 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mAdapter.changeCursor(null);
+		mAdapter.swapCursor(null);
 		mCursor = null;
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		mAdapter.changeCursor(cursor);
+		mAdapter.swapCursor(cursor);
 		mCursor = cursor;
 	}
 
@@ -225,7 +225,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 
 	private void sendDraft(DraftItem draft) {
 		final Uri uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
-		mInterface.updateStatus(draft.account_ids, draft.text, null, uri, draft.in_reply_to_status_id);
+		mInterface.updateStatus(draft.account_ids, draft.text, null, uri, draft.in_reply_to_status_id, false);
 	}
 
 	private class DraftItem {

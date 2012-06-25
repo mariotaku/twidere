@@ -15,6 +15,7 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 
 	private final long mUserId;
 	private final String mUserScreenName;
+	private int mTotalItemsCount;
 
 	public UserFavoritesLoader(Context context, long account_id, long user_id, long max_id, List<ParcelableStatus> data) {
 		this(context, account_id, user_id, null, max_id, data);
@@ -31,13 +32,25 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 		mUserId = user_id;
 		mUserScreenName = user_screenname;
 	}
+	
+	public int getTotalItemsCount() {
+		return mTotalItemsCount;
+	}
 
 	@Override
 	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
 		if (twitter != null) {
-			if (mUserId != -1)
+			if (mUserId != -1) {
+				if (mTotalItemsCount == -1) {
+					try {
+						mTotalItemsCount = twitter.showUser(mUserId).getFavouritesCount();
+					} catch (TwitterException e) {
+						mTotalItemsCount = -1;
+					}
+				}
 				return twitter.getFavorites(String.valueOf(mUserId), paging);
+			}
 			else if (mUserScreenName != null) return twitter.getFavorites(mUserScreenName, paging);
 		}
 		return null;

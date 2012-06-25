@@ -100,16 +100,6 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void changeCursor(Cursor cursor) {
-		if (cursor != null) {
-			mIndices = new StatusesCursorIndices(cursor);
-		} else {
-			mIndices = null;
-		}
-		super.changeCursor(cursor);
-	}
-
-	@Override
 	public ParcelableStatus findItem(long id) {
 		for (int i = 0; i < getCount(); i++) {
 			if (getItemId(i) == id) {
@@ -120,19 +110,15 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 		}
 		return null;
 	}
-	
+
 	public long findItemIdByPosition(int position) {
-		if (position >= 0 && position < getCount()) {
-			return getItem(position).getLong(mIndices.status_id);
-		}
+		if (position >= 0 && position < getCount()) return getItem(position).getLong(mIndices.status_id);
 		return -1;
 	}
-	
+
 	public int findItemPositionByStatusId(long status_id) {
 		for (int i = 0; i < getCount(); i++) {
-			if (getItem(i).getLong(mIndices.status_id) == status_id) {
-				return i;
-			}
+			if (getItem(i).getLong(mIndices.status_id) == status_id) return i;
 		}
 		return -1;
 	}
@@ -190,6 +176,16 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public Cursor swapCursor(Cursor cursor) {
+		if (cursor != null) {
+			mIndices = new StatusesCursorIndices(cursor);
+		} else {
+			mIndices = null;
+		}
+		return super.swapCursor(cursor);
 	}
 
 }

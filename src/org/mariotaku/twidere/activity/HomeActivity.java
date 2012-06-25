@@ -89,7 +89,13 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 	private boolean mIsNavigateToDefaultAccount = false;
 
-	public void checkDefaultAccountSet() {
+	public static final int TAB_POSITION_HOME = 0;
+	public static final int TAB_POSITION_MENTIONS = 1;
+	public static final int TAB_POSITION_DISCOVER = 2;
+	public static final int TAB_POSITION_ME = 3;
+
+	public boolean checkDefaultAccountSet() {
+		boolean result = true;
 		final long[] activated_ids = getActivatedAccountIds(this);
 		final long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
 		if (default_account_id == -1 || !ArrayUtils.contains(activated_ids, default_account_id)) {
@@ -98,17 +104,19 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 				mIndicator.setPagingEnabled(true);
 				mIsNavigateToDefaultAccount = false;
 			} else if (activated_ids.length > 1) {
-				mViewPager.setCurrentItem(mAdapter.getCount() - 1, false);
+				mViewPager.setCurrentItem(TAB_POSITION_ME, false);
 				mIndicator.setPagingEnabled(false);
 				if (!mIsNavigateToDefaultAccount) {
 					Toast.makeText(this, R.string.set_default_account_hint, Toast.LENGTH_LONG).show();
 				}
 				mIsNavigateToDefaultAccount = true;
+				result = false;
 			}
 		} else {
 			mIndicator.setPagingEnabled(true);
 			mIsNavigateToDefaultAccount = false;
 		}
+		return result;
 	}
 
 	public boolean isDualPaneMode() {
@@ -228,8 +236,11 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 		if (getActivatedAccountIds(this).length <= 0) {
 			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
-		} else {
-			checkDefaultAccountSet();
+		} else if (checkDefaultAccountSet()) {
+			final int position = mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION, TAB_POSITION_HOME);
+			if (position >= 0 || position < mViewPager.getChildCount()) {
+				mViewPager.setCurrentItem(position);
+			}
 		}
 	}
 
@@ -313,6 +324,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	public void onStop() {
 		unregisterReceiver(mStateReceiver);
+		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
 		super.onStop();
 	}
 

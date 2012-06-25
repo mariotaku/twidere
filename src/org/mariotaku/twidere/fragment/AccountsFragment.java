@@ -165,13 +165,13 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		mCursor = null;
-		mAdapter.changeCursor(null);
+		mAdapter.swapCursor(null);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mCursor = data;
-		mAdapter.changeCursor(data);
+		mAdapter.swapCursor(data);
 	}
 
 	@Override
@@ -291,16 +291,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 
 		@Override
-		public void changeCursor(Cursor cursor) {
-			super.changeCursor(cursor);
-			if (cursor != null) {
-				mUserColorIdx = cursor.getColumnIndex(Accounts.USER_COLOR);
-				mProfileImageIdx = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
-				mUserIdIdx = cursor.getColumnIndex(Accounts.USER_ID);
-			}
-		}
-
-		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
 			final View view = super.newView(context, cursor, parent);
@@ -313,6 +303,16 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		public void notifyDataSetChanged() {
 			mDefaultAccountId = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
 			super.notifyDataSetChanged();
+		}
+
+		@Override
+		public Cursor swapCursor(Cursor cursor) {
+			if (cursor != null) {
+				mUserColorIdx = cursor.getColumnIndex(Accounts.USER_COLOR);
+				mProfileImageIdx = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
+				mUserIdIdx = cursor.getColumnIndex(Accounts.USER_ID);
+			}
+			return super.swapCursor(cursor);
 		}
 	}
 }

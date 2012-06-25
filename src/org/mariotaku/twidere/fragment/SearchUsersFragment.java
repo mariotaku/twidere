@@ -24,7 +24,7 @@ public class SearchUsersFragment extends BaseUsersListFragment {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void onDestroyView() {
 		mPage = 1;
