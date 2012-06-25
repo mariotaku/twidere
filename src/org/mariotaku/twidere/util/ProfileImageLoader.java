@@ -283,7 +283,7 @@ public class ProfileImageLoader {
 
 	private static class MemoryCache {
 
-		private static final int MAX_CACHE_CAPACITY = 40;
+		private static final int MAX_CACHE_CAPACITY = 60;
 
 		private final Map<URL, SoftReference<Bitmap>> mSoftCache = new ConcurrentHashMap<URL, SoftReference<Bitmap>>();
 

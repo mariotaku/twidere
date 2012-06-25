@@ -2,7 +2,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<string name="app_name">Twidere</string>
-	<string name="loading">正在载入…</string>
 	<string name="compose">撰写</string>
 	<string name="add_account">添加帐号</string>
 	<string name="settings">设定</string>
@@ -56,7 +55,6 @@
 	<string name="open_in_browser">在浏览器中打开</string>
 	<string name="just_now">刚刚</string>
 	<string name="tap_to_load_more">轻按以加载更多</string>
-	<string name="go_to_my_profile_page">查看我的个人资料页面</string>
 	<string name="delete">删除</string>
 	<string name="retweet">转推</string>
 	<string name="cancel_retweet">取消转推</string>
@@ -74,7 +72,6 @@
 	<string name="view_user_profile">用户资料</string>
 	<string name="browser">浏览器</string>
 	<string name="pick_from_gallery">从图库中选取</string>
-	<string name="pick_from_map">从地图上选取</string>
 	<string name="tweets">推文</string>
 	<string name="followers">关注者</string>
 	<string name="following">关注</string>
@@ -111,10 +108,6 @@
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>，来自<xliff:g id="source">%2$s</xliff:g></string>
 	<string name="filter">过滤</string>
 	<string name="filter_summary">隐藏不希望看到的用户/来源或者含有特定关键词的推文。</string>
-	<string name="filter_enabled">过滤已启用</string>
-	<string name="filter_disabled">过滤已禁用</string>
-	<string name="enable">启用</string>
-	<string name="disable">禁用</string>
 	<string name="users">用户</string>
 	<string name="keywords">关键词</string>
 	<string name="sources">来源</string>
@@ -124,8 +117,6 @@
 	<string name="pick_color">选取颜色</string>
 	<string name="follow">关注</string>
 	<string name="unfollow">取消关注</string>
-	<string name="delete_account">删除帐号</string>
-	<string name="delete_account_desc">你确定删除帐号 <xliff:g id="user_name">%s</xliff:g> ？</string>
 	<string name="bottom_compose_button">底部放置的撰写按钮</string>
 	<string name="bottom_compose_button_summary">将撰写按钮放置在底部，当你的手机屏幕难以单手操作，它会有不少帮助。</string>
 	<string name="leftside_compose_button">左侧撰写按钮</string>
@@ -156,16 +147,12 @@
 	<string name="drafts">草稿</string>
 	<string name="send_all">全部发送</string>
 	<string name="delete_all">全部删除</string>
-	<string name="profile">资料</string>
 	<string name="description">简介</string>
 	<string name="location">位置</string>
 	<string name="url">网址</string>
 	<string name="favorites">收藏</string>
 	<string name="name">名字</string>
 	<string name="refresh">刷新</string>
-	<string name="delete_all_confirm">你确定删除所有未发送的推文？</string>
-	<string name="send_all_confirm">你确定发送所有未发送的推文？</string>
-	<string name="delete_draft_confirm">你确定删除这条未发送的推文？</string>
 	<string name="retry">重试</string>
 	<string name="more">更多</string>
 	<string name="quote_format">引用格式</string>
@@ -184,5 +171,7 @@
 	<string name="daily_trends">本日话题</string>
 	<string name="weekly_trends">本周话题</string>
 	<string name="search_hint">搜索推文或用户</string>
+	<string name="remember_position">记住位置</string>
+	<string name="remember_position_summary">打开Twidere时，恢复到退出前列表/页面的位置</string>
 
 </resources>

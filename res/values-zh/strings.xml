@@ -2,7 +2,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<string name="app_name">Twidere</string>
-	<string name="loading">正在載入…</string>
 	<string name="compose">撰寫</string>
 	<string name="add_account">添加帳號</string>
 	<string name="settings">設定</string>
@@ -56,7 +55,6 @@
 	<string name="open_in_browser">在瀏覽器中打開</string>
 	<string name="just_now">剛剛</string>
 	<string name="tap_to_load_more">輕按以加載更多</string>
-	<string name="go_to_my_profile_page">查看我的個人資料頁面</string>
 	<string name="delete">刪除</string>
 	<string name="retweet">轉推</string>
 	<string name="cancel_retweet">取消轉推</string>
@@ -74,7 +72,6 @@
 	<string name="view_user_profile">用戶資料</string>
 	<string name="browser">瀏覽器</string>
 	<string name="pick_from_gallery">從圖庫中選取</string>
-	<string name="pick_from_map">從地圖上選取</string>
 	<string name="tweets">推文</string>
 	<string name="followers">關注者</string>
 	<string name="following">關注</string>
@@ -111,10 +108,6 @@
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>，來自<xliff:g id="source">%2$s</xliff:g></string>
 	<string name="filter">過濾</string>
 	<string name="filter_summary">隱藏不希望看到的用戶/來源或者含有特定關鍵詞的推文。</string>
-	<string name="filter_enabled">過濾已啟用</string>
-	<string name="filter_disabled">過濾已禁用</string>
-	<string name="enable">啟用</string>
-	<string name="disable">禁用</string>
 	<string name="users">用戶</string>
 	<string name="keywords">關鍵詞</string>
 	<string name="sources">來源</string>
@@ -124,8 +117,6 @@
 	<string name="pick_color">選取顏色</string>
 	<string name="follow">關注</string>
 	<string name="unfollow">取消關注</string>
-	<string name="delete_account">刪除帳號</string>
-	<string name="delete_account_desc">你確定刪除帳號 <xliff:g id="user_name">%s</xliff:g> ？</string>
 	<string name="bottom_compose_button">底部放置的撰寫按鈕</string>
 	<string name="bottom_compose_button_summary">將撰寫按鈕放置在底部，當你的手機屏幕難以單手操作，它會有不少幫助。</string>
 	<string name="leftside_compose_button">左側撰寫按鈕</string>
@@ -156,16 +147,12 @@
 	<string name="drafts">草稿</string>
 	<string name="send_all">全部發送</string>
 	<string name="delete_all">全部刪除</string>
-	<string name="profile">資料</string>
 	<string name="description">簡介</string>
 	<string name="location">位置</string>
 	<string name="url">網址</string>
 	<string name="favorites">收藏</string>
 	<string name="name">名字</string>
 	<string name="refresh">刷新</string>
-	<string name="delete_all_confirm">你確定刪除所有未發送的推文？</string>
-	<string name="send_all_confirm">你確定發送所有未發送的推文？</string>
-	<string name="delete_draft_confirm">你確定刪除這條未發送的推文？</string>
 	<string name="retry">重試</string>
 	<string name="more">更多</string>
 	<string name="quote_format">引用格式</string>
@@ -181,5 +168,10 @@
 	<string name="search_tweets">搜索推文</string>
 	<string name="created_at">創建日期</string>
 	<string name="set_default_account_hint">請設定一個預設帳號。</string>
+	<string name="daily_trends">本日話題</string>
+	<string name="weekly_trends">本週話題</string>
+	<string name="search_hint">搜索推文或用戶</string>
+	<string name="remember_position">記住位置</string>
+	<string name="remember_position_summary">打開Twidere時，恢復到退出前列表/頁面的位置</string>
 
 </resources>

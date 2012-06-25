@@ -82,11 +82,13 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
+		super.onLoaderReset(loader);
 		mAdapter.swapCursor(null);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		super.onLoadFinished(loader, data);
 		mAdapter.swapCursor(data);
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
 	}

@@ -1,5 +1,6 @@
 package org.mariotaku.twidere.fragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.activity.HomeActivity;
@@ -34,10 +35,17 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
 	private long mAccountId;
+	private final ArrayList<ParcelableUser> mData = new ArrayList<ParcelableUser>();
 
 	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true;
 
 	private Fragment mDetailFragment;
+
+	private boolean mAllItemsLoaded = false;
+
+	public final ArrayList<ParcelableUser> getData() {
+		return mData;
+	}
 
 	public abstract Loader<List<ParcelableUser>> newLoaderInstance();
 
@@ -45,9 +53,12 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
-		mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID);
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		if (mAccountId != account_id) {
+			mData.clear();
+		}
+		mAccountId = account_id;
 		mAdapter = new UsersAdapter(getActivity());
 		mListView = getListView();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -98,12 +109,7 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 	@Override
 	public void onLoadFinished(Loader<List<ParcelableUser>> loader, List<ParcelableUser> data) {
 		setProgressBarIndeterminateVisibility(false);
-		mAdapter.clear();
-		if (data != null) {
-			for (final ParcelableUser user : data) {
-				mAdapter.add(user);
-			}
-		}
+		mAdapter.setData(data);
 		if (loader instanceof IDsUsersLoader) {
 			final long[] ids = ((IDsUsersLoader) loader).getIDsArray();
 			mAllItemsLoaded = ids != null && ids.length == mAdapter.getCount();
@@ -111,8 +117,6 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 		}
 	}
 
-	private boolean mAllItemsLoaded = false;
-	
 	@Override
 	public void onResume() {
 		super.onResume();

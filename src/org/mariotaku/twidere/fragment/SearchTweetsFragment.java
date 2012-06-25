@@ -15,7 +15,7 @@ import android.support.v4.content.Loader;
 public class SearchTweetsFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
 	private ParcelableStatusesAdapter mAdapter;
-	private final List<ParcelableStatus> mData = new ArrayList<ParcelableStatus>();
+	private final ArrayList<ParcelableStatus> mData = new ArrayList<ParcelableStatus>();
 
 	@Override
 	public long[] getLastStatusIds() {
@@ -39,7 +39,19 @@ public class SearchTweetsFragment extends BaseStatusesListFragment<List<Parcelab
 	}
 
 	@Override
+	public boolean mustShowLastAsGap() {
+		return false;
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+		if (savedInstanceState != null) {
+			final ArrayList<ParcelableStatus> data = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
+			if (data != null) {
+				mData.clear();
+				mData.addAll(data);
+			}
+		}
 		final ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
 				.getProfileImageLoader();
 		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
@@ -67,35 +79,29 @@ public class SearchTweetsFragment extends BaseStatusesListFragment<List<Parcelab
 
 	@Override
 	public void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
-		getListView().onRefreshComplete();
+		super.onLoaderReset(loader);
+		onRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
+		super.onLoadFinished(loader, data);
 		mAdapter.clear();
-		if (data != null) {
-			for (final ParcelableStatus status : data) {
-				mAdapter.add(status);
-			}
-		}
-		getListView().onRefreshComplete();
+		onRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
 	public void onPostStart() {
-
+		if (isActivityFirstCreated()) {
+			getLoaderManager().restartLoader(0, getArguments(), this);
+		}
 	}
 
 	@Override
 	public void onRefresh() {
 		getStatuses(null, null);
-	}
-
-	@Override
-	public boolean mustShowLastAsGap() {
-		return false;
 	}
 
 }

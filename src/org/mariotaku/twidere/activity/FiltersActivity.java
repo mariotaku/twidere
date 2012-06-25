@@ -78,7 +78,6 @@ public class FiltersActivity extends BaseActivity implements OnCheckedChangeList
 
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
-		// TODO Auto-generated method stub
 
 	}
 

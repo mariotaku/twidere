@@ -33,7 +33,6 @@ public interface Constants extends TwitterConstants {
 
 	public static final String LOGTAG = "Twidere";
 
-	public static final String CLIENT_URL = "https://github.com/mariotaku/twidere";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 13;
@@ -150,6 +149,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_MENTIONS = "mentions";
 	public static final String INTENT_KEY_ACCOUNT_ID = "account_id";
 	public static final String INTENT_KEY_PAGE = "page";
+	public static final String INTENT_KEY_DATA = "data";
 	public static final String INTENT_KEY_QUERY = "query";
 	public static final String INTENT_KEY_QUERY_TYPE = "query_type";
 	public static final String INTENT_KEY_USER_ID = "user_id";
@@ -161,7 +161,6 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
 	public static final String INTENT_KEY_TEXT = "text";
 	public static final String INTENT_KEY_SUCCEED = "succeed";
-	public static final String INTENT_KEY_REFRESH_ALL = "refresh_all";
 	public static final String INTENT_KEY_IDS = "ids";
 	public static final String INTENT_KEY_IS_QUOTE = "is_quote";
 	public static final String INTENT_KEY_IS_SHARE = "is_share";

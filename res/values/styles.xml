@@ -44,9 +44,36 @@
 		<item name="thumb">@drawable/switch_inner_holo_light</item>
 	</style>
 
+	<style name="Widget.TabPageIndicator" parent="@android:style/Widget">
+		<item name="android:gravity">center_horizontal</item>
+		<item name="android:background">@drawable/vpi__tab_indicator</item>
+		<item name="android:paddingLeft">8dip</item>
+		<item name="android:paddingRight">8dip</item>
+		<item name="android:paddingTop">6dp</item>
+		<item name="android:paddingBottom">6dp</item>
+		<item name="android:orientation">horizontal</item>
+	</style>
+
+	<style name="Widget.TabPageIndicator.TextView" parent="@android:style/Widget.TextView">
+		<item name="android:textAppearance">@style/TextAppearance.TabPageIndicator</item>
+		<item name="android:textColor">@color/vpi__dark_theme</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:layout_gravity">center</item>
+		<item name="android:gravity">center</item>
+		<item name="android:paddingTop">4dp</item>
+		<item name="android:paddingBottom">4dp</item>
+		<item name="android:maxLines">1</item>
+	</style>
+
 	<style name="TextAppearance.Holo.Widget.Switch" parent="android:TextAppearance.Small">
 		<item name="textColor">?android:attr/textColorSecondary</item>
 		<item name="textSize">14sp</item>
 	</style>
+
+	<style name="Widget.TabPageIndicator.TextView.Light">
+		<item name="android:textColor">@color/vpi__light_theme</item>
+	</style>
+
+	<style name="TextAppearance.TabPageIndicator" parent="@android:style/TextAppearance.Small"></style>
 
 </resources>

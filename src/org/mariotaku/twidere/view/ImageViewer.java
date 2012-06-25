@@ -281,16 +281,16 @@ public class ImageViewer extends View {
 			final int pointer_count = event.getPointerCount();
 			final float diffX = event.getX(0) - event.getX(1), diffY = event.getY(0) - event.getY(1);
 
-			final int x = (int) ((event.getX(0) + event.getX(1)) / 2);
+			int x = (int) ((event.getX(0) + event.getX(1)) / 2);
 			int y = (int) ((event.getY(0) + event.getY(1)) / 2);
 
 			for (int i = 0; i < pointer_count; i++) {
-				y += event.getX(i);
+				x += event.getX(i);
 			}
-			y /= pointer_count;
+			x /= pointer_count;
 
 			for (int i = 0; i < pointer_count; i++) {
-				y += event.getX(i);
+				y += event.getY(i);
 			}
 			y /= pointer_count;
 

@@ -29,36 +29,47 @@ public class MentionsFragment extends CursorStatusesListFragment {
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				if (!getServiceInterface().isMentionsRefreshing()) {
-					getListView().onRefreshComplete();
+					onRefreshComplete();
+				} else {
+					setRefreshing(false);
 				}
 			} else if ((MentionsFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
 				if (getListView() != null) {
-					getListView().getRefreshableView().setSelection(0);
+					getListView().setSelection(0);
 				}
 		}
 	};
 
+	private boolean mShouldRestorePositoin = false;
+	
 	@Override
 	public Uri getContentUri() {
 		return Mentions.CONTENT_URI;
 	}
 
 	@Override
+	public boolean mustShowLastAsGap() {
+		return false;
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mShouldRestorePositoin = true;
 		super.onActivityCreated(savedInstanceState);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		super.onLoadFinished(loader, data);
-		if (isActivityFirstCreated()) {
-			final ListView list = getListView().getRefreshableView();
+		if (mShouldRestorePositoin) {
+			final ListView list = getListView();
 			final long status_id = mPreferences.getLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, -1);
 			final int position = getListAdapter().findItemPositionByStatusId(status_id);
 			if (position > -1 && position < list.getCount()) {
 				list.setSelection(position);
 			}
+			mShouldRestorePositoin = false;
 		}
 	}
 
@@ -72,21 +83,18 @@ public class MentionsFragment extends CursorStatusesListFragment {
 		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		registerReceiver(mStatusReceiver, filter);
 		if (!getServiceInterface().isMentionsRefreshing()) {
-			getListView().onRefreshComplete();
+			onRefreshComplete();
+		} else {
+			setRefreshing(false);
 		}
 	}
 
 	@Override
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
-		final int first_visible_position = getListView().getRefreshableView().getFirstVisiblePosition();
+		final int first_visible_position = getListView().getFirstVisiblePosition();
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
 		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
 		super.onStop();
-	}
-
-	@Override
-	public boolean mustShowLastAsGap() {
-		return false;
 	}
 }

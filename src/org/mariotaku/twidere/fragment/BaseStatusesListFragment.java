@@ -28,10 +28,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -39,20 +37,18 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
-
-abstract class BaseStatusesListFragment<Data> extends BaseFragment implements OnRefreshListener, LoaderCallbacks<Data>,
+abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
 		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
 	private ServiceInterface mServiceInterface;
-	private PullToRefreshListView mListView;
 
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
 
 	private Handler mHandler;
 	private Runnable mTicker;
+	private ListView mListView;
+	private Data mData;
 
 	private PopupMenu mPopupMenu;
 
@@ -72,13 +68,14 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 		return mAsyncTaskManager;
 	}
 
+	public final Data getData() {
+		return mData;
+	}
+
 	public abstract long[] getLastStatusIds();
 
+	@Override
 	public abstract StatusesAdapterInterface getListAdapter();
-
-	public final PullToRefreshListView getListView() {
-		return mListView;
-	}
 
 	public ParcelableStatus getSelectedStatus() {
 		return mSelectedStatus;
@@ -98,19 +95,20 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 		return mActivityFirstCreated;
 	}
 
+	public abstract boolean mustShowLastAsGap();
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mAsyncTaskManager = AsyncTaskManager.getInstance();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
-		mListView = (PullToRefreshListView) getView().findViewById(R.id.refreshable_list);
-		mListView.setOnRefreshListener(this);
-		final ListView list = mListView.getRefreshableView();
-		list.setAdapter(getListAdapter());
-		list.setOnScrollListener(this);
-		list.setOnItemClickListener(this);
-		list.setOnItemLongClickListener(this);
+		setListAdapter(getListAdapter());
+		setShowIndicator(false);
+		mListView = getListView();
+		mListView.setOnScrollListener(this);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
 		getLoaderManager().initLoader(0, getArguments(), this);
 	}
 
@@ -125,11 +123,6 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 
 	@Override
 	public abstract Loader<Data> onCreateLoader(int id, Bundle args);
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.refreshable_list, container, false);
-	}
 
 	@Override
 	public void onDestroy() {
@@ -170,10 +163,14 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 	}
 
 	@Override
-	public abstract void onLoaderReset(Loader<Data> loader);
+	public void onLoaderReset(Loader<Data> loader) {
+		mData = null;
+	}
 
 	@Override
-	public abstract void onLoadFinished(Loader<Data> loader, Data data);
+	public void onLoadFinished(Loader<Data> loader, Data data) {
+		mData = data;
+	}
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
@@ -261,10 +258,8 @@ abstract class BaseStatusesListFragment<Data> extends BaseFragment implements On
 		adapter.setDisplayProfileImage(display_profile_image);
 		adapter.setDisplayName(display_name);
 		adapter.setTextSize(text_size);
-		adapter.setShowLastItemAsGap(!mLoadMoreAutomatically||mustShowLastAsGap());
+		adapter.setShowLastItemAsGap(!mLoadMoreAutomatically || mustShowLastAsGap());
 	}
-	
-	public abstract boolean mustShowLastAsGap();
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {

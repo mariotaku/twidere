@@ -75,31 +75,36 @@ public class LinkHandlerActivity extends BaseActivity {
 		final Intent intent = getIntent();
 		final Uri data = intent.getData();
 		final String action = intent.getAction();
-		final long account_id = getDefaultAccountId(this);
-		if (Intent.ACTION_SEARCH.equals(action) && isMyAccount(this, account_id)) {
-			final String query = intent.getStringExtra(SearchManager.QUERY);
-			final Bundle args = new Bundle();
-			args.putString(INTENT_KEY_QUERY, query);
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
-					RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
-			suggestions.saveRecentQuery(query, null);
-			if (QUERY_PARAM_VALUE_TWEETS.equals(mSearchType)) {
-				mFragment = new SearchTweetsFragment();
-			} else if (QUERY_PARAM_VALUE_USERS.equals(mSearchType)) {
-				mFragment = new SearchUsersFragment();
-			} else {
-				mSearchTypeFragment.setArguments(args);
-				if (!mSearchTypeFragment.getShowsDialog()) {
-					mSearchTypeFragment.show(getSupportFragmentManager(), null);
+		if (Intent.ACTION_SEARCH.equals(action)) {
+			final long account_id = getDefaultAccountId(this);
+			if (isMyAccount(this, account_id)) {
+				final String query = intent.getStringExtra(SearchManager.QUERY);
+				final Bundle args = new Bundle();
+				args.putString(INTENT_KEY_QUERY, query);
+				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+
+				if (QUERY_PARAM_VALUE_TWEETS.equals(mSearchType)) {
+					setTitle(getString(R.string.search_tweets) + " | " + query);
+					mFragment = new SearchTweetsFragment();
+				} else if (QUERY_PARAM_VALUE_USERS.equals(mSearchType)) {
+					setTitle(getString(R.string.search_users) + " | " + query);
+					mFragment = new SearchUsersFragment();
+				} else {
+					final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+							RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
+					suggestions.saveRecentQuery(query, null);
+					mSearchTypeFragment.setArguments(args);
+					//if (mSearchTypeFragment.isHidden()) {
+						mSearchTypeFragment.show(getSupportFragmentManager(), null);
+					//}
+					setTitle(getString(android.R.string.search_go) + " | " + query);
+					return;
 				}
-				setTitle(getString(android.R.string.search_go) + " | " + query);
-				return;
+				mFragment.setArguments(args);
+				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				ft.replace(android.R.id.content, mFragment);
+				ft.commit();
 			}
-			mFragment.setArguments(args);
-			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(android.R.id.content, mFragment);
-			ft.commit();
 		} else if (data != null) {
 			if (setFragment(data)) {
 				if (mFragment != null) {

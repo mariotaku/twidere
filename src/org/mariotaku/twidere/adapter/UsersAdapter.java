@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.adapter;
 
+import java.util.List;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.BaseAdapterInterface;
@@ -28,6 +30,14 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	public ParcelableUser findItem(long id) {
 		for (int i = 0; i < getCount(); i++) {
 			if (getItemId(i) == id) return getItem(i);
+		}
+		return null;
+	}
+	
+	public ParcelableUser findItemByUserId(long user_id) {
+		for (int i = 0; i < getCount(); i++) {
+			ParcelableUser item = getItem(i);
+			if (item.user_id == user_id) return item;
 		}
 		return null;
 	}
@@ -91,6 +101,22 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
 			notifyDataSetChanged();
+		}
+	}
+	
+	public void setData(List<ParcelableUser> data) {
+		setData(data, false);
+	}
+	
+	public void setData(List<ParcelableUser> data, boolean clear_old) {
+		if (clear_old) {
+			clear();
+		}
+		if (data == null) return;
+		for (ParcelableUser user : data) {
+			if (findItemByUserId(user.user_id) == null) {
+				add(user);
+			}
 		}
 	}
 

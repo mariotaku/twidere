@@ -17,6 +17,8 @@ public class UserFavoritesFragment extends BaseStatusesListFragment<List<Parcela
 	private ParcelableStatusesAdapter mAdapter;
 	private final List<ParcelableStatus> mData = new ArrayList<ParcelableStatus>();
 
+	private boolean isAllItemsLoaded = false;
+
 	@Override
 	public long[] getLastStatusIds() {
 		final int last_idx = mAdapter.getCount() - 1;
@@ -36,6 +38,11 @@ public class UserFavoritesFragment extends BaseStatusesListFragment<List<Parcela
 		args.putLong(INTENT_KEY_MAX_ID, max_id);
 		getLoaderManager().restartLoader(0, args, this);
 		return -1;
+	}
+
+	@Override
+	public boolean mustShowLastAsGap() {
+		return !isAllItemsLoaded;
 	}
 
 	@Override
@@ -71,14 +78,14 @@ public class UserFavoritesFragment extends BaseStatusesListFragment<List<Parcela
 
 	@Override
 	public void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
-		getListView().onRefreshComplete();
+		super.onLoaderReset(loader);
+		onRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
 	}
 
-	private boolean isAllItemsLoaded = false;
-	
 	@Override
 	public void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
+		super.onLoadFinished(loader, data);
 		mAdapter.clear();
 		if (data != null) {
 			for (final ParcelableStatus status : data) {
@@ -86,26 +93,23 @@ public class UserFavoritesFragment extends BaseStatusesListFragment<List<Parcela
 			}
 		}
 		if (loader instanceof UserFavoritesLoader) {
-			int total = ((UserFavoritesLoader) loader).getTotalItemsCount();
+			final int total = ((UserFavoritesLoader) loader).getTotalItemsCount();
 			isAllItemsLoaded = total != -1 && total == mAdapter.getCount();
 		}
-		getListView().onRefreshComplete();
+		onRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
 	public void onPostStart() {
-
+		if (isActivityFirstCreated()) {
+			getLoaderManager().restartLoader(0, getArguments(), this);
+		}
 	}
 
 	@Override
 	public void onRefresh() {
 		getStatuses(null, null);
-	}
-
-	@Override
-	public boolean mustShowLastAsGap() {
-		return !isAllItemsLoaded;
 	}
 
 }
