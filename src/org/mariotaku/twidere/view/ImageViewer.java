@@ -295,7 +295,7 @@ public class ImageViewer extends View {
 			y /= pointer_count;
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
-				case MotionEvent.ACTION_POINTER_UP:
+				case MotionEvent.ACTION_POINTER_UP: {
 					viewer.mStartPinchDistance2 = -1;
 					viewer.mMotionControl = false;
 					if (viewer.mZoomFactor < viewer.mMinZoomFactor) {
@@ -304,6 +304,7 @@ public class ImageViewer extends View {
 						viewer.mHandler.sendEmptyMessage(ZOOM_OUT_1);
 					}
 					break;
+				}
 				case MotionEvent.ACTION_POINTER_DOWN: {
 					viewer.mHandler.removeCallbacksAndMessages(null);
 					viewer.mMotionControl = true;
@@ -335,8 +336,8 @@ public class ImageViewer extends View {
 						}
 						viewer.postInvalidate();
 					}
-				}
 					break;
+				}
 			}
 			return true;
 		}

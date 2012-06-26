@@ -22,6 +22,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
@@ -30,7 +31,6 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -688,14 +688,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			openUserFollowing(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
-	}
-
-	private static class GetExternalCacheDirAccessor {
-
-		@TargetApi(8)
-		public static File getExternalCacheDir(Context context) {
-			return context.getExternalCacheDir();
-		}
 	}
 
 	private class LocationAction extends UserAction {

@@ -114,7 +114,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		}
 		if (data == null) return;
 		for (ParcelableUser user : data) {
-			if (findItemByUserId(user.user_id) == null) {
+			if (clear_old || findItemByUserId(user.user_id) == null) {
 				add(user);
 			}
 		}

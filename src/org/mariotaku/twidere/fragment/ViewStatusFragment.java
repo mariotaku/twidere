@@ -173,10 +173,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			}
 			case R.id.view_map: {
 				if (mStatus.location != null) {
-					final Bundle bundle = new Bundle();
-					bundle.putDouble(INTENT_KEY_LATITUDE, mStatus.location.getLatitude());
-					bundle.putDouble(INTENT_KEY_LONGITUDE, mStatus.location.getLongitude());
-					startActivity(new Intent(INTENT_ACTION_VIEW_MAP).putExtras(bundle));
+					final Uri.Builder builder = new Uri.Builder();
+					builder.scheme(SCHEME_TWIDERE);
+					builder.authority(AUTHORITY_MAP);
+					builder.appendQueryParameter(QUERY_PARAM_LAT, String.valueOf(mStatus.location.getLatitude()));
+					builder.appendQueryParameter(QUERY_PARAM_LNG, String.valueOf(mStatus.location.getLongitude()));
+					startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				}
 				break;
 			}

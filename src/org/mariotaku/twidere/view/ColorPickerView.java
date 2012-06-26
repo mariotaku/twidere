@@ -17,8 +17,8 @@
 package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
+import org.mariotaku.twidere.util.SetLayerTypeAccessor;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -947,13 +947,4 @@ public class ColorPickerView extends View {
 		public void onColorChanged(int color);
 	}
 
-	private static class SetLayerTypeAccessor {
-
-		@TargetApi(11)
-		public static void setLayerType(View view, int layerType, Paint paint) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				view.setLayerType(layerType, paint);
-			}
-		}
-	}
 }

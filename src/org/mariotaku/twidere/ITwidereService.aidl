@@ -31,6 +31,9 @@ interface ITwidereService {
 	int destroyFavorite(long account_id, long status_id);
 	int createFriendship(long account_id, long user_id);
 	int destroyFriendship(long account_id, long user_id);
+	int createBlock(long account_id, long user_id);
+	int destroyBlock(long account_id, long user_id);
+	int reportSpam(long account_id, long max_id);
 	int updateProfile(long account_id, String name, String url, String location, String description);
 	int updateProfileImage(long account_id, in Uri image_uri, boolean delete_image);
 	boolean isHomeTimelineRefreshing();

@@ -1,7 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.getDefaultTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 
 import java.util.ArrayList;
@@ -14,6 +14,10 @@ import twitter4j.Trend;
 import twitter4j.Trends;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -47,6 +51,31 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 	private static final int TRENDS_TYPE_DAILY = 1;
 	private static final int TRENDS_TYPE_WEEKLY = 2;
 
+	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+				long account_id = getDefaultAccountId(context);
+				if (mAccountId != account_id) {
+					mTwitter = getDefaultTwitterInstance(context, false);
+					if (mTwitter == null) {
+						mContentView.setVisibility(View.GONE);
+						return;
+					}
+					if (mTrendsCategoriesAdapter != null && mTrendsCategoriesAdapter != null) {
+						final TrendsCategory tc = mTrendsCategoriesAdapter.getItem(mTrendsSpinner
+								.getSelectedItemPosition());
+						if (tc != null) {
+							fetchTrends(tc.type);
+						}
+					}
+				}
+			}
+		}
+	};
+
 	private OnItemClickListener mOnTrendsClickListener = new OnItemClickListener() {
 
 		@Override
@@ -63,7 +92,7 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 		super.onActivityCreated(savedInstanceState);
 		mInflater = getLayoutInflater(savedInstanceState);
 		mAccountId = getDefaultAccountId(getActivity());
-		mTwitter = getTwitterInstance(getActivity(), mAccountId, false);
+		mTwitter = getDefaultTwitterInstance(getActivity(), false);
 		if (mTwitter == null) {
 			mContentView.setVisibility(View.GONE);
 			return;
@@ -84,7 +113,13 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.trends_refresh: {
-				fetchTrends(mTrendsCategoriesAdapter.getItem(mTrendsSpinner.getSelectedItemPosition()).type);
+				if (mTrendsCategoriesAdapter != null && mTrendsCategoriesAdapter != null) {
+					final TrendsCategory tc = mTrendsCategoriesAdapter
+							.getItem(mTrendsSpinner.getSelectedItemPosition());
+					if (tc != null) {
+						fetchTrends(tc.type);
+					}
+				}
 				break;
 			}
 		}
@@ -206,6 +241,19 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 			}
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		registerReceiver(mStatusReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStatusReceiver);
+		super.onStop();
 	}
 
 	private static class TrendsCategory {

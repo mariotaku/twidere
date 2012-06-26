@@ -2,7 +2,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<string name="app_name">ツイデレ</string>
-	<string name="loading">読み込み中…</string>
 	<string name="compose">ツイートする…</string>
 	<string name="add_account">アカウントを追加</string>
 	<string name="settings">設定</string>
@@ -148,7 +147,6 @@
 	<string name="drafts">下書き</string>
 	<string name="send_all">全てを送信</string>
 	<string name="delete_all">すべてを削除</string>
-	<string name="profile">プロフィール</string>
 	<string name="description">自己紹介</string>
 	<string name="location">現在地</string>
 	<string name="url">URL</string>
@@ -173,5 +171,10 @@
 	<string name="daily_trends">デーリー・トレンド</string>
 	<string name="weekly_trends">ウィークリート・レンド</string>
 	<string name="search_hint">ツイートまたユーザーを検索</string>
+	<string name="remember_position">Remember position</string>
+	<string name="remember_position_summary">Remember list/tab position before closing Twidere</string>
+	<string name="user_blocked">Ulocked this user.</string>
+	<string name="user_unblocked">Unblocked this user.</string>
+	<string name="reported_user_for_spam">Reported this user for spam.</string>
 
 </resources>

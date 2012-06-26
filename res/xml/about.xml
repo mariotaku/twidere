@@ -50,14 +50,14 @@
 			android:title="ilovinheart">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="https://twitter.com/#!/ilovinheart"/>
+				android:data="twidere://user?user_id=144878723"/>
 		</PreferenceScreen>
 		<PreferenceScreen
 			android:summary="Adjusted icon for 0.0.13 version and above"
 			android:title="lordfriend">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="https://twitter.com/#!/lordfriend"/>
+				android:data="twidere://user?user_id=450691326"/>
 		</PreferenceScreen>
 	</PreferenceCategory>
 

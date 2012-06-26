@@ -33,10 +33,11 @@ import java.net.URL;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.view.ImageViewer;
 
-import android.annotation.TargetApi;
-import android.content.Context;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -57,6 +58,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 	@Override
 	public void onClick(View view) {
+		final Uri uri = getIntent().getData();
 		switch (view.getId()) {
 			case R.id.close: {
 				onBackPressed();
@@ -66,6 +68,35 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				if (mImageLoader == null || mImageLoader.getStatus() != Status.RUNNING) {
 					loadImage();
 				}
+				break;
+			}
+			case R.id.share: {
+				if (uri == null) break;
+				final Intent intent = new Intent(Intent.ACTION_SEND);
+				final String scheme = uri.getScheme();
+				if ("file".equals(scheme)) {
+					intent.setType("image/*");
+					intent.putExtra(Intent.EXTRA_STREAM, uri);
+				} else {
+					intent.setType("text/plain");
+					intent.putExtra(Intent.EXTRA_TEXT, uri.toString());
+				}
+				startActivity(Intent.createChooser(intent, getString(R.string.share)));
+				break;
+			}
+			case R.id.open_in_browser: {
+				if (uri == null) break;
+				final String scheme = uri.getScheme();
+				if ("http".equals(scheme)||"https".equals(scheme)) {
+					final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+					intent.addCategory(Intent.CATEGORY_BROWSABLE);
+					try {
+						startActivity(intent);
+					} catch (ActivityNotFoundException e) {
+						// Ignore.
+					}
+				}
+				break;
 			}
 		}
 	}
@@ -97,6 +128,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			finish();
 			return;
 		}
+		mImageView.setBitmap(null);
 		mImageLoader = new ImageLoader(uri, mImageView, this);
 		mImageLoader.execute();
 	}
@@ -178,14 +210,12 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 							.setBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.broken_image));
 				}
 			}
-			// activity.mRefresh.setVisibility(View.VISIBLE);
 			activity.mProgress.setVisibility(View.INVISIBLE);
 			super.onPostExecute(result);
 		}
 
 		@Override
 		protected void onPreExecute() {
-			// activity.mRefresh.setVisibility(View.INVISIBLE);
 			activity.mProgress.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
@@ -243,14 +273,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			}
 			if (mCacheDir != null && !mCacheDir.exists()) {
 				mCacheDir.mkdirs();
-			}
-		}
-
-		private static class GetExternalCacheDirAccessor {
-
-			@TargetApi(8)
-			public static File getExternalCacheDir(Context context) {
-				return context.getExternalCacheDir();
 			}
 		}
 	}

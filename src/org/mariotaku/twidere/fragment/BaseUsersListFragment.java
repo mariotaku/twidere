@@ -7,8 +7,8 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.UsersAdapter;
 import org.mariotaku.twidere.loader.IDsUsersLoader;
 import org.mariotaku.twidere.util.ParcelableUser;
+import org.mariotaku.twidere.util.SetLayerTypeAccessor;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -53,14 +53,15 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mAdapter = new UsersAdapter(getActivity());
+		mListView = getListView();
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		if (mAccountId != account_id) {
+			mAdapter.clear();
 			mData.clear();
 		}
 		mAccountId = account_id;
-		mAdapter = new UsersAdapter(getActivity());
-		mListView = getListView();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			SetLayerTypeAccessor.setLayerType(mListView, View.LAYER_TYPE_SOFTWARE, new Paint());
 		}
@@ -182,14 +183,6 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
 			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-
-	private static class SetLayerTypeAccessor {
-
-		@TargetApi(11)
-		public static void setLayerType(View view, int layerType, Paint paint) {
-			view.setLayerType(layerType, paint);
 		}
 	}
 

@@ -3,7 +3,7 @@ package org.mariotaku.twidere.fragment;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.ConstantsTrojan;
+import android.support.v4.app.ListFragmentTrojan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +18,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-class PullToRefreshListFragment extends BaseListFragment implements ConstantsTrojan, OnRefreshListener {
+class PullToRefreshListFragment extends BaseListFragment implements ListFragmentTrojan, OnRefreshListener {
 
 	private PullToRefreshListView mPullToRefreshListView;
 
@@ -249,5 +249,9 @@ class PullToRefreshListFragment extends BaseListFragment implements ConstantsTro
 	public final void setShowViewWhileRefreshing(boolean showView) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setShowViewWhileRefreshing(showView);
+	}
+
+	public final PullToRefreshListView getPullToRefreshListView() {
+		return mPullToRefreshListView;
 	}
 }

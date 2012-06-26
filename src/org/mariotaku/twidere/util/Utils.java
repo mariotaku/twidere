@@ -85,7 +85,6 @@ import android.text.format.Time;
 import android.text.style.URLSpan;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.widget.Toast;
 
 public final class Utils implements Constants {
@@ -1422,13 +1421,13 @@ public final class Utils implements Constants {
 		final int enter_anim = animation ? android.R.anim.fade_in : 0;
 		final int exit_anim = animation ? android.R.anim.fade_out : 0;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-			new MethodsCompat().overridePendingTransition(activity, enter_anim, exit_anim);
+			OverridePendingTransitionAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
 		} else {
 			activity.getWindow().setWindowAnimations(0);
 		}
 		activity.finish();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-			new MethodsCompat().overridePendingTransition(activity, enter_anim, exit_anim);
+			OverridePendingTransitionAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
 		} else {
 			activity.getWindow().setWindowAnimations(0);
 		}
@@ -1471,12 +1470,6 @@ public final class Utils implements Constants {
 				iconFav.clearColorFilter();
 				itemFav.setTitle(R.string.fav);
 			}
-		}
-	}
-
-	public static void setWindowUiOptions(Window window, int uiOptions) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			new MethodsCompat().setUiOptions(window, uiOptions);
 		}
 	}
 

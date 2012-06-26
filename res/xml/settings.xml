@@ -77,6 +77,12 @@
 				android:action="org.mariotaku.twidere.FILTERS"
 				android:targetPackage="org.mariotaku.twidere"/>
 		</PreferenceScreen>
+
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="remember_position"
+			android:summary="@string/remember_position_summary"
+			android:title="@string/remember_position"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="cat_storage"

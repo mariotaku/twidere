@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.view;
 
-import android.annotation.TargetApi;
+import org.mariotaku.twidere.util.SetLayerTypeAccessor;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -50,14 +51,6 @@ public class RoundCorneredImageView extends ImageView {
 	private void init() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			SetLayerTypeAccessor.setLayerType(this, View.LAYER_TYPE_SOFTWARE, new Paint());
-		}
-	}
-
-	private static class SetLayerTypeAccessor {
-
-		@TargetApi(11)
-		public static void setLayerType(View view, int layerType, Paint paint) {
-			view.setLayerType(layerType, paint);
 		}
 	}
 }

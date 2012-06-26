@@ -12,6 +12,7 @@ import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ScreenNameTokenizer;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -19,7 +20,6 @@ import org.mariotaku.twidere.view.StatusComposeEditText;
 
 import com.twitter.Validator;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -160,12 +160,20 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 
+		mEditText = (StatusComposeEditText) findViewById(R.id.edit_text);
+		mTextCount = (TextView) findViewById(R.id.text_count);
+		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
+		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);
+		
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		mAccountIds = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
 		mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
 		mInReplyToStatusId = bundle != null ? bundle.getLong(INTENT_KEY_IN_REPLY_TO_ID) : -1;
 		mInReplyToScreenName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME) : null;
 		mInReplyToName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_NAME) : null;
+		mIsImageAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_IMAGE_ATTACHED) : false;
+		mIsPhotoAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_PHOTO_ATTACHED) : false;
+		mImageUri = (Uri) (bundle != null ? bundle.getParcelable(INTENT_KEY_IMAGE_URI) : null);
 		int text_selection_start = -1;
 		if (mInReplyToStatusId > 0) {
 			final String account_username = getAccountUsername(this, mAccountId);
@@ -204,22 +212,51 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			if (mAccountIds == null || mAccountIds.length == 0) {
 				mAccountIds = getActivatedAccountIds(this);
 			}
-			if (bundle != null) {
-				if (bundle.getBoolean(INTENT_KEY_IS_SHARE, false)) {
-					setTitle(R.string.share);
-					mText = String.valueOf(bundle.getCharSequence(Intent.EXTRA_TEXT));
+			final String action = getIntent().getAction();
+			if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+				setTitle(R.string.share);
+				final Bundle extras = getIntent().getExtras();
+				if (extras != null) {
+					if (mText == null){
+						final CharSequence extra_text = extras.getCharSequence(Intent.EXTRA_TEXT);
+						mText = extra_text != null ? String.valueOf(extra_text) : "";
+					} else {
+						mText = bundle.getString(INTENT_KEY_TEXT);
+					}
+					if (mImageUri == null) {
+						final Uri extra_stream = extras.getParcelable(Intent.EXTRA_STREAM);
+						final String content_type = getIntent().getType();
+						if (extra_stream != null && content_type != null && content_type.startsWith("image/")) {
+							final String real_path = getImagePathFromUri(this, extra_stream);
+							final File file = new File(real_path);
+							if (file.exists()) {
+								mImageUri = Uri.fromFile(file);
+								mIsImageAttached = true;
+								mIsPhotoAttached = false;
+							} else {
+								mImageUri = null;
+								mIsImageAttached = false;
+							}
+						}
+					}
 				}
+			} else if (bundle != null) {
+
 				if (bundle.getString(INTENT_KEY_TEXT) != null) {
 					mText = bundle.getString(INTENT_KEY_TEXT);
 				}
 			}
 		}
-		mEditText = (StatusComposeEditText) findViewById(R.id.edit_text);
-		mTextCount = (TextView) findViewById(R.id.text_count);
-		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
+		
+		final File image_file = mImageUri != null && "file".equals(mImageUri.getScheme()) ? new File(mImageUri.getPath()) : null;
+		final boolean image_file_valid = image_file != null && image_file.exists();
+		mImageThumbnailPreview.setVisibility(image_file_valid ? View.VISIBLE : View.GONE);
+		if (image_file_valid) {
+			reloadAttachedImageThumbnail(image_file);
+		}
+		
 		mImageThumbnailPreview.setOnClickListener(this);
 		mImageThumbnailPreview.setOnLongClickListener(this);
-		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);
 		mMenuBar.setOnMenuItemClickListener(this);
 		mMenuBar.inflate(R.menu.menu_compose);
 		setMenu(mMenuBar.getMenu());
@@ -347,9 +384,16 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		outState.putString(INTENT_KEY_IN_REPLY_TO_NAME, mInReplyToName);
 		outState.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mInReplyToScreenName);
 		outState.putBoolean(INTENT_KEY_IS_QUOTE, mIsQuote);
+		outState.putBoolean(INTENT_KEY_IMAGE_ATTACHED, mIsImageAttached);
+		outState.putBoolean(INTENT_KEY_PHOTO_ATTACHED, mIsPhotoAttached);
+		outState.putParcelable(INTENT_KEY_IMAGE_URI, mImageUri);
 		super.onSaveInstanceState(outState);
 	}
 
+	private static final String INTENT_KEY_IMAGE_URI = "image_uri";
+	private static final String INTENT_KEY_PHOTO_ATTACHED = "photo_attached"; 
+	private static final String INTENT_KEY_IMAGE_ATTACHED = "image_attached";
+	
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 
@@ -465,13 +509,5 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			super.onPostExecute(result);
 		}
 
-	}
-
-	private static class GetExternalCacheDirAccessor {
-
-		@TargetApi(8)
-		public static File getExternalCacheDir(Context context) {
-			return context.getExternalCacheDir();
-		}
 	}
 }

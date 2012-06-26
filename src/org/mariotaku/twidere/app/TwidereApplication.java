@@ -6,11 +6,11 @@ import java.io.FileFilter;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
-import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask.Status;
@@ -94,12 +94,5 @@ public class TwidereApplication extends Application implements Constants {
 			f.delete();
 		}
 
-		private static class GetExternalCacheDirAccessor {
-
-			@TargetApi(8)
-			public static File getExternalCacheDir(Context context) {
-				return context.getExternalCacheDir();
-			}
-		}
 	}
 }

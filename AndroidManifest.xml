@@ -156,16 +156,6 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.MapActivity"
-			android:label="@string/view_map">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<action android:name="org.mariotaku.twidere.VIEW_MAP"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
 			android:name=".activity.AboutActivity"
 			android:label="@string/about">
 			<intent-filter>
@@ -250,6 +240,9 @@
 					android:scheme="twidere"/>
 				<data
 					android:host="search"
+					android:scheme="twidere"/>
+				<data
+					android:host="map"
 					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>

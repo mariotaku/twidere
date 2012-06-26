@@ -59,6 +59,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_STATUS = "status";
 	public static final String AUTHORITY_CONVERSATION = "conversation";
 	public static final String AUTHORITY_SEARCH = "search";
+	public static final String AUTHORITY_MAP = "map";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -70,6 +71,8 @@ public interface Constants extends TwitterConstants {
 	public static final String QUERY_PARAM_VALUE_USERS = "users";
 	public static final String QUERY_PARAM_VALUE_TWEETS = "tweets";
 	public static final String QUERY_PARAM_NOTIFY = "notify";
+	public static final String QUERY_PARAM_LAT = "lat";
+	public static final String QUERY_PARAM_LNG = "lng";
 
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
 
@@ -100,6 +103,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_CONSUMER_SECRET = "consumer_secret";
 	public static final String PREFERENCE_KEY_QUOTE_FORMAT = "quote_format";
 	public static final String PREFERENCE_KEY_DEFAULT_ACCOUNT_ID = "default_account_id";
+	public static final String PREFERENCE_KEY_REMEMBER_POSITION = "remember_position";
 	public static final String PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID = "saved_home_timeline_id";
 	public static final String PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID = "saved_mentions_list_id";
 	public static final String PREFERENCE_KEY_SAVED_TAB_POSITION = "saved_tab_position";
@@ -118,7 +122,6 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_COMPOSE = INTENT_PACKAGE_PREFIX + "COMPOSE";
 	public static final String INTENT_ACTION_SETTINGS = INTENT_PACKAGE_PREFIX + "SETTINGS";
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_PACKAGE_PREFIX + "SELECT_ACCOUNT";
-	public static final String INTENT_ACTION_VIEW_MAP = INTENT_PACKAGE_PREFIX + "VIEW_MAP";
 	public static final String INTENT_ACTION_VIEW_IMAGE = INTENT_PACKAGE_PREFIX + "VIEW_IMAGE";
 	public static final String INTENT_ACTION_FILTERS = INTENT_PACKAGE_PREFIX + "FILTERS";
 	public static final String INTENT_ACTION_ABOUT = INTENT_PACKAGE_PREFIX + "ABOUT";
@@ -139,6 +142,7 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_MENTIONS_REFRESHED = INTENT_PACKAGE_PREFIX + "MENTIONS_REFRESHED";
 	public static final String BROADCAST_REFRESHSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "REFRESHSTATE_CHANGED";
 	public static final String BROADCAST_FRIENDSHIP_CHANGED = INTENT_PACKAGE_PREFIX + "FRIENDSHIP_CHANGED";
+	public static final String BROADCAST_BLOCKSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "BLOCKSTATE_CHANGED";
 	public static final String BROADCAST_PROFILE_UPDATED = INTENT_PACKAGE_PREFIX + "PROFILE_UPDATED";
 	public static final String BROADCAST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DATABASE_UPDATED";
 	public static final String BROADCAST_FAVORITE_CHANGED = INTENT_PACKAGE_PREFIX + "FAVORITE_CHANGED";

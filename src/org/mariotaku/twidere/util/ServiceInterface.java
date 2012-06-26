@@ -2,17 +2,11 @@ package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.ServiceUtils.bindToService;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.Location;
 import android.net.Uri;
@@ -23,43 +17,11 @@ public class ServiceInterface implements Constants, ITwidereService {
 
 	private ITwidereService mService;
 
-	private Context mContext;
-
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			final String action = intent.getAction();
-			if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
-				for (final StateListener listener : mStateListeners)
-					if (listener != null) {
-						listener.onHomeTimelineRefreshed();
-					}
-			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
-				for (final StateListener listener : mStateListeners)
-					if (listener != null) {
-						listener.onMentionsRefreshed();
-					}
-			}
-		}
-
-	};
-
-	private List<StateListener> mStateListeners = new ArrayList<StateListener>();
-
-	private ServiceConnection mConntecion = new ServiceConnection() {
+	private final ServiceConnection mConntecion = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(ComponentName service, IBinder obj) {
 			mService = ITwidereService.Stub.asInterface(obj);
-			final IntentFilter filter = new IntentFilter() {
-
-				{
-					addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
-					addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
-				}
-			};
-			mContext.registerReceiver(mStatusReceiver, filter);
 		}
 
 		@Override
@@ -72,21 +34,13 @@ public class ServiceInterface implements Constants, ITwidereService {
 
 	private ServiceInterface(Context context) {
 		bindToService(context, mConntecion);
-		mContext = context;
-
-	}
-
-	public void addStateListener(StateListener listener) {
-		if (listener != null) {
-			mStateListeners.add(listener);
-		}
 
 	}
 
 	@Override
 	public IBinder asBinder() {
 		// Useless here
-		return null;
+		return mService.asBinder();
 	}
 
 	@Override
@@ -221,12 +175,6 @@ public class ServiceInterface implements Constants, ITwidereService {
 		return false;
 	}
 
-	public void removeStateListener(StateListener listener) {
-		if (listener != null) {
-			mStateListeners.remove(listener);
-		}
-	}
-
 	@Override
 	public int retweetStatus(long account_id, long status_id) {
 		if (mService == null) return -1;
@@ -291,11 +239,36 @@ public class ServiceInterface implements Constants, ITwidereService {
 		return sInstance;
 	}
 
-	public interface StateListener {
+	@Override
+	public int createBlock(long account_id, long user_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.createBlock(account_id, user_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 
-		void onHomeTimelineRefreshed();
+	@Override
+	public int destroyBlock(long account_id, long user_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.destroyBlock(account_id, user_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 
-		void onMentionsRefreshed();
-
+	@Override
+	public int reportSpam(long account_id, long user_id) throws RemoteException {
+		if (mService == null) return -1;
+		try {
+			return mService.reportSpam(account_id, user_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }

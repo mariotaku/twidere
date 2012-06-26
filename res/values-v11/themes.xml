@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Theme.Twidere.ImageViewer" parent="android:Theme.Holo.NoActionBar">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowBackground">@drawable/image_viewer_background</item>
+		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
+	</style>
+
+</resources>

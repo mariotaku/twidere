@@ -6,6 +6,7 @@ import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.GoogleWebMapFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
@@ -46,6 +47,7 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final int CODE_USER_BLOCKS = 7;
 	private static final int CODE_CONVERSATION = 8;
 	private static final int CODE_SEARCH = 9;
+	private static final int CODE_MAP = 10;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
@@ -57,6 +59,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_USER_BLOCKS, null, CODE_USER_BLOCKS);
 		URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, CODE_CONVERSATION);
 		URI_MATCHER.addURI(AUTHORITY_SEARCH, null, CODE_SEARCH);
+		URI_MATCHER.addURI(AUTHORITY_MAP, null, CODE_MAP);
 	}
 
 	private Fragment mFragment;
@@ -152,23 +155,6 @@ public class LinkHandlerActivity extends BaseActivity {
 		Fragment fragment = null;
 		if (uri != null) {
 			final Bundle bundle = new Bundle();
-			final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
-			if (param_account_id != null) {
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
-			} else {
-				final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
-				if (param_account_name != null) {
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
-				} else {
-					final long account_id = getDefaultAccountId(this);
-					if (isMyAccount(this, account_id)) {
-						bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-					} else {
-						finish();
-						return false;
-					}
-				}
-			}
 			switch (URI_MATCHER.match(uri)) {
 				case CODE_STATUS: {
 					setTitle(R.string.view_status);
@@ -282,8 +268,45 @@ public class LinkHandlerActivity extends BaseActivity {
 					}
 					break;
 				}
+				case CODE_MAP: {
+					setTitle(R.string.view_map);
+					final String param_lat = uri.getQueryParameter(QUERY_PARAM_LAT);
+					final String param_lng = uri.getQueryParameter(QUERY_PARAM_LNG);
+					if (param_lat == null || param_lng == null) {
+						finish();
+						return false;
+					}
+					try {
+						bundle.putDouble(INTENT_KEY_LATITUDE, Double.valueOf(param_lat));
+						bundle.putDouble(INTENT_KEY_LONGITUDE, Double.valueOf(param_lng));
+					} catch (NumberFormatException e) {
+						finish();
+						return false;
+					}
+					fragment = new GoogleWebMapFragment();
+					fragment.setArguments(bundle);
+					mFragment = fragment;
+					return true;
+				}
 				default: {
 					break;
+				}
+			}
+			final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+			if (param_account_id != null) {
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
+			} else {
+				final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
+				if (param_account_name != null) {
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
+				} else {
+					final long account_id = getDefaultAccountId(this);
+					if (isMyAccount(this, account_id)) {
+						bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					} else {
+						finish();
+						return false;
+					}
 				}
 			}
 			if (fragment != null) {

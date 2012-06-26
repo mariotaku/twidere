@@ -62,7 +62,8 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		super.onLoadFinished(loader, data);
-		if (mShouldRestorePositoin) {
+		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
+		if (mShouldRestorePositoin && remember_position) {
 			final ListView list = getListView();
 			final long status_id = mPreferences.getLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, -1);
 			final int position = getListAdapter().findItemPositionByStatusId(status_id);

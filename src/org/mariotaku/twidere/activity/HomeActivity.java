@@ -88,6 +88,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	private boolean mProgressBarIndeterminateVisible = false;
 
 	private boolean mIsNavigateToDefaultAccount = false;
+	private boolean mStateSaved;
 
 	public static final int TAB_POSITION_HOME = 0;
 	public static final int TAB_POSITION_MENTIONS = 1;
@@ -191,6 +192,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
+		mStateSaved = false;
 		final boolean home_display_icon = getResources().getBoolean(R.bool.home_display_icon);
 		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
 		setContentView(R.layout.main);
@@ -234,14 +236,21 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		mIndicator.setViewPager(mViewPager);
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 
+		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
 		if (getActivatedAccountIds(this).length <= 0) {
 			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
-		} else if (checkDefaultAccountSet()) {
+		} else if (remember_position && checkDefaultAccountSet()) {
 			final int position = mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION, TAB_POSITION_HOME);
 			if (position >= 0 || position < mViewPager.getChildCount()) {
 				mViewPager.setCurrentItem(position);
 			}
 		}
+	}
+
+	@Override
+	public void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		 mStateSaved = false;
 	}
 
 	@Override
@@ -310,12 +319,17 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	public void onResume() {
 		super.onResume();
+		mStateSaved = false;
 		invalidateSupportOptionsMenu();
 	}
 
 	@Override
 	public void onStart() {
+		if (!isDualPaneMode() && !mStateSaved) {
+			getSupportFragmentManager().popBackStackImmediate();
+		}
 		super.onStart();
+		mStateSaved = false;
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
@@ -326,6 +340,19 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		unregisterReceiver(mStateReceiver);
 		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
 		super.onStop();
+		mStateSaved = true;
+	}
+
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+		mStateSaved = false;
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		mStateSaved = true;
+		super.onSaveInstanceState(outState);
 	}
 
 	public void setPagingEnabled(boolean enabled) {

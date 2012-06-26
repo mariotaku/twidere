@@ -173,5 +173,8 @@
 	<string name="search_hint">搜索推文或用戶</string>
 	<string name="remember_position">記住位置</string>
 	<string name="remember_position_summary">打開Twidere時，恢復到退出前列表/頁面的位置</string>
+	<string name="user_blocked">你屏蔽了這個用戶。</string>
+	<string name="user_unblocked">你解除了對這個用戶的屏蔽。</string>
+	<string name="reported_user_for_spam">你已報告這個用戶發送垃圾信息。</string>
 
 </resources>

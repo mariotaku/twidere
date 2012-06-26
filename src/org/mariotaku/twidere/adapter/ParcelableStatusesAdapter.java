@@ -5,6 +5,8 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
+import java.util.List;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ProfileImageLoader;
@@ -33,6 +35,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public ParcelableStatus findItem(long id) {
 		for (int i = 0; i < getCount(); i++) {
 			if (getItemId(i) == id) return getItem(i);
+		}
+		return null;
+	}
+	
+	public ParcelableStatus findItemByStatusId(long status_id) {
+		for (int i = 0; i < getCount(); i++) {
+			final ParcelableStatus status = getItem(i);
+			if (status.status_id == status_id) return status;
 		}
 		return null;
 	}
@@ -136,4 +146,19 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		}
 	}
 
+	public void setData(List<ParcelableStatus> data) {
+		setData(data, false);
+	}
+	
+	public void setData(List<ParcelableStatus> data, boolean clear_old) {
+		if (clear_old) {
+			clear();
+		}
+		if (data == null) return;
+		for (ParcelableStatus status : data) {
+			if (clear_old || findItemByStatusId(status.status_id) == null) {
+				add(status);
+			}
+		}
+	}
 }

@@ -14,13 +14,16 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.SetLayerTypeAccessor;
 import org.mariotaku.twidere.util.StatusViewHolder;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -102,10 +105,13 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		super.onActivityCreated(savedInstanceState);
 		mAsyncTaskManager = AsyncTaskManager.getInstance();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
+		mServiceInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		setListAdapter(getListAdapter());
 		setShowIndicator(false);
 		mListView = getListView();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			SetLayerTypeAccessor.setLayerType(mListView, View.LAYER_TYPE_SOFTWARE, new Paint());
+		}
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
