@@ -57,7 +57,7 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-				long account_id = getDefaultAccountId(context);
+				final long account_id = getDefaultAccountId(context);
 				if (mAccountId != account_id) {
 					mTwitter = getDefaultTwitterInstance(context, false);
 					if (mTwitter == null) {
@@ -144,6 +144,19 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
 
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		registerReceiver(mStatusReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStatusReceiver);
+		super.onStop();
 	}
 
 	private void fetchTrends(int type) {
@@ -241,19 +254,6 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 			}
 			notifyDataSetChanged();
 		}
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		registerReceiver(mStatusReceiver, filter);
-	}
-
-	@Override
-	public void onStop() {
-		unregisterReceiver(mStatusReceiver);
-		super.onStop();
 	}
 
 	private static class TrendsCategory {

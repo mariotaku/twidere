@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
+import static android.os.Environment.getExternalStorageDirectory;
+import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
@@ -412,9 +414,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private void takePhoto() {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+		if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
-					.getExternalCacheDir(getActivity()) : new File(Environment.getExternalStorageDirectory().getPath()
+					.getExternalCacheDir(getActivity()) : new File(getExternalStorageDirectory().getPath()
 					+ "/Android/data/" + getActivity().getPackageName() + "/cache/");
 			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
 			mImageUri = Uri.fromFile(file);

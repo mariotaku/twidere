@@ -3,10 +3,9 @@
 
 	<item
 		android:id="@id/edit_api"
-		android:icon="@drawable/ic_menu_edit"
+		android:icon="@drawable/ic_menu_server"
 		android:showAsAction="always"
-		android:title="@string/edit_api">
-	</item>
+		android:title="@string/edit_api"/>
 	<item
 		android:id="@id/settings"
 		android:icon="@drawable/ic_menu_preferences"

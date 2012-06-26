@@ -55,6 +55,17 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int createBlock(long account_id, long user_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.createBlock(account_id, user_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public int createFavorite(long account_id, long status_id) {
 		if (mService == null) return -1;
 		try {
@@ -70,6 +81,17 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.createFriendship(account_id, user_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int destroyBlock(long account_id, long user_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.destroyBlock(account_id, user_id);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -176,6 +198,17 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int reportSpam(long account_id, long user_id) throws RemoteException {
+		if (mService == null) return -1;
+		try {
+			return mService.reportSpam(account_id, user_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public int retweetStatus(long account_id, long status_id) {
 		if (mService == null) return -1;
 		try {
@@ -237,38 +270,5 @@ public class ServiceInterface implements Constants, ITwidereService {
 			sInstance = new ServiceInterface(context);
 		}
 		return sInstance;
-	}
-
-	@Override
-	public int createBlock(long account_id, long user_id) {
-		if (mService == null) return -1;
-		try {
-			return mService.createBlock(account_id, user_id);
-		} catch (final RemoteException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
-
-	@Override
-	public int destroyBlock(long account_id, long user_id) {
-		if (mService == null) return -1;
-		try {
-			return mService.destroyBlock(account_id, user_id);
-		} catch (final RemoteException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
-
-	@Override
-	public int reportSpam(long account_id, long user_id) throws RemoteException {
-		if (mService == null) return -1;
-		try {
-			return mService.reportSpam(account_id, user_id);
-		} catch (final RemoteException e) {
-			e.printStackTrace();
-		}
-		return -1;
 	}
 }

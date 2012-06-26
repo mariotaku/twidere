@@ -1,9 +1,11 @@
 package org.mariotaku.twidere.fragment;
 
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.ListFragmentTrojan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +20,13 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-class PullToRefreshListFragment extends BaseListFragment implements ListFragmentTrojan, OnRefreshListener {
+class PullToRefreshListFragment extends BaseListFragment implements OnRefreshListener {
 
 	private PullToRefreshListView mPullToRefreshListView;
+
+	public final PullToRefreshListView getPullToRefreshListView() {
+		return mPullToRefreshListView;
+	}
 
 	/**
 	 * Provide default implementation to return a simple list view. Subclasses
@@ -91,20 +97,6 @@ class PullToRefreshListFragment extends BaseListFragment implements ListFragment
 		return root;
 	}
 
-	/**
-	 * Sets whether an indicator graphic should be displayed when the View is in
-	 * a state where a Pull-to-Refresh can happen. An example of this state is
-	 * when the Adapter View is scrolled to the top and the mode is set to
-	 * {@link Mode#PULL_DOWN_TO_REFRESH}
-	 * 
-	 * @param showIndicator
-	 *            - true if the indicators should be shown.
-	 */
-	public final void setShowIndicator(boolean showIndicator) {
-		if (mPullToRefreshListView == null) return;
-		mPullToRefreshListView.setShowIndicator(showIndicator);
-	}
-	
 	@Override
 	public void onRefresh() {
 
@@ -118,14 +110,23 @@ class PullToRefreshListFragment extends BaseListFragment implements ListFragment
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.onRefreshComplete();
 	}
-	
+
+	/**
+	 * Set the drawable used in the loading layout. This is the same as calling
+	 * <code>setLoadingDrawable(drawable, Mode.BOTH)</code>
+	 * 
+	 * @param drawable - Drawable to display
+	 */
+	public final void setLoadingDrawable(Drawable drawable) {
+		if (mPullToRefreshListView == null) return;
+		mPullToRefreshListView.setLoadingDrawable(drawable);
+	}
+
 	/**
 	 * Set the drawable used in the loading layout.
 	 * 
-	 * @param drawable
-	 *            - Drawable to display
-	 * @param mode
-	 *            - Controls which Header/Footer Views will be updated.
+	 * @param drawable - Drawable to display
+	 * @param mode - Controls which Header/Footer Views will be updated.
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
@@ -133,26 +134,12 @@ class PullToRefreshListFragment extends BaseListFragment implements ListFragment
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setLoadingDrawable(drawable, mode);
 	}
-	
-	/**
-	 * Set the drawable used in the loading layout. This is the same as calling
-	 * <code>setLoadingDrawable(drawable, Mode.BOTH)</code>
-	 * 
-	 * @param drawable
-	 *            - Drawable to display
-	 */
-	public final void setLoadingDrawable(Drawable drawable) {
-		if (mPullToRefreshListView == null) return;
-		mPullToRefreshListView.setLoadingDrawable(drawable);
-	}
-	
+
 	/**
 	 * Set Text to show when the Widget is being Pulled
 	 * 
-	 * @param pullLabel
-	 *            - String to display
-	 * @param mode
-	 *            - Controls which Header/Footer Views will be updated.
+	 * @param pullLabel - String to display
+	 * @param mode - Controls which Header/Footer Views will be updated.
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
@@ -160,49 +147,45 @@ class PullToRefreshListFragment extends BaseListFragment implements ListFragment
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setPullLabel(pullLabel);
 	}
-	
+
 	/**
 	 * A mutator to enable/disable Pull-to-Refresh for the current View
 	 * 
-	 * @param enable
-	 *            Whether Pull-To-Refresh should be used
+	 * @param enable Whether Pull-To-Refresh should be used
 	 */
 	public final void setPullToRefreshEnabled(boolean enable) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setPullToRefreshEnabled(enable);
 	}
-	
+
 	/**
 	 * Sets the Widget to be in the refresh State. The UI will be updated to
 	 * show the 'Refreshing' view.
 	 * 
-	 * @param doScroll
-	 *            - true if you want to force a scroll to the Refreshing view.
+	 * @param doScroll - true if you want to force a scroll to the Refreshing
+	 *            view.
 	 */
 	public final void setRefreshing(boolean doScroll) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setRefreshing(doScroll);
 	}
-	
+
 	/**
 	 * Set Text to show when the Widget is refreshing
 	 * <code>setRefreshingLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
-	 * @param releaseLabel
-	 *            - String to display
+	 * @param releaseLabel - String to display
 	 */
 	public void setRefreshingLabel(String refreshingLabel) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setRefreshingLabel(refreshingLabel);
 	}
-	
+
 	/**
 	 * Set Text to show when the Widget is refreshing
 	 * 
-	 * @param refreshingLabel
-	 *            - String to display
-	 * @param mode
-	 *            - Controls which Header/Footer Views will be updated.
+	 * @param refreshingLabel - String to display
+	 * @param mode - Controls which Header/Footer Views will be updated.
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
@@ -210,28 +193,25 @@ class PullToRefreshListFragment extends BaseListFragment implements ListFragment
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setRefreshingLabel(refreshingLabel, mode);
 	}
-	
+
 	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
 	 * released. This is the same as calling
 	 * <code>setReleaseLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
-	 * @param releaseLabel
-	 *            - String to display
+	 * @param releaseLabel - String to display
 	 */
 	public void setReleaseLabel(String releaseLabel) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setReleaseLabel(releaseLabel);
 	}
-	
+
 	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
 	 * released
 	 * 
-	 * @param releaseLabel
-	 *            - String to display
-	 * @param mode
-	 *            - Controls which Header/Footer Views will be updated.
+	 * @param releaseLabel - String to display
+	 * @param mode - Controls which Header/Footer Views will be updated.
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
@@ -239,7 +219,20 @@ class PullToRefreshListFragment extends BaseListFragment implements ListFragment
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setReleaseLabel(releaseLabel, mode);
 	}
-	
+
+	/**
+	 * Sets whether an indicator graphic should be displayed when the View is in
+	 * a state where a Pull-to-Refresh can happen. An example of this state is
+	 * when the Adapter View is scrolled to the top and the mode is set to
+	 * {@link Mode#PULL_DOWN_TO_REFRESH}
+	 * 
+	 * @param showIndicator - true if the indicators should be shown.
+	 */
+	public final void setShowIndicator(boolean showIndicator) {
+		if (mPullToRefreshListView == null) return;
+		mPullToRefreshListView.setShowIndicator(showIndicator);
+	}
+
 	/**
 	 * A mutator to enable/disable whether the 'Refreshing' View should be
 	 * automatically shown when refreshing.
@@ -249,9 +242,5 @@ class PullToRefreshListFragment extends BaseListFragment implements ListFragment
 	public final void setShowViewWhileRefreshing(boolean showView) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setShowViewWhileRefreshing(showView);
-	}
-
-	public final PullToRefreshListView getPullToRefreshListView() {
-		return mPullToRefreshListView;
 	}
 }

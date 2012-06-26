@@ -28,7 +28,7 @@
 				android:layout_gravity="bottom|right"
 				android:contentDescription="@string/compose"
 				android:onClick="onClick"
-				android:src="@drawable/ic_menu_compose"/>
+				android:src="@drawable/ic_menu_tweet"/>
 		</FrameLayout>
 
 		<FrameLayout

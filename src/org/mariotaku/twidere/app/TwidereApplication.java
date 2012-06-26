@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.app;
 
+import static android.os.Environment.getExternalStorageDirectory;
+
 import java.io.File;
 import java.io.FileFilter;
 
@@ -15,7 +17,6 @@ import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask.Status;
 import android.os.Build;
-import android.os.Environment;
 
 public class TwidereApplication extends Application implements Constants {
 
@@ -67,9 +68,9 @@ public class TwidereApplication extends Application implements Constants {
 		@Override
 		protected Void doInBackground(Void... args) {
 			final File external_cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
-					.getExternalCacheDir(context) : Environment.getExternalStorageDirectory() != null ? new File(
-					Environment.getExternalStorageDirectory().getPath() + "/Android/data/" + context.getPackageName()
-							+ "/cache/") : null;
+					.getExternalCacheDir(context) : getExternalStorageDirectory() != null ? new File(
+					getExternalStorageDirectory().getPath() + "/Android/data/" + context.getPackageName() + "/cache/")
+					: null;
 
 			if (external_cache_dir != null) {
 				for (final File file : external_cache_dir.listFiles((FileFilter) null)) {

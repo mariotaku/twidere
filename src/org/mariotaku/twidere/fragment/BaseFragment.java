@@ -12,7 +12,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 
-class BaseFragment extends Fragment implements Constants {
+public class BaseFragment extends Fragment implements Constants {
 
 	public ActionBarFragmentActivity getActionBarActivity() {
 		final Activity activity = getActivity();

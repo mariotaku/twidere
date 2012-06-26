@@ -29,7 +29,7 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 
 	@Override
 	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
-		
+
 	}
 
 }

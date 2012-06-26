@@ -176,5 +176,10 @@
 	<string name="user_blocked">Ulocked this user.</string>
 	<string name="user_unblocked">Unblocked this user.</string>
 	<string name="reported_user_for_spam">Reported this user for spam.</string>
-
+	<string name="filename_hint">Filename</string>
+	<string name="overwrite_confirm">File exists, overrite?</string>
+	<string name="save_as">Save as</string>
+	<string name="please_wait">Please wait.</string>
+	<string name="file_saved_to">File saved to <xliff:g id="filename">%s</xliff:g> .</string>
+	
 </resources>

@@ -25,12 +25,12 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		mAccountId = account_id;
 		mMaxId = max_id;
 	}
-	
+
+	public abstract IDs getIDs() throws TwitterException;
+
 	public long[] getIDsArray() {
 		return mIDs != null ? mIDs.getIDs() : null;
 	}
-
-	public abstract IDs getIDs() throws TwitterException;
 
 	@Override
 	public List<ParcelableUser> getUsers() throws TwitterException {
@@ -48,8 +48,7 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		final int max_id_idx = mMaxId > 0 ? ArrayUtils.indexOf(ids, mMaxId) : 0;
 		if (max_id_idx < 0) return null;
 		if (max_id_idx == ids.length - 1) return Collections.emptyList();
-		final int count = max_id_idx + load_item_limit < ids.length ? load_item_limit : ids.length
-				- max_id_idx;
+		final int count = max_id_idx + load_item_limit < ids.length ? load_item_limit : ids.length - max_id_idx;
 		final long[] ids_to_load = new long[count];
 		int temp_idx = max_id_idx;
 		for (int i = 0; i < ids_to_load.length; i++) {

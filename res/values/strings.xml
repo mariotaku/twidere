@@ -39,7 +39,7 @@
 	<string name="me">Me</string>
 	<string name="error_occurred">An error occurred, please try again.</string>
 	<string name="error_already_logged_in">You are already logged in.</string>
-	<string name="no_account_selected">You must select one account or more.</string>
+	<string name="no_account_selected">You must select at least one account.</string>
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
 	<string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
 	<string name="select_account">Select account</string>
@@ -176,5 +176,10 @@
 	<string name="user_blocked">Ulocked this user.</string>
 	<string name="user_unblocked">Unblocked this user.</string>
 	<string name="reported_user_for_spam">Reported this user for spam.</string>
+	<string name="filename_hint">Filename</string>
+	<string name="overwrite_confirm">File exists, overrite?</string>
+	<string name="save_as">Save as</string>
+	<string name="please_wait">Please wait.</string>
+	<string name="file_saved_to">File saved to <xliff:g id="filename">%s</xliff:g> .</string>
 
 </resources>

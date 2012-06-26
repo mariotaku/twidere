@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="19"
+	android:versionCode="20"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -279,6 +279,15 @@
 				<data android:scheme="file"/>
 				<data android:scheme="http"/>
 				<data android:scheme="https"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.FileSaveAsActivity"
+			android:label="@string/save_as">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.SAVE_FILE"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
 

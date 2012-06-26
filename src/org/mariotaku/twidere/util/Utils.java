@@ -77,12 +77,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.format.Time;
-import android.text.style.URLSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -159,15 +155,7 @@ public final class Utils implements Constants {
 		}
 
 		builder.append(Statuses.ACCOUNT_ID + " IN ( ");
-		for (int i = 0; i < account_ids.length; i++) {
-			final String id_string = String.valueOf(account_ids[i]);
-			if (id_string != null) {
-				if (i > 0) {
-					builder.append(", ");
-				}
-				builder.append(id_string);
-			}
-		}
+		builder.append(ArrayUtils.buildString(account_ids, ',', true));
 		builder.append(" )");
 
 		return builder.toString();
@@ -276,6 +264,43 @@ public final class Utils implements Constants {
 		return location.getLatitude() + "," + location.getLongitude();
 	}
 
+	public static String formatStatusText(Status status) {
+		if (status == null) return null;
+		final String text = status.getText();
+		if (text == null) return null;
+		final HtmlBuilder builder = new HtmlBuilder(text, VERBOSE);
+		final URLEntity[] urls = status.getURLEntities();
+		if (urls != null) {
+			for (final URLEntity url_entity : urls) {
+				final int start = url_entity.getStart();
+				final int end = url_entity.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				final URL expanded_url = url_entity.getExpandedURL();
+				if (expanded_url != null) {
+					builder.addLink(expanded_url.toString(), start, end);
+				}
+			}
+		}
+		// Format media.
+		final MediaEntity[] medias = status.getMediaEntities();
+		if (medias != null) {
+			for (final MediaEntity media_item : medias) {
+				final int start = media_item.getStart();
+				final int end = media_item.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				final URL media_url = media_item.getMediaURL();
+				if (media_url != null) {
+					builder.addLink(media_url.toString(), start, end);
+				}
+			}
+		}
+		return builder.build();
+	}
+
 	public static String formatTimeStampString(Context context, long timestamp) {
 		final Time then = new Time();
 		then.set(timestamp);
@@ -358,6 +383,43 @@ public final class Utils implements Constants {
 			return res.getQuantityString(R.plurals.Nyears, year_diff, year_diff);
 		}
 		return then.format3339(true);
+	}
+
+	public static String formatTweetText(Tweet tweet) {
+		if (tweet == null) return null;
+		final String text = tweet.getText();
+		if (text == null) return null;
+		final HtmlBuilder builder = new HtmlBuilder(text, VERBOSE);
+		final URLEntity[] urls = tweet.getURLEntities();
+		if (urls != null) {
+			for (final URLEntity url_entity : urls) {
+				final int start = url_entity.getStart();
+				final int end = url_entity.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				final URL expanded_url = url_entity.getExpandedURL();
+				if (expanded_url != null) {
+					builder.addLink(expanded_url.toString(), start, end);
+				}
+			}
+		}
+		// Format media.
+		final MediaEntity[] medias = tweet.getMediaEntities();
+		if (medias != null) {
+			for (final MediaEntity media_item : medias) {
+				final int start = media_item.getStart();
+				final int end = media_item.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				final URL media_url = media_item.getMediaURL();
+				if (media_url != null) {
+					builder.addLink(media_url.toString(), start, end);
+				}
+			}
+		}
+		return builder.build();
 	}
 
 	public static int getAccountColor(Context context, long account_id) {
@@ -674,26 +736,6 @@ public final class Utils implements Constants {
 		return status_ids;
 	}
 
-	public static String[] getMentionedNames(CharSequence user_name, CharSequence text, boolean at_sign,
-			boolean include_author) {
-		final Pattern pattern = Pattern.compile("(?<!\\w)(@(\\w+))", Pattern.MULTILINE);
-		final Matcher matcher = pattern.matcher(text);
-		final List<String> mentions = new ArrayList<String>();
-
-		if (include_author) {
-			mentions.add((at_sign ? "@" : "") + user_name);
-		}
-
-		while (matcher.find()) {
-			final String mention = matcher.group(at_sign ? 1 : 2);
-			if (mentions.contains(mention)) {
-				continue;
-			}
-			mentions.add(mention);
-		}
-		return mentions.toArray(new String[mentions.size()]);
-	}
-
 	/**
 	 * @deprecated
 	 */
@@ -790,97 +832,6 @@ public final class Utils implements Constants {
 			cur.close();
 		}
 		return null;
-	}
-
-	public static String getSpannedStatusString(Spanned text) {
-		if (text == null) return "";
-		final CharSequence TAG_START = "<p>";
-		final CharSequence TAG_END = "</p>";
-		final String formatted = Html.toHtml(text);
-		if (formatted != null && formatted.contains(TAG_START) && formatted.contains(TAG_END)) {
-			final int start = formatted.indexOf(TAG_START.toString()) + TAG_START.length();
-			final int end = formatted.lastIndexOf(TAG_END.toString());
-			return formatted.substring(start, end);
-		}
-		return formatted;
-	}
-
-	public static Spanned getSpannedStatusText(Status status, long account_id) {
-		if (status == null || status.getText() == null) return new SpannableString("");
-		final SpannableString text = new SpannableString(status.getText());
-		// Format links.
-		final URLEntity[] urls = status.getURLEntities();
-		if (urls != null) {
-			for (final URLEntity url_entity : urls) {
-				final int start = url_entity.getStart();
-				final int end = url_entity.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				final URL expanded_url = url_entity.getExpandedURL();
-				final URL url = url_entity.getURL();
-				if (expanded_url != null) {
-					text.setSpan(new URLSpan(expanded_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				} else if (url != null) {
-					text.setSpan(new URLSpan(url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				}
-			}
-		}
-		// Format media.
-		final MediaEntity[] media = status.getMediaEntities();
-		if (media != null) {
-			for (final MediaEntity media_item : media) {
-				final int start = media_item.getStart();
-				final int end = media_item.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				final URL media_url = media_item.getMediaURL();
-				if (media_url != null) {
-					text.setSpan(new URLSpan(media_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				}
-			}
-		}
-		return text;
-	}
-
-	public static Spanned getSpannedTweetText(Tweet tweet, long account_id) {
-		if (tweet == null || tweet.getText() == null) return new SpannableString("");
-		final SpannableString text = new SpannableString(tweet.getText());
-		// Format links.
-		final URLEntity[] urls = tweet.getURLEntities();
-		if (urls != null) {
-			for (final URLEntity url_entity : urls) {
-				final int start = url_entity.getStart();
-				final int end = url_entity.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				final URL expanded_url = url_entity.getExpandedURL();
-				final URL url = url_entity.getURL();
-				if (expanded_url != null) {
-					text.setSpan(new URLSpan(expanded_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				} else if (url != null) {
-					text.setSpan(new URLSpan(url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				}
-			}
-		}
-		// Format media.
-		final MediaEntity[] media = tweet.getMediaEntities();
-		if (media != null) {
-			for (final MediaEntity media_item : media) {
-				final int start = media_item.getStart();
-				final int end = media_item.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				final URL media_url = media_item.getMediaURL();
-				if (media_url != null) {
-					text.setSpan(new URLSpan(media_url.toString()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				}
-			}
-		}
-		return text;
 	}
 
 	public static int getTableId(Uri uri) {
@@ -1166,7 +1117,7 @@ public final class Utils implements Constants {
 		if (status.getCreatedAt() != null) {
 			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
 		}
-		values.put(Statuses.TEXT, getSpannedStatusString(getSpannedStatusText(status, account_id)));
+		values.put(Statuses.TEXT, formatStatusText(status));
 		values.put(Statuses.TEXT_PLAIN, status.getText());
 		values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
 		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());

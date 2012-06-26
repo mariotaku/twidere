@@ -176,5 +176,10 @@
 	<string name="user_blocked">你屏蔽了這個用戶。</string>
 	<string name="user_unblocked">你解除了對這個用戶的屏蔽。</string>
 	<string name="reported_user_for_spam">你已報告這個用戶發送垃圾信息。</string>
+	<string name="filename_hint">檔案名</string>
+	<string name="overwrite_confirm">檔案已經存在，覆蓋嗎？</string>
+	<string name="save_as">保存為</string>
+	<string name="please_wait">請稍等。</string>
+	<string name="file_saved_to">檔案已經保存到 <xliff:g id="filename">%s</xliff:g>。</string>
 
 </resources>

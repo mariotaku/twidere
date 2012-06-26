@@ -32,10 +32,6 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 		mUserId = user_id;
 		mUserScreenName = user_screenname;
 	}
-	
-	public int getTotalItemsCount() {
-		return mTotalItemsCount;
-	}
 
 	@Override
 	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
@@ -45,15 +41,18 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 				if (mTotalItemsCount == -1) {
 					try {
 						mTotalItemsCount = twitter.showUser(mUserId).getFavouritesCount();
-					} catch (TwitterException e) {
+					} catch (final TwitterException e) {
 						mTotalItemsCount = -1;
 					}
 				}
 				return twitter.getFavorites(String.valueOf(mUserId), paging);
-			}
-			else if (mUserScreenName != null) return twitter.getFavorites(mUserScreenName, paging);
+			} else if (mUserScreenName != null) return twitter.getFavorites(mUserScreenName, paging);
 		}
 		return null;
+	}
+
+	public int getTotalItemsCount() {
+		return mTotalItemsCount;
 	}
 
 }

@@ -1,9 +1,10 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
+
+import java.util.List;
 
 import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.popupmenu.PopupMenu;
@@ -39,6 +40,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+
+import com.twitter.Extractor;
 
 public class ViewConversationFragment extends BaseListFragment implements OnScrollListener, OnItemClickListener,
 		OnItemLongClickListener, OnMenuItemClickListener {
@@ -161,7 +164,9 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 				case MENU_REPLY: {
 					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 					final Bundle bundle = new Bundle();
-					bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text_plain, false, true));
+					final List<String> mentions = new Extractor().extractMentionedScreennames(text_plain);
+					mentions.add(0, screen_name);
+					bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
 					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);

@@ -3,7 +3,7 @@
 
 	<item
 		android:id="@id/compose"
-		android:icon="@drawable/ic_menu_compose"
+		android:icon="@drawable/ic_menu_tweet"
 		android:showAsAction="always"
 		android:title="@string/compose"/>
 	<item

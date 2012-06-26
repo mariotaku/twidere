@@ -63,7 +63,8 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 				if (!insert_gap) {
 					insert_gap = list_modified;
 				}
-				//data.add(new ParcelableStatus(status, account_id, i == statuses.size() - 1 ? insert_gap : false));
+				// data.add(new ParcelableStatus(status, account_id, i ==
+				// statuses.size() - 1 ? insert_gap : false));
 				data.add(new ParcelableStatus(status, account_id, false));
 			}
 		}

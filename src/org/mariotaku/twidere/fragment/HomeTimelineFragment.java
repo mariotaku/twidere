@@ -40,6 +40,8 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		}
 	};
 
+	private boolean mShouldRestorePositoin = false;
+
 	@Override
 	public Uri getContentUri() {
 		return Statuses.CONTENT_URI;
@@ -50,8 +52,6 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		return false;
 	}
 
-	private boolean mShouldRestorePositoin = false;
-	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);

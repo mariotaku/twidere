@@ -248,12 +248,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	}
 
 	@Override
-	public void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		 mStateSaved = false;
-	}
-
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_home, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -295,6 +289,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			}
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		mStateSaved = false;
 	}
 
 	@Override
@@ -343,18 +343,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		mStateSaved = true;
 	}
 
-	@Override
-	protected void onPostResume() {
-		super.onPostResume();
-		mStateSaved = false;
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		mStateSaved = true;
-		super.onSaveInstanceState(outState);
-	}
-
 	public void setPagingEnabled(boolean enabled) {
 		if (mIndicator != null) {
 			mIndicator.setPagingEnabled(enabled);
@@ -395,6 +383,18 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			}
 		}
 		super.onNewIntent(intent);
+	}
+
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+		mStateSaved = false;
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		mStateSaved = true;
+		super.onSaveInstanceState(outState);
 	}
 
 	private void navigateToTop() {

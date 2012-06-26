@@ -41,7 +41,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	};
 
 	private boolean mShouldRestorePositoin = false;
-	
+
 	@Override
 	public Uri getContentUri() {
 		return Mentions.CONTENT_URI;

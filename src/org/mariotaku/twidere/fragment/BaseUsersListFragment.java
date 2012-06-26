@@ -7,14 +7,10 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.UsersAdapter;
 import org.mariotaku.twidere.loader.IDsUsersLoader;
 import org.mariotaku.twidere.util.ParcelableUser;
-import org.mariotaku.twidere.util.SetLayerTypeAccessor;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Paint;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -62,9 +58,6 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 			mData.clear();
 		}
 		mAccountId = account_id;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			SetLayerTypeAccessor.setLayerType(mListView, View.LAYER_TYPE_SOFTWARE, new Paint());
-		}
 		mListView.setOnItemClickListener(this);
 		mListView.setOnScrollListener(this);
 		setListAdapter(mAdapter);

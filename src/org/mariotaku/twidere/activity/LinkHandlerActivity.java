@@ -74,7 +74,9 @@ public class LinkHandlerActivity extends BaseActivity {
 		setContentView(new FrameLayout(this));
 		setSupportProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		if (savedInstanceState != null) mSearchType = savedInstanceState.getString(INTENT_KEY_QUERY_TYPE);
+		if (savedInstanceState != null) {
+			mSearchType = savedInstanceState.getString(INTENT_KEY_QUERY_TYPE);
+		}
 		final Intent intent = getIntent();
 		final Uri data = intent.getData();
 		final String action = intent.getAction();
@@ -97,9 +99,9 @@ public class LinkHandlerActivity extends BaseActivity {
 							RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
 					suggestions.saveRecentQuery(query, null);
 					mSearchTypeFragment.setArguments(args);
-					//if (mSearchTypeFragment.isHidden()) {
-						mSearchTypeFragment.show(getSupportFragmentManager(), null);
-					//}
+					// if (mSearchTypeFragment.isHidden()) {
+					mSearchTypeFragment.show(getSupportFragmentManager(), null);
+					// }
 					setTitle(getString(android.R.string.search_go) + " | " + query);
 					return;
 				}
@@ -125,12 +127,6 @@ public class LinkHandlerActivity extends BaseActivity {
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putString(INTENT_KEY_QUERY_TYPE, mSearchType);
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
@@ -138,6 +134,12 @@ public class LinkHandlerActivity extends BaseActivity {
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putString(INTENT_KEY_QUERY_TYPE, mSearchType);
+		super.onSaveInstanceState(outState);
 	}
 
 	private long parseLong(String source) {
@@ -244,7 +246,9 @@ public class LinkHandlerActivity extends BaseActivity {
 					break;
 				}
 				case CODE_SEARCH: {
-					if (mSearchType == null) mSearchType = uri.getQueryParameter(QUERY_PARAM_TYPE);
+					if (mSearchType == null) {
+						mSearchType = uri.getQueryParameter(QUERY_PARAM_TYPE);
+					}
 					final String query = uri.getQueryParameter(QUERY_PARAM_QUERY);
 					if (query == null) {
 						finish();
@@ -279,7 +283,7 @@ public class LinkHandlerActivity extends BaseActivity {
 					try {
 						bundle.putDouble(INTENT_KEY_LATITUDE, Double.valueOf(param_lat));
 						bundle.putDouble(INTENT_KEY_LONGITUDE, Double.valueOf(param_lng));
-					} catch (NumberFormatException e) {
+					} catch (final NumberFormatException e) {
 						finish();
 						return false;
 					}

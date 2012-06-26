@@ -31,8 +31,11 @@ import twitter4j.TwitterConstants;
 
 public interface Constants extends TwitterConstants {
 
-	public static final String LOGTAG = "Twidere";
+	public static final boolean ENABLE_VERBOSE_LOG_OUTPUT_IN_DEBUG_BUILDS = true;
+	
+	public static final boolean VERBOSE = BuildConfig.DEBUG && ENABLE_VERBOSE_LOG_OUTPUT_IN_DEBUG_BUILDS;
 
+	public static final String LOGTAG = "Twidere";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 13;
@@ -130,6 +133,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_PACKAGE_PREFIX + "TWITTER_LOGIN";
 	public static final String INTENT_ACTION_DRAFTS = INTENT_PACKAGE_PREFIX + "DRAFTS";
 	public static final String INTENT_ACTION_DIRECT_MESSAGES = INTENT_PACKAGE_PREFIX + "DIRECT_MESSAGES";
+	public static final String INTENT_ACTION_SAVE_FILE = INTENT_PACKAGE_PREFIX + "SAVE_FILE";
 
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "HOME_TIMELINE_DATABASE_UPDATED";
@@ -170,6 +174,8 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_IS_SHARE = "is_share";
 	public static final String INTENT_KEY_STATUS = "status";
 	public static final String INTENT_KEY_FAVORITED = "favorited";
+	public static final String INTENT_KEY_FILENAME = "filename";
+	public static final String INTENT_KEY_FILE_SOURCE = "file_source";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -202,6 +208,8 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_DELETE_ALL = R.id.delete_all;
 	public static final int MENU_SEND_ALL = R.id.send_all;
 	public static final int MENU_SET_AS_DEFAULT = R.id.set_as_default;
+	public static final int MENU_SAVE = R.id.save;
+	public static final int MENU_CANCEL = R.id.cancel;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
@@ -210,6 +218,7 @@ public interface Constants extends TwitterConstants {
 	public static final int REQUEST_EDIT_API = 5;
 	public static final int REQUEST_GOTO_AUTHORIZATION = 6;
 	public static final int REQUEST_SET_COLOR = 7;
+	public static final int REQUEST_SAVE_FILE = 8;
 
 	public static final int RESULT_UNKNOWN_ERROR = -1;
 	public static final int RESULT_SUCCESS = 0;

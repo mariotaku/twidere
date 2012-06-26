@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.twitter.Regex;
-
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -33,6 +31,8 @@ import android.text.method.MovementMethod;
 import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
+
+import com.twitter.Regex;
 
 /**
  * Linkify take a piece of text and a regular expression and turns all of the
@@ -175,6 +175,22 @@ public class AutoLink {
 		mOnLinkClickListener = listener;
 	}
 
+	private final boolean addHashtagLinks(Spannable spannable) {
+		boolean hasMatches = false;
+		final Matcher matcher = Regex.VALID_HASHTAG.matcher(spannable);
+
+		while (matcher.find()) {
+			final int start = matcher.start(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
+			final int end = matcher.end(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
+			final String url = matcher.group(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
+
+			applyLink(url, start, end, spannable, LINK_TYPE_HASHTAGS);
+			hasMatches = true;
+		}
+
+		return hasMatches;
+	}
+
 	/**
 	 * Applies a regex to a Spannable turning the matches into links.
 	 * 
@@ -194,22 +210,6 @@ public class AutoLink {
 			final String url = matcher.group(Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
 
 			applyLink(url, start, end, spannable, LINK_TYPE_MENTIONS);
-			hasMatches = true;
-		}
-
-		return hasMatches;
-	}
-	
-	private final boolean addHashtagLinks(Spannable spannable) {
-		boolean hasMatches = false;
-		final Matcher matcher = Regex.VALID_HASHTAG.matcher(spannable);
-
-		while (matcher.find()) {
-			final int start = matcher.start(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
-			final int end = matcher.end(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
-			final String url = matcher.group(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
-
-			applyLink(url, start, end, spannable, LINK_TYPE_HASHTAGS);
 			hasMatches = true;
 		}
 

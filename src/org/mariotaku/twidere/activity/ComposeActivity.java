@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.activity;
 
+import static android.os.Environment.getExternalStorageDirectory;
+import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
@@ -10,15 +12,10 @@ import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
-import org.mariotaku.twidere.util.ProfileImageLoader;
-import org.mariotaku.twidere.util.ScreenNameTokenizer;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.view.StatusComposeEditText;
-
-import com.twitter.Validator;
 
 import android.app.Activity;
 import android.content.Context;
@@ -49,6 +46,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.twitter.Validator;
+
 public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
 		OnClickListener, OnLongClickListener {
 
@@ -75,6 +74,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private final Validator mValidator = new Validator();
 
 	private AttachedImageThumbnailTask mAttachedImageThumbnailTask;
+
+	private static final String INTENT_KEY_IMAGE_URI = "image_uri";
+
+	private static final String INTENT_KEY_PHOTO_ATTACHED = "photo_attached";
+
+	private static final String INTENT_KEY_IMAGE_ATTACHED = "image_attached";
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -164,7 +169,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mTextCount = (TextView) findViewById(R.id.text_count);
 		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
 		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);
-		
+
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		mAccountIds = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
 		mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
@@ -217,7 +222,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				setTitle(R.string.share);
 				final Bundle extras = getIntent().getExtras();
 				if (extras != null) {
-					if (mText == null){
+					if (mText == null) {
 						final CharSequence extra_text = extras.getCharSequence(Intent.EXTRA_TEXT);
 						mText = extra_text != null ? String.valueOf(extra_text) : "";
 					} else {
@@ -247,14 +252,15 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				}
 			}
 		}
-		
-		final File image_file = mImageUri != null && "file".equals(mImageUri.getScheme()) ? new File(mImageUri.getPath()) : null;
+
+		final File image_file = mImageUri != null && "file".equals(mImageUri.getScheme()) ? new File(
+				mImageUri.getPath()) : null;
 		final boolean image_file_valid = image_file != null && image_file.exists();
 		mImageThumbnailPreview.setVisibility(image_file_valid ? View.VISIBLE : View.GONE);
 		if (image_file_valid) {
 			reloadAttachedImageThumbnail(image_file);
 		}
-		
+
 		mImageThumbnailPreview.setOnClickListener(this);
 		mImageThumbnailPreview.setOnLongClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(this);
@@ -263,9 +269,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mMenuBar.show();
 		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
-		final ProfileImageLoader imageloader = ((TwidereApplication) getApplication()).getProfileImageLoader();
-		mEditText.setAdapter(new UserAutoCompleteAdapter(this, imageloader));
-		mEditText.setTokenizer(new ScreenNameTokenizer(mEditText));
 		if (mText != null) {
 			mEditText.setText(mText);
 			if (mIsQuote) {
@@ -358,7 +361,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		final String text = mEditText != null ? String.valueOf(mEditText.getText()) : null;
-		if ( mTextCount != null) {
+		if (mTextCount != null) {
 			mTextCount.setText(String.valueOf(mValidator.getTweetLength(text)));
 		}
 		final MenuItem sendItem = menu.findItem(MENU_SEND);
@@ -390,10 +393,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		super.onSaveInstanceState(outState);
 	}
 
-	private static final String INTENT_KEY_IMAGE_URI = "image_uri";
-	private static final String INTENT_KEY_PHOTO_ATTACHED = "photo_attached"; 
-	private static final String INTENT_KEY_IMAGE_ATTACHED = "image_attached";
-	
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 
@@ -467,10 +466,10 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	private void takePhoto() {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+		if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
-					.getExternalCacheDir(this) : new File(Environment.getExternalStorageDirectory().getPath()
-					+ "/Android/data/" + getPackageName() + "/cache/");
+					.getExternalCacheDir(this) : new File(getExternalStorageDirectory().getPath() + "/Android/data/"
+					+ getPackageName() + "/cache/");
 			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
 			mImageUri = Uri.fromFile(file);
 			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);

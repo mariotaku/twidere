@@ -38,7 +38,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		}
 		return null;
 	}
-	
+
 	public ParcelableStatus findItemByStatusId(long status_id) {
 		for (int i = 0; i < getCount(); i++) {
 			final ParcelableStatus status = getItem(i);
@@ -106,6 +106,22 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		return view;
 	}
 
+	public void setData(List<ParcelableStatus> data) {
+		setData(data, false);
+	}
+
+	public void setData(List<ParcelableStatus> data, boolean clear_old) {
+		if (clear_old) {
+			clear();
+		}
+		if (data == null) return;
+		for (final ParcelableStatus status : data) {
+			if (clear_old || findItemByStatusId(status.status_id) == null) {
+				add(status);
+			}
+		}
+	}
+
 	@Override
 	public void setDisplayName(boolean display) {
 		if (display != mDisplayName) {
@@ -143,22 +159,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
 			notifyDataSetChanged();
-		}
-	}
-
-	public void setData(List<ParcelableStatus> data) {
-		setData(data, false);
-	}
-	
-	public void setData(List<ParcelableStatus> data, boolean clear_old) {
-		if (clear_old) {
-			clear();
-		}
-		if (data == null) return;
-		for (ParcelableStatus status : data) {
-			if (clear_old || findItemByStatusId(status.status_id) == null) {
-				add(status);
-			}
 		}
 	}
 }

@@ -29,7 +29,7 @@
 			android:src="@drawable/ic_menu_close_clear_cancel"/>
 
 		<ImageButton
-			android:id="@+id/refresh"
+			android:id="@+id/refresh_stop_save"
 			android:layout_width="64dp"
 			android:layout_height="48dp"
 			android:layout_alignParentRight="true"
@@ -59,7 +59,7 @@
 			android:background="@drawable/btn_image_viewer_bottomright"
 			android:contentDescription="@string/open_in_browser"
 			android:onClick="onClick"
-			android:src="@drawable/ic_menu_gallery"/>
+			android:src="@drawable/ic_menu_browser"/>
 	</RelativeLayout>
 
 </merge>

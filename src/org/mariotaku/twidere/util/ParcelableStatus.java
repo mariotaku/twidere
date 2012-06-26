@@ -1,9 +1,8 @@
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.Utils.formatStatusText;
+import static org.mariotaku.twidere.util.Utils.formatTweetText;
 import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
-import static org.mariotaku.twidere.util.Utils.getSpannedStatusString;
-import static org.mariotaku.twidere.util.Utils.getSpannedStatusText;
-import static org.mariotaku.twidere.util.Utils.getSpannedTweetText;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.net.URL;
@@ -151,7 +150,7 @@ public class ParcelableStatus implements Parcelable {
 		final MediaEntity[] medias = status.getMediaEntities();
 
 		status_timestamp = getTime(status.getCreatedAt());
-		text = getSpannedStatusText(status, account_id);
+		text = Html.fromHtml(formatStatusText(status));
 		text_plain = status.getText();
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();
@@ -182,7 +181,7 @@ public class ParcelableStatus implements Parcelable {
 		final MediaEntity[] medias = tweet.getMediaEntities();
 
 		status_timestamp = getTime(tweet.getCreatedAt());
-		text = getSpannedTweetText(tweet, account_id);
+		text = Html.fromHtml(formatTweetText(tweet));
 		text_plain = tweet.getText();
 		retweet_count = -1;
 		in_reply_to_screen_name = tweet.getToUser();
@@ -223,7 +222,7 @@ public class ParcelableStatus implements Parcelable {
 		out.writeInt(has_media ? 1 : 0);
 		out.writeString(retweeted_by_name);
 		out.writeString(retweeted_by_screen_name);
-		out.writeString(getSpannedStatusString(text));
+		out.writeString(Html.toHtml(text));
 		out.writeString(text_plain);
 		out.writeString(name);
 		out.writeString(screen_name);

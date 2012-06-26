@@ -33,10 +33,10 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		}
 		return null;
 	}
-	
+
 	public ParcelableUser findItemByUserId(long user_id) {
 		for (int i = 0; i < getCount(); i++) {
-			ParcelableUser item = getItem(i);
+			final ParcelableUser item = getItem(i);
 			if (item.user_id == user_id) return item;
 		}
 		return null;
@@ -59,7 +59,8 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			final ParcelableUser user = getItem(position);
 			holder.setTextSize(mTextSize);
 			holder.name.setText(mDisplayName ? user.name : user.screen_name);
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(user.is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(
+					user.is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				mImageLoader.displayImage(user.profile_image_url, holder.profile_image);
@@ -70,6 +71,22 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 
 	public boolean isGap(int position) {
 		return mShowLastItemAsGap && position == getCount() - 1;
+	}
+
+	public void setData(List<ParcelableUser> data) {
+		setData(data, false);
+	}
+
+	public void setData(List<ParcelableUser> data, boolean clear_old) {
+		if (clear_old) {
+			clear();
+		}
+		if (data == null) return;
+		for (final ParcelableUser user : data) {
+			if (clear_old || findItemByUserId(user.user_id) == null) {
+				add(user);
+			}
+		}
 	}
 
 	@Override
@@ -101,22 +118,6 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
 			notifyDataSetChanged();
-		}
-	}
-	
-	public void setData(List<ParcelableUser> data) {
-		setData(data, false);
-	}
-	
-	public void setData(List<ParcelableUser> data, boolean clear_old) {
-		if (clear_old) {
-			clear();
-		}
-		if (data == null) return;
-		for (ParcelableUser user : data) {
-			if (clear_old || findItemByUserId(user.user_id) == null) {
-				add(user);
-			}
 		}
 	}
 

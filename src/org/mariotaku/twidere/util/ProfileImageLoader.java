@@ -1,5 +1,8 @@
 package org.mariotaku.twidere.util;
 
+import static android.os.Environment.getExternalStorageDirectory;
+import static android.os.Environment.getExternalStorageState;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -189,10 +192,10 @@ public class ProfileImageLoader {
 
 		public void init() {
 			/* Find the dir to save cached images. */
-			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+			if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 				mCacheDir = new File(
 						Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(mContext)
-								: new File(Environment.getExternalStorageDirectory().getPath() + "/Android/data/"
+								: new File(getExternalStorageDirectory().getPath() + "/Android/data/"
 										+ mContext.getPackageName() + "/cache/"), CACHE_DIR_NAME);
 			} else {
 				mCacheDir = new File(mContext.getCacheDir(), CACHE_DIR_NAME);

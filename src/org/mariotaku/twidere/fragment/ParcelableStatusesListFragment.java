@@ -37,6 +37,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		return -1;
 	}
 
+	public abstract Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args);
+
 	@Override
 	public final void onActivityCreated(Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
@@ -53,20 +55,12 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		if (getData() instanceof ArrayList) {
-			outState.putParcelableArrayList(INTENT_KEY_DATA, (ArrayList<? extends Parcelable>) getData());
-		}
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
 	public final Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		return newLoaderInstance(args);
 	}
-	
-	public abstract Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args);
+
+	public abstract void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter);
 
 	@Override
 	public final void onDestroyView() {
@@ -92,8 +86,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		setProgressBarIndeterminateVisibility(false);
 	}
 
-	public abstract void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter);
-	
 	@Override
 	public final void onPostStart() {
 		if (isActivityFirstCreated()) {
@@ -104,6 +96,14 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	@Override
 	public final void onRefresh() {
 		getStatuses(null, null);
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		if (getData() instanceof ArrayList) {
+			outState.putParcelableArrayList(INTENT_KEY_DATA, (ArrayList<? extends Parcelable>) getData());
+		}
+		super.onSaveInstanceState(outState);
 	}
 
 }

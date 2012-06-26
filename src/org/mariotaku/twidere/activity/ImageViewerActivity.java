@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.activity;
 
+import static android.os.Environment.getExternalStorageDirectory;
+import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 
@@ -49,12 +51,16 @@ import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 
 public class ImageViewerActivity extends FragmentActivity implements Constants, OnClickListener {
 
 	private ImageViewer mImageView;
 	private ImageLoader mImageLoader;
 	private View mProgress;
+	private ImageButton mRefreshStopSaveButton;
+	private boolean mImageLoading, mImageLoaded;
+	private File mImageFile;
 
 	@Override
 	public void onClick(View view) {
@@ -64,14 +70,20 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				onBackPressed();
 				break;
 			}
-			case R.id.refresh: {
-				if (mImageLoader == null || mImageLoader.getStatus() != Status.RUNNING) {
+			case R.id.refresh_stop_save: {
+				if (!mImageLoaded && !mImageLoading) {
 					loadImage();
+				} else if (!mImageLoaded && mImageLoading) {
+					stopLoading();
+				} else if (mImageLoaded) {
+					saveImage();
 				}
 				break;
 			}
 			case R.id.share: {
-				if (uri == null) break;
+				if (uri == null) {
+					break;
+				}
 				final Intent intent = new Intent(Intent.ACTION_SEND);
 				final String scheme = uri.getScheme();
 				if ("file".equals(scheme)) {
@@ -85,14 +97,16 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				break;
 			}
 			case R.id.open_in_browser: {
-				if (uri == null) break;
+				if (uri == null) {
+					break;
+				}
 				final String scheme = uri.getScheme();
-				if ("http".equals(scheme)||"https".equals(scheme)) {
+				if ("http".equals(scheme) || "https".equals(scheme)) {
 					final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 					intent.addCategory(Intent.CATEGORY_BROWSABLE);
 					try {
 						startActivity(intent);
-					} catch (ActivityNotFoundException e) {
+					} catch (final ActivityNotFoundException e) {
 						// Ignore.
 					}
 				}
@@ -106,6 +120,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		super.onCreate(icicle);
 		setContentView(R.layout.image_viewer);
 		mImageView = (ImageViewer) findViewById(R.id.image_viewer);
+		mRefreshStopSaveButton = (ImageButton) findViewById(R.id.refresh_stop_save);
 		mProgress = findViewById(R.id.progress);
 		loadImage();
 	}
@@ -115,13 +130,13 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		super.onDestroy();
 		mImageView.recycle();
 		if (mImageLoader != null && !mImageLoader.isCancelled()) {
-			mImageLoader.cancel(true);
+			mImageLoader.cancel();
 		}
 	}
 
 	private void loadImage() {
 		if (mImageLoader != null && mImageLoader.getStatus() == Status.RUNNING) {
-			mImageLoader.cancel(true);
+			mImageLoader.cancel();
 		}
 		final Uri uri = getIntent().getData();
 		if (uri == null) {
@@ -129,27 +144,67 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			return;
 		}
 		mImageView.setBitmap(null);
-		mImageLoader = new ImageLoader(uri, mImageView, this);
+		mImageLoader = new ImageLoader(uri, mImageView);
 		mImageLoader.execute();
 	}
 
-	private static class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
+	private void saveImage() {
+		if (mImageFile != null && mImageFile.exists()) {
+			final Uri uri = getIntent().getData();
+			if (uri == null) return;
+			final String file_name = uri.getLastPathSegment();
+			final BitmapFactory.Options o = new BitmapFactory.Options();
+			o.inJustDecodeBounds = true;
+			BitmapFactory.decodeFile(mImageFile.getPath(), o);
+			final String mime_type = o.outMimeType;
+			String file_name_with_suffix = null;
+			if (file_name.matches("(.*/)*.+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|GIF|BMP)$")) {
+				file_name_with_suffix = file_name;
+			} else {
+				if (mime_type == null) return;
+				if (mime_type.startsWith("image/") && !"image/*".equals(mime_type)) {
+					file_name_with_suffix = file_name + "." + mime_type.substring(5);
+				}
+			}
+			final Intent intent = new Intent(INTENT_ACTION_SAVE_FILE);
+			intent.setPackage(getPackageName());
+			intent.putExtra(INTENT_KEY_FILE_SOURCE, mImageFile.getPath());
+			intent.putExtra(INTENT_KEY_FILENAME, file_name_with_suffix);
+			startActivity(intent);
+		}
+	}
+
+	private void stopLoading() {
+		if (mImageLoader != null) {
+			mImageLoader.cancel();
+		}
+	}
+
+	private class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
 
 		private static final String CACHE_DIR_NAME = "cached_images";
 
 		private final Uri uri;
 		private final ImageViewer image_view;
-		private final ImageViewerActivity activity;
 		private final boolean ignore_ssl_error;
 		private File mCacheDir;
 
-		public ImageLoader(Uri uri, ImageViewer image_view, ImageViewerActivity activity) {
+		public ImageLoader(Uri uri, ImageViewer image_view) {
 			this.uri = uri;
 			this.image_view = image_view;
-			this.activity = activity;
-			ignore_ssl_error = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(
+			ignore_ssl_error = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(
 					PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			init();
+		}
+
+		protected void cancel() {
+			mImageLoading = false;
+			cancel(true);
+			if (!mImageLoaded) {
+				mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+				image_view.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.refresh_image));
+				mProgress.setVisibility(View.GONE);
+			}
 		}
 
 		@Override
@@ -202,21 +257,27 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		@Override
 		protected void onPostExecute(Bitmap result) {
+			mImageLoading = false;
 			if (image_view != null) {
 				if (result != null) {
 					image_view.setBitmap(result);
+					mImageLoaded = true;
+					mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_save);
 				} else {
-					image_view
-							.setBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.broken_image));
+					image_view.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.broken_image));
+					mImageLoaded = false;
+					mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
 				}
 			}
-			activity.mProgress.setVisibility(View.INVISIBLE);
+			mProgress.setVisibility(View.GONE);
 			super.onPostExecute(result);
 		}
 
 		@Override
 		protected void onPreExecute() {
-			activity.mProgress.setVisibility(View.VISIBLE);
+			mImageLoading = true;
+			mProgress.setVisibility(View.VISIBLE);
+			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
 			super.onPreExecute();
 		}
 
@@ -250,9 +311,12 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				}
 				if (bitmap == null) {
 					break;
-				} else
-					return bitmap;
+				} else {
+					mImageFile = f;
+				}
+				return bitmap;
 			}
+			mImageFile = null;
 			return null;
 		}
 
@@ -263,13 +327,13 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private void init() {
 			/* Find the dir to save cached images. */
-			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+			if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 				mCacheDir = new File(
-						Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(activity)
-								: new File(Environment.getExternalStorageDirectory().getPath() + "/Android/data/"
-										+ activity.getPackageName() + "/cache/"), CACHE_DIR_NAME);
+						Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(ImageViewerActivity.this)
+								: new File(getExternalStorageDirectory().getPath() + "/Android/data/"
+										+ getPackageName() + "/cache/"), CACHE_DIR_NAME);
 			} else {
-				mCacheDir = new File(activity.getCacheDir(), CACHE_DIR_NAME);
+				mCacheDir = new File(getCacheDir(), CACHE_DIR_NAME);
 			}
 			if (mCacheDir != null && !mCacheDir.exists()) {
 				mCacheDir.mkdirs();

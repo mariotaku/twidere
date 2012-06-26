@@ -1,10 +1,8 @@
-/*
- * @formatter:off
- */
 package com.twitter;
 
 import java.util.regex.Pattern;
 
+//@formatter:off
 public class Regex {
   private static final String UNICODE_SPACES = "[" +
     "\\u0009-\\u000d" +     //  # White_Space # Cc   [5] <control-0009>..<control-000D>

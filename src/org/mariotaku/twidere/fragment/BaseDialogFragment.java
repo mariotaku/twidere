@@ -12,7 +12,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.v4.app.DialogFragment;
 
-class BaseDialogFragment extends DialogFragment implements Constants {
+public class BaseDialogFragment extends DialogFragment implements Constants {
 
 	public ActionBarFragmentActivity getActionBarActivity() {
 		final Activity activity = getActivity();

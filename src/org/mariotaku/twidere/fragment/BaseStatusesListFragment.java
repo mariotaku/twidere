@@ -1,10 +1,11 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getMentionedNames;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
+
+import java.util.List;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -14,16 +15,13 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.util.SetLayerTypeAccessor;
 import org.mariotaku.twidere.util.StatusViewHolder;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Paint;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -39,6 +37,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+
+import com.twitter.Extractor;
 
 abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
 		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
@@ -109,9 +109,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		setListAdapter(getListAdapter());
 		setShowIndicator(false);
 		mListView = getListView();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			SetLayerTypeAccessor.setLayerType(mListView, View.LAYER_TYPE_SOFTWARE, new Paint());
-		}
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
@@ -220,7 +217,9 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				case MENU_REPLY: {
 					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 					final Bundle bundle = new Bundle();
-					bundle.putStringArray(INTENT_KEY_MENTIONS, getMentionedNames(screen_name, text_plain, false, true));
+					final List<String> mentions = new Extractor().extractMentionedScreennames(text_plain);
+					mentions.add(0, screen_name);
+					bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
 					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
