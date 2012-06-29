@@ -54,7 +54,7 @@
 	<string name="description_permission_write_databases">データベースにツイート、下書き、アカウント情報またはダイレクトメッセージなどを書き込む。</string>
 	<string name="open_in_browser">ブラウザで開く</string>
 	<string name="just_now">たった今</string>
-	<string name="tap_to_load_more">タップしてツイートを読み込む</string>
+	<string name="tap_to_load_more">タップしてツイートをさらに読み込む</string>
 	<string name="delete">削除</string>
 	<string name="retweet">リツイート</string>
 	<string name="cancel_retweet">リツイートをキャンセル</string>
@@ -116,7 +116,7 @@
 	<string name="set_color">色を設定</string>
 	<string name="pick_color">色を選択</string>
 	<string name="follow">フォロー</string>
-	<string name="unfollow">アンフォロー</string>
+	<string name="unfollow">フォローを解除</string>
 	<string name="bottom_compose_button">つぶやきボタンを下に置く</string>
 	<string name="bottom_compose_button_summary">つぶやきボタンを下に置く。携帯を片手でうまく使えない場合すごく役立つ。</string>
 	<string name="leftside_compose_button">つぶやきボタンを左に置く</string>
@@ -135,7 +135,7 @@
 	<string name="favorite_success">お気に入りに登録しました</string>
 	<string name="unfavorite_success">お気に入りから削除しました</string>
 	<string name="follow_success">フォローしました</string>
-	<string name="unfollow_success">アンフォローしました</string>
+	<string name="unfollow_success">フォローを解除しました</string>
 	<string name="profile_update_success">プロフィールを更新しました</string>
 	<string name="profile_image_update_success">プロフィール画像を更新しました</string>
 	<string name="display_name">名前を表示</string>
@@ -171,10 +171,15 @@
 	<string name="daily_trends">デーリー・トレンド</string>
 	<string name="weekly_trends">ウィークリート・レンド</string>
 	<string name="search_hint">ツイートまたユーザーを検索</string>
-	<string name="remember_position">Remember position</string>
-	<string name="remember_position_summary">Remember list/tab position before closing Twidere</string>
-	<string name="user_blocked">Ulocked this user.</string>
-	<string name="user_unblocked">Unblocked this user.</string>
-	<string name="reported_user_for_spam">Reported this user for spam.</string>
+	<string name="remember_position">位置を記憶</string>
+	<string name="remember_position_summary">ツイデレを閉じる前にリスト/タブの位置を記憶する</string>
+	<string name="user_blocked">ブロックを解除</string>
+	<string name="user_unblocked">このユーザーのブロックを解除しました。</string>
+	<string name="reported_user_for_spam">スパムとして報告</string>
+	<string name="filename_hint">ファイル名</string>
+	<string name="overwrite_confirm">ファイルはすでに存在します。上書きしますか？</string>
+	<string name="save_as">名前を付けて保存</string>
+	<string name="please_wait">しばらくお待ちください...</string>
+	<string name="file_saved_to"> <xliff:g id="filename">%s</xliff:g> にファイルが保存されました。</string>
 
 </resources>
