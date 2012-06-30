@@ -937,7 +937,9 @@ public class TwidereService extends Service implements Constants {
 
 					long min_id = -1;
 
-					if (VERBOSE) Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Start convert statuses to contentvalues.");
+					if (VERBOSE) {
+						Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Start convert statuses to contentvalues.");
+					}
 					for (final twitter4j.Status status : statuses) {
 						if (status == null) {
 							continue;
@@ -965,24 +967,36 @@ public class TwidereService extends Service implements Constants {
 						}
 
 					}
-					if (VERBOSE) Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished convert statuses to contentvalues.");
-					
+					if (VERBOSE) {
+						Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished convert statuses to contentvalues.");
+					}
+
 					{
-						if (VERBOSE) Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Delete old cached_users data.");
+						if (VERBOSE) {
+							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Delete old cached_users data.");
+						}
 						resolver.delete(CachedUsers.CONTENT_URI,
 								CachedUsers.USER_ID + " IN (" + ListUtils.buildString(user_ids, ',', true) + " )", null);
-						if (VERBOSE) Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished delete old cached_users data.");
-						if (VERBOSE) Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Insert cached_users data.");
+						if (VERBOSE) {
+							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished delete old cached_users data.");
+						}
+						if (VERBOSE) {
+							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Insert cached_users data.");
+						}
 						resolver.bulkInsert(CachedUsers.CONTENT_URI,
 								cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
-						if (VERBOSE) Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished insert cached_users data.");
+						if (VERBOSE) {
+							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished insert cached_users data.");
+						}
 					}
-					
+
 					int rows_deleted = -1;
 
 					// Delete all rows conflicting before new data inserted.
 					{
-						if (VERBOSE) Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Delete conflicting statuses.");
+						if (VERBOSE) {
+							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Delete conflicting statuses.");
+						}
 						final StringBuilder where = new StringBuilder();
 						where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 						where.append(" AND ");
@@ -992,11 +1006,15 @@ public class TwidereService extends Service implements Constants {
 						where.append(buildInWhereClause(Statuses.RETWEET_ID, status_ids));
 						where.append(")");
 						rows_deleted = resolver.delete(query_uri, where.toString(), null);
-						if (VERBOSE) Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished delete conflicting statuses.");
+						if (VERBOSE) {
+							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished delete conflicting statuses.");
+						}
 					}
 
 					// Insert previously fetched items.
-					if (VERBOSE) Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Insert statuses.");
+					if (VERBOSE) {
+						Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Insert statuses.");
+					}
 					resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 					// No row deleted, so I will insert a gap.
@@ -1010,7 +1028,9 @@ public class TwidereService extends Service implements Constants {
 						where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
 						resolver.update(query_uri, values, where.toString(), null);
 					}
-					if (VERBOSE) Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished insert statuses.");
+					if (VERBOSE) {
+						Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished insert statuses.");
+					}
 					succeed = true;
 				}
 				return succeed;

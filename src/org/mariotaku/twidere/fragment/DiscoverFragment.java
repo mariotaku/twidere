@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.MemCache;
 
 import twitter4j.Trend;
 import twitter4j.Trends;
@@ -47,6 +48,7 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 	private ArrayAdapter<TrendsCategory> mTrendsCategoriesAdapter;
 	private ImageButton mTrendsRefreshButton;
 	private View mContentView;
+	private MemCache mMemCache;
 
 	private static final int TRENDS_TYPE_DAILY = 1;
 	private static final int TRENDS_TYPE_WEEKLY = 2;
@@ -93,6 +95,7 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 		mInflater = getLayoutInflater(savedInstanceState);
 		mAccountId = getDefaultAccountId(getActivity());
 		mTwitter = getDefaultTwitterInstance(getActivity(), false);
+		mMemCache = getApplication().getMemCache();
 		if (mTwitter == null) {
 			mContentView.setVisibility(View.GONE);
 			return;
@@ -181,11 +184,19 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 			try {
 				switch (type) {
 					case TRENDS_TYPE_DAILY: {
-						result = mTwitter.getDailyTrends();
+						result = mMemCache.getCachedDailyTrends();
+						if (result == null) {
+							result = mTwitter.getDailyTrends();
+							mMemCache.cacheDailyTrends(result);
+						}
 						break;
 					}
 					case TRENDS_TYPE_WEEKLY: {
-						result = mTwitter.getWeeklyTrends();
+						result = mMemCache.getCachedWeeklyTrends();
+						if (result == null) {
+							result = mTwitter.getWeeklyTrends();
+							mMemCache.cacheWeeklyTrends(result);
+						}
 						break;
 					}
 				}

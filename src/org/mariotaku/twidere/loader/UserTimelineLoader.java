@@ -27,18 +27,17 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 	@Override
 	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
-		if (twitter != null) {
-			if (mUserId != -1) {
-				if (mTotalItemsCount == -1) {
-					try {
-						mTotalItemsCount = twitter.showUser(mUserId).getStatusesCount();
-					} catch (final TwitterException e) {
-						mTotalItemsCount = -1;
-					}
+		if (twitter == null) return null;
+		if (mUserId != -1) {
+			if (mTotalItemsCount == -1) {
+				try {
+					mTotalItemsCount = twitter.showUser(mUserId).getStatusesCount();
+				} catch (final TwitterException e) {
+					mTotalItemsCount = -1;
 				}
-				return twitter.getUserTimeline(mUserId, paging);
-			} else if (mUserScreenName != null) return twitter.getUserTimeline(mUserScreenName, paging);
-		}
+			}
+			return twitter.getUserTimeline(mUserId, paging);
+		} else if (mUserScreenName != null) return twitter.getUserTimeline(mUserScreenName, paging);
 		return null;
 	}
 

@@ -10,6 +10,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
+import org.mariotaku.twidere.util.MemCache;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
@@ -21,8 +22,10 @@ import android.os.Build;
 public class TwidereApplication extends Application implements Constants {
 
 	private ProfileImageLoader mProfileImageLoader;
-	private AsyncTaskManager mAsyncTaskManager = new AsyncTaskManager();
+	private AsyncTaskManager mAsyncTaskManager;
 	private ClearCacheTask mClearCacheTask;
+	private ServiceInterface mServiceInterface;
+	private MemCache mMemCache;
 
 	public void clearCache() {
 		if (mClearCacheTask == null || mClearCacheTask.getStatus() == Status.FINISHED) {
@@ -32,22 +35,33 @@ public class TwidereApplication extends Application implements Constants {
 	}
 
 	public AsyncTaskManager getAsyncTaskManager() {
+		if (mAsyncTaskManager == null) {
+			mAsyncTaskManager = new AsyncTaskManager();
+		}
 		return mAsyncTaskManager;
 	}
 
+	public MemCache getMemCache() {
+		if (mMemCache == null) {
+			mMemCache = MemCache.getInstance();
+		}
+		return mMemCache;
+	}
+
 	public ProfileImageLoader getProfileImageLoader() {
+		if (mProfileImageLoader == null) {
+			mProfileImageLoader = new ProfileImageLoader(this, R.drawable.ic_profile_image_default, getResources()
+					.getDimensionPixelSize(R.dimen.profile_image_size));
+		}
 		return mProfileImageLoader;
 	}
 
 	public ServiceInterface getServiceInterface() {
-		return ServiceInterface.getInstance(this);
-	}
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		mProfileImageLoader = new ProfileImageLoader(this, R.drawable.ic_profile_image_default, getResources()
-				.getDimensionPixelSize(R.dimen.profile_image_size));
+		if (mServiceInterface == null) {
+			mServiceInterface = ServiceInterface.getInstance(this);
+		}
+		return mServiceInterface;
 	}
 
 	@Override

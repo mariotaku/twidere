@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.webkit.WebView;
 
-public class GoogleWebMapFragment extends WebViewFragment {
+public class WebMapFragment extends WebViewFragment {
 
 	private final Uri mUri = Uri.parse("file:///android_asset/mapview.html");
 

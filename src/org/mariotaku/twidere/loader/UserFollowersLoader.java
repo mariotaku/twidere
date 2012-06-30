@@ -5,6 +5,7 @@ import java.util.List;
 import org.mariotaku.twidere.util.ParcelableUser;
 
 import twitter4j.IDs;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 
@@ -22,9 +23,11 @@ public class UserFollowersLoader extends IDsUsersLoader {
 
 	@Override
 	public IDs getIDs() throws TwitterException {
+		final Twitter twitter = getTwitter();
+		if (twitter == null) return null;
 		if (mUserId > 0)
-			return getTwitter().getFollowersIDs(mUserId, -1);
-		else if (mScreenName != null) return getTwitter().getFollowersIDs(mScreenName, -1);
+			return twitter.getFollowersIDs(mUserId, -1);
+		else if (mScreenName != null) return twitter.getFollowersIDs(mScreenName, -1);
 		return null;
 	}
 

@@ -91,7 +91,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	private boolean mFollowInfoDisplayed = false;
 
 	public void displayStatus(ParcelableStatus status) {
-		if (status == null) return;
+		if (status == null || getActivity() == null) return;
 		mStatus = status;
 
 		mMenuBar.inflate(R.menu.menu_status);
@@ -100,9 +100,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 		mNameView.setText(status.name != null ? status.name : "");
 		mScreenNameView.setText(status.screen_name != null ? "@" + status.screen_name : "");
-		if (status.text != null) {
-			mTextView.setText(status.text);
-		}
+		mTextView.setText(status.text);
 		final AutoLink linkify = new AutoLink(mTextView);
 		linkify.setOnLinkClickListener(this);
 		linkify.addAllLinks();
@@ -202,7 +200,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		if (mFollowInfoTask != null) {
 			mFollowInfoTask.cancel(true);
 		}
-
 		super.onDestroyView();
 	}
 
@@ -344,6 +341,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 		@Override
 		protected void onPostExecute(Response<Boolean> result) {
+			if (getActivity() == null) return;
 			if (result.exception == null) {
 				mFollowIndicator.setVisibility(result.value == null || result.value ? View.GONE : View.VISIBLE);
 				if (result.value != null) {
@@ -358,6 +356,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 		@Override
 		protected void onPreExecute() {
+			if (getActivity() == null) return;
 			mFollowIndicator.setVisibility(View.VISIBLE);
 			mFollowButton.setVisibility(View.GONE);
 			mProgress.setVisibility(View.VISIBLE);
@@ -426,6 +425,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 		@Override
 		protected void onPostExecute(Response<ParcelableStatus> result) {
+			if (getActivity() == null) return;
 			if (result.value == null) {
 			} else {
 				displayStatus(result.value);
@@ -437,6 +437,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 		@Override
 		protected void onPreExecute() {
+			if (getActivity() == null) return;
 			setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}

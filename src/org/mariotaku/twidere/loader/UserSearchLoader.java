@@ -30,7 +30,9 @@ public class UserSearchLoader extends ParcelableUsersLoader {
 
 	@Override
 	public List<ParcelableUser> getUsers() throws TwitterException {
-		final ResponseList<User> users = mTwitter.searchUsers(mQuery, mPage);
+		final Twitter twitter = getTwitter();
+		if (twitter == null) return null;
+		final ResponseList<User> users = twitter.searchUsers(mQuery, mPage);
 		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();
 		for (int i = 0; i < users.size(); i++) {
 			result.add(new ParcelableUser(users.get(i), mAccountId, mPage * 20 + i));

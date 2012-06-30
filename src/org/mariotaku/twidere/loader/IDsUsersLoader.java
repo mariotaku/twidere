@@ -35,6 +35,7 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 	@Override
 	public List<ParcelableUser> getUsers() throws TwitterException {
 		final Twitter twitter = getTwitter();
+		if (twitter == null) return null;
 		final SharedPreferences prefs = getContext()
 				.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int prefs_load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,

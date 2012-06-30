@@ -5,6 +5,7 @@ import java.util.List;
 import org.mariotaku.twidere.util.ParcelableUser;
 
 import twitter4j.IDs;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 
@@ -16,7 +17,9 @@ public class UserBlocksLoader extends IDsUsersLoader {
 
 	@Override
 	public IDs getIDs() throws TwitterException {
-		return getTwitter().getBlockingUsersIDs();
+		final Twitter twitter = getTwitter();
+		if (twitter == null) return null;
+		return twitter.getBlockingUsersIDs();
 	}
 
 }

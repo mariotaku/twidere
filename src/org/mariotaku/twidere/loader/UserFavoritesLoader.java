@@ -36,18 +36,17 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 	@Override
 	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
-		if (twitter != null) {
-			if (mUserId != -1) {
-				if (mTotalItemsCount == -1) {
-					try {
-						mTotalItemsCount = twitter.showUser(mUserId).getFavouritesCount();
-					} catch (final TwitterException e) {
-						mTotalItemsCount = -1;
-					}
+		if (twitter == null) return null;
+		if (mUserId != -1) {
+			if (mTotalItemsCount == -1) {
+				try {
+					mTotalItemsCount = twitter.showUser(mUserId).getFavouritesCount();
+				} catch (final TwitterException e) {
+					mTotalItemsCount = -1;
 				}
-				return twitter.getFavorites(String.valueOf(mUserId), paging);
-			} else if (mUserScreenName != null) return twitter.getFavorites(mUserScreenName, paging);
-		}
+			}
+			return twitter.getFavorites(String.valueOf(mUserId), paging);
+		} else if (mUserScreenName != null) return twitter.getFavorites(mUserScreenName, paging);
 		return null;
 	}
 

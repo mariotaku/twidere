@@ -32,8 +32,10 @@ import twitter4j.TwitterConstants;
 public interface Constants extends TwitterConstants {
 
 	public static final boolean ENABLE_VERBOSE_LOG_OUTPUT_IN_DEBUG_BUILDS = true;
-	
-	public static final boolean VERBOSE = BuildConfig.DEBUG && ENABLE_VERBOSE_LOG_OUTPUT_IN_DEBUG_BUILDS;
+
+	public static final boolean DEBUG = BuildConfig.DEBUG;
+
+	public static final boolean VERBOSE = DEBUG && ENABLE_VERBOSE_LOG_OUTPUT_IN_DEBUG_BUILDS;
 
 	public static final String LOGTAG = "Twidere";
 
@@ -42,6 +44,11 @@ public interface Constants extends TwitterConstants {
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
+
+	public static final String MAPS_API_KEY_RELEASE = "0kjPwJOe_zwYjzGc9uYak7vhm_Sf3eob-2L3Xzw";
+	public static final String MAPS_API_KEY_DEBUG = "0kjPwJOe_zwY9p6kT-kygu4mxwysyOOpfkaXqTA";
+
+	public static final String MAPS_API_KEY = DEBUG ? MAPS_API_KEY_DEBUG : MAPS_API_KEY_RELEASE;
 
 	public static final String SCHEME_HTTP = "http";
 	public static final String SCHEME_HTTPS = "https";

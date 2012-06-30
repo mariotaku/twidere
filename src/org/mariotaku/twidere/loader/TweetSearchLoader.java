@@ -40,6 +40,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		final List<ParcelableStatus> data = getData();
 		final long account_id = getAccountId();
 		final Twitter twitter = getTwitter();
+		if (twitter == null) return null;
 		List<Tweet> tweets = null;
 		try {
 			final Query query = new Query(mQuery);
@@ -58,11 +59,14 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		if (tweets != null) {
 			Collections.sort(tweets, TWITTER4J_TWEET_ID_COMPARATOR);
 			boolean insert_gap = false;
+			int statuses_deleted = 0;
 			for (int i = 0; i < tweets.size(); i++) {
 				final Tweet status = tweets.get(i);
-				final boolean list_modified = deleteStatus(status.getId());
+				if (deleteStatus(status.getId())) {
+					statuses_deleted++;
+				}
 				if (!insert_gap) {
-					insert_gap = list_modified;
+					insert_gap = statuses_deleted > 1;
 				}
 				data.add(new ParcelableStatus(status, account_id, i == tweets.size() - 1 ? insert_gap : false));
 			}

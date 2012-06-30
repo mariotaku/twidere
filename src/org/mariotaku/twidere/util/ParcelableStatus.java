@@ -39,10 +39,11 @@ public class ParcelableStatus implements Parcelable {
 
 	public final boolean is_gap, is_retweet, is_favorite, is_protected, has_media;
 
-	public final String retweeted_by_name, retweeted_by_screen_name, text_plain, name, screen_name,
+	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, name, screen_name,
 			in_reply_to_screen_name, source;
-	public final Spanned text;
 	public final GeoLocation location;
+
+	public final Spanned text;
 
 	public URL profile_image_url;
 
@@ -87,7 +88,7 @@ public class ParcelableStatus implements Parcelable {
 		retweeted_by_name = indices.retweeted_by_name != -1 ? cursor.getString(indices.retweeted_by_name) : null;
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
-		text = indices.text != -1 ? Html.fromHtml(cursor.getString(indices.text)) : null;
+		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		name = indices.name != -1 ? cursor.getString(indices.name) : null;
 		screen_name = indices.screen_name != -1 ? cursor.getString(indices.screen_name) : null;
@@ -97,6 +98,8 @@ public class ParcelableStatus implements Parcelable {
 		location = indices.location != -1 ? getGeoLocationFromString(cursor.getString(indices.location)) : null;
 		profile_image_url = indices.profile_image_url != -1 ? parseURL(cursor.getString(indices.profile_image_url))
 				: null;
+
+		text = text_html != null ? Html.fromHtml(text_html) : null;
 	}
 
 	public ParcelableStatus(Parcel in) {
@@ -116,7 +119,7 @@ public class ParcelableStatus implements Parcelable {
 		has_media = in.readInt() == 1;
 		retweeted_by_name = in.readString();
 		retweeted_by_screen_name = in.readString();
-		text = Html.fromHtml(in.readString());
+		text_html = in.readString();
 		text_plain = in.readString();
 		name = in.readString();
 		screen_name = in.readString();
@@ -124,6 +127,8 @@ public class ParcelableStatus implements Parcelable {
 		source = in.readString();
 		location = (GeoLocation) in.readSerializable();
 		profile_image_url = (URL) in.readSerializable();
+
+		text = text_html != null ? Html.fromHtml(text_html) : null;
 	}
 
 	public ParcelableStatus(Status status, long account_id, boolean is_gap) {
@@ -150,7 +155,7 @@ public class ParcelableStatus implements Parcelable {
 		final MediaEntity[] medias = status.getMediaEntities();
 
 		status_timestamp = getTime(status.getCreatedAt());
-		text = Html.fromHtml(formatStatusText(status));
+		text_html = formatStatusText(status);
 		text_plain = status.getText();
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();
@@ -161,6 +166,7 @@ public class ParcelableStatus implements Parcelable {
 		is_favorite = status.isFavorited();
 		has_media = medias != null && medias.length > 0;
 
+		text = text_html != null ? Html.fromHtml(text_html) : null;
 	}
 
 	public ParcelableStatus(Tweet tweet, long account_id, boolean is_gap) {
@@ -181,7 +187,7 @@ public class ParcelableStatus implements Parcelable {
 		final MediaEntity[] medias = tweet.getMediaEntities();
 
 		status_timestamp = getTime(tweet.getCreatedAt());
-		text = Html.fromHtml(formatTweetText(tweet));
+		text_html = formatTweetText(tweet);
 		text_plain = tweet.getText();
 		retweet_count = -1;
 		in_reply_to_screen_name = tweet.getToUser();
@@ -192,6 +198,7 @@ public class ParcelableStatus implements Parcelable {
 		is_favorite = false;
 		has_media = medias != null && medias.length > 0;
 
+		text = text_html != null ? Html.fromHtml(text_html) : null;
 	}
 
 	@Override
@@ -222,7 +229,7 @@ public class ParcelableStatus implements Parcelable {
 		out.writeInt(has_media ? 1 : 0);
 		out.writeString(retweeted_by_name);
 		out.writeString(retweeted_by_screen_name);
-		out.writeString(Html.toHtml(text));
+		out.writeString(text_html);
 		out.writeString(text_plain);
 		out.writeString(name);
 		out.writeString(screen_name);

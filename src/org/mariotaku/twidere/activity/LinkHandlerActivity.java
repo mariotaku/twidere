@@ -6,7 +6,7 @@ import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.GoogleWebMapFragment;
+import org.mariotaku.twidere.fragment.WebMapFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
@@ -287,7 +287,7 @@ public class LinkHandlerActivity extends BaseActivity {
 						finish();
 						return false;
 					}
-					fragment = new GoogleWebMapFragment();
+					fragment = new WebMapFragment();
 					fragment.setArguments(bundle);
 					mFragment = fragment;
 					return true;

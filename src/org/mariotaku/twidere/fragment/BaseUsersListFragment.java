@@ -7,6 +7,7 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.UsersAdapter;
 import org.mariotaku.twidere.loader.IDsUsersLoader;
 import org.mariotaku.twidere.util.ParcelableUser;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;

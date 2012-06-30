@@ -239,7 +239,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
 		if (getActivatedAccountIds(this).length <= 0) {
 			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
-		} else if (remember_position && checkDefaultAccountSet()) {
+		} else if (checkDefaultAccountSet() && remember_position) {
 			final int position = mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION, TAB_POSITION_HOME);
 			if (position >= 0 || position < mViewPager.getChildCount()) {
 				mViewPager.setCurrentItem(position);

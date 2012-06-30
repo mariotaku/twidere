@@ -326,6 +326,7 @@ public final class Utils implements Constants {
 	}
 
 	public static String formatToLongTimeString(Context context, long timestamp) {
+		if (context == null) return null;
 		final Time then = new Time();
 		then.set(timestamp);
 		final Time now = new Time();
@@ -339,6 +340,7 @@ public final class Utils implements Constants {
 	}
 
 	public static String formatToShortTimeString(Context context, long timestamp) {
+		if (context == null) return null;
 		final Resources res = context.getResources();
 		final Time then = new Time(), now = new Time();
 		then.set(timestamp);
