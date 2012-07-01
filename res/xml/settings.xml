@@ -147,13 +147,13 @@
 			android:dependency="enable_proxy"
 			android:key="proxy_host"
 			android:singleLine="true"
-			android:title="@string/proxy_address"/>
+			android:title="@string/proxy_host"/>
 		<EditTextPreference
 			android:dependency="enable_proxy"
 			android:inputType="number"
 			android:key="proxy_port"
 			android:singleLine="true"
-			android:title="@string/proxy_address"/>
+			android:title="@string/proxy_port"/>
 		<EditTextPreference
 			android:dependency="enable_proxy"
 			android:key="proxy_username"
