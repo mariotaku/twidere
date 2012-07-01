@@ -40,7 +40,7 @@ public interface Constants extends TwitterConstants {
 	public static final String LOGTAG = "Twidere";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 13;
+	public static final int DATABASES_VERSION = 14;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -117,6 +117,11 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID = "saved_home_timeline_id";
 	public static final String PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID = "saved_mentions_list_id";
 	public static final String PREFERENCE_KEY_SAVED_TAB_POSITION = "saved_tab_position";
+	public static final String PREFERENCE_KEY_ENABLE_PROXY = "enable_proxy";
+	public static final String PREFERENCE_KEY_PROXY_HOST = "proxy_host";
+	public static final String PREFERENCE_KEY_PROXY_PORT = "proxy_port";
+	public static final String PREFERENCE_KEY_PROXY_USERNAME = "proxy_username";
+	public static final String PREFERENCE_KEY_PROXY_PASSWORD = "proxy_password";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;

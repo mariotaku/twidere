@@ -75,10 +75,13 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String TOKEN_SECRET = "token_secret";
 
-		/**
-		 * Rest Base URL of the account </br> Type: TEXT
-		 */
 		public static final String REST_BASE_URL = "rest_base_url";
+
+		public static final String SIGNING_REST_BASE_URL = "signing_rest_base_url";
+
+		public static final String OAUTH_BASE_URL = "oauth_base_url";
+
+		public static final String SIGNING_OAUTH_BASE_URL = "oauth_rest_base_url";
 
 		/**
 		 * Search Base URL of the account </br> Type: TEXT
@@ -86,14 +89,6 @@ public final class TweetStore implements Constants {
 		public static final String SEARCH_BASE_URL = "search_base_url";
 
 		public static final String UPLOAD_BASE_URL = "upload_base_url";
-
-		public static final String OAUTH_ACCESS_TOKEN_URL = "oauth_access_token_url";
-
-		public static final String OAUTH_AUTHENTICATION_URL = "oauth_authentication_url";
-
-		public static final String OAUTH_AUTHORIZATION_URL = "oauth_authorization_url";
-
-		public static final String OAUTH_REQUEST_TOKEN_URL = "oauth_request_token_url";
 
 		public static final String USER_COLOR = "user_color";
 
@@ -110,13 +105,12 @@ public final class TweetStore implements Constants {
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
 		public static final String[] COLUMNS = new String[] { _ID, USERNAME, USER_ID, AUTH_TYPE, BASIC_AUTH_PASSWORD,
-				OAUTH_TOKEN, TOKEN_SECRET, REST_BASE_URL, SEARCH_BASE_URL, UPLOAD_BASE_URL, OAUTH_ACCESS_TOKEN_URL,
-				OAUTH_AUTHENTICATION_URL, OAUTH_AUTHORIZATION_URL, OAUTH_REQUEST_TOKEN_URL, PROFILE_IMAGE_URL,
-				USER_COLOR, IS_ACTIVATED };
+				OAUTH_TOKEN, TOKEN_SECRET, REST_BASE_URL, SIGNING_REST_BASE_URL, SEARCH_BASE_URL, UPLOAD_BASE_URL,
+				OAUTH_BASE_URL, SIGNING_OAUTH_BASE_URL, PROFILE_IMAGE_URL, USER_COLOR, IS_ACTIVATED };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_INT_UNIQUE,
 				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
+				TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
 
 	}
 

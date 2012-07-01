@@ -3,9 +3,10 @@
 	<head>
 		<title>Google Maps</title>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="target-densitydpi=device-dpi, user-scalable=no"/>
+		<meta name="viewport" user-scalable=no"/>
 		<style type="text/css">
 			html, body, #map_canvas {
+				background-image: url('images/loading_tile.png');
 				margin: 0;
 				padding: 0;
 				width: 100%;
@@ -18,23 +19,21 @@
 			function initialize() {
 				var latitude = 0;
 				var longitude = 0;
-				var disable_ui = false;
 				if (window.android) {
 					latitude = window.android.getLatitude();
 					longitude = window.android.getLongitude();
-					disable_ui = window.android.isUIDisabled();
 				}
 			
-				setupMap(latitude, longitude, 12, disable_ui);
+				setupMap(latitude, longitude, 12);
 				setCenter(latitude, longitude);
 				setMark(latitude, longitude);
 			}
 			
-			function setupMap(latitude, longitude, default_zoom, disable_ui) {
+			function setupMap(latitude, longitude, default_zoom) {
 				var options = {
 					zoom: default_zoom,
 					center: getLatLng(latitude, longitude),
-					disableDefaultUI: disable_ui,
+					disableDefaultUI: true,
 					mapTypeId: google.maps.MapTypeId.ROADMAP
 				};
 				map = new google.maps.Map(document.getElementById('map_canvas'), options);

@@ -46,7 +46,7 @@
 	<string name="username">ユーザー名かメイルアドレス</string>
 	<string name="password">パスワード</string>
 	<string name="label_tweetstore_provider">ツイデレのデータベース・ストレージ</string>
-	<string name="label_update_service">タイムライン更新サービス</string>
+	<string name="label_backend_service">Application backend service</string>
 	<string name="label_permission_group_access_twidere">ツイデレ アプリ　をアクセス</string>
 	<string name="label_permission_read_databases">データベースの読み込み</string>
 	<string name="label_permission_write_databases">データベースの書み込み</string>
@@ -179,7 +179,7 @@
 	<string name="filename_hint">ファイル名</string>
 	<string name="overwrite_confirm">ファイルはすでに存在します。上書きしますか？</string>
 	<string name="save_as">名前を付けて保存</string>
-	<string name="please_wait">しばらくお待ちください...</string>
-	<string name="file_saved_to"> <xliff:g id="filename">%s</xliff:g> にファイルが保存されました。</string>
+	<string name="please_wait">しばらくお待ちください…</string>
+	<string name="file_saved_to"><xliff:g id="filename">%s</xliff:g> にファイルが保存されました。</string>
 
 </resources>

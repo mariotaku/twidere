@@ -103,7 +103,7 @@ public class DiscoverFragment extends BaseFragment implements OnClickListener, O
 		mTrendsAdapter = new TrendsAdapter();
 		mTrendsListView.setAdapter(mTrendsAdapter);
 		mTrendsListView.setOnItemClickListener(mOnTrendsClickListener);
-		mTrendsCategoriesAdapter = new ArrayAdapter<TrendsCategory>(getActivity(), R.layout.spinner_item_filters);
+		mTrendsCategoriesAdapter = new ArrayAdapter<TrendsCategory>(getActivity(), R.layout.spinner_item);
 		mTrendsCategoriesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mTrendsCategoriesAdapter.add(new TrendsCategory(TRENDS_TYPE_DAILY, getString(R.string.daily_trends)));
 		mTrendsCategoriesAdapter.add(new TrendsCategory(TRENDS_TYPE_WEEKLY, getString(R.string.weekly_trends)));

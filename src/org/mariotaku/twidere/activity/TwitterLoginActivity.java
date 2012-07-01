@@ -7,6 +7,7 @@ import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
+import static org.mariotaku.twidere.util.Utils.parseInt;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,8 +56,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 
-	private String mRestBaseURL, mSearchBaseURL, mUploadBaseURL, mOAuthAccessTokenURL, mOAuthAuthenticationURL,
-			mOAuthAuthorizationURL, mOAuthRequestTokenURL;
+	private String mRestBaseURL, mSearchBaseURL, mUploadBaseURL, mSigningRESTBaseURL, mOAuthBaseURL,
+			mSigningOAuthBaseURL;
 	private String mUsername, mPassword;
 
 	private int mAuthType, mUserColor;
@@ -100,10 +101,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
 						mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
 						mUploadBaseURL = bundle.getString(Accounts.UPLOAD_BASE_URL);
-						mOAuthAccessTokenURL = bundle.getString(Accounts.OAUTH_ACCESS_TOKEN_URL);
-						mOAuthAuthenticationURL = bundle.getString(Accounts.OAUTH_AUTHENTICATION_URL);
-						mOAuthAuthorizationURL = bundle.getString(Accounts.OAUTH_AUTHORIZATION_URL);
-						mOAuthRequestTokenURL = bundle.getString(Accounts.OAUTH_REQUEST_TOKEN_URL);
+						mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
+						mOAuthBaseURL = bundle.getString(Accounts.OAUTH_BASE_URL);
+						mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
 
 						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
 						final boolean hide_username_password = mAuthType == Accounts.AUTH_TYPE_OAUTH
@@ -262,10 +262,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 				bundle.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 				bundle.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
-				bundle.putString(Accounts.OAUTH_ACCESS_TOKEN_URL, mOAuthAccessTokenURL);
-				bundle.putString(Accounts.OAUTH_AUTHENTICATION_URL, mOAuthAuthenticationURL);
-				bundle.putString(Accounts.OAUTH_AUTHORIZATION_URL, mOAuthAuthorizationURL);
-				bundle.putString(Accounts.OAUTH_REQUEST_TOKEN_URL, mOAuthRequestTokenURL);
+				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
+				bundle.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
+				bundle.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
 				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_EDIT_API);
@@ -281,10 +280,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 		outState.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 		outState.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
-		outState.putString(Accounts.OAUTH_ACCESS_TOKEN_URL, mOAuthAccessTokenURL);
-		outState.putString(Accounts.OAUTH_AUTHENTICATION_URL, mOAuthAuthenticationURL);
-		outState.putString(Accounts.OAUTH_AUTHORIZATION_URL, mOAuthAuthorizationURL);
-		outState.putString(Accounts.OAUTH_REQUEST_TOKEN_URL, mOAuthRequestTokenURL);
+		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
+		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
+		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
 		outState.putString(Accounts.USERNAME, mUsername);
 		outState.putString(Accounts.PASSWORD, mPassword);
 		outState.putInt(Accounts.USER_COLOR, mUserColor);
@@ -334,6 +332,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+		final boolean enable_proxy = preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
 		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY);
 		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET);
 		if (!isNullOrEmpty(mRestBaseURL)) {
@@ -345,17 +344,14 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		if (!isNullOrEmpty(mUploadBaseURL)) {
 			cb.setUploadBaseURL(mUploadBaseURL);
 		}
-		if (!isNullOrEmpty(mOAuthAccessTokenURL)) {
-			cb.setOAuthAccessTokenURL(mOAuthAccessTokenURL);
+		if (!isNullOrEmpty(mSigningRESTBaseURL)) {
+			cb.setSigningRestBaseURL(mSigningRESTBaseURL);
 		}
-		if (!isNullOrEmpty(mOAuthAuthenticationURL)) {
-			cb.setOAuthAuthenticationURL(mOAuthAuthenticationURL);
+		if (!isNullOrEmpty(mOAuthBaseURL)) {
+			cb.setOAuthBaseURL(mOAuthBaseURL);
 		}
-		if (!isNullOrEmpty(mOAuthAuthorizationURL)) {
-			cb.setOAuthAuthorizationURL(mOAuthAuthorizationURL);
-		}
-		if (!isNullOrEmpty(mOAuthRequestTokenURL)) {
-			cb.setOAuthRequestTokenURL(mOAuthRequestTokenURL);
+		if (!isNullOrEmpty(mSigningOAuthBaseURL)) {
+			cb.setSigningOAuthBaseURL(mSigningOAuthBaseURL);
 		}
 		if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
@@ -366,6 +362,19 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 		cb.setGZIPEnabled(enable_gzip_compressing);
 		cb.setIgnoreSSLError(ignore_ssl_error);
+		if (enable_proxy) {
+			final String proxy_host = preferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
+			final int proxy_port = parseInt(preferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
+			if (proxy_host != null && proxy_port > 0) {
+				cb.setHttpProxyHost(proxy_host);
+				cb.setHttpProxyPort(proxy_port);
+				final String proxy_username = preferences.getString(PREFERENCE_KEY_PROXY_USERNAME, null);
+				if (proxy_username != null)cb.setHttpProxyUser(proxy_username);
+				final String proxy_password = preferences.getString(PREFERENCE_KEY_PROXY_PASSWORD, null);
+				if (proxy_password != null) cb.setHttpProxyPassword(proxy_password);
+			}
+			
+		}
 		return cb;
 	}
 

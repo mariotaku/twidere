@@ -867,14 +867,24 @@ public final class Utils implements Constants {
 		return getTwitterInstance(context, account_id, include_entities, true);
 	}
 
+	public static int parseInt(String string) {
+		try {
+			return Integer.valueOf(string);
+		} catch (NumberFormatException e) {
+			return -1;
+		}
+	}
+	
 	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities,
 			boolean include_rts) {
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+		final boolean enable_proxy = preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
 		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY);
 		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET);
+		
 		Twitter twitter = null;
 		final StringBuilder where = new StringBuilder();
 		where.append(Accounts.USER_ID + "=" + account_id);
@@ -886,17 +896,27 @@ public final class Utils implements Constants {
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
+				if (enable_proxy) {
+					final String proxy_host = preferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
+					final int proxy_port = parseInt(preferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
+					if (proxy_host != null && proxy_port > 0) {
+						cb.setHttpProxyHost(proxy_host);
+						cb.setHttpProxyPort(proxy_port);
+						final String proxy_username = preferences.getString(PREFERENCE_KEY_PROXY_USERNAME, null);
+						if (proxy_username != null)cb.setHttpProxyUser(proxy_username);
+						final String proxy_password = preferences.getString(PREFERENCE_KEY_PROXY_PASSWORD, null);
+						if (proxy_password != null) cb.setHttpProxyPassword(proxy_password);
+					}
+					
+				}
 				final String rest_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_BASE_URL));
+				final String signing_rest_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.SIGNING_REST_BASE_URL));
 				final String search_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_BASE_URL));
 				final String upload_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.UPLOAD_BASE_URL));
-				final String oauth_access_token_url = cur.getString(cur
-						.getColumnIndexOrThrow(Accounts.OAUTH_ACCESS_TOKEN_URL));
-				final String oauth_authentication_url = cur.getString(cur
-						.getColumnIndexOrThrow(Accounts.OAUTH_AUTHENTICATION_URL));
-				final String oauth_authorization_url = cur.getString(cur
-						.getColumnIndexOrThrow(Accounts.OAUTH_AUTHORIZATION_URL));
-				final String oauth_request_token_url = cur.getString(cur
-						.getColumnIndexOrThrow(Accounts.OAUTH_REQUEST_TOKEN_URL));
+				final String oauth_base_url = cur.getString(cur
+						.getColumnIndexOrThrow(Accounts.OAUTH_BASE_URL));
+				final String signing_oauth_base_url = cur.getString(cur
+						.getColumnIndexOrThrow(Accounts.SIGNING_OAUTH_BASE_URL));
 				if (!isNullOrEmpty(rest_base_url)) {
 					cb.setRestBaseURL(rest_base_url);
 				}
@@ -906,17 +926,14 @@ public final class Utils implements Constants {
 				if (!isNullOrEmpty(upload_base_url)) {
 					cb.setUploadBaseURL(upload_base_url);
 				}
-				if (!isNullOrEmpty(oauth_access_token_url)) {
-					cb.setOAuthAccessTokenURL(oauth_access_token_url);
+				if (!isNullOrEmpty(signing_rest_base_url)) {
+					cb.setSigningRestBaseURL(signing_rest_base_url);
 				}
-				if (!isNullOrEmpty(oauth_authentication_url)) {
-					cb.setOAuthAuthenticationURL(oauth_authentication_url);
+				if (!isNullOrEmpty(oauth_base_url)) {
+					cb.setOAuthBaseURL(oauth_base_url);
 				}
-				if (!isNullOrEmpty(oauth_authorization_url)) {
-					cb.setOAuthAuthorizationURL(oauth_authorization_url);
-				}
-				if (!isNullOrEmpty(oauth_request_token_url)) {
-					cb.setOAuthRequestTokenURL(oauth_request_token_url);
+				if (!isNullOrEmpty(signing_oauth_base_url)) {
+					cb.setSigningOAuthBaseURL(signing_oauth_base_url);
 				}
 				cb.setIncludeEntitiesEnabled(include_entities);
 				cb.setIncludeRTsEnabled(include_rts);
@@ -982,6 +999,16 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
+	public static long parseLong(String source) {
+		if (source == null) return -1;
+		try {
+			return Long.parseLong(source);
+		} catch (final NumberFormatException e) {
+			// Wrong number format? Ignore them.
+		}
+		return -1;
+	}
+	
 	public static boolean isMyAccount(Context context, long account_id) {
 		for (final long id : getAccountIds(context)) {
 			if (id == account_id) return true;

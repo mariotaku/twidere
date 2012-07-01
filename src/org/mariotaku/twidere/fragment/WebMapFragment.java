@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 public class WebMapFragment extends WebViewFragment {
@@ -12,8 +13,6 @@ public class WebMapFragment extends WebViewFragment {
 	private final Uri mUri = Uri.parse("file:///android_asset/mapview.html");
 
 	private double latitude, longitude;
-
-	private boolean disable_ui = false;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -42,6 +41,9 @@ public class WebMapFragment extends WebViewFragment {
 		webview.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 		setWebViewClient(new MapWebViewClient(getActivity()));
 		loadUrl(mUri.toString());
+		
+		WebSettings settings = webview.getSettings();
+		settings.setBuiltInZoomControls(false);
 
 		/** Allows JavaScript calls to access application resources **/
 		webview.addJavascriptInterface(new JavaScriptInterface(), "android");
@@ -61,10 +63,6 @@ public class WebMapFragment extends WebViewFragment {
 
 		public double getLongitude() {
 			return longitude;
-		}
-
-		public boolean isUIDisabled() {
-			return disable_ui;
 		}
 
 	}

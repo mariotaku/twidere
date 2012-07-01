@@ -4,11 +4,9 @@ import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.WebMapFragment;
-import org.mariotaku.twidere.fragment.SearchTweetsFragment;
-import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
@@ -17,18 +15,11 @@ import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
-import org.mariotaku.twidere.provider.RecentSearchProvider;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.SearchManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.SearchRecentSuggestions;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
@@ -46,8 +37,6 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final int CODE_USER_FOLLOWING = 6;
 	private static final int CODE_USER_BLOCKS = 7;
 	private static final int CODE_CONVERSATION = 8;
-	private static final int CODE_SEARCH = 9;
-	private static final int CODE_MAP = 10;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
@@ -58,14 +47,9 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_USER_FAVORITES, null, CODE_USER_FAVORITES);
 		URI_MATCHER.addURI(AUTHORITY_USER_BLOCKS, null, CODE_USER_BLOCKS);
 		URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, CODE_CONVERSATION);
-		URI_MATCHER.addURI(AUTHORITY_SEARCH, null, CODE_SEARCH);
-		URI_MATCHER.addURI(AUTHORITY_MAP, null, CODE_MAP);
 	}
 
 	private Fragment mFragment;
-	private String mSearchType;
-
-	private final DialogFragment mSearchTypeFragment = new SearchTypeFragment();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -74,43 +58,9 @@ public class LinkHandlerActivity extends BaseActivity {
 		setContentView(new FrameLayout(this));
 		setSupportProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		if (savedInstanceState != null) {
-			mSearchType = savedInstanceState.getString(INTENT_KEY_QUERY_TYPE);
-		}
 		final Intent intent = getIntent();
 		final Uri data = intent.getData();
-		final String action = intent.getAction();
-		if (Intent.ACTION_SEARCH.equals(action)) {
-			final long account_id = getDefaultAccountId(this);
-			if (isMyAccount(this, account_id)) {
-				final String query = intent.getStringExtra(SearchManager.QUERY);
-				final Bundle args = new Bundle();
-				args.putString(INTENT_KEY_QUERY, query);
-				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-
-				if (QUERY_PARAM_VALUE_TWEETS.equals(mSearchType)) {
-					setTitle(getString(R.string.search_tweets) + " | " + query);
-					mFragment = new SearchTweetsFragment();
-				} else if (QUERY_PARAM_VALUE_USERS.equals(mSearchType)) {
-					setTitle(getString(R.string.search_users) + " | " + query);
-					mFragment = new SearchUsersFragment();
-				} else {
-					final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
-							RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
-					suggestions.saveRecentQuery(query, null);
-					mSearchTypeFragment.setArguments(args);
-					// if (mSearchTypeFragment.isHidden()) {
-					mSearchTypeFragment.show(getSupportFragmentManager(), null);
-					// }
-					setTitle(getString(android.R.string.search_go) + " | " + query);
-					return;
-				}
-				mFragment.setArguments(args);
-				final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-				ft.replace(android.R.id.content, mFragment);
-				ft.commit();
-			}
-		} else if (data != null) {
+		if (data != null) {
 			if (setFragment(data)) {
 				if (mFragment != null) {
 					final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -134,22 +84,6 @@ public class LinkHandlerActivity extends BaseActivity {
 				break;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putString(INTENT_KEY_QUERY_TYPE, mSearchType);
-		super.onSaveInstanceState(outState);
-	}
-
-	private long parseLong(String source) {
-		if (source == null) return -1;
-		try {
-			return Long.parseLong(source);
-		} catch (final NumberFormatException e) {
-			// Wrong number format? Ignore them.
-		}
-		return -1;
 	}
 
 	private boolean setFragment(Uri uri) {
@@ -245,53 +179,6 @@ public class LinkHandlerActivity extends BaseActivity {
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
 					break;
 				}
-				case CODE_SEARCH: {
-					if (mSearchType == null) {
-						mSearchType = uri.getQueryParameter(QUERY_PARAM_TYPE);
-					}
-					final String query = uri.getQueryParameter(QUERY_PARAM_QUERY);
-					if (query == null) {
-						finish();
-						return false;
-					}
-					bundle.putString(INTENT_KEY_QUERY, query);
-					final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
-							RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
-					suggestions.saveRecentQuery(query, null);
-					if (QUERY_PARAM_VALUE_TWEETS.equals(mSearchType)) {
-						setTitle(getString(R.string.search_tweets) + " | " + query);
-						fragment = new SearchTweetsFragment();
-					} else if (QUERY_PARAM_VALUE_USERS.equals(mSearchType)) {
-						setTitle(getString(R.string.search_users) + " | " + query);
-						fragment = new SearchUsersFragment();
-					} else {
-						setTitle(getString(android.R.string.search_go) + " | " + query);
-						mSearchTypeFragment.setArguments(bundle);
-						mSearchTypeFragment.show(getSupportFragmentManager(), null);
-						return false;
-					}
-					break;
-				}
-				case CODE_MAP: {
-					setTitle(R.string.view_map);
-					final String param_lat = uri.getQueryParameter(QUERY_PARAM_LAT);
-					final String param_lng = uri.getQueryParameter(QUERY_PARAM_LNG);
-					if (param_lat == null || param_lng == null) {
-						finish();
-						return false;
-					}
-					try {
-						bundle.putDouble(INTENT_KEY_LATITUDE, Double.valueOf(param_lat));
-						bundle.putDouble(INTENT_KEY_LONGITUDE, Double.valueOf(param_lng));
-					} catch (final NumberFormatException e) {
-						finish();
-						return false;
-					}
-					fragment = new WebMapFragment();
-					fragment.setArguments(bundle);
-					mFragment = fragment;
-					return true;
-				}
 				default: {
 					break;
 				}
@@ -319,64 +206,5 @@ public class LinkHandlerActivity extends BaseActivity {
 		}
 		mFragment = fragment;
 		return true;
-	}
-
-	public static class SearchTypeFragment extends DialogFragment {
-
-		private static final int ITEM_TYPE_TWEETS = 0;
-		private static final int ITEM_TYPE_USERS = 1;
-		private LinkHandlerActivity mActivity;
-
-		@Override
-		public void onActivityCreated(Bundle savedInstanceState) {
-			mActivity = (LinkHandlerActivity) getActivity();
-			super.onActivityCreated(savedInstanceState);
-		}
-
-		@Override
-		public void onCancel(DialogInterface dialog) {
-			mActivity.finish();
-			super.onCancel(dialog);
-		}
-
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			final CharSequence[] items = new CharSequence[] { getString(R.string.search_tweets),
-					getString(R.string.search_users) };
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			final Bundle args = new Bundle(getArguments());
-			final String query = args.getString(INTENT_KEY_QUERY);
-			builder.setTitle(getString(android.R.string.search_go) + " " + query);
-			builder.setItems(items, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int item) {
-
-					Fragment fragment = null;
-					switch (item) {
-						case ITEM_TYPE_TWEETS: {
-							getActivity().setTitle(getString(R.string.search_tweets) + " | " + query);
-							fragment = new SearchTweetsFragment();
-							mActivity.mSearchType = QUERY_PARAM_VALUE_TWEETS;
-							break;
-						}
-						case ITEM_TYPE_USERS: {
-							getActivity().setTitle(getString(R.string.search_users) + " | " + query);
-							fragment = new SearchUsersFragment();
-							mActivity.mSearchType = QUERY_PARAM_VALUE_USERS;
-							break;
-						}
-					}
-					if (fragment != null) {
-						mActivity.mFragment = fragment;
-						fragment.setArguments(args);
-						final FragmentTransaction ft = getFragmentManager().beginTransaction();
-						ft.replace(android.R.id.content, fragment);
-						ft.commit();
-					}
-				}
-			});
-			return builder.create();
-		}
-
 	}
 }

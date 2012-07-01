@@ -14,6 +14,7 @@ import static org.mariotaku.twidere.util.Utils.openUserFavorites;
 import static org.mariotaku.twidere.util.Utils.openUserFollowers;
 import static org.mariotaku.twidere.util.Utils.openUserFollowing;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
+import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 
 import java.io.File;
 import java.net.URL;
@@ -75,19 +76,19 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private ProfileImageLoader mProfileImageLoader;
 	private ImageView mProfileImageView;
-	private FollowInfoTask mFollowInfoTask;
-	private View mFollowIndicator;
-	private TextView mNameView, mScreenNameView;
-	private View mNameLayout, mProfileImageContainer;
-	private ProgressBar mProgress, mListProgress;
-	private Button mFollowButton, mRetryButton;
+	private GetFriendshipTask mFollowInfoTask;
+	private View mFollowContainer, mMoreOptionsContainer;
+	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView, mTweetCount, mFollowersCount, mFriendsCount;
+	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer, mTweetsContainer, mFollowersContainer, mFriendsContainer;
+	private ProgressBar mFollowProgress, mMoreOptionsProgress, mListProgress;
+	private Button mFollowButton,mMoreOptionsButton, mRetryButton;
 
 	private UserProfileActionAdapter mAdapter;
 	private ListView mListView;
 	private UserInfoTask mUserInfoTask;
 	private View mHeaderView;
 	private long mAccountId;
-	private boolean mIsFollowing;
+	private Relationship mFriendship;
 	private EditTextDialogFragment mDialogFragment;
 	private Uri mImageUri;
 
@@ -132,10 +133,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private boolean mFollowInfoDisplayed = false;
 
 	public void changeUser(long account_id, User user) {
-		if (user == null || !isMyActivatedAccount(getActivity(), account_id)) return;
+		if (user == null || getActivity() == null ||!isMyActivatedAccount(getActivity(), account_id)) return;
 		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
 			mUserInfoTask.cancel(true);
 		}
+		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), user.getId());
 		mUserInfoTask = null;
 		mRetryButton.setVisibility(View.GONE);
 		mAccountId = account_id;
@@ -143,6 +145,22 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenName = user.getScreenName();
 		mNameView.setText(user.getName());
 		mScreenNameView.setText(user.getScreenName());
+		final String description = user.getDescription();
+		mDescriptionContainer.setVisibility(is_my_activated_account || description != null ? View.VISIBLE : View.GONE);
+		mDescriptionContainer.setOnLongClickListener(this);
+		mDescriptionView.setText(description);
+		final String location = user.getLocation();
+		mLocationContainer.setVisibility(is_my_activated_account || location != null ? View.VISIBLE : View.GONE);
+		mLocationContainer.setOnLongClickListener(this);
+		mLocationView.setText(location);
+		final String url = user.getURL() != null ? user.getURL().toString() : null;
+		mURLContainer.setVisibility(is_my_activated_account || url != null ? View.VISIBLE : View.GONE);
+		mURLContainer.setOnLongClickListener(this);
+		mURLView.setText(url);
+		mCreatedAtView.setText(formatToLongTimeString(getActivity(), user.getCreatedAt().getTime()));
+		mTweetCount.setText(String.valueOf(user.getStatusesCount()));
+		mFollowersCount.setText(String.valueOf(user.getFollowersCount()));
+		mFriendsCount.setText(String.valueOf(user.getFriendsCount()));
 		mProfileImageLoader.displayImage(user.getProfileImageURL(), mProfileImageView);
 		mUser = user;
 		mAdapter.notifyDataSetChanged();
@@ -194,13 +212,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 		mProfileImageLoader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
 		mAdapter = new UserProfileActionAdapter(getActivity());
-		mAdapter.add(new DescriptionAction());
-		mAdapter.add(new LocationAction());
-		mAdapter.add(new URLAction());
-		mAdapter.add(new CreatedDateAction());
-		mAdapter.add(new StatusesAction());
-		mAdapter.add(new FollowersAction());
-		mAdapter.add(new FollowingAction());
 		mAdapter.add(new FavoritesAction());
 		if (isMyActivatedAccount(getActivity(), user_id) || isMyActivatedUserName(getActivity(), screen_name)) {
 			mAdapter.add(new UserBlocksAction());
@@ -208,8 +219,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 		mProfileImageContainer.setOnClickListener(this);
 		mProfileImageContainer.setOnLongClickListener(this);
-		mNameLayout.setOnClickListener(this);
-		mNameLayout.setOnLongClickListener(this);
+		mNameContainer.setOnClickListener(this);
+		mNameContainer.setOnLongClickListener(this);
+		mTweetsContainer.setOnClickListener(this);
+		mFollowersContainer.setOnClickListener(this);
+		mFriendsContainer.setOnClickListener(this);
 		mRetryButton.setOnClickListener(this);
 		setListAdapter(null);
 		mListView = getListView();
@@ -253,7 +267,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case R.id.follow: {
 				if (mUser != null) {
 					final ServiceInterface service = ServiceInterface.getInstance(getActivity());
-					if (mIsFollowing) {
+					if (mFriendship.isSourceFollowingTarget()) {
 						service.destroyFriendship(mAccountId, mUser.getId());
 					} else {
 						service.createFriendship(mAccountId, mUser.getId());
@@ -265,7 +279,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				reloadUserInfo();
 				break;
 			}
-			case R.id.name_view: {
+			case R.id.name_container: {
 				if (mUser != null) {
 				}
 				break;
@@ -282,6 +296,30 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				}
 				break;
 			}
+			case R.id.tweets_container: {
+				if (mUser == null) return;
+				openUserTimeline(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
+				break;
+			}
+			case R.id.followers_container: {
+				if (mUser == null) return;
+				openUserFollowers(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
+				break;
+			}
+			case R.id.friends_container: {
+				if (mUser == null) return;
+				openUserFollowing(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
+				break;
+			}
+			case R.id.more_options: {
+				if (mUser == null) return;
+				if (isMyActivatedAccount(getActivity(), mUser.getId())) {
+					
+				} else {
+					
+				}
+				break;
+			}
 		}
 
 	}
@@ -289,14 +327,30 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mHeaderView = inflater.inflate(R.layout.user_profile_header, null, false);
-		mNameLayout = mHeaderView.findViewById(R.id.name_view);
+		mNameContainer = mHeaderView.findViewById(R.id.name_container);
 		mNameView = (TextView) mHeaderView.findViewById(R.id.name);
 		mScreenNameView = (TextView) mHeaderView.findViewById(R.id.screen_name);
+		mDescriptionView = (TextView) mHeaderView.findViewById(R.id.description);
+		mLocationView = (TextView) mHeaderView.findViewById(R.id.location);
+		mURLView = (TextView) mHeaderView.findViewById(R.id.url);
+		mCreatedAtView = (TextView) mHeaderView.findViewById(R.id.created_at);
+		mTweetsContainer = mHeaderView.findViewById(R.id.tweets_container);
+		mTweetCount = (TextView) mHeaderView.findViewById(R.id.tweet_count);
+		mFollowersContainer = mHeaderView.findViewById(R.id.followers_container);
+		mFollowersCount = (TextView) mHeaderView.findViewById(R.id.followers_count);
+		mFriendsContainer = mHeaderView.findViewById(R.id.friends_container);
+		mFriendsCount =(TextView) mHeaderView.findViewById(R.id.friends_count);
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mProfileImageContainer = mHeaderView.findViewById(R.id.profile_image_container);
+		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
+		mLocationContainer = mHeaderView.findViewById(R.id.location_container);
+		mURLContainer = mHeaderView.findViewById(R.id.url_container);
+		mFollowContainer = mHeaderView.findViewById(R.id.follow_container);
 		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
-		mFollowIndicator = mHeaderView.findViewById(R.id.follow_indicator);
-		mProgress = (ProgressBar) mHeaderView.findViewById(R.id.progress);
+		mFollowProgress = (ProgressBar) mHeaderView.findViewById(R.id.follow_progress);
+		mMoreOptionsContainer = mHeaderView.findViewById(R.id.more_options_container);
+		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
+		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
 		final View view = inflater.inflate(R.layout.user_profile, null, false);
 		mRetryButton = (Button) view.findViewById(R.id.retry);
 		mListProgress = (ProgressBar) view.findViewById(R.id.list_progress);
@@ -332,24 +386,37 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public boolean onLongClick(View view) {
+		if (mUser == null) return false;
+		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mUser.getId());
+		if (!is_my_activated_account) return false;
 		switch (view.getId()) {
-			case R.id.name_view: {
-				if (mUser != null && isMyAccount(getActivity(), mUser.getId())) {
-					mDialogFragment = new EditTextDialogFragment(mUser.getName(), getString(R.string.name), TYPE_NAME);
-					mDialogFragment.show(getFragmentManager(), "edit_name");
-					return true;
-				}
-				break;
+			case R.id.name_container: {
+				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getName(), getString(R.string.name), TYPE_NAME);
+				mDialogFragment.show(getFragmentManager(), "edit_name");
+				return true;
 			}
 			case R.id.profile_image_container: {
-				if (mUser != null && isMyAccount(getActivity(), mUser.getId())) {
-					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-					mPopupMenu.inflate(R.menu.context_profile_image);
-					mPopupMenu.setOnMenuItemClickListener(this);
-					mPopupMenu.show();
-					return true;
-				}
-				break;
+				mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+				mPopupMenu.inflate(R.menu.context_profile_image);
+				mPopupMenu.setOnMenuItemClickListener(this);
+				mPopupMenu.show();
+				return true;
+			}
+			case R.id.description_container: {
+				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getDescription(), getString(R.string.description), TYPE_DESCRIPTION);
+				mDialogFragment.show(getFragmentManager(), "edit_description");
+				return true;
+			}
+			case R.id.location_container: {
+				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getLocation(), getString(R.string.location), TYPE_LOCATION);
+				mDialogFragment.show(getFragmentManager(), "edit_location");
+				return true;
+			}
+			case R.id.url_container: {
+				final URL url = mUser.getURL();
+				mDialogFragment = new EditTextDialogFragment(mUser.getId(), url != null?url.toString():null, getString(R.string.url), TYPE_URL);
+				mDialogFragment.show(getFragmentManager(), "edit_url");
+				return true;
 			}
 		}
 		return false;
@@ -408,7 +475,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (mFollowInfoTask != null) {
 			mFollowInfoTask.cancel(true);
 		}
-		mFollowInfoTask = new FollowInfoTask();
+		mFollowInfoTask = new GetFriendshipTask();
 		mFollowInfoTask.execute();
 	}
 
@@ -423,52 +490,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
 			startActivityForResult(intent, REQUEST_TAKE_PHOTO);
 		}
-	}
-
-	private class CreatedDateAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.created_at);
-		}
-
-		@SuppressWarnings("deprecation")
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getCreatedAt().toLocaleString());
-		}
-
-	}
-
-	private class DescriptionAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.description);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return mUser.getDescription();
-		}
-
-		@Override
-		public void onClick() {
-
-		}
-
-		@Override
-		public boolean onLongClick() {
-			if (mUser != null && isMyAccount(getActivity(), mUser.getId())) {
-				mDialogFragment = new EditTextDialogFragment(getSummary(), getName(), TYPE_DESCRIPTION);
-				mDialogFragment.show(getFragmentManager(), "edit_description");
-				return true;
-			}
-			return false;
-		}
-
 	}
 
 	private class DirectMessagesAction extends UserAction {
@@ -500,11 +521,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private String mText;
 		private final int mType;
 		private final String mTitle;
+		private final long mAccountId;
 
-		public EditTextDialogFragment(String text, String title, int type) {
+		public EditTextDialogFragment(long account_id, String text, String title, int type) {
+			mAccountId = account_id;
 			mText = text;
 			mType = type;
 			mTitle = title;
+			
 		}
 
 		@Override
@@ -605,119 +629,64 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class FollowersAction extends UserAction {
+	private class GetFriendshipTask extends AsyncTask<Void, Void, Response<Relationship>> {
 
+		private final boolean is_my_activated_account;
+		
+		GetFriendshipTask() {
+			is_my_activated_account = isMyActivatedAccount(getActivity(), mUser.getId());
+		}
+		
 		@Override
-		public String getName() {
-			return getString(R.string.followers);
+		protected Response<Relationship> doInBackground(Void... params) {
+			return getFriendship();
 		}
 
 		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getFollowersCount());
-		}
-
-		@Override
-		public void onClick() {
-			if (mUser == null) return;
-			openUserFollowers(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
-		}
-
-	}
-
-	private class FollowInfoTask extends AsyncTask<Void, Void, Response<Boolean>> {
-
-		@Override
-		protected Response<Boolean> doInBackground(Void... params) {
-			return isFollowing();
-		}
-
-		@Override
-		protected void onPostExecute(Response<Boolean> result) {
-			mIsFollowing = false;
+		protected void onPostExecute(Response<Relationship> result) {
+			mFriendship = null;
 			if (result.exception == null) {
-				mFollowIndicator.setVisibility(result.value == null ? View.GONE : View.VISIBLE);
+				mFollowContainer.setVisibility(result.value == null ? View.GONE : View.VISIBLE);
+				if (!is_my_activated_account) {
+					mMoreOptionsContainer.setVisibility(result.value == null ? View.GONE : View.VISIBLE);
+				}
 				if (result.value != null) {
-					mIsFollowing = result.value;
+					mFriendship = result.value;
 					mFollowButton.setVisibility(View.VISIBLE);
-					mFollowButton.setText(result.value ? R.string.unfollow : R.string.follow);
+					mFollowButton.setText(mFriendship.isSourceFollowingTarget() ? R.string.unfollow : R.string.follow);
+					if (!is_my_activated_account) {
+						mMoreOptionsButton.setVisibility(View.VISIBLE);
+					}
 					mFollowInfoDisplayed = true;
 				}
 			}
-			mProgress.setVisibility(View.GONE);
+			mFollowProgress.setVisibility(View.GONE);
+			mMoreOptionsProgress.setVisibility(View.GONE);
 			super.onPostExecute(result);
 			mFollowInfoTask = null;
 		}
 
 		@Override
 		protected void onPreExecute() {
-			mFollowIndicator.setVisibility(View.VISIBLE);
+			mFollowContainer.setVisibility(is_my_activated_account ? View.VISIBLE : View.GONE);
 			mFollowButton.setVisibility(View.GONE);
-			mProgress.setVisibility(View.VISIBLE);
+			mFollowProgress.setVisibility(View.VISIBLE);
+			mMoreOptionsContainer.setVisibility(is_my_activated_account ? View.GONE : View.VISIBLE);
+			mMoreOptionsButton.setVisibility(View.GONE);
+			mMoreOptionsProgress.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
 
-		private Response<Boolean> isFollowing() {
-			if (mUser == null) return new Response<Boolean>(null, null);
-			if (mAccountId == mUser.getId()) return new Response<Boolean>(null, null);
+		private Response<Relationship> getFriendship() {
+			if (mUser == null) return new Response<Relationship>(null, null);
+			if (mAccountId == mUser.getId()) return new Response<Relationship>(null, null);
 			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 			try {
 				final Relationship result = twitter.showFriendship(mAccountId, mUser.getId());
-				return new Response<Boolean>(result.isSourceFollowingTarget(), null);
+				return new Response<Relationship>(result, null);
 			} catch (final TwitterException e) {
-				return new Response<Boolean>(null, e);
+				return new Response<Relationship>(null, e);
 			}
-		}
-	}
-
-	private class FollowingAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.following);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getFriendsCount());
-		}
-
-		@Override
-		public void onClick() {
-			if (mUser == null) return;
-			openUserFollowing(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
-		}
-
-	}
-
-	private class LocationAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.location);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return mUser.getLocation();
-		}
-
-		@Override
-		public void onClick() {
-
-		}
-
-		@Override
-		public boolean onLongClick() {
-			if (mUser != null && isMyAccount(getActivity(), mUser.getId())) {
-				mDialogFragment = new EditTextDialogFragment(getSummary(), getName(), TYPE_LOCATION);
-				mDialogFragment.show(getFragmentManager(), "edit_location");
-				return true;
-			}
-			return false;
 		}
 	}
 
@@ -729,62 +698,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			this.value = value;
 			this.exception = exception;
 		}
-	}
-
-	private class StatusesAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.tweets);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null) return null;
-			return String.valueOf(mUser.getStatusesCount());
-		}
-
-		@Override
-		public void onClick() {
-			if (mUser == null) return;
-			openUserTimeline(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
-		}
-
-	}
-
-	private class URLAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.url);
-		}
-
-		@Override
-		public String getSummary() {
-			if (mUser == null || mUser.getURL() == null) return null;
-			return String.valueOf(mUser.getURL());
-		}
-
-		@Override
-		public void onClick() {
-			if (mUser == null) return;
-			final URL url = mUser.getURL();
-			if (url != null) {
-				final Uri uri = Uri.parse(String.valueOf(url));
-				startActivity(new Intent(Intent.ACTION_VIEW, uri));
-			}
-		}
-
-		@Override
-		public boolean onLongClick() {
-			if (mUser != null && isMyAccount(getActivity(), mUser.getId())) {
-				mDialogFragment = new EditTextDialogFragment(getSummary(), getName(), TYPE_URL);
-				mDialogFragment.show(getFragmentManager(), "edit_url");
-				return true;
-			}
-			return false;
-		}
-
 	}
 
 	private abstract class UserAction {
@@ -906,7 +819,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private class UserProfileActionAdapter extends ArrayAdapter<UserAction> {
 
 		public UserProfileActionAdapter(Context context) {
-			super(context, R.layout.two_line_list_item, android.R.id.text1);
+			super(context, R.layout.user_action_list_item, android.R.id.text1);
 		}
 
 		public UserAction findItem(long id) {

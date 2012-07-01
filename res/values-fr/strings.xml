@@ -18,10 +18,9 @@
 	<string name="rest_base_url">URL REST</string>
 	<string name="search_base_url">URL de recherche</string>
 	<string name="upload_base_url">URL d\'upload</string>
-	<string name="oauth_access_token_url">URL du token d\'accès oAuth</string>
-	<string name="oauth_authentication_url">URL d\'authentification oAuth</string>
-	<string name="oauth_authorization_url">URL d\'autorisation oAuth</string>
-	<string name="oauth_request_token_url">URL de requête de token oAuth</string>
+	<string name="oauth_base_url">OAuth Base URL</string>
+	<string name="signing_oauth_base_url">Signing OAuth Base URL</string>
+	<string name="signing_rest_base_url">Signing REST Base URL</string>
 	<string name="auth_type">Type d\'authentification</string>
 	<string name="oauth">OAuth</string>
 	<string name="xauth">xAuth</string>
@@ -46,7 +45,7 @@
 	<string name="username">Login</string>
 	<string name="password">Mot de passe</string>
 	<string name="label_tweetstore_provider">Fournisseur de base de données de Twidere</string>
-	<string name="label_update_service">Service de mise à jour de la timeline update</string>
+	<string name="label_backend_service">Application backend service</string>
 	<string name="label_permission_group_access_twidere">Accès aux données de Twidere</string>
 	<string name="label_permission_read_databases">Lire les bases de données de Twidere</string>
 	<string name="label_permission_write_databases">Écrire les bases de données de Twidere</string>
@@ -176,5 +175,5 @@
 	<string name="user_blocked">Ulocked this user.</string>
 	<string name="user_unblocked">Unblocked this user.</string>
 	<string name="reported_user_for_spam">Reported this user for spam.</string>
-	
+
 </resources>

@@ -18,10 +18,9 @@
 	<string name="rest_base_url">REST Base URL</string>
 	<string name="search_base_url">Search Base URL</string>
 	<string name="upload_base_url">Upload Base URL</string>
-	<string name="oauth_access_token_url">oAuth Access Token URL</string>
-	<string name="oauth_authentication_url">oAuth Authentication URL</string>
-	<string name="oauth_authorization_url">oAuth Authorization URL</string>
-	<string name="oauth_request_token_url">oAuth Request Token URL</string>
+	<string name="oauth_base_url">OAuth Base URL</string>
+	<string name="signing_oauth_base_url">Signing OAuth Base URL</string>
+	<string name="signing_rest_base_url">Signing REST Base URL</string>
 	<string name="auth_type">Auth type</string>
 	<string name="oauth">OAuth</string>
 	<string name="xauth">xAuth</string>
@@ -46,7 +45,7 @@
 	<string name="username">Benutzername</string>
 	<string name="password">Passwort</string>
 	<string name="label_tweetstore_provider">Twidere Datenbank Anbieter</string>
-	<string name="label_update_service">Timeline Update Service</string>
+	<string name="label_backend_service">Application backend service</string>
 	<string name="label_permission_group_access_twidere">Greife auf Twidere zu</string>
 	<string name="label_permission_read_databases">Lese Twidere Datenbank aus</string>
 	<string name="label_permission_write_databases">Schreibe in die Twidere Datenbank</string>

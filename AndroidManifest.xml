@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="20"
+	android:versionCode="21"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -73,7 +73,7 @@
 
 			<meta-data
 				android:name="android.app.default_searchable"
-				android:value=".activity.LinkHandlerActivity"/>
+				android:value=".activity.SearchActivity"/>
 		</activity>
 		<activity
 			android:name=".activity.ComposeActivity"
@@ -205,13 +205,6 @@
 		<activity
 			android:name=".activity.LinkHandlerActivity"
 			android:windowSoftInputMode="adjustResize">
-			<meta-data
-				android:name="android.app.searchable"
-				android:resource="@xml/searchable"/>
-
-			<intent-filter>
-				<action android:name="android.intent.action.SEARCH"/>
-			</intent-filter>
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>
 
@@ -242,11 +235,26 @@
 				<data
 					android:host="conversation"
 					android:scheme="twidere"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.SearchActivity"
+			android:windowSoftInputMode="adjustResize">
+			<meta-data
+				android:name="android.app.searchable"
+				android:resource="@xml/searchable"/>
+
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH"/>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW"/>
+
+				<category android:name="android.intent.category.BROWSABLE"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+
 				<data
 					android:host="search"
-					android:scheme="twidere"/>
-				<data
-					android:host="map"
 					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>
@@ -274,7 +282,7 @@
 			android:name=".activity.ImageViewerActivity"
 			android:label="@string/view_image"
 			android:process=":image_viewer"
-			android:theme="@style/Theme.Twidere.ImageViewer">
+			android:theme="@style/Theme.Twidere.Viewer">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>
 
@@ -285,6 +293,24 @@
 				<data android:scheme="https"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".activity.MapViewerActivity"
+			android:label="@string/view_map"
+			android:theme="@style/Theme.Twidere.Viewer">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW"/>
+
+				<category android:name="android.intent.category.BROWSABLE"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+
+				<data
+					android:host="map"
+					android:scheme="twidere"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.NativeMapActivity"
+			android:label="@string/view_map"/>
 		<activity
 			android:name=".activity.FileSaveAsActivity"
 			android:label="@string/save_as">
@@ -298,7 +324,7 @@
 		<service
 			android:name=".service.TwidereService"
 			android:exported="false"
-			android:label="@string/label_update_service">
+			android:label="@string/label_backend_service">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SERVICE"/>
 

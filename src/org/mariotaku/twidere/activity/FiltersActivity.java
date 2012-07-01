@@ -52,8 +52,8 @@ public class FiltersActivity extends BaseActivity implements OnCheckedChangeList
 		mToggle = (CompoundButton) view.findViewById(R.id.toggle);
 		mToggle.setOnCheckedChangeListener(this);
 		mToggle.setChecked(filter_enabled);
-		mAdapter = new ArrayAdapter<TabSpec>(this, R.layout.spinner_item_filters);
-		mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_filters);
+		mAdapter = new ArrayAdapter<TabSpec>(this, R.layout.spinner_item);
+		mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
 		mAdapter.add(new TabSpec(FilteredUsersFragment.class, getString(R.string.users)));
 		mAdapter.add(new TabSpec(FilteredKeywordsFragment.class, getString(R.string.keywords)));
 		mAdapter.add(new TabSpec(FilteredSourcesFragment.class, getString(R.string.sources)));

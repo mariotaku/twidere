@@ -17,13 +17,13 @@ import android.widget.TextView;
 
 public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener, OnClickListener {
 
-	private EditText mEditRestBaseURL, mEditSearchBaseURL, mEditUploadBaseURL, mEditoAuthAccessTokenURL,
-			mEditoAuthenticationURL, mEditoAuthorizationURL, mEditoAuthRequestTokenURL;
+	private EditText mEditRestBaseURL, mEditSearchBaseURL, mEditUploadBaseURL, mEditSigningRESTBaseURL,
+			mEditOAuthBaseURL, mEditSigningOAuthBaseURL;
 	private RadioGroup mEditAuthType;
 	private RadioButton mButtonOAuth, mButtonxAuth, mButtonBasic, mButtonTwipOMode;
 	private Button mSaveButton;
-	private String mRestBaseURL, mSearchBaseURL, mUploadBaseURL, mOAuthAccessTokenURL, mOAuthAuthenticationURL,
-			mOAuthAuthorizationURL, mOAuthRequestTokenURL;
+	private String mRestBaseURL, mSearchBaseURL, mUploadBaseURL, mSigningRESTBaseURL, mOAuthBaseURL,
+			mSigningOAuthBaseURL;
 	private TextView mAdvancedAPIConfigLabel;
 	private int mAuthType;
 
@@ -58,10 +58,9 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 				bundle.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 				bundle.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
-				bundle.putString(Accounts.OAUTH_ACCESS_TOKEN_URL, mOAuthAccessTokenURL);
-				bundle.putString(Accounts.OAUTH_AUTHENTICATION_URL, mOAuthAuthenticationURL);
-				bundle.putString(Accounts.OAUTH_AUTHORIZATION_URL, mOAuthAuthorizationURL);
-				bundle.putString(Accounts.OAUTH_REQUEST_TOKEN_URL, mOAuthRequestTokenURL);
+				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
+				bundle.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
+				bundle.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
 				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
 				setResult(RESULT_OK, new Intent().putExtras(bundle));
 				finish();
@@ -78,18 +77,13 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 					mEditSearchBaseURL.setText(mSearchBaseURL != null ? mSearchBaseURL : DEFAULT_SEARCH_BASE_URL);
 					mEditUploadBaseURL = (EditText) findViewById(R.id.upload_base_url);
 					mEditUploadBaseURL.setText(mUploadBaseURL != null ? mUploadBaseURL : DEFAULT_UPLOAD_BASE_URL);
-					mEditoAuthAccessTokenURL = (EditText) findViewById(R.id.oauth_access_token_url);
-					mEditoAuthAccessTokenURL.setText(mOAuthAccessTokenURL != null ? mOAuthAccessTokenURL
-							: DEFAULT_OAUTH_ACCESS_TOKEN_URL);
-					mEditoAuthenticationURL = (EditText) findViewById(R.id.oauth_authentication_url);
-					mEditoAuthenticationURL.setText(mOAuthAuthenticationURL != null ? mOAuthAuthenticationURL
+					mEditSigningRESTBaseURL = (EditText) findViewById(R.id.signing_rest_base_url);
+					mEditSigningRESTBaseURL.setText(mSigningRESTBaseURL);
+					mEditOAuthBaseURL = (EditText) findViewById(R.id.oauth_base_url);
+					mEditOAuthBaseURL.setText(mOAuthBaseURL != null ? mOAuthBaseURL
 							: DEFAULT_OAUTH_AUTHENTICATION_URL);
-					mEditoAuthorizationURL = (EditText) findViewById(R.id.oauth_authorization_url);
-					mEditoAuthorizationURL.setText(mOAuthAuthorizationURL != null ? mOAuthAuthorizationURL
-							: DEFAULT_OAUTH_AUTHORIZATION_URL);
-					mEditoAuthRequestTokenURL = (EditText) findViewById(R.id.oauth_request_token_url);
-					mEditoAuthRequestTokenURL.setText(mOAuthRequestTokenURL != null ? mOAuthRequestTokenURL
-							: DEFAULT_OAUTH_REQUEST_TOKEN_URL);
+					mEditSigningOAuthBaseURL = (EditText) findViewById(R.id.signing_oauth_base_url);
+					mEditSigningOAuthBaseURL.setText(mSigningOAuthBaseURL);
 				} else if (inflated_view != null) {
 					final boolean is_visible = inflated_view.getVisibility() == View.VISIBLE;
 					final int compound_res = is_visible ? R.drawable.expander_close_holo
@@ -121,10 +115,9 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
 		mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
 		mUploadBaseURL = bundle.getString(Accounts.UPLOAD_BASE_URL);
-		mOAuthAccessTokenURL = bundle.getString(Accounts.OAUTH_ACCESS_TOKEN_URL);
-		mOAuthAuthenticationURL = bundle.getString(Accounts.OAUTH_AUTHENTICATION_URL);
-		mOAuthAuthorizationURL = bundle.getString(Accounts.OAUTH_AUTHORIZATION_URL);
-		mOAuthRequestTokenURL = bundle.getString(Accounts.OAUTH_REQUEST_TOKEN_URL);
+		mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
+		mOAuthBaseURL = bundle.getString(Accounts.OAUTH_BASE_URL);
+		mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
 
 		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
 		mEditAuthType.setOnCheckedChangeListener(this);
@@ -144,10 +137,9 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 		outState.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 		outState.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
-		outState.putString(Accounts.OAUTH_ACCESS_TOKEN_URL, mOAuthAccessTokenURL);
-		outState.putString(Accounts.OAUTH_AUTHENTICATION_URL, mOAuthAuthenticationURL);
-		outState.putString(Accounts.OAUTH_AUTHORIZATION_URL, mOAuthAuthorizationURL);
-		outState.putString(Accounts.OAUTH_REQUEST_TOKEN_URL, mOAuthRequestTokenURL);
+		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
+		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
+		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
 		super.onSaveInstanceState(outState);
 	}
@@ -171,28 +163,22 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 				mUploadBaseURL = ed.toString();
 			}
 		}
-		if (mEditoAuthAccessTokenURL != null) {
-			final Editable ed = mEditoAuthAccessTokenURL.getText();
+		if (mEditSigningRESTBaseURL != null) {
+			final Editable ed = mEditSigningRESTBaseURL.getText();
 			if (ed != null) {
-				mOAuthAccessTokenURL = ed.toString();
+				mSigningRESTBaseURL = ed.toString();
 			}
 		}
-		if (mEditoAuthenticationURL != null) {
-			final Editable ed = mEditoAuthenticationURL.getText();
+		if (mEditOAuthBaseURL != null) {
+			final Editable ed = mEditOAuthBaseURL.getText();
 			if (ed != null) {
-				mOAuthAuthenticationURL = ed.toString();
+				mOAuthBaseURL = ed.toString();
 			}
 		}
-		if (mEditoAuthorizationURL != null) {
-			final Editable ed = mEditoAuthorizationURL.getText();
+		if (mEditSigningOAuthBaseURL != null) {
+			final Editable ed = mEditSigningOAuthBaseURL.getText();
 			if (ed != null) {
-				mOAuthAuthorizationURL = ed.toString();
-			}
-		}
-		if (mEditoAuthRequestTokenURL != null) {
-			final Editable ed = mEditoAuthRequestTokenURL.getText();
-			if (ed != null) {
-				mOAuthRequestTokenURL = ed.toString();
+				mSigningOAuthBaseURL = ed.toString();
 			}
 		}
 	}

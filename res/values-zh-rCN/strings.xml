@@ -18,10 +18,9 @@
 	<string name="rest_base_url">REST Base URL</string>
 	<string name="search_base_url">Search Base URL</string>
 	<string name="upload_base_url">Upload Base URL</string>
-	<string name="oauth_access_token_url">OAuth Access Token URL</string>
-	<string name="oauth_authentication_url">OAuth Authentication URL</string>
-	<string name="oauth_authorization_url">OAuth Authorization URL</string>
-	<string name="oauth_request_token_url">OAuth Request Token URL</string>
+	<string name="oauth_base_url">OAuth Base URL</string>
+	<string name="signing_oauth_base_url">Signing OAuth Base URL</string>
+	<string name="signing_rest_base_url">Signing REST Base URL</string>
 	<string name="auth_type">验证方式</string>
 	<string name="oauth">OAuth</string>
 	<string name="xauth">xAuth</string>
@@ -46,7 +45,7 @@
 	<string name="username">用户名</string>
 	<string name="password">密码</string>
 	<string name="label_tweetstore_provider">Twidere 数据库存储</string>
-	<string name="label_update_service">时间线更新服务</string>
+	<string name="label_backend_service">应用后端服务</string>
 	<string name="label_permission_group_access_twidere">访问 Twidere 应用</string>
 	<string name="label_permission_read_databases">读取 Twidere 的数据库</string>
 	<string name="label_permission_write_databases">写入 Twidere 的数据库</string>
@@ -181,5 +180,9 @@
 	<string name="save_as">保存为</string>
 	<string name="please_wait">请稍等。</string>
 	<string name="file_saved_to">文件已经保存到 <xliff:g id="filename">%s</xliff:g>。</string>
+	<string name="proxy">代理服务器</string>
+	<string name="http_proxy">HTTP代理</string>
+	<string name="http_proxy_summary">为API请求使用HTTP代理。</string>
+	<string name="proxy_address">代理服务器地址</string>
 
 </resources>

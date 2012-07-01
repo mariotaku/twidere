@@ -18,7 +18,7 @@
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 	</style>
 
-	<style name="Theme.Twidere.ImageViewer" parent="android:Theme.Translucent.NoTitleBar">
+	<style name="Theme.Twidere.Viewer" parent="android:Theme.Translucent.NoTitleBar">
 		<item name="android:windowBackground">@drawable/image_viewer_background</item>
 		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
 	</style>
