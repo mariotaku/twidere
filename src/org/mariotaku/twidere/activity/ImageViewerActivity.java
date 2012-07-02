@@ -21,6 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 
@@ -52,6 +53,10 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.content.SharedPreferences;
+import java.net.Proxy;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 public class ImageViewerActivity extends FragmentActivity implements Constants, OnClickListener {
 
@@ -186,14 +191,21 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private final Uri uri;
 		private final ImageViewer image_view;
-		private final boolean ignore_ssl_error;
+		private final boolean ignore_ssl_error, use_proxy;
 		private File mCacheDir;
+		private final SharedPreferences prefs;
+		private final String proxy_host;
+		private final int proxy_port;
 
 		public ImageLoader(Uri uri, ImageViewer image_view) {
 			this.uri = uri;
 			this.image_view = image_view;
-			ignore_ssl_error = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(
+			prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+			ignore_ssl_error = prefs.getBoolean(
 					PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+			use_proxy = prefs.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
+			proxy_host = prefs.getString(PREFERENCE_KEY_PROXY_HOST, null);
+			proxy_port = parseInt(prefs.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
 			init();
 		}
 
@@ -227,7 +239,14 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				// from web
 				try {
 					Bitmap bitmap = null;
-					final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+					final HttpURLConnection conn;
+					if (use_proxy && proxy_host != null && proxy_port > 0) {
+						SocketAddress addr = InetSocketAddress.createUnresolved(proxy_host, proxy_port);
+						Proxy proxy = new Proxy(Proxy.Type.HTTP, addr);
+						conn = (HttpURLConnection) url.openConnection(proxy);
+					} else{
+						conn = (HttpURLConnection) url.openConnection();
+					}
 					if (ignore_ssl_error) {
 						setIgnoreSSLError(conn);
 					}

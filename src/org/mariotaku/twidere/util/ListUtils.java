@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.service;
+package org.mariotaku.twidere.util;
 
 import java.util.List;
 

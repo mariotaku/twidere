@@ -51,6 +51,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
+import org.mariotaku.twidere.util.ListUtils;
 
 public class TwidereService extends Service implements Constants {
 
