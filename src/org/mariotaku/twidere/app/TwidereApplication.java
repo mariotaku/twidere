@@ -66,7 +66,9 @@ public class TwidereApplication extends Application implements Constants {
 
 	@Override
 	public void onLowMemory() {
-		mProfileImageLoader.clearMemoryCache();
+		if (mProfileImageLoader != null) {
+			mProfileImageLoader.clearMemoryCache();
+		}
 		super.onLowMemory();
 	}
 

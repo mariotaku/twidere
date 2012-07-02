@@ -36,6 +36,19 @@
 				android:action="android.intent.action.VIEW"
 				android:data="https://twitter.com/#!/marcpl31"/>
 		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="Cem Uluer"
+			android:title="Türkçe">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="http://zettahub.de"/>
+		</PreferenceScreen>
+		<PreferenceScreen
+			android:title="Other Languages">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="http://crowdin.com/project/twidere"/>
+		</PreferenceScreen>		
 	</PreferenceCategory>
 	<PreferenceCategory android:title="SPECIAL THANKS TO">
 		<PreferenceScreen
