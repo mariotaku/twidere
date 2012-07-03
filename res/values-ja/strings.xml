@@ -27,7 +27,7 @@
 	<string name="xauth">xAuth</string>
 	<string name="basic">Basic</string>
 	<string name="twip_o">twip O モード</string>
-	<string name="advanced">高度な設定</string>
+	<string name="advanced">詳細設定</string>
 	<string name="save">保存</string>
 	<string name="edit">編集</string>
 	<string name="test">テスト</string>
@@ -181,5 +181,10 @@
 	<string name="save_as">名前を付けて保存</string>
 	<string name="please_wait">しばらくお待ちください…</string>
 	<string name="file_saved_to"><xliff:g id="filename">%s</xliff:g> にファイルが保存されました。</string>
+	<string name="proxy">プロキシ</string>
+	<string name="http_proxy">HTTP プロキシ</string>
+	<string name="http_proxy_summary">API リクエスト用のHTTP プロキシ</string>
+	<string name="proxy_host">ホスト</string>
+	<string name="proxy_port">ポート番号</string>
 
 </resources>
