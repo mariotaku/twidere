@@ -16,6 +16,8 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.parseInt;
+ 
 import org.mariotaku.twidere.R;
 
 import android.content.Intent;
@@ -27,11 +29,13 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import android.content.SharedPreferences;
+import org.mariotaku.twidere.util.WebViewProxySettings;
 
 public class AuthorizationActivity extends BaseActivity {
 
 	private Uri authUrl;
-
+	private SharedPreferences mPreferences;
 	private WebView mWebView;
 	private WebSettings mWebSettings;
 
@@ -58,6 +62,15 @@ public class AuthorizationActivity extends BaseActivity {
 		mWebSettings.setBlockNetworkImage(false);
 		mWebSettings.setSaveFormData(true);
 		mWebSettings.setSavePassword(true);
+		
+		final boolean enable_proxy = mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
+		final String proxy_host = mPreferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
+		final int proxy_port = parseInt(mPreferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
+		if (enable_proxy && proxy_host != null && proxy_port > 0) {
+			WebViewProxySettings.setProxy(mWebView, proxy_host, proxy_port);
+		} else {
+			WebViewProxySettings.resetProxy(mWebView);
+		}
 
 	}
 

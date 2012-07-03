@@ -81,7 +81,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 					mEditSigningRESTBaseURL.setText(mSigningRESTBaseURL);
 					mEditOAuthBaseURL = (EditText) findViewById(R.id.oauth_base_url);
 					mEditOAuthBaseURL.setText(mOAuthBaseURL != null ? mOAuthBaseURL
-							: DEFAULT_OAUTH_AUTHENTICATION_URL);
+							: DEFAULT_OAUTH_BASE_URL);
 					mEditSigningOAuthBaseURL = (EditText) findViewById(R.id.signing_oauth_base_url);
 					mEditSigningOAuthBaseURL.setText(mSigningOAuthBaseURL);
 				} else if (inflated_view != null) {
