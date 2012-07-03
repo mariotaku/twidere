@@ -18,7 +18,7 @@ Twidere is a powerful twitter client for Android 1.6+, which gives you a full Ho
 
 ###Icon designers###
 
-[@lordfriend](https://twitter.com/#!/lordfriend)  (0.0.13_TESTING version)
+[@lordfriend](https://twitter.com/#!/lordfriend)
 
 [@ilovinheart](https://twitter.com/#!/ilovinheart) (0.0.7 version)
 
