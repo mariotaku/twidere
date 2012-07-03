@@ -99,7 +99,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		boolean result = true;
 		final long[] activated_ids = getActivatedAccountIds(this);
 		final long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
-		if (default_account_id == -1 || !ArrayUtils.contains(activated_ids, default_account_id)) {
+		if (default_account_id == -1 || !ArrayUtils.containsLong(activated_ids, default_account_id)) {
 			if (activated_ids.length == 1) {
 				mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
 				mIndicator.setPagingEnabled(true);

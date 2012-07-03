@@ -84,11 +84,18 @@ public class Extractor {
 	 * @return List of hashtags referenced (without the leading # sign)
 	 */
 	public List<String> extractHashtags(String text) {
+		return extractHashtags(text, true);
+	}
+	 
+	 
+	public List<String> extractHashtags(String text, boolean exclude_duplicate) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		final List<String> extracted = new ArrayList<String>();
 		for (final Entity entity : extractHashtagsWithIndices(text)) {
-			extracted.add(entity.value);
+			if (!exclude_duplicate || !extracted.contains(entity.value)) {
+				extracted.add(entity.value);
+			}
 		}
 
 		return extracted;
@@ -112,11 +119,17 @@ public class Extractor {
 	 * @return List of usernames referenced (without the leading @ sign)
 	 */
 	public List<String> extractMentionedScreennames(String text) {
+		return extractMentionedScreennames(text, true);
+	}
+
+	public List<String> extractMentionedScreennames(String text, boolean exclude_duplicate) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		final List<String> extracted = new ArrayList<String>();
 		for (final Entity entity : extractMentionedScreennamesWithIndices(text)) {
-			extracted.add(entity.value);
+			if (!exclude_duplicate || !extracted.contains(entity.value)) {
+				extracted.add(entity.value);
+			}
 		}
 		return extracted;
 	}

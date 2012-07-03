@@ -1,0 +1,208 @@
+package org.mariotaku.twidere.util;
+import android.database.sqlite.SQLiteDatabase;
+import android.content.ContentValues;
+import java.util.List;
+import java.util.ArrayList;
+import android.provider.BaseColumns;
+import android.database.Cursor;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+
+public final class DatabaseUpgradeHelper {
+
+	private static final int FIELD_TYPE_NULL = 0;
+
+	private static final int FIELD_TYPE_INTEGER = 1;
+
+	private static final int FIELD_TYPE_FLOAT = 2;
+
+	private static final int FIELD_TYPE_STRING = 3;
+
+	private static final int FIELD_TYPE_BLOB = 4;
+
+	private static String createTable(String tableName, String[] columns, String[] types, boolean create_if_not_exists) {
+		if (tableName == null || columns == null || types == null || types.length != columns.length
+			|| types.length == 0)
+			throw new IllegalArgumentException("Invalid parameters for creating table " + tableName);
+		final StringBuilder stringBuilder = new StringBuilder(create_if_not_exists ? "CREATE TABLE IF NOT EXISTS "
+															  : "CREATE TABLE ");
+
+		stringBuilder.append(tableName);
+		stringBuilder.append(" (");
+		for (int n = 0, i = columns.length; n < i; n++) {
+			if (n > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(columns[n]).append(' ').append(types[n]);
+		}
+		return stringBuilder.append(");").toString();
+	}
+
+	private static int getTypeInt(String type) {
+		final int idx = type.contains("(") ? type.indexOf("(") : type.indexOf(" ");
+		final String type_main = idx > -1 ? type.substring(0, idx) : type;
+		if ("NULL".equalsIgnoreCase(type_main))
+			return FIELD_TYPE_NULL;
+		else if ("INTEGER".equalsIgnoreCase(type_main))
+			return FIELD_TYPE_INTEGER;
+		else if ("FLOAT".equalsIgnoreCase(type_main))
+			return FIELD_TYPE_FLOAT;
+		else if ("TEXT".equalsIgnoreCase(type_main))
+			return FIELD_TYPE_STRING;
+		else if ("BLOB".equalsIgnoreCase(type_main)) return FIELD_TYPE_BLOB;
+		throw new IllegalStateException("Unknown field type " + type + " !");
+	}
+
+	private static String[] getBatchTypeString(SQLiteDatabase db, String table, String[] columns) {
+
+		if (columns == null || columns.length == 0) return new String[0];
+		final String[] types = new String[columns.length];
+		final StringBuilder builder = new StringBuilder();
+		builder.append("SELECT ");
+		for (int i = 0; i < columns.length; i++) {
+			builder.append("typeof("+columns[i]+")");
+			if (i != columns.length - 1) {
+				builder.append(", ");
+			}
+		}
+		builder.append(" FROM " + table);
+		final Cursor cur = db.rawQuery(builder.toString(), null);
+		if (cur == null) return null;
+
+		cur.moveToFirst();
+		for (int i = 0;i < types.length; i++) {
+			types[i] = cur.getString(i);
+		}
+		cur.close();
+		return types;
+
+	}
+	
+	private static String getTypeString(SQLiteDatabase db, String table, String column) {
+
+		final String sql = "SELECT typeof(" + column + ") FROM " + table;
+		final Cursor cur = db.rawQuery(sql, null);
+		if (cur == null) return null;
+
+		cur.moveToFirst();
+		final String type = cur.getString(0);
+		cur.close();
+		return type;
+
+	}
+
+	private static boolean isTypeCompatible(String old_type, String new_type) {
+		if (old_type != null && new_type != null) {
+			final int old_idx = old_type.contains("(") ? old_type.indexOf("(") : old_type.indexOf(" ");
+			final int new_idx = new_type.contains("(") ? new_type.indexOf("(") : new_type.indexOf(" ");
+			final String old_type_main = old_idx > -1 ? old_type.substring(0, old_idx) : old_type;
+			final String new_type_main = new_idx > -1 ? new_type.substring(0, new_idx) : new_type;
+			return old_type_main.equalsIgnoreCase(new_type_main);
+		}
+		return false;
+	}
+
+	private static boolean shouldUpgrade(String[] old_cols, String[] old_types, String[] new_cols, String[] new_types) {
+		if (old_cols == null || old_types == null || new_cols == null || new_types == null) {
+			throw new IllegalArgumentException("All arguments cannot be null!");
+		}
+		if (old_cols.length != old_types.length || new_cols.length != new_types.length) {
+			throw new IllegalArgumentException("Length of columns and types not match!");
+		}
+		if (old_cols.length != new_cols.length) return true;
+		if (!ArrayUtils.contentMatch(old_cols, new_cols)) return true;
+		final Map<String, String> old_map = new HashMap<String, String>(), new_map = new HashMap<String, String>();
+		// I'm sure the length of four arrays are equal.
+		for (int i = 0; i < old_cols.length; i++) {
+			old_map.put(old_cols[i], old_types[i]);
+			new_map.put(new_cols[i], new_types[i]);
+		}
+		final Set<String> old_keyset = old_map.keySet();
+		for (String col_name : old_keyset) {
+			if (!isTypeCompatible(old_map.get(col_name), new_map.get(col_name))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static void safeUpgrade(SQLiteDatabase db, String table, String[] new_cols, String[] new_types, boolean fast_upgrade) {
+
+		if (new_cols == null || new_types == null || new_cols.length != new_types.length)
+			throw new IllegalArgumentException("Invalid parameters, length of columns and types not match.");
+
+		// First, create the table if not exists.
+		db.execSQL(createTable(table, new_cols, new_types, true));
+
+		// We need to get all data from old table.
+		final Cursor cur = db.query(table, null, null, null, null, null, null);
+		cur.moveToFirst();
+		final String[] old_cols = cur.getColumnNames();
+		
+		if (fast_upgrade) {
+			final String[] old_types = getBatchTypeString(db, table, old_cols);
+			
+			if (!shouldUpgrade(old_cols, old_types, new_cols, new_types)) {
+				if (cur != null) {
+					cur.close();
+				}
+				return;
+			}
+		}
+
+		final List<ContentValues> values_list = new ArrayList<ContentValues>();
+
+		while (!cur.isAfterLast()) {
+			final ContentValues values = new ContentValues();
+			for (int i = 0; i < new_cols.length; i++) {
+				final String new_col = new_cols[i];
+				final String new_type = new_types[i];
+				if (BaseColumns._ID.equals(new_col)) {
+					continue;
+				}
+
+				final int idx = cur.getColumnIndex(new_col);
+
+				if (ArrayUtils.contains(old_cols, new_col)) {
+					final String old_type = getTypeString(db, table, new_col);
+					final boolean compatible = isTypeCompatible(old_type, new_type);
+					if (compatible && idx > -1) {
+						switch (getTypeInt(new_type)) {
+							case FIELD_TYPE_INTEGER:
+								values.put(new_col, cur.getLong(idx));
+								break;
+							case FIELD_TYPE_FLOAT:
+								values.put(new_col, cur.getFloat(idx));
+								break;
+							case FIELD_TYPE_STRING:
+								values.put(new_col, cur.getString(idx));
+								break;
+							case FIELD_TYPE_BLOB:
+								values.put(new_col, cur.getBlob(idx));
+								break;
+							case FIELD_TYPE_NULL:
+							default:
+								break;
+						}
+					}
+				}
+
+			}
+			values_list.add(values);
+			cur.moveToNext();
+		}
+		cur.close();
+		// OK, now we got all data can be moved from old table, so we will
+		// delete the old table and create a new one.
+		db.execSQL("DROP TABLE IF EXISTS " + table);
+		db.execSQL(createTable(table, new_cols, new_types, false));
+
+		// Now, insert all data backuped into new table.
+		for (final ContentValues values : values_list) {
+			db.insert(table, null, values);
+		}
+	}
+
+
+}
