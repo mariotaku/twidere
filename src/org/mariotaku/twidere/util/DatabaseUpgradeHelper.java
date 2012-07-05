@@ -48,7 +48,7 @@ public final class DatabaseUpgradeHelper {
 				return;
 			}
 		}
-		
+
 		final List<ContentValues> values_list = new ArrayList<ContentValues>();
 
 		while (!cur.isAfterLast()) {
@@ -183,9 +183,9 @@ public final class DatabaseUpgradeHelper {
 			final int new_idx = new_type.contains("(") ? new_type.indexOf("(") : new_type.indexOf(" ");
 			final String old_type_main = old_idx > -1 ? old_type.substring(0, old_idx) : old_type;
 			final String new_type_main = new_idx > -1 ? new_type.substring(0, new_idx) : new_type;
-			if(treat_null_as_compatible) {
-				return "NULL".equalsIgnoreCase(old_type_main) || "NULL".equalsIgnoreCase(new_type_main) || old_type_main.equalsIgnoreCase(new_type_main); 
-			}
+			if (treat_null_as_compatible)
+				return "NULL".equalsIgnoreCase(old_type_main) || "NULL".equalsIgnoreCase(new_type_main)
+						|| old_type_main.equalsIgnoreCase(new_type_main);
 			return old_type_main.equalsIgnoreCase(new_type_main);
 		}
 		return false;

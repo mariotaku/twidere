@@ -3,7 +3,6 @@ package org.mariotaku.twidere.service;
 import static org.mariotaku.twidere.util.Utils.buildQueryUri;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getRetweetId;
-import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.makeCachedUsersContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusesContentValues;
@@ -46,7 +45,6 @@ import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.widget.Toast;
 
 public class TwidereService extends Service implements Constants {
@@ -620,169 +618,6 @@ public class TwidereService extends Service implements Constants {
 		}
 
 	}
-	
-	private class StoreHomeTimelineTask extends StoreStatusesTask {
-
-		public StoreHomeTimelineTask(List<StatusesResponse> result) {
-			super(result, Statuses.CONTENT_URI);
-		}
-
-		@Override
-		protected void onPostExecute(Boolean succeed) {
-			mStoreStatusesFinished = true;
-			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
-				succeed != null && succeed));
-			super.onPostExecute(succeed);
-		}
-
-	}
-
-	private class StoreMentionsTask extends StoreStatusesTask {
-
-		public StoreMentionsTask(List<StatusesResponse> result) {
-			super(result, Mentions.CONTENT_URI);
-		}
-
-		@Override
-		protected void onPostExecute(Boolean succeed) {
-			mStoreMentionsFinished = true;
-			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
-				succeed != null && succeed));
-			super.onPostExecute(succeed);
-		}
-
-	}
-
-	private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, Boolean> {
-
-		private final List<StatusesResponse> responses;
-		private final Uri uri;
-
-		public StoreStatusesTask(List<StatusesResponse> result, Uri uri) {
-			super(TwidereService.this, mAsyncTaskManager);
-			responses = result;
-			this.uri = uri;
-		}
-
-		@Override
-		protected Boolean doInBackground(Void... args) {
-			final ContentResolver resolver = getContentResolver();
-			boolean succeed = false;
-			final Uri query_uri = buildQueryUri(uri, false);
-
-			for (final StatusesResponse response : responses) {
-				final long account_id = response.account_id;
-				final ResponseList<twitter4j.Status> statuses = response.responselist;
-				final Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id,
-						null, null);
-				boolean no_items_before = false;
-				if (cur != null) {
-					no_items_before = cur.getCount() <= 0;
-					cur.close();
-				}
-				if (statuses == null || statuses.size() <= 0) {
-					continue;
-				}
-				final List<ContentValues> values_list = new ArrayList<ContentValues>(), cached_users_list = new ArrayList<ContentValues>();
-				final List<Long> status_ids = new ArrayList<Long>(), retweet_ids = new ArrayList<Long>(), user_ids = new ArrayList<Long>();
-
-				long min_id = -1;
-
-				for (final twitter4j.Status status : statuses) {
-					if (status == null) {
-						continue;
-					}
-					final User user = status.getUser();
-					final long user_id = user.getId();
-					final long status_id = status.getId();
-					final long retweet_id = status.getRetweetedStatus() != null ? status.getRetweetedStatus()
-							.getId() : -1;
-
-					user_ids.add(user_id);
-					if (!user_ids.contains(user_id)) {
-						cached_users_list.add(makeCachedUsersContentValues(user));
-					}
-					status_ids.add(status_id);
-
-					if ((retweet_id <= 0 || !retweet_ids.contains(retweet_id)) && !retweet_ids.contains(status_id)) {
-						if (status_id < min_id || min_id == -1) {
-							min_id = status_id;
-						}
-						if (retweet_id > 0) {
-							retweet_ids.add(retweet_id);
-						}
-						values_list.add(makeStatusesContentValues(status, account_id));
-					}
-
-				}
-
-				{
-					resolver.delete(CachedUsers.CONTENT_URI,
-							CachedUsers.USER_ID + " IN (" + ListUtils.buildString(user_ids, ',', true) + " )", null);
-					resolver.bulkInsert(CachedUsers.CONTENT_URI,
-							cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
-				}
-
-				int rows_deleted = -1;
-
-				// Delete all rows conflicting before new data inserted.
-				{
-					final StringBuilder where = new StringBuilder();
-					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
-					where.append(" AND ");
-					where.append("(");
-					where.append(buildInWhereClause(Statuses.STATUS_ID, status_ids));
-					where.append(" OR ");
-					where.append(buildInWhereClause(Statuses.RETWEET_ID, status_ids));
-					where.append(")");
-					rows_deleted = resolver.delete(query_uri, where.toString(), null);
-				}
-
-				// Insert previously fetched items.
-				resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
-
-				// No row deleted, so I will insert a gap.
-				final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
-						|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
-				if (insert_gap) {
-					final ContentValues values = new ContentValues();
-					values.put(Statuses.IS_GAP, 1);
-					final StringBuilder where = new StringBuilder();
-					where.append(Statuses.ACCOUNT_ID + "=" + account_id);
-					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
-					resolver.update(query_uri, values, where.toString(), null);
-				}
-				succeed = true;
-			}
-			return succeed;
-		}
-
-			@Override
-			protected void onPostExecute(Boolean succeed) {
-				if (succeed) {
-					notifyForUpdatedUri(TwidereService.this, uri);
-				}
-				super.onPostExecute(succeed);
-			}
-
-			private String buildInWhereClause(String column, List<Long> ids) {
-				final StringBuilder builder = new StringBuilder();
-				builder.append(column + " IN ( ");
-				for (int i = 0; i < ids.size(); i++) {
-					final String id_string = String.valueOf(ids.get(i));
-					if (id_string != null) {
-						if (i > 0) {
-							builder.append(", ");
-						}
-						builder.append(id_string);
-					}
-				}
-				builder.append(" )");
-				return builder.toString();
-			}
-
-		}
-	
 
 	private abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<StatusesResponse>> {
 
@@ -839,23 +674,9 @@ public class TwidereService extends Service implements Constants {
 			}
 			return result;
 		}
-	
+
 	}
 
-	private static final class StatusesResponse {
-
-		public final long account_id, max_id;
-		public final ResponseList<twitter4j.Status> responselist;
-
-		public StatusesResponse(long account_id, long max_id, ResponseList<twitter4j.Status> responselist) {
-			this.account_id = account_id;
-			this.max_id = max_id;
-			this.responselist = responselist;
-
-		}
-	}
-	
-	
 	private class ReportSpamTask extends ManagedAsyncTask<Void, Void, UserResponse> {
 
 		private long account_id;
@@ -1072,6 +893,19 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
+	private static final class StatusesResponse {
+
+		public final long account_id, max_id;
+		public final ResponseList<twitter4j.Status> responselist;
+
+		public StatusesResponse(long account_id, long max_id, ResponseList<twitter4j.Status> responselist) {
+			this.account_id = account_id;
+			this.max_id = max_id;
+			this.responselist = responselist;
+
+		}
+	}
+
 	private static final class StatusResponse {
 		public final TwitterException exception;
 		public final Status status;
@@ -1082,6 +916,168 @@ public class TwidereService extends Service implements Constants {
 			this.status = status;
 			this.account_id = account_id;
 		}
+	}
+
+	private class StoreHomeTimelineTask extends StoreStatusesTask {
+
+		public StoreHomeTimelineTask(List<StatusesResponse> result) {
+			super(result, Statuses.CONTENT_URI);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean succeed) {
+			mStoreStatusesFinished = true;
+			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed != null
+					&& succeed));
+			super.onPostExecute(succeed);
+		}
+
+	}
+
+	private class StoreMentionsTask extends StoreStatusesTask {
+
+		public StoreMentionsTask(List<StatusesResponse> result) {
+			super(result, Mentions.CONTENT_URI);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean succeed) {
+			mStoreMentionsFinished = true;
+			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed != null
+					&& succeed));
+			super.onPostExecute(succeed);
+		}
+
+	}
+
+	private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, Boolean> {
+
+		private final List<StatusesResponse> responses;
+		private final Uri uri;
+
+		public StoreStatusesTask(List<StatusesResponse> result, Uri uri) {
+			super(TwidereService.this, mAsyncTaskManager);
+			responses = result;
+			this.uri = uri;
+		}
+
+		@Override
+		protected Boolean doInBackground(Void... args) {
+			final ContentResolver resolver = getContentResolver();
+			boolean succeed = false;
+			final Uri query_uri = buildQueryUri(uri, false);
+
+			for (final StatusesResponse response : responses) {
+				final long account_id = response.account_id;
+				final ResponseList<twitter4j.Status> statuses = response.responselist;
+				final Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id, null,
+						null);
+				boolean no_items_before = false;
+				if (cur != null) {
+					no_items_before = cur.getCount() <= 0;
+					cur.close();
+				}
+				if (statuses == null || statuses.size() <= 0) {
+					continue;
+				}
+				final List<ContentValues> values_list = new ArrayList<ContentValues>(), cached_users_list = new ArrayList<ContentValues>();
+				final List<Long> status_ids = new ArrayList<Long>(), retweet_ids = new ArrayList<Long>(), user_ids = new ArrayList<Long>();
+
+				long min_id = -1;
+
+				for (final twitter4j.Status status : statuses) {
+					if (status == null) {
+						continue;
+					}
+					final User user = status.getUser();
+					final long user_id = user.getId();
+					final long status_id = status.getId();
+					final long retweet_id = status.getRetweetedStatus() != null ? status.getRetweetedStatus().getId()
+							: -1;
+
+					user_ids.add(user_id);
+					if (!user_ids.contains(user_id)) {
+						cached_users_list.add(makeCachedUsersContentValues(user));
+					}
+					status_ids.add(status_id);
+
+					if ((retweet_id <= 0 || !retweet_ids.contains(retweet_id)) && !retweet_ids.contains(status_id)) {
+						if (status_id < min_id || min_id == -1) {
+							min_id = status_id;
+						}
+						if (retweet_id > 0) {
+							retweet_ids.add(retweet_id);
+						}
+						values_list.add(makeStatusesContentValues(status, account_id));
+					}
+
+				}
+
+				{
+					resolver.delete(CachedUsers.CONTENT_URI,
+							CachedUsers.USER_ID + " IN (" + ListUtils.buildString(user_ids, ',', true) + " )", null);
+					resolver.bulkInsert(CachedUsers.CONTENT_URI,
+							cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
+				}
+
+				int rows_deleted = -1;
+
+				// Delete all rows conflicting before new data inserted.
+				{
+					final StringBuilder where = new StringBuilder();
+					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
+					where.append(" AND ");
+					where.append("(");
+					where.append(buildInWhereClause(Statuses.STATUS_ID, status_ids));
+					where.append(" OR ");
+					where.append(buildInWhereClause(Statuses.RETWEET_ID, status_ids));
+					where.append(")");
+					rows_deleted = resolver.delete(query_uri, where.toString(), null);
+				}
+
+				// Insert previously fetched items.
+				resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
+
+				// No row deleted, so I will insert a gap.
+				final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
+						|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
+				if (insert_gap) {
+					final ContentValues values = new ContentValues();
+					values.put(Statuses.IS_GAP, 1);
+					final StringBuilder where = new StringBuilder();
+					where.append(Statuses.ACCOUNT_ID + "=" + account_id);
+					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
+					resolver.update(query_uri, values, where.toString(), null);
+				}
+				succeed = true;
+			}
+			return succeed;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean succeed) {
+			if (succeed) {
+				notifyForUpdatedUri(TwidereService.this, uri);
+			}
+			super.onPostExecute(succeed);
+		}
+
+		private String buildInWhereClause(String column, List<Long> ids) {
+			final StringBuilder builder = new StringBuilder();
+			builder.append(column + " IN ( ");
+			for (int i = 0; i < ids.size(); i++) {
+				final String id_string = String.valueOf(ids.get(i));
+				if (id_string != null) {
+					if (i > 0) {
+						builder.append(", ");
+					}
+					builder.append(id_string);
+				}
+			}
+			builder.append(" )");
+			return builder.toString();
+		}
+
 	}
 
 	private class UpdateProfileImageTask extends ManagedAsyncTask<Void, Void, UserResponse> {

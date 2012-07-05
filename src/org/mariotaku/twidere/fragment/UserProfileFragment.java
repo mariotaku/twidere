@@ -336,7 +336,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					final Drawable blockIcon = blockItem.getIcon();
 					if (mFriendship.isSourceBlockingTarget()) {
 						blockItem.setTitle(R.string.unblock);
-						blockIcon.setColorFilter(getResources().getColor(R.color.holo_blue_bright), PorterDuff.Mode.MULTIPLY);
+						blockIcon.setColorFilter(getResources().getColor(R.color.holo_blue_bright),
+								PorterDuff.Mode.MULTIPLY);
 					} else {
 						blockItem.setTitle(R.string.block);
 						blockIcon.clearColorFilter();
@@ -464,7 +465,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case MENU_BLOCK: {
-				if (mService == null||mUser == null || mFriendship == null) break;
+				if (mService == null || mUser == null || mFriendship == null) {
+					break;
+				}
 				if (mFriendship.isSourceBlockingTarget()) {
 					mService.destroyBlock(mAccountId, mUser.getId());
 				} else {
@@ -473,16 +476,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case MENU_REPORT_SPAM: {
-				if (mService == null||mUser == null) break;
+				if (mService == null || mUser == null) {
+					break;
+				}
 				mService.reportSpam(mAccountId, mUser.getId());
 				break;
 			}
 			case MENU_MUTE: {
-				if (mUser == null) break;
+				if (mUser == null) {
+					break;
+				}
 				final String screen_name = mUser.getScreenName();
 				final Uri uri = Filters.Users.CONTENT_URI;
 				final ContentValues values = new ContentValues();
-				final SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit();
+				final SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME,
+						Context.MODE_PRIVATE).edit();
 				final ContentResolver resolver = getContentResolver();
 				values.put(Filters.Users.TEXT, screen_name);
 				resolver.delete(uri, Filters.Users.TEXT + " = '" + screen_name + "'", null);
