@@ -98,8 +98,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
 		mMenuBar.show();
 
-		mNameView.setText(status.name != null ? status.name : "");
-		mScreenNameView.setText(status.screen_name != null ? "@" + status.screen_name : "");
+		mNameView.setText(status.name);
+		mScreenNameView.setText(status.screen_name);
 		mTextView.setText(status.text);
 		final AutoLink linkify = new AutoLink(mTextView);
 		linkify.setOnLinkClickListener(this);

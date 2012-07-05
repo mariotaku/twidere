@@ -268,7 +268,7 @@ public final class Utils implements Constants {
 		if (status == null) return null;
 		final String text = status.getText();
 		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, VERBOSE);
+		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG);
 		final URLEntity[] urls = status.getURLEntities();
 		if (urls != null) {
 			for (final URLEntity url_entity : urls) {

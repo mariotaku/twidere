@@ -21,7 +21,7 @@ public final class ArrayUtils {
 		return builder.toString();
 	}
 
-	public static boolean containsLong(long[] array, long value) {
+	public static boolean contains(long[] array, long value) {
 		for (final long item : array) {
 			if (item == value) return true;
 		}
