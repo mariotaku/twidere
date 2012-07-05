@@ -22,9 +22,9 @@ import java.net.URL;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -44,6 +44,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -70,6 +73,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
@@ -102,6 +106,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
+				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId
+						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+					showFollowInfo(true);
+				}
+			}
+			if (BROADCAST_BLOCKSTATE_CHANGED.equals(action)) {
 				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					showFollowInfo(true);
@@ -213,7 +223,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
-		mProfileImageLoader = ((TwidereApplication) getActivity().getApplication()).getProfileImageLoader();
+		mProfileImageLoader = getApplication().getProfileImageLoader();
 		mAdapter = new UserProfileActionAdapter(getActivity());
 		mAdapter.add(new FavoritesAction());
 		if (isMyActivatedAccount(getActivity(), user_id) || isMyActivatedUserName(getActivity(), screen_name)) {
@@ -224,10 +234,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mProfileImageContainer.setOnLongClickListener(this);
 		mNameContainer.setOnClickListener(this);
 		mNameContainer.setOnLongClickListener(this);
+		mFollowButton.setOnClickListener(this);
 		mTweetsContainer.setOnClickListener(this);
 		mFollowersContainer.setOnClickListener(this);
 		mFriendsContainer.setOnClickListener(this);
 		mRetryButton.setOnClickListener(this);
+		mMoreOptionsButton.setOnClickListener(this);
 		setListAdapter(null);
 		mListView = getListView();
 		mListView.addHeaderView(mHeaderView, null, false);
@@ -268,7 +280,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.follow: {
-				if (mUser != null) {
+				if (mUser != null && mAccountId != mUser.getId()) {
 					final ServiceInterface service = ServiceInterface.getInstance(getActivity());
 					if (mFriendship.isSourceFollowingTarget()) {
 						service.destroyFriendship(mAccountId, mUser.getId());
@@ -315,11 +327,22 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case R.id.more_options: {
-				if (mUser == null) return;
-				if (isMyActivatedAccount(getActivity(), mUser.getId())) {
-
-				} else {
-
+				if (mUser == null || mFriendship == null) return;
+				if (!isMyActivatedAccount(getActivity(), mUser.getId())) {
+					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+					mPopupMenu.inflate(R.menu.context_user_profile);
+					final MenuItem blockItem = mPopupMenu.getMenu().findItem(MENU_BLOCK);
+					if (blockItem == null) return;
+					final Drawable blockIcon = blockItem.getIcon();
+					if (mFriendship.isSourceBlockingTarget()) {
+						blockItem.setTitle(R.string.unblock);
+						blockIcon.setColorFilter(getResources().getColor(R.color.holo_blue_bright), PorterDuff.Mode.MULTIPLY);
+					} else {
+						blockItem.setTitle(R.string.block);
+						blockIcon.clearColorFilter();
+					}
+					mPopupMenu.setOnMenuItemClickListener(this);
+					mPopupMenu.show();
 				}
 				break;
 			}
@@ -438,6 +461,34 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			case MENU_ADD_IMAGE: {
 				pickImage();
+				break;
+			}
+			case MENU_BLOCK: {
+				if (mService == null||mUser == null || mFriendship == null) break;
+				if (mFriendship.isSourceBlockingTarget()) {
+					mService.destroyBlock(mAccountId, mUser.getId());
+				} else {
+					mService.createBlock(mAccountId, mUser.getId());
+				}
+				break;
+			}
+			case MENU_REPORT_SPAM: {
+				if (mService == null||mUser == null) break;
+				mService.reportSpam(mAccountId, mUser.getId());
+				break;
+			}
+			case MENU_MUTE: {
+				if (mUser == null) break;
+				final String screen_name = mUser.getScreenName();
+				final Uri uri = Filters.Users.CONTENT_URI;
+				final ContentValues values = new ContentValues();
+				final SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit();
+				final ContentResolver resolver = getContentResolver();
+				values.put(Filters.Users.TEXT, screen_name);
+				resolver.delete(uri, Filters.Users.TEXT + " = '" + screen_name + "'", null);
+				resolver.insert(uri, values);
+				editor.putBoolean(PREFERENCE_KEY_ENABLE_FILTER, true).commit();
+				Toast.makeText(getActivity(), R.string.user_muted, Toast.LENGTH_SHORT).show();
 				break;
 			}
 		}
@@ -675,7 +726,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		protected void onPreExecute() {
-			mFollowContainer.setVisibility(is_my_activated_account ? View.VISIBLE : View.GONE);
+			mFollowContainer.setVisibility(is_my_activated_account ? View.GONE : View.VISIBLE);
 			mFollowButton.setVisibility(View.GONE);
 			mFollowProgress.setVisibility(View.VISIBLE);
 			mMoreOptionsContainer.setVisibility(is_my_activated_account ? View.GONE : View.VISIBLE);
@@ -808,7 +859,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				mListView.setVisibility(View.GONE);
 				mRetryButton.setVisibility(View.VISIBLE);
 			}
-			mFollowButton.setOnClickListener(mUser != null ? UserProfileFragment.this : null);
 			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);
 		}

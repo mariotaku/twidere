@@ -228,54 +228,6 @@ public final class TweetStore implements Constants {
 
 	}
 
-	public static interface Messages extends BaseColumns {
-		public static final String ACCOUNT_ID = "account_id";
-
-		public static final String MESSAGE_ID = "message_id";
-
-		public static final String SENDER_ID = "sender_id";
-
-		public static final String SENDER_NAME = "sender_name";
-
-		public static final String SENDER_SCREEN_NAME = "sender_screen_name";
-
-		public static final String SENDER_PROFILE_IMAGE_URL = "sender_profile_image_url";
-
-		public static final String RECIPIENT_ID = "recipient_id";
-
-		public static final String RECIPIENT_NAME = "recipient_name";
-
-		public static final String RECIPIENT_SCREEN_NAME = "recipient_screen_name";
-
-		public static final String RECIPIENT_PROFILE_IMAGE_URL = "recipient_profile_image_url";
-
-		/**
-		 * Status content.<br>
-		 * Type: TEXT
-		 */
-		public static final String TEXT = "text";
-
-		public static final String STATE = "state";
-
-		public static final int STATE_INCOMING = 0;
-		public static final int STATE_OUTGOING = 1;
-		public static final int STATE_OUTGOING_UNSENT = 2;
-		
-		public static final String CONTENT_PATH = "messages";
-
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
-		
-		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, MESSAGE_ID, SENDER_ID, SENDER_NAME,
-				SENDER_SCREEN_NAME, SENDER_PROFILE_IMAGE_URL, RECIPIENT_ID, RECIPIENT_NAME, RECIPIENT_SCREEN_NAME,
-				RECIPIENT_PROFILE_IMAGE_URL, TEXT, STATE};
-		
-		public static final String[] TYPES = new String[]{TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_TEXT, TYPE_INT};
-
-	}
-
 	public static interface Statuses extends BaseColumns {
 
 		public static final String CONTENT_PATH = "statuses";

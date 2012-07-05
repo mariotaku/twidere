@@ -6,7 +6,6 @@ import static org.mariotaku.twidere.util.Utils.getRetweetId;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.makeCachedUsersContentValues;
-import static org.mariotaku.twidere.util.Utils.makeMessagesContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusesContentValues;
 import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 
@@ -23,14 +22,12 @@ import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Messages;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
 import org.mariotaku.twidere.util.Utils;
 
-import twitter4j.DirectMessage;
 import twitter4j.GeoLocation;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -577,7 +574,7 @@ public class TwidereService extends Service implements Constants {
 	private class GetHomeTimelineTask extends GetStatusesTask {
 
 		public GetHomeTimelineTask(long[] account_ids, long[] max_ids) {
-			super(TwidereService.this, mAsyncTaskManager, Statuses.CONTENT_URI, account_ids, max_ids);
+			super(Statuses.CONTENT_URI, account_ids, max_ids);
 		}
 
 		@Override
@@ -603,7 +600,7 @@ public class TwidereService extends Service implements Constants {
 	private class GetMentionsTask extends GetStatusesTask {
 
 		public GetMentionsTask(long[] account_ids, long[] max_ids) {
-			super(TwidereService.this, mAsyncTaskManager, Mentions.CONTENT_URI, account_ids, max_ids);
+			super(Mentions.CONTENT_URI, account_ids, max_ids);
 		}
 
 		@Override
@@ -625,197 +622,15 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private static class GetMessagesTask extends ManagedAsyncTask<Void, Void, GetMessagesTask.AccountResponse> {
-
-		private long account_id, max_id;
-
-		private final Uri uri;
-		private final Context context;
-		private final AsyncTaskManager manager;
-
-		public GetMessagesTask(Context context, AsyncTaskManager manager, Uri uri, long account_id, long max_id) {
-			super(context, manager);
-			this.uri = uri;
-			this.context = context;
-			this.manager = manager;
-			this.account_id = account_id;
-			this.max_id = max_id;
-		}
-
-		@Override
-		protected AccountResponse doInBackground(Void... params) {
-
-			AccountResponse result = new AccountResponse(account_id, max_id, null);
-
-			final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final int load_item_limit = prefs
-					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-			final Twitter twitter = getTwitterInstance(context, account_id, true);
-			if (twitter != null) {
-				try {
-					final Paging paging = new Paging();
-					paging.setCount(load_item_limit);
-					if (max_id > 0) {
-						paging.setMaxId(max_id);
-					}
-					final ResponseList<DirectMessage> statuses = twitter.getDirectMessages(paging);
-					if (statuses != null) {
-						statuses.addAll(twitter.getSentDirectMessages(paging));
-					}
-
-					if (statuses != null) {
-						result = new AccountResponse(account_id, max_id, statuses);
-					}
-				} catch (final TwitterException e) {
-					e.printStackTrace();
-				}
-			}
-			return result;
-		}
-
-		@Override
-		protected void onPostExecute(AccountResponse responses) {
-			synchronized (this) {
-				manager.add(new StoreMessagesTask(context, manager, responses, uri), true);
-			}
-			super.onPostExecute(responses);
-		}
-
-		private static class AccountResponse {
-
-			public final long account_id, max_id;
-			public final ResponseList<DirectMessage> responselist;
-
-			public AccountResponse(long account_id, long max_id, ResponseList<DirectMessage> responselist) {
-				this.account_id = account_id;
-				this.max_id = max_id;
-				this.responselist = responselist;
-
-			}
-		}
-
-		private static class StoreMessagesTask extends ManagedAsyncTask<Void, Void, Boolean> {
-
-			private final AccountResponse response;
-			private final Context context;
-			private final Uri uri;
-
-			public StoreMessagesTask(Context context, AsyncTaskManager manager, AccountResponse result, Uri uri) {
-				super(context, manager);
-				response = result;
-				this.context = context;
-				this.uri = uri;
-			}
-
-			@Override
-			protected Boolean doInBackground(Void... args) {
-				final ContentResolver resolver = context.getContentResolver();
-				boolean succeed = false;
-				final Uri query_uri = buildQueryUri(uri, false);
-
-				final long account_id = response.account_id;
-				final ResponseList<DirectMessage> statuses = response.responselist;
-				final Cursor cur = resolver.query(uri, new String[0], Messages.ACCOUNT_ID + " = " + account_id, null,
-						null);
-				boolean no_items_before = false;
-				if (cur != null) {
-					no_items_before = cur.getCount() <= 0;
-					cur.close();
-				}
-				if (statuses == null || statuses.size() <= 0) return false;
-				final List<ContentValues> values_list = new ArrayList<ContentValues>();
-				final List<Long> status_ids = new ArrayList<Long>();
-
-				long min_id = -1;
-
-				for (final DirectMessage status : statuses) {
-					if (status == null) {
-						continue;
-					}
-					final long status_id = status.getId();
-
-					status_ids.add(status_id);
-
-					if (status_id < min_id || min_id == -1) {
-						min_id = status_id;
-					}
-					values_list.add(makeMessagesContentValues(status, account_id));
-
-				}
-				int rows_deleted = -1;
-
-				// Delete all rows conflicting before new data inserted.
-				{
-					final StringBuilder where = new StringBuilder();
-					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
-					where.append(" AND ");
-					where.append("(");
-					where.append(buildInWhereClause(Statuses.STATUS_ID, status_ids));
-					where.append(" OR ");
-					where.append(buildInWhereClause(Statuses.RETWEET_ID, status_ids));
-					where.append(")");
-					rows_deleted = resolver.delete(query_uri, where.toString(), null);
-				}
-
-				// Insert previously fetched items.
-				resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
-
-				// No row deleted, so I will insert a gap.
-				final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
-						|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
-				if (insert_gap) {
-					final ContentValues values = new ContentValues();
-					values.put(Statuses.IS_GAP, 1);
-					final StringBuilder where = new StringBuilder();
-					where.append(Statuses.ACCOUNT_ID + "=" + account_id);
-					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
-					resolver.update(query_uri, values, where.toString(), null);
-				}
-				succeed = true;
-				return succeed;
-			}
-
-			@Override
-			protected void onPostExecute(Boolean succeed) {
-				if (succeed) {
-					notifyForUpdatedUri(context, uri);
-				}
-				super.onPostExecute(succeed);
-			}
-
-			private String buildInWhereClause(String column, List<Long> ids) {
-				final StringBuilder builder = new StringBuilder();
-				builder.append(column + " IN ( ");
-				for (int i = 0; i < ids.size(); i++) {
-					final String id_string = String.valueOf(ids.get(i));
-					if (id_string != null) {
-						if (i > 0) {
-							builder.append(", ");
-						}
-						builder.append(id_string);
-					}
-				}
-				builder.append(" )");
-				return builder.toString();
-			}
-
-		}
-
-	}
-
 	private abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<GetStatusesTask.AccountResponse>> {
 
 		private long[] account_ids, max_ids;
 
 		private final Uri uri;
-		private final Context context;
-		private final AsyncTaskManager manager;
 
-		public GetStatusesTask(Context context, AsyncTaskManager manager, Uri uri, long[] account_ids, long[] max_ids) {
-			super(context, manager);
+		public GetStatusesTask(Uri uri, long[] account_ids, long[] max_ids) {
+			super(TwidereService.this, mAsyncTaskManager);
 			this.uri = uri;
-			this.context = context;
-			this.manager = manager;
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
 		}
@@ -835,11 +650,11 @@ public class TwidereService extends Service implements Constants {
 			final boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
 
 			int idx = 0;
-			final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			final SharedPreferences prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final int load_item_limit = prefs
 					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 			for (final long account_id : account_ids) {
-				final Twitter twitter = getTwitter(context, account_id, true);
+				final Twitter twitter = getTwitter(TwidereService.this, account_id, true);
 				if (twitter != null) {
 					try {
 						final Paging paging = new Paging();
@@ -867,11 +682,11 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(List<AccountResponse> responses) {
 			switch (getTableId(uri)) {
 				case URI_STATUSES: {
-					manager.add(new StoreHomeTimelineTask(context, manager, responses), true);
+					mAsyncTaskManager.add(new StoreHomeTimelineTask(responses), true);
 					break;
 				}
 				case URI_MENTIONS: {
-					manager.add(new StoreMentionsTask(context, manager, responses), true);
+					mAsyncTaskManager.add(new StoreMentionsTask(responses), true);
 					break;
 				}
 			}
@@ -893,8 +708,8 @@ public class TwidereService extends Service implements Constants {
 
 		private class StoreHomeTimelineTask extends StoreStatusesTask {
 
-			public StoreHomeTimelineTask(Context context, AsyncTaskManager manager, List<AccountResponse> result) {
-				super(context, manager, result, Statuses.CONTENT_URI);
+			public StoreHomeTimelineTask(List<AccountResponse> result) {
+				super(result, Statuses.CONTENT_URI);
 			}
 
 			@Override
@@ -907,8 +722,8 @@ public class TwidereService extends Service implements Constants {
 
 		private class StoreMentionsTask extends StoreStatusesTask {
 
-			public StoreMentionsTask(Context context, AsyncTaskManager manager, List<AccountResponse> result) {
-				super(context, manager, result, Statuses.CONTENT_URI);
+			public StoreMentionsTask(List<AccountResponse> result) {
+				super(result, Statuses.CONTENT_URI);
 			}
 
 			@Override
@@ -922,19 +737,17 @@ public class TwidereService extends Service implements Constants {
 		private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, Boolean> {
 
 			private final List<AccountResponse> responses;
-			private final Context context;
 			private final Uri uri;
 
-			public StoreStatusesTask(Context context, AsyncTaskManager manager, List<AccountResponse> result, Uri uri) {
-				super(context, manager);
+			public StoreStatusesTask(List<AccountResponse> result, Uri uri) {
+				super(TwidereService.this, mAsyncTaskManager);
 				responses = result;
-				this.context = context;
 				this.uri = uri;
 			}
 
 			@Override
 			protected Boolean doInBackground(Void... args) {
-				final ContentResolver resolver = context.getContentResolver();
+				final ContentResolver resolver = getContentResolver();
 				boolean succeed = false;
 				final Uri query_uri = buildQueryUri(uri, false);
 
@@ -1028,7 +841,7 @@ public class TwidereService extends Service implements Constants {
 			@Override
 			protected void onPostExecute(Boolean succeed) {
 				if (succeed) {
-					notifyForUpdatedUri(context, uri);
+					notifyForUpdatedUri(TwidereService.this, uri);
 				}
 				super.onPostExecute(succeed);
 			}
@@ -1218,11 +1031,6 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public int getMentions(long[] account_ids, long[] max_ids) throws RemoteException {
 			return mService.get().getMentions(account_ids, max_ids);
-		}
-
-		@Override
-		public int getMessages(long account_id, long max_id) throws RemoteException {
-			return mService.get().getMessages(account_id, max_id);
 		}
 
 		@Override

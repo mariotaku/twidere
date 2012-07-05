@@ -22,7 +22,6 @@ package org.mariotaku.twidere;
 interface ITwidereService {
 	int getHomeTimeline(in long[] account_ids, in long[] max_ids);
 	int getMentions(in long[] account_ids, in long[] max_ids);
-	int getMessages(in long account_id, in long max_id);
 	int updateStatus(in long[] account_ids, String content, in Location location, in Uri image_uri, long in_reply_to, boolean delete_image);
 	int destroyStatus(long account_id, long status_id);
 	int retweetStatus(long account_ids, long status_id);

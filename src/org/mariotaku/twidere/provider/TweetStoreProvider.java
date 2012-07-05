@@ -11,7 +11,6 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Messages;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
 import android.content.ContentProvider;
@@ -131,7 +130,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			db.execSQL(createTable(TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true));
 			db.execSQL(createTable(TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true));
 			db.execSQL(createTable(TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true));
-			db.execSQL(createTable(TABLE_MESSAGES, Messages.COLUMNS, Messages.TYPES, true));
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
@@ -173,7 +171,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			safeUpgrade(db, TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES, true);
 			safeUpgrade(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true);
 			safeUpgrade(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true);
-			safeUpgrade(db, TABLE_MESSAGES, Messages.COLUMNS, Messages.TYPES, true);
 		}
 
 	}

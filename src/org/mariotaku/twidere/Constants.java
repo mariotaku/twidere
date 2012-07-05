@@ -25,7 +25,6 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Favorites;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Messages;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
 import twitter4j.TwitterConstants;
@@ -217,6 +216,9 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_SET_AS_DEFAULT = R.id.set_as_default;
 	public static final int MENU_SAVE = R.id.save;
 	public static final int MENU_CANCEL = R.id.cancel;
+	public static final int MENU_BLOCK = R.id.block;
+	public static final int MENU_REPORT_SPAM = R.id.report_spam;
+	public static final int MENU_MUTE = R.id.mute;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
@@ -245,7 +247,6 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_FILTERED_USERS = Filters.Users.CONTENT_PATH;
 	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.CONTENT_PATH;
 	public static final String TABLE_FILTERED_SOURCES = Filters.Sources.CONTENT_PATH;
-	public static final String TABLE_MESSAGES = Messages.CONTENT_PATH;
 
 	public static final int URI_ACCOUNTS = 1;
 	public static final int URI_STATUSES = 2;

@@ -23,7 +23,7 @@
 			android:layout_height="48dp"
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentTop="true"
-			android:background="@drawable/btn_image_viewer_topleft"
+			android:background="@drawable/btn_viewer_topleft"
 			android:contentDescription="@android:string/cancel"
 			android:onClick="onClick"
 			android:src="@drawable/ic_menu_close_clear_cancel"/>
@@ -34,7 +34,7 @@
 			android:layout_height="48dp"
 			android:layout_alignParentRight="true"
 			android:layout_alignParentTop="true"
-			android:background="@drawable/btn_image_viewer_topright"
+			android:background="@drawable/btn_viewer_topright"
 			android:contentDescription="@string/refresh"
 			android:onClick="onClick"
 			android:src="@drawable/ic_menu_refresh"/>
@@ -45,7 +45,7 @@
 			android:layout_height="48dp"
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentLeft="true"
-			android:background="@drawable/btn_image_viewer_bottomleft"
+			android:background="@drawable/btn_viewer_bottomleft"
 			android:contentDescription="@string/share"
 			android:onClick="onClick"
 			android:src="@drawable/ic_menu_share"/>
@@ -56,7 +56,7 @@
 			android:layout_height="48dp"
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentRight="true"
-			android:background="@drawable/btn_image_viewer_bottomright"
+			android:background="@drawable/btn_viewer_bottomright"
 			android:contentDescription="@string/open_in_browser"
 			android:onClick="onClick"
 			android:src="@drawable/ic_menu_browser"/>

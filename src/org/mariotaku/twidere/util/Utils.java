@@ -41,10 +41,8 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Messages;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
-import twitter4j.DirectMessage;
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
@@ -1099,27 +1097,6 @@ public final class Utils implements Constants {
 		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
 		values.put(CachedUsers.USER_ID, user.getId());
 
-		return values;
-	}
-
-	public static ContentValues makeMessagesContentValues(DirectMessage message, long account_id) {
-		if (message == null || message.getId() <= 0) return null;
-		final User sender = message.getSender();
-		final User recipient = message.getRecipient();
-		final ContentValues values = new ContentValues();
-		values.put(Messages.ACCOUNT_ID, account_id);
-		values.put(Messages.MESSAGE_ID, message.getId());
-		values.put(Messages.SENDER_ID, sender.getId());
-		values.put(Messages.SENDER_NAME, sender.getName());
-		values.put(Messages.SENDER_SCREEN_NAME, sender.getScreenName());
-		values.put(Messages.SENDER_PROFILE_IMAGE_URL, String.valueOf(sender.getProfileImageURL()));
-		values.put(Messages.RECIPIENT_ID, recipient.getId());
-		values.put(Messages.RECIPIENT_NAME, recipient.getName());
-		values.put(Messages.RECIPIENT_SCREEN_NAME, recipient.getScreenName());
-		values.put(Messages.RECIPIENT_PROFILE_IMAGE_URL, String.valueOf(recipient.getProfileImageURL()));
-		values.put(Messages.TEXT, message.getText());
-		values.put(Messages.STATE, message.getSenderId() == account_id ? Messages.STATE_OUTGOING
-				: Messages.STATE_INCOMING);
 		return values;
 	}
 

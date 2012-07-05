@@ -77,7 +77,7 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setCustomView(R.layout.actionbar_search);
+		mActionBar.setCustomView(R.layout.actionbar_spinner_navigation);
 		final View view = mActionBar.getCustomView();
 		mSpinner = (Spinner) view.findViewById(R.id.navigate);
 		mAdapter = new ArrayAdapter<TabSpec>(this, R.layout.spinner_item);

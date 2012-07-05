@@ -154,17 +154,6 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int getMessages(long account_id, long max_id) {
-		if (mService == null) return -1;
-		try {
-			return mService.getMessages(account_id, max_id);
-		} catch (final RemoteException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
-
-	@Override
 	public boolean hasActivatedTask() {
 		if (mService == null) return false;
 		try {
@@ -198,7 +187,7 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int reportSpam(long account_id, long user_id) throws RemoteException {
+	public int reportSpam(long account_id, long user_id) {
 		if (mService == null) return -1;
 		try {
 			return mService.reportSpam(account_id, user_id);
