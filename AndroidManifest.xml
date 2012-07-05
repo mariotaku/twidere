@@ -281,7 +281,6 @@
 		<activity
 			android:name=".activity.ImageViewerActivity"
 			android:label="@string/view_image"
-			android:process=":image_viewer"
 			android:theme="@style/Theme.Twidere.Viewer">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>

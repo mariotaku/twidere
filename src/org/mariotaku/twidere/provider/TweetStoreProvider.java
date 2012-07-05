@@ -1,13 +1,9 @@
 package org.mariotaku.twidere.provider;
 
+import static org.mariotaku.twidere.util.DatabaseUpgradeHelper.safeUpgrade;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
-
-import static org.mariotaku.twidere.util.DatabaseUpgradeHelper.safeUpgrade;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -25,7 +21,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
 public final class TweetStoreProvider extends ContentProvider implements Constants {
 
@@ -176,8 +171,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			safeUpgrade(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true);
 			safeUpgrade(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true);
 		}
-
-		
 
 	}
 

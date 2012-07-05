@@ -31,11 +31,7 @@ import twitter4j.TwitterConstants;
 
 public interface Constants extends TwitterConstants {
 
-	public static final boolean ENABLE_VERBOSE_LOG_OUTPUT_IN_DEBUG_BUILDS = true;
-
 	public static final boolean DEBUG = BuildConfig.DEBUG;
-
-	public static final boolean VERBOSE = DEBUG && ENABLE_VERBOSE_LOG_OUTPUT_IN_DEBUG_BUILDS;
 
 	public static final String LOGTAG = "Twidere";
 
@@ -120,8 +116,6 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_ENABLE_PROXY = "enable_proxy";
 	public static final String PREFERENCE_KEY_PROXY_HOST = "proxy_host";
 	public static final String PREFERENCE_KEY_PROXY_PORT = "proxy_port";
-	public static final String PREFERENCE_KEY_PROXY_USERNAME = "proxy_username";
-	public static final String PREFERENCE_KEY_PROXY_PASSWORD = "proxy_password";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;

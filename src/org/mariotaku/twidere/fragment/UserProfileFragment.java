@@ -2,6 +2,7 @@ package org.mariotaku.twidere.fragment;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
@@ -14,7 +15,6 @@ import static org.mariotaku.twidere.util.Utils.openUserFavorites;
 import static org.mariotaku.twidere.util.Utils.openUserFollowers;
 import static org.mariotaku.twidere.util.Utils.openUserFollowing;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
-import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 
 import java.io.File;
 import java.net.URL;
@@ -78,10 +78,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private ImageView mProfileImageView;
 	private GetFriendshipTask mFollowInfoTask;
 	private View mFollowContainer, mMoreOptionsContainer;
-	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView, mTweetCount, mFollowersCount, mFriendsCount;
-	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer, mTweetsContainer, mFollowersContainer, mFriendsContainer;
+	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
+			mTweetCount, mFollowersCount, mFriendsCount;
+	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
+			mTweetsContainer, mFollowersContainer, mFriendsContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress, mListProgress;
-	private Button mFollowButton,mMoreOptionsButton, mRetryButton;
+	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
 
 	private UserProfileActionAdapter mAdapter;
 	private ListView mListView;
@@ -133,7 +135,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private boolean mFollowInfoDisplayed = false;
 
 	public void changeUser(long account_id, User user) {
-		if (user == null || getActivity() == null ||!isMyActivatedAccount(getActivity(), account_id)) return;
+		if (user == null || getActivity() == null || !isMyActivatedAccount(getActivity(), account_id)) return;
 		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
 			mUserInfoTask.cancel(true);
 		}
@@ -146,7 +148,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mNameView.setText(user.getName());
 		mScreenNameView.setText(user.getScreenName());
 		final String description = user.getDescription();
-		mDescriptionContainer.setVisibility(is_my_activated_account || isNullOrEmpty(description) ? View.VISIBLE : View.GONE);
+		mDescriptionContainer.setVisibility(is_my_activated_account || isNullOrEmpty(description) ? View.VISIBLE
+				: View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final String location = user.getLocation();
@@ -314,9 +317,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case R.id.more_options: {
 				if (mUser == null) return;
 				if (isMyActivatedAccount(getActivity(), mUser.getId())) {
-					
+
 				} else {
-					
+
 				}
 				break;
 			}
@@ -339,7 +342,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowersContainer = mHeaderView.findViewById(R.id.followers_container);
 		mFollowersCount = (TextView) mHeaderView.findViewById(R.id.followers_count);
 		mFriendsContainer = mHeaderView.findViewById(R.id.friends_container);
-		mFriendsCount =(TextView) mHeaderView.findViewById(R.id.friends_count);
+		mFriendsCount = (TextView) mHeaderView.findViewById(R.id.friends_count);
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mProfileImageContainer = mHeaderView.findViewById(R.id.profile_image_container);
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
@@ -391,7 +394,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (!is_my_activated_account) return false;
 		switch (view.getId()) {
 			case R.id.name_container: {
-				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getName(), getString(R.string.name), TYPE_NAME);
+				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getName(), getString(R.string.name),
+						TYPE_NAME);
 				mDialogFragment.show(getFragmentManager(), "edit_name");
 				return true;
 			}
@@ -403,18 +407,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				return true;
 			}
 			case R.id.description_container: {
-				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getDescription(), getString(R.string.description), TYPE_DESCRIPTION);
+				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getDescription(),
+						getString(R.string.description), TYPE_DESCRIPTION);
 				mDialogFragment.show(getFragmentManager(), "edit_description");
 				return true;
 			}
 			case R.id.location_container: {
-				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getLocation(), getString(R.string.location), TYPE_LOCATION);
+				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getLocation(),
+						getString(R.string.location), TYPE_LOCATION);
 				mDialogFragment.show(getFragmentManager(), "edit_location");
 				return true;
 			}
 			case R.id.url_container: {
 				final URL url = mUser.getURL();
-				mDialogFragment = new EditTextDialogFragment(mUser.getId(), url != null?url.toString():null, getString(R.string.url), TYPE_URL);
+				mDialogFragment = new EditTextDialogFragment(mUser.getId(), url != null ? url.toString() : null,
+						getString(R.string.url), TYPE_URL);
 				mDialogFragment.show(getFragmentManager(), "edit_url");
 				return true;
 			}
@@ -528,7 +535,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mText = text;
 			mType = type;
 			mTitle = title;
-			
+
 		}
 
 		@Override
@@ -632,11 +639,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private class GetFriendshipTask extends AsyncTask<Void, Void, Response<Relationship>> {
 
 		private final boolean is_my_activated_account;
-		
+
 		GetFriendshipTask() {
 			is_my_activated_account = isMyActivatedAccount(getActivity(), mUser.getId());
 		}
-		
+
 		@Override
 		protected Response<Relationship> doInBackground(Void... params) {
 			return getFriendship();

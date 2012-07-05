@@ -86,8 +86,7 @@ public class Extractor {
 	public List<String> extractHashtags(String text) {
 		return extractHashtags(text, true);
 	}
-	 
-	 
+
 	public List<String> extractHashtags(String text, boolean exclude_duplicate) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 

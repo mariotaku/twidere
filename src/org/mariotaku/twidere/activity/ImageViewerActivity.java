@@ -21,9 +21,10 @@ package org.mariotaku.twidere.activity;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
-import static org.mariotaku.twidere.util.Utils.parseInt;
+import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
+import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,6 +42,7 @@ import org.mariotaku.twidere.view.ImageViewer;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -49,14 +51,12 @@ import android.os.AsyncTask.Status;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.content.SharedPreferences;
-import java.net.Proxy;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
 public class ImageViewerActivity extends FragmentActivity implements Constants, OnClickListener {
 
@@ -66,6 +66,18 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	private ImageButton mRefreshStopSaveButton;
 	private boolean mImageLoading, mImageLoaded;
 	private File mImageFile;
+
+	private Handler mErrorHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.obj instanceof Exception) {
+				showErrorToast(ImageViewerActivity.this, (Exception) msg.obj, true);
+			}
+			super.handleMessage(msg);
+		}
+
+	};
 
 	@Override
 	public void onClick(View view) {
@@ -191,21 +203,15 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private final Uri uri;
 		private final ImageViewer image_view;
-		private final boolean ignore_ssl_error, use_proxy;
+		private final boolean ignore_ssl_error;
 		private File mCacheDir;
 		private final SharedPreferences prefs;
-		private final String proxy_host;
-		private final int proxy_port;
 
 		public ImageLoader(Uri uri, ImageViewer image_view) {
 			this.uri = uri;
 			this.image_view = image_view;
 			prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-			ignore_ssl_error = prefs.getBoolean(
-					PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-			use_proxy = prefs.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
-			proxy_host = prefs.getString(PREFERENCE_KEY_PROXY_HOST, null);
-			proxy_port = parseInt(prefs.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
+			ignore_ssl_error = prefs.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			init();
 		}
 
@@ -239,14 +245,8 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				// from web
 				try {
 					Bitmap bitmap = null;
-					final HttpURLConnection conn;
-					if (use_proxy && proxy_host != null && proxy_port > 0) {
-						SocketAddress addr = InetSocketAddress.createUnresolved(proxy_host, proxy_port);
-						Proxy proxy = new Proxy(Proxy.Type.HTTP, addr);
-						conn = (HttpURLConnection) url.openConnection(proxy);
-					} else{
-						conn = (HttpURLConnection) url.openConnection();
-					}
+					final HttpURLConnection conn = (HttpURLConnection) url
+							.openConnection(getProxy(ImageViewerActivity.this));
 					if (ignore_ssl_error) {
 						setIgnoreSSLError(conn);
 					}
@@ -268,7 +268,9 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				} catch (final FileNotFoundException e) {
 					init();
 				} catch (final IOException e) {
-					// e.printStackTrace();
+					final Message msg = new Message();
+					msg.obj = e;
+					mErrorHandler.sendMessage(msg);
 				}
 			} else if ("file".equals(scheme)) return decodeFile(new File(uri.getPath()));
 			return null;

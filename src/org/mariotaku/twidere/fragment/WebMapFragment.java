@@ -41,8 +41,8 @@ public class WebMapFragment extends WebViewFragment {
 		webview.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 		setWebViewClient(new MapWebViewClient(getActivity()));
 		loadUrl(mUri.toString());
-		
-		WebSettings settings = webview.getSettings();
+
+		final WebSettings settings = webview.getSettings();
 		settings.setBuiltInZoomControls(false);
 
 		/** Allows JavaScript calls to access application resources **/

@@ -42,7 +42,9 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 		super.onCreate(savedInstanceState);
 		final Intent intent = getIntent();
 		mArguments.clear();
-		final String query = Intent.ACTION_SEARCH.equals(intent.getAction()) ? intent.getStringExtra(SearchManager.QUERY) : (mData != null ? mData.getQueryParameter(QUERY_PARAM_QUERY) : null);
+		final String query = Intent.ACTION_SEARCH.equals(intent.getAction()) ? intent
+				.getStringExtra(SearchManager.QUERY) : mData != null ? mData.getQueryParameter(QUERY_PARAM_QUERY)
+				: null;
 		if (query == null) {
 			finish();
 			return;

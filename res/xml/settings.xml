@@ -154,17 +154,6 @@
 			android:key="proxy_port"
 			android:singleLine="true"
 			android:title="@string/proxy_port"/>
-		<EditTextPreference
-			android:dependency="enable_proxy"
-			android:key="proxy_username"
-			android:singleLine="true"
-			android:title="@string/username"/>
-		<EditTextPreference
-			android:dependency="enable_proxy"
-			android:inputType="textPassword"
-			android:key="proxy_password"
-			android:singleLine="true"
-			android:title="@string/password"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="cat_about"

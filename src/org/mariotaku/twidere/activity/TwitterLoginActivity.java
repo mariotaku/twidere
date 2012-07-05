@@ -5,9 +5,9 @@ import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
+import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
-import static org.mariotaku.twidere.util.Utils.parseInt;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -365,15 +365,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		if (enable_proxy) {
 			final String proxy_host = preferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
 			final int proxy_port = parseInt(preferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
-			if (proxy_host != null && proxy_port > 0) {
+			if (isNullOrEmpty(proxy_host) && proxy_port > 0) {
 				cb.setHttpProxyHost(proxy_host);
 				cb.setHttpProxyPort(proxy_port);
-				final String proxy_username = preferences.getString(PREFERENCE_KEY_PROXY_USERNAME, null);
-				if (proxy_username != null)cb.setHttpProxyUser(proxy_username);
-				final String proxy_password = preferences.getString(PREFERENCE_KEY_PROXY_PASSWORD, null);
-				if (proxy_password != null) cb.setHttpProxyPassword(proxy_password);
 			}
-			
+
 		}
 		return cb;
 	}

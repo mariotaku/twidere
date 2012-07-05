@@ -18,10 +18,9 @@
   <string name="rest_base_url">REST Base URL</string>
   <string name="search_base_url">Procurar por Base URL</string>
   <string name="upload_base_url">Upload de Base URL</string>
-  <string name="oauth_access_token_url">oAuth Access Token URL</string>
-  <string name="oauth_authentication_url">URL de autentificação oAuth</string>
-  <string name="oauth_authorization_url">URL de autorização oAuth</string>
-  <string name="oauth_request_token_url">oAuth Request Token URL</string>
+  <string name="oauth_base_url">OAuth Base URL</string>
+  <string name="signing_oauth_base_url">Signing OAuth Base URL</string>
+  <string name="signing_rest_base_url">Signing REST Base URL</string>
   <string name="auth_type">Tipo de Auth</string>
   <string name="oauth">OAuth</string>
   <string name="xauth">xAuth</string>
@@ -39,14 +38,14 @@
   <string name="me">Eu</string>
   <string name="error_occurred">Ocorreu um erro, por favor tente novamente.</string>
   <string name="error_already_logged_in">Você já fez login.</string>
-  <string name="no_account_selected">Você precisa selecionar uma conta ou mais.</string>
+  <string name="no_account_selected">Você precisa selecionar pelo menos uma conta.</string>
   <string name="error_unknown_error">Erro: Erro desconhecido, isto é provavelmente um bug.</string>
   <string name="error_message">Erro: <xliff:g id="message">%s</xliff:g></string>
   <string name="select_account">Selecione a conta</string>
   <string name="username">Nome de Usuário</string>
   <string name="password">Senha</string>
   <string name="label_tweetstore_provider">Provedor de banco de dados do Twidere</string>
-  <string name="label_update_service">Serviço de atualização da timeline</string>
+  <string name="label_backend_service">Application backend service</string>
   <string name="label_permission_group_access_twidere">Acessar o aplicativo Twidere</string>
   <string name="label_permission_read_databases">Ler os bancos de dados do Twidere</string>
   <string name="label_permission_write_databases">Escrever os bancos de dados do Twidere</string>
@@ -77,7 +76,7 @@
   <string name="following">Seguindo</string>
   <string name="about">Sobre</string>
   <string name="about_summary">Sobre o Twidere</string>
-  <string name="license">Licença Open Source</string>
+  <string name="license">Licença dos recursos abertos</string>
   <string name="license_summary">O Twidere está licenciado sobre o GPLv3.</string>
   <string name="api">API</string>
   <string name="consumer_key">Chave de Consumidor</string>
@@ -95,7 +94,7 @@
   <string name="clear_cache">Limpar o cache</string>
   <string name="clear_cache_summary">Limpar as imagens de perfil armazenadas em cache.</string>
   <string name="clear_databases">Limpar dados armazenados</string>
-  <string name="clear_databases_summary">Limpar todos tweets, perfis e mensagens. Você não irá perder as credenciais de sua conta.</string>
+  <string name="clear_databases_summary">Limpar todos tweets, perfis e mensagens. Você não irá perder as credenciais da sua conta.</string>
   <string name="look_and_feel">Visual e tátil</string>
   <string name="dark_theme">Usar o tema escuro</string>
   <string name="dark_theme_summary">Usar o tema Holo Dark no Twidere.</string>
@@ -124,7 +123,7 @@
   <string name="load_item_limit">Limite de itens para carregar</string>
   <string name="load_item_limit_summary">Definir limite de itens por carregamento.</string>
   <string name="load_more_automatically">Carregar conteúdo adicional automaticamente</string>
-  <string name="load_more_automatically_summary">Carregar conteúdo adicional (Ex.: foto, mapa, stauts, etc.) automaticamente</string>
+  <string name="load_more_automatically_summary">Carregar conteúdo adicional (Ex.: foto, mapa, estado, etc.) automaticamente</string>
   <string name="quote">Citação</string>
   <string name="add_rule">Adicionar regra</string>
   <string name="longclick_to_delete">Mantenha pressionado para apagar.</string>
@@ -176,4 +175,14 @@
   <string name="user_blocked">Desbloquear este usuário.</string>
   <string name="user_unblocked">Desbloquear este usuário.</string>
   <string name="reported_user_for_spam">Denunciar este usuário por spam.</string>
+  <string name="filename_hint">Nome do arquivo</string>
+  <string name="overwrite_confirm">Este arquivo já exsite,deseja substituir?</string>
+  <string name="save_as">Salvar como</string>
+  <string name="please_wait">Por favor espere.</string>
+  <string name="file_saved_to">Arquivo salvado para <xliff:g id="filename">%s</xliff:g> .</string>
+  <string name="proxy">Proxy</string>
+  <string name="http_proxy">HTTP Proxy</string>
+  <string name="http_proxy_summary">Use HTTP Proxy para solicitações de API.</string>
+  <string name="proxy_host">Proxy Host</string>
+  <string name="proxy_port">Proxy Port</string>
 </resources>

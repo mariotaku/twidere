@@ -149,12 +149,13 @@ public class AutoLink {
 					if (matcher.matches()) {
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
-						final String url = "http://instagr.am/p/" + matcher.group(INSTAGRAM_GROUP_ID) + "/media/?size=l";
+						final String url = "http://instagr.am/p/" + matcher.group(INSTAGRAM_GROUP_ID)
+								+ "/media/?size=l";
 						string.removeSpan(span);
 						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
 					}
 				}
-				//addInstagramLinks(string);
+				// addInstagramLinks(string);
 				break;
 			}
 			case LINK_TYPE_TWITPIC: {
@@ -169,7 +170,7 @@ public class AutoLink {
 						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
 					}
 				}
-				//addTwitpicLinks(string);
+				// addTwitpicLinks(string);
 				break;
 			}
 			case LINK_TYPE_LINKS: {

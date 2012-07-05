@@ -29,7 +29,9 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
-				setRefreshing(getServiceInterface().isHomeTimelineRefreshing());
+				if (getServiceInterface().isHomeTimelineRefreshing()) {
+					setRefreshing(false);
+				}
 			} else if ((HomeTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
 				if (getListView() != null) {
 					getListView().setSelection(0);
@@ -80,10 +82,10 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
 		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		registerReceiver(mStatusReceiver, filter);
-		if (!getServiceInterface().isHomeTimelineRefreshing()) {
-			onRefreshComplete();
-		} else {
+		if (getServiceInterface().isHomeTimelineRefreshing()) {
 			setRefreshing(false);
+		} else {
+			onRefreshComplete();
 		}
 	}
 

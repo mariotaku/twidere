@@ -26,6 +26,7 @@ import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Messages;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
 import org.mariotaku.twidere.util.Utils;
 
@@ -49,9 +50,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 import android.widget.Toast;
-import org.mariotaku.twidere.util.ListUtils;
 
 public class TwidereService extends Service implements Constants {
 
@@ -864,9 +863,6 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(List<AccountResponse> responses) {
-			if (VERBOSE) {
-				Log.d(LOGTAG, "Statuses download finished.");
-			}
 			synchronized (this) {
 				manager.add(new StoreStatusesTask(context, manager, responses, uri), true);
 			}
@@ -938,9 +934,6 @@ public class TwidereService extends Service implements Constants {
 
 					long min_id = -1;
 
-					if (VERBOSE) {
-						Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Start convert statuses to contentvalues.");
-					}
 					for (final twitter4j.Status status : statuses) {
 						if (status == null) {
 							continue;
@@ -968,36 +961,18 @@ public class TwidereService extends Service implements Constants {
 						}
 
 					}
-					if (VERBOSE) {
-						Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished convert statuses to contentvalues.");
-					}
 
 					{
-						if (VERBOSE) {
-							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Delete old cached_users data.");
-						}
 						resolver.delete(CachedUsers.CONTENT_URI,
 								CachedUsers.USER_ID + " IN (" + ListUtils.buildString(user_ids, ',', true) + " )", null);
-						if (VERBOSE) {
-							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished delete old cached_users data.");
-						}
-						if (VERBOSE) {
-							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Insert cached_users data.");
-						}
 						resolver.bulkInsert(CachedUsers.CONTENT_URI,
 								cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
-						if (VERBOSE) {
-							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished insert cached_users data.");
-						}
 					}
 
 					int rows_deleted = -1;
 
 					// Delete all rows conflicting before new data inserted.
 					{
-						if (VERBOSE) {
-							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Delete conflicting statuses.");
-						}
 						final StringBuilder where = new StringBuilder();
 						where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 						where.append(" AND ");
@@ -1007,15 +982,9 @@ public class TwidereService extends Service implements Constants {
 						where.append(buildInWhereClause(Statuses.RETWEET_ID, status_ids));
 						where.append(")");
 						rows_deleted = resolver.delete(query_uri, where.toString(), null);
-						if (VERBOSE) {
-							Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished delete conflicting statuses.");
-						}
 					}
 
 					// Insert previously fetched items.
-					if (VERBOSE) {
-						Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Insert statuses.");
-					}
 					resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 					// No row deleted, so I will insert a gap.
@@ -1028,9 +997,6 @@ public class TwidereService extends Service implements Constants {
 						where.append(Statuses.ACCOUNT_ID + "=" + account_id);
 						where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
 						resolver.update(query_uri, values, where.toString(), null);
-					}
-					if (VERBOSE) {
-						Log.v(LOGTAG, System.currentTimeMillis() + ":" + "Finished insert statuses.");
 					}
 					succeed = true;
 				}
@@ -1051,9 +1017,6 @@ public class TwidereService extends Service implements Constants {
 						mStoreMentionsFinished = true;
 						break;
 					}
-				}
-				if (VERBOSE) {
-					Log.d(LOGTAG, "Statuses saved in databases.");
 				}
 				super.onPostExecute(succeed);
 			}
