@@ -158,16 +158,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mNameView.setText(user.getName());
 		mScreenNameView.setText(user.getScreenName());
 		final String description = user.getDescription();
-		mDescriptionContainer.setVisibility(is_my_activated_account || isNullOrEmpty(description) ? View.VISIBLE
-				: View.GONE);
+		mDescriptionContainer.setVisibility(is_my_activated_account || isNullOrEmpty(description) ? View.GONE
+				: View.VISIBLE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final String location = user.getLocation();
-		mLocationContainer.setVisibility(is_my_activated_account || isNullOrEmpty(location) ? View.VISIBLE : View.GONE);
+		mLocationContainer.setVisibility(is_my_activated_account || isNullOrEmpty(location) ? View.GONE : View.VISIBLE);
 		mLocationContainer.setOnLongClickListener(this);
 		mLocationView.setText(location);
 		final String url = user.getURL() != null ? user.getURL().toString() : null;
-		mURLContainer.setVisibility(is_my_activated_account || isNullOrEmpty(url) ? View.VISIBLE : View.GONE);
+		mURLContainer.setVisibility(is_my_activated_account || isNullOrEmpty(url) ? View.GONE : View.VISIBLE);
 		mURLContainer.setOnLongClickListener(this);
 		mURLView.setText(url);
 		mCreatedAtView.setText(formatToLongTimeString(getActivity(), user.getCreatedAt().getTime()));
