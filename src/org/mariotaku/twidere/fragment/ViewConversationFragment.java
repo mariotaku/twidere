@@ -68,7 +68,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
+		mServiceInterface = ((TwidereApplication) getApplication()).getServiceInterface();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		Bundle bundle = getArguments();
@@ -85,7 +85,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		}
 		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
 		mStatusHandler = new StatusHandler(mAdapter, account_id);
-		mShowConversationTask = new ShowConversationTask(getActivity(), mStatusHandler, account_id, status_id);
+		mShowConversationTask = new ShowConversationTask(mStatusHandler, account_id, status_id);
 		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView.setOnScrollListener(this);
@@ -292,14 +292,12 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		}
 	}
 
-	private static class ShowConversationTask extends AsyncTask<Void, Void, TwitterException> {
+	private class ShowConversationTask extends AsyncTask<Void, Void, TwitterException> {
 
-		private FragmentActivity mActivity;
-		private long mAccountId, mStatusId;
-		private StatusHandler mHandler;
+		private final long mAccountId, mStatusId;
+		private final StatusHandler mHandler;
 
-		public ShowConversationTask(FragmentActivity context, StatusHandler handler, long account_id, long status_id) {
-			mActivity = context;
+		public ShowConversationTask(StatusHandler handler, long account_id, long status_id) {
 			mHandler = handler;
 			mAccountId = account_id;
 			mStatusId = status_id;
@@ -307,13 +305,14 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 		@Override
 		protected TwitterException doInBackground(Void... params) {
-			final Twitter twitter = getTwitterInstance(mActivity, mAccountId, true);
+			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, true);
 			try {
 				twitter4j.Status status = twitter.showStatus(mStatusId);
 				mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, status));
 				long in_reply_to_id = status.getInReplyToStatusId();
 				while (in_reply_to_id != -1) {
 					status = twitter.showStatus(in_reply_to_id);
+					if (status.getId() <= 0) break;
 					mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, status));
 					in_reply_to_id = status.getInReplyToStatusId();
 				}
@@ -328,17 +327,13 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 			if (result != null) {
 
 			}
-			if (mActivity instanceof ActionBarFragmentActivity) {
-				((ActionBarFragmentActivity) mActivity).setSupportProgressBarIndeterminateVisibility(false);
-			}
+			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);
 		}
 
 		@Override
 		protected void onPreExecute() {
-			if (mActivity instanceof ActionBarFragmentActivity) {
-				((ActionBarFragmentActivity) mActivity).setSupportProgressBarIndeterminateVisibility(true);
-			}
+			setProgressBarIndeterminateVisibility(true);	
 			super.onPreExecute();
 		}
 

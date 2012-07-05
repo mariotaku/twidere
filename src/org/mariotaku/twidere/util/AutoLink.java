@@ -141,6 +141,17 @@ public class AutoLink {
 					}
 				}
 				break;
+			} case LINK_TYPE_LINKS: {
+				final ArrayList<LinkSpec> links = new ArrayList<LinkSpec>();
+				gatherLinks(links, string, Patterns.WEB_URL, new String[] { "http://", "https://", "rtsp://" },
+							sUrlMatchFilter, null);
+				for (final LinkSpec link : links) {
+					final URLSpan[] spans = string.getSpans(link.start, link.end, URLSpan.class);
+					if (spans == null || spans.length <= 0) {
+						applyLink(link.url, link.start, link.end, string, LINK_TYPE_LINKS);
+					}
+				}
+				break;
 			}
 			case LINK_TYPE_INSTAGRAM: {
 				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
@@ -155,7 +166,6 @@ public class AutoLink {
 						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
 					}
 				}
-				// addInstagramLinks(string);
 				break;
 			}
 			case LINK_TYPE_TWITPIC: {
@@ -170,19 +180,7 @@ public class AutoLink {
 						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
 					}
 				}
-				// addTwitpicLinks(string);
 				break;
-			}
-			case LINK_TYPE_LINKS: {
-				final ArrayList<LinkSpec> links = new ArrayList<LinkSpec>();
-				gatherLinks(links, string, Patterns.WEB_URL, new String[] { "http://", "https://", "rtsp://" },
-						sUrlMatchFilter, null);
-				for (final LinkSpec link : links) {
-					final URLSpan[] spans = string.getSpans(link.start, link.end, URLSpan.class);
-					if (spans == null || spans.length <= 0) {
-						applyLink(link.url, link.start, link.end, string, LINK_TYPE_LINKS);
-					}
-				}
 			}
 			default: {
 				return;
@@ -218,22 +216,6 @@ public class AutoLink {
 		return hasMatches;
 	}
 
-	private final boolean addInstagramLinks(Spannable spannable) {
-		boolean hasMatches = false;
-		final Matcher matcher = PATTERN_INSTAGRAM.matcher(spannable);
-
-		while (matcher.find()) {
-			final int start = matcher.start(INSTAGRAM_GROUP_ALL);
-			final int end = matcher.end(INSTAGRAM_GROUP_ALL);
-			final String url = "http://instagr.am/p/" + matcher.group(INSTAGRAM_GROUP_ID) + "/media/?size=l";
-
-			applyLink(url, start, end, spannable, LINK_TYPE_IMAGES);
-			hasMatches = true;
-		}
-
-		return hasMatches;
-	}
-
 	private final boolean addMentionLinks(Spannable spannable) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_MENTION_OR_LIST.matcher(spannable);
@@ -244,22 +226,6 @@ public class AutoLink {
 			final String url = matcher.group(Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
 
 			applyLink(url, start, end, spannable, LINK_TYPE_MENTIONS);
-			hasMatches = true;
-		}
-
-		return hasMatches;
-	}
-
-	private final boolean addTwitpicLinks(Spannable spannable) {
-		boolean hasMatches = false;
-		final Matcher matcher = PATTERN_TWITPIC.matcher(spannable);
-
-		while (matcher.find()) {
-			final int start = matcher.start(TWITPIC_GROUP_ALL);
-			final int end = matcher.end(TWITPIC_GROUP_ALL);
-			final String url = "http://twitpic.com/show/large/" + matcher.group(TWITPIC_GROUP_ID);
-
-			applyLink(url, start, end, spannable, LINK_TYPE_IMAGES);
 			hasMatches = true;
 		}
 
