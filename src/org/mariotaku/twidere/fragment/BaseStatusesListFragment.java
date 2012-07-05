@@ -11,7 +11,6 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -105,7 +104,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		super.onActivityCreated(savedInstanceState);
 		mAsyncTaskManager = AsyncTaskManager.getInstance();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mServiceInterface = ((TwidereApplication) getApplication()).getServiceInterface();
+		mServiceInterface = getApplication().getServiceInterface();
 		setListAdapter(getListAdapter());
 		setShowIndicator(false);
 		mListView = getListView();

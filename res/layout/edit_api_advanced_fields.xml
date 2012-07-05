@@ -37,20 +37,6 @@
 	<TextView
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:text="@string/signing_rest_base_url"
-		android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-	<EditText
-		android:id="@+id/signing_rest_base_url"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:ems="10"
-		android:inputType="textUri"
-		android:singleLine="true"/>
-
-	<TextView
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
 		android:text="@string/oauth_base_url"
 		android:textAppearance="?android:attr/textAppearanceSmall"/>
 
@@ -65,6 +51,21 @@
 	<TextView
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
+		android:text="@string/signing_rest_base_url"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+	<EditText
+		android:id="@+id/signing_rest_base_url"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:ems="10"
+		android:enabled="false"
+		android:inputType="textUri"
+		android:singleLine="true"/>
+
+	<TextView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
 		android:text="@string/signing_oauth_base_url"
 		android:textAppearance="?android:attr/textAppearanceSmall"/>
 
@@ -73,6 +74,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:ems="10"
+		android:enabled="false"
 		android:inputType="textUri"
 		android:singleLine="true"/>
 

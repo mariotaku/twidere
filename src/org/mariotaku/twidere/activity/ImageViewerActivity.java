@@ -236,11 +236,11 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				if (mCacheDir == null || !mCacheDir.exists()) {
 					init();
 				}
-				final File f = new File(mCacheDir, getURLFilename(url));
+				final File cache_file = new File(mCacheDir, getURLFilename(url));
 
 				// from SD cache
-				final Bitmap b = decodeFile(f);
-				if (b != null) return b;
+				final Bitmap cached_bitmap = decodeFile(cache_file);
+				if (cached_bitmap != null) return cached_bitmap;
 
 				// from web
 				try {
@@ -254,14 +254,14 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					conn.setReadTimeout(30000);
 					conn.setInstanceFollowRedirects(true);
 					final InputStream is = conn.getInputStream();
-					final OutputStream os = new FileOutputStream(f);
+					final OutputStream os = new FileOutputStream(cache_file);
 					copyStream(is, os);
 					os.close();
-					bitmap = decodeFile(f);
+					bitmap = decodeFile(cache_file);
 					if (bitmap == null) {
 						// The file is corrupted, so we remove it from cache.
-						if (f.isFile()) {
-							f.delete();
+						if (cache_file.isFile()) {
+							cache_file.delete();
 						}
 					}
 					return bitmap;

@@ -1103,8 +1103,20 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues makeMessagesContentValues(DirectMessage message, long account_id) {
+		if (message == null || message.getId() <= 0) return null;
+		final User sender = message.getSender();
+		final User recipient = message.getRecipient();
 		final ContentValues values = new ContentValues();
 		values.put(Messages.ACCOUNT_ID, account_id);
+		values.put(Messages.MESSAGE_ID, message.getId());
+		values.put(Messages.SENDER_ID, sender.getId());
+		values.put(Messages.SENDER_NAME, sender.getName());
+		values.put(Messages.SENDER_SCREEN_NAME, sender.getScreenName());
+		values.put(Messages.SENDER_PROFILE_IMAGE_URL, String.valueOf(sender.getProfileImageURL()));
+		values.put(Messages.RECIPIENT_ID, recipient.getId());
+		values.put(Messages.RECIPIENT_NAME, recipient.getName());
+		values.put(Messages.RECIPIENT_SCREEN_NAME, recipient.getScreenName());
+		values.put(Messages.RECIPIENT_PROFILE_IMAGE_URL, String.valueOf(recipient.getProfileImageURL()));
 		values.put(Messages.TEXT, message.getText());
 		values.put(Messages.STATE, message.getSenderId() == account_id ? Messages.STATE_OUTGOING
 				: Messages.STATE_INCOMING);
@@ -1467,16 +1479,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void showErrorToast(Context context, Exception e, boolean long_message) {
-		final String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
-				.getString(R.string.error_unknown_error);
-		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
-		final Toast toast = Toast.makeText(context, message, length);
-		toast.show();
-	}
-
-	public static void showErrorToast(Context context, long account_id, String operation, Exception e,
-			boolean long_message) {
-		final String message = e != null ? context.getString(R.string.error_message, e.getMessage()) : context
+		final String message = e != null ? context.getString(R.string.error_message, e.getLocalizedMessage()) : context
 				.getString(R.string.error_unknown_error);
 		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
 		final Toast toast = Toast.makeText(context, message, length);

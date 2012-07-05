@@ -6,13 +6,11 @@ import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
 import java.util.List;
 
-import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ParcelableStatus;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -68,7 +66,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mServiceInterface = ((TwidereApplication) getApplication()).getServiceInterface();
+		mServiceInterface = getApplication().getServiceInterface();
 		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		Bundle bundle = getArguments();
@@ -78,8 +76,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		final long account_id = bundle.getLong(INTENT_KEY_ACCOUNT_ID, INVALID_ID);
 		final long status_id = bundle.getLong(INTENT_KEY_STATUS_ID, INVALID_ID);
 
-		final ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
-				.getProfileImageLoader();
+		final ProfileImageLoader imageloader = getApplication().getProfileImageLoader();
 		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
 			mShowConversationTask.cancel(true);
 		}
@@ -312,7 +309,9 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 				long in_reply_to_id = status.getInReplyToStatusId();
 				while (in_reply_to_id != -1) {
 					status = twitter.showStatus(in_reply_to_id);
-					if (status.getId() <= 0) break;
+					if (status.getId() <= 0) {
+						break;
+					}
 					mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, status));
 					in_reply_to_id = status.getInReplyToStatusId();
 				}
@@ -333,7 +332,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 
 		@Override
 		protected void onPreExecute() {
-			setProgressBarIndeterminateVisibility(true);	
+			setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}
 

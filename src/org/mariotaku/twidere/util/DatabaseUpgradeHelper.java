@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public final class DatabaseUpgradeHelper {
 				return;
 			}
 		}
-
+		
 		final List<ContentValues> values_list = new ArrayList<ContentValues>();
 
 		while (!cur.isAfterLast()) {
@@ -63,7 +64,7 @@ public final class DatabaseUpgradeHelper {
 
 				if (ArrayUtils.contains(old_cols, new_col)) {
 					final String old_type = getTypeString(db, table, new_col);
-					final boolean compatible = isTypeCompatible(old_type, new_type);
+					final boolean compatible = isTypeCompatible(old_type, new_type, false);
 					if (compatible && idx > -1) {
 						switch (getTypeInt(new_type)) {
 							case FIELD_TYPE_INTEGER:
@@ -135,9 +136,13 @@ public final class DatabaseUpgradeHelper {
 		final Cursor cur = db.rawQuery(builder.toString(), null);
 		if (cur == null) return null;
 
-		cur.moveToFirst();
-		for (int i = 0; i < types.length; i++) {
-			types[i] = cur.getString(i);
+		if (cur.getCount() > 0) {
+			cur.moveToFirst();
+			for (int i = 0; i < types.length; i++) {
+				types[i] = cur.getString(i);
+			}
+		} else {
+			Arrays.fill(types, "NULL");
 		}
 		cur.close();
 		return types;
@@ -172,12 +177,15 @@ public final class DatabaseUpgradeHelper {
 
 	}
 
-	private static boolean isTypeCompatible(String old_type, String new_type) {
+	private static boolean isTypeCompatible(String old_type, String new_type, boolean treat_null_as_compatible) {
 		if (old_type != null && new_type != null) {
 			final int old_idx = old_type.contains("(") ? old_type.indexOf("(") : old_type.indexOf(" ");
 			final int new_idx = new_type.contains("(") ? new_type.indexOf("(") : new_type.indexOf(" ");
 			final String old_type_main = old_idx > -1 ? old_type.substring(0, old_idx) : old_type;
 			final String new_type_main = new_idx > -1 ? new_type.substring(0, new_idx) : new_type;
+			if(treat_null_as_compatible) {
+				return "NULL".equalsIgnoreCase(old_type_main) || "NULL".equalsIgnoreCase(new_type_main) || old_type_main.equalsIgnoreCase(new_type_main); 
+			}
 			return old_type_main.equalsIgnoreCase(new_type_main);
 		}
 		return false;
@@ -198,7 +206,7 @@ public final class DatabaseUpgradeHelper {
 		}
 		final Set<String> old_keyset = old_map.keySet();
 		for (final String col_name : old_keyset) {
-			if (!isTypeCompatible(old_map.get(col_name), new_map.get(col_name))) return true;
+			if (!isTypeCompatible(old_map.get(col_name), new_map.get(col_name), true)) return true;
 		}
 		return false;
 	}

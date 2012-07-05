@@ -595,6 +595,7 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(responses);
 			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
 					responses.size() > 0));
+			mGetHomeTimelineTaskId = -1;
 		}
 
 	}
@@ -619,6 +620,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(List<GetStatusesTask.AccountResponse> responses) {
 			super.onPostExecute(responses);
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, responses.size() > 0));
+			mGetMentionsTaskId = -1;
 		}
 
 	}
@@ -863,25 +865,17 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(List<AccountResponse> responses) {
-			synchronized (this) {
-				manager.add(new StoreStatusesTask(context, manager, responses, uri), true);
-			}
-			super.onPostExecute(responses);
-		}
-
-		@Override
-		protected void onPreExecute() {
 			switch (getTableId(uri)) {
 				case URI_STATUSES: {
-					mStoreStatusesFinished = false;
+					manager.add(new StoreHomeTimelineTask(context, manager, responses), true);
 					break;
 				}
 				case URI_MENTIONS: {
-					mStoreMentionsFinished = false;
+					manager.add(new StoreMentionsTask(context, manager, responses), true);
 					break;
 				}
 			}
-			super.onPreExecute();
+			super.onPostExecute(responses);
 		}
 
 		private class AccountResponse {
@@ -895,6 +889,34 @@ public class TwidereService extends Service implements Constants {
 				this.responselist = responselist;
 
 			}
+		}
+
+		private class StoreHomeTimelineTask extends StoreStatusesTask {
+
+			public StoreHomeTimelineTask(Context context, AsyncTaskManager manager, List<AccountResponse> result) {
+				super(context, manager, result, Statuses.CONTENT_URI);
+			}
+
+			@Override
+			protected void onPostExecute(Boolean succeed) {
+				mStoreStatusesFinished = true;
+				super.onPostExecute(succeed);
+			}
+
+		}
+
+		private class StoreMentionsTask extends StoreStatusesTask {
+
+			public StoreMentionsTask(Context context, AsyncTaskManager manager, List<AccountResponse> result) {
+				super(context, manager, result, Statuses.CONTENT_URI);
+			}
+
+			@Override
+			protected void onPostExecute(Boolean succeed) {
+				mStoreMentionsFinished = true;
+				super.onPostExecute(succeed);
+			}
+
 		}
 
 		private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, Boolean> {
@@ -1007,16 +1029,6 @@ public class TwidereService extends Service implements Constants {
 			protected void onPostExecute(Boolean succeed) {
 				if (succeed) {
 					notifyForUpdatedUri(context, uri);
-				}
-				switch (getTableId(uri)) {
-					case URI_STATUSES: {
-						mStoreStatusesFinished = true;
-						break;
-					}
-					case URI_MENTIONS: {
-						mStoreMentionsFinished = true;
-						break;
-					}
 				}
 				super.onPostExecute(succeed);
 			}

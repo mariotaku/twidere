@@ -141,10 +141,11 @@ public class AutoLink {
 					}
 				}
 				break;
-			} case LINK_TYPE_LINKS: {
+			}
+			case LINK_TYPE_LINKS: {
 				final ArrayList<LinkSpec> links = new ArrayList<LinkSpec>();
 				gatherLinks(links, string, Patterns.WEB_URL, new String[] { "http://", "https://", "rtsp://" },
-							sUrlMatchFilter, null);
+						sUrlMatchFilter, null);
 				for (final LinkSpec link : links) {
 					final URLSpan[] spans = string.getSpans(link.start, link.end, URLSpan.class);
 					if (spans == null || spans.length <= 0) {
