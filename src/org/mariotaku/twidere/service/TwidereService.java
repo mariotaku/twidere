@@ -588,10 +588,9 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<GetStatusesTask.AccountResponse> responses) {
+		protected void onPostExecute(List<StatusesResponse> responses) {
 			super.onPostExecute(responses);
-			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
-					responses.size() > 0));
+			mAsyncTaskManager.add(new StoreHomeTimelineTask(responses), true);
 			mGetHomeTimelineTaskId = -1;
 		}
 
@@ -614,229 +613,149 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<GetStatusesTask.AccountResponse> responses) {
+		protected void onPostExecute(List<StatusesResponse> responses) {
 			super.onPostExecute(responses);
-			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, responses.size() > 0));
+			mAsyncTaskManager.add(new StoreMentionsTask(responses), true);
 			mGetMentionsTaskId = -1;
 		}
 
 	}
+	
+	private class StoreHomeTimelineTask extends StoreStatusesTask {
 
-	private abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<GetStatusesTask.AccountResponse>> {
+		public StoreHomeTimelineTask(List<StatusesResponse> result) {
+			super(result, Statuses.CONTENT_URI);
+		}
 
-		private long[] account_ids, max_ids;
+		@Override
+		protected void onPostExecute(Boolean succeed) {
+			mStoreStatusesFinished = true;
+			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
+				succeed != null && succeed));
+			super.onPostExecute(succeed);
+		}
 
+	}
+
+	private class StoreMentionsTask extends StoreStatusesTask {
+
+		public StoreMentionsTask(List<StatusesResponse> result) {
+			super(result, Mentions.CONTENT_URI);
+		}
+
+		@Override
+		protected void onPostExecute(Boolean succeed) {
+			mStoreMentionsFinished = true;
+			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
+				succeed != null && succeed));
+			super.onPostExecute(succeed);
+		}
+
+	}
+
+	private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, Boolean> {
+
+		private final List<StatusesResponse> responses;
 		private final Uri uri;
 
-		public GetStatusesTask(Uri uri, long[] account_ids, long[] max_ids) {
+		public StoreStatusesTask(List<StatusesResponse> result, Uri uri) {
 			super(TwidereService.this, mAsyncTaskManager);
+			responses = result;
 			this.uri = uri;
-			this.account_ids = account_ids;
-			this.max_ids = max_ids;
-		}
-
-		public abstract ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
-				throws TwitterException;
-
-		public abstract Twitter getTwitter(Context context, long account_id, boolean include_entities);
-
-		@Override
-		protected List<AccountResponse> doInBackground(Void... params) {
-
-			final List<AccountResponse> result = new ArrayList<AccountResponse>();
-
-			if (account_ids == null) return result;
-
-			final boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
-
-			int idx = 0;
-			final SharedPreferences prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final int load_item_limit = prefs
-					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-			for (final long account_id : account_ids) {
-				final Twitter twitter = getTwitter(TwidereService.this, account_id, true);
-				if (twitter != null) {
-					try {
-						final Paging paging = new Paging();
-						paging.setCount(load_item_limit);
-						long max_id = -1;
-						if (max_ids_valid && max_ids[idx] > 0) {
-							max_id = max_ids[idx];
-							paging.setMaxId(max_id);
-						}
-						final ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
-
-						if (statuses != null) {
-							result.add(new AccountResponse(account_id, max_id, statuses));
-						}
-					} catch (final TwitterException e) {
-						e.printStackTrace();
-					}
-				}
-				idx++;
-			}
-			return result;
 		}
 
 		@Override
-		protected void onPostExecute(List<AccountResponse> responses) {
-			switch (getTableId(uri)) {
-				case URI_STATUSES: {
-					mAsyncTaskManager.add(new StoreHomeTimelineTask(responses), true);
-					break;
+		protected Boolean doInBackground(Void... args) {
+			final ContentResolver resolver = getContentResolver();
+			boolean succeed = false;
+			final Uri query_uri = buildQueryUri(uri, false);
+
+			for (final StatusesResponse response : responses) {
+				final long account_id = response.account_id;
+				final ResponseList<twitter4j.Status> statuses = response.responselist;
+				final Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id,
+						null, null);
+				boolean no_items_before = false;
+				if (cur != null) {
+					no_items_before = cur.getCount() <= 0;
+					cur.close();
 				}
-				case URI_MENTIONS: {
-					mAsyncTaskManager.add(new StoreMentionsTask(responses), true);
-					break;
+				if (statuses == null || statuses.size() <= 0) {
+					continue;
 				}
-			}
-			super.onPostExecute(responses);
-		}
+				final List<ContentValues> values_list = new ArrayList<ContentValues>(), cached_users_list = new ArrayList<ContentValues>();
+				final List<Long> status_ids = new ArrayList<Long>(), retweet_ids = new ArrayList<Long>(), user_ids = new ArrayList<Long>();
 
-		private class AccountResponse {
+				long min_id = -1;
 
-			public final long account_id, max_id;
-			public final ResponseList<twitter4j.Status> responselist;
-
-			public AccountResponse(long account_id, long max_id, ResponseList<twitter4j.Status> responselist) {
-				this.account_id = account_id;
-				this.max_id = max_id;
-				this.responselist = responselist;
-
-			}
-		}
-
-		private class StoreHomeTimelineTask extends StoreStatusesTask {
-
-			public StoreHomeTimelineTask(List<AccountResponse> result) {
-				super(result, Statuses.CONTENT_URI);
-			}
-
-			@Override
-			protected void onPostExecute(Boolean succeed) {
-				mStoreStatusesFinished = true;
-				super.onPostExecute(succeed);
-			}
-
-		}
-
-		private class StoreMentionsTask extends StoreStatusesTask {
-
-			public StoreMentionsTask(List<AccountResponse> result) {
-				super(result, Statuses.CONTENT_URI);
-			}
-
-			@Override
-			protected void onPostExecute(Boolean succeed) {
-				mStoreMentionsFinished = true;
-				super.onPostExecute(succeed);
-			}
-
-		}
-
-		private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, Boolean> {
-
-			private final List<AccountResponse> responses;
-			private final Uri uri;
-
-			public StoreStatusesTask(List<AccountResponse> result, Uri uri) {
-				super(TwidereService.this, mAsyncTaskManager);
-				responses = result;
-				this.uri = uri;
-			}
-
-			@Override
-			protected Boolean doInBackground(Void... args) {
-				final ContentResolver resolver = getContentResolver();
-				boolean succeed = false;
-				final Uri query_uri = buildQueryUri(uri, false);
-
-				for (final AccountResponse response : responses) {
-					final long account_id = response.account_id;
-					final ResponseList<twitter4j.Status> statuses = response.responselist;
-					final Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id,
-							null, null);
-					boolean no_items_before = false;
-					if (cur != null) {
-						no_items_before = cur.getCount() <= 0;
-						cur.close();
-					}
-					if (statuses == null || statuses.size() <= 0) {
+				for (final twitter4j.Status status : statuses) {
+					if (status == null) {
 						continue;
 					}
-					final List<ContentValues> values_list = new ArrayList<ContentValues>(), cached_users_list = new ArrayList<ContentValues>();
-					final List<Long> status_ids = new ArrayList<Long>(), retweet_ids = new ArrayList<Long>(), user_ids = new ArrayList<Long>();
+					final User user = status.getUser();
+					final long user_id = user.getId();
+					final long status_id = status.getId();
+					final long retweet_id = status.getRetweetedStatus() != null ? status.getRetweetedStatus()
+							.getId() : -1;
 
-					long min_id = -1;
+					user_ids.add(user_id);
+					if (!user_ids.contains(user_id)) {
+						cached_users_list.add(makeCachedUsersContentValues(user));
+					}
+					status_ids.add(status_id);
 
-					for (final twitter4j.Status status : statuses) {
-						if (status == null) {
-							continue;
+					if ((retweet_id <= 0 || !retweet_ids.contains(retweet_id)) && !retweet_ids.contains(status_id)) {
+						if (status_id < min_id || min_id == -1) {
+							min_id = status_id;
 						}
-						final User user = status.getUser();
-						final long user_id = user.getId();
-						final long status_id = status.getId();
-						final long retweet_id = status.getRetweetedStatus() != null ? status.getRetweetedStatus()
-								.getId() : -1;
-
-						user_ids.add(user_id);
-						if (!user_ids.contains(user_id)) {
-							cached_users_list.add(makeCachedUsersContentValues(user));
+						if (retweet_id > 0) {
+							retweet_ids.add(retweet_id);
 						}
-						status_ids.add(status_id);
-
-						if ((retweet_id <= 0 || !retweet_ids.contains(retweet_id)) && !retweet_ids.contains(status_id)) {
-							if (status_id < min_id || min_id == -1) {
-								min_id = status_id;
-							}
-							if (retweet_id > 0) {
-								retweet_ids.add(retweet_id);
-							}
-							values_list.add(makeStatusesContentValues(status, account_id));
-						}
-
+						values_list.add(makeStatusesContentValues(status, account_id));
 					}
 
-					{
-						resolver.delete(CachedUsers.CONTENT_URI,
-								CachedUsers.USER_ID + " IN (" + ListUtils.buildString(user_ids, ',', true) + " )", null);
-						resolver.bulkInsert(CachedUsers.CONTENT_URI,
-								cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
-					}
-
-					int rows_deleted = -1;
-
-					// Delete all rows conflicting before new data inserted.
-					{
-						final StringBuilder where = new StringBuilder();
-						where.append(Statuses.ACCOUNT_ID + " = " + account_id);
-						where.append(" AND ");
-						where.append("(");
-						where.append(buildInWhereClause(Statuses.STATUS_ID, status_ids));
-						where.append(" OR ");
-						where.append(buildInWhereClause(Statuses.RETWEET_ID, status_ids));
-						where.append(")");
-						rows_deleted = resolver.delete(query_uri, where.toString(), null);
-					}
-
-					// Insert previously fetched items.
-					resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
-
-					// No row deleted, so I will insert a gap.
-					final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
-							|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
-					if (insert_gap) {
-						final ContentValues values = new ContentValues();
-						values.put(Statuses.IS_GAP, 1);
-						final StringBuilder where = new StringBuilder();
-						where.append(Statuses.ACCOUNT_ID + "=" + account_id);
-						where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
-						resolver.update(query_uri, values, where.toString(), null);
-					}
-					succeed = true;
 				}
-				return succeed;
+
+				{
+					resolver.delete(CachedUsers.CONTENT_URI,
+							CachedUsers.USER_ID + " IN (" + ListUtils.buildString(user_ids, ',', true) + " )", null);
+					resolver.bulkInsert(CachedUsers.CONTENT_URI,
+							cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
+				}
+
+				int rows_deleted = -1;
+
+				// Delete all rows conflicting before new data inserted.
+				{
+					final StringBuilder where = new StringBuilder();
+					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
+					where.append(" AND ");
+					where.append("(");
+					where.append(buildInWhereClause(Statuses.STATUS_ID, status_ids));
+					where.append(" OR ");
+					where.append(buildInWhereClause(Statuses.RETWEET_ID, status_ids));
+					where.append(")");
+					rows_deleted = resolver.delete(query_uri, where.toString(), null);
+				}
+
+				// Insert previously fetched items.
+				resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
+
+				// No row deleted, so I will insert a gap.
+				final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
+						|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
+				if (insert_gap) {
+					final ContentValues values = new ContentValues();
+					values.put(Statuses.IS_GAP, 1);
+					final StringBuilder where = new StringBuilder();
+					where.append(Statuses.ACCOUNT_ID + "=" + account_id);
+					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
+					resolver.update(query_uri, values, where.toString(), null);
+				}
+				succeed = true;
 			}
+			return succeed;
+		}
 
 			@Override
 			protected void onPostExecute(Boolean succeed) {
@@ -863,9 +782,80 @@ public class TwidereService extends Service implements Constants {
 			}
 
 		}
+	
 
+	private abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<StatusesResponse>> {
+
+		private long[] account_ids, max_ids;
+
+		private final Uri uri;
+
+		public GetStatusesTask(Uri uri, long[] account_ids, long[] max_ids) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.uri = uri;
+			this.account_ids = account_ids;
+			this.max_ids = max_ids;
+		}
+
+		public abstract ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
+				throws TwitterException;
+
+		public abstract Twitter getTwitter(Context context, long account_id, boolean include_entities);
+
+		@Override
+		protected List<StatusesResponse> doInBackground(Void... params) {
+
+			final List<StatusesResponse> result = new ArrayList<StatusesResponse>();
+
+			if (account_ids == null) return result;
+
+			final boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
+
+			int idx = 0;
+			final SharedPreferences prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			final int load_item_limit = prefs
+					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
+			for (final long account_id : account_ids) {
+				final Twitter twitter = getTwitter(TwidereService.this, account_id, true);
+				if (twitter != null) {
+					try {
+						final Paging paging = new Paging();
+						paging.setCount(load_item_limit);
+						long max_id = -1;
+						if (max_ids_valid && max_ids[idx] > 0) {
+							max_id = max_ids[idx];
+							paging.setMaxId(max_id);
+						}
+						final ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
+
+						if (statuses != null) {
+							result.add(new StatusesResponse(account_id, max_id, statuses));
+						}
+					} catch (final TwitterException e) {
+						e.printStackTrace();
+					}
+				}
+				idx++;
+			}
+			return result;
+		}
+	
 	}
 
+	private static final class StatusesResponse {
+
+		public final long account_id, max_id;
+		public final ResponseList<twitter4j.Status> responselist;
+
+		public StatusesResponse(long account_id, long max_id, ResponseList<twitter4j.Status> responselist) {
+			this.account_id = account_id;
+			this.max_id = max_id;
+			this.responselist = responselist;
+
+		}
+	}
+	
+	
 	private class ReportSpamTask extends ManagedAsyncTask<Void, Void, UserResponse> {
 
 		private long account_id;
@@ -984,99 +974,98 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		public int cancelRetweet(long account_id, long status_id) throws RemoteException {
+		public int cancelRetweet(long account_id, long status_id) {
 			return mService.get().cancelRetweet(account_id, status_id);
 		}
 
 		@Override
-		public int createBlock(long account_id, long user_id) throws RemoteException {
+		public int createBlock(long account_id, long user_id) {
 			return mService.get().createBlock(account_id, user_id);
 		}
 
 		@Override
-		public int createFavorite(long account_id, long status_id) throws RemoteException {
+		public int createFavorite(long account_id, long status_id) {
 			return mService.get().createFavorite(account_id, status_id);
 		}
 
 		@Override
-		public int createFriendship(long account_id, long user_id) throws RemoteException {
+		public int createFriendship(long account_id, long user_id) {
 			return mService.get().createFriendship(account_id, user_id);
 		}
 
 		@Override
-		public int destroyBlock(long account_id, long user_id) throws RemoteException {
+		public int destroyBlock(long account_id, long user_id) {
 			return mService.get().destroyBlock(account_id, user_id);
 		}
 
 		@Override
-		public int destroyFavorite(long account_id, long status_id) throws RemoteException {
+		public int destroyFavorite(long account_id, long status_id) {
 			return mService.get().destroyFavorite(account_id, status_id);
 		}
 
 		@Override
-		public int destroyFriendship(long account_id, long user_id) throws RemoteException {
+		public int destroyFriendship(long account_id, long user_id) {
 			return mService.get().destroyFriendship(account_id, user_id);
 		}
 
 		@Override
-		public int destroyStatus(long account_id, long status_id) throws RemoteException {
+		public int destroyStatus(long account_id, long status_id) {
 			return mService.get().destroyStatus(account_id, status_id);
 		}
 
 		@Override
-		public int getHomeTimeline(long[] account_ids, long[] max_ids) throws RemoteException {
+		public int getHomeTimeline(long[] account_ids, long[] max_ids) {
 			return mService.get().getHomeTimeline(account_ids, max_ids);
 		}
 
 		@Override
-		public int getMentions(long[] account_ids, long[] max_ids) throws RemoteException {
+		public int getMentions(long[] account_ids, long[] max_ids) {
 			return mService.get().getMentions(account_ids, max_ids);
 		}
 
 		@Override
-		public boolean hasActivatedTask() throws RemoteException {
+		public boolean hasActivatedTask() {
 			return mService.get().hasActivatedTask();
 		}
 
 		@Override
-		public boolean isHomeTimelineRefreshing() throws RemoteException {
+		public boolean isHomeTimelineRefreshing() {
 			return mService.get().isHomeTimelineRefreshing();
 		}
 
 		@Override
-		public boolean isMentionsRefreshing() throws RemoteException {
+		public boolean isMentionsRefreshing() {
 			return mService.get().isMentionsRefreshing();
 		}
 
 		@Override
-		public int reportSpam(long account_id, long user_id) throws RemoteException {
+		public int reportSpam(long account_id, long user_id) {
 			return mService.get().reportSpam(account_id, user_id);
 		}
 
 		@Override
-		public int retweetStatus(long account_id, long status_id) throws RemoteException {
+		public int retweetStatus(long account_id, long status_id) {
 			return mService.get().retweetStatus(account_id, status_id);
 		}
 
 		@Override
-		public boolean test() throws RemoteException {
+		public boolean test() {
 			return true;
 		}
 
 		@Override
-		public int updateProfile(long account_id, String name, String url, String location, String description)
-				throws RemoteException {
+		public int updateProfile(long account_id, String name, String url, String location, String description) {
 			return mService.get().updateProfile(account_id, name, url, location, description);
 		}
 
 		@Override
-		public int updateProfileImage(long account_id, Uri image_uri, boolean delete_image) throws RemoteException {
+		public int updateProfileImage(long account_id, Uri image_uri, boolean delete_image) {
 			return mService.get().updateProfileImage(account_id, image_uri, delete_image);
 		}
 
 		@Override
 		public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to,
-				boolean delete_image) throws RemoteException {
+				boolean delete_image) {
 			return mService.get().updateStatus(account_ids, content, location, image_uri, in_reply_to, delete_image);
 
 		}
