@@ -41,6 +41,17 @@ public class ParcelableDirectMessage implements Parcelable {
 			return new ParcelableDirectMessage[size];
 		}
 	};
+	
+	public static final Comparator<ParcelableDirectMessage> MESSAGE_ID_COMPARATOR = new Comparator<ParcelableDirectMessage>() {
+
+		@Override
+		public int compare(ParcelableDirectMessage object1, ParcelableDirectMessage object2) {
+			final long diff = object2.message_id - object1.message_id;
+			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+			return (int) diff;
+		}
+	};
 
 	public final long account_id, message_id, message_timestamp;
 	public final long sender_id, recipient_id;

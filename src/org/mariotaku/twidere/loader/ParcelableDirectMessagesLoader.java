@@ -37,22 +37,23 @@ import twitter4j.ResponseList;
 import twitter4j.Paging;
 import android.content.SharedPreferences;
 import twitter4j.TwitterException;
+import org.mariotaku.twidere.model.ParcelableDirectMessage;
 
-public abstract class DirectMessagesLoader extends AsyncTaskLoader<List<DirectMessage>> implements Constants {
+public abstract class ParcelableDirectMessagesLoader extends AsyncTaskLoader<List<ParcelableDirectMessage>> implements Constants {
 
 	private final Twitter mTwitter;
 	private final long mAccountId, mMaxId;
-	private final List<DirectMessage> mData;
+	private final List<ParcelableDirectMessage> mData;
 
-	public DirectMessagesLoader(Context context, long account_id, long max_id, List<DirectMessage> data) {
+	public ParcelableDirectMessagesLoader(Context context, long account_id, long max_id, List<ParcelableDirectMessage> data) {
 		super(context);
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
 		mMaxId = max_id;
-		mData = data != null ? data : new ArrayList<DirectMessage>();
+		mData = data != null ? data : new ArrayList<ParcelableDirectMessage>();
 	}
 	
-	public static final Comparator<DirectMessage> TWITTER4J_DIRECT_MESSAGE_COMPARATOR = new Comparator<DirectMessage>() {
+	public static final Comparator<DirectMessage> TWITTER4J_MESSAGE_ID_COMPARATOR = new Comparator<DirectMessage>() {
 
 		@Override
 		public int compare(DirectMessage object1, DirectMessage object2) {
@@ -64,15 +65,15 @@ public abstract class DirectMessagesLoader extends AsyncTaskLoader<List<DirectMe
 	};
 
 	public boolean containsStatus(long message_id) {
-		for (final DirectMessage message : mData) {
-			if (message.getId() == message_id) return true;
+		for (final ParcelableDirectMessage message : mData) {
+			if (message.message_id == message_id) return true;
 		}
 		return false;
 	}
 
 	public boolean deleteStatus(long message_id) {
-		for (final DirectMessage message : mData) {
-			if (message.getId() == message_id) return mData.remove(message);
+		for (final ParcelableDirectMessage message : mData) {
+			if (message.message_id == message_id) return mData.remove(message);
 		}
 		return false;
 	}
@@ -81,7 +82,7 @@ public abstract class DirectMessagesLoader extends AsyncTaskLoader<List<DirectMe
 		return mAccountId;
 	}
 
-	public List<DirectMessage> getData() {
+	public List<ParcelableDirectMessage> getData() {
 		return mData;
 	}
 
@@ -92,8 +93,8 @@ public abstract class DirectMessagesLoader extends AsyncTaskLoader<List<DirectMe
 	public abstract ResponseList<DirectMessage> getDirectMessages(Paging paging) throws TwitterException;
 
 	@Override
-	public List<DirectMessage> loadInBackground(){
-		ResponseList<DirectMessage> statuses = null;
+	public List<ParcelableDirectMessage> loadInBackground(){
+		ResponseList<DirectMessage> messages = null;
 		try {
 			final Paging paging = new Paging();
 			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
@@ -104,14 +105,23 @@ public abstract class DirectMessagesLoader extends AsyncTaskLoader<List<DirectMe
 			if (mMaxId > 0) {
 				paging.setMaxId(mMaxId);
 			}
-			statuses = getDirectMessages(paging);
+			messages = getDirectMessages(paging);
 		} catch (final TwitterException e) {
 			e.printStackTrace();
 		}
-		if (statuses != null) {
-			mData.addAll(statuses);			
-		}
-		Collections.sort(mData, TWITTER4J_DIRECT_MESSAGE_COMPARATOR);
+		if (messages != null) {
+			Collections.sort(messages, TWITTER4J_MESSAGE_ID_COMPARATOR);
+			int deleted_count = 0;
+			for (int i = 0; i < messages.size(); i++) {
+				final DirectMessage message = messages.get(i);			
+				if (deleteStatus(message.getId())) {
+					deleted_count++;
+				}
+				mData.add(new ParcelableDirectMessage(message, mAccountId, i == messages.size() - 1 ? 
+											  deleted_count > 1 : false));
+			}
+		}		
+		Collections.sort(mData, ParcelableDirectMessage.MESSAGE_ID_COMPARATOR);
 		return mData;
 		
 		

@@ -75,9 +75,9 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		}
 		if (statuses != null) {
 			Collections.sort(statuses, TWITTER4J_STATUS_ID_COMPARATOR);
+			int deleted_count = 0;
 			for (int i = 0; i < statuses.size(); i++) {
 				final Status status = statuses.get(i);
-				int deleted_count = 0;
 				if (deleteStatus(status.getId())) {
 					deleted_count++;
 				}

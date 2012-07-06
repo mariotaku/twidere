@@ -26,11 +26,12 @@ import twitter4j.ResponseList;
 import twitter4j.TwitterException;
 import twitter4j.Twitter;
 import android.content.Context;
+import org.mariotaku.twidere.model.ParcelableDirectMessage;
 
-public class SentDirectMessagesLoader extends DirectMessagesLoader {
+public class SentDirectMessagesLoader extends ParcelableDirectMessagesLoader {
 
 
-	public SentDirectMessagesLoader(Context context, long account_id, long max_id, List<DirectMessage> data) {
+	public SentDirectMessagesLoader(Context context, long account_id, long max_id, List<ParcelableDirectMessage> data) {
 		super(context, account_id, max_id, data);
 	}
 
