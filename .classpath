@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="output" path="bin/classes"/>
+<?xml version="1.0" encoding="UTF-8"?><classpath>
+<classpathentry kind="src" path="src"/>
+<classpathentry kind="src" path="gen"/>
+<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+<classpathentry kind="output" path="bin/classes"/>
+<classpathentry kind="lib" path="/mnt/sdcard/Projects/twidere/libs/android-preference-1.0.jar"/>
+<classpathentry kind="lib" path="/mnt/sdcard/Projects/twidere/libs/android-support-v4.jar"/>
+<classpathentry kind="lib" path="/mnt/sdcard/Projects/twidere/libs/twitter4j-core-android-2.2.5.jar"/>
 </classpath>

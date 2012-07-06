@@ -1,10 +1,29 @@
+/*
+ *				Twidere - Twitter client for Android
+ * 
+ * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.loader;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.mariotaku.twidere.util.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableStatus;
 
 import twitter4j.Query;
 import twitter4j.Tweet;
@@ -58,17 +77,13 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		}
 		if (tweets != null) {
 			Collections.sort(tweets, TWITTER4J_TWEET_ID_COMPARATOR);
-			boolean insert_gap = false;
-			int statuses_deleted = 0;
+			int deleted_count = 0;
 			for (int i = 0; i < tweets.size(); i++) {
 				final Tweet status = tweets.get(i);
 				if (deleteStatus(status.getId())) {
-					statuses_deleted++;
+					deleted_count++;
 				}
-				if (!insert_gap) {
-					insert_gap = statuses_deleted > 1;
-				}
-				data.add(new ParcelableStatus(status, account_id, i == tweets.size() - 1 ? insert_gap : false));
+				data.add(new ParcelableStatus(status, account_id, i == tweets.size() - 1 ? deleted_count > 1 : false));
 			}
 		}
 		Collections.sort(data, ParcelableStatus.STATUS_ID_COMPARATOR);

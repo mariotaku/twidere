@@ -1,3 +1,22 @@
+/*
+ *				Twidere - Twitter client for Android
+ * 
+ * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.fragment;
 
 import static android.os.Environment.getExternalStorageDirectory;
@@ -158,16 +177,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mNameView.setText(user.getName());
 		mScreenNameView.setText(user.getScreenName());
 		final String description = user.getDescription();
-		mDescriptionContainer.setVisibility(is_my_activated_account || isNullOrEmpty(description) ? View.GONE
-				: View.VISIBLE);
+		mDescriptionContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(description) ? View.VISIBLE
+				: View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final String location = user.getLocation();
-		mLocationContainer.setVisibility(is_my_activated_account || isNullOrEmpty(location) ? View.GONE : View.VISIBLE);
+		mLocationContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(location) ? View.VISIBLE : View.GONE);
 		mLocationContainer.setOnLongClickListener(this);
 		mLocationView.setText(location);
 		final String url = user.getURL() != null ? user.getURL().toString() : null;
-		mURLContainer.setVisibility(is_my_activated_account || isNullOrEmpty(url) ? View.GONE : View.VISIBLE);
+		mURLContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(url) ? View.VISIBLE : View.GONE);
 		mURLContainer.setOnLongClickListener(this);
 		mURLView.setText(url);
 		mCreatedAtView.setText(formatToLongTimeString(getActivity(), user.getCreatedAt().getTime()));

@@ -17,29 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.fragment;
+package org.mariotaku.twidere.loader;
 
 import java.util.List;
+import twitter4j.DirectMessage;
+import twitter4j.Paging;
+import twitter4j.ResponseList;
+import twitter4j.TwitterException;
+import twitter4j.Twitter;
+import android.content.Context;
 
-import org.mariotaku.twidere.loader.UserFriendsLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
+public class SentDirectMessagesLoader extends DirectMessagesLoader {
 
-import android.os.Bundle;
-import android.support.v4.content.Loader;
 
-public class UserFriendsFragment extends BaseUsersListFragment {
+	public SentDirectMessagesLoader(Context context, long account_id, long max_id, List<DirectMessage> data) {
+		super(context, account_id, max_id, data);
+	}
 
-	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance() {
-		final Bundle args = getArguments();
-		if (args != null) {
-			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			return new UserFriendsLoader(getActivity(), account_id, user_id, screen_name, max_id, getData());
-		}
-		return null;
+	public ResponseList<DirectMessage> getDirectMessages(Paging paging) throws TwitterException {
+		final Twitter twitter = getTwitter();
+		if (twitter == null) return null;
+		return twitter.getDirectMessages(paging);
 	}
 
 }

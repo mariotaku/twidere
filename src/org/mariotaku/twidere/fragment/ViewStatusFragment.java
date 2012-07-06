@@ -1,3 +1,22 @@
+/*
+ *				Twidere - Twitter client for Android
+ * 
+ * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
@@ -7,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
+import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.util.List;
 
@@ -18,10 +38,10 @@ import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AutoLink;
 import org.mariotaku.twidere.util.AutoLink.OnLinkClickListener;
-import org.mariotaku.twidere.util.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.util.StatusesCursorIndices;
+import org.mariotaku.twidere.model.StatusesCursorIndices;
 import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.Relationship;
@@ -50,13 +70,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.twitter.Extractor;
+import android.content.SharedPreferences;
 
 public class ViewStatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener,
 		OnLinkClickListener {
 
 	private long mAccountId, mStatusId;
 
-	public ServiceInterface mServiceInterface;
+	private ServiceInterface mServiceInterface;
+	private SharedPreferences mPreferences;
 	private ContentResolver mResolver;
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView;
 	private ImageView mProfileImageView;
@@ -68,6 +90,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	private FollowInfoTask mFollowInfoTask;
 	private GetStatusTask mGetStatusTask;
 	private ParcelableStatus mStatus;
+	private boolean mLoadMoreAutomatically;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -119,15 +142,20 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		final ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
 				.getProfileImageLoader();
 		imageloader.displayImage(status.profile_image_url, mProfileImageView);
-
+		if (mLoadMoreAutomatically) {
+			showFollowInfo(false);
+		} else {
+			mFollowIndicator.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-
-		mServiceInterface = ((TwidereApplication) getActivity().getApplication()).getServiceInterface();
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mServiceInterface = getApplication().getServiceInterface();
 		mResolver = getContentResolver();
 		super.onActivityCreated(savedInstanceState);
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_LOAD_MORE_AUTOMATICALLY, false);
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
@@ -427,9 +455,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		protected void onPostExecute(Response<ParcelableStatus> result) {
 			if (getActivity() == null) return;
 			if (result.value == null) {
+				showErrorToast(getActivity(), result.exception, true);
 			} else {
 				displayStatus(result.value);
-				showFollowInfo(false);
 			}
 			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);
