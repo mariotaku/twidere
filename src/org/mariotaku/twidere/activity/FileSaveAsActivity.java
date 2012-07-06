@@ -320,16 +320,17 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			final TextView view = (TextView) (convertView != null ? convertView : mInflater.inflate(
-					android.R.layout.simple_list_item_activated_1, parent, false));
+			final View view = convertView != null ? convertView : mInflater.inflate(
+					android.R.layout.simple_list_item_activated_1, parent, false);
+			final TextView text = (TextView)(view instanceof TextView ? view : view.findViewById(android.R.id.text1));
 			final File file = getItem(position);
 
-			view.setText(file.getName());
+			text.setText(file.getName());
 			final int padding = (int) (4 * mContext.getResources().getDisplayMetrics().density);
-			view.setSingleLine(true);
-			view.setEllipsize(TruncateAt.MARQUEE);
-			view.setPadding(padding, padding, position, padding);
-			view.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_folder, 0, 0, 0);
+			text.setSingleLine(true);
+			text.setEllipsize(TruncateAt.MARQUEE);
+			text.setPadding(padding, padding, position, padding);
+			text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_folder, 0, 0, 0);
 			return view;
 		}
 
