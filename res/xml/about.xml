@@ -43,12 +43,11 @@
 				android:action="android.intent.action.VIEW"
 				android:data="http://zettahub.de"/>
 		</PreferenceScreen>
-		<PreferenceScreen
-			android:title="Other Languages">
+		<PreferenceScreen android:title="Other Languages">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="http://crowdin.com/project/twidere"/>
-		</PreferenceScreen>		
+				android:data="http://crowdin.net/project/twidere"/>
+		</PreferenceScreen>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="SPECIAL THANKS TO">
 		<PreferenceScreen
