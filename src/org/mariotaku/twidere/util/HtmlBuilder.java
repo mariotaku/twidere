@@ -51,7 +51,7 @@ public class HtmlBuilder {
 		if (start < 0 || start >= string_length || end < 0 || end > string_length) {
 			if (strict)
 				throw new StringIndexOutOfBoundsException("String length = " + string_length + ", start = " + start
-						+ ", end = " + end);
+														  + ", end = " + end);
 			return;
 		}
 		for (int i = 0; i < links.size(); i++) {
@@ -65,22 +65,22 @@ public class HtmlBuilder {
 	}
 
 	public String build() {
-		if (links.size() == 0) return string;
+		if (links.size() == 0) return escapeHTMLString(string);
 		Collections.sort(links, LinkSpec.COMPARATOR);
 		final StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < links.size(); i++) {
 			final LinkSpec spec = links.get(i);
 			if (i == 0) {
-				builder.append(string.substring(0, spec.start));
+				builder.append(escapeHTMLString(string.substring(0, spec.start)));
 			}
 			if (i > 0) {
-				builder.append(string.substring(links.get(i - 1).end, spec.start));
+				builder.append(escapeHTMLString(string.substring(links.get(i - 1).end, spec.start)));
 			}
 			builder.append("<a href=\"" + spec.link + "\">");
-			builder.append(string.substring(spec.start, spec.end));
+			builder.append(escapeHTMLString(string.substring(spec.start, spec.end)));
 			builder.append("</a>");
 			if (i == links.size() - 1) {
-				builder.append(string.substring(spec.end, string.length()));
+				builder.append(escapeHTMLString(string.substring(spec.end, string.length())));
 			}
 		}
 		return builder.toString();
@@ -109,6 +109,65 @@ public class HtmlBuilder {
 		public String toString() {
 			return "LinkSpec(" + link + ", " + start + ", " + end + ")";
 		}
+	}
+
+
+	private static String escapeHTMLString(String string) {
+		final StringBuffer sb = new StringBuffer(string.length());
+		// true if last char was blank
+		boolean lastWasBlankChar = false;
+		final int len = string.length();
+		for (int i = 0; i < len; i++) {
+			final char c = string.charAt(i);
+			if (c == ' ') {
+				// blank gets extra work,
+				// this solves the problem you get if you replace all
+				// blanks with &nbsp;, if you do that you loss
+				// word breaking
+				if (lastWasBlankChar) {
+					lastWasBlankChar = false;
+					sb.append("&nbsp;");
+                } else {
+					lastWasBlankChar = true;
+					sb.append(' ');
+                }
+            } else {
+				lastWasBlankChar = false;
+				// HTML Special Chars
+				switch (c) {
+					case '"':
+						sb.append("&quot;");
+						break;
+					case '&':
+						sb.append("&amp;");
+						break;
+					case '<':
+						sb.append("&lt;");
+						break;
+					case '>':
+						sb.append("&gt;");
+						break;
+					case '\n':
+						sb.append("<br/>");
+						break;
+					default:
+						final int ci = 0xffff & c;
+						if (ci < 160)
+						// nothing special only 7 Bit
+							sb.append(c);
+						else {
+							// Not 7 Bit use the unicode system
+							sb.append("&#");
+							sb.append(new Integer(ci).toString());
+							sb.append(';');
+						}
+						break;
+
+
+				}
+            }
+        }
+		return sb.toString();
 	}
 
 }
