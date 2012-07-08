@@ -47,6 +47,7 @@ import org.mariotaku.twidere.util.Utils;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -234,26 +235,30 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	@Override
 	public void onLinkClick(String link, int type) {
 		if (mStatus == null) return;
-		switch (type) {
-			case AutoLink.LINK_TYPE_MENTIONS: {
-				Utils.openUserProfile(getActivity(), mStatus.account_id, -1, link);
-				break;
+		try {
+			switch (type) {
+				case AutoLink.LINK_TYPE_MENTIONS: {
+					Utils.openUserProfile(getActivity(), mStatus.account_id, -1, link);
+					break;
+				}
+				case AutoLink.LINK_TYPE_HASHTAGS: {
+					Utils.openTweetSearch(getActivity(), mStatus.account_id, link);
+					break;
+				}
+				case AutoLink.LINK_TYPE_IMAGES: {
+					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
+					intent.setPackage(getActivity().getPackageName());
+					startActivity(intent);
+					break;
+				}
+				case AutoLink.LINK_TYPE_LINKS: {
+					final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+					startActivity(intent);
+					break;
+				}
 			}
-			case AutoLink.LINK_TYPE_HASHTAGS: {
-				Utils.openTweetSearch(getActivity(), mStatus.account_id, link);
-				break;
-			}
-			case AutoLink.LINK_TYPE_IMAGES: {
-				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
-				intent.setPackage(getActivity().getPackageName());
-				startActivity(intent);
-				break;
-			}
-			case AutoLink.LINK_TYPE_LINKS: {
-				final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-				startActivity(intent);
-				break;
-			}
+		} catch (ActivityNotFoundException e) {
+			e.printStackTrace();
 		}
 
 	}
