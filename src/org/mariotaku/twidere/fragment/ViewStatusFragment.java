@@ -41,7 +41,7 @@ import org.mariotaku.twidere.util.AutoLink.OnLinkClickListener;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.model.StatusesCursorIndices;
+import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.Relationship;
@@ -437,7 +437,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 				if (cur.getCount() > 0) {
 					cur.moveToFirst();
-					status = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
+					status = new ParcelableStatus(cur, new StatusCursorIndices(cur));
 				}
 				cur.close();
 			}

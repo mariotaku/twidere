@@ -103,7 +103,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.StatusesCursorIndices;
+import org.mariotaku.twidere.model.StatusCursorIndices;
 
 public final class Utils implements Constants {
 
@@ -268,7 +268,7 @@ public final class Utils implements Constants {
 			}
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				status = new ParcelableStatus(cur, new StatusesCursorIndices(cur));
+				status = new ParcelableStatus(cur, new StatusCursorIndices(cur));
 			}
 			cur.close();
 		}

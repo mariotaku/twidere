@@ -88,7 +88,7 @@ public class ParcelableStatus implements Parcelable {
 		}
 	};
 
-	public ParcelableStatus(Cursor cursor, StatusesCursorIndices indices) {
+	public ParcelableStatus(Cursor cursor, StatusCursorIndices indices) {
 		retweet_id = indices.retweet_id != -1 ? cursor.getLong(indices.retweet_id) : -1;
 		retweeted_by_id = indices.retweeted_by_id != -1 ? cursor.getLong(indices.retweeted_by_id) : -1;
 		status_id = indices.status_id != -1 ? cursor.getLong(indices.status_id) : -1;

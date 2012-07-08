@@ -31,7 +31,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
-import org.mariotaku.twidere.model.StatusesCursorIndices;
+import org.mariotaku.twidere.model.StatusCursorIndices;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -45,7 +45,7 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 	private final ProfileImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
-	private StatusesCursorIndices mIndices;
+	private StatusCursorIndices mIndices;
 
 	public StatusesCursorAdapter(Context context, ProfileImageLoader loader) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
@@ -200,7 +200,7 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 	@Override
 	public Cursor swapCursor(Cursor cursor) {
 		if (cursor != null) {
-			mIndices = new StatusesCursorIndices(cursor);
+			mIndices = new StatusCursorIndices(cursor);
 		} else {
 			mIndices = null;
 		}

@@ -59,7 +59,7 @@ public class ParcelableDirectMessage implements Parcelable {
 	public final boolean is_gap;
 
 	public final String text;
-	public final String sender_name, recipient_name, sender_screenname, recipient_screenname;
+	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
 	
 	public final URL sender_profile_image_url, recipient_profile_image_url;
 
@@ -73,8 +73,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		text = in.readString();
 		sender_name = in.readString();
 		recipient_name = in.readString();
-		sender_screenname = in.readString();
-		recipient_screenname = in.readString();
+		sender_screen_name = in.readString();
+		recipient_screen_name = in.readString();
 		sender_profile_image_url = (URL) in.readSerializable();
 		recipient_profile_image_url = (URL) in.readSerializable();
 	}
@@ -90,8 +90,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		text = message.getText();
 		sender_name = sender != null ? sender.getName() : null;
 		recipient_name = recipient != null ? recipient.getName() : null;
-		sender_screenname = sender != null ? sender.getScreenName() : null;
-		recipient_screenname = recipient != null ? recipient.getScreenName() : null;
+		sender_screen_name = sender != null ? sender.getScreenName() : null;
+		recipient_screen_name = recipient != null ? recipient.getScreenName() : null;
 		sender_profile_image_url = sender != null ? sender.getProfileImageURL() : null;
 		recipient_profile_image_url = recipient != null ? recipient.getProfileImageURL() : null;
 	}
@@ -117,8 +117,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		out.writeString(text);
 		out.writeString(sender_name);
 		out.writeString(recipient_name);
-		out.writeString(sender_screenname);
-		out.writeString(recipient_screenname);
+		out.writeString(sender_screen_name);
+		out.writeString(recipient_screen_name);
 		out.writeSerializable(sender_profile_image_url);
 		out.writeSerializable(recipient_profile_image_url);
 	}
