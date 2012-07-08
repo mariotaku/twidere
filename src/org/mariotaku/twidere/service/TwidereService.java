@@ -81,6 +81,14 @@ public class TwidereService extends Service implements Constants {
 
 	private SharedPreferences mPreferences;
 
+	private int mGetReceivedDirectMessagesTaskId;
+
+	private int mGetSentDirectMessagesTaskId;
+
+	private boolean mStoreReceivedDirectMessagesFinished;
+
+	private boolean mStoreSentDirectMessagesFinished;
+
 	public int cancelRetweet(long account_id, long status_id) {
 		final CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
@@ -133,8 +141,14 @@ public class TwidereService extends Service implements Constants {
 		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	public int getMessages(long account_id, long max_id) {
-		return -1;
+	public int getReceivedDirectMessages(long account_id, long max_id) {
+		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_id, max_id);
+		return mAsyncTaskManager.add(task, true);
+	}
+
+	public int getSentDirectMessages(long account_id, long max_id) {
+		final GetSentDirectMessagesTask task = new GetSentDirectMessagesTask(account_id, max_id);
+		return mAsyncTaskManager.add(task, true);
 	}
 
 	public boolean hasActivatedTask() {
@@ -698,7 +712,7 @@ public class TwidereService extends Service implements Constants {
 	private class GetReceivedDirectMessagesTask extends GetDirectMessagesTask {
 
 		public GetReceivedDirectMessagesTask(long account_ids, long max_ids) {
-			super(Mentions.CONTENT_URI, account_ids, max_ids);
+			super(DirectMessages.Inbox.CONTENT_URI, account_ids, max_ids);
 		}
 
 		@Override
@@ -710,7 +724,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(DirectMessagesResponse responses) {
 			super.onPostExecute(responses);
 			mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses), true);
-			mGetMentionsTaskId = -1;
+			mGetReceivedDirectMessagesTaskId = -1;
 		}
 
 	}
@@ -718,7 +732,7 @@ public class TwidereService extends Service implements Constants {
 	private class GetSentDirectMessagesTask extends GetDirectMessagesTask {
 
 		public GetSentDirectMessagesTask(long account_ids, long max_ids) {
-			super(Statuses.CONTENT_URI, account_ids, max_ids);
+			super(DirectMessages.Outbox.CONTENT_URI, account_ids, max_ids);
 		}
 
 		@Override
@@ -730,7 +744,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(DirectMessagesResponse responses) {
 			super.onPostExecute(responses);
 			mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses), true);
-			mGetHomeTimelineTaskId = -1;
+			mGetSentDirectMessagesTaskId = -1;
 		}
 
 	}
@@ -1145,12 +1159,12 @@ public class TwidereService extends Service implements Constants {
 	private class StoreReceivedDirectMessagesTask extends StoreDirectMessagesTask {
 
 		public StoreReceivedDirectMessagesTask(DirectMessagesResponse result) {
-			super(result, Mentions.CONTENT_URI);
+			super(result, DirectMessages.Inbox.CONTENT_URI);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean succeed) {
-			mStoreMentionsFinished = true;
+			mStoreReceivedDirectMessagesFinished = true;
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed != null
 					&& succeed));
 			super.onPostExecute(succeed);
@@ -1161,12 +1175,12 @@ public class TwidereService extends Service implements Constants {
 	private class StoreSentDirectMessagesTask extends StoreDirectMessagesTask {
 
 		public StoreSentDirectMessagesTask(DirectMessagesResponse result) {
-			super(result, Statuses.CONTENT_URI);
+			super(result, DirectMessages.Outbox.CONTENT_URI);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean succeed) {
-			mStoreStatusesFinished = true;
+			mStoreSentDirectMessagesFinished = true;
 			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed != null
 					&& succeed));
 			super.onPostExecute(succeed);
