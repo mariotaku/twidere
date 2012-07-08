@@ -34,14 +34,14 @@ import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AutoLink;
 import org.mariotaku.twidere.util.AutoLink.OnLinkClickListener;
-import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.Relationship;
@@ -52,6 +52,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -70,7 +71,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.twitter.Extractor;
-import android.content.SharedPreferences;
 
 public class ViewStatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener,
 		OnLinkClickListener {

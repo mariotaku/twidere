@@ -23,10 +23,10 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.Date;
 
+import twitter4j.DirectMessage;
 import twitter4j.User;
 import android.os.Parcel;
 import android.os.Parcelable;
-import twitter4j.DirectMessage;
 
 public class ParcelableDirectMessage implements Parcelable {
 
@@ -41,7 +41,7 @@ public class ParcelableDirectMessage implements Parcelable {
 			return new ParcelableDirectMessage[size];
 		}
 	};
-	
+
 	public static final Comparator<ParcelableDirectMessage> MESSAGE_ID_COMPARATOR = new Comparator<ParcelableDirectMessage>() {
 
 		@Override
@@ -60,24 +60,8 @@ public class ParcelableDirectMessage implements Parcelable {
 
 	public final String text;
 	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
-	
-	public final URL sender_profile_image_url, recipient_profile_image_url;
 
-	public ParcelableDirectMessage(Parcel in) {
-		account_id = in.readLong();
-		message_id = in.readLong();
-		message_timestamp = in.readLong();
-		sender_id = in.readLong();
-		recipient_id = in.readLong();
-		is_gap = in.readInt() == 1;
-		text = in.readString();
-		sender_name = in.readString();
-		recipient_name = in.readString();
-		sender_screen_name = in.readString();
-		recipient_screen_name = in.readString();
-		sender_profile_image_url = (URL) in.readSerializable();
-		recipient_profile_image_url = (URL) in.readSerializable();
-	}
+	public final URL sender_profile_image_url, recipient_profile_image_url;
 
 	public ParcelableDirectMessage(DirectMessage message, long account_id, boolean is_gap) {
 		this.account_id = account_id;
@@ -94,6 +78,22 @@ public class ParcelableDirectMessage implements Parcelable {
 		recipient_screen_name = recipient != null ? recipient.getScreenName() : null;
 		sender_profile_image_url = sender != null ? sender.getProfileImageURL() : null;
 		recipient_profile_image_url = recipient != null ? recipient.getProfileImageURL() : null;
+	}
+
+	public ParcelableDirectMessage(Parcel in) {
+		account_id = in.readLong();
+		message_id = in.readLong();
+		message_timestamp = in.readLong();
+		sender_id = in.readLong();
+		recipient_id = in.readLong();
+		is_gap = in.readInt() == 1;
+		text = in.readString();
+		sender_name = in.readString();
+		recipient_name = in.readString();
+		sender_screen_name = in.readString();
+		recipient_screen_name = in.readString();
+		sender_profile_image_url = (URL) in.readSerializable();
+		recipient_profile_image_url = (URL) in.readSerializable();
 	}
 
 	@Override

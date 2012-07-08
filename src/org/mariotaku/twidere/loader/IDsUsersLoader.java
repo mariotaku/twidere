@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.util.ArrayUtils;
 
 import twitter4j.IDs;
 import twitter4j.ResponseList;

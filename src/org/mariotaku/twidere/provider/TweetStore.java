@@ -170,23 +170,22 @@ public final class TweetStore implements Constants {
 				TYPE_TEXT };
 
 	}
-	
+
 	public static interface DirectMessages extends BaseColumns {
-		
 
 		public static final String CONTENT_PATH = "messages";
 
 		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-																   CONTENT_PATH);
-		
+				CONTENT_PATH);
+
 		public static final String ACCOUNT_ID = "account_id";
 		public static final String MESSAGE_ID = "message_id";
 		public static final String MESSAGE_TIMESTAMP = "message_timestamp";
 		public static final String SENDER_ID = "sender_id";
 		public static final String RECIPIENT_ID = "recipient_id";
-		
+
 		public static final String IS_GAP = "is_gap";
-		
+
 		public static final String TEXT = "text";
 		public static final String SENDER_NAME = "sender_name";
 		public static final String RECIPIENT_NAME = "recipient_name";
@@ -194,66 +193,39 @@ public final class TweetStore implements Constants {
 		public static final String RECIPIENT_SCREEN_NAME = "recipient_screen_name";
 		public static final String SENDER_PROFILE_IMAGE_URL = "sender_profile_image_url";
 		public static final String RECIPIENT_PROFILE_IMAGE_URL = "recipient_profile_image_url";
-		
-		public static final String[] COLUMNS = new String[]{
-			ACCOUNT_ID,
-			MESSAGE_ID,
-			MESSAGE_TIMESTAMP,
-			SENDER_ID,
-			RECIPIENT_ID,
-			IS_GAP,
-			TEXT,
-			SENDER_NAME,
-			RECIPIENT_NAME,
-			SENDER_SCREEN_NAME,
-			RECIPIENT_SCREEN_NAME,
-			SENDER_PROFILE_IMAGE_URL,
-			RECIPIENT_PROFILE_IMAGE_URL
-		};
-		public static final String[] TYPES = new String[]{
-			TYPE_INT,
-			TYPE_INT,
-			TYPE_INT,
-			TYPE_INT,
-			TYPE_INT,
-			TYPE_BOOLEAN,
-			TYPE_TEXT,
-			TYPE_TEXT,
-			TYPE_TEXT,
-			TYPE_TEXT,
-			TYPE_TEXT,
-			TYPE_TEXT,
-			TYPE_TEXT
-		};
-		
-		
-		public static interface Inbox extends DirectMessages {
 
-			public static final String CONTENT_PATH = "messages_inbox";
+		public static final String[] COLUMNS = new String[] { ACCOUNT_ID, MESSAGE_ID, MESSAGE_TIMESTAMP, SENDER_ID,
+				RECIPIENT_ID, IS_GAP, TEXT, SENDER_NAME, RECIPIENT_NAME, SENDER_SCREEN_NAME, RECIPIENT_SCREEN_NAME,
+				SENDER_PROFILE_IMAGE_URL, RECIPIENT_PROFILE_IMAGE_URL };
+		public static final String[] TYPES = new String[] { TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
+				TYPE_BOOLEAN, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
 
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-																	   CONTENT_PATH);
-			
-		}
-		
-		public static interface Outbox extends DirectMessages {
-			
-
-			public static final String CONTENT_PATH = "messages_outbox";
-
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-																	   CONTENT_PATH);
-			
-		}
-		
 		public static interface Conversation extends DirectMessages {
 
 			public static final String CONTENT_PATH = "messages_conversation";
 
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-																	   CONTENT_PATH);
+					CONTENT_PATH);
 		}
-		
+
+		public static interface Inbox extends DirectMessages {
+
+			public static final String CONTENT_PATH = "messages_inbox";
+
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+					CONTENT_PATH);
+
+		}
+
+		public static interface Outbox extends DirectMessages {
+
+			public static final String CONTENT_PATH = "messages_outbox";
+
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+					CONTENT_PATH);
+
+		}
+
 	}
 
 	public static interface Drafts extends BaseColumns {

@@ -22,37 +22,29 @@ package org.mariotaku.twidere.loader;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
-
-import twitter4j.Twitter;
-import twitter4j.DirectMessage;
-
-import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
-import java.util.Collections;
-import java.util.Comparator;
-import twitter4j.ResponseList;
-import twitter4j.Paging;
-import android.content.SharedPreferences;
-import twitter4j.TwitterException;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 
-public abstract class ParcelableDirectMessagesLoader extends AsyncTaskLoader<List<ParcelableDirectMessage>> implements Constants {
+import twitter4j.DirectMessage;
+import twitter4j.Paging;
+import twitter4j.ResponseList;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.v4.content.AsyncTaskLoader;
+
+public abstract class ParcelableDirectMessagesLoader extends AsyncTaskLoader<List<ParcelableDirectMessage>> implements
+		Constants {
 
 	private final Twitter mTwitter;
 	private final long mAccountId, mMaxId;
 	private final List<ParcelableDirectMessage> mData;
 
-	public ParcelableDirectMessagesLoader(Context context, long account_id, long max_id, List<ParcelableDirectMessage> data) {
-		super(context);
-		mTwitter = getTwitterInstance(context, account_id, true);
-		mAccountId = account_id;
-		mMaxId = max_id;
-		mData = data != null ? data : new ArrayList<ParcelableDirectMessage>();
-	}
-	
 	public static final Comparator<DirectMessage> TWITTER4J_MESSAGE_ID_COMPARATOR = new Comparator<DirectMessage>() {
 
 		@Override
@@ -63,6 +55,15 @@ public abstract class ParcelableDirectMessagesLoader extends AsyncTaskLoader<Lis
 			return (int) diff;
 		}
 	};
+
+	public ParcelableDirectMessagesLoader(Context context, long account_id, long max_id,
+			List<ParcelableDirectMessage> data) {
+		super(context);
+		mTwitter = getTwitterInstance(context, account_id, true);
+		mAccountId = account_id;
+		mMaxId = max_id;
+		mData = data != null ? data : new ArrayList<ParcelableDirectMessage>();
+	}
 
 	public boolean containsStatus(long message_id) {
 		for (final ParcelableDirectMessage message : mData) {
@@ -86,21 +87,21 @@ public abstract class ParcelableDirectMessagesLoader extends AsyncTaskLoader<Lis
 		return mData;
 	}
 
+	public abstract ResponseList<DirectMessage> getDirectMessages(Paging paging) throws TwitterException;
+
 	public Twitter getTwitter() {
 		return mTwitter;
 	}
-	
-	public abstract ResponseList<DirectMessage> getDirectMessages(Paging paging) throws TwitterException;
 
 	@Override
-	public List<ParcelableDirectMessage> loadInBackground(){
+	public List<ParcelableDirectMessage> loadInBackground() {
 		ResponseList<DirectMessage> messages = null;
 		try {
 			final Paging paging = new Paging();
 			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
-																			  Context.MODE_PRIVATE);
+					Context.MODE_PRIVATE);
 			final int load_item_limit = prefs
-				.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
+					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 			paging.setCount(load_item_limit);
 			if (mMaxId > 0) {
 				paging.setMaxId(mMaxId);
@@ -113,18 +114,17 @@ public abstract class ParcelableDirectMessagesLoader extends AsyncTaskLoader<Lis
 			Collections.sort(messages, TWITTER4J_MESSAGE_ID_COMPARATOR);
 			int deleted_count = 0;
 			for (int i = 0; i < messages.size(); i++) {
-				final DirectMessage message = messages.get(i);			
+				final DirectMessage message = messages.get(i);
 				if (deleteStatus(message.getId())) {
 					deleted_count++;
 				}
-				mData.add(new ParcelableDirectMessage(message, mAccountId, i == messages.size() - 1 ? 
-											  deleted_count > 1 : false));
+				mData.add(new ParcelableDirectMessage(message, mAccountId, i == messages.size() - 1 ? deleted_count > 1
+						: false));
 			}
-		}		
+		}
 		Collections.sort(mData, ParcelableDirectMessage.MESSAGE_ID_COMPARATOR);
 		return mData;
-		
-		
+
 	};
 
 	@Override

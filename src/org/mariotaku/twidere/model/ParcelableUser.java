@@ -74,7 +74,7 @@ public class ParcelableUser implements Parcelable {
 		location = in.readString();
 		profile_image_url = (URL) in.readSerializable();
 	}
-	
+
 	public ParcelableUser(User user, long account_id) {
 		this(user, account_id, 0);
 	}

@@ -81,8 +81,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 				if (deleteStatus(status.getId())) {
 					deleted_count++;
 				}
-				data.add(new ParcelableStatus(status, account_id, i == statuses.size() - 1 ? 
-					deleted_count > 1 : false));
+				data.add(new ParcelableStatus(status, account_id, i == statuses.size() - 1 ? deleted_count > 1 : false));
 			}
 		}
 		Collections.sort(data, ParcelableStatus.STATUS_ID_COMPARATOR);

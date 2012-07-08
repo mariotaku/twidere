@@ -55,13 +55,17 @@ import org.mariotaku.twidere.fragment.UserFriendsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
+import twitter4j.DirectMessage;
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
@@ -102,8 +106,6 @@ import android.text.format.Time;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.StatusCursorIndices;
 
 public final class Utils implements Constants {
 
@@ -1111,18 +1113,44 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues makeCachedUsersContentValues(User user) {
+	public static ContentValues makeCachedUserContentValues(User user) {
+		if (user == null || user.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		values.put(CachedUsers.NAME, user.getName());
 		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
 		values.put(CachedUsers.USER_ID, user.getId());
-
 		return values;
 	}
 
-	public static ContentValues makeStatusesContentValues(Status status, long account_id) {
-		if (status == null) return null;
+	public static ContentValues makeDirectMessageContentValues(DirectMessage message, long account_id) {
+		if (message == null || message.getId() <= 0) return null;
+		final ContentValues values = new ContentValues();
+		final User sender = message.getSender(), recipient = message.getRecipient();
+		if (sender == null || recipient == null) return null;
+		values.put(DirectMessages.ACCOUNT_ID, account_id);
+		values.put(DirectMessages.MESSAGE_ID, message.getId());
+		values.put(DirectMessages.MESSAGE_TIMESTAMP, message.getCreatedAt().getTime());
+		values.put(DirectMessages.SENDER_ID, sender.getId());
+		values.put(DirectMessages.RECIPIENT_ID, recipient.getId());
+		values.put(DirectMessages.TEXT, message.getText());
+		values.put(DirectMessages.SENDER_NAME, sender.getName());
+		values.put(DirectMessages.SENDER_SCREEN_NAME, sender.getScreenName());
+		values.put(DirectMessages.RECIPIENT_NAME, recipient.getName());
+		values.put(DirectMessages.RECIPIENT_SCREEN_NAME, recipient.getScreenName());
+		final URL sender_profile_image_url = sender.getProfileImageURL();
+		final URL recipient_profile_image_url = recipient.getProfileImageURL();
+		if (sender_profile_image_url != null) {
+			values.put(DirectMessages.SENDER_PROFILE_IMAGE_URL, sender_profile_image_url.toString());
+		}
+		if (recipient_profile_image_url != null) {
+			values.put(DirectMessages.SENDER_PROFILE_IMAGE_URL, recipient_profile_image_url.toString());
+		}
+		return values;
+	}
+
+	public static ContentValues makeStatusContentValues(Status status, long account_id) {
+		if (status == null || status.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		values.put(Statuses.STATUS_ID, status.getId());
 		final int is_retweet = status.isRetweet() ? 1 : 0;

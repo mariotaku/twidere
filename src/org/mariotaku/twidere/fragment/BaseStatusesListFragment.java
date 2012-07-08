@@ -30,10 +30,10 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.model.StatusViewHolder;
+import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.content.Context;

@@ -31,9 +31,9 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.model.StatusViewHolder;
 
 import twitter4j.Status;
 import twitter4j.Twitter;

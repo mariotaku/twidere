@@ -28,8 +28,8 @@ import java.util.List;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.model.StatusViewHolder;
+import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.content.Context;

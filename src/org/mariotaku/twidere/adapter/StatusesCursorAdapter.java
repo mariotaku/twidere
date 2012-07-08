@@ -28,10 +28,10 @@ import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.ProfileImageLoader;
-import org.mariotaku.twidere.model.StatusViewHolder;
-import org.mariotaku.twidere.util.StatusesAdapterInterface;
 import org.mariotaku.twidere.model.StatusCursorIndices;
+import org.mariotaku.twidere.model.StatusViewHolder;
+import org.mariotaku.twidere.util.ProfileImageLoader;
+import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.content.Context;
 import android.database.Cursor;

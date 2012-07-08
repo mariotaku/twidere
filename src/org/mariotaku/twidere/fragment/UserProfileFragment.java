@@ -28,7 +28,7 @@ import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedUserName;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
-import static org.mariotaku.twidere.util.Utils.makeCachedUsersContentValues;
+import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.openUserBlocks;
 import static org.mariotaku.twidere.util.Utils.openUserFavorites;
 import static org.mariotaku.twidere.util.Utils.openUserFollowers;
@@ -182,7 +182,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final String location = user.getLocation();
-		mLocationContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(location) ? View.VISIBLE : View.GONE);
+		mLocationContainer
+				.setVisibility(is_my_activated_account || !isNullOrEmpty(location) ? View.VISIBLE : View.GONE);
 		mLocationContainer.setOnLongClickListener(this);
 		mLocationView.setText(location);
 		final String url = user.getURL() != null ? user.getURL().toString() : null;
@@ -867,7 +868,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				final User user = result.value;
 				final ContentResolver resolver = getContentResolver();
 				resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + result.value.getId(), null);
-				resolver.insert(CachedUsers.CONTENT_URI, makeCachedUsersContentValues(result.value));
+				resolver.insert(CachedUsers.CONTENT_URI, makeCachedUserContentValues(result.value));
 				setListShown(true);
 				changeUser(mAccountId, user);
 				mRetryButton.setVisibility(View.GONE);
