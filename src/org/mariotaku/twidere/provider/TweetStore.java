@@ -256,15 +256,6 @@ public final class TweetStore implements Constants {
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
 	}
 
-	public static interface Favorites extends Statuses {
-
-		public static final String CONTENT_PATH = "favorites";
-
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
-
-	}
-
 	public static interface Filters extends BaseColumns {
 
 		public static final String TEXT = "text";

@@ -22,7 +22,6 @@ package org.mariotaku.twidere;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
-import org.mariotaku.twidere.provider.TweetStore.Favorites;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -232,17 +231,12 @@ public interface Constants extends TwitterConstants {
 	public static final int RESULT_UNKNOWN_ERROR = -1;
 	public static final int RESULT_SUCCESS = 0;
 	public static final int RESULT_ALREADY_LOGGED_IN = 1;
-	public static final int RESULT_CONNECTIVITY_ERROR = 2;
-	public static final int RESULT_SERVER_ERROR = 3;
-	public static final int RESULT_BAD_ADDRESS = 4;
-	public static final int RESULT_NO_PERMISSION = 5;
-	public static final int RESULT_OPEN_BROWSER = 6;
+	public static final int RESULT_OPEN_BROWSER = 2;
 
 	public static final String TABLE_ACCOUNTS = Accounts.CONTENT_PATH;
 	public static final String TABLE_STATUSES = Statuses.CONTENT_PATH;
 	public static final String TABLE_MENTIONS = Mentions.CONTENT_PATH;
 	public static final String TABLE_DRAFTS = Drafts.CONTENT_PATH;
-	public static final String TABLE_FAVORITES = Favorites.CONTENT_PATH;
 	public static final String TABLE_CACHED_USERS = CachedUsers.CONTENT_PATH;
 	public static final String TABLE_FILTERED_USERS = Filters.Users.CONTENT_PATH;
 	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.CONTENT_PATH;
@@ -251,12 +245,10 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_ACCOUNTS = 1;
 	public static final int URI_STATUSES = 2;
 	public static final int URI_MENTIONS = 3;
-	public static final int URI_FAVORITES = 4;
-	public static final int URI_DRAFTS = 5;
-	public static final int URI_CACHED_USERS = 6;
-	public static final int URI_FILTERED_USERS = 7;
-	public static final int URI_FILTERED_KEYWORDS = 8;
-	public static final int URI_FILTERED_SOURCES = 9;
-	public static final int URI_USER_TIMELINE = 10;
+	public static final int URI_DRAFTS = 4;
+	public static final int URI_CACHED_USERS = 5;
+	public static final int URI_FILTERED_USERS = 6;
+	public static final int URI_FILTERED_KEYWORDS = 7;
+	public static final int URI_FILTERED_SOURCES = 8;
 
 }

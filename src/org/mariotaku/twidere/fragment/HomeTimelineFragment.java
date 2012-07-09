@@ -116,4 +116,12 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, status_id).commit();
 		super.onStop();
 	}
+
+	@Override
+	public int getStatuses(long[] account_ids, long[] max_ids) {
+		return getServiceInterface().getHomeTimeline(account_ids, max_ids);
+			
+	}
+	
+	
 }

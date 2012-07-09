@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
 import static org.mariotaku.twidere.util.Utils.buildFilterWhereClause;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getLastSortIds;
-import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 
 import org.mariotaku.twidere.activity.HomeActivity;
@@ -59,19 +58,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	public StatusesCursorAdapter getListAdapter() {
 		return mAdapter;
-	}
-
-	@Override
-	public int getStatuses(long[] account_ids, long[] max_ids) {
-		switch (getTableId(getContentUri())) {
-			case URI_STATUSES:
-				return getServiceInterface().getHomeTimeline(account_ids, max_ids);
-			case URI_MENTIONS:
-				return getServiceInterface().getMentions(account_ids, max_ids);
-			case URI_FAVORITES:
-				break;
-		}
-		return -1;
 	}
 
 	@Override

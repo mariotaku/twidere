@@ -116,4 +116,12 @@ public class MentionsFragment extends CursorStatusesListFragment {
 		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
 		super.onStop();
 	}
+	
+
+	@Override
+	public int getStatuses(long[] account_ids, long[] max_ids) {
+		return getServiceInterface().getMentions(account_ids, max_ids);
+	}
+	
+	
 }

@@ -153,12 +153,10 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DRAFTS, URI_DRAFTS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FAVORITES, URI_FAVORITES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_USERS, URI_CACHED_USERS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, URI_FILTERED_USERS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_KEYWORDS, URI_FILTERED_KEYWORDS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, URI_FILTERED_SOURCES);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES + "/*", URI_USER_TIMELINE);
 	}
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
@@ -658,25 +656,6 @@ public final class Utils implements Constants {
 
 	public static Twitter getDefaultTwitterInstance(Context context, boolean include_entities, boolean include_rts) {
 		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, include_rts);
-	}
-
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
-	public static int getErrorCode(TwitterException e) {
-		if (e == null) return RESULT_UNKNOWN_ERROR;
-		final int status_code = e.getStatusCode();
-		if (status_code == -1)
-			return RESULT_CONNECTIVITY_ERROR;
-		else if (status_code >= 401 && status_code < 404)
-			return RESULT_NO_PERMISSION;
-		else if (status_code >= 404 && status_code < 500)
-			return RESULT_BAD_ADDRESS;
-		else if (status_code >= 500 && status_code < 600)
-			return RESULT_SERVER_ERROR;
-		else
-			return RESULT_UNKNOWN_ERROR;
 	}
 
 	public static GeoLocation getGeoLocationFromString(String location) {
