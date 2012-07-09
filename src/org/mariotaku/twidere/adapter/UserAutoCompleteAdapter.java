@@ -99,6 +99,8 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 		final StringBuilder where = new StringBuilder();
 		constraint = constraint != null ? constraint.toString().replaceAll("_", "\\_") : null;
 		where.append(CachedUsers.SCREEN_NAME + " LIKE '" + constraint + "%' ESCAPE '\\'");
+		where.append(" OR ");
+		where.append(CachedUsers.NAME + " LIKE '" + constraint + "%' ESCAPE '\\'");
 		return mResolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, constraint != null ? where.toString()
 				: null, null, null);
 	}
