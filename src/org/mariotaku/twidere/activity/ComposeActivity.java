@@ -214,7 +214,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					if (mentions.length == 1 && mentions[0].equals(account_username)) {
 						builder.append('@' + account_username + ' ');
 					}
-					if (!mention.equals(account_username)) {
+					if (!mention.equals(account_username) && !mention.equals(mInReplyToScreenName)) {
 						builder.append('@' + mention + ' ');
 					}
 				}
