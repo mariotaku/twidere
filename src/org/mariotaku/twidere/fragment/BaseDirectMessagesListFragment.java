@@ -243,7 +243,8 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 				if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
 					final Bundle args = getArguments();
 					if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID)) return;
-					mRunningTaskId = getDirectMessages(args.getLong(INTENT_KEY_ACCOUNT_ID), -1);
+					mRunningTaskId = getDirectMessages(args.getLong(INTENT_KEY_ACCOUNT_ID),
+							mAdapter.findItemIdByPosition(mAdapter.getCount() - 1));
 				}
 			}
 		}

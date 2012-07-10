@@ -1268,6 +1268,16 @@ public final class Utils implements Constants {
 						.putExtra(INTENT_KEY_SUCCEED, true));
 				break;
 			}
+			case URI_DIRECT_MESSAGES_INBOX: {
+				context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
+						INTENT_KEY_SUCCEED, true));
+				break;
+			}
+			case URI_DIRECT_MESSAGES_OUTBOX: {
+				context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
+						INTENT_KEY_SUCCEED, true));
+				break;
+			}
 			default: {
 				return;
 			}

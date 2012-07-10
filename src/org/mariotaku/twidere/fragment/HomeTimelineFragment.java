@@ -72,11 +72,6 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 	}
 
 	@Override
-	public boolean mustShowLastAsGap() {
-		return false;
-	}
-
-	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mShouldRestorePositoin = true;

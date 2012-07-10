@@ -32,7 +32,6 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/name"
-		android:autoLink="all"
 		android:paddingBottom="2dp"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>

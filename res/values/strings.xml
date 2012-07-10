@@ -197,6 +197,10 @@
 	<string name="stop_service_after_closed">Stop service after twidere closed.</string>
 	<string name="stop_service_after_closed_summary">I don\'t know why you\'d like to enable this, but if you got any problem after enable this, remember, it\'s all your fault.</string>
 	<string name="other_settings">Other settings</string>
+	<string name="refresh_and_notifications">Refresh &amp; Notifications</string>
+	<string name="auto_refresh">Auto refresh</string>
+	<string name="refresh_interval">Refresh interval</string>
+	<string name="content_to_refresh">Content to refresh</string>
 	<string name="notifications">Notifications</string>
 
 </resources>

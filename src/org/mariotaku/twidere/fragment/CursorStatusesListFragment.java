@@ -61,6 +61,11 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
+	public boolean isListLoadFinished() {
+		return false;
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
 				.getProfileImageLoader();
@@ -111,4 +116,5 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		getStatuses(account_ids, null);
 
 	}
+
 }

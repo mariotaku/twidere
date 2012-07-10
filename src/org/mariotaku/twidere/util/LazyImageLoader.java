@@ -21,6 +21,8 @@ package org.mariotaku.twidere.util;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.getProxy;
+import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,6 +66,7 @@ import android.widget.ListView;
 public class LazyImageLoader {
 
 	private final MemoryCache mMemoryCache = new MemoryCache();
+	private final Context mContext;
 	private final FileCache mFileCache;
 	private final Map<ImageView, URL> mImageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, URL>());
 	private final ExecutorService mExecutorService;
@@ -72,6 +75,7 @@ public class LazyImageLoader {
 
 	public LazyImageLoader(Context context, String cache_dir_name, int fallback_image_res, int required_width,
 			int required_height) {
+		mContext = context;
 		mFileCache = new FileCache(context, cache_dir_name);
 		mExecutorService = Executors.newFixedThreadPool(5);
 		mFallbackRes = fallback_image_res;
@@ -254,7 +258,8 @@ public class LazyImageLoader {
 			// from web
 			try {
 				Bitmap bitmap = null;
-				final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				final HttpURLConnection conn = (HttpURLConnection) url.openConnection(getProxy(mContext));
+				setIgnoreSSLError(conn);
 				conn.setConnectTimeout(30000);
 				conn.setReadTimeout(30000);
 				conn.setInstanceFollowRedirects(true);

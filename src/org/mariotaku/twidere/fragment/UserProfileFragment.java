@@ -586,11 +586,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		@Override
-		public String getSummary() {
-			return "This feature is not implemented.";
-		}
-
-		@Override
 		public void onClick() {
 			if (mUser == null || !isMyActivatedAccount(getActivity(), mUser.getId())) return;
 			final Bundle bundle = new Bundle();

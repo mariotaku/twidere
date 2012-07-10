@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.restartActivity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
@@ -87,6 +88,8 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 			resolver.delete(Statuses.CONTENT_URI, null, null);
 			resolver.delete(Mentions.CONTENT_URI, null, null);
 			resolver.delete(CachedUsers.CONTENT_URI, null, null);
+			resolver.delete(DirectMessages.Inbox.CONTENT_URI, null, null);
+			resolver.delete(DirectMessages.Outbox.CONTENT_URI, null, null);
 			suggestions.clearHistory();
 		} else if (PREFERENCE_KEY_CLEAR_CACHE.equals(preference.getKey())) {
 			getTwidereApplication().clearCache();

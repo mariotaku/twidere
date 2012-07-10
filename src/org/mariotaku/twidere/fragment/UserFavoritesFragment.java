@@ -33,8 +33,8 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	private boolean isAllItemsLoaded = false;
 
 	@Override
-	public boolean mustShowLastAsGap() {
-		return !isAllItemsLoaded;
+	public boolean isListLoadFinished() {
+		return isAllItemsLoaded;
 	}
 
 	@Override

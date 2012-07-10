@@ -118,10 +118,21 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_PROXY_PORT = "proxy_port";
 	public static final String PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED = "stop_service_after_closed";
 
+	public static final String PREFERENCE_KEY_AUTO_REFRESH = "auto_refresh";
+	public static final String PREFERENCE_KEY_REFRESH_INTERVAL = "refresh_interval";
+	public static final String PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE = "refresh_enable_home_timeline";
+	public static final String PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS = "refresh_enable_mentions";
+	public static final String PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES = "refresh_enable_direct_messages";
+	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE = "notification_enable_home_timeline";
+	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS = "notification_enable_mentions";
+	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES = "notification_enable_direct_messages";
+	
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final float PREFERENCE_DEFAULT_TEXT_SIZE = 14.0f;
+	
+	
 
 	public static final String QUOTE_FORMAT_TEXT_PATTERN = "[TEXT]";
 

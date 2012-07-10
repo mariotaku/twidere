@@ -195,7 +195,12 @@
 	<string name="outbox">发件箱</string>
 	<string name="load_images">载入图片</string>
 	<string name="stop_service_after_closed">关闭后停止后端服务</string>
-	<string name="stop_service_after_closed_summary">我不知道你为什么想要启用这个选项，但是如果你启用后出现任何问题，记住，这全是你的错。</string>
+	<string name="stop_service_after_closed_summary">我不建议你启用它，希望你去找找Android的后台管理机制看一下，这不是Windows，这是Android。</string>
 	<string name="other_settings">其他设定</string>
+	<string name="refresh_and_notifications">刷新与通知</string>
+	<string name="auto_refresh">自动刷新</string>
+	<string name="refresh_interval">刷新间隔</string>
+	<string name="content_to_refresh">刷新的内容</string>
+	<string name="notifications">通知</string>
 
 </resources>

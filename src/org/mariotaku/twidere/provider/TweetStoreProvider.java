@@ -128,15 +128,15 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			}
 			case URI_DIRECT_MESSAGES_INBOX: {
 				if (!is_insert) {
-					context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
-							true));
+					context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
+							INTENT_KEY_SUCCEED, true));
 				}
 				break;
 			}
 			case URI_DIRECT_MESSAGES_OUTBOX: {
 				if (!is_insert) {
-					context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
-							true));
+					context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
+							INTENT_KEY_SUCCEED, true));
 				}
 				break;
 			}

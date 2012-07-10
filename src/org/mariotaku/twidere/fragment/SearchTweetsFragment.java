@@ -31,7 +31,7 @@ import android.support.v4.content.Loader;
 public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 
 	@Override
-	public boolean mustShowLastAsGap() {
+	public boolean isListLoadFinished() {
 		return false;
 	}
 

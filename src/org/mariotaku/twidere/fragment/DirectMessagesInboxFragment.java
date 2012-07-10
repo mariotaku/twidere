@@ -49,21 +49,7 @@ public class DirectMessagesInboxFragment extends BaseDirectMessagesListFragment 
 			}
 		}
 	};
-	
-	@Override
-	public void onStart() {
-		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED);
-		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
-		registerReceiver(mStatusReceiver, filter);
-		if (getServiceInterface().isReceivedDirectMessagesRefreshing()) {
-			setRefreshing(false);
-		} else {
-			onRefreshComplete();
-		}
-	}
-	
+
 	@Override
 	public Uri getContentUri() {
 		return DirectMessages.Inbox.CONTENT_URI;
@@ -83,6 +69,20 @@ public class DirectMessagesInboxFragment extends BaseDirectMessagesListFragment 
 	@Override
 	public void onPostStart() {
 
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED);
+		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
+		registerReceiver(mStatusReceiver, filter);
+		if (getServiceInterface().isReceivedDirectMessagesRefreshing()) {
+			setRefreshing(false);
+		} else {
+			onRefreshComplete();
+		}
 	}
 
 	@Override

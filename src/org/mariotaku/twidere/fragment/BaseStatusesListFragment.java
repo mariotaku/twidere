@@ -116,7 +116,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		return mActivityFirstCreated;
 	}
 
-	public abstract boolean mustShowLastAsGap();
+	public abstract boolean isListLoadFinished();
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -282,7 +282,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		adapter.setDisplayProfileImage(display_profile_image);
 		adapter.setDisplayName(display_name);
 		adapter.setTextSize(text_size);
-		adapter.setShowLastItemAsGap(!mLoadMoreAutomatically && mustShowLastAsGap());
+		adapter.setShowLastItemAsGap(!(mLoadMoreAutomatically || isListLoadFinished()));
 	}
 
 	@Override
