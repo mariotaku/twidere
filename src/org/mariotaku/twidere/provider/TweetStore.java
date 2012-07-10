@@ -194,11 +194,13 @@ public final class TweetStore implements Constants {
 		public static final String SENDER_PROFILE_IMAGE_URL = "sender_profile_image_url";
 		public static final String RECIPIENT_PROFILE_IMAGE_URL = "recipient_profile_image_url";
 
-		public static final String[] COLUMNS = new String[] { ACCOUNT_ID, MESSAGE_ID, MESSAGE_TIMESTAMP, SENDER_ID,
-				RECIPIENT_ID, IS_GAP, TEXT, SENDER_NAME, RECIPIENT_NAME, SENDER_SCREEN_NAME, RECIPIENT_SCREEN_NAME,
-				SENDER_PROFILE_IMAGE_URL, RECIPIENT_PROFILE_IMAGE_URL };
-		public static final String[] TYPES = new String[] { TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
-				TYPE_BOOLEAN, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
+		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, MESSAGE_ID, MESSAGE_TIMESTAMP,
+				SENDER_ID, RECIPIENT_ID, IS_GAP, TEXT, SENDER_NAME, RECIPIENT_NAME, SENDER_SCREEN_NAME,
+				RECIPIENT_SCREEN_NAME, SENDER_PROFILE_IMAGE_URL, RECIPIENT_PROFILE_IMAGE_URL };
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
+				TYPE_INT, TYPE_BOOLEAN, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
+
+		public static final String DEFAULT_SORT_ORDER = MESSAGE_ID + " DESC";
 
 		public static interface Conversation extends DirectMessages {
 

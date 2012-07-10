@@ -17,8 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.fragment;
+package org.mariotaku.twidere.util;
 
-public abstract class BaseDirectMessagesFragment extends PullToRefreshListFragment {
+import org.mariotaku.twidere.model.ParcelableDirectMessage;
+
+public interface DirectMessagesAdapterInterface extends BaseAdapterInterface {
+
+	public ParcelableDirectMessage findItem(long id);
 
 }

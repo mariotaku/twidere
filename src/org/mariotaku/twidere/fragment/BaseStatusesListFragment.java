@@ -236,6 +236,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 					final Bundle bundle = new Bundle();
 					final List<String> mentions = new Extractor().extractMentionedScreennames(text_plain);
+					mentions.remove(screen_name);
 					mentions.add(0, screen_name);
 					bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -277,11 +278,11 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_LOAD_MORE_AUTOMATICALLY, false);
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		adapter.setDisplayProfileImage(display_profile_image);
 		adapter.setDisplayName(display_name);
 		adapter.setTextSize(text_size);
-		adapter.setShowLastItemAsGap(!mLoadMoreAutomatically || mustShowLastAsGap());
+		adapter.setShowLastItemAsGap(!mLoadMoreAutomatically && mustShowLastAsGap());
 	}
 
 	@Override

@@ -30,11 +30,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -47,6 +47,7 @@ import javax.net.ssl.X509TrustManager;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.fragment.ImagesPreviewFragment.ImageSpec;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
@@ -55,6 +56,8 @@ import org.mariotaku.twidere.fragment.UserFriendsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
+import org.mariotaku.twidere.model.DirectMessageCursorIndices;
+import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.provider.TweetStore;
@@ -71,7 +74,6 @@ import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.URLEntity;
 import twitter4j.User;
@@ -157,15 +159,23 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, URI_FILTERED_USERS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_KEYWORDS, URI_FILTERED_KEYWORDS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, URI_FILTERED_SOURCES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES, URI_DIRECT_MESSAGES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_INBOX,
+				URI_DIRECT_MESSAGES_INBOX);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_OUTBOX,
+				URI_DIRECT_MESSAGES_OUTBOX);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATION,
+				URI_DIRECT_MESSAGES_CONVERSATION);
 	}
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 
-	private static final String IMAGE_URL_PATTERN = "href=\\s*[\\\"'](http(s?):\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp))[\\\"']\\s*";
 	private static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+	private static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
+			DirectMessages.Outbox.CONTENT_URI };
 
 	private Utils() {
-
+		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
 	}
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
@@ -254,6 +264,25 @@ public final class Utils implements Constants {
 
 	public static void clearAccountColor() {
 		sAccountColors.clear();
+	}
+
+	public static ParcelableDirectMessage findDirectMessageInDatabases(Context context, long account_id, long message_id) {
+		final ContentResolver resolver = context.getContentResolver();
+		ParcelableDirectMessage message = null;
+		final String where = DirectMessages.ACCOUNT_ID + " = " + account_id + " AND " + DirectMessages.MESSAGE_ID
+				+ " = " + message_id;
+		for (final Uri uri : DIRECT_MESSAGES_URIS) {
+			final Cursor cur = resolver.query(uri, DirectMessages.COLUMNS, where, null, null);
+			if (cur == null) {
+				continue;
+			}
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				message = new ParcelableDirectMessage(cur, new DirectMessageCursorIndices(cur));
+			}
+			cur.close();
+		}
+		return message;
 	}
 
 	public static ParcelableStatus findStatusInDatabases(Context context, long account_id, long status_id) {
@@ -669,32 +698,6 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static URL[] getImageLinksForText(CharSequence text) {
-
-		final Pattern pattern = Pattern.compile(IMAGE_URL_PATTERN);
-		final Matcher matcher = pattern.matcher(text);
-		final List<URL> image_links = new ArrayList<URL>();
-		while (matcher.find()) {
-			final String link_string = matcher.group(1);
-			if (link_string == null) {
-				continue;
-			}
-			URL link = null;
-			try {
-				link = new URL(link_string);
-			} catch (final MalformedURLException e) {
-
-			}
-			if (link == null) {
-				continue;
-			}
-			if (!image_links.contains(link)) {
-				image_links.add(link);
-			}
-		}
-		return image_links.toArray(new URL[image_links.size()]);
-	}
-
 	public static String getImagePathFromUri(Context context, Uri uri) {
 		if (uri == null) return null;
 
@@ -718,6 +721,50 @@ public final class Utils implements Constants {
 		return null;
 	}
 
+	public static List<ImageSpec> getImagesInStatus(String status_string) {
+		if (status_string == null) return Collections.emptyList();
+		final List<ImageSpec> images = new ArrayList<ImageSpec>();
+		// get instagram images
+		{
+			final Matcher matcher = TwidereLinkify.PATTERN_INSTAGRAM.matcher(status_string);
+			while (matcher.find()) {
+				images.add(getInstagramImage(matcher.group(TwidereLinkify.INSTAGRAM_GROUP_ID)));
+			}
+		}
+		{
+			final Matcher matcher = TwidereLinkify.PATTERN_TWITPIC.matcher(status_string);
+			while (matcher.find()) {
+				images.add(getTwitpicImage(matcher.group(TwidereLinkify.TWITPIC_GROUP_ID)));
+			}
+		}
+		{
+			final Matcher matcher = TwidereLinkify.PATTERN_TWITTER_IMAGES.matcher(status_string);
+			while (matcher.find()) {
+				images.add(getTwitterImage(matcher.group()));
+			}
+		}
+		{
+			final Matcher matcher = TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI.matcher(status_string);
+			while (matcher.find()) {
+				images.add(getLockerzAndPlixiImage(matcher.group()));
+			}
+		}
+		{
+			final Matcher matcher = TwidereLinkify.PATTERN_SINA_WEIBO_IMAGES.matcher(status_string);
+			while (matcher.find()) {
+				images.add(getSinaWeiboImage(matcher.group()));
+			}
+		}
+		return images;
+	}
+
+	public static ImageSpec getInstagramImage(String id) {
+		if (isNullOrEmpty(id)) return null;
+		final String thumbnail_size = "http://instagr.am/p/" + id + "/media/?size=t";
+		final String full_size = "http://instagr.am/p/" + id + "/media/?size=l";
+		return new ImageSpec(thumbnail_size, full_size);
+	}
+
 	public static long[] getLastSortIds(Context context, Uri uri) {
 		final long[] account_ids = getActivatedAccountIds(context);
 		final String[] cols = new String[] { Statuses.STATUS_ID };
@@ -739,6 +786,14 @@ public final class Utils implements Constants {
 			idx++;
 		}
 		return status_ids;
+	}
+
+	public static ImageSpec getLockerzAndPlixiImage(String url) {
+		if (isNullOrEmpty(url)) return null;
+		final String thumbnail_size = "http://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
+		final String full_size = "http://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
+		return new ImageSpec(thumbnail_size, full_size);
+
 	}
 
 	/**
@@ -853,6 +908,15 @@ public final class Utils implements Constants {
 		return null;
 	}
 
+	public static ImageSpec getSinaWeiboImage(String url) {
+		if (isNullOrEmpty(url)) return null;
+		final String thumbnail_size = url.replaceAll("\\/" + TwidereLinkify.SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/",
+				"/thumbnail/");
+		final String full_size = url.replaceAll("\\/" + TwidereLinkify.SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/",
+				"/large/");
+		return new ImageSpec(thumbnail_size, full_size);
+	}
+
 	public static int getTableId(Uri uri) {
 		return CONTENT_PROVIDER_URI_MATCHER.match(uri);
 	}
@@ -875,9 +939,29 @@ public final class Utils implements Constants {
 				return TABLE_FILTERED_KEYWORDS;
 			case URI_FILTERED_SOURCES:
 				return TABLE_FILTERED_SOURCES;
+			case URI_DIRECT_MESSAGES:
+				return TABLE_DIRECT_MESSAGES;
+			case URI_DIRECT_MESSAGES_INBOX:
+				return TABLE_DIRECT_MESSAGES_INBOX;
+			case URI_DIRECT_MESSAGES_OUTBOX:
+				return TABLE_DIRECT_MESSAGES_OUTBOX;
+			case URI_DIRECT_MESSAGES_CONVERSATION:
+				return TABLE_DIRECT_MESSAGES_CONVERSATION;
 			default:
 				return null;
 		}
+	}
+
+	public static ImageSpec getTwitpicImage(String id) {
+		if (isNullOrEmpty(id)) return null;
+		final String thumbnail_size = "http://twitpic.com/show/thumb/" + id;
+		final String full_size = "http://twitpic.com/show/large/" + id;
+		return new ImageSpec(thumbnail_size, full_size);
+	}
+
+	public static ImageSpec getTwitterImage(String url) {
+		if (isNullOrEmpty(url)) return null;
+		return new ImageSpec(url + ":thumb", url);
 	}
 
 	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities) {
@@ -997,10 +1081,10 @@ public final class Utils implements Constants {
 
 	public static int getTypeIcon(boolean is_fav, boolean has_location, boolean has_media) {
 		if (is_fav)
-			return R.drawable.ic_tweet_stat_starred;
+			return R.drawable.ic_indicator_starred;
 		else if (has_media)
-			return R.drawable.ic_tweet_stat_has_media;
-		else if (has_location) return R.drawable.ic_tweet_stat_has_location;
+			return R.drawable.ic_indicator_has_media;
+		else if (has_location) return R.drawable.ic_indicator_has_location;
 		return 0;
 	}
 
@@ -1123,7 +1207,7 @@ public final class Utils implements Constants {
 			values.put(DirectMessages.SENDER_PROFILE_IMAGE_URL, sender_profile_image_url.toString());
 		}
 		if (recipient_profile_image_url != null) {
-			values.put(DirectMessages.SENDER_PROFILE_IMAGE_URL, recipient_profile_image_url.toString());
+			values.put(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL, recipient_profile_image_url.toString());
 		}
 		return values;
 	}

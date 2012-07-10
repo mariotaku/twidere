@@ -197,7 +197,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mInReplyToName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_NAME) : null;
 		mIsImageAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_IMAGE_ATTACHED) : false;
 		mIsPhotoAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_PHOTO_ATTACHED) : false;
-		mImageUri = (Uri) (bundle != null ? bundle.getParcelable(INTENT_KEY_IMAGE_URI) : null);
+		mImageUri = bundle != null ? (Uri) bundle.getParcelable(INTENT_KEY_IMAGE_URI) : null;
 		int text_selection_start = -1;
 		if (mInReplyToStatusId > 0) {
 			final String account_username = getAccountUsername(this, mAccountId);
@@ -214,7 +214,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					if (mentions.length == 1 && mentions[0].equals(account_username)) {
 						builder.append('@' + account_username + ' ');
 					}
-					if (!mention.equals(account_username) && !mention.equals(mInReplyToScreenName)) {
+					if (!mention.equals(account_username)) {
 						builder.append('@' + mention + ' ');
 					}
 				}

@@ -19,12 +19,15 @@
 
 package org.mariotaku.twidere.model;
 
+import static org.mariotaku.twidere.util.Utils.parseURL;
+
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Date;
 
 import twitter4j.DirectMessage;
 import twitter4j.User;
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -62,6 +65,25 @@ public class ParcelableDirectMessage implements Parcelable {
 	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
 
 	public final URL sender_profile_image_url, recipient_profile_image_url;
+
+	public ParcelableDirectMessage(Cursor cursor, DirectMessageCursorIndices indices) {
+		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
+		is_gap = indices.is_gap != -1 ? cursor.getShort(indices.is_gap) == 1 : null;
+		message_id = indices.message_id != -1 ? cursor.getLong(indices.message_id) : -1;
+		message_timestamp = indices.message_timestamp != -1 ? cursor.getLong(indices.message_timestamp) : -1;
+		sender_id = indices.sender_id != -1 ? cursor.getLong(indices.sender_id) : -1;
+		recipient_id = indices.recipient_id != -1 ? cursor.getLong(indices.recipient_id) : -1;
+		text = indices.text != -1 ? cursor.getString(indices.text) : null;
+		sender_name = indices.sender_name != -1 ? cursor.getString(indices.sender_name) : null;
+		recipient_name = indices.recipient_name != -1 ? cursor.getString(indices.recipient_name) : null;
+		sender_screen_name = indices.sender_screen_name != -1 ? cursor.getString(indices.sender_screen_name) : null;
+		recipient_screen_name = indices.recipient_screen_name != -1 ? cursor.getString(indices.recipient_screen_name)
+				: null;
+		sender_profile_image_url = indices.sender_profile_image_url != -1 ? parseURL(cursor
+				.getString(indices.sender_profile_image_url)) : null;
+		recipient_profile_image_url = indices.recipient_profile_image_url != -1 ? parseURL(cursor
+				.getString(indices.recipient_profile_image_url)) : null;
+	}
 
 	public ParcelableDirectMessage(DirectMessage message, long account_id, boolean is_gap) {
 		this.account_id = account_id;

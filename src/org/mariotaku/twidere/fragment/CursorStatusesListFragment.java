@@ -29,7 +29,7 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.StatusesCursorAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.ProfileImageLoader;
+import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -62,7 +62,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		final ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
+		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
 				.getProfileImageLoader();
 		mAdapter = new StatusesCursorAdapter(getActivity(), imageloader);
 		super.onActivityCreated(savedInstanceState);

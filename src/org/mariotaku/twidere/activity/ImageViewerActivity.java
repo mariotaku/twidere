@@ -175,7 +175,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			BitmapFactory.decodeFile(mImageFile.getPath(), o);
 			final String mime_type = o.outMimeType;
 			String file_name_with_suffix = null;
-			if (file_name.matches("(.*/)*.+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|GIF|BMP)$")) {
+			if (file_name.matches("(.*/)*.+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|JPEG|GIF|BMP)$")) {
 				file_name_with_suffix = file_name;
 			} else {
 				if (mime_type == null) return;

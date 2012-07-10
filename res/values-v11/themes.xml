@@ -6,6 +6,7 @@
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowBackground">@drawable/image_viewer_background</item>
 		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 	</style>
 
 </resources>

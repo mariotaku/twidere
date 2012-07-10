@@ -28,9 +28,9 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
+import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
 import org.mariotaku.twidere.util.MemCache;
-import org.mariotaku.twidere.util.ProfileImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Application;
@@ -40,10 +40,9 @@ import android.os.Build;
 
 public class TwidereApplication extends Application implements Constants {
 
-	private ProfileImageLoader mProfileImageLoader;
+	private LazyImageLoader mProfileImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private ClearCacheTask mClearCacheTask;
-	private ServiceInterface mServiceInterface;
 	private MemCache mMemCache;
 
 	public void clearCache() {
@@ -67,20 +66,17 @@ public class TwidereApplication extends Application implements Constants {
 		return mMemCache;
 	}
 
-	public ProfileImageLoader getProfileImageLoader() {
+	public LazyImageLoader getProfileImageLoader() {
 		if (mProfileImageLoader == null) {
-			mProfileImageLoader = new ProfileImageLoader(this, R.drawable.ic_profile_image_default, getResources()
-					.getDimensionPixelSize(R.dimen.profile_image_size));
+			final int profile_image_size = getResources().getDimensionPixelSize(R.dimen.profile_image_size);
+			mProfileImageLoader = new LazyImageLoader(this, DIR_NAME_PROFILE_IMAGES,
+					R.drawable.ic_profile_image_default, profile_image_size, profile_image_size);
 		}
 		return mProfileImageLoader;
 	}
 
 	public ServiceInterface getServiceInterface() {
-
-		if (mServiceInterface == null) {
-			mServiceInterface = ServiceInterface.getInstance(this);
-		}
-		return mServiceInterface;
+		return ServiceInterface.getInstance(this);
 	}
 
 	@Override

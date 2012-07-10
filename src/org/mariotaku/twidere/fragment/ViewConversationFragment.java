@@ -32,7 +32,7 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
-import org.mariotaku.twidere.util.ProfileImageLoader;
+import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import twitter4j.Status;
@@ -95,7 +95,7 @@ public class ViewConversationFragment extends BaseListFragment implements OnScro
 		final long account_id = bundle.getLong(INTENT_KEY_ACCOUNT_ID, INVALID_ID);
 		final long status_id = bundle.getLong(INTENT_KEY_STATUS_ID, INVALID_ID);
 
-		final ProfileImageLoader imageloader = getApplication().getProfileImageLoader();
+		final LazyImageLoader imageloader = getApplication().getProfileImageLoader();
 		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
 			mShowConversationTask.cancel(true);
 		}

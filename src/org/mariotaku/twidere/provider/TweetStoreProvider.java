@@ -27,6 +27,7 @@ import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
@@ -125,6 +126,20 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				}
 				break;
 			}
+			case URI_DIRECT_MESSAGES_INBOX: {
+				if (!is_insert) {
+					context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
+							true));
+				}
+				break;
+			}
+			case URI_DIRECT_MESSAGES_OUTBOX: {
+				if (!is_insert) {
+					context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
+							true));
+				}
+				break;
+			}
 			default:
 				return;
 		}
@@ -149,6 +164,10 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			db.execSQL(createTable(TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true));
 			db.execSQL(createTable(TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true));
 			db.execSQL(createTable(TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true));
+			db.execSQL(createTable(TABLE_DIRECT_MESSAGES_INBOX, DirectMessages.Inbox.COLUMNS,
+					DirectMessages.Inbox.TYPES, true));
+			db.execSQL(createTable(TABLE_DIRECT_MESSAGES_OUTBOX, DirectMessages.Outbox.COLUMNS,
+					DirectMessages.Outbox.TYPES, true));
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
@@ -190,6 +209,9 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			safeUpgrade(db, TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES, true);
 			safeUpgrade(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true);
 			safeUpgrade(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true);
+			safeUpgrade(db, TABLE_DIRECT_MESSAGES_INBOX, DirectMessages.Inbox.COLUMNS, DirectMessages.Inbox.TYPES, true);
+			safeUpgrade(db, TABLE_DIRECT_MESSAGES_OUTBOX, DirectMessages.Outbox.COLUMNS, DirectMessages.Outbox.TYPES,
+					true);
 		}
 
 	}

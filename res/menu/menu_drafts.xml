@@ -4,6 +4,7 @@
 	<item
 		android:id="@+id/delete_all_submenu"
 		android:icon="@drawable/ic_menu_delete"
+		android:showAsAction="always"
 		android:title="@string/delete_all">
 		<menu>
 			<item
@@ -18,6 +19,7 @@
 	<item
 		android:id="@+id/send_all_submenu"
 		android:icon="@drawable/ic_menu_send"
+		android:showAsAction="always"
 		android:title="@string/send_all">
 		<menu>
 			<item

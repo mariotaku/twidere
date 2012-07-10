@@ -2,6 +2,8 @@
 <resources>
 
 	<dimen name="profile_image_size">56dp</dimen>
+	<dimen name="image_preview_width">160dp</dimen>
+	<dimen name="image_preview_height">120dp</dimen>
 	<dimen name="set_color_height">240dp</dimen>
 
 </resources>

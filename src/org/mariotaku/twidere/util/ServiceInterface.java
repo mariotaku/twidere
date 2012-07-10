@@ -173,6 +173,28 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int getReceivedDirectMessages(long account_id, long max_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.getReceivedDirectMessages(account_id, max_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int getSentDirectMessages(long account_id, long max_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.getSentDirectMessages(account_id, max_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public boolean hasActivatedTask() {
 		if (mService == null) return false;
 		try {
@@ -206,6 +228,28 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public boolean isReceivedDirectMessagesRefreshing() {
+		if (mService == null) return false;
+		try {
+			return mService.isReceivedDirectMessagesRefreshing();
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isSentDirectMessagesRefreshing() {
+		if (mService == null) return false;
+		try {
+			return mService.isSentDirectMessagesRefreshing();
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
 	public int reportSpam(long account_id, long user_id) {
 		if (mService == null) return -1;
 		try {
@@ -225,6 +269,17 @@ public class ServiceInterface implements Constants, ITwidereService {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+
+	@Override
+	public void shutdownService() {
+		if (mService == null) return;
+		try {
+			mService.shutdownService();
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override

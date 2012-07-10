@@ -21,6 +21,7 @@ package org.mariotaku.twidere;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
@@ -35,7 +36,7 @@ public interface Constants extends TwitterConstants {
 	public static final String LOGTAG = "Twidere";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 16;
+	public static final int DATABASES_VERSION = 18;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -103,7 +104,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_ENABLE_FILTER = "enable_filter";
 	public static final String PREFERENCE_KEY_GZIP_COMPRESSING = "gzip_compressing";
 	public static final String PREFERENCE_KEY_IGNORE_SSL_ERROR = "ignore_ssl_error";
-	public static final String PREFERENCE_LOAD_MORE_AUTOMATICALLY = "load_more_automatically";
+	public static final String PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY = "load_more_automatically";
 	public static final String PREFERENCE_KEY_CONSUMER_KEY = "consumer_key";
 	public static final String PREFERENCE_KEY_CONSUMER_SECRET = "consumer_secret";
 	public static final String PREFERENCE_KEY_QUOTE_FORMAT = "quote_format";
@@ -115,6 +116,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_ENABLE_PROXY = "enable_proxy";
 	public static final String PREFERENCE_KEY_PROXY_HOST = "proxy_host";
 	public static final String PREFERENCE_KEY_PROXY_PORT = "proxy_port";
+	public static final String PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED = "stop_service_after_closed";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
@@ -155,6 +157,14 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_PROFILE_UPDATED = INTENT_PACKAGE_PREFIX + "PROFILE_UPDATED";
 	public static final String BROADCAST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DATABASE_UPDATED";
 	public static final String BROADCAST_FAVORITE_CHANGED = INTENT_PACKAGE_PREFIX + "FAVORITE_CHANGED";
+	public static final String BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED = INTENT_PACKAGE_PREFIX
+			+ "RECEIVED_DIRECT_MESSAGES_REFRESHED";
+	public static final String BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED = INTENT_PACKAGE_PREFIX
+			+ "SENT_DIRECT_MESSAGES_REFRESHED";
+	public static final String BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
+			+ "RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED";
+	public static final String BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
+			+ "SENT_DIRECT_MESSAGES_DATABASE_UPDATED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -241,6 +251,10 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_FILTERED_USERS = Filters.Users.CONTENT_PATH;
 	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.CONTENT_PATH;
 	public static final String TABLE_FILTERED_SOURCES = Filters.Sources.CONTENT_PATH;
+	public static final String TABLE_DIRECT_MESSAGES = DirectMessages.CONTENT_PATH;
+	public static final String TABLE_DIRECT_MESSAGES_INBOX = DirectMessages.Inbox.CONTENT_PATH;
+	public static final String TABLE_DIRECT_MESSAGES_OUTBOX = DirectMessages.Outbox.CONTENT_PATH;
+	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION = DirectMessages.Conversation.CONTENT_PATH;
 
 	public static final int URI_ACCOUNTS = 1;
 	public static final int URI_STATUSES = 2;
@@ -250,5 +264,11 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_FILTERED_USERS = 6;
 	public static final int URI_FILTERED_KEYWORDS = 7;
 	public static final int URI_FILTERED_SOURCES = 8;
+	public static final int URI_DIRECT_MESSAGES = 9;
+	public static final int URI_DIRECT_MESSAGES_INBOX = 10;
+	public static final int URI_DIRECT_MESSAGES_OUTBOX = 11;
+	public static final int URI_DIRECT_MESSAGES_CONVERSATION = 12;
 
+	public static final String DIR_NAME_PROFILE_IMAGES = "profile_images";
+	public static final String DIR_NAME_CACHED_THUMBNAILS = "cached_thumbnails";
 }

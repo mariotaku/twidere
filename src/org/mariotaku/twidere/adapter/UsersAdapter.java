@@ -26,7 +26,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.UserViewHolder;
 import org.mariotaku.twidere.util.BaseAdapterInterface;
-import org.mariotaku.twidere.util.ProfileImageLoader;
+import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.Context;
 import android.view.View;
@@ -35,7 +35,7 @@ import android.widget.ArrayAdapter;
 
 public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
 
-	private final ProfileImageLoader mImageLoader;
+	private final LazyImageLoader mImageLoader;
 	private boolean mDisplayProfileImage, mShowLastItemAsGap, mDisplayName;
 	private float mTextSize;
 
@@ -79,7 +79,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			holder.setTextSize(mTextSize);
 			holder.name.setText(mDisplayName ? user.name : user.screen_name);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(
-					user.is_protected ? R.drawable.ic_tweet_stat_is_protected : 0, 0, 0, 0);
+					user.is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				mImageLoader.displayImage(user.profile_image_url, holder.profile_image);

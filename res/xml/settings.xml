@@ -173,5 +173,14 @@
 				android:targetPackage="org.mariotaku.twidere"/>
 		</PreferenceScreen>
 	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="cat_other_settings"
+		android:title="@string/other_settings">
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="stop_service_after_closed"
+			android:summary="@string/stop_service_after_closed_summary"
+			android:title="@string/stop_service_after_closed"/>
+	</PreferenceCategory>
 
 </PreferenceScreen>

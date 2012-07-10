@@ -34,7 +34,7 @@
 			android:title="Français">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="https://twitter.com/#!/marcpl31"/>
+				android:data="twidere://user?user_id=250570612"/>
 		</PreferenceScreen>
 		<PreferenceScreen
 			android:summary="Cem Uluer"

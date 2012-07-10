@@ -7,6 +7,7 @@
 		<item name="tabBackground">@null</item>
 		<item name="switchStyle">@style/Widget.Holo.CompoundButton.Switch</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
 		<!-- Button styles -->
 		<item name="android:buttonStyle">@style/Widget.Twidere.Button</item>
@@ -22,6 +23,7 @@
 		<item name="switchStyle">@style/Widget.Holo.Light.CompoundButton.Switch</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
 		<!-- Button styles -->
 		<item name="android:buttonStyle">@style/Widget.Twidere.Light.Button</item>
@@ -33,6 +35,7 @@
 	<style name="Theme.Twidere.Viewer" parent="android:Theme.Translucent.NoTitleBar">
 		<item name="android:windowBackground">@drawable/image_viewer_background</item>
 		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 	</style>
 
 	<style name="Theme.Twidere.Dialog" parent="Theme.Holo.Dialog">
@@ -40,6 +43,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="switchStyle">@style/Widget.Holo.CompoundButton.Switch</item>
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
 		<!-- Button styles -->
 		<item name="android:buttonStyle">@style/Widget.Twidere.Button</item>
@@ -53,6 +57,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="switchStyle">@style/Widget.Holo.Light.CompoundButton.Switch</item>
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
 		<!-- Button styles -->
 		<item name="android:buttonStyle">@style/Widget.Twidere.Light.Button</item>

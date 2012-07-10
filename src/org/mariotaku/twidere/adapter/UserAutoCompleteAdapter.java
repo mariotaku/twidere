@@ -25,7 +25,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.ProfileImageLoader;
+import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -40,7 +40,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 	private Cursor mCursor;
 
 	private final ContentResolver mResolver;
-	private final ProfileImageLoader mImageLoader;
+	private final LazyImageLoader mImageLoader;
 	private static final String[] FROM = new String[] { CachedUsers.NAME, CachedUsers.SCREEN_NAME };
 	private static final int[] TO = new int[] { android.R.id.text1, android.R.id.text2 };
 

@@ -52,16 +52,17 @@ import twitter4j.DirectMessage;
 import twitter4j.GeoLocation;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
-import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
@@ -77,17 +78,29 @@ public class TwidereService extends Service implements Constants {
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 
-	private boolean mStoreStatusesFinished = true, mStoreMentionsFinished = true;
+	private int mStoreStatusesTaskId, mStoreMentionsTaskId;
 
 	private SharedPreferences mPreferences;
 
-	private int mGetReceivedDirectMessagesTaskId;
+	private int mGetReceivedDirectMessagesTaskId, mGetSentDirectMessagesTaskId;
 
-	private int mGetSentDirectMessagesTaskId;
+	private int mStoreReceivedDirectMessagesTaskId, mStoreSentDirectMessagesTaskId;
 
-	private boolean mStoreReceivedDirectMessagesFinished;
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
-	private boolean mStoreSentDirectMessagesFinished;
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+				if (!mAsyncTaskManager.hasActivatedTask() && mShouldShutdown) {
+					stopSelf();
+				}
+			}
+		}
+
+	};
+
+	private boolean mShouldShutdown = false;
 
 	public int cancelRetweet(long account_id, long status_id) {
 		final CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
@@ -142,13 +155,15 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public int getReceivedDirectMessages(long account_id, long max_id) {
+		mAsyncTaskManager.cancel(mGetReceivedDirectMessagesTaskId);
 		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_id, max_id);
-		return mAsyncTaskManager.add(task, true);
+		return mGetReceivedDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public int getSentDirectMessages(long account_id, long max_id) {
+		mAsyncTaskManager.cancel(mGetSentDirectMessagesTaskId);
 		final GetSentDirectMessagesTask task = new GetSentDirectMessagesTask(account_id, max_id);
-		return mAsyncTaskManager.add(task, true);
+		return mGetSentDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public boolean hasActivatedTask() {
@@ -156,11 +171,22 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public boolean isHomeTimelineRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetHomeTimelineTaskId) || !mStoreStatusesFinished;
+		return mAsyncTaskManager.isExcuting(mGetHomeTimelineTaskId)
+				|| mAsyncTaskManager.isExcuting(mStoreStatusesTaskId);
 	}
 
 	public boolean isMentionsRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetMentionsTaskId) || !mStoreMentionsFinished;
+		return mAsyncTaskManager.isExcuting(mGetMentionsTaskId) || mAsyncTaskManager.isExcuting(mStoreMentionsTaskId);
+	}
+
+	public boolean isReceivedDirectMessagesRefreshing() {
+		return mAsyncTaskManager.isExcuting(mGetReceivedDirectMessagesTaskId)
+				|| mAsyncTaskManager.isExcuting(mStoreReceivedDirectMessagesTaskId);
+	}
+
+	public boolean isSentDirectMessagesRefreshing() {
+		return mAsyncTaskManager.isExcuting(mGetSentDirectMessagesTaskId)
+				|| mAsyncTaskManager.isExcuting(mStoreSentDirectMessagesTaskId);
 	}
 
 	@Override
@@ -173,6 +199,14 @@ public class TwidereService extends Service implements Constants {
 		super.onCreate();
 		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		registerReceiver(mStateReceiver, filter);
+	}
+
+	@Override
+	public void onDestroy() {
+		unregisterReceiver(mStateReceiver);
+		super.onDestroy();
 	}
 
 	public int reportSpam(long account_id, long user_id) {
@@ -183,6 +217,14 @@ public class TwidereService extends Service implements Constants {
 	public int retweetStatus(long account_id, long status_id) {
 		final RetweetStatusTask task = new RetweetStatusTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
+	}
+
+	public void shutdownService() {
+		if (!mAsyncTaskManager.hasActivatedTask()) {
+			stopSelf();
+		} else {
+			mShouldShutdown = true;
+		}
 	}
 
 	public int updateProfile(long account_id, String name, String url, String location, String description) {
@@ -206,7 +248,7 @@ public class TwidereService extends Service implements Constants {
 		Utils.showErrorToast(this, e, long_message);
 	}
 
-	private class CancelRetweetTask extends ManagedAsyncTask<Void, Void, StatusResponse> {
+	private class CancelRetweetTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
 		private long status_id, retweeted_id;
@@ -218,35 +260,35 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected StatusResponse doInBackground(Void... params) {
+		protected SingleResponse<twitter4j.Status> doInBackground(Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final twitter4j.Status status = twitter.destroyStatus(retweeted_id);
-					return new StatusResponse(account_id, status, null);
+					return new SingleResponse<twitter4j.Status>(account_id, status, null);
 				} catch (final TwitterException e) {
-					return new StatusResponse(account_id, null, e);
+					return new SingleResponse<twitter4j.Status>(account_id, null, e);
 				}
 			}
-			return new StatusResponse(account_id, null, null);
+			return new SingleResponse<twitter4j.Status>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(StatusResponse result) {
-			if (result != null && result.status != null) {
+		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
+			if (result != null && result.data != null) {
 				final ContentResolver resolver = getContentResolver();
-				final User user = result.status.getUser();
-				final twitter4j.Status retweeted_status = result.status.getRetweetedStatus();
+				final User user = result.data.getUser();
+				final twitter4j.Status retweeted_status = result.data.getRetweetedStatus();
 				if (user != null && retweeted_status != null) {
 					final ContentValues values = new ContentValues();
-					values.put(Statuses.RETWEET_COUNT, result.status.getRetweetCount());
+					values.put(Statuses.RETWEET_COUNT, result.data.getRetweetCount());
 					values.put(Statuses.RETWEET_ID, -1);
 					values.put(Statuses.RETWEETED_BY_ID, -1);
 					values.put(Statuses.RETWEETED_BY_NAME, "");
 					values.put(Statuses.RETWEETED_BY_SCREEN_NAME, "");
 					values.put(Statuses.IS_RETWEET, 0);
-					final String status_where = Statuses.STATUS_ID + " = " + result.status.getId();
+					final String status_where = Statuses.STATUS_ID + " = " + result.data.getId();
 					final String retweet_where = Statuses.STATUS_ID + " = " + retweeted_status.getId();
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
 						resolver.delete(uri, status_where, null);
@@ -268,7 +310,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CreateBlockTask extends ManagedAsyncTask<Void, Void, UserResponse> {
+	private class CreateBlockTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
 		private long user_id;
@@ -280,37 +322,37 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Void... params) {
+		protected SingleResponse<User> doInBackground(Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.createBlock(user_id);
-					return new UserResponse(user, null);
+					return new SingleResponse<User>(account_id, user, null);
 				} catch (final TwitterException e) {
-					return new UserResponse(null, e);
+					return new SingleResponse<User>(account_id, null, e);
 				}
 			}
-			return new UserResponse(null, null);
+			return new SingleResponse<User>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(UserResponse result) {
-			if (result != null && result.user != null) {
+		protected void onPostExecute(SingleResponse<User> result) {
+			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.user_blocked, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private class CreateFavoriteTask extends ManagedAsyncTask<Void, Void, StatusResponse> {
+	private class CreateFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
 
@@ -323,28 +365,28 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected StatusResponse doInBackground(Void... params) {
+		protected SingleResponse<twitter4j.Status> doInBackground(Void... params) {
 
-			if (account_id < 0) return new StatusResponse(account_id, null, null);
+			if (account_id < 0) return new SingleResponse<twitter4j.Status>(account_id, null, null);
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final twitter4j.Status status = twitter.createFavorite(status_id);
-					return new StatusResponse(account_id, status, null);
+					return new SingleResponse<twitter4j.Status>(account_id, status, null);
 				} catch (final TwitterException e) {
-					return new StatusResponse(account_id, null, e);
+					return new SingleResponse<twitter4j.Status>(account_id, null, e);
 				}
 			}
-			return new StatusResponse(account_id, null, null);
+			return new SingleResponse<twitter4j.Status>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(StatusResponse result) {
+		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
 			final ContentResolver resolver = getContentResolver();
 
-			if (result.status != null) {
-				final long status_id = result.status.getId();
+			if (result.data != null) {
+				final long status_id = result.data.getId();
 				final ContentValues values = new ContentValues();
 				values.put(Statuses.IS_FAVORITE, 1);
 				final StringBuilder where = new StringBuilder();
@@ -371,7 +413,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CreateFriendshipTask extends ManagedAsyncTask<Void, Void, UserResponse> {
+	private class CreateFriendshipTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
 		private long user_id;
@@ -383,37 +425,37 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Void... params) {
+		protected SingleResponse<User> doInBackground(Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.createFriendship(user_id);
-					return new UserResponse(user, null);
+					return new SingleResponse<User>(account_id, user, null);
 				} catch (final TwitterException e) {
-					return new UserResponse(null, e);
+					return new SingleResponse<User>(account_id, null, e);
 				}
 			}
-			return new UserResponse(null, null);
+			return new SingleResponse<User>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(UserResponse result) {
-			if (result != null && result.user != null) {
+		protected void onPostExecute(SingleResponse<User> result) {
+			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.follow_success, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private class DestroyBlockTask extends ManagedAsyncTask<Void, Void, UserResponse> {
+	private class DestroyBlockTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
 		private long user_id;
@@ -425,37 +467,37 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Void... params) {
+		protected SingleResponse<User> doInBackground(Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.destroyBlock(user_id);
-					return new UserResponse(user, null);
+					return new SingleResponse<User>(account_id, user, null);
 				} catch (final TwitterException e) {
-					return new UserResponse(null, e);
+					return new SingleResponse<User>(account_id, null, e);
 				}
 			}
-			return new UserResponse(null, null);
+			return new SingleResponse<User>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(UserResponse result) {
-			if (result != null && result.user != null) {
+		protected void onPostExecute(SingleResponse<User> result) {
+			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.user_unblocked, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private class DestroyFavoriteTask extends ManagedAsyncTask<Void, Void, StatusResponse> {
+	private class DestroyFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
 
@@ -468,30 +510,30 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected StatusResponse doInBackground(Void... params) {
+		protected SingleResponse<twitter4j.Status> doInBackground(Void... params) {
 
 			if (account_id < 0) {
-				new StatusResponse(account_id, null, null);
+				new SingleResponse<twitter4j.Status>(account_id, null, null);
 			}
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final twitter4j.Status status = twitter.destroyFavorite(status_id);
-					return new StatusResponse(account_id, status, null);
+					return new SingleResponse<twitter4j.Status>(account_id, status, null);
 				} catch (final TwitterException e) {
-					return new StatusResponse(account_id, null, e);
+					return new SingleResponse<twitter4j.Status>(account_id, null, e);
 				}
 			}
-			return new StatusResponse(account_id, null, null);
+			return new SingleResponse<twitter4j.Status>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(StatusResponse result) {
+		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
 			final ContentResolver resolver = getContentResolver();
 
-			if (result.status != null) {
-				final long status_id = result.status.getId();
+			if (result.data != null) {
+				final long status_id = result.data.getId();
 				final ContentValues values = new ContentValues();
 				values.put(Statuses.IS_FAVORITE, 0);
 				final StringBuilder where = new StringBuilder();
@@ -519,7 +561,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyFriendshipTask extends ManagedAsyncTask<Void, Void, UserResponse> {
+	private class DestroyFriendshipTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
 		private long user_id;
@@ -531,37 +573,37 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Void... params) {
+		protected SingleResponse<User> doInBackground(Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.destroyFriendship(user_id);
-					return new UserResponse(user, null);
+					return new SingleResponse<User>(account_id, user, null);
 				} catch (final TwitterException e) {
-					return new UserResponse(null, e);
+					return new SingleResponse<User>(account_id, null, e);
 				}
 			}
-			return new UserResponse(null, null);
+			return new SingleResponse<User>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(UserResponse result) {
-			if (result != null && result.user != null) {
+		protected void onPostExecute(SingleResponse<User> result) {
+			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.unfollow_success, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private class DestroyStatusTask extends ManagedAsyncTask<Void, Void, StatusResponse> {
+	private class DestroyStatusTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
 
@@ -574,24 +616,24 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected StatusResponse doInBackground(Void... params) {
+		protected SingleResponse<twitter4j.Status> doInBackground(Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final twitter4j.Status status = twitter.destroyStatus(status_id);
-					return new StatusResponse(account_id, status, null);
+					return new SingleResponse<twitter4j.Status>(account_id, status, null);
 				} catch (final TwitterException e) {
-					return new StatusResponse(account_id, null, e);
+					return new SingleResponse<twitter4j.Status>(account_id, null, e);
 				}
 			}
-			return new StatusResponse(account_id, null, null);
+			return new SingleResponse<twitter4j.Status>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(StatusResponse result) {
-			if (result != null && result.status != null) {
-				final long status_id = result.status.getId();
+		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
+			if (result != null && result.data != null) {
+				final long status_id = result.data.getId();
 				final ContentResolver resolver = getContentResolver();
 				final StringBuilder where = new StringBuilder();
 				where.append(Statuses.STATUS_ID + " = " + status_id);
@@ -608,20 +650,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private static final class DirectMessagesResponse {
-
-		public final long account_id, max_id;
-		public final ResponseList<DirectMessage> responselist;
-
-		public DirectMessagesResponse(long account_id, long max_id, ResponseList<DirectMessage> responselist) {
-			this.account_id = account_id;
-			this.max_id = max_id;
-			this.responselist = responselist;
-
-		}
-	}
-
-	private abstract class GetDirectMessagesTask extends ManagedAsyncTask<Void, Void, DirectMessagesResponse> {
+	private abstract class GetDirectMessagesTask extends ManagedAsyncTask<Void, Void, ListResponse<DirectMessage>> {
 
 		private long account_id, max_id;
 
@@ -635,7 +664,7 @@ public class TwidereService extends Service implements Constants {
 				throws TwitterException;
 
 		@Override
-		protected DirectMessagesResponse doInBackground(Void... params) {
+		protected ListResponse<DirectMessage> doInBackground(Void... params) {
 
 			final int load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
 					PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
@@ -649,12 +678,12 @@ public class TwidereService extends Service implements Constants {
 					}
 					final ResponseList<DirectMessage> statuses = getDirectMessages(twitter, paging);
 
-					if (statuses != null) return new DirectMessagesResponse(account_id, max_id, statuses);
+					if (statuses != null) return new ListResponse<DirectMessage>(account_id, max_id, statuses);
 				} catch (final TwitterException e) {
 					e.printStackTrace();
 				}
 			}
-			return null;
+			return new ListResponse<DirectMessage>(account_id, max_id, null);
 		}
 
 	}
@@ -676,10 +705,15 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<StatusesResponse> responses) {
+		protected void onPostExecute(List<ListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
-			mAsyncTaskManager.add(new StoreHomeTimelineTask(responses), true);
+			mStoreStatusesTaskId = mAsyncTaskManager.add(new StoreHomeTimelineTask(responses), true);
 			mGetHomeTimelineTaskId = -1;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
 		}
 
 	}
@@ -701,10 +735,15 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<StatusesResponse> responses) {
+		protected void onPostExecute(List<ListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
-			mAsyncTaskManager.add(new StoreMentionsTask(responses), true);
+			mStoreMentionsTaskId = mAsyncTaskManager.add(new StoreMentionsTask(responses), true);
 			mGetMentionsTaskId = -1;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
 		}
 
 	}
@@ -721,10 +760,16 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(DirectMessagesResponse responses) {
+		protected void onPostExecute(ListResponse<DirectMessage> responses) {
 			super.onPostExecute(responses);
-			mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses), true);
+			mStoreReceivedDirectMessagesTaskId = mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses),
+					true);
 			mGetReceivedDirectMessagesTaskId = -1;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
 		}
 
 	}
@@ -741,15 +786,20 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(DirectMessagesResponse responses) {
+		protected void onPostExecute(ListResponse<DirectMessage> responses) {
 			super.onPostExecute(responses);
-			mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses), true);
+			mStoreSentDirectMessagesTaskId = mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses), true);
 			mGetSentDirectMessagesTaskId = -1;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
 		}
 
 	}
 
-	private abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<StatusesResponse>> {
+	private abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<ListResponse<twitter4j.Status>>> {
 
 		private long[] account_ids, max_ids;
 
@@ -765,9 +815,9 @@ public class TwidereService extends Service implements Constants {
 		public abstract Twitter getTwitter(Context context, long account_id, boolean include_entities);
 
 		@Override
-		protected List<StatusesResponse> doInBackground(Void... params) {
+		protected List<ListResponse<twitter4j.Status>> doInBackground(Void... params) {
 
-			final List<StatusesResponse> result = new ArrayList<StatusesResponse>();
+			final List<ListResponse<twitter4j.Status>> result = new ArrayList<ListResponse<twitter4j.Status>>();
 
 			if (account_ids == null) return result;
 
@@ -790,7 +840,7 @@ public class TwidereService extends Service implements Constants {
 						final ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
 
 						if (statuses != null) {
-							result.add(new StatusesResponse(account_id, max_id, statuses));
+							result.add(new ListResponse<twitter4j.Status>(account_id, max_id, statuses));
 						}
 					} catch (final TwitterException e) {
 						e.printStackTrace();
@@ -803,7 +853,20 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class ReportSpamTask extends ManagedAsyncTask<Void, Void, UserResponse> {
+	private static final class ListResponse<Data> {
+
+		public final long account_id, max_id;
+		public final ResponseList<Data> list;
+
+		public ListResponse(long account_id, long max_id, ResponseList<Data> responselist) {
+			this.account_id = account_id;
+			this.max_id = max_id;
+			this.list = responselist;
+
+		}
+	}
+
+	private class ReportSpamTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
 		private long user_id;
@@ -815,37 +878,37 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Void... params) {
+		protected SingleResponse<User> doInBackground(Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.reportSpam(user_id);
-					return new UserResponse(user, null);
+					return new SingleResponse<User>(account_id, user, null);
 				} catch (final TwitterException e) {
-					return new UserResponse(null, e);
+					return new SingleResponse<User>(account_id, null, e);
 				}
 			}
-			return new UserResponse(null, null);
+			return new SingleResponse<User>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(UserResponse result) {
-			if (result != null && result.user != null) {
+		protected void onPostExecute(SingleResponse<User> result) {
+			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.reported_user_for_spam, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private class RetweetStatusTask extends ManagedAsyncTask<Void, Void, StatusResponse> {
+	private class RetweetStatusTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
 
@@ -858,32 +921,32 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected StatusResponse doInBackground(Void... params) {
+		protected SingleResponse<twitter4j.Status> doInBackground(Void... params) {
 
-			if (account_id < 0) return new StatusResponse(account_id, null, null);
+			if (account_id < 0) return new SingleResponse<twitter4j.Status>(account_id, null, null);
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final twitter4j.Status status = twitter.retweetStatus(status_id);
-					return new StatusResponse(account_id, status, null);
+					return new SingleResponse<twitter4j.Status>(account_id, status, null);
 				} catch (final TwitterException e) {
-					return new StatusResponse(account_id, null, e);
+					return new SingleResponse<twitter4j.Status>(account_id, null, e);
 				}
 			}
-			return new StatusResponse(account_id, null, null);
+			return new SingleResponse<twitter4j.Status>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(StatusResponse result) {
+		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
 			final ContentResolver resolver = getContentResolver();
 
-			if (result.status != null) {
-				final User user = result.status.getUser();
-				final twitter4j.Status retweeted_status = result.status.getRetweetedStatus();
+			if (result.data != null) {
+				final User user = result.data.getUser();
+				final twitter4j.Status retweeted_status = result.data.getRetweetedStatus();
 				if (user != null && retweeted_status != null) {
 					final ContentValues values = new ContentValues();
-					values.put(Statuses.RETWEET_ID, result.status.getId());
+					values.put(Statuses.RETWEET_ID, result.data.getId());
 					values.put(Statuses.RETWEETED_BY_ID, user.getId());
 					values.put(Statuses.RETWEETED_BY_NAME, user.getName());
 					values.put(Statuses.RETWEETED_BY_SCREEN_NAME, user.getScreenName());
@@ -971,6 +1034,16 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public int getReceivedDirectMessages(long account_id, long max_id) {
+			return mService.get().getReceivedDirectMessages(account_id, max_id);
+		}
+
+		@Override
+		public int getSentDirectMessages(long account_id, long max_id) {
+			return mService.get().getSentDirectMessages(account_id, max_id);
+		}
+
+		@Override
 		public boolean hasActivatedTask() {
 			return mService.get().hasActivatedTask();
 		}
@@ -986,6 +1059,16 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public boolean isReceivedDirectMessagesRefreshing() {
+			return mService.get().isReceivedDirectMessagesRefreshing();
+		}
+
+		@Override
+		public boolean isSentDirectMessagesRefreshing() {
+			return mService.get().isSentDirectMessagesRefreshing();
+		}
+
+		@Override
 		public int reportSpam(long account_id, long user_id) {
 			return mService.get().reportSpam(account_id, user_id);
 		}
@@ -993,6 +1076,11 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public int retweetStatus(long account_id, long status_id) {
 			return mService.get().retweetStatus(account_id, status_id);
+		}
+
+		@Override
+		public void shutdownService() {
+			mService.get().shutdownService();
 		}
 
 		@Override
@@ -1019,37 +1107,24 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private static final class StatusesResponse {
-
-		public final long account_id, max_id;
-		public final ResponseList<Status> responselist;
-
-		public StatusesResponse(long account_id, long max_id, ResponseList<twitter4j.Status> responselist) {
-			this.account_id = account_id;
-			this.max_id = max_id;
-			this.responselist = responselist;
-
-		}
-	}
-
-	private static final class StatusResponse {
+	private static final class SingleResponse<Data> {
 		public final TwitterException exception;
-		public final Status status;
+		public final Data data;
 		public final long account_id;
 
-		public StatusResponse(long account_id, Status status, TwitterException exception) {
+		public SingleResponse(long account_id, Data data, TwitterException exception) {
 			this.exception = exception;
-			this.status = status;
+			this.data = data;
 			this.account_id = account_id;
 		}
 	}
 
 	private class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, Boolean> {
 
-		private final DirectMessagesResponse response;
+		private final ListResponse<DirectMessage> response;
 		private final Uri uri;
 
-		public StoreDirectMessagesTask(DirectMessagesResponse result, Uri uri) {
+		public StoreDirectMessagesTask(ListResponse<DirectMessage> result, Uri uri) {
 			super(TwidereService.this, mAsyncTaskManager);
 			response = result;
 			this.uri = uri;
@@ -1061,7 +1136,7 @@ public class TwidereService extends Service implements Constants {
 			final Uri query_uri = buildQueryUri(uri, false);
 
 			final long account_id = response.account_id;
-			final ResponseList<DirectMessage> messages = response.responselist;
+			final ResponseList<DirectMessage> messages = response.list;
 			final Cursor cur = resolver.query(uri, new String[0], DirectMessages.ACCOUNT_ID + " = " + account_id, null,
 					null);
 			boolean no_items_before = false;
@@ -1126,13 +1201,13 @@ public class TwidereService extends Service implements Constants {
 
 	private class StoreHomeTimelineTask extends StoreStatusesTask {
 
-		public StoreHomeTimelineTask(List<StatusesResponse> result) {
+		public StoreHomeTimelineTask(List<ListResponse<twitter4j.Status>> result) {
 			super(result, Statuses.CONTENT_URI);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean succeed) {
-			mStoreStatusesFinished = true;
+			mStoreStatusesTaskId = -1;
 			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed != null
 					&& succeed));
 			super.onPostExecute(succeed);
@@ -1142,13 +1217,13 @@ public class TwidereService extends Service implements Constants {
 
 	private class StoreMentionsTask extends StoreStatusesTask {
 
-		public StoreMentionsTask(List<StatusesResponse> result) {
+		public StoreMentionsTask(List<ListResponse<twitter4j.Status>> result) {
 			super(result, Mentions.CONTENT_URI);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean succeed) {
-			mStoreMentionsFinished = true;
+			mStoreMentionsTaskId = -1;
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed != null
 					&& succeed));
 			super.onPostExecute(succeed);
@@ -1158,15 +1233,15 @@ public class TwidereService extends Service implements Constants {
 
 	private class StoreReceivedDirectMessagesTask extends StoreDirectMessagesTask {
 
-		public StoreReceivedDirectMessagesTask(DirectMessagesResponse result) {
+		public StoreReceivedDirectMessagesTask(ListResponse<DirectMessage> result) {
 			super(result, DirectMessages.Inbox.CONTENT_URI);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean succeed) {
-			mStoreReceivedDirectMessagesFinished = true;
-			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed != null
-					&& succeed));
+			mStoreReceivedDirectMessagesTaskId = -1;
+			sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
+					succeed != null && succeed));
 			super.onPostExecute(succeed);
 		}
 
@@ -1174,15 +1249,15 @@ public class TwidereService extends Service implements Constants {
 
 	private class StoreSentDirectMessagesTask extends StoreDirectMessagesTask {
 
-		public StoreSentDirectMessagesTask(DirectMessagesResponse result) {
+		public StoreSentDirectMessagesTask(ListResponse<DirectMessage> result) {
 			super(result, DirectMessages.Outbox.CONTENT_URI);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean succeed) {
-			mStoreSentDirectMessagesFinished = true;
-			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed != null
-					&& succeed));
+			mStoreSentDirectMessagesTaskId = -1;
+			sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
+					succeed != null && succeed));
 			super.onPostExecute(succeed);
 		}
 
@@ -1190,10 +1265,10 @@ public class TwidereService extends Service implements Constants {
 
 	private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, Boolean> {
 
-		private final List<StatusesResponse> responses;
+		private final List<ListResponse<twitter4j.Status>> responses;
 		private final Uri uri;
 
-		public StoreStatusesTask(List<StatusesResponse> result, Uri uri) {
+		public StoreStatusesTask(List<ListResponse<twitter4j.Status>> result, Uri uri) {
 			super(TwidereService.this, mAsyncTaskManager);
 			responses = result;
 			this.uri = uri;
@@ -1205,9 +1280,9 @@ public class TwidereService extends Service implements Constants {
 			boolean succeed = false;
 			final Uri query_uri = buildQueryUri(uri, false);
 
-			for (final StatusesResponse response : responses) {
+			for (final ListResponse<twitter4j.Status> response : responses) {
 				final long account_id = response.account_id;
-				final ResponseList<twitter4j.Status> statuses = response.responselist;
+				final ResponseList<twitter4j.Status> statuses = response.list;
 				final Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id, null,
 						null);
 				boolean no_items_before = false;
@@ -1302,7 +1377,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class UpdateProfileImageTask extends ManagedAsyncTask<Void, Void, UserResponse> {
+	private class UpdateProfileImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private final long account_id;
 		private final Uri image_uri;
@@ -1316,23 +1391,23 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Void... params) {
+		protected SingleResponse<User> doInBackground(Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
 				try {
 					final User user = twitter.updateProfileImage(new File(image_uri.getPath()));
-					return new UserResponse(user, null);
+					return new SingleResponse<User>(account_id, user, null);
 				} catch (final TwitterException e) {
-					return new UserResponse(null, e);
+					return new SingleResponse<User>(account_id, null, e);
 				}
 			}
-			return new UserResponse(null, null);
+			return new SingleResponse<User>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(UserResponse result) {
-			if (result != null && result.user != null) {
+		protected void onPostExecute(SingleResponse<User> result) {
+			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.profile_image_update_success, Toast.LENGTH_SHORT).show();
 				if (delete_image) {
 					new File(image_uri.getPath()).delete();
@@ -1342,14 +1417,14 @@ public class TwidereService extends Service implements Constants {
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private class UpdateProfileTask extends ManagedAsyncTask<Void, Void, UserResponse> {
+	private class UpdateProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private final long account_id;
 		private final String name, url, location, description;
@@ -1364,37 +1439,37 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected UserResponse doInBackground(Void... params) {
+		protected SingleResponse<User> doInBackground(Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.updateProfile(name, url, location, description);
-					return new UserResponse(user, null);
+					return new SingleResponse<User>(account_id, user, null);
 				} catch (final TwitterException e) {
-					return new UserResponse(null, e);
+					return new SingleResponse<User>(account_id, null, e);
 				}
 			}
-			return new UserResponse(null, null);
+			return new SingleResponse<User>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(UserResponse result) {
-			if (result != null && result.user != null) {
+		protected void onPostExecute(SingleResponse<User> result) {
+			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.profile_update_success, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.user != null);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<StatusResponse>> {
+	private class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<SingleResponse<twitter4j.Status>>> {
 
 		private long[] account_ids;
 		private String content;
@@ -1415,11 +1490,11 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected List<StatusResponse> doInBackground(Void... params) {
+		protected List<SingleResponse<twitter4j.Status>> doInBackground(Void... params) {
 
 			if (account_ids == null) return null;
 
-			final List<StatusResponse> result = new ArrayList<StatusResponse>();
+			final List<SingleResponse<twitter4j.Status>> result = new ArrayList<SingleResponse<twitter4j.Status>>();
 
 			for (final long account_id : account_ids) {
 				final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
@@ -1437,10 +1512,10 @@ public class TwidereService extends Service implements Constants {
 								status.setMedia(image_file);
 							}
 						}
-						result.add(new StatusResponse(account_id, twitter.updateStatus(status), null));
+						result.add(new SingleResponse<twitter4j.Status>(account_id, twitter.updateStatus(status), null));
 					} catch (final TwitterException e) {
 						e.printStackTrace();
-						result.add(new StatusResponse(account_id, null, e));
+						result.add(new SingleResponse<twitter4j.Status>(account_id, null, e));
 					}
 				}
 			}
@@ -1448,14 +1523,14 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<StatusResponse> result) {
+		protected void onPostExecute(List<SingleResponse<twitter4j.Status>> result) {
 
 			boolean succeed = false;
 			TwitterException exception = null;
 			final List<Long> failed_account_ids = new ArrayList<Long>();
 
-			for (final StatusResponse response : result) {
-				if (response.status != null) {
+			for (final SingleResponse<twitter4j.Status> response : result) {
+				if (response.data != null) {
 					succeed = true;
 					break;
 				} else {
@@ -1496,16 +1571,6 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
-	}
-
-	private static final class UserResponse {
-		public TwitterException exception;
-		public User user;
-
-		public UserResponse(User user, TwitterException exception) {
-			this.exception = exception;
-			this.user = user;
-		}
 	}
 
 }

@@ -193,5 +193,10 @@
 	<string name="user_muted">Added this user to filters list. You will not see tweets from this user in your home timeline / mentions list.</string>
 	<string name="inbox">Inbox</string>
 	<string name="outbox">Outbox</string>
+	<string name="load_images">Load images</string>
+	<string name="stop_service_after_closed">Stop service after twidere closed.</string>
+	<string name="stop_service_after_closed_summary">I don\'t know why you\'d like to enable this, but if you got any problem after enable this, remember, it\'s all your fault.</string>
+	<string name="other_settings">Other settings</string>
+	<string name="notifications">Notifications</string>
 
 </resources>

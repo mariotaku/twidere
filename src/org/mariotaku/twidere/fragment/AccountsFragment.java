@@ -31,7 +31,7 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.ProfileImageLoader;
+import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -98,7 +98,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		final ProfileImageLoader imageloader = getApplication().getProfileImageLoader();
+		final LazyImageLoader imageloader = getApplication().getProfileImageLoader();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = getContentResolver();
 		mAdapter = new AccountsAdapter(getActivity(), imageloader);
@@ -286,12 +286,12 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	private static class AccountsAdapter extends SimpleCursorAdapter {
 
-		private final ProfileImageLoader mImageLoader;
+		private final LazyImageLoader mImageLoader;
 		private final SharedPreferences mPreferences;
 		private int mUserColorIdx, mProfileImageIdx, mUserIdIdx;
 		private long mDefaultAccountId;
 
-		public AccountsAdapter(Context context, ProfileImageLoader loader) {
+		public AccountsAdapter(Context context, LazyImageLoader loader) {
 			super(context, R.layout.account_list_item, null, new String[] { Accounts.USERNAME },
 					new int[] { android.R.id.text1 }, 0);
 			mImageLoader = loader;

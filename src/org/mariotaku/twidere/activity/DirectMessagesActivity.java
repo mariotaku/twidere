@@ -62,7 +62,7 @@ public class DirectMessagesActivity extends BaseActivity implements OnItemSelect
 			finish();
 			return;
 		}
-		setContentView(new FrameLayout(this));
+		setContentView(R.layout.direct_messages);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -105,8 +105,6 @@ public class DirectMessagesActivity extends BaseActivity implements OnItemSelect
 			case MENU_HOME:
 				finish();
 				break;
-			case MENU_ADD:
-				return false;
 		}
 		return super.onOptionsItemSelected(item);
 	}

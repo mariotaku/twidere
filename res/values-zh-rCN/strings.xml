@@ -193,5 +193,9 @@
 	<string name="user_muted">你过滤了这个用户，你将不会在主页/提及中看到这个用户的推文。</string>
 	<string name="inbox">收件箱</string>
 	<string name="outbox">发件箱</string>
+	<string name="load_images">载入图片</string>
+	<string name="stop_service_after_closed">关闭后停止后端服务</string>
+	<string name="stop_service_after_closed_summary">我不知道你为什么想要启用这个选项，但是如果你启用后出现任何问题，记住，这全是你的错。</string>
+	<string name="other_settings">其他设定</string>
 
 </resources>

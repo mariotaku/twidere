@@ -44,7 +44,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
 import android.widget.GridView;
@@ -62,20 +61,22 @@ import android.widget.ListView;
  * @author mariotaku
  * 
  */
-public class ProfileImageLoader {
+public class LazyImageLoader {
 
 	private final MemoryCache mMemoryCache = new MemoryCache();
 	private final FileCache mFileCache;
 	private final Map<ImageView, URL> mImageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, URL>());
 	private final ExecutorService mExecutorService;
-	private final Drawable mFallbackDrawable;
-	private final int mRequiredSize;
+	private final int mFallbackRes;
+	private final int mRequiredWidth, mRequiredHeight;
 
-	public ProfileImageLoader(Context context, int fallback, int required_size) {
-		mFileCache = new FileCache(context);
+	public LazyImageLoader(Context context, String cache_dir_name, int fallback_image_res, int required_width,
+			int required_height) {
+		mFileCache = new FileCache(context, cache_dir_name);
 		mExecutorService = Executors.newFixedThreadPool(5);
-		mFallbackDrawable = context.getResources().getDrawable(fallback);
-		mRequiredSize = required_size % 2 == 0 ? required_size : required_size + 1;
+		mFallbackRes = fallback_image_res;
+		mRequiredWidth = required_width % 2 == 0 ? required_width : required_width + 1;
+		mRequiredHeight = required_height % 2 == 0 ? required_height : required_height + 1;
 	}
 
 	public void clearFileCache() {
@@ -89,7 +90,7 @@ public class ProfileImageLoader {
 	public void displayImage(URL url, ImageView imageview) {
 		if (imageview == null) return;
 		if (url == null) {
-			imageview.setImageDrawable(mFallbackDrawable);
+			imageview.setImageResource(mFallbackRes);
 			return;
 		}
 		mImageViews.put(imageview, url);
@@ -98,7 +99,7 @@ public class ProfileImageLoader {
 			imageview.setImageBitmap(bitmap);
 		} else {
 			queuePhoto(url, imageview);
-			imageview.setImageDrawable(mFallbackDrawable);
+			imageview.setImageResource(mFallbackRes);
 		}
 	}
 
@@ -127,7 +128,7 @@ public class ProfileImageLoader {
 			// Find the correct scale value. It should be the power of 2.
 			int width_tmp = options.outWidth, height_tmp = options.outHeight;
 			int scale = 1;
-			while (width_tmp / 2 >= mRequiredSize || height_tmp / 2 >= mRequiredSize) {
+			while (width_tmp / 2 >= mRequiredWidth || height_tmp / 2 >= mRequiredHeight) {
 				width_tmp /= 2;
 				height_tmp /= 2;
 				scale *= 2;
@@ -178,20 +179,21 @@ public class ProfileImageLoader {
 			if (bitmap != null) {
 				imagetoload.imageview.setImageBitmap(bitmap);
 			} else {
-				imagetoload.imageview.setImageDrawable(mFallbackDrawable);
+				imagetoload.imageview.setImageResource(mFallbackRes);
 			}
 		}
 	}
 
 	private static class FileCache {
 
-		private static final String CACHE_DIR_NAME = "profile_images";
+		private final String mCacheDirName;
 
 		private File mCacheDir;
 		private Context mContext;
 
-		public FileCache(Context context) {
+		public FileCache(Context context, String cache_dir_name) {
 			mContext = context;
+			mCacheDirName = cache_dir_name;
 			init();
 		}
 
@@ -218,9 +220,9 @@ public class ProfileImageLoader {
 				mCacheDir = new File(
 						Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(mContext)
 								: new File(getExternalStorageDirectory().getPath() + "/Android/data/"
-										+ mContext.getPackageName() + "/cache/"), CACHE_DIR_NAME);
+										+ mContext.getPackageName() + "/cache/"), mCacheDirName);
 			} else {
-				mCacheDir = new File(mContext.getCacheDir(), CACHE_DIR_NAME);
+				mCacheDir = new File(mContext.getCacheDir(), mCacheDirName);
 			}
 			if (mCacheDir != null && !mCacheDir.exists()) {
 				mCacheDir.mkdirs();

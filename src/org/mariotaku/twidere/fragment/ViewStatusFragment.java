@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
@@ -28,22 +27,24 @@ import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.fragment.ImagesPreviewFragment.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.AutoLink;
-import org.mariotaku.twidere.util.AutoLink.OnLinkClickListener;
-import org.mariotaku.twidere.util.ProfileImageLoader;
+import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.util.Utils;
 
+import twitter4j.GeoLocation;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -54,9 +55,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -65,7 +69,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -76,15 +79,14 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		OnLinkClickListener {
 
 	private long mAccountId, mStatusId;
-
+	private ImagesPreviewFragment mImagesPreviewFragment = new ImagesPreviewFragment();
 	private ServiceInterface mServiceInterface;
 	private SharedPreferences mPreferences;
 	private ContentResolver mResolver;
-	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView;
+	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView;
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
-	private ImageButton mViewMapButton, mViewMediaButton;
-	private View mProfileView, mFollowIndicator;
+	private View mProfileView, mFollowIndicator, mImagesPreviewContainer;
 	private MenuBar mMenuBar;
 	private ProgressBar mProgress;
 	private FollowInfoTask mFollowInfoTask;
@@ -111,7 +113,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		}
 	};
 
-	private boolean mFollowInfoDisplayed = false;
+	private boolean mFollowInfoDisplayed, mLocationInfoDisplayed;
+
+	private LocationInfoTask mLocationInfoTask;
 
 	public void displayStatus(ParcelableStatus status) {
 		if (status == null || getActivity() == null) return;
@@ -124,7 +128,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mNameView.setText(status.name);
 		mScreenNameView.setText(status.screen_name);
 		mTextView.setText(status.text);
-		final AutoLink linkify = new AutoLink(mTextView);
+		final TwidereLinkify linkify = new TwidereLinkify(mTextView);
 		linkify.setOnLinkClickListener(this);
 		linkify.addAllLinks();
 		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -136,14 +140,24 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		if (is_reply) {
 			mInReplyToView.setText(getString(R.string.in_reply_to, status.in_reply_to_screen_name));
 		}
-		mViewMapButton.setVisibility(status.location != null ? View.VISIBLE : View.GONE);
-		mViewMediaButton.setVisibility(status.has_media ? View.VISIBLE : View.GONE);
 
-		final ProfileImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
-				.getProfileImageLoader();
+		final LazyImageLoader imageloader = getApplication().getProfileImageLoader();
 		imageloader.displayImage(status.profile_image_url, mProfileImageView);
+		final List<ImageSpec> images = Utils.getImagesInStatus(status.text_html);
+		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
+		if (images.size() > 0) {
+			for (final ImageSpec spec : images) {
+				mImagesPreviewFragment.add(spec);
+			}
+			final FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.images_preview, mImagesPreviewFragment);
+			ft.commit();
+		}
+		mLocationView.setVisibility(status.location != null ? View.VISIBLE : View.GONE);
+
 		if (mLoadMoreAutomatically) {
-			showFollowInfo(false);
+			showFollowInfo(true);
+			showLocationInfo(true);
 		} else {
 			mFollowIndicator.setVisibility(View.GONE);
 		}
@@ -155,31 +169,16 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mServiceInterface = getApplication().getServiceInterface();
 		mResolver = getContentResolver();
 		super.onActivityCreated(savedInstanceState);
-		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_LOAD_MORE_AUTOMATICALLY, false);
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
 		}
-		final View view = getView();
-		mNameView = (TextView) view.findViewById(R.id.name);
-		mScreenNameView = (TextView) view.findViewById(R.id.screen_name);
-		mTextView = (TextView) view.findViewById(R.id.text);
-		mProfileImageView = (ImageView) view.findViewById(R.id.profile_image);
-		mTimeAndSourceView = (TextView) view.findViewById(R.id.time_source);
-		mInReplyToView = (TextView) view.findViewById(R.id.in_reply_to);
 		mInReplyToView.setOnClickListener(this);
-		mFollowButton = (Button) view.findViewById(R.id.follow);
 		mFollowButton.setOnClickListener(this);
-		mFollowIndicator = view.findViewById(R.id.follow_indicator);
-		mProfileView = view.findViewById(R.id.profile);
 		mProfileView.setOnClickListener(this);
-		mViewMapButton = (ImageButton) view.findViewById(R.id.view_map);
-		mViewMapButton.setOnClickListener(this);
-		mViewMediaButton = (ImageButton) view.findViewById(R.id.view_media);
-		mViewMediaButton.setOnClickListener(this);
-		mProgress = (ProgressBar) view.findViewById(R.id.progress);
-		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
+		mLocationView.setOnClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(this);
 		getStatus(false);
 	}
@@ -200,15 +199,14 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				Utils.openConversation(getActivity(), mStatus.account_id, mStatus.status_id);
 				break;
 			}
-			case R.id.view_map: {
-				if (mStatus.location != null) {
-					final Uri.Builder builder = new Uri.Builder();
-					builder.scheme(SCHEME_TWIDERE);
-					builder.authority(AUTHORITY_MAP);
-					builder.appendQueryParameter(QUERY_PARAM_LAT, String.valueOf(mStatus.location.getLatitude()));
-					builder.appendQueryParameter(QUERY_PARAM_LNG, String.valueOf(mStatus.location.getLongitude()));
-					startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-				}
+			case R.id.location_view: {
+				if (mStatus.location == null) return;
+				final Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(AUTHORITY_MAP);
+				builder.appendQueryParameter(QUERY_PARAM_LAT, String.valueOf(mStatus.location.getLatitude()));
+				builder.appendQueryParameter(QUERY_PARAM_LNG, String.valueOf(mStatus.location.getLongitude()));
+				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				break;
 			}
 		}
@@ -217,7 +215,21 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.view_status, container, false);
+		final View view = inflater.inflate(R.layout.view_status, container, false);
+		mImagesPreviewContainer = view.findViewById(R.id.images_preview);
+		mLocationView = (TextView) view.findViewById(R.id.location_view);
+		mNameView = (TextView) view.findViewById(R.id.name);
+		mScreenNameView = (TextView) view.findViewById(R.id.screen_name);
+		mTextView = (TextView) view.findViewById(R.id.text);
+		mProfileImageView = (ImageView) view.findViewById(R.id.profile_image);
+		mTimeAndSourceView = (TextView) view.findViewById(R.id.time_source);
+		mInReplyToView = (TextView) view.findViewById(R.id.in_reply_to);
+		mFollowButton = (Button) view.findViewById(R.id.follow);
+		mFollowIndicator = view.findViewById(R.id.follow_indicator);
+		mProgress = (ProgressBar) view.findViewById(R.id.progress);
+		mProfileView = view.findViewById(R.id.profile);
+		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
+		return view;
 	}
 
 	@Override
@@ -235,21 +247,21 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	public void onLinkClick(String link, int type) {
 		if (mStatus == null) return;
 		switch (type) {
-			case AutoLink.LINK_TYPE_MENTIONS: {
+			case TwidereLinkify.LINK_TYPE_MENTIONS: {
 				Utils.openUserProfile(getActivity(), mStatus.account_id, -1, link);
 				break;
 			}
-			case AutoLink.LINK_TYPE_HASHTAGS: {
+			case TwidereLinkify.LINK_TYPE_HASHTAGS: {
 				Utils.openTweetSearch(getActivity(), mStatus.account_id, link);
 				break;
 			}
-			case AutoLink.LINK_TYPE_IMAGES: {
+			case TwidereLinkify.LINK_TYPE_IMAGES: {
 				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
 				intent.setPackage(getActivity().getPackageName());
 				startActivity(intent);
 				break;
 			}
-			case AutoLink.LINK_TYPE_LINKS: {
+			case TwidereLinkify.LINK_TYPE_LINKS: {
 				final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
 				startActivity(intent);
 				break;
@@ -298,6 +310,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 				final Bundle bundle = new Bundle();
 				final List<String> mentions = new Extractor().extractMentionedScreennames(text_plain);
+				mentions.remove(screen_name);
 				mentions.add(0, screen_name);
 				bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
 				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
@@ -359,6 +372,15 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mFollowInfoTask.execute();
 	}
 
+	private void showLocationInfo(boolean force) {
+		if (mLocationInfoDisplayed && !force) return;
+		if (mLocationInfoTask != null) {
+			mLocationInfoTask.cancel(true);
+		}
+		mLocationInfoTask = new LocationInfoTask();
+		mLocationInfoTask.execute();
+	}
+
 	private class FollowInfoTask extends AsyncTask<Void, Void, Response<Boolean>> {
 
 		@Override
@@ -393,15 +415,13 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		private Response<Boolean> isAllFollowing() {
 			if (mStatus == null) return new Response<Boolean>(null, null);
 			if (isMyActivatedAccount(getActivity(), mStatus.user_id)) return new Response<Boolean>(true, null);
-			final long[] ids = getActivatedAccountIds(getActivity());
-			for (final long id : ids) {
-				final Twitter twitter = getTwitterInstance(getActivity(), id, false);
-				try {
-					final Relationship result = twitter.showFriendship(id, mStatus.user_id);
-					if (!result.isSourceFollowingTarget()) return new Response<Boolean>(false, null);
-				} catch (final TwitterException e) {
-					return new Response<Boolean>(null, e);
-				}
+			final Twitter twitter = getTwitterInstance(getActivity(), mStatus.account_id, false);
+			if (twitter == null) return new Response<Boolean>(null, null);
+			try {
+				final Relationship result = twitter.showFriendship(mStatus.account_id, mStatus.user_id);
+				if (!result.isSourceFollowingTarget()) return new Response<Boolean>(false, null);
+			} catch (final TwitterException e) {
+				return new Response<Boolean>(null, e);
 			}
 			return new Response<Boolean>(null, null);
 		}
@@ -467,6 +487,50 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			if (getActivity() == null) return;
 			setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
+		}
+
+	}
+
+	private class LocationInfoTask extends AsyncTask<Void, Void, String> {
+
+		@Override
+		protected String doInBackground(Void... params) {
+			if (mStatus == null || mStatus.location == null) return null;
+			final Twitter twitter = getTwitterInstance(getActivity(), mStatus.account_id, false);
+			if (twitter == null) return null;
+			final GeoLocation location = mStatus.location;
+			try {
+				final Geocoder coder = new Geocoder(getActivity());
+				final List<Address> addresses = coder.getFromLocation(location.getLatitude(), location.getLongitude(),
+						1);
+				if (addresses.size() == 1) {
+					final Address address = addresses.get(0);
+					final StringBuilder builder = new StringBuilder();
+					for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+						builder.append(address.getAddressLine(i));
+						if (i != address.getMaxAddressLineIndex() - 1) {
+							builder.append(", ");
+						}
+					}
+					return builder.toString();
+
+				}
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			if (result != null) {
+				mLocationView.setText(result);
+				mLocationInfoDisplayed = true;
+			} else {
+				mLocationView.setText(R.string.view_map);
+				mLocationInfoDisplayed = false;
+			}
+			super.onPostExecute(result);
 		}
 
 	}

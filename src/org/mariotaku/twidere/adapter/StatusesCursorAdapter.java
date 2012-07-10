@@ -30,7 +30,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.StatusViewHolder;
-import org.mariotaku.twidere.util.ProfileImageLoader;
+import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.content.Context;
@@ -42,12 +42,12 @@ import android.view.ViewGroup;
 public class StatusesCursorAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface {
 
 	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
-	private final ProfileImageLoader mImageLoader;
+	private final LazyImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
 	private StatusCursorIndices mIndices;
 
-	public StatusesCursorAdapter(Context context, ProfileImageLoader loader) {
+	public StatusesCursorAdapter(Context context, LazyImageLoader loader) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
 		mImageLoader = loader;
@@ -91,22 +91,22 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 			holder.setTextSize(mTextSize);
 
 			holder.text.setText(text_plain);
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(is_protected ? R.drawable.ic_tweet_stat_is_protected
-					: 0, 0, 0, 0);
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(
+					is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
 			holder.name.setText(name);
-			holder.tweet_time.setText(formatToShortTimeString(mContext, status_timestamp));
-			holder.tweet_time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+			holder.time.setText(formatToShortTimeString(mContext, status_timestamp));
+			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getTypeIcon(is_favorite, has_location, has_media), 0);
 
 			holder.reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
 			if (is_retweet) {
 				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by
 						+ (retweet_count > 1 ? " + " + (retweet_count - 1) : "")));
-				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tweet_stat_retweet,
-						0, 0, 0);
+				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
+						0, 0);
 			} else if (is_reply) {
 				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to, in_reply_to_screen_name));
-				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tweet_stat_reply, 0,
+				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
 						0, 0);
 			}
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);

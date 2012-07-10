@@ -19,6 +19,10 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.Utils.getInstagramImage;
+import static org.mariotaku.twidere.util.Utils.getLockerzAndPlixiImage;
+import static org.mariotaku.twidere.util.Utils.getTwitpicImage;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +53,7 @@ import com.twitter.Regex;
  * <code>http://example.com</code> when the clickable url link is created.
  */
 
-public class AutoLink {
+public class TwidereLinkify {
 
 	public static final int LINK_TYPE_MENTIONS = 1;
 	public static final int LINK_TYPE_HASHTAGS = 2;
@@ -57,25 +61,39 @@ public class AutoLink {
 	public static final int LINK_TYPE_LINKS = 4;
 	public static final int LINK_TYPE_INSTAGRAM = 5;
 	public static final int LINK_TYPE_TWITPIC = 6;
+	public static final int LINK_TYPE_LOCKERZ_AND_PLIXI = 7;
 
 	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_MENTIONS, LINK_TYPE_HASHTAGS, LINK_TYPE_IMAGES,
-			LINK_TYPE_LINKS, LINK_TYPE_INSTAGRAM, LINK_TYPE_TWITPIC
+			LINK_TYPE_LINKS, LINK_TYPE_INSTAGRAM, LINK_TYPE_TWITPIC, LINK_TYPE_LOCKERZ_AND_PLIXI
 
 	};
 
-	private static final Pattern PATTERN_IMAGES = Pattern.compile("https?:\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp)",
+	public static final Pattern PATTERN_IMAGES = Pattern.compile("(https?:\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp))",
 			Pattern.CASE_INSENSITIVE);
-	private static final Pattern PATTERN_INSTAGRAM = Pattern.compile(
+
+	public static final Pattern PATTERN_TWITTER_IMAGES = Pattern.compile(
+			"(https?:\\/\\/p\\.twimg\\.com\\/([\\d\\w]+)\\.(png|jpeg|jpg|gif|bmp))", Pattern.CASE_INSENSITIVE);
+
+	public static final String SINA_WEIBO_IMAGES_AVALIABLE_SIZES = "(large|thumbnail|bmiddle|mw600)";
+
+	public static final Pattern PATTERN_SINA_WEIBO_IMAGES = Pattern.compile("(https?:\\/\\/[\\w\\d]+\\.sinaimg\\.cn\\/"
+			+ SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/(([\\d\\w]+)\\.(png|jpeg|jpg|gif|bmp)))",
+			Pattern.CASE_INSENSITIVE);
+
+	public static final Pattern PATTERN_LOCKERZ_AND_PLIXI = Pattern
+			.compile("https?:\\/\\/(plixi\\.com\\/p|lockerz\\.com\\/s)\\/(\\w+)\\/?");
+
+	public static final Pattern PATTERN_INSTAGRAM = Pattern.compile(
 			"(https?:\\/\\/(instagr\\.am|instagram\\.com)\\/p\\/([_\\-\\d\\w]+)\\/?)", Pattern.CASE_INSENSITIVE);
 
-	private static final int INSTAGRAM_GROUP_ALL = 1;
-	private static final int INSTAGRAM_GROUP_ID = 3;
+	public static final int INSTAGRAM_GROUP_ALL = 1;
+	public static final int INSTAGRAM_GROUP_ID = 3;
 
-	private static final Pattern PATTERN_TWITPIC = Pattern.compile("(https?:\\/\\/twitpic\\.com\\/([\\d\\w]+)\\/?)",
+	public static final Pattern PATTERN_TWITPIC = Pattern.compile("(https?:\\/\\/twitpic\\.com\\/([\\d\\w]+)\\/?)",
 			Pattern.CASE_INSENSITIVE);
 
-	private static final int TWITPIC_GROUP_ALL = 1;
-	private static final int TWITPIC_GROUP_ID = 2;
+	public static final int TWITPIC_GROUP_ALL = 1;
+	public static final int TWITPIC_GROUP_ID = 2;
 
 	private final TextView view;
 
@@ -96,7 +114,7 @@ public class AutoLink {
 		}
 	};
 
-	public AutoLink(TextView view) {
+	public TwidereLinkify(TextView view) {
 		this.view = view;
 	}
 
@@ -161,8 +179,7 @@ public class AutoLink {
 					if (matcher.matches()) {
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
-						final String url = "http://instagr.am/p/" + matcher.group(INSTAGRAM_GROUP_ID)
-								+ "/media/?size=l";
+						final String url = getInstagramImage(matcher.group(INSTAGRAM_GROUP_ID)).image_link;
 						string.removeSpan(span);
 						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
 					}
@@ -176,7 +193,21 @@ public class AutoLink {
 					if (matcher.matches()) {
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
-						final String url = "http://twitpic.com/show/large/" + matcher.group(TWITPIC_GROUP_ID);
+						final String url = getTwitpicImage(matcher.group(TWITPIC_GROUP_ID)).image_link;
+						string.removeSpan(span);
+						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
+					}
+				}
+				break;
+			}
+			case LINK_TYPE_LOCKERZ_AND_PLIXI: {
+				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
+				for (final URLSpan span : spans) {
+					final Matcher matcher = PATTERN_LOCKERZ_AND_PLIXI.matcher(span.getURL());
+					if (matcher.matches()) {
+						final int start = string.getSpanStart(span);
+						final int end = string.getSpanEnd(span);
+						final String url = getLockerzAndPlixiImage(matcher.group()).image_link;
 						string.removeSpan(span);
 						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
 					}

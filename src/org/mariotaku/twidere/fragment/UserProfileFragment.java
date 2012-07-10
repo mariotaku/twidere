@@ -45,7 +45,7 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
-import org.mariotaku.twidere.util.ProfileImageLoader;
+import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import twitter4j.Relationship;
@@ -97,7 +97,7 @@ import android.widget.Toast;
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
-	private ProfileImageLoader mProfileImageLoader;
+	private LazyImageLoader mProfileImageLoader;
 	private ImageView mProfileImageView;
 	private GetFriendshipTask mFollowInfoTask;
 	private View mFollowContainer, mMoreOptionsContainer;

@@ -66,6 +66,12 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 	}
 
 	@Override
+	public int getStatuses(long[] account_ids, long[] max_ids) {
+		return getServiceInterface().getHomeTimeline(account_ids, max_ids);
+
+	}
+
+	@Override
 	public boolean mustShowLastAsGap() {
 		return false;
 	}
@@ -117,11 +123,4 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		super.onStop();
 	}
 
-	@Override
-	public int getStatuses(long[] account_ids, long[] max_ids) {
-		return getServiceInterface().getHomeTimeline(account_ids, max_ids);
-			
-	}
-	
-	
 }
