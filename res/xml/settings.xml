@@ -48,11 +48,10 @@
 		android:title="@string/content">
 		<EditTextPreference
 			android:defaultValue="RT [TEXT]"
-			android:dialogMessage="@string/quote_format_message"
 			android:dialogTitle="@string/quote_format"
 			android:key="quote_format"
 			android:singleLine="true"
-			android:summary="@string/quote_format_summary"
+			android:summary="@string/quote_format_message"
 			android:title="@string/quote_format"/>
 
 		<CheckBoxPreference
@@ -185,6 +184,8 @@
 		android:title="@string/other_settings">
 		<CheckBoxPreference
 			android:defaultValue="false"
+			android:dependency="auto_refresh"
+			android:disableDependentsState="true"
 			android:key="stop_service_after_closed"
 			android:summary="@string/stop_service_after_closed_summary"
 			android:title="@string/stop_service_after_closed"/>

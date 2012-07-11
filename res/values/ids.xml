@@ -39,5 +39,6 @@
 	<item name="block" type="id"/>
 	<item name="report_spam" type="id"/>
 	<item name="mute" type="id"/>
+	<item name="view_profile" type="id"/>
 
 </resources>

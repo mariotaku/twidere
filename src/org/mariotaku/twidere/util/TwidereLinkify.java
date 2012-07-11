@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.Utils.getImglyImage;
 import static org.mariotaku.twidere.util.Utils.getInstagramImage;
 import static org.mariotaku.twidere.util.Utils.getLockerzAndPlixiImage;
 import static org.mariotaku.twidere.util.Utils.getTwitpicImage;
@@ -62,9 +63,10 @@ public class TwidereLinkify {
 	public static final int LINK_TYPE_INSTAGRAM = 5;
 	public static final int LINK_TYPE_TWITPIC = 6;
 	public static final int LINK_TYPE_LOCKERZ_AND_PLIXI = 7;
+	public static final int LINK_TYPE_IMGLY = 8;
 
 	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_MENTIONS, LINK_TYPE_HASHTAGS, LINK_TYPE_IMAGES,
-			LINK_TYPE_LINKS, LINK_TYPE_INSTAGRAM, LINK_TYPE_TWITPIC, LINK_TYPE_LOCKERZ_AND_PLIXI
+			LINK_TYPE_LINKS, LINK_TYPE_INSTAGRAM, LINK_TYPE_TWITPIC, LINK_TYPE_LOCKERZ_AND_PLIXI, LINK_TYPE_IMGLY
 
 	};
 
@@ -94,6 +96,12 @@ public class TwidereLinkify {
 
 	public static final int TWITPIC_GROUP_ALL = 1;
 	public static final int TWITPIC_GROUP_ID = 2;
+
+	public static final Pattern PATTERN_IMGLY = Pattern.compile("(https?:\\/\\/img\\.ly\\/([\\w\\d]+)\\/?)",
+			Pattern.CASE_INSENSITIVE);
+
+	public static final int IMGLY_GROUP_ALL = 1;
+	public static final int IMGLY_GROUP_ID = 2;
 
 	private final TextView view;
 
@@ -208,6 +216,20 @@ public class TwidereLinkify {
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
 						final String url = getLockerzAndPlixiImage(matcher.group()).image_link;
+						string.removeSpan(span);
+						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
+					}
+				}
+				break;
+			}
+			case LINK_TYPE_IMGLY: {
+				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
+				for (final URLSpan span : spans) {
+					final Matcher matcher = PATTERN_IMGLY.matcher(span.getURL());
+					if (matcher.matches()) {
+						final int start = string.getSpanStart(span);
+						final int end = string.getSpanEnd(span);
+						final String url = getImglyImage(matcher.group(IMGLY_GROUP_ID)).image_link;
 						string.removeSpan(span);
 						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
 					}

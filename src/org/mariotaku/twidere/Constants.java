@@ -126,13 +126,11 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE = "notification_enable_home_timeline";
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS = "notification_enable_mentions";
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES = "notification_enable_direct_messages";
-	
+
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final float PREFERENCE_DEFAULT_TEXT_SIZE = 14.0f;
-	
-	
 
 	public static final String QUOTE_FORMAT_TEXT_PATTERN = "[TEXT]";
 
@@ -182,6 +180,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_URI = "uri";
 	public static final String INTENT_KEY_MENTIONS = "mentions";
 	public static final String INTENT_KEY_ACCOUNT_ID = "account_id";
+	public static final String INTENT_KEY_CONVERSATION_ID = "conversation_id";
 	public static final String INTENT_KEY_PAGE = "page";
 	public static final String INTENT_KEY_DATA = "data";
 	public static final String INTENT_KEY_QUERY = "query";
@@ -202,6 +201,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_FAVORITED = "favorited";
 	public static final String INTENT_KEY_FILENAME = "filename";
 	public static final String INTENT_KEY_FILE_SOURCE = "file_source";
+	public static final String INTENT_KEY_ITEMS_INSERTED = "items_inserted";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -216,6 +216,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_LOCATION = R.id.location;
 	public static final int MENU_IMAGE = R.id.image;
 	public static final int MENU_VIEW = R.id.view;
+	public static final int MENU_VIEW_PROFILE = R.id.view_profile;
 	public static final int MENU_DELETE = R.id.delete;
 	public static final int MENU_TOGGLE = R.id.toggle;
 	public static final int MENU_ADD = R.id.add;
@@ -266,6 +267,7 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_DIRECT_MESSAGES_INBOX = DirectMessages.Inbox.CONTENT_PATH;
 	public static final String TABLE_DIRECT_MESSAGES_OUTBOX = DirectMessages.Outbox.CONTENT_PATH;
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION = DirectMessages.Conversation.CONTENT_PATH;
+	public static final String TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = DirectMessages.ConversationsEntry.CONTENT_PATH;
 
 	public static final int URI_ACCOUNTS = 1;
 	public static final int URI_STATUSES = 2;
@@ -279,6 +281,7 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_DIRECT_MESSAGES_INBOX = 10;
 	public static final int URI_DIRECT_MESSAGES_OUTBOX = 11;
 	public static final int URI_DIRECT_MESSAGES_CONVERSATION = 12;
+	public static final int URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = 13;
 
 	public static final String DIR_NAME_PROFILE_IMAGES = "profile_images";
 	public static final String DIR_NAME_CACHED_THUMBNAILS = "cached_thumbnails";

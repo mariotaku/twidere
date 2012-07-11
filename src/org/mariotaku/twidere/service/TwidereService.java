@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.service;
 
 import static org.mariotaku.twidere.util.Utils.buildQueryUri;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getRetweetId;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
@@ -27,6 +28,7 @@ import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
+import static org.mariotaku.twidere.util.Utils.parseInt;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -56,6 +58,9 @@ import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import android.annotation.SuppressLint;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -67,7 +72,11 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 public class TwidereService extends Service implements Constants {
@@ -86,6 +95,8 @@ public class TwidereService extends Service implements Constants {
 
 	private int mStoreReceivedDirectMessagesTaskId, mStoreSentDirectMessagesTaskId;
 
+	private NotificationManager mNotificationManager;
+
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -101,6 +112,49 @@ public class TwidereService extends Service implements Constants {
 	};
 
 	private boolean mShouldShutdown = false;
+	private static final int ACTION_AUTO_REFRESH = 1;
+
+	@SuppressLint("HandlerLeak")
+	private final Handler mHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case ACTION_AUTO_REFRESH: {
+					final long[] activated_ids = getActivatedAccountIds(TwidereService.this);
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
+						if (!isHomeTimelineRefreshing()) {
+							getHomeTimeline(activated_ids, null, true);
+						}
+					}
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
+						if (!isMentionsRefreshing()) {
+							getMentions(activated_ids, null, true);
+						}
+					}
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
+						if (!isReceivedDirectMessagesRefreshing()) {
+							getReceivedDirectMessages(mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1), -1,
+									true);
+						}
+					}
+					mHandler.removeMessages(ACTION_AUTO_REFRESH);
+					final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
+					if (update_interval <= 0 || !mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+						break;
+					}
+					mHandler.sendEmptyMessageDelayed(ACTION_AUTO_REFRESH, update_interval);
+					break;
+				}
+			}
+		}
+	};
+
+	private static final int NOTIFICATION_ID_HOME_TIMELINE = 1;
+
+	private static final int NOTIFICATION_ID_MENTIONS = 2;
+
+	private static final int NOTIFICATION_ID_DIRECT_MESSAGES = 3;
 
 	public int cancelRetweet(long account_id, long status_id) {
 		final CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
@@ -127,6 +181,11 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
+	public int destroyDirectMessage(long account_id, long message_id) {
+		final DestroyDirectMessageTask task = new DestroyDirectMessageTask(account_id, message_id);
+		return mAsyncTaskManager.add(task, true);
+	}
+
 	public int destroyFavorite(long account_id, long status_id) {
 		final DestroyFavoriteTask task = new DestroyFavoriteTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
@@ -143,21 +202,15 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public int getHomeTimeline(long[] account_ids, long[] max_ids) {
-		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
-		final GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids);
-		return mGetHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
+		return getHomeTimeline(account_ids, max_ids, false);
 	}
 
 	public int getMentions(long[] account_ids, long[] max_ids) {
-		mAsyncTaskManager.cancel(mGetMentionsTaskId);
-		final GetMentionsTask task = new GetMentionsTask(account_ids, max_ids);
-		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
+		return getMentions(account_ids, max_ids, false);
 	}
 
 	public int getReceivedDirectMessages(long account_id, long max_id) {
-		mAsyncTaskManager.cancel(mGetReceivedDirectMessagesTaskId);
-		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_id, max_id);
-		return mGetReceivedDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
+		return getReceivedDirectMessages(account_id, max_id, false);
 	}
 
 	public int getSentDirectMessages(long account_id, long max_id) {
@@ -197,15 +250,23 @@ public class TwidereService extends Service implements Constants {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
+		startAutoRefresh();
 	}
 
 	@Override
 	public void onDestroy() {
 		unregisterReceiver(mStateReceiver);
+		mNotificationManager.cancelAll();
+		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+			// Auto refresh enabled, so I will try to start service after it was
+			// stopped.
+			startService(new Intent(INTENT_ACTION_SERVICE));
+		}
 		super.onDestroy();
 	}
 
@@ -219,12 +280,33 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
+	public int sendDirectMessage(long account_id, String screen_name, long user_id, String message) {
+		final SendDirectMessageTask task = new SendDirectMessageTask(account_id, screen_name, user_id, message);
+		return mAsyncTaskManager.add(task, true);
+	}
+
 	public void shutdownService() {
+		// Auto refresh is enabled, so this service cannot be shut down.
+		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) return;
 		if (!mAsyncTaskManager.hasActivatedTask()) {
 			stopSelf();
 		} else {
 			mShouldShutdown = true;
 		}
+	}
+
+	public boolean startAutoRefresh() {
+		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
+			if (update_interval <= 0) return false;
+			mHandler.sendEmptyMessageDelayed(ACTION_AUTO_REFRESH, update_interval);
+			return true;
+		}
+		return false;
+	}
+
+	public void stopAutoRefresh() {
+		mHandler.removeMessages(ACTION_AUTO_REFRESH);
 	}
 
 	public int updateProfile(long account_id, String name, String url, String location, String description) {
@@ -242,6 +324,25 @@ public class TwidereService extends Service implements Constants {
 		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to,
 				delete_image);
 		return mAsyncTaskManager.add(task, true);
+	}
+
+	private int getHomeTimeline(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
+		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
+		final GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids, is_auto_refresh);
+		return mGetHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
+	}
+
+	private int getMentions(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
+		mAsyncTaskManager.cancel(mGetMentionsTaskId);
+		final GetMentionsTask task = new GetMentionsTask(account_ids, max_ids, is_auto_refresh);
+		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
+	}
+
+	private int getReceivedDirectMessages(long account_id, long max_id, boolean is_auto_refresh) {
+		mAsyncTaskManager.cancel(mGetReceivedDirectMessagesTaskId);
+		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_id, max_id,
+				is_auto_refresh);
+		return mGetReceivedDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	private void showErrorToast(Exception e, boolean long_message) {
@@ -497,6 +598,46 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
+	private class DestroyDirectMessageTask extends ManagedAsyncTask<Void, Void, SingleResponse<DirectMessage>> {
+
+		private final Twitter twitter;
+		private final long message_id;
+		private final long account_id;
+
+		public DestroyDirectMessageTask(long account_id, long message_id) {
+			super(TwidereService.this, mAsyncTaskManager);
+			twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			this.account_id = account_id;
+			this.message_id = message_id;
+		}
+
+		@Override
+		protected SingleResponse<DirectMessage> doInBackground(Void... args) {
+			if (twitter == null) return new SingleResponse<DirectMessage>(account_id, null, null);
+			try {
+				return new SingleResponse<DirectMessage>(account_id, twitter.destroyDirectMessage(message_id), null);
+			} catch (final TwitterException e) {
+				return new SingleResponse<DirectMessage>(account_id, null, e);
+			}
+		}
+
+		@Override
+		protected void onPostExecute(SingleResponse<DirectMessage> result) {
+			super.onPostExecute(result);
+			if (result == null) return;
+			if (result.data != null) {
+				Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
+				final String where = DirectMessages.MESSAGE_ID + " = " + result.data.getId();
+				final ContentResolver resolver = getContentResolver();
+				resolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
+				resolver.delete(DirectMessages.Outbox.CONTENT_URI, where, null);
+			} else {
+				showErrorToast(result.exception, true);
+			}
+		}
+
+	}
+
 	private class DestroyFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
@@ -690,8 +831,11 @@ public class TwidereService extends Service implements Constants {
 
 	private class GetHomeTimelineTask extends GetStatusesTask {
 
-		public GetHomeTimelineTask(long[] account_ids, long[] max_ids) {
+		private final boolean is_auto_refresh;
+
+		public GetHomeTimelineTask(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
 			super(Statuses.CONTENT_URI, account_ids, max_ids);
+			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
@@ -707,7 +851,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(List<ListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
-			mStoreStatusesTaskId = mAsyncTaskManager.add(new StoreHomeTimelineTask(responses), true);
+			mStoreStatusesTaskId = mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, is_auto_refresh), true);
 			mGetHomeTimelineTaskId = -1;
 		}
 
@@ -720,8 +864,11 @@ public class TwidereService extends Service implements Constants {
 
 	private class GetMentionsTask extends GetStatusesTask {
 
-		public GetMentionsTask(long[] account_ids, long[] max_ids) {
+		private final boolean is_auto_refresh;
+
+		public GetMentionsTask(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
 			super(Mentions.CONTENT_URI, account_ids, max_ids);
+			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
@@ -737,7 +884,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(List<ListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
-			mStoreMentionsTaskId = mAsyncTaskManager.add(new StoreMentionsTask(responses), true);
+			mStoreMentionsTaskId = mAsyncTaskManager.add(new StoreMentionsTask(responses, is_auto_refresh), true);
 			mGetMentionsTaskId = -1;
 		}
 
@@ -750,8 +897,11 @@ public class TwidereService extends Service implements Constants {
 
 	private class GetReceivedDirectMessagesTask extends GetDirectMessagesTask {
 
-		public GetReceivedDirectMessagesTask(long account_ids, long max_ids) {
+		private final boolean is_auto_refresh;
+
+		public GetReceivedDirectMessagesTask(long account_ids, long max_ids, boolean is_auto_refresh) {
 			super(DirectMessages.Inbox.CONTENT_URI, account_ids, max_ids);
+			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
@@ -762,8 +912,8 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(ListResponse<DirectMessage> responses) {
 			super.onPostExecute(responses);
-			mStoreReceivedDirectMessagesTaskId = mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses),
-					true);
+			mStoreReceivedDirectMessagesTaskId = mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses,
+					is_auto_refresh), true);
 			mGetReceivedDirectMessagesTaskId = -1;
 		}
 
@@ -862,7 +1012,6 @@ public class TwidereService extends Service implements Constants {
 			this.account_id = account_id;
 			this.max_id = max_id;
 			this.list = responselist;
-
 		}
 	}
 
@@ -969,6 +1118,52 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
+	private class SendDirectMessageTask extends ManagedAsyncTask<Void, Void, SingleResponse<DirectMessage>> {
+
+		private final Twitter twitter;
+		private final long user_id;
+		private final String screen_name;
+		private final String message;
+		private final long account_id;
+
+		public SendDirectMessageTask(long account_id, String screen_name, long user_id, String message) {
+			super(TwidereService.this, mAsyncTaskManager);
+			twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			this.account_id = account_id;
+			this.user_id = user_id;
+			this.screen_name = screen_name;
+			this.message = message;
+		}
+
+		@Override
+		protected SingleResponse<DirectMessage> doInBackground(Void... args) {
+			if (twitter == null) return new SingleResponse<DirectMessage>(account_id, null, null);
+			try {
+				if (user_id > 0)
+					return new SingleResponse<DirectMessage>(account_id, twitter.sendDirectMessage(user_id, message),
+							null);
+				else if (screen_name != null)
+					return new SingleResponse<DirectMessage>(account_id,
+							twitter.sendDirectMessage(screen_name, message), null);
+			} catch (final TwitterException e) {
+				return new SingleResponse<DirectMessage>(account_id, null, e);
+			}
+			return new SingleResponse<DirectMessage>(account_id, null, null);
+		}
+
+		@Override
+		protected void onPostExecute(SingleResponse<DirectMessage> result) {
+			super.onPostExecute(result);
+			if (result == null) return;
+			if (result.data != null) {
+				Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(result.exception, true);
+			}
+		}
+
+	}
+
 	/*
 	 * By making this a static class with a WeakReference to the Service, we
 	 * ensure that the Service can be GCd even when the system process still has
@@ -1006,6 +1201,11 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public int destroyBlock(long account_id, long user_id) {
 			return mService.get().destroyBlock(account_id, user_id);
+		}
+
+		@Override
+		public int destroyDirectMessage(long account_id, long message_id) {
+			return mService.get().destroyDirectMessage(account_id, message_id);
 		}
 
 		@Override
@@ -1079,8 +1279,23 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public int sendDirectMessage(long account_id, String screen_name, long user_id, String message) {
+			return mService.get().sendDirectMessage(account_id, screen_name, user_id, message);
+		}
+
+		@Override
 		public void shutdownService() {
 			mService.get().shutdownService();
+		}
+
+		@Override
+		public boolean startAutoRefresh() {
+			return mService.get().startAutoRefresh();
+		}
+
+		@Override
+		public void stopAutoRefresh() {
+			mService.get().stopAutoRefresh();
 		}
 
 		@Override
@@ -1108,18 +1323,18 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	private static final class SingleResponse<Data> {
-		public final TwitterException exception;
+		public final Exception exception;
 		public final Data data;
 		public final long account_id;
 
-		public SingleResponse(long account_id, Data data, TwitterException exception) {
+		public SingleResponse(long account_id, Data data, Exception exception) {
 			this.exception = exception;
 			this.data = data;
 			this.account_id = account_id;
 		}
 	}
 
-	private class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, Boolean> {
+	private class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
 		private final ListResponse<DirectMessage> response;
 		private final Uri uri;
@@ -1131,10 +1346,10 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected Boolean doInBackground(Void... args) {
+		protected SingleResponse<Bundle> doInBackground(Void... args) {
 			final ContentResolver resolver = getContentResolver();
 			final Uri query_uri = buildQueryUri(uri, false);
-
+			final Bundle bundle = new Bundle();
 			final long account_id = response.account_id;
 			final ResponseList<DirectMessage> messages = response.list;
 			final Cursor cur = resolver.query(uri, new String[0], DirectMessages.ACCOUNT_ID + " = " + account_id, null,
@@ -1144,105 +1359,183 @@ public class TwidereService extends Service implements Constants {
 				no_items_before = cur.getCount() <= 0;
 				cur.close();
 			}
-			if (messages == null) return false;
-			final List<ContentValues> values_list = new ArrayList<ContentValues>();
-			final List<Long> message_ids = new ArrayList<Long>();
+			bundle.putBoolean(INTENT_KEY_SUCCEED, messages != null);
+			if (messages != null) {
+				final List<ContentValues> values_list = new ArrayList<ContentValues>();
+				final List<Long> message_ids = new ArrayList<Long>();
 
-			final long min_id = -1;
+				final long min_id = -1;
 
-			for (final DirectMessage message : messages) {
-				if (message == null || message.getId() <= 0) {
-					continue;
+				for (final DirectMessage message : messages) {
+					if (message == null || message.getId() <= 0) {
+						continue;
+					}
+					message_ids.add(message.getId());
+
+					values_list.add(makeDirectMessageContentValues(message, account_id));
+
 				}
-				message_ids.add(message.getId());
 
-				values_list.add(makeDirectMessageContentValues(message, account_id));
+				int rows_deleted = -1;
 
+				// Delete all rows conflicting before new data inserted.
+				{
+					final StringBuilder where = new StringBuilder();
+					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
+					where.append(" AND ");
+					where.append(DirectMessages.MESSAGE_ID + " IN ( " + ListUtils.buildString(message_ids, ',', true)
+							+ " ) ");
+					rows_deleted = resolver.delete(query_uri, where.toString(), null);
+				}
+
+				// Insert previously fetched items.
+				resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
+
+				// No row deleted, so I will insert a gap.
+				final boolean insert_gap = rows_deleted == 1 && message_ids.contains(response.max_id)
+						|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
+				if (insert_gap) {
+					final ContentValues values = new ContentValues();
+					values.put(DirectMessages.IS_GAP, 1);
+					final StringBuilder where = new StringBuilder();
+					where.append(DirectMessages.ACCOUNT_ID + "=" + account_id);
+					where.append(" AND " + DirectMessages.MESSAGE_ID + "=" + min_id);
+					resolver.update(query_uri, values, where.toString(), null);
+				}
+				final int actual_items_inserted = values_list.size() - rows_deleted;
+				if (actual_items_inserted > 0) {
+					bundle.putInt(INTENT_KEY_ITEMS_INSERTED, actual_items_inserted);
+				}
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			}
-
-			int rows_deleted = -1;
-
-			// Delete all rows conflicting before new data inserted.
-			{
-				final StringBuilder where = new StringBuilder();
-				where.append(Statuses.ACCOUNT_ID + " = " + account_id);
-				where.append(" AND ");
-				where.append(DirectMessages.MESSAGE_ID + " IN ( " + ListUtils.buildString(message_ids, ',', true)
-						+ " ) ");
-				rows_deleted = resolver.delete(query_uri, where.toString(), null);
-			}
-
-			// Insert previously fetched items.
-			resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
-
-			// No row deleted, so I will insert a gap.
-			final boolean insert_gap = rows_deleted == 1 && message_ids.contains(response.max_id) || rows_deleted == 0
-					&& response.max_id == -1 && !no_items_before;
-			if (insert_gap) {
-				final ContentValues values = new ContentValues();
-				values.put(DirectMessages.IS_GAP, 1);
-				final StringBuilder where = new StringBuilder();
-				where.append(DirectMessages.ACCOUNT_ID + "=" + account_id);
-				where.append(" AND " + DirectMessages.MESSAGE_ID + "=" + min_id);
-				resolver.update(query_uri, values, where.toString(), null);
-			}
-			return true;
+			return new SingleResponse<Bundle>(-1, bundle, null);
 		}
 
 		@Override
-		protected void onPostExecute(Boolean succeed) {
-			if (succeed) {
+		protected void onPostExecute(SingleResponse<Bundle> response) {
+			if (response != null && response.data != null && response.data.getBoolean(INTENT_KEY_SUCCEED)) {
 				notifyForUpdatedUri(TwidereService.this, uri);
+
 			}
-			super.onPostExecute(succeed);
+			super.onPostExecute(response);
 		}
 
 	}
 
 	private class StoreHomeTimelineTask extends StoreStatusesTask {
 
-		public StoreHomeTimelineTask(List<ListResponse<twitter4j.Status>> result) {
+		private final boolean is_auto_refresh;
+
+		public StoreHomeTimelineTask(List<ListResponse<twitter4j.Status>> result, boolean is_auto_refresh) {
 			super(result, Statuses.CONTENT_URI);
+			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
-		protected void onPostExecute(Boolean succeed) {
+		protected void onPostExecute(SingleResponse<Bundle> response) {
 			mStoreStatusesTaskId = -1;
-			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed != null
-					&& succeed));
-			super.onPostExecute(succeed);
+			final boolean succeed = response != null && response.data != null
+					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
+			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed));
+			if (succeed && is_auto_refresh
+					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false)) {
+				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				if (items_inserted > 0) {
+					final NotificationCompat.Builder builder = new NotificationCompat.Builder(TwidereService.this);
+					final String message = getResources().getQuantityString(R.plurals.Ntweets, items_inserted,
+							items_inserted);
+					builder.setTicker(message);
+					builder.setContentTitle(getString(R.string.new_notifications));
+					builder.setContentText(message);
+					builder.setAutoCancel(true);
+					builder.setWhen(System.currentTimeMillis());
+					builder.setSmallIcon(R.drawable.ic_stat_tweet);
+					builder.setContentIntent(PendingIntent.getActivity(TwidereService.this, 0, new Intent(
+							INTENT_ACTION_HOME), PendingIntent.FLAG_UPDATE_CURRENT));
+					mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE, builder.getNotification());
+				}
+			}
+			super.onPostExecute(response);
 		}
 
 	}
 
 	private class StoreMentionsTask extends StoreStatusesTask {
 
-		public StoreMentionsTask(List<ListResponse<twitter4j.Status>> result) {
+		private final boolean is_auto_refresh;
+
+		public StoreMentionsTask(List<ListResponse<twitter4j.Status>> result, boolean is_auto_refresh) {
 			super(result, Mentions.CONTENT_URI);
+			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
-		protected void onPostExecute(Boolean succeed) {
+		protected void onPostExecute(SingleResponse<Bundle> response) {
 			mStoreMentionsTaskId = -1;
-			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed != null
-					&& succeed));
-			super.onPostExecute(succeed);
+			final boolean succeed = response != null && response.data != null
+					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
+			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed));
+			if (succeed && is_auto_refresh
+					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) {
+				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				if (items_inserted > 0) {
+					final NotificationCompat.Builder builder = new NotificationCompat.Builder(TwidereService.this);
+					final String message = getResources().getQuantityString(R.plurals.Nmentions, items_inserted,
+							items_inserted);
+					builder.setTicker(message);
+					builder.setContentTitle(getString(R.string.new_notifications));
+					builder.setContentText(message);
+					builder.setAutoCancel(true);
+					builder.setWhen(System.currentTimeMillis());
+					builder.setSmallIcon(R.drawable.ic_stat_mention);
+					builder.setContentIntent(PendingIntent.getActivity(TwidereService.this, 0, new Intent(
+							INTENT_ACTION_HOME), PendingIntent.FLAG_UPDATE_CURRENT));
+					mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, builder.getNotification());
+				}
+			}
+			super.onPostExecute(response);
 		}
 
 	}
 
 	private class StoreReceivedDirectMessagesTask extends StoreDirectMessagesTask {
 
-		public StoreReceivedDirectMessagesTask(ListResponse<DirectMessage> result) {
+		private final boolean is_auto_refresh;
+
+		public StoreReceivedDirectMessagesTask(ListResponse<DirectMessage> result, boolean is_auto_refresh) {
 			super(result, DirectMessages.Inbox.CONTENT_URI);
+			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
-		protected void onPostExecute(Boolean succeed) {
+		protected void onPostExecute(SingleResponse<Bundle> response) {
 			mStoreReceivedDirectMessagesTaskId = -1;
-			sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
-					succeed != null && succeed));
-			super.onPostExecute(succeed);
+			final boolean succeed = response != null && response.data != null
+					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
+			sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED)
+					.putExtra(INTENT_KEY_SUCCEED, succeed));
+			if (succeed && is_auto_refresh
+					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)) {
+				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				if (items_inserted > 0) {
+					final NotificationCompat.Builder builder = new NotificationCompat.Builder(TwidereService.this);
+					final String message = getResources().getQuantityString(R.plurals.Ndirect_messages, items_inserted,
+							items_inserted);
+					final Intent intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
+					final Bundle bundle = new Bundle(response.data);
+					intent.putExtras(bundle);
+					builder.setTicker(message);
+					builder.setAutoCancel(true);
+					builder.setContentTitle(getString(R.string.new_notifications));
+					builder.setContentText(message);
+					builder.setWhen(System.currentTimeMillis());
+					builder.setSmallIcon(R.drawable.ic_stat_direct_message);
+					builder.setContentIntent(PendingIntent.getActivity(TwidereService.this, 0, intent,
+							PendingIntent.FLAG_UPDATE_CURRENT));
+					mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, builder.getNotification());
+				}
+			}
+			super.onPostExecute(response);
 		}
 
 	}
@@ -1254,16 +1547,17 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(Boolean succeed) {
+		protected void onPostExecute(SingleResponse<Bundle> response) {
 			mStoreSentDirectMessagesTaskId = -1;
-			sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
-					succeed != null && succeed));
-			super.onPostExecute(succeed);
+			final boolean succeed = response != null && response.data != null
+					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
+			sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed));
+			super.onPostExecute(response);
 		}
 
 	}
 
-	private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, Boolean> {
+	private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
 		private final List<ListResponse<twitter4j.Status>> responses;
 		private final Uri uri;
@@ -1275,11 +1569,11 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected Boolean doInBackground(Void... args) {
+		protected SingleResponse<Bundle> doInBackground(Void... args) {
 			final ContentResolver resolver = getContentResolver();
 			boolean succeed = false;
 			final Uri query_uri = buildQueryUri(uri, false);
-
+			int total_items_inserted = 0;
 			for (final ListResponse<twitter4j.Status> response : responses) {
 				final long account_id = response.account_id;
 				final ResponseList<twitter4j.Status> statuses = response.list;
@@ -1308,8 +1602,8 @@ public class TwidereService extends Service implements Constants {
 					final long retweet_id = status.getRetweetedStatus() != null ? status.getRetweetedStatus().getId()
 							: -1;
 
-					user_ids.add(user_id);
 					if (!user_ids.contains(user_id)) {
+						user_ids.add(user_id);
 						cached_users_list.add(makeCachedUserContentValues(user));
 					}
 					status_ids.add(status_id);
@@ -1351,6 +1645,12 @@ public class TwidereService extends Service implements Constants {
 				// Insert previously fetched items.
 				resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
 
+				final int actual_items_inserted = values_list.size() - rows_deleted;
+
+				if (actual_items_inserted > 0) {
+					total_items_inserted += actual_items_inserted;
+				}
+
 				// No row deleted, so I will insert a gap.
 				final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
 						|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
@@ -1364,15 +1664,18 @@ public class TwidereService extends Service implements Constants {
 				}
 				succeed = true;
 			}
-			return succeed;
+			final Bundle bundle = new Bundle();
+			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
+			bundle.putInt(INTENT_KEY_ITEMS_INSERTED, total_items_inserted);
+			return new SingleResponse<Bundle>(-1, bundle, null);
 		}
 
 		@Override
-		protected void onPostExecute(Boolean succeed) {
-			if (succeed) {
+		protected void onPostExecute(SingleResponse<Bundle> response) {
+			if (response.data.getBoolean(INTENT_KEY_SUCCEED)) {
 				notifyForUpdatedUri(TwidereService.this, uri);
 			}
-			super.onPostExecute(succeed);
+			super.onPostExecute(response);
 		}
 
 	}
@@ -1526,7 +1829,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(List<SingleResponse<twitter4j.Status>> result) {
 
 			boolean succeed = false;
-			TwitterException exception = null;
+			Exception exception = null;
 			final List<Long> failed_account_ids = new ArrayList<Long>();
 
 			for (final SingleResponse<twitter4j.Status> response : result) {

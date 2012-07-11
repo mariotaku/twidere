@@ -26,18 +26,19 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class DirectMessageViewHolder {
+public class DMConversationViewHolder {
 
-	public final ImageView profile_image;
+	public final ImageView profile_image_left, profile_image_right;
 	public final TextView name, text, time;
 	private final View content, gap_indicator;
 	public boolean show_as_gap;
 	private float text_size;
 
-	public DirectMessageViewHolder(View view, Context context) {
+	public DMConversationViewHolder(View view, Context context) {
 		content = view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
-		profile_image = (ImageView) view.findViewById(R.id.profile_image);
+		profile_image_left = (ImageView) view.findViewById(R.id.profile_image_left);
+		profile_image_right = (ImageView) view.findViewById(R.id.profile_image_right);
 		name = (TextView) view.findViewById(R.id.name);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
@@ -46,7 +47,8 @@ public class DirectMessageViewHolder {
 
 	public void setShowAsGap(boolean show_gap) {
 		show_as_gap = show_gap;
-		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		profile_image_left.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		profile_image_right.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		text.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		time.setVisibility(show_gap ? View.GONE : View.VISIBLE);
@@ -59,7 +61,7 @@ public class DirectMessageViewHolder {
 			this.text_size = text_size;
 			text.setTextSize(text_size);
 			name.setTextSize(text_size * 1.05f);
-			time.setTextSize(text_size * 0.65f);
+			time.setTextSize(text_size * 0.75f);
 		}
 	}
 }

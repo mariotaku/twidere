@@ -19,7 +19,7 @@ public class RefreshContentPreference extends Preference implements Constants, O
 
 	private boolean[] checked_items;
 	private SharedPreferences prefs;
-	
+
 	public RefreshContentPreference(Context context) {
 		this(context, null);
 	}
@@ -35,31 +35,6 @@ public class RefreshContentPreference extends Preference implements Constants, O
 	}
 
 	@Override
-	public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-		checked_items[which] = isChecked;
-	}
-
-	@Override
-	public boolean onPreferenceClick(Preference preference) {
-		prefs = getSharedPreferences();
-		if (prefs == null) return false;
-		checked_items = new boolean[] {
-				prefs.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false),
-				prefs.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false),
-				prefs.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false) };
-		
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
-		builder.setTitle(getTitle());
-		builder.setPositiveButton(android.R.string.ok, this);
-		builder.setNegativeButton(android.R.string.cancel, this);
-		builder.setMultiChoiceItems(R.array.entries_refresh_notification_content, checked_items, this);
-		builder.show();
-
-		return true;
-	}
-
-	@Override
 	public void onClick(DialogInterface dialog, int which) {
 		if (prefs == null) return;
 		switch (which) {
@@ -71,7 +46,31 @@ public class RefreshContentPreference extends Preference implements Constants, O
 				editor.commit();
 				break;
 		}
-		
+
+	}
+
+	@Override
+	public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+		checked_items[which] = isChecked;
+	}
+
+	@Override
+	public boolean onPreferenceClick(Preference preference) {
+		prefs = getSharedPreferences();
+		if (prefs == null) return false;
+		checked_items = new boolean[] { prefs.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false),
+				prefs.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false),
+				prefs.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false) };
+
+		final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+		builder.setTitle(getTitle());
+		builder.setPositiveButton(android.R.string.ok, this);
+		builder.setNegativeButton(android.R.string.cancel, this);
+		builder.setMultiChoiceItems(R.array.entries_refresh_notification_content, checked_items, this);
+		builder.show();
+
+		return true;
 	}
 
 }

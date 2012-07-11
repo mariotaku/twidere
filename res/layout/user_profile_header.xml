@@ -35,6 +35,8 @@
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@+id/profile_image_container"
 			android:layout_alignTop="@+id/profile_image_container"
+			android:layout_alignWithParentIfMissing="true"
+			android:layout_toLeftOf="@+id/follow_container"
 			android:layout_toRightOf="@+id/profile_image_container"
 			android:background="@drawable/item_background_holo_light"
 			android:gravity="center_vertical"

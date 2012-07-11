@@ -32,7 +32,7 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-public class ServiceInterface implements Constants, ITwidereService {
+public final class ServiceInterface implements Constants, ITwidereService {
 
 	private ITwidereService mService;
 
@@ -111,6 +111,17 @@ public class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.destroyBlock(account_id, user_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int destroyDirectMessage(long account_id, long message_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.destroyDirectMessage(account_id, message_id);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -272,6 +283,17 @@ public class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int sendDirectMessage(long account_id, String screen_name, long user_id, String message) {
+		if (mService == null) return -1;
+		try {
+			return mService.sendDirectMessage(account_id, screen_name, user_id, message);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public void shutdownService() {
 		if (mService == null) return;
 		try {
@@ -280,6 +302,27 @@ public class ServiceInterface implements Constants, ITwidereService {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public boolean startAutoRefresh() {
+		if (mService == null) return false;
+		try {
+			return mService.startAutoRefresh();
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public void stopAutoRefresh() {
+		if (mService == null) return;
+		try {
+			mService.stopAutoRefresh();
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

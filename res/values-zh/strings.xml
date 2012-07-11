@@ -16,9 +16,11 @@
   <string name="sign_up">註冊</string>
   <string name="sign_in">登錄</string>
   <string name="rest_base_url">REST Base URL</string>
+  <string name="search_base_url">Search Base URL</string>
   <string name="upload_base_url">Upload Base URL</string>
   <string name="oauth_base_url">OAuth Base URL</string>
   <string name="signing_oauth_base_url">Signing OAuth Base URL</string>
+  <string name="signing_rest_base_url">Signing REST Base URL</string>
   <string name="auth_type">驗證方式</string>
   <string name="oauth">OAuth</string>
   <string name="xauth">xAuth</string>
@@ -181,6 +183,23 @@
   <string name="proxy">代理伺服器</string>
   <string name="http_proxy">HTTP代理</string>
   <string name="http_proxy_summary">為API請求使用HTTP代理。</string>
-  <string name="proxy_host">代理伺服器主機名稱</string>
-  <string name="proxy_port">代理伺服器端口</string>
+  <string name="proxy_host">代理伺服器主機名</string>
+  <string name="proxy_port">代理伺服器連接埠</string>
+  <string name="block">阻止</string>
+  <string name="unblock">取消阻止</string>
+  <string name="report_for_spam">報告垃圾信息</string>
+  <string name="mute">過濾</string>
+  <string name="user_muted">你過濾了這個用戶，你將不會在主頁/提及中看到這個用戶的推文。</string>
+  <string name="inbox">收件箱</string>
+  <string name="outbox">發件箱</string>
+  <string name="load_images">載入圖片</string>
+  <string name="stop_service_after_closed">關閉後停止後端服務</string>
+  <string name="stop_service_after_closed_summary">我不建議你啟用它，希望你去找找Android的後台管理機制看一下，這不是Windows，這是Android。</string>
+  <string name="other_settings">其他設定</string>
+  <string name="refresh_and_notifications">刷新與通知</string>
+  <string name="auto_refresh">自動刷新</string>
+  <string name="refresh_interval">刷新間隔</string>
+  <string name="content_to_refresh">刷新的內容</string>
+  <string name="notifications">通知</string>
+  <string name="new_notifications">新通知</string>
 </resources>

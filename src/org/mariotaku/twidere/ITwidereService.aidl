@@ -26,6 +26,8 @@ interface ITwidereService {
 	int getSentDirectMessages(long account_id, long max_id);
 	int updateStatus(in long[] account_ids, String content, in Location location, in Uri image_uri, long in_reply_to, boolean delete_image);
 	int destroyStatus(long account_id, long status_id);
+	int sendDirectMessage(long account_id, String screen_name, long user_id, String message);
+	int destroyDirectMessage(long account_id, long message_id);
 	int retweetStatus(long account_ids, long status_id);
 	int cancelRetweet(long account_id, long status_id);
 	int createFavorite(long account_ids, long status_id);
@@ -43,5 +45,7 @@ interface ITwidereService {
 	boolean isSentDirectMessagesRefreshing();
 	boolean hasActivatedTask();
 	boolean test();
+	boolean startAutoRefresh();
+	void stopAutoRefresh();
 	void shutdownService();
 }

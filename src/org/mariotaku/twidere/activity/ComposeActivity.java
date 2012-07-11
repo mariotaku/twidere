@@ -55,7 +55,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.ArrowKeyMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -286,7 +285,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mMenuBar.inflate(R.menu.menu_compose);
 		setMenu(mMenuBar.getMenu());
 		mMenuBar.show();
-		mEditText.setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		mEditText.addTextChangedListener(this);
 		if (mText != null) {
 			mEditText.setText(mText);

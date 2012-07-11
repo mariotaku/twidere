@@ -136,7 +136,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 			mCursor.moveToPosition(position);
 			mSelectedId = mCursor.getLong(mCursor.getColumnIndex(Drafts._ID));
 			mPopupMenu = PopupMenu.getInstance(this, view);
-			mPopupMenu.inflate(R.menu.context_draft);
+			mPopupMenu.inflate(R.menu.action_draft);
 			mPopupMenu.setOnMenuItemClickListener(this);
 			mPopupMenu.show();
 			return true;

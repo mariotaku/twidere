@@ -158,7 +158,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			mSelectedColor = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.USER_COLOR));
 			mSelectedUserId = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
 			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-			mPopupMenu.inflate(R.menu.context_account);
+			mPopupMenu.inflate(R.menu.action_account);
 			mPopupMenu.setOnMenuItemClickListener(this);
 			mPopupMenu.show();
 			return true;
@@ -196,7 +196,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	public boolean onMenuItemClick(MenuItem item) {
 		if (mSelectedUserId == INVALID_ID) return false;
 		switch (item.getItemId()) {
-			case MENU_VIEW: {
+			case MENU_VIEW_PROFILE: {
 				openUserProfile(getActivity(), mSelectedUserId, mSelectedUserId, null);
 				break;
 			}

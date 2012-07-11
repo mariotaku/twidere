@@ -2,18 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@id/view"
-		android:icon="@drawable/ic_menu_profile"
-		android:title="@string/view_user_profile"/>
+		android:id="@id/reply"
+		android:icon="@drawable/ic_menu_reply"
+		android:title="@string/reply"/>
 	<item
-		android:id="@id/set_color"
-		android:icon="@drawable/ic_menu_color_palette"
-		android:title="@string/set_color"/>
-	<item
-		android:id="@id/set_as_default"
-		android:icon="@drawable/ic_menu_mark"
-		android:title="@string/set_as_default"/>
-	<item
+		android:id="@+id/delete_submenu"
 		android:icon="@drawable/ic_menu_delete"
 		android:title="@string/delete">
 		<menu>
@@ -26,5 +19,9 @@
 				android:title="@string/delete"/>
 		</menu>
 	</item>
+	<item
+		android:id="@id/view_profile"
+		android:icon="@drawable/ic_menu_profile"
+		android:title="@string/view_user_profile"/>
 
 </menu>

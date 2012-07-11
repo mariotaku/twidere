@@ -20,14 +20,14 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.findDirectMessageInDatabases;
-import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
+import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.net.URL;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
-import org.mariotaku.twidere.model.DirectMessageViewHolder;
+import org.mariotaku.twidere.model.DMConversationViewHolder;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.util.DirectMessagesAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -35,6 +35,7 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -54,7 +55,7 @@ public class DirectMessagesCursorAdapter extends SimpleCursorAdapter implements 
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		final DirectMessageViewHolder holder = (DirectMessageViewHolder) view.getTag();
+		final DMConversationViewHolder holder = (DMConversationViewHolder) view.getTag();
 
 		final long account_id = cursor.getLong(mIndices.account_id);
 		final long message_timestamp = cursor.getLong(mIndices.message_timestamp);
@@ -65,11 +66,9 @@ public class DirectMessagesCursorAdapter extends SimpleCursorAdapter implements 
 		final boolean is_last = cursor.getPosition() == getCount() - 1;
 		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1;
 
-		final String name = is_outgoing ? mDisplayName ? cursor.getString(mIndices.recipient_name) : cursor
-				.getString(mIndices.recipient_screen_name) : mDisplayName ? cursor.getString(mIndices.sender_name)
-				: cursor.getString(mIndices.sender_screen_name);
-		final URL profile_image_url = parseURL(is_outgoing ? cursor.getString(mIndices.recipient_profile_image_url)
-				: cursor.getString(mIndices.sender_profile_image_url));
+		final String name = mDisplayName ? cursor.getString(mIndices.sender_name) : cursor
+				.getString(mIndices.sender_screen_name);
+		final URL sender_profile_image_url = parseURL(cursor.getString(mIndices.sender_profile_image_url));
 
 		holder.setShowAsGap(show_gap);
 
@@ -77,12 +76,17 @@ public class DirectMessagesCursorAdapter extends SimpleCursorAdapter implements 
 
 			holder.setTextSize(mTextSize);
 			holder.name.setText(name);
+			holder.name.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
 			holder.text.setText(cursor.getString(mIndices.text));
-			holder.time.setText(formatToShortTimeString(mContext, message_timestamp));
-			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, is_outgoing ? R.drawable.ic_indicator_outgoing
-					: R.drawable.ic_indicator_incoming, 0);
-			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-			mImageLoader.displayImage(profile_image_url, holder.profile_image);
+			holder.text.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
+			holder.time.setText(formatToLongTimeString(mContext, message_timestamp));
+			holder.time.setGravity(is_outgoing ? Gravity.RIGHT : Gravity.LEFT);
+			holder.profile_image_left.setVisibility(mDisplayProfileImage && is_outgoing ? View.VISIBLE : View.GONE);
+			holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
+			if (mDisplayProfileImage) {
+				mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_left);
+				mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_right);
+			}
 		}
 
 		super.bindView(view, context, cursor);
@@ -121,8 +125,8 @@ public class DirectMessagesCursorAdapter extends SimpleCursorAdapter implements 
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
-		if (!(tag instanceof DirectMessageViewHolder)) {
-			view.setTag(new DirectMessageViewHolder(view, context));
+		if (!(tag instanceof DMConversationViewHolder)) {
+			view.setTag(new DMConversationViewHolder(view, context));
 		}
 		return view;
 	}

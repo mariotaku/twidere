@@ -16,10 +16,8 @@
 			android:layout_height="fill_parent"
 			android:completionThreshold="1"
 			android:gravity="top"
-			android:inputType="textLongMessage|textMultiLine"
-			android:singleLine="false"
 			android:hint="@string/tweet_hint"
-			android:scrollbars="vertical"/>
+			android:singleLine="false"/>
 
 		<FrameLayout
 			android:layout_width="fill_parent"

@@ -25,6 +25,7 @@ import android.content.Context;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.ArrowKeyMovementMethod;
 import android.util.AttributeSet;
 import android.widget.MultiAutoCompleteTextView;
 
@@ -44,6 +45,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView {
 		super(context, attrs, defStyle);
 		mAdapter = new UserAutoCompleteAdapter(context);
 		setTokenizer(new ScreenNameTokenizer());
+		setMovementMethod(ArrowKeyMovementMethod.getInstance());
 	}
 
 	@Override

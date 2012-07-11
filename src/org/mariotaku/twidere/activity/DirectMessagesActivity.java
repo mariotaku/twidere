@@ -23,6 +23,8 @@ import static org.mariotaku.twidere.util.Utils.isMyAccount;
 
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.DMConversationsEntryFragment;
+import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesInboxFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesOutboxFragment;
 
@@ -30,7 +32,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -71,16 +72,10 @@ public class DirectMessagesActivity extends BaseActivity implements OnItemSelect
 		mSpinner = (Spinner) view.findViewById(R.id.navigate);
 		mAdapter = new ArrayAdapter<TabSpec>(this, R.layout.spinner_item);
 		mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-		mAdapter.add(new TabSpec(DirectMessagesInboxFragment.class, getString(R.string.inbox)));
-		mAdapter.add(new TabSpec(DirectMessagesOutboxFragment.class, getString(R.string.outbox)));
+		mAdapter.add(new TabSpec(DMConversationsEntryFragment.class, "All messages"));
+		mAdapter.add(new TabSpec(DirectMessagesConversationFragment.class, "Conversation"));
 		mSpinner.setAdapter(mAdapter);
 		mSpinner.setOnItemSelectedListener(this);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_filter, menu);
-		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -102,7 +97,7 @@ public class DirectMessagesActivity extends BaseActivity implements OnItemSelect
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
-				finish();
+				onBackPressed();
 				break;
 		}
 		return super.onOptionsItemSelected(item);

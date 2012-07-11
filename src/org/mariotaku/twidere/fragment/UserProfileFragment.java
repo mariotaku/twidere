@@ -350,7 +350,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				if (mUser == null || mFriendship == null) return;
 				if (!isMyActivatedAccount(getActivity(), mUser.getId())) {
 					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-					mPopupMenu.inflate(R.menu.context_user_profile);
+					mPopupMenu.inflate(R.menu.action_user_profile);
 					final MenuItem blockItem = mPopupMenu.getMenu().findItem(MENU_BLOCK);
 					if (blockItem == null) return;
 					final Drawable blockIcon = blockItem.getIcon();
@@ -445,7 +445,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			case R.id.profile_image_container: {
 				mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-				mPopupMenu.inflate(R.menu.context_profile_image);
+				mPopupMenu.inflate(R.menu.action_profile_image);
 				mPopupMenu.setOnMenuItemClickListener(this);
 				mPopupMenu.show();
 				return true;

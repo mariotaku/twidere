@@ -164,13 +164,16 @@ public final class Utils implements Constants {
 				URI_DIRECT_MESSAGES_INBOX);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_OUTBOX,
 				URI_DIRECT_MESSAGES_OUTBOX);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATION,
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATION + "/#/#",
 				URI_DIRECT_MESSAGES_CONVERSATION);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY + "/#",
+				URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
 	}
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 
 	private static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+
 	private static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
 			DirectMessages.Outbox.CONTENT_URI };
 
@@ -191,6 +194,19 @@ public final class Utils implements Constants {
 		builder.append(" )");
 
 		return builder.toString();
+	}
+
+	public static Uri buildDirectMessageConversationUri(long account_id, long conversation_id) {
+		final Uri.Builder builder = DirectMessages.Conversation.CONTENT_URI.buildUpon();
+		builder.appendPath(String.valueOf(account_id));
+		builder.appendPath(String.valueOf(conversation_id));
+		return builder.build();
+	}
+	
+	public static Uri buildDirectMessageConversationsEntryUri(long account_id) {
+		final Uri.Builder builder = DirectMessages.ConversationsEntry.CONTENT_URI.buildUpon();
+		builder.appendPath(String.valueOf(account_id));
+		return builder.build();
 	}
 
 	public static String buildFilterWhereClause(String table, String selection) {
@@ -755,7 +771,21 @@ public final class Utils implements Constants {
 				images.add(getSinaWeiboImage(matcher.group()));
 			}
 		}
+		{
+			final Matcher matcher = TwidereLinkify.PATTERN_IMGLY.matcher(status_string);
+			while (matcher.find()) {
+				images.add(getImglyImage(matcher.group(TwidereLinkify.IMGLY_GROUP_ID)));
+			}
+		}
 		return images;
+	}
+
+	public static ImageSpec getImglyImage(String id) {
+		if (isNullOrEmpty(id)) return null;
+		final String thumbnail_size = "https://img.ly/show/thumb/" + id;
+		final String full_size = "https://img.ly/show/full/" + id;
+		return new ImageSpec(thumbnail_size, full_size);
+
 	}
 
 	public static ImageSpec getInstagramImage(String id) {
@@ -947,6 +977,8 @@ public final class Utils implements Constants {
 				return TABLE_DIRECT_MESSAGES_OUTBOX;
 			case URI_DIRECT_MESSAGES_CONVERSATION:
 				return TABLE_DIRECT_MESSAGES_CONVERSATION;
+			case URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+				return TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY;
 			default:
 				return null;
 		}
@@ -1494,12 +1526,14 @@ public final class Utils implements Constants {
 
 	}
 
-	public static int parseInt(String string) {
+	public static int parseInt(String source) {
+		if (source == null) return -1;
 		try {
-			return Integer.valueOf(string);
+			return Integer.valueOf(source);
 		} catch (final NumberFormatException e) {
-			return -1;
+			// Wrong number format? Ignore them.
 		}
+		return -1;
 	}
 
 	public static long parseLong(String source) {

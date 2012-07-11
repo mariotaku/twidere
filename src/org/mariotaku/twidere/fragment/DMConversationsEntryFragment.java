@@ -23,16 +23,15 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.DirectMessagesCursorAdapter;
+import org.mariotaku.twidere.adapter.DirectMessagesConversationsEntryAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.DMConversationViewHolder;
+import org.mariotaku.twidere.model.DMConversationsEntryViewHolder;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.AsyncTaskManager;
-import org.mariotaku.twidere.util.DirectMessagesAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -53,7 +52,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment implements LoaderCallbacks<Cursor>,
+public class DMConversationsEntryFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
 		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
 	private ServiceInterface mServiceInterface;
@@ -68,14 +67,11 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 	private PopupMenu mPopupMenu;
 
 	private ParcelableDirectMessage mSelectedDirectMessage;
-	private int mRunningTaskId;
-
-	private boolean mLoadMoreAutomatically;
 
 	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mActivityFirstCreated,
 			mNotReachedBottomBefore = true;
 
-	private DirectMessagesCursorAdapter mAdapter;
+	private DirectMessagesConversationsEntryAdapter mAdapter;
 
 	private static final long TICKER_DURATION = 5000L;
 
@@ -83,18 +79,9 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 		return mAsyncTaskManager;
 	}
 
-	public abstract Uri getContentUri();
-
-	public abstract int getDirectMessages(long account_id, long max_id);
-
 	public long getLastDirectMessageId() {
 		return -1;
 	};
-
-	@Override
-	public DirectMessagesAdapterInterface getListAdapter() {
-		return mAdapter;
-	}
 
 	public ParcelableDirectMessage getSelectedDirectMessage() {
 		return mSelectedDirectMessage;
@@ -120,9 +107,8 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 		mServiceInterface = getApplication().getServiceInterface();
 		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
 				.getProfileImageLoader();
-		mAdapter = new DirectMessagesCursorAdapter(getActivity(), imageloader);
+		mAdapter = new DirectMessagesConversationsEntryAdapter(getActivity(), imageloader);
 		setListAdapter(mAdapter);
-		setShowIndicator(false);
 		mListView = getListView();
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
@@ -142,10 +128,9 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID)) return null;
-		final String[] cols = DirectMessages.COLUMNS;
-		final Uri uri = getContentUri();
-		final String where = DirectMessages.ACCOUNT_ID + " = " + args.getLong(INTENT_KEY_ACCOUNT_ID);
-		return new CursorLoader(getActivity(), uri, cols, where, null, DirectMessages.DEFAULT_SORT_ORDER);
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
+		final Uri uri = Utils.buildDirectMessageConversationsEntryUri(account_id);
+		return new CursorLoader(getActivity(), uri, null, null, null, null);
 	}
 
 	@Override
@@ -157,28 +142,20 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		final Object tag = view.getTag();
-		if (tag instanceof DMConversationViewHolder) {
-			final ParcelableDirectMessage message = getListAdapter().findItem(id);
-			final DMConversationViewHolder holder = (DMConversationViewHolder) tag;
-			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
-				getDirectMessages(message.account_id, message.message_id);
-			} else {
-				openStatus(message);
-			}
+		if (tag instanceof DMConversationsEntryViewHolder) {
 		}
 	}
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
 		final Object tag = view.getTag();
-		if (tag instanceof DMConversationViewHolder) {
-			final DMConversationViewHolder holder = (DMConversationViewHolder) tag;
-			if (holder.show_as_gap) return false;
-			mSelectedDirectMessage = getListAdapter().findItem(id);
-			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-			mPopupMenu.inflate(R.menu.action_direct_message);
-			mPopupMenu.setOnMenuItemClickListener(this);
-			mPopupMenu.show();
+		if (tag instanceof DMConversationsEntryViewHolder) {
+//			final DMConversationsEntryViewHolder holder = (DMConversationsEntryViewHolder) tag;
+//			mSelectedDirectMessage = getListAdapter().findItem(id);
+//			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+//			mPopupMenu.inflate(R.menu.action_direct_message);
+//			mPopupMenu.setOnMenuItemClickListener(this);
+//			mPopupMenu.show();
 			return true;
 		}
 		return false;
@@ -226,27 +203,15 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 		return true;
 	}
 
-	public abstract void onPostStart();
-
-	@Override
-	public void onRefresh() {
-		final Bundle args = getArguments();
-		if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID)) return;
-		mRunningTaskId = getDirectMessages(args.getLong(INTENT_KEY_ACCOUNT_ID), -1);
-	};
-
 	@Override
 	public void onResume() {
 		super.onResume();
-		final DirectMessagesAdapterInterface adapter = getListAdapter();
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
-		adapter.setDisplayProfileImage(display_profile_image);
-		adapter.setDisplayName(display_name);
-		adapter.setTextSize(text_size);
-		adapter.setShowLastItemAsGap(!mLoadMoreAutomatically);
+		mAdapter.setDisplayProfileImage(display_profile_image);
+		mAdapter.setDisplayName(display_name);
+		mAdapter.setTextSize(text_size);
 	}
 
 	@Override
@@ -259,14 +224,6 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 			if (mReachedBottom && mNotReachedBottomBefore) {
 				mNotReachedBottomBefore = false;
 				return;
-			}
-			if (mLoadMoreAutomatically && mReachedBottom && getListAdapter().getCount() > visibleItemCount) {
-				if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
-					final Bundle args = getArguments();
-					if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID)) return;
-					mRunningTaskId = getDirectMessages(args.getLong(INTENT_KEY_ACCOUNT_ID),
-							mAdapter.findItemIdByPosition(mAdapter.getCount() - 1));
-				}
 			}
 		}
 
@@ -297,7 +254,7 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 			public void run() {
 				if (mTickerStopped) return;
 				if (mListView != null && !mBusy) {
-					getListAdapter().notifyDataSetChanged();
+					mAdapter.notifyDataSetChanged();
 				}
 				final long now = SystemClock.uptimeMillis();
 				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
@@ -306,7 +263,6 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 		};
 		mTicker.run();
 
-		onPostStart();
 	}
 
 	@Override
@@ -317,10 +273,6 @@ abstract class BaseDirectMessagesListFragment extends PullToRefreshListFragment 
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
-	}
-
-	private void openStatus(ParcelableDirectMessage status) {
-
 	}
 
 }

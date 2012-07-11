@@ -23,6 +23,9 @@ import static org.mariotaku.twidere.util.DatabaseUpgradeHelper.safeUpgrade;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
+import static org.mariotaku.twidere.util.Utils.parseInt;
+
+import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -32,6 +35,7 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.ArrayUtils;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -68,6 +72,13 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	public Uri insert(Uri uri, ContentValues values) {
 		final String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
+		if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table))
+			// read-only here.
+			return null;
+		else if (TABLE_DIRECT_MESSAGES.equals(table)) // read-only here.
+			return null;
+		else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table))// read-only here.
+			return null;
 		final long row_id = database.insert(table, null, values);
 		onDatabaseUpdated(uri, true);
 		return Uri.withAppendedPath(uri, String.valueOf(row_id));
@@ -83,6 +94,50 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		final String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
+		final String projection_string = projection != null ? ArrayUtils.buildString(projection, ',', false) : "*";
+		if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table)) {
+			// read-only here.
+			final List<String> segments = uri.getPathSegments();
+			if (segments.size() != 3) return null;
+			final StringBuilder sql_builder = new StringBuilder();
+			sql_builder.append("SELECT " + projection_string);
+			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
+			sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + segments.get(1));
+			sql_builder.append(" AND " + DirectMessages.SENDER_ID + " = " + segments.get(2));
+			if (selection != null) {
+				sql_builder.append(" AND " + selection);
+			}
+			sql_builder.append(" UNION ");
+			sql_builder.append("SELECT " + projection_string);
+			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
+			sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + segments.get(1));
+			sql_builder.append(" AND " + DirectMessages.RECIPIENT_ID + " = " + segments.get(2));
+			if (selection != null) {
+				sql_builder.append(" AND " + selection);
+			}
+			sql_builder.append(" ORDER BY "
+					+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
+			return database.rawQuery(sql_builder.toString(), selectionArgs);
+		} else if (TABLE_DIRECT_MESSAGES.equals(table)) {
+			// read-only here.
+			final StringBuilder sql_builder = new StringBuilder();
+			sql_builder.append("SELECT " + projection_string);
+			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
+			if (selection != null) {
+				sql_builder.append(" WHERE " + selection);
+			}
+			sql_builder.append(" UNION ");
+			sql_builder.append("SELECT " + projection_string);
+			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
+			if (selection != null) {
+				sql_builder.append(" WHERE " + selection);
+			}
+			sql_builder.append(" ORDER BY " + (sortOrder != null ? sortOrder : DirectMessages.DEFAULT_SORT_ORDER));
+			return database.rawQuery(sql_builder.toString(), selectionArgs);
+		} else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) {
+			// read-only here.
+			return database.rawQuery(DirectMessages.ConversationsEntry.buildSQL(parseInt(uri.getLastPathSegment())), null);
+		}
 		return database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
 	}
 
@@ -91,6 +146,13 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		final String table = getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
+			if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table))
+				// read-only here.
+				return 0;
+			else if (TABLE_DIRECT_MESSAGES.equals(table)) // read-only here.
+				return 0;
+			else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table))// read-only here.
+				return 0;
 			result = database.update(table, values, selection, selectionArgs);
 		}
 		if (result > 0) {

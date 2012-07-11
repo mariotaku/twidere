@@ -204,10 +204,57 @@ public final class TweetStore implements Constants {
 
 		public static interface Conversation extends DirectMessages {
 
+			public static final String DEFAULT_SORT_ORDER = MESSAGE_TIMESTAMP + " ASC";
+
 			public static final String CONTENT_PATH = "messages_conversation";
 
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 					CONTENT_PATH);
+		}
+
+		public static class ConversationsEntry implements BaseColumns {
+
+			public static final String CONTENT_PATH = "messages_conversations_entry";
+
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+					CONTENT_PATH);
+			
+			public static final String ACCOUNT_ID = "account_id";
+			public static final String SENDER_ID = "sender_id";
+			public static final String MESSAGE_TIMESTAMP = "message_timestamp";
+			public static final String NAME = "name";
+			public static final String SCREEN_NAME = "screen_name";
+			public static final String TEXT = "text";
+			public static final String CONVERSATION_ID = "conversation_id";
+
+			public static final int IDX__ID = 0;
+			public static final int IDX_MESSAGE_TIMESTAMP = 1;
+			public static final int IDX_ACCOUNT_ID = 2;
+			public static final int IDX_SENDER_ID = 3;
+			public static final int IDX_NAME = 4;
+			public static final int IDX_SCREEN_NAME = 5;
+			public static final int IDX_PROFILE_IMAGE_URL = 6;
+			public static final int IDX_TEXT = 7;
+			public static final int IDX_CONVERSATION_ID = 8;
+
+			public static String buildSQL(long account_id) {
+				final StringBuilder builder = new StringBuilder();
+				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS "
+						+ MESSAGE_TIMESTAMP + ", " + ACCOUNT_ID + ", " + SENDER_ID + ", " + DirectMessages.SENDER_NAME
+						+ " AS " + NAME + ", " + DirectMessages.SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + DirectMessages.SENDER_PROFILE_IMAGE_URL
+						+ ", " + TEXT
+						+ ", " + DirectMessages.SENDER_ID + " AS " + CONVERSATION_ID + " FROM "
+						+ TABLE_DIRECT_MESSAGES_INBOX + " GROUP BY " + DirectMessages.SENDER_ID);
+				builder.append(" UNION ");
+				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS "
+						+ MESSAGE_TIMESTAMP + ", " + ACCOUNT_ID + ", " + SENDER_ID + ", " 	+ DirectMessages.RECIPIENT_NAME 
+						+ " AS " + NAME + ", " + DirectMessages.RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + DirectMessages.RECIPIENT_PROFILE_IMAGE_URL
+						+ ", " + TEXT + ", " + DirectMessages.RECIPIENT_ID + " AS "
+						+ CONVERSATION_ID + " FROM " + TABLE_DIRECT_MESSAGES_OUTBOX + " GROUP BY "
+						+ DirectMessages.SENDER_ID);
+				builder.append(" ORDER BY " + DirectMessages.MESSAGE_TIMESTAMP + " DESC");
+				return builder.toString();
+			}
 		}
 
 		public static interface Inbox extends DirectMessages {

@@ -202,5 +202,6 @@
 	<string name="refresh_interval">Refresh interval</string>
 	<string name="content_to_refresh">Content to refresh</string>
 	<string name="notifications">Notifications</string>
+	<string name="new_notifications">New notifications</string>
 
 </resources>
