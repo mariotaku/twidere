@@ -64,6 +64,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_USER_BLOCKS = "user_blocks";
 	public static final String AUTHORITY_STATUS = "status";
 	public static final String AUTHORITY_CONVERSATION = "conversation";
+	public static final String AUTHORITY_DIRECT_MESSAGES_CONVERSATION = "direct_messages_conversation";
 	public static final String AUTHORITY_SEARCH = "search";
 	public static final String AUTHORITY_MAP = "map";
 
@@ -79,6 +80,7 @@ public interface Constants extends TwitterConstants {
 	public static final String QUERY_PARAM_NOTIFY = "notify";
 	public static final String QUERY_PARAM_LAT = "lat";
 	public static final String QUERY_PARAM_LNG = "lng";
+	public static final String QUERY_PARAM_CONVERSATION_ID = "conversation_id";
 
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
 
@@ -161,6 +163,7 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = INTENT_PACKAGE_PREFIX + "HOME_TIMELINE_REFRESHED";
 	public static final String BROADCAST_MENTIONS_REFRESHED = INTENT_PACKAGE_PREFIX + "MENTIONS_REFRESHED";
 	public static final String BROADCAST_REFRESHSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "REFRESHSTATE_CHANGED";
+	public static final String BROADCAST_NOTIFICATION_CLEARED = INTENT_PACKAGE_PREFIX + "NOTIFICATION_CLEARED";
 	public static final String BROADCAST_FRIENDSHIP_CHANGED = INTENT_PACKAGE_PREFIX + "FRIENDSHIP_CHANGED";
 	public static final String BROADCAST_BLOCKSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "BLOCKSTATE_CHANGED";
 	public static final String BROADCAST_PROFILE_UPDATED = INTENT_PACKAGE_PREFIX + "PROFILE_UPDATED";
@@ -193,6 +196,8 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_IN_REPLY_TO_NAME = "in_reply_to_name";
 	public static final String INTENT_KEY_IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
 	public static final String INTENT_KEY_TEXT = "text";
+	public static final String INTENT_KEY_TITLE = "title";
+	public static final String INTENT_KEY_TYPE = "type";
 	public static final String INTENT_KEY_SUCCEED = "succeed";
 	public static final String INTENT_KEY_IDS = "ids";
 	public static final String INTENT_KEY_IS_QUOTE = "is_quote";
@@ -202,6 +207,9 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_FILENAME = "filename";
 	public static final String INTENT_KEY_FILE_SOURCE = "file_source";
 	public static final String INTENT_KEY_ITEMS_INSERTED = "items_inserted";
+	public static final String INTENT_KEY_INITIAL_TAB = "initial_tab";
+	public static final String INTENT_KEY_NOTIFICATION_ID = "notification_id";
+	public static final String INTENT_KEY_FROM_NOTIFICATION = "from_notification";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -240,6 +248,8 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_BLOCK = R.id.block;
 	public static final int MENU_REPORT_SPAM = R.id.report_spam;
 	public static final int MENU_MUTE = R.id.mute;
+	public static final int MENU_REFRESH = R.id.refresh;
+	public static final int MENU_LOAD_MORE = R.id.load_more;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
@@ -267,6 +277,7 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_DIRECT_MESSAGES_INBOX = DirectMessages.Inbox.CONTENT_PATH;
 	public static final String TABLE_DIRECT_MESSAGES_OUTBOX = DirectMessages.Outbox.CONTENT_PATH;
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION = DirectMessages.Conversation.CONTENT_PATH;
+	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = DirectMessages.Conversation.CONTENT_PATH_SCREEN_NAME;
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = DirectMessages.ConversationsEntry.CONTENT_PATH;
 
 	public static final int URI_ACCOUNTS = 1;
@@ -281,8 +292,16 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_DIRECT_MESSAGES_INBOX = 10;
 	public static final int URI_DIRECT_MESSAGES_OUTBOX = 11;
 	public static final int URI_DIRECT_MESSAGES_CONVERSATION = 12;
-	public static final int URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = 13;
+	public static final int URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = 13;
+	public static final int URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = 14;
 
 	public static final String DIR_NAME_PROFILE_IMAGES = "profile_images";
 	public static final String DIR_NAME_CACHED_THUMBNAILS = "cached_thumbnails";
+
+	public static final int PANE_LEFT = R.id.left_pane;
+	public static final int PANE_RIGHT = R.id.right_pane;
+
+	public static final int NOTIFICATION_ID_HOME_TIMELINE = 1;
+	public static final int NOTIFICATION_ID_MENTIONS = 2;
+	public static final int NOTIFICATION_ID_DIRECT_MESSAGES = 3;
 }

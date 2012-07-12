@@ -19,110 +19,187 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.DirectMessagesCursorAdapter;
+import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
+import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.DMConversationViewHolder;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
-import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.util.Utils;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
-public class DirectMessagesConversationFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
-		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
+import com.twitter.Validator;
 
-	private ServiceInterface mServiceInterface;
+public class DirectMessagesConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>,
+		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener {
+
+	private ServiceInterface mService;
 
 	private SharedPreferences mPreferences;
-	private AsyncTaskManager mAsyncTaskManager;
 
-	private Handler mHandler;
-	private Runnable mTicker;
 	private ListView mListView;
+	private EditText mEditText;
+	private AutoCompleteTextView mEditScreenName;
+	private ImageButton mSendButton;
+	private Button mScreenNameConfirmButton;
+	private View mConversationContainer, mScreenNameContainer;
 
 	private PopupMenu mPopupMenu;
 
 	private ParcelableDirectMessage mSelectedDirectMessage;
 
-	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mActivityFirstCreated,
-			mNotReachedBottomBefore = true;
+	private DirectMessagesConversationAdapter mAdapter;
+	private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
 
-	private DirectMessagesCursorAdapter mAdapter;
+	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
-	private static final long TICKER_DURATION = 5000L;
-
-	public AsyncTaskManager getAsyncTaskManager() {
-		return mAsyncTaskManager;
-	}
-
-	public long getLastDirectMessageId() {
-		return -1;
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)
+					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
+				getLoaderManager().restartLoader(0, mArguments, DirectMessagesConversationFragment.this);
+			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+				setProgressBarIndeterminateVisibility(mService.isReceivedDirectMessagesRefreshing()
+						|| mService.isSentDirectMessagesRefreshing());
+			}
+		}
 	};
 
-	public ParcelableDirectMessage getSelectedDirectMessage() {
-		return mSelectedDirectMessage;
+	final Validator mValidator = new Validator();
+	final Bundle mArguments = new Bundle();
+
+	private TextWatcher mScreenNameTextWatcher = new TextWatcher() {
+
+		@Override
+		public void afterTextChanged(Editable s) {
+
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			if (mScreenNameConfirmButton == null) return;
+			mScreenNameConfirmButton.setEnabled(s.length() > 0 && s.length() < 20);
+		}
+	};
+
+	@Override
+	public void afterTextChanged(Editable s) {
+
 	}
 
-	public ServiceInterface getServiceInterface() {
-		return mServiceInterface;
-	}
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-	public SharedPreferences getSharedPreferences() {
-		return mPreferences;
-	}
-
-	public boolean isActivityFirstCreated() {
-		return mActivityFirstCreated;
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mAsyncTaskManager = AsyncTaskManager.getInstance();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mServiceInterface = getApplication().getServiceInterface();
+		mService = getApplication().getServiceInterface();
+
 		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
 				.getProfileImageLoader();
-		mAdapter = new DirectMessagesCursorAdapter(getActivity(), imageloader);
-		setListAdapter(mAdapter);
-		mListView = getListView();
+		mAdapter = new DirectMessagesConversationAdapter(getActivity(), imageloader);
+		mListView.setAdapter(mAdapter);
 		mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		mListView.setStackFromBottom(true);
-		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
-		getLoaderManager().initLoader(0, getArguments(), this);
+		final Bundle args = savedInstanceState == null ? getArguments() : savedInstanceState.getBundle(INTENT_KEY_DATA);
+		if (args != null) {
+			mArguments.putAll(args);
+		}
+		getLoaderManager().initLoader(0, mArguments, this);
+
+		mEditText.addTextChangedListener(this);
+		final String text = savedInstanceState != null ? savedInstanceState.getString(INTENT_KEY_TEXT) : null;
+		if (text != null) {
+			mEditText.setText(text);
+		}
+
+		mUserAutoCompleteAdapter = new UserAutoCompleteAdapter(getActivity());
+
+		mEditScreenName.addTextChangedListener(mScreenNameTextWatcher);
+		mEditScreenName.setAdapter(mUserAutoCompleteAdapter);
+
+		mSendButton.setOnClickListener(this);
+		mSendButton.setEnabled(false);
+		mScreenNameConfirmButton.setOnClickListener(this);
+		mScreenNameConfirmButton.setEnabled(false);
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.send: {
+				final Editable text = mEditText.getText();
+				if (text == null) return;
+				final String message = text.toString();
+				if (mValidator.isValidTweet(message)) {
+					final long account_id = mArguments.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+					final long conversation_id = mArguments.getLong(INTENT_KEY_CONVERSATION_ID, -1);
+					final String screen_name = mArguments.getString(INTENT_KEY_SCREEN_NAME);
+					mService.sendDirectMessage(account_id, screen_name, conversation_id, message);
+					text.clear();
+				}
+				break;
+			}
+			case R.id.screen_name_confirm: {
+				final CharSequence text = mEditScreenName.getText();
+				if (text == null) return;
+				final String screen_name = text.toString();
+				mArguments.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				getLoaderManager().restartLoader(0, mArguments, this);
+				break;
+			}
+		}
+
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mActivityFirstCreated = true;
 		// Tell the framework to try to keep this fragment around
 		// during a configuration change.
 		setRetainInstance(true);
@@ -132,15 +209,33 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID)) return null;
 		final String[] cols = DirectMessages.COLUMNS;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-		final long conversation_id = args.getLong(INTENT_KEY_CONVERSATION_ID);
-		final Uri uri = Utils.buildDirectMessageConversationUri(account_id, conversation_id);
+		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+		final long conversation_id = args != null ? args.getLong(INTENT_KEY_CONVERSATION_ID, -1) : -1;
+		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;
+		final Uri uri = buildDirectMessageConversationUri(account_id, conversation_id, screen_name);
+		mConversationContainer.setVisibility(account_id <= 0 || conversation_id <= 0 && screen_name == null ? View.GONE
+				: View.VISIBLE);
+		mScreenNameContainer
+				.setVisibility(account_id <= 0 || conversation_id <= 0 && screen_name == null ? View.VISIBLE
+						: View.GONE);
 		return new CursorLoader(getActivity(), uri, cols, null, null, DirectMessages.Conversation.DEFAULT_SORT_ORDER);
 	}
 
 	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		final View view = inflater.inflate(R.layout.direct_messages_conversation, null);
+		mListView = (ListView) view.findViewById(android.R.id.list);
+		mEditText = (EditText) view.findViewById(R.id.edit_text);
+		mSendButton = (ImageButton) view.findViewById(R.id.send);
+		mConversationContainer = view.findViewById(R.id.conversation_container);
+		mScreenNameContainer = view.findViewById(R.id.screen_name_container);
+		mEditScreenName = (AutoCompleteTextView) view.findViewById(R.id.screen_name);
+		mScreenNameConfirmButton = (Button) view.findViewById(R.id.screen_name_confirm);
+		return view;
+	}
+
+	@Override
 	public void onDestroy() {
-		mActivityFirstCreated = true;
 		super.onDestroy();
 	}
 
@@ -157,9 +252,14 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		if (tag instanceof DMConversationViewHolder) {
 			final DMConversationViewHolder holder = (DMConversationViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			mSelectedDirectMessage = mAdapter.findItem(id);
+			final ParcelableDirectMessage dm = mSelectedDirectMessage = mAdapter.findItem(id);
 			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_direct_message);
+			final Menu menu = mPopupMenu.getMenu();
+			final MenuItem view_profile_item = menu.findItem(MENU_VIEW_PROFILE);
+			if (view_profile_item != null && dm != null) {
+				view_profile_item.setVisible(dm.account_id != dm.sender_id);
+			}
 			mPopupMenu.setOnMenuItemClickListener(this);
 			mPopupMenu.show();
 			return true;
@@ -188,18 +288,13 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 					break;
 				}
 				case MENU_DELETE: {
-					mServiceInterface.destroyDirectMessage(account_id, message_id);
+					mService.destroyDirectMessage(account_id, message_id);
 					break;
 				}
 				case MENU_VIEW_PROFILE: {
 					if (mSelectedDirectMessage == null) return false;
-					if (account_id == mSelectedDirectMessage.sender_id) {
-						openUserProfile(getActivity(), account_id, mSelectedDirectMessage.recipient_id,
-								mSelectedDirectMessage.recipient_screen_name);
-					} else {
-						openUserProfile(getActivity(), account_id, mSelectedDirectMessage.sender_id,
-								mSelectedDirectMessage.sender_screen_name);
-					}
+					openUserProfile(getActivity(), account_id, mSelectedDirectMessage.sender_id,
+							mSelectedDirectMessage.sender_screen_name);
 					break;
 				}
 				default:
@@ -221,64 +316,41 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
-				&& totalItemCount >= visibleItemCount;
-
-		if (mReachedBottom != reached) {
-			mReachedBottom = reached;
-			if (mReachedBottom && mNotReachedBottomBefore) {
-				mNotReachedBottomBefore = false;
-				return;
-			}
-		}
-
-	}
-
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
-		switch (scrollState) {
-			case SCROLL_STATE_FLING:
-			case SCROLL_STATE_TOUCH_SCROLL:
-				mBusy = true;
-				break;
-			case SCROLL_STATE_IDLE:
-				mBusy = false;
-				break;
-		}
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putString(INTENT_KEY_TEXT, String.valueOf(mEditText.getText()));
+		outState.putBundle(INTENT_KEY_DATA, mArguments);
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		mTickerStopped = false;
-		mHandler = new Handler();
-
-		mTicker = new Runnable() {
-
-			@Override
-			public void run() {
-				if (mTickerStopped) return;
-				if (mListView != null && !mBusy) {
-					mAdapter.notifyDataSetChanged();
-				}
-				final long now = SystemClock.uptimeMillis();
-				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
-				mHandler.postAtTime(mTicker, next);
-			}
-		};
-		mTicker.run();
-
+		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED);
+		registerReceiver(mStatusReceiver, filter);
 	}
 
 	@Override
 	public void onStop() {
-		mTickerStopped = true;
-		mActivityFirstCreated = false;
+		unregisterReceiver(mStatusReceiver);
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
+	}
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		if (mSendButton == null || s == null) return;
+		mSendButton.setEnabled(mValidator.isValidTweet(s.toString()));
+	}
+
+	public void showConversation(long account_id, long conversation_id) {
+		final Bundle args = new Bundle();
+		args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+		args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+		getLoaderManager().restartLoader(0, args, this);
 	}
 
 }

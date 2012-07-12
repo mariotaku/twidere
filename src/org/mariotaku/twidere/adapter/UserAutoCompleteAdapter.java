@@ -51,14 +51,18 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 	public UserAutoCompleteAdapter(Context context) {
 		super(context, R.layout.user_autocomplete_list_item, null, FROM, TO, 0);
 		mResolver = context.getContentResolver();
-		mImageLoader = ((TwidereApplication) context.getApplicationContext()).getProfileImageLoader();
+		final Context app_context = context.getApplicationContext();
+		mImageLoader = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context)
+				.getProfileImageLoader() : null;
 	}
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		if (mCursorClosed) return;
 		final ImageView image_view = (ImageView) view.findViewById(android.R.id.icon);
-		mImageLoader.displayImage(parseURL(cursor.getString(mProfileImageUrlIdx)), image_view);
+		if (mImageLoader != null) {
+			mImageLoader.displayImage(parseURL(cursor.getString(mProfileImageUrlIdx)), image_view);
+		}
 		super.bindView(view, context, cursor);
 	}
 

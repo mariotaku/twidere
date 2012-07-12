@@ -38,6 +38,7 @@ import java.util.List;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -106,6 +107,11 @@ public class TwidereService extends Service implements Constants {
 				if (!mAsyncTaskManager.hasActivatedTask() && mShouldShutdown) {
 					stopSelf();
 				}
+			} else if (BROADCAST_NOTIFICATION_CLEARED.equals(action)) {
+				final Bundle extras = intent.getExtras();
+				if (extras != null && extras.containsKey(INTENT_KEY_NOTIFICATION_ID)) {
+					clearNewNotificationCount(extras.getInt(INTENT_KEY_NOTIFICATION_ID));
+				}
 			}
 		}
 
@@ -150,15 +156,28 @@ public class TwidereService extends Service implements Constants {
 		}
 	};
 
-	private static final int NOTIFICATION_ID_HOME_TIMELINE = 1;
-
-	private static final int NOTIFICATION_ID_MENTIONS = 2;
-
-	private static final int NOTIFICATION_ID_DIRECT_MESSAGES = 3;
+	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
 
 	public int cancelRetweet(long account_id, long status_id) {
 		final CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
+	}
+
+	public void clearNewNotificationCount(int id) {
+		switch (id) {
+			case NOTIFICATION_ID_HOME_TIMELINE: {
+				mNewStatusesCount = 0;
+				break;
+			}
+			case NOTIFICATION_ID_MENTIONS: {
+				mNewMentionsCount = 0;
+				break;
+			}
+			case NOTIFICATION_ID_DIRECT_MESSAGES: {
+				mNewMessagesCount = 0;
+				break;
+			}
+		}
 	}
 
 	public int createBlock(long account_id, long user_id) {
@@ -254,6 +273,7 @@ public class TwidereService extends Service implements Constants {
 		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		filter.addAction(BROADCAST_NOTIFICATION_CLEARED);
 		registerReceiver(mStateReceiver, filter);
 		startAutoRefresh();
 	}
@@ -625,8 +645,8 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(SingleResponse<DirectMessage> result) {
 			super.onPostExecute(result);
 			if (result == null) return;
-			if (result.data != null) {
-				Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
+			if (result.data != null && result.data.getId() > 0) {
+				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
 				final String where = DirectMessages.MESSAGE_ID + " = " + result.data.getId();
 				final ContentResolver resolver = getContentResolver();
 				resolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
@@ -917,11 +937,6 @@ public class TwidereService extends Service implements Constants {
 			mGetReceivedDirectMessagesTaskId = -1;
 		}
 
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-		}
-
 	}
 
 	private class GetSentDirectMessagesTask extends GetDirectMessagesTask {
@@ -940,11 +955,6 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(responses);
 			mStoreSentDirectMessagesTaskId = mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses), true);
 			mGetSentDirectMessagesTaskId = -1;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
 		}
 
 	}
@@ -1155,7 +1165,11 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(SingleResponse<DirectMessage> result) {
 			super.onPostExecute(result);
 			if (result == null) return;
-			if (result.data != null) {
+			if (result.data != null && result.data.getId() > 0) {
+				final Uri.Builder builder = DirectMessages.Outbox.CONTENT_URI.buildUpon();
+				builder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(true));
+				final ContentValues values = makeDirectMessageContentValues(result.data, account_id);
+				getContentResolver().insert(builder.build(), values);
 				Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
@@ -1181,6 +1195,11 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public int cancelRetweet(long account_id, long status_id) {
 			return mService.get().cancelRetweet(account_id, status_id);
+		}
+
+		@Override
+		public void clearNewNotificationCount(int id) {
+			mService.get().clearNewNotificationCount(id);
 		}
 
 		@Override
@@ -1439,19 +1458,29 @@ public class TwidereService extends Service implements Constants {
 			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false)) {
-				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				if (items_inserted > 0) {
+				mNewStatusesCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				if (mNewStatusesCount > 0) {
 					final NotificationCompat.Builder builder = new NotificationCompat.Builder(TwidereService.this);
-					final String message = getResources().getQuantityString(R.plurals.Ntweets, items_inserted,
-							items_inserted);
+					final String message = getResources().getQuantityString(R.plurals.Ntweets, mNewStatusesCount,
+							mNewStatusesCount);
 					builder.setTicker(message);
 					builder.setContentTitle(getString(R.string.new_notifications));
 					builder.setContentText(message);
 					builder.setAutoCancel(true);
 					builder.setWhen(System.currentTimeMillis());
 					builder.setSmallIcon(R.drawable.ic_stat_tweet);
-					builder.setContentIntent(PendingIntent.getActivity(TwidereService.this, 0, new Intent(
-							INTENT_ACTION_HOME), PendingIntent.FLAG_UPDATE_CURRENT));
+					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
+					final Bundle delete_extras = new Bundle();
+					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_HOME_TIMELINE);
+					delete_intent.putExtras(delete_extras);
+					builder.setDeleteIntent(PendingIntent.getBroadcast(TwidereService.this, 0, delete_intent,
+							PendingIntent.FLAG_UPDATE_CURRENT));
+					final Intent content_intent = new Intent(INTENT_ACTION_HOME);
+					final Bundle content_extras = new Bundle();
+					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_HOME);
+					content_intent.putExtras(content_extras);
+					builder.setContentIntent(PendingIntent.getActivity(TwidereService.this, 0, content_intent,
+							PendingIntent.FLAG_UPDATE_CURRENT));
 					mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE, builder.getNotification());
 				}
 			}
@@ -1477,19 +1506,29 @@ public class TwidereService extends Service implements Constants {
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) {
-				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				if (items_inserted > 0) {
+				mNewMentionsCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				if (mNewMentionsCount > 0) {
 					final NotificationCompat.Builder builder = new NotificationCompat.Builder(TwidereService.this);
-					final String message = getResources().getQuantityString(R.plurals.Nmentions, items_inserted,
-							items_inserted);
+					final String message = getResources().getQuantityString(R.plurals.Nmentions, mNewMentionsCount,
+							mNewMentionsCount);
 					builder.setTicker(message);
 					builder.setContentTitle(getString(R.string.new_notifications));
 					builder.setContentText(message);
 					builder.setAutoCancel(true);
 					builder.setWhen(System.currentTimeMillis());
 					builder.setSmallIcon(R.drawable.ic_stat_mention);
-					builder.setContentIntent(PendingIntent.getActivity(TwidereService.this, 0, new Intent(
-							INTENT_ACTION_HOME), PendingIntent.FLAG_UPDATE_CURRENT));
+					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
+					final Bundle delete_extras = new Bundle();
+					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
+					delete_intent.putExtras(delete_extras);
+					builder.setDeleteIntent(PendingIntent.getBroadcast(TwidereService.this, 0, delete_intent,
+							PendingIntent.FLAG_UPDATE_CURRENT));
+					final Intent content_intent = new Intent(INTENT_ACTION_HOME);
+					final Bundle content_extras = new Bundle();
+					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
+					content_intent.putExtras(content_extras);
+					builder.setContentIntent(PendingIntent.getActivity(TwidereService.this, 0, content_intent,
+							PendingIntent.FLAG_UPDATE_CURRENT));
 					mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, builder.getNotification());
 				}
 			}
@@ -1516,21 +1555,28 @@ public class TwidereService extends Service implements Constants {
 					.putExtra(INTENT_KEY_SUCCEED, succeed));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)) {
-				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				if (items_inserted > 0) {
+				mNewMessagesCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				if (mNewMessagesCount > 0) {
 					final NotificationCompat.Builder builder = new NotificationCompat.Builder(TwidereService.this);
-					final String message = getResources().getQuantityString(R.plurals.Ndirect_messages, items_inserted,
-							items_inserted);
-					final Intent intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
-					final Bundle bundle = new Bundle(response.data);
-					intent.putExtras(bundle);
+					final String message = getResources().getQuantityString(R.plurals.Ndirect_messages,
+							mNewMessagesCount, mNewMessagesCount);
 					builder.setTicker(message);
 					builder.setAutoCancel(true);
 					builder.setContentTitle(getString(R.string.new_notifications));
 					builder.setContentText(message);
 					builder.setWhen(System.currentTimeMillis());
 					builder.setSmallIcon(R.drawable.ic_stat_direct_message);
-					builder.setContentIntent(PendingIntent.getActivity(TwidereService.this, 0, intent,
+					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
+					final Bundle delete_extras = new Bundle();
+					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
+					delete_intent.putExtras(delete_extras);
+					builder.setDeleteIntent(PendingIntent.getBroadcast(TwidereService.this, 0, delete_intent,
+							PendingIntent.FLAG_UPDATE_CURRENT));
+					final Intent content_intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
+					final Bundle content_extras = new Bundle(response.data);
+					content_extras.putBoolean(INTENT_KEY_FROM_NOTIFICATION, true);
+					content_intent.putExtras(content_extras);
+					builder.setContentIntent(PendingIntent.getActivity(TwidereService.this, 0, content_intent,
 							PendingIntent.FLAG_UPDATE_CURRENT));
 					mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, builder.getNotification());
 				}

@@ -39,14 +39,15 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
+		long account_id = -1, max_id = -1, user_id = -1;
+		String screen_name = null;
 		if (args != null) {
-			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			return new UserTimelineLoader(getActivity(), account_id, user_id, screen_name, max_id, getData());
+			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
+			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
-		return null;
+		return new UserTimelineLoader(getActivity(), account_id, user_id, screen_name, max_id, getData());
 	}
 
 	@Override

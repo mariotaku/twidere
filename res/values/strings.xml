@@ -203,5 +203,7 @@
 	<string name="content_to_refresh">Content to refresh</string>
 	<string name="notifications">Notifications</string>
 	<string name="new_notifications">New notifications</string>
+	<string name="load_earlier_messages">Load earlier direct messages</string>
+	<string name="screen_name">Screen name</string>
 
 </resources>

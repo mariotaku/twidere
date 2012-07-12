@@ -23,9 +23,11 @@
   <string name="advanced">Avancé</string>
   <string name="save">Enregistrer</string>
   <string name="edit">Modifier</string>
+  <string name="test">Test</string>
   <string name="login_to_twitter">Se connecter à Twitter</string>
   <string name="edit_api">Modifier l\'API</string>
   <string name="home">Accueil</string>
+  <string name="mentions">Mentions</string>
   <string name="discover">Découvrir</string>
   <string name="me">Moi</string>
   <string name="error_occurred">Une erreur s\'est produite, veuillez réessayer.</string>
@@ -47,8 +49,6 @@
   <string name="delete">Supprimer</string>
   <string name="retweet">Retweeter</string>
   <string name="cancel_retweet">Annuler le retweet</string>
-  <string name="fav">Ajouter aux favoris</string>
-  <string name="unfav">Supprimer des favoris</string>
   <string name="reply">Répondre</string>
   <string name="share">Partager</string>
   <string name="share_via_twidere">Partager via Twidere</string>
@@ -142,4 +142,9 @@
   <string name="search_tweets">Chercher des Tweets</string>
   <string name="created_at">Créé à</string>
   <string name="set_default_account_hint">Veuillez définir un compte par défaut.</string>
+  <string name="remember_position">Se souvenir de la position</string>
+  <string name="remember_position_summary">Se souvenir de la position dans la liste/l\'onglet avant de fermer Twidere</string>
+  <string name="user_blocked">Bloquer cet utilisateur.</string>
+  <string name="user_unblocked">Débloquer cet utilisateur.</string>
+  <string name="reported_user_for_spam">Reporter cet utilisateur pour spam.</string>
 </resources>

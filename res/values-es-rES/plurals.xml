@@ -21,4 +21,7 @@
     <item quantity="one">1 año</item>
     <item quantity="other"><xliff:g id="minutes"> %d </xliff:g> años</item>
   </plurals>
+  <plurals name="Ntweets"/>
+  <plurals name="Nmentions"/>
+  <plurals name="Ndirect_messages"/>
 </resources>

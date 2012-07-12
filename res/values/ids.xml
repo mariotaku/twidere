@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item name="compose" type="id"/>
 	<item name="send" type="id"/>
@@ -40,5 +40,6 @@
 	<item name="report_spam" type="id"/>
 	<item name="mute" type="id"/>
 	<item name="view_profile" type="id"/>
+	<item name="load_more" type="id"/>
 
 </resources>

@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="21"
+	android:versionCode="22"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
 		android:minSdkVersion="4"
-		android:targetSdkVersion="15"/>
+		android:targetSdkVersion="16"/>
 
 	<permission-group
 		android:name="org.mariotaku.twidere.ACCESS_APPLICATION"
@@ -234,6 +234,9 @@
 					android:scheme="twidere"/>
 				<data
 					android:host="conversation"
+					android:scheme="twidere"/>
+				<data
+					android:host="direct_messages_conversation"
 					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>

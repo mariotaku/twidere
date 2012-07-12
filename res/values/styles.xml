@@ -64,7 +64,7 @@
 
 	<style name="Widget.Holo.CompoundButton.Switch" parent="android:Widget.CompoundButton">
 		<item name="track">@drawable/switch_track_holo_dark</item>
-		<item name="thumb">@drawable/switch_inner_holo_dark</item>
+		<item name="thumb">@drawable/switch_inner_holo</item>
 		<item name="switchTextAppearance">@style/TextAppearance.Holo.Widget.Switch</item>
 		<item name="textOn">@string/capital_on</item>
 		<item name="textOff">@string/capital_off</item>
@@ -75,7 +75,7 @@
 
 	<style name="Widget.Holo.Light.CompoundButton.Switch" parent="Widget.Holo.CompoundButton.Switch">
 		<item name="track">@drawable/switch_track_holo_light</item>
-		<item name="thumb">@drawable/switch_inner_holo_light</item>
+		<item name="thumb">@drawable/switch_inner_holo</item>
 	</style>
 
 	<style name="Widget.TabPageIndicator" parent="@android:style/Widget">

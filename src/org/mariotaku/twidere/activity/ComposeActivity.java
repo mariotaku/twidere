@@ -31,7 +31,6 @@ import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.view.StatusComposeEditText;
@@ -82,7 +81,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private MenuBar mMenuBar;
 	private boolean mIsImageAttached, mIsPhotoAttached;
 	private long[] mAccountIds;
-	private ServiceInterface mInterface;
+	private ServiceInterface mService;
 	private Location mRecentLocation;
 	private LocationManager mLocationManager;
 	private SharedPreferences mPreferences;
@@ -177,7 +176,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	public void onCreate(Bundle savedInstanceState) {
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
+		mService = getTwidereApplication().getServiceInterface();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.compose);
 		mActionBar = getSupportActionBar();
@@ -364,7 +363,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				final String text = mEditText != null ? mEditText.getText().toString() : null;
 				if (mValidator.isValidTweet(text)) {
 					final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
-					mInterface.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
+					mService.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
 							mInReplyToStatusId, mIsPhotoAttached && !mIsImageAttached);
 					setResult(Activity.RESULT_OK);
 					finish();

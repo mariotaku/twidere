@@ -32,12 +32,12 @@ public class UserBlocksFragment extends BaseUsersListFragment {
 	@Override
 	public Loader<List<ParcelableUser>> newLoaderInstance() {
 		final Bundle args = getArguments();
+		long account_id = -1, max_id = -1;
 		if (args != null) {
-			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-			return new UserBlocksLoader(getActivity(), account_id, max_id, getData());
+			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 		}
-		return null;
+		return new UserBlocksLoader(getActivity(), account_id, max_id, getData());
 	}
 
 }

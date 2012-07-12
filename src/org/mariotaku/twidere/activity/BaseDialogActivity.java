@@ -26,6 +26,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.FragmentActivity;
 
+@SuppressLint({ "Registered", "Registered" })
 class BaseDialogActivity extends FragmentActivity implements Constants, ActivityThemeChangeInterface {
 
 	private int mThemeId;

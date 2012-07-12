@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
@@ -56,6 +57,7 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final int CODE_USER_FOLLOWING = 6;
 	private static final int CODE_USER_BLOCKS = 7;
 	private static final int CODE_CONVERSATION = 8;
+	private static final int CODE_DIRECT_MESSAGES_CONVERSATION = 9;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
@@ -66,6 +68,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_USER_FAVORITES, null, CODE_USER_FAVORITES);
 		URI_MATCHER.addURI(AUTHORITY_USER_BLOCKS, null, CODE_USER_BLOCKS);
 		URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, CODE_CONVERSATION);
+		URI_MATCHER.addURI(AUTHORITY_DIRECT_MESSAGES_CONVERSATION, null, CODE_DIRECT_MESSAGES_CONVERSATION);
 	}
 
 	private Fragment mFragment;
@@ -196,6 +199,19 @@ public class LinkHandlerActivity extends BaseActivity {
 					fragment = new ViewConversationFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
+					break;
+				}
+				case CODE_DIRECT_MESSAGES_CONVERSATION: {
+					setTitle(R.string.direct_messages);
+					fragment = new DirectMessagesConversationFragment();
+					final String param_conversation_id = uri.getQueryParameter(QUERY_PARAM_CONVERSATION_ID);
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final long conversation_id = parseLong(param_conversation_id);
+					if (conversation_id > 0) {
+						bundle.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+					} else if (param_screen_name != null) {
+						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					}
 					break;
 				}
 				default: {

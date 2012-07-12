@@ -58,7 +58,7 @@
   <string name="retweet">Retweet</string>
   <string name="cancel_retweet">Cancelar retweet</string>
   <string name="fav">Favorito</string>
-  <string name="unfav">Quitar favorito</string>
+  <string name="unfav">Desmarcar favorito</string>
   <string name="reply">Respuesta</string>
   <string name="share">Compartir</string>
   <string name="share_via_twidere">Compartir a través de Twidere</string>
@@ -183,7 +183,14 @@
   <string name="file_saved_to">Guardar archivo a <xliff:g id="filename">%s</xliff:g> .</string>
   <string name="proxy">Proxy</string>
   <string name="http_proxy">HTTP Proxy</string>
-  <string name="http_proxy_summary">Usar HTTP Proxy para solicitud de API.</string>
+  <string name="http_proxy_summary">Usar HTTP Proxy para todas las peticiones de la red.</string>
   <string name="proxy_host">Proxy Host</string>
   <string name="proxy_port">Proxy Port</string>
+  <string name="block">Bloquear</string>
+  <string name="unblock">Desbloquear</string>
+  <string name="report_for_spam">Reportar como spam</string>
+  <string name="mute">Silenciar</string>
+  <string name="user_muted">Agregar este usuaio a la lista de filtros. Tu no veras tweets de este usuario en tu inicio / lista de menciones.</string>
+  <string name="inbox">Mensaje</string>
+  <string name="outbox">Mensajes enviados</string>
 </resources>

@@ -35,12 +35,14 @@
   <string name="me">Saya</string>
   <string name="error_occurred">Terjadi kesalahan, silahkan coba lagi.</string>
   <string name="error_already_logged_in">Anda sudah login.</string>
+  <string name="no_account_selected">Anda harus memilih setidaknya satu akun.</string>
   <string name="error_unknown_error">Kesalahan: Kesalahan tidak diketahui, ini mungkin adalah bug.</string>
   <string name="error_message">Kesalahan: <xliff:g id="message">%s</xliff:g></string>
   <string name="select_account">Pilih akun</string>
   <string name="username">Nama pengguna</string>
   <string name="password">Kata Sandi</string>
   <string name="label_tweetstore_provider">Penyedia database Twidere</string>
+  <string name="label_backend_service">Layanan backend aplikasi</string>
   <string name="label_permission_group_access_twidere">Akses aplikasi Twidere</string>
   <string name="label_permission_read_databases">Baca database Twidere</string>
   <string name="label_permission_write_databases">Tulis database Twidere</string>
@@ -52,8 +54,6 @@
   <string name="delete">Hapus</string>
   <string name="retweet">Retweet</string>
   <string name="cancel_retweet">Batalkan retweet</string>
-  <string name="fav">Fav</string>
-  <string name="unfav">Unfav</string>
   <string name="reply">Balas</string>
   <string name="share">Bagikan</string>
   <string name="share_via_twidere">Bagikan melalui Twidere</string>
@@ -170,4 +170,16 @@
   <string name="user_blocked">Unlock pengguna ini.</string>
   <string name="user_unblocked">Unblock pengguna ini.</string>
   <string name="reported_user_for_spam">Laporkan sebagai spam.</string>
+  <string name="filename_hint">Nama berkas</string>
+  <string name="overwrite_confirm">Berkas sudah ada, timpa?</string>
+  <string name="save_as">Simpan sebagai</string>
+  <string name="please_wait">Tunggu sebentar.</string>
+  <string name="http_proxy">Proxy HTTP</string>
+  <string name="http_proxy_summary">Gunakan Proxy HTTP untuk semua permintaan jaringan.</string>
+  <string name="proxy_port">Port Proxy</string>
+  <string name="block">Blok</string>
+  <string name="unblock">Hilangkan Blokir</string>
+  <string name="user_muted">Pengguna ini sudah didaftarkan pada daftar filter. Anda tidak akan melihat tweets dari pengguna ini dalam timeline/mention.</string>
+  <string name="inbox">Kotak masuk</string>
+  <string name="outbox">Kotak keluar</string>
 </resources>

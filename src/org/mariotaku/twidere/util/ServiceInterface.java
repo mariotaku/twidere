@@ -74,6 +74,17 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public void clearNewNotificationCount(int id) {
+		if (mService == null) return;
+		try {
+			mService.clearNewNotificationCount(id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
 	public int createBlock(long account_id, long user_id) {
 		if (mService == null) return -1;
 		try {

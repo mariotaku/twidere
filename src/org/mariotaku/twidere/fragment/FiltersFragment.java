@@ -52,7 +52,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 	private FilterListAdapter mAdapter;
 
-	private AddItemFragment mFragment = new AddItemFragment(this);
+	private AddItemFragment mFragment = new AddItemFragment();
 
 	private ContentResolver mResolver;
 
@@ -106,6 +106,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_ADD:
+				mFragment.setFiltersFragment(this);
 				mFragment.show(getFragmentManager(), "add_rule");
 				break;
 		}
@@ -166,19 +167,15 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 	}
 
-	private static class AddItemFragment extends BaseDialogFragment implements OnClickListener {
+	public static class AddItemFragment extends BaseDialogFragment implements OnClickListener {
 
-		private FiltersFragment mFragment;
 		private EditText mEditText;
-
-		public AddItemFragment(FiltersFragment fragment) {
-			mFragment = fragment;
-		}
 
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE:
+					if (mFragment == null) return;
 					final ContentValues values = new ContentValues();
 					if (mEditText.length() <= 0) return;
 					final String text = mEditText.getText().toString();
@@ -188,6 +185,12 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 					break;
 			}
 
+		}
+
+		private FiltersFragment mFragment;
+		
+		public void setFiltersFragment(FiltersFragment fragment) {
+			mFragment = fragment;
 		}
 
 		@SuppressWarnings("deprecation")

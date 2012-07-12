@@ -49,12 +49,14 @@
   <string name="view_status">Tweet</string>
   <string name="view_conversation">Konversation</string>
   <string name="view_user_profile">Benutzerprofil</string>
+  <string name="browser">Browser</string>
   <string name="pick_from_gallery">Wähle aus Galerie</string>
   <string name="followers">Follower</string>
   <string name="about">Über</string>
   <string name="about_summary">Über Twidere</string>
   <string name="license">Open Source Lizenz</string>
   <string name="license_summary">Twidere ist unter GPLv3 lizenziert.</string>
+  <string name="api">API</string>
   <string name="consumer_key">Benutzerschlüssel</string>
   <string name="consumer_key_summary">Benutzerschlüssel für OAuth/xAuth, freilassen für Standart.</string>
   <string name="consumer_secret">Benutzergeheimnis</string>
@@ -138,4 +140,5 @@
   <string name="search_users">Suche Benutzer</string>
   <string name="search_tweets">Suche Tweets</string>
   <string name="created_at">Erstellt am</string>
+  <string name="block">Blockieren</string>
 </resources>

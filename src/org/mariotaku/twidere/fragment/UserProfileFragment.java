@@ -114,7 +114,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private View mHeaderView;
 	private long mAccountId;
 	private Relationship mFriendship;
-	private EditTextDialogFragment mDialogFragment;
+	private final EditTextDialogFragment mDialogFragment = new EditTextDialogFragment();
 	private Uri mImageUri;
 
 	private User mUser = null;
@@ -437,12 +437,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mUser.getId());
 		if (!is_my_activated_account) return false;
 		switch (view.getId()) {
-			case R.id.name_container: {
-				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getName(), getString(R.string.name),
-						TYPE_NAME);
-				mDialogFragment.show(getFragmentManager(), "edit_name");
-				return true;
-			}
 			case R.id.profile_image_container: {
 				mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 				mPopupMenu.inflate(R.menu.action_profile_image);
@@ -450,22 +444,44 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				mPopupMenu.show();
 				return true;
 			}
+			case R.id.name_container: {
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, mUser.getId());
+				args.putString(INTENT_KEY_TEXT, mUser.getName());
+				args.putString(INTENT_KEY_TITLE, getString(R.string.name));
+				args.putInt(INTENT_KEY_TYPE, TYPE_NAME);
+				mDialogFragment.setArguments(args);
+				mDialogFragment.show(getFragmentManager(), "edit_name");
+				return true;
+			}
 			case R.id.description_container: {
-				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getDescription(),
-						getString(R.string.description), TYPE_DESCRIPTION);
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, mUser.getId());
+				args.putString(INTENT_KEY_TEXT, mUser.getDescription());
+				args.putString(INTENT_KEY_TITLE, getString(R.string.description));
+				args.putInt(INTENT_KEY_TYPE, TYPE_DESCRIPTION);
+				mDialogFragment.setArguments(args);
 				mDialogFragment.show(getFragmentManager(), "edit_description");
 				return true;
 			}
 			case R.id.location_container: {
-				mDialogFragment = new EditTextDialogFragment(mUser.getId(), mUser.getLocation(),
-						getString(R.string.location), TYPE_LOCATION);
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, mUser.getId());
+				args.putString(INTENT_KEY_TEXT, mUser.getLocation());
+				args.putString(INTENT_KEY_TITLE, getString(R.string.location));
+				args.putInt(INTENT_KEY_TYPE, TYPE_LOCATION);
+				mDialogFragment.setArguments(args);
 				mDialogFragment.show(getFragmentManager(), "edit_location");
 				return true;
 			}
 			case R.id.url_container: {
 				final URL url = mUser.getURL();
-				mDialogFragment = new EditTextDialogFragment(mUser.getId(), url != null ? url.toString() : null,
-						getString(R.string.url), TYPE_URL);
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, mUser.getId());
+				args.putString(INTENT_KEY_TEXT, url != null ? url.toString() : null);
+				args.putString(INTENT_KEY_TITLE, getString(R.string.url));
+				args.putInt(INTENT_KEY_TYPE, TYPE_URL);
+				mDialogFragment.setArguments(args);
 				mDialogFragment.show(getFragmentManager(), "edit_url");
 				return true;
 			}
@@ -597,19 +613,32 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class EditTextDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
+	public static class EditTextDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
 		private EditText mEditText;
 		private String mText;
-		private final int mType;
-		private final String mTitle;
-		private final long mAccountId;
+		private int mType;
+		private String mTitle;
+		private long mAccountId;
+		private ServiceInterface mService;
 
-		public EditTextDialogFragment(long account_id, String text, String title, int type) {
-			mAccountId = account_id;
-			mText = text;
-			mType = type;
-			mTitle = title;
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			mService = ServiceInterface.getInstance(getActivity());
+			super.onActivityCreated(savedInstanceState);
+			final Bundle bundle = savedInstanceState != null ? getArguments() : savedInstanceState;
+			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+			mText = bundle != null ? bundle.getString(INTENT_KEY_TEXT) : null;
+			mType = bundle != null ? bundle.getInt(INTENT_KEY_TYPE, -1) : -1;
+			mTitle = bundle != null ? bundle.getString(INTENT_KEY_TITLE) : null;
+		}
 
+		@Override
+		public void onSaveInstanceState(Bundle outState) {
+			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+			outState.putString(INTENT_KEY_TEXT, mText);
+			outState.putInt(INTENT_KEY_TYPE, mType);
+			outState.putString(INTENT_KEY_TITLE, mTitle);
+			super.onSaveInstanceState(outState);
 		}
 
 		@Override

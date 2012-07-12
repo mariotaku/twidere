@@ -42,6 +42,11 @@ public final class TweetStore implements Constants {
 
 	private static final String TYPE_BOOLEAN = "INTEGER(1)";
 
+	public static final String NULL_CONTENT_PATH = "null_content";
+
+	public static final Uri NULL_CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+			NULL_CONTENT_PATH);
+
 	public static interface Accounts extends BaseColumns {
 
 		public static final int AUTH_TYPE_OAUTH = 0;
@@ -208,8 +213,13 @@ public final class TweetStore implements Constants {
 
 			public static final String CONTENT_PATH = "messages_conversation";
 
+			public static final String CONTENT_PATH_SCREEN_NAME = "messages_conversation_screen_name";
+
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 					CONTENT_PATH);
+
+			public static final Uri CONTENT_URI_SCREEN_NAME = Uri.withAppendedPath(
+					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH_SCREEN_NAME);
 		}
 
 		public static class ConversationsEntry implements BaseColumns {
@@ -218,41 +228,51 @@ public final class TweetStore implements Constants {
 
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 					CONTENT_PATH);
-			
-			public static final String ACCOUNT_ID = "account_id";
-			public static final String SENDER_ID = "sender_id";
+
+			public static final String MAX_TIMESTAMP = "max_timestamp";
 			public static final String MESSAGE_TIMESTAMP = "message_timestamp";
+			public static final String IS_OUTGOING = "is_outgoing";
 			public static final String NAME = "name";
 			public static final String SCREEN_NAME = "screen_name";
+			public static final String PROFILE_IMAGE_URL = "profile_image_url";
 			public static final String TEXT = "text";
 			public static final String CONVERSATION_ID = "conversation_id";
 
 			public static final int IDX__ID = 0;
-			public static final int IDX_MESSAGE_TIMESTAMP = 1;
-			public static final int IDX_ACCOUNT_ID = 2;
-			public static final int IDX_SENDER_ID = 3;
+			public static final int IDX_MAX_TIMESTAMP = 1;
+			public static final int IDX_IS_OUTGOING = 3;
 			public static final int IDX_NAME = 4;
 			public static final int IDX_SCREEN_NAME = 5;
 			public static final int IDX_PROFILE_IMAGE_URL = 6;
 			public static final int IDX_TEXT = 7;
 			public static final int IDX_CONVERSATION_ID = 8;
+			public static final int IDX_MESSAGE_TIMESTAMP = 9;
 
 			public static String buildSQL(long account_id) {
 				final StringBuilder builder = new StringBuilder();
-				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS "
-						+ MESSAGE_TIMESTAMP + ", " + ACCOUNT_ID + ", " + SENDER_ID + ", " + DirectMessages.SENDER_NAME
-						+ " AS " + NAME + ", " + DirectMessages.SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + DirectMessages.SENDER_PROFILE_IMAGE_URL
-						+ ", " + TEXT
-						+ ", " + DirectMessages.SENDER_ID + " AS " + CONVERSATION_ID + " FROM "
-						+ TABLE_DIRECT_MESSAGES_INBOX + " GROUP BY " + DirectMessages.SENDER_ID);
+				builder.append("SELECT * FROM(");
+				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP
+						+ ", " + ACCOUNT_ID + ", " + "0 AS " + IS_OUTGOING + ", " + DirectMessages.SENDER_NAME + " AS "
+						+ NAME + ", " + DirectMessages.SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
+						+ DirectMessages.SENDER_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", "
+						+ DirectMessages.SENDER_ID + " AS " + CONVERSATION_ID + ", " + DirectMessages.MESSAGE_TIMESTAMP);
+				builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
+				builder.append(" GROUP BY " + CONVERSATION_ID);
+				builder.append(" HAVING " + MAX_TIMESTAMP + " NOT NULL");
 				builder.append(" UNION ");
-				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS "
-						+ MESSAGE_TIMESTAMP + ", " + ACCOUNT_ID + ", " + SENDER_ID + ", " 	+ DirectMessages.RECIPIENT_NAME 
-						+ " AS " + NAME + ", " + DirectMessages.RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + DirectMessages.RECIPIENT_PROFILE_IMAGE_URL
-						+ ", " + TEXT + ", " + DirectMessages.RECIPIENT_ID + " AS "
-						+ CONVERSATION_ID + " FROM " + TABLE_DIRECT_MESSAGES_OUTBOX + " GROUP BY "
-						+ DirectMessages.SENDER_ID);
-				builder.append(" ORDER BY " + DirectMessages.MESSAGE_TIMESTAMP + " DESC");
+				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP
+						+ ", " + ACCOUNT_ID + ", " + "1 AS " + IS_OUTGOING + ", " + DirectMessages.RECIPIENT_NAME
+						+ " AS " + NAME + ", " + DirectMessages.RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
+						+ DirectMessages.RECIPIENT_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", "
+						+ DirectMessages.RECIPIENT_ID + " AS " + CONVERSATION_ID + ", "
+						+ DirectMessages.MESSAGE_TIMESTAMP);
+				builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
+				builder.append(" GROUP BY " + CONVERSATION_ID);
+				builder.append(" HAVING " + MAX_TIMESTAMP + " NOT NULL");
+				builder.append(")");
+				builder.append(" GROUP BY " + CONVERSATION_ID);
+				builder.append(" HAVING " + DirectMessages.ACCOUNT_ID + " = " + account_id);
+				builder.append(" ORDER BY " + MESSAGE_TIMESTAMP + " DESC");
 				return builder.toString();
 			}
 		}

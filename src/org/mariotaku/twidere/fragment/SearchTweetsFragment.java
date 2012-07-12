@@ -37,13 +37,14 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
+		long account_id = -1, max_id = -1;
+		String query = null;
 		if (args != null) {
-			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-			final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-			final String query = args.getString(INTENT_KEY_QUERY);
-			if (query != null) return new TweetSearchLoader(getActivity(), account_id, query, max_id, getData());
+			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
+			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
+			query = args.getString(INTENT_KEY_QUERY);
 		}
-		return null;
+		return new TweetSearchLoader(getActivity(), account_id, query, max_id, getData());
 	}
 
 	@Override

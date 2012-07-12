@@ -39,7 +39,7 @@ public class BrowserActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		mUri = getIntent().getData();
 		if (mUri == null) {
-			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT);
+			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
 			finish();
 			return;
 		}

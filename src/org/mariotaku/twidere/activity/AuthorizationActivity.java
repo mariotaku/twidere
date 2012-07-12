@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.parseInt;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.WebViewProxySettings;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -35,6 +36,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+@SuppressLint({ "SetJavaScriptEnabled" })
 public class AuthorizationActivity extends BaseActivity {
 
 	private Uri authUrl;
@@ -45,10 +47,11 @@ public class AuthorizationActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		authUrl = getIntent().getData();
 		if (authUrl == null) {
-			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT);
+			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
 			finish();
 			return;
 		}
@@ -94,7 +97,7 @@ public class AuthorizationActivity extends BaseActivity {
 		@Override
 		public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 			super.onReceivedError(view, errorCode, description, failingUrl);
-			Toast.makeText(AuthorizationActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT);
+			Toast.makeText(AuthorizationActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
 			finish();
 		}
 

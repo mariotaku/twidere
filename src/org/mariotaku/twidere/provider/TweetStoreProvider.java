@@ -77,7 +77,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			return null;
 		else if (TABLE_DIRECT_MESSAGES.equals(table)) // read-only here.
 			return null;
-		else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table))// read-only here.
+		else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) // read-only
+																			// here.
 			return null;
 		final long row_id = database.insert(table, null, values);
 		onDatabaseUpdated(uri, true);
@@ -118,6 +119,29 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			sql_builder.append(" ORDER BY "
 					+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
 			return database.rawQuery(sql_builder.toString(), selectionArgs);
+		} else if (TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME.equals(table)) {
+			// read-only here.
+			final List<String> segments = uri.getPathSegments();
+			if (segments.size() != 3) return null;
+			final StringBuilder sql_builder = new StringBuilder();
+			sql_builder.append("SELECT " + projection_string);
+			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
+			sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + segments.get(1));
+			sql_builder.append(" AND " + DirectMessages.SENDER_SCREEN_NAME + " = '" + segments.get(2) + "'");
+			if (selection != null) {
+				sql_builder.append(" AND " + selection);
+			}
+			sql_builder.append(" UNION ");
+			sql_builder.append("SELECT " + projection_string);
+			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
+			sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + segments.get(1));
+			sql_builder.append(" AND " + DirectMessages.RECIPIENT_SCREEN_NAME + " = '" + segments.get(2) + "'");
+			if (selection != null) {
+				sql_builder.append(" AND " + selection);
+			}
+			sql_builder.append(" ORDER BY "
+					+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
+			return database.rawQuery(sql_builder.toString(), selectionArgs);
 		} else if (TABLE_DIRECT_MESSAGES.equals(table)) {
 			// read-only here.
 			final StringBuilder sql_builder = new StringBuilder();
@@ -134,10 +158,10 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			}
 			sql_builder.append(" ORDER BY " + (sortOrder != null ? sortOrder : DirectMessages.DEFAULT_SORT_ORDER));
 			return database.rawQuery(sql_builder.toString(), selectionArgs);
-		} else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) {
-			// read-only here.
-			return database.rawQuery(DirectMessages.ConversationsEntry.buildSQL(parseInt(uri.getLastPathSegment())), null);
-		}
+		} else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) // read-only
+																			// here.
+			return database.rawQuery(DirectMessages.ConversationsEntry.buildSQL(parseInt(uri.getLastPathSegment())),
+					null);
 		return database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
 	}
 
@@ -151,7 +175,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				return 0;
 			else if (TABLE_DIRECT_MESSAGES.equals(table)) // read-only here.
 				return 0;
-			else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table))// read-only here.
+			else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) // read-only
+																				// here.
 				return 0;
 			result = database.update(table, values, selection, selectionArgs);
 		}
@@ -175,28 +200,28 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				break;
 			}
 			case URI_STATUSES: {
-				if (!is_insert) {
+				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 					context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(
 							INTENT_KEY_SUCCEED, true));
 				}
 				break;
 			}
 			case URI_MENTIONS: {
-				if (!is_insert) {
+				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 					context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
 							true));
 				}
 				break;
 			}
 			case URI_DIRECT_MESSAGES_INBOX: {
-				if (!is_insert) {
+				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 					context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
 							INTENT_KEY_SUCCEED, true));
 				}
 				break;
 			}
 			case URI_DIRECT_MESSAGES_OUTBOX: {
-				if (!is_insert) {
+				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 					context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
 							INTENT_KEY_SUCCEED, true));
 				}

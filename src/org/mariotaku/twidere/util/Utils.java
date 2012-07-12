@@ -166,6 +166,8 @@ public final class Utils implements Constants {
 				URI_DIRECT_MESSAGES_OUTBOX);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATION + "/#/#",
 				URI_DIRECT_MESSAGES_CONVERSATION);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME
+				+ "/#/*", URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY + "/#",
 				URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
 	}
@@ -196,16 +198,18 @@ public final class Utils implements Constants {
 		return builder.toString();
 	}
 
-	public static Uri buildDirectMessageConversationUri(long account_id, long conversation_id) {
-		final Uri.Builder builder = DirectMessages.Conversation.CONTENT_URI.buildUpon();
-		builder.appendPath(String.valueOf(account_id));
-		builder.appendPath(String.valueOf(conversation_id));
-		return builder.build();
-	}
-	
 	public static Uri buildDirectMessageConversationsEntryUri(long account_id) {
 		final Uri.Builder builder = DirectMessages.ConversationsEntry.CONTENT_URI.buildUpon();
 		builder.appendPath(String.valueOf(account_id));
+		return builder.build();
+	}
+
+	public static Uri buildDirectMessageConversationUri(long account_id, long conversation_id, String screen_name) {
+		if (conversation_id <= 0 && screen_name == null) return TweetStore.NULL_CONTENT_URI;
+		final Uri.Builder builder = conversation_id > 0 ? DirectMessages.Conversation.CONTENT_URI.buildUpon()
+				: DirectMessages.Conversation.CONTENT_URI_SCREEN_NAME.buildUpon();
+		builder.appendPath(String.valueOf(account_id));
+		builder.appendPath(conversation_id > 0 ? String.valueOf(conversation_id) : screen_name);
 		return builder.build();
 	}
 
@@ -262,6 +266,18 @@ public final class Utils implements Constants {
 				where.append(" SELECT " + Statuses._ID + " FROM " + table);
 				where.append(" WHERE " + Statuses.ACCOUNT_ID + " = " + account_id);
 				where.append(" ORDER BY " + Statuses.STATUS_ID + " DESC");
+				where.append(" LIMIT " + item_limit + ")");
+				resolver.delete(uri, where.toString(), null);
+			}
+			for (final Uri uri : DIRECT_MESSAGES_URIS) {
+				final String table = getTableNameForContentUri(uri);
+				final StringBuilder where = new StringBuilder();
+				where.append(DirectMessages.ACCOUNT_ID + " = " + account_id);
+				where.append(" AND ");
+				where.append(DirectMessages._ID + " NOT IN (");
+				where.append(" SELECT " + DirectMessages._ID + " FROM " + table);
+				where.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + account_id);
+				where.append(" ORDER BY " + DirectMessages.MESSAGE_ID + " DESC");
 				where.append(" LIMIT " + item_limit + ")");
 				resolver.delete(uri, where.toString(), null);
 			}
@@ -777,6 +793,12 @@ public final class Utils implements Constants {
 				images.add(getImglyImage(matcher.group(TwidereLinkify.IMGLY_GROUP_ID)));
 			}
 		}
+		{
+			final Matcher matcher = TwidereLinkify.PATTERN_YFROG.matcher(status_string);
+			while (matcher.find()) {
+				images.add(getYfrogImage(matcher.group(TwidereLinkify.YFROG_GROUP_ID)));
+			}
+		}
 		return images;
 	}
 
@@ -977,6 +999,8 @@ public final class Utils implements Constants {
 				return TABLE_DIRECT_MESSAGES_OUTBOX;
 			case URI_DIRECT_MESSAGES_CONVERSATION:
 				return TABLE_DIRECT_MESSAGES_CONVERSATION;
+			case URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
+				return TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME;
 			case URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
 				return TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY;
 			default:
@@ -1118,6 +1142,14 @@ public final class Utils implements Constants {
 			return R.drawable.ic_indicator_has_media;
 		else if (has_location) return R.drawable.ic_indicator_has_location;
 		return 0;
+	}
+
+	public static ImageSpec getYfrogImage(String id) {
+		if (isNullOrEmpty(id)) return null;
+		final String thumbnail_size = "http://yfrog.com/" + id + ":small";
+		final String full_size = "http://yfrog.com/" + id + ":medium";
+		return new ImageSpec(thumbnail_size, full_size);
+
 	}
 
 	public static boolean isMyAccount(Context context, long account_id) {

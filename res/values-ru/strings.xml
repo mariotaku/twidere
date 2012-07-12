@@ -34,6 +34,7 @@
   <string name="clear_databases">Очистить базы данных</string>
   <string name="look_and_feel">Внешний вид</string>
   <string name="dark_theme">Использовать темную тему</string>
+  <string name="quote">цитировать</string>
   <string name="text_size">Размер текста</string>
   <string name="text_size_summary">Размер текста статусов.</string>
   <string name="cannot_get_location">Не удается получить ваше местоположение.</string>

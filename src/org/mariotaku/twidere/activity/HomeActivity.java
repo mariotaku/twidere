@@ -26,7 +26,6 @@ import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.fragment.DiscoverFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
@@ -68,7 +67,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	private ProgressBar mProgress;
 	private TabsAdapter mAdapter;
 	private ImageButton mComposeButton;
-	private ServiceInterface mInterface;
+	private ServiceInterface mService;
 	private TabPageIndicator mIndicator;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
@@ -82,8 +81,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		}
 
 	};
-
-	public static final int PANE_LEFT = R.id.left_pane, PANE_RIGHT = R.id.right_pane;
 
 	private boolean mProgressBarIndeterminateVisible = false;
 
@@ -189,7 +186,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		mInterface = ((TwidereApplication) getApplication()).getServiceInterface();
+		mService = getTwidereApplication().getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		mStateSaved = false;
@@ -207,11 +204,23 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		}
 
 		final Bundle bundle = getIntent().getExtras();
+		int initial_tab = -1;
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null) {
-				mInterface.getHomeTimeline(refreshed_ids, null);
-				mInterface.getMentions(refreshed_ids, null);
+				mService.getHomeTimeline(refreshed_ids, null);
+				mService.getMentions(refreshed_ids, null);
+			}
+			initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
+			switch (initial_tab) {
+				case TAB_POSITION_HOME: {
+					mService.clearNewNotificationCount(NOTIFICATION_ID_HOME_TIMELINE);
+					break;
+				}
+				case TAB_POSITION_MENTIONS: {
+					mService.clearNewNotificationCount(NOTIFICATION_ID_MENTIONS);
+					break;
+				}
 			}
 		}
 		mActionBar = getSupportActionBar();
@@ -239,8 +248,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
 		if (getActivatedAccountIds(this).length <= 0) {
 			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
-		} else if (checkDefaultAccountSet() && remember_position) {
-			final int position = mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION, TAB_POSITION_HOME);
+		} else if (checkDefaultAccountSet() && (remember_position || initial_tab > 0)) {
+			final int position = initial_tab > 0 ? initial_tab : mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION,
+					TAB_POSITION_HOME);
 			if (position >= 0 || position < mViewPager.getChildCount()) {
 				mViewPager.setCurrentItem(position);
 			}
@@ -268,7 +278,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			// Well, all right... If you still want to enable this option, I
 			// have no responsibility
 			// for any problems occurred.
-			mInterface.shutdownService();
+			mService.shutdownService();
 		}
 	}
 
@@ -361,7 +371,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
 		mProgressBarIndeterminateVisible = visible;
-		mProgress.setVisibility(visible || mInterface.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
+		mProgress.setVisibility(visible || mService.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
 	}
 
 	public void showAtPane(int pane, Fragment fragment, boolean addToBackStack) {
@@ -386,8 +396,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null) {
-				mInterface.getHomeTimeline(refreshed_ids, null);
-				mInterface.getMentions(refreshed_ids, null);
+				mService.getHomeTimeline(refreshed_ids, null);
+				mService.getMentions(refreshed_ids, null);
 			}
 		}
 		super.onNewIntent(intent);

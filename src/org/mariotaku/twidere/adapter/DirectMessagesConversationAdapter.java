@@ -26,8 +26,8 @@ import static org.mariotaku.twidere.util.Utils.parseURL;
 import java.net.URL;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.DMConversationViewHolder;
+import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.util.DirectMessagesAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -39,7 +39,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class DirectMessagesCursorAdapter extends SimpleCursorAdapter implements DirectMessagesAdapterInterface {
+public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements DirectMessagesAdapterInterface {
 
 	private boolean mDisplayProfileImage, mDisplayName, mShowLastItemAsGap;
 	private final LazyImageLoader mImageLoader;
@@ -47,7 +47,7 @@ public class DirectMessagesCursorAdapter extends SimpleCursorAdapter implements 
 	private final Context mContext;
 	private DirectMessageCursorIndices mIndices;
 
-	public DirectMessagesCursorAdapter(Context context, LazyImageLoader loader) {
+	public DirectMessagesConversationAdapter(Context context, LazyImageLoader loader) {
 		super(context, R.layout.direct_message_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
 		mImageLoader = loader;
