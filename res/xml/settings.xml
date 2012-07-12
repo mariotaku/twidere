@@ -184,8 +184,6 @@
 		android:title="@string/other_settings">
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:dependency="auto_refresh"
-			android:disableDependentsState="true"
 			android:key="stop_service_after_closed"
 			android:summary="@string/stop_service_after_closed_summary"
 			android:title="@string/stop_service_after_closed"/>
