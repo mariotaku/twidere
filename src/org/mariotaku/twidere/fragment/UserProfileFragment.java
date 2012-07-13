@@ -72,6 +72,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -114,7 +115,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private View mHeaderView;
 	private long mAccountId;
 	private Relationship mFriendship;
-	private final EditTextDialogFragment mDialogFragment = new EditTextDialogFragment();
+	private final DialogFragment mDialogFragment = new EditTextDialogFragment();
 	private Uri mImageUri;
 
 	private User mUser = null;
@@ -622,17 +623,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private ServiceInterface mService;
 
 		@Override
-		public void onActivityCreated(Bundle savedInstanceState) {
-			mService = ServiceInterface.getInstance(getActivity());
-			super.onActivityCreated(savedInstanceState);
-			final Bundle bundle = savedInstanceState != null ? getArguments() : savedInstanceState;
-			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-			mText = bundle != null ? bundle.getString(INTENT_KEY_TEXT) : null;
-			mType = bundle != null ? bundle.getInt(INTENT_KEY_TYPE, -1) : -1;
-			mTitle = bundle != null ? bundle.getString(INTENT_KEY_TITLE) : null;
-		}
-
-		@Override
 		public void onSaveInstanceState(Bundle outState) {
 			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 			outState.putString(INTENT_KEY_TEXT, mText);
@@ -673,6 +663,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@SuppressWarnings("deprecation")
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			mService = ServiceInterface.getInstance(getActivity());
+			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
+			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+			mText = bundle != null ? bundle.getString(INTENT_KEY_TEXT) : null;
+			mType = bundle != null ? bundle.getInt(INTENT_KEY_TYPE, -1) : -1;
+			mTitle = bundle != null ? bundle.getString(INTENT_KEY_TITLE) : null;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			final FrameLayout layout = new FrameLayout(getActivity());
 			mEditText = new EditText(getActivity());

@@ -26,5 +26,10 @@
 		<item>@string/mentions</item>
 		<item>@string/inbox</item>
 	</string-array>
+	<string-array name="entries_notification_type">
+		<item>@string/sound</item>
+		<item>@string/vibration</item>
+		<item>@string/lights</item>
+	</string-array>
 
 </resources>

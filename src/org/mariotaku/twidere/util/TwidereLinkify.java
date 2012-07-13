@@ -77,7 +77,7 @@ public class TwidereLinkify {
 			Pattern.CASE_INSENSITIVE);
 
 	public static final Pattern PATTERN_TWITTER_IMAGES = Pattern.compile(
-			"(https?:\\/\\/p\\.twimg\\.com\\/([\\d\\w]+)\\.(png|jpeg|jpg|gif|bmp))", Pattern.CASE_INSENSITIVE);
+			"(https?:\\/\\/p\\.twimg\\.com\\/([\\d\\w\\-_]+)\\.(png|jpeg|jpg|gif|bmp))", Pattern.CASE_INSENSITIVE);
 
 	public static final String SINA_WEIBO_IMAGES_AVALIABLE_SIZES = "(large|thumbnail|bmiddle|mw600)";
 

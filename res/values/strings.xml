@@ -200,10 +200,19 @@
 	<string name="refresh_and_notifications">Refresh &amp; Notifications</string>
 	<string name="auto_refresh">Auto refresh</string>
 	<string name="refresh_interval">Refresh interval</string>
+	<string name="refresh_interval_summary">Smaller refresh interval consumes more battery and network traffic!</string>
 	<string name="content_to_refresh">Content to refresh</string>
+	<string name="content_to_nofity">Content to notify</string>
+	<string name="notifications_type">Notifications type</string>
+	<string name="notifications_type_summary">This option will NOT override system settings.</string>
+	<string name="sound">Sound</string>
+	<string name="vibration">Vibration</string>
+	<string name="lights">Lights</string>
 	<string name="notifications">Notifications</string>
 	<string name="new_notifications">New notifications</string>
 	<string name="load_earlier_messages">Load earlier direct messages</string>
 	<string name="screen_name">Screen name</string>
+	<string name="sort_timeline_by_time">Sort timeline by time</string>
+	<string name="sort_timeline_by_time_summary">This may cause retweeted status shown in wrong place, but may helpful if you use other services like Identi.ca.</string>
 
 </resources>

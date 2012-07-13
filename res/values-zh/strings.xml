@@ -199,11 +199,20 @@
 	<string name="other_settings">其他設定</string>
 	<string name="refresh_and_notifications">刷新與通知</string>
 	<string name="auto_refresh">自動刷新</string>
+	<string name="refresh_interval_summary">更小的刷新間隔將消耗更多的電量及數據流量！</string>
 	<string name="refresh_interval">刷新間隔</string>
 	<string name="content_to_refresh">刷新的內容</string>
+	<string name="content_to_nofity">通知的內容</string>
+	<string name="notifications_type">通知類型</string>
+	<string name="notifications_type_summary">這個選項將不會覆蓋系統的聲音/震動設置。</string>
+	<string name="sound">聲音</string>
+	<string name="vibration">震動</string>
+	<string name="lights">LED閃爍</string>
 	<string name="notifications">通知</string>
 	<string name="new_notifications">新通知</string>
 	<string name="load_earlier_messages">加載更早的私信</string>
 	<string name="screen_name">用戶名</string>
+	<string name="sort_timeline_by_time">按時間順序排序時間綫</string>
+	<string name="sort_timeline_by_time_summary">這可能使得被轉推的推文顯示在錯誤的位置，不過如果你使用其他服務比如（Identi.ca），這個選項會有不少幫助。</string>
 
 </resources>

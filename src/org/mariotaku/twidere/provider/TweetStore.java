@@ -464,8 +464,12 @@ public final class TweetStore implements Constants {
 		 * Type: INTEGER (long)
 		 */
 		public static final String STATUS_TIMESTAMP = "status_timestamp";
+		
+		public static final String SORT_ORDER_TIMESTAMP_DESC = STATUS_TIMESTAMP + " DESC";
+		
+		public static final String SORT_ORDER_STATUS_ID_DESC = STATUS_ID + " DESC";
 
-		public static final String DEFAULT_SORT_ORDER = STATUS_ID + " DESC";
+		public static final String DEFAULT_SORT_ORDER = SORT_ORDER_STATUS_ID_DESC;
 
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
 				TEXT, TEXT_PLAIN, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID,

@@ -167,6 +167,7 @@
 			android:entries="@array/entries_refresh_interval"
 			android:entryValues="@array/values_refresh_interval"
 			android:key="refresh_interval"
+			android:summary="@string/refresh_interval_summary"
 			android:title="@string/refresh_interval"/>
 
 		<org.mariotaku.twidere.preference.RefreshContentPreference
@@ -177,7 +178,13 @@
 		<org.mariotaku.twidere.preference.NotificationContentPreference
 			android:dependency="auto_refresh"
 			android:key="notification_content"
-			android:title="@string/notifications"/>
+			android:title="@string/content_to_nofity"/>
+
+		<org.mariotaku.twidere.preference.NotificationTypePreference
+			android:dependency="auto_refresh"
+			android:key="notifications_type"
+			android:summary="@string/notifications_type_summary"
+			android:title="@string/notifications_type"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="cat_other_settings"
@@ -187,8 +194,13 @@
 			android:key="stop_service_after_closed"
 			android:summary="@string/stop_service_after_closed_summary"
 			android:title="@string/stop_service_after_closed"/>
+		<CheckBoxPreference
+			android:key="sort_timeline_by_time"
+			android:summary="@string/sort_timeline_by_time_summary"
+			android:title="@string/sort_timeline_by_time"/>
 	</PreferenceCategory>
 	<PreferenceCategory
+		sort_timeline_by_time=""
 		android:key="cat_about"
 		android:title="@string/about">
 		<PreferenceScreen
