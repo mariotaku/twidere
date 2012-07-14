@@ -53,8 +53,9 @@
 
 	<LinearLayout
 		android:id="@+id/screen_name_container"
-		android:layout_width="fill_parent"
+		android:layout_width="300dp"
 		android:layout_height="fill_parent"
+		android:layout_gravity="center"
 		android:gravity="center"
 		android:orientation="horizontal"
 		android:padding="16dp"

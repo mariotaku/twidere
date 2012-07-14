@@ -202,12 +202,14 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			finish();
 			return;
 		}
+		
+		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
 
 		final Bundle bundle = getIntent().getExtras();
 		int initial_tab = -1;
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
-			if (refreshed_ids != null) {
+			if (refreshed_ids != null && !refresh_on_start) {
 				mService.getHomeTimeline(refreshed_ids, null);
 				mService.getMentions(refreshed_ids, null);
 			}
@@ -246,7 +248,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
-		if (getActivatedAccountIds(this).length <= 0) {
+		final long[] activated_ids = getActivatedAccountIds(this);
+		if (activated_ids.length <= 0) {
 			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
 		} else if (checkDefaultAccountSet() && (remember_position || initial_tab > 0)) {
 			final int position = initial_tab > 0 ? initial_tab : mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION,
@@ -254,6 +257,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			if (position >= 0 || position < mViewPager.getChildCount()) {
 				mViewPager.setCurrentItem(position);
 			}
+		}
+		if (refresh_on_start) {
+			mService.getHomeTimeline(activated_ids, null);
+			mService.getMentions(activated_ids, null);
 		}
 	}
 
@@ -295,6 +302,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			}
 			case MENU_SEARCH: {
 				onSearchRequested();
+				break;
+			}
+			case MENU_DIRECT_MESSAGES: {
+				startActivity(new Intent(INTENT_ACTION_DIRECT_MESSAGES));
 				break;
 			}
 			case MENU_SELECT_ACCOUNT: {

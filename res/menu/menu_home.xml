@@ -12,6 +12,11 @@
 		android:showAsAction="never"
 		android:title="@android:string/search_go"/>
 	<item
+		android:id="@id/direct_messages"
+		android:icon="@drawable/ic_menu_messages"
+		android:showAsAction="never"
+		android:title="@string/direct_messages"/>
+	<item
 		android:id="@id/select_account"
 		android:icon="@drawable/ic_menu_accounts_stock"
 		android:showAsAction="never"

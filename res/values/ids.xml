@@ -41,5 +41,6 @@
 	<item name="mute" type="id"/>
 	<item name="view_profile" type="id"/>
 	<item name="load_more" type="id"/>
+	<item name="direct_messages" type="id"/>
 
 </resources>

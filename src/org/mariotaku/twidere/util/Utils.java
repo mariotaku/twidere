@@ -248,6 +248,7 @@ public final class Utils implements Constants {
 	}
 
 	public static Uri buildDirectMessageConversationsEntryUri(long account_id) {
+		if (account_id <= 0) return TweetStore.NULL_CONTENT_URI;
 		final Uri.Builder builder = DirectMessages.ConversationsEntry.CONTENT_URI.buildUpon();
 		builder.appendPath(String.valueOf(account_id));
 		return builder.build();

@@ -159,9 +159,26 @@
 		android:title="@string/refresh_and_notifications">
 		<CheckBoxPreference
 			android:defaultValue="false"
+			android:key="refresh_on_start"
+			android:summary="@string/refresh_on_start_summary"
+			android:title="@string/refresh_on_start"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="refresh_after_tweet"
+			android:summary="@string/refresh_after_tweet_summary"
+			android:title="@string/refresh_after_tweet"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
 			android:key="auto_refresh"
 			android:title="@string/auto_refresh"/>
 
+		<ListPreference
+			android:dependency="auto_refresh"
+			android:entries="@array/entries_refresh_interval"
+			android:entryValues="@array/values_refresh_interval"
+			android:key="refresh_interval"
+			android:summary="@string/refresh_interval_summary"
+			android:title="@string/refresh_interval"/>
 		<ListPreference
 			android:dependency="auto_refresh"
 			android:entries="@array/entries_refresh_interval"

@@ -24,6 +24,8 @@ import static android.os.Environment.getExternalStorageDirectory;
 import java.io.File;
 import java.io.FileFilter;
 
+import org.acra.ACRA;
+import org.acra.annotation.ReportsCrashes;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.AsyncTaskManager;
@@ -38,6 +40,7 @@ import android.content.Context;
 import android.os.AsyncTask.Status;
 import android.os.Build;
 
+@ReportsCrashes(formKey = "dEcwVVBoTDE0RXZaczFiMUxuek43WGc6MQ") 
 public class TwidereApplication extends Application implements Constants {
 
 	private LazyImageLoader mProfileImageLoader;
@@ -50,6 +53,12 @@ public class TwidereApplication extends Application implements Constants {
 			mClearCacheTask = new ClearCacheTask(this, getAsyncTaskManager());
 			mClearCacheTask.execute();
 		}
+	}
+
+	@Override
+	public void onCreate() {
+		ACRA.init(this);
+		super.onCreate();
 	}
 
 	public AsyncTaskManager getAsyncTaskManager() {

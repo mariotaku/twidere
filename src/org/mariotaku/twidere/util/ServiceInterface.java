@@ -195,10 +195,10 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int getReceivedDirectMessages(long account_id, long max_id) {
+	public int getReceivedDirectMessages(long[] account_ids, long[] max_ids) {
 		if (mService == null) return -1;
 		try {
-			return mService.getReceivedDirectMessages(account_id, max_id);
+			return mService.getReceivedDirectMessages(account_ids, max_ids);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -206,10 +206,10 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int getSentDirectMessages(long account_id, long max_id) {
+	public int getSentDirectMessages(long[] account_ids, long[] max_ids) {
 		if (mService == null) return -1;
 		try {
-			return mService.getSentDirectMessages(account_id, max_id);
+			return mService.getSentDirectMessages(account_ids, max_ids);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}

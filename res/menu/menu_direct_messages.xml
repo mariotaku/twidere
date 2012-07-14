@@ -13,7 +13,7 @@
 		android:title="@string/compose"/>
 	<item
 		android:id="@id/load_more"
-		android:icon="@drawable/ic_menu_more"
+		android:icon="@android:drawable/ic_menu_recent_history"
 		android:showAsAction="never"
 		android:title="@string/load_earlier_messages"/>
 

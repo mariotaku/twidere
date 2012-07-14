@@ -99,7 +99,7 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 		mActionBar.setCustomView(R.layout.actionbar_spinner_navigation);
 		final View view = mActionBar.getCustomView();
 		mSpinner = (Spinner) view.findViewById(R.id.navigate);
-		mAdapter = new ArrayAdapter<TabSpec>(this, R.layout.spinner_item);
+		mAdapter = new ArrayAdapter<TabSpec>(this, R.layout.spinner_item_white_text);
 		mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
 		mAdapter.add(new TabSpec(SearchTweetsFragment.class, getString(R.string.search_tweets)));
 		mAdapter.add(new TabSpec(SearchUsersFragment.class, getString(R.string.search_users)));

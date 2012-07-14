@@ -5,4 +5,4 @@
 	android:layout_height="wrap_content"
 	android:ellipsize="marquee"
 	android:singleLine="true"
-	android:textColor="?android:attr/textColorPrimary"/>
+	android:textColor="#ffffff"/>

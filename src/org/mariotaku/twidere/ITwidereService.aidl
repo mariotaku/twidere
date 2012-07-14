@@ -22,8 +22,8 @@ package org.mariotaku.twidere;
 interface ITwidereService {
 	int getHomeTimeline(in long[] account_ids, in long[] max_ids);
 	int getMentions(in long[] account_ids, in long[] max_ids);
-	int getReceivedDirectMessages(long account_id, long max_id);
-	int getSentDirectMessages(long account_id, long max_id);
+	int getReceivedDirectMessages(in long[] account_ids, in long[] max_ids);
+	int getSentDirectMessages(in long[] account_ids, in long[] max_ids);
 	int updateStatus(in long[] account_ids, String content, in Location location, in Uri image_uri, long in_reply_to, boolean delete_image);
 	int destroyStatus(long account_id, long status_id);
 	int sendDirectMessage(long account_id, String screen_name, long user_id, String message);

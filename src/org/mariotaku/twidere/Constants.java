@@ -128,6 +128,9 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED = "stop_service_after_closed";
 	public static final String PREFERENCE_KEY_SORT_TIMELINE_BY_TIME = "sort_timeline_by_time";
 
+	public static final String PREFERENCE_KEY_REFRESH_ON_START = "refresh_on_start";
+	public static final String PREFERENCE_KEY_REFRESH_AFTER_TWEET = "refresh_after_tweet";
+	
 	public static final String PREFERENCE_KEY_AUTO_REFRESH = "auto_refresh";
 	public static final String PREFERENCE_KEY_REFRESH_INTERVAL = "refresh_interval";
 	public static final String PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE = "refresh_enable_home_timeline";
@@ -264,6 +267,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_MUTE = R.id.mute;
 	public static final int MENU_REFRESH = R.id.refresh;
 	public static final int MENU_LOAD_MORE = R.id.load_more;
+	public static final int MENU_DIRECT_MESSAGES = R.id.direct_messages;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
