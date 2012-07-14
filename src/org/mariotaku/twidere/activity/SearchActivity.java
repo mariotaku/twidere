@@ -108,12 +108,6 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_filter, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 		final Fragment fragment = Fragment.instantiate(this, mAdapter.getItem(position).cls.getName());
 		fragment.setArguments(mArguments);
@@ -134,8 +128,6 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 			case MENU_HOME:
 				finish();
 				break;
-			case MENU_ADD:
-				return false;
 		}
 		return super.onOptionsItemSelected(item);
 	}
