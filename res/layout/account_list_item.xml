@@ -21,7 +21,7 @@
 	android:layout_gravity="center_vertical"
 	android:background="@drawable/ic_label_color"
 	android:minHeight="?android:attr/listPreferredItemHeight"
-	android:padding="4dip">
+	android:padding="6dp">
 
 	<org.mariotaku.twidere.view.RoundCorneredImageView
 		android:id="@android:id/icon"
@@ -37,7 +37,7 @@
 		android:layout_toRightOf="@android:id/icon"
 		android:gravity="center_vertical"
 		android:orientation="vertical"
-		android:padding="4dip">
+		android:padding="4dp">
 
 		<TextView
 			android:id="@android:id/text1"

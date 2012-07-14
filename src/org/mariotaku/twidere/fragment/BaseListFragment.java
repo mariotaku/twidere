@@ -21,7 +21,6 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 
 import android.app.Activity;
@@ -71,8 +70,8 @@ public class BaseListFragment extends ListFragment implements Constants {
 
 	public void setProgressBarIndeterminateVisibility(boolean visible) {
 		final Activity activity = getActivity();
-		if (activity instanceof BaseActivity) {
-			((BaseActivity) activity).setSupportProgressBarIndeterminateVisibility(visible);
+		if (activity instanceof ActionBarFragmentActivity) {
+			((ActionBarFragmentActivity) activity).setSupportProgressBarIndeterminateVisibility(visible);
 		}
 	}
 

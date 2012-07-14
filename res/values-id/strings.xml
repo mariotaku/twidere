@@ -78,7 +78,7 @@
   <string name="consumer_key_summary">Kode Consumer Key OAuth/xAuth, kosongkan untuk tetapan default.</string>
   <string name="consumer_secret">Kode Consumer Secret</string>
   <string name="consumer_secret_summary">Kode Consumer Secret untuk OAuth/xAuth, kosongkan untuk tetapan default.</string>
-  <string name="warn_expert_only">Mohon diperhatikan! Kode consumer key/secret yang salah akan mengakibatkan koneksi error!</string>
+  <string name="warn_expert_only">Mohon dperhatikan! Kode consumer key/secret yang salah akan mengakibatkan koneksi error!</string>
   <string name="ignore_ssl_error">Abaikan kesalahan SSL</string>
   <string name="ignore_ssl_error_summary">Abaikan kesalahan SSL, aktifkan jika anda mengalami masalah dengan server API custom.</string>
   <string name="gzip_compressing">Kompresi GZip</string>

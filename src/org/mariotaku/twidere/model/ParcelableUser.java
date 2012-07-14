@@ -41,9 +41,7 @@ public class ParcelableUser implements Parcelable {
 		}
 	};
 
-	public final long account_id, user_id, created_at;
-
-	public final int position;
+	public final long account_id, user_id, created_at, position;
 
 	public final boolean is_protected;
 
@@ -63,7 +61,7 @@ public class ParcelableUser implements Parcelable {
 	};
 
 	public ParcelableUser(Parcel in) {
-		position = in.readInt();
+		position = in.readLong();
 		account_id = in.readLong();
 		user_id = in.readLong();
 		created_at = in.readLong();
@@ -79,7 +77,7 @@ public class ParcelableUser implements Parcelable {
 		this(user, account_id, 0);
 	}
 
-	public ParcelableUser(User user, long account_id, int position) {
+	public ParcelableUser(User user, long account_id, long position) {
 		this.position = position;
 		this.account_id = account_id;
 		user_id = user.getId();
@@ -104,7 +102,7 @@ public class ParcelableUser implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-		out.writeInt(position);
+		out.writeLong(position);
 		out.writeLong(account_id);
 		out.writeLong(user_id);
 		out.writeLong(created_at);

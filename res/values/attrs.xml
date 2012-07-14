@@ -3,6 +3,7 @@
 
 	<declare-styleable name="Twidere">
 		<attr name="switchStyle" format="reference"/>
+		<attr name="editTextStyle" format="reference"/>
 	</declare-styleable>
 	<declare-styleable name="ViewPagerIndicator">
 		<attr name="tabStyle" format="reference"/>

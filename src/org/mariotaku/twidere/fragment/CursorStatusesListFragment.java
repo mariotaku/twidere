@@ -82,7 +82,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 				Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_FAVORITE,
 				Statuses.HAS_MEDIA, Statuses.IS_PROTECTED, Statuses.IS_GAP };
 		final Uri uri = getContentUri();
-		final String sort_by = getSharedPreferences().getBoolean(PREFERENCE_KEY_SORT_TIMELINE_BY_TIME, false) ? Statuses.SORT_ORDER_TIMESTAMP_DESC : Statuses.SORT_ORDER_STATUS_ID_DESC;
+		final String sort_by = getSharedPreferences().getBoolean(PREFERENCE_KEY_SORT_TIMELINE_BY_TIME, false) ? Statuses.SORT_ORDER_TIMESTAMP_DESC
+				: Statuses.SORT_ORDER_STATUS_ID_DESC;
 		String where = buildActivatedStatsWhereClause(getActivity(), null);
 		if (getSharedPreferences().getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
 			final String table = getTableNameForContentUri(uri);

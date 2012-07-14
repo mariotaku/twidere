@@ -6,6 +6,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="switchStyle">@style/Widget.Holo.CompoundButton.Switch</item>
+		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
@@ -21,6 +22,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="switchStyle">@style/Widget.Holo.Light.CompoundButton.Switch</item>
+		<item name="editTextStyle">@style/Widget.Holo.Light.EditText</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>

@@ -13,7 +13,7 @@
 		<RelativeLayout
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:padding="16dip">
+			android:padding="16dp">
 
 			<TextView
 				android:id="@+id/label_rest_base_url"

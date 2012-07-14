@@ -147,11 +147,12 @@ public class Regex {
   public static final Pattern INVALID_HASHTAG_MATCH_END = Pattern.compile("^(?:[#＃]|://)");
 
   public static final Pattern AT_SIGNS = Pattern.compile("[" + AT_SIGNS_CHARS + "]");
-  public static final Pattern VALID_MENTION_OR_LIST = Pattern.compile("([^a-z0-9_!#$%&*" + AT_SIGNS_CHARS + "]|^|RT:?)(" + AT_SIGNS + "+)([a-z0-9_]{1,20})(/[a-z][a-z0-9_\\-]{0,24})?", Pattern.CASE_INSENSITIVE);
+  public static final Pattern VALID_MENTION_OR_LIST = Pattern.compile("([^a-z0-9_!#$%&*" + AT_SIGNS_CHARS + "]|^|RT:?)(" + AT_SIGNS + "+)([a-z0-9_]{1,20})(\\/([a-z][a-z0-9_\\-]{0,24}))?", Pattern.CASE_INSENSITIVE);
   public static final int VALID_MENTION_OR_LIST_GROUP_BEFORE = 1;
   public static final int VALID_MENTION_OR_LIST_GROUP_AT = 2;
   public static final int VALID_MENTION_OR_LIST_GROUP_USERNAME = 3;
-  public static final int VALID_MENTION_OR_LIST_GROUP_LIST = 4;
+  public static final int VALID_MENTION_OR_LIST_GROUP_LIST_WITH_SLASH = 4;
+  public static final int VALID_MENTION_OR_LIST_GROUP_LIST = 5;
 
   public static final Pattern VALID_REPLY = Pattern.compile("^(?:" + UNICODE_SPACES + ")*" + AT_SIGNS + "([a-z0-9_]{1,20})", Pattern.CASE_INSENSITIVE);
   public static final int VALID_REPLY_GROUP_USERNAME = 1;

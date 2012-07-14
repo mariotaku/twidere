@@ -242,6 +242,15 @@
 				<data
 					android:host="direct_messages_conversation"
 					android:scheme="twidere"/>
+				<data
+					android:host="list_timeline"
+					android:scheme="twidere"/>
+				<data
+					android:host="list_members"
+					android:scheme="twidere"/>
+				<data
+					android:host="list_subscribers"
+					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>
 		<activity

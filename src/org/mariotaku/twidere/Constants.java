@@ -67,12 +67,19 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_DIRECT_MESSAGES_CONVERSATION = "direct_messages_conversation";
 	public static final String AUTHORITY_SEARCH = "search";
 	public static final String AUTHORITY_MAP = "map";
+	public static final String AUTHORITY_LIST_DETAILS = "list_details";
+	public static final String AUTHORITY_LIST_TYPE = "list_type";
+	public static final String AUTHORITY_LIST_TIMELINE = "list_timeline";
+	public static final String AUTHORITY_LIST_MEMBERS = "list_members";
+	public static final String AUTHORITY_LIST_SUBSCRIBERS = "list_subscribers";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
 	public static final String QUERY_PARAM_STATUS_ID = "status_id";
 	public static final String QUERY_PARAM_USER_ID = "user_id";
+	public static final String QUERY_PARAM_LIST_ID = "list_id";
 	public static final String QUERY_PARAM_SCREEN_NAME = "screen_name";
+	public static final String QUERY_PARAM_LIST_NAME = "list_name";
 	public static final String QUERY_PARAM_QUERY = "query";
 	public static final String QUERY_PARAM_TYPE = "type";
 	public static final String QUERY_PARAM_VALUE_USERS = "users";
@@ -194,9 +201,11 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_QUERY = "query";
 	public static final String INTENT_KEY_QUERY_TYPE = "query_type";
 	public static final String INTENT_KEY_USER_ID = "user_id";
+	public static final String INTENT_KEY_LIST_ID = "list_id";
 	public static final String INTENT_KEY_MAX_ID = "max_id";
 	public static final String INTENT_KEY_STATUS_ID = "status_id";
 	public static final String INTENT_KEY_SCREEN_NAME = "screen_name";
+	public static final String INTENT_KEY_LIST_NAME = "list_name";
 	public static final String INTENT_KEY_IN_REPLY_TO_ID = "in_reply_to_id";
 	public static final String INTENT_KEY_IN_REPLY_TO_NAME = "in_reply_to_name";
 	public static final String INTENT_KEY_IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";

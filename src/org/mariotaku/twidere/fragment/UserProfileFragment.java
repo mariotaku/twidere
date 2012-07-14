@@ -177,6 +177,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenName = user.getScreenName();
 		mNameView.setText(user.getName());
 		mScreenNameView.setText(user.getScreenName());
+		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(user.isProtected() ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
 		final String description = user.getDescription();
 		mDescriptionContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(description) ? View.VISIBLE
 				: View.GONE);
@@ -595,25 +596,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
-	private class DirectMessagesAction extends UserAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.direct_messages);
-		}
-
-		@Override
-		public void onClick() {
-			if (mUser == null || !isMyActivatedAccount(getActivity(), mUser.getId())) return;
-			final Bundle bundle = new Bundle();
-			bundle.putLong(INTENT_KEY_ACCOUNT_ID, mUser.getId());
-			final Intent intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
-			intent.putExtras(bundle);
-			startActivity(intent);
-		}
-
-	}
-
 	public static class EditTextDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
 		private EditText mEditText;
 		private String mText;
@@ -621,15 +603,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private String mTitle;
 		private long mAccountId;
 		private ServiceInterface mService;
-
-		@Override
-		public void onSaveInstanceState(Bundle outState) {
-			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-			outState.putString(INTENT_KEY_TEXT, mText);
-			outState.putInt(INTENT_KEY_TYPE, mType);
-			outState.putString(INTENT_KEY_TITLE, mTitle);
-			super.onSaveInstanceState(outState);
-		}
 
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
@@ -710,6 +683,34 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();
+		}
+
+		@Override
+		public void onSaveInstanceState(Bundle outState) {
+			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+			outState.putString(INTENT_KEY_TEXT, mText);
+			outState.putInt(INTENT_KEY_TYPE, mType);
+			outState.putString(INTENT_KEY_TITLE, mTitle);
+			super.onSaveInstanceState(outState);
+		}
+
+	}
+
+	private class DirectMessagesAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.direct_messages);
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null || !isMyActivatedAccount(getActivity(), mUser.getId())) return;
+			final Bundle bundle = new Bundle();
+			bundle.putLong(INTENT_KEY_ACCOUNT_ID, mUser.getId());
+			final Intent intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
+			intent.putExtras(bundle);
+			startActivity(intent);
 		}
 
 	}

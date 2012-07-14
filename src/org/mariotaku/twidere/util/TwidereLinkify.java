@@ -24,6 +24,9 @@ import static org.mariotaku.twidere.util.Utils.getInstagramImage;
 import static org.mariotaku.twidere.util.Utils.getLockerzAndPlixiImage;
 import static org.mariotaku.twidere.util.Utils.getTwitpicImage;
 import static org.mariotaku.twidere.util.Utils.getYfrogImage;
+import static org.mariotaku.twidere.util.Utils.matcherEnd;
+import static org.mariotaku.twidere.util.Utils.matcherGroup;
+import static org.mariotaku.twidere.util.Utils.matcherStart;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -57,18 +60,19 @@ import com.twitter.Regex;
 
 public class TwidereLinkify {
 
-	public static final int LINK_TYPE_MENTIONS = 1;
-	public static final int LINK_TYPE_HASHTAGS = 2;
-	public static final int LINK_TYPE_IMAGES = 3;
-	public static final int LINK_TYPE_LINKS = 4;
+	public static final int LINK_TYPE_MENTION = 1;
+	public static final int LINK_TYPE_HASHTAG = 2;
+	public static final int LINK_TYPE_IMAGE = 3;
+	public static final int LINK_TYPE_LINK = 4;
 	public static final int LINK_TYPE_INSTAGRAM = 5;
 	public static final int LINK_TYPE_TWITPIC = 6;
 	public static final int LINK_TYPE_LOCKERZ_AND_PLIXI = 7;
 	public static final int LINK_TYPE_IMGLY = 8;
 	public static final int LINK_TYPE_YFROG = 9;
+	public static final int LINK_TYPE_LIST = 10;
 
-	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_MENTIONS, LINK_TYPE_HASHTAGS, LINK_TYPE_IMAGES,
-			LINK_TYPE_LINKS, LINK_TYPE_INSTAGRAM, LINK_TYPE_TWITPIC, LINK_TYPE_LOCKERZ_AND_PLIXI, LINK_TYPE_IMGLY,
+	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_MENTION, LINK_TYPE_HASHTAG, LINK_TYPE_IMAGE,
+			LINK_TYPE_LINK, LINK_TYPE_INSTAGRAM, LINK_TYPE_TWITPIC, LINK_TYPE_LOCKERZ_AND_PLIXI, LINK_TYPE_IMGLY,
 			LINK_TYPE_YFROG
 
 	};
@@ -156,15 +160,15 @@ public class TwidereLinkify {
 	public final void addLinks(int type) {
 		final SpannableString string = SpannableString.valueOf(view.getText());
 		switch (type) {
-			case LINK_TYPE_MENTIONS: {
-				addMentionLinks(string);
+			case LINK_TYPE_MENTION: {
+				addMentionOrListLinks(string);
 				break;
 			}
-			case LINK_TYPE_HASHTAGS: {
+			case LINK_TYPE_HASHTAG: {
 				addHashtagLinks(string);
 				break;
 			}
-			case LINK_TYPE_IMAGES: {
+			case LINK_TYPE_IMAGE: {
 				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
 				for (final URLSpan span : spans) {
 					final int start = string.getSpanStart(span);
@@ -172,19 +176,19 @@ public class TwidereLinkify {
 					final String url = span.getURL();
 					if (url.matches(PATTERN_IMAGES.pattern())) {
 						string.removeSpan(span);
-						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
+						applyLink(url, start, end, string, LINK_TYPE_IMAGE);
 					}
 				}
 				break;
 			}
-			case LINK_TYPE_LINKS: {
+			case LINK_TYPE_LINK: {
 				final ArrayList<LinkSpec> links = new ArrayList<LinkSpec>();
 				gatherLinks(links, string, Patterns.WEB_URL, new String[] { "http://", "https://", "rtsp://" },
 						sUrlMatchFilter, null);
 				for (final LinkSpec link : links) {
 					final URLSpan[] spans = string.getSpans(link.start, link.end, URLSpan.class);
 					if (spans == null || spans.length <= 0) {
-						applyLink(link.url, link.start, link.end, string, LINK_TYPE_LINKS);
+						applyLink(link.url, link.start, link.end, string, LINK_TYPE_LINK);
 					}
 				}
 				break;
@@ -196,9 +200,9 @@ public class TwidereLinkify {
 					if (matcher.matches()) {
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
-						final String url = getInstagramImage(matcher.group(INSTAGRAM_GROUP_ID)).image_link;
+						final String url = getInstagramImage(matcherGroup(matcher, INSTAGRAM_GROUP_ID)).image_link;
 						string.removeSpan(span);
-						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
+						applyLink(url, start, end, string, LINK_TYPE_IMAGE);
 					}
 				}
 				break;
@@ -210,9 +214,9 @@ public class TwidereLinkify {
 					if (matcher.matches()) {
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
-						final String url = getTwitpicImage(matcher.group(TWITPIC_GROUP_ID)).image_link;
+						final String url = getTwitpicImage(matcherGroup(matcher, TWITPIC_GROUP_ID)).image_link;
 						string.removeSpan(span);
-						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
+						applyLink(url, start, end, string, LINK_TYPE_IMAGE);
 					}
 				}
 				break;
@@ -226,7 +230,7 @@ public class TwidereLinkify {
 						final int end = string.getSpanEnd(span);
 						final String url = getLockerzAndPlixiImage(matcher.group()).image_link;
 						string.removeSpan(span);
-						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
+						applyLink(url, start, end, string, LINK_TYPE_IMAGE);
 					}
 				}
 				break;
@@ -238,9 +242,9 @@ public class TwidereLinkify {
 					if (matcher.matches()) {
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
-						final String url = getImglyImage(matcher.group(IMGLY_GROUP_ID)).image_link;
+						final String url = getImglyImage(matcherGroup(matcher, IMGLY_GROUP_ID)).image_link;
 						string.removeSpan(span);
-						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
+						applyLink(url, start, end, string, LINK_TYPE_IMAGE);
 					}
 				}
 				break;
@@ -252,9 +256,9 @@ public class TwidereLinkify {
 					if (matcher.matches()) {
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
-						final String url = getYfrogImage(matcher.group(YFROG_GROUP_ID)).image_link;
+						final String url = getYfrogImage(matcherGroup(matcher, YFROG_GROUP_ID)).image_link;
 						string.removeSpan(span);
-						applyLink(url, start, end, string, LINK_TYPE_IMAGES);
+						applyLink(url, start, end, string, LINK_TYPE_IMAGE);
 					}
 				}
 				break;
@@ -282,27 +286,32 @@ public class TwidereLinkify {
 		final Matcher matcher = Regex.VALID_HASHTAG.matcher(spannable);
 
 		while (matcher.find()) {
-			final int start = matcher.start(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
-			final int end = matcher.end(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
-			final String url = matcher.group(Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
+			final int start = matcherStart(matcher, Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
+			final int end = matcherEnd(matcher, Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
+			final String url = matcherGroup(matcher, Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
 
-			applyLink(url, start, end, spannable, LINK_TYPE_HASHTAGS);
+			applyLink(url, start, end, spannable, LINK_TYPE_HASHTAG);
 			hasMatches = true;
 		}
 
 		return hasMatches;
 	}
 
-	private final boolean addMentionLinks(Spannable spannable) {
+	private final boolean addMentionOrListLinks(Spannable spannable) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_MENTION_OR_LIST.matcher(spannable);
 
 		while (matcher.find()) {
-			final int start = matcher.start(Regex.VALID_MENTION_OR_LIST_GROUP_AT);
-			final int end = matcher.end(Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
-			final String url = matcher.group(Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
-
-			applyLink(url, start, end, spannable, LINK_TYPE_MENTIONS);
+			final int start = matcherStart(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_AT);
+			final int username_end = matcherEnd(matcher,Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
+			final int list_start = matcherStart(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
+			final int list_end = matcherEnd(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
+			final String mention = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
+			final String list = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
+			applyLink(mention, start, username_end, spannable, LINK_TYPE_MENTION);
+			if (list_start >= 0 && list_end >= 0) {
+				applyLink(mention + "/" + list, list_start, list_end, spannable, LINK_TYPE_LIST);
+			}
 			hasMatches = true;
 		}
 

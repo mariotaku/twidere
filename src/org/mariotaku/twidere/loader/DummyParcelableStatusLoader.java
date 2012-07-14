@@ -19,29 +19,22 @@
 
 package org.mariotaku.twidere.loader;
 
+import java.util.Collections;
 import java.util.List;
 
-import org.mariotaku.twidere.model.ParcelableDirectMessage;
+import org.mariotaku.twidere.model.ParcelableStatus;
 
-import twitter4j.DirectMessage;
-import twitter4j.Paging;
-import twitter4j.ResponseList;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import android.content.Context;
 
-public class ReceivedDirectMessagesLoader extends ParcelableDirectMessagesLoader {
+public class DummyParcelableStatusLoader extends ParcelableStatusesLoader {
 
-	public ReceivedDirectMessagesLoader(Context context, long account_id, long max_id,
-			List<ParcelableDirectMessage> data) {
-		super(context, account_id, max_id, data);
+	public DummyParcelableStatusLoader(Context context, long account_id, List<ParcelableStatus> data) {
+		super(context, account_id, data);
 	}
 
 	@Override
-	public ResponseList<DirectMessage> getDirectMessages(Paging paging) throws TwitterException {
-		final Twitter twitter = getTwitter();
-		if (twitter == null) return null;
-		return twitter.getDirectMessages(paging);
+	public List<ParcelableStatus> loadInBackground() {
+		return Collections.emptyList();
 	}
 
 }

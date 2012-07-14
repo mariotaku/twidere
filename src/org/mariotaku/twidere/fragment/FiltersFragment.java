@@ -113,6 +113,57 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 		return super.onOptionsItemSelected(item);
 	}
 
+	public static class AddItemFragment extends BaseDialogFragment implements OnClickListener {
+
+		private EditText mEditText;
+
+		private FiltersFragment mFragment;
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					if (mFragment == null) return;
+					final ContentValues values = new ContentValues();
+					if (mEditText.length() <= 0) return;
+					final String text = mEditText.getText().toString();
+					values.put(Filters.TEXT, text);
+					getContentResolver().insert(mFragment.getContentUri(), values);
+					mFragment.getLoaderManager().restartLoader(0, null, mFragment);
+					break;
+			}
+
+		}
+
+		@SuppressWarnings("deprecation")
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			final FrameLayout layout = new FrameLayout(getActivity());
+			mEditText = new EditText(getActivity());
+			layout.addView(mEditText, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT) {
+
+				{
+					final int margin = (int) (getResources().getDisplayMetrics().density * 16);
+					bottomMargin = margin;
+					leftMargin = margin;
+					rightMargin = margin;
+					topMargin = margin;
+					gravity = Gravity.CENTER;
+				}
+			});
+			builder.setTitle(R.string.add_rule);
+			builder.setView(layout);
+			builder.setPositiveButton(android.R.string.ok, this);
+			builder.setNegativeButton(android.R.string.cancel, this);
+			return builder.create();
+		}
+
+		public void setFiltersFragment(FiltersFragment fragment) {
+			mFragment = fragment;
+		}
+	}
+
 	public static class FilteredKeywordsFragment extends FiltersFragment {
 
 		@Override
@@ -165,56 +216,5 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 			super(context, android.R.layout.simple_list_item_1, null, from, to, 0);
 		}
 
-	}
-
-	public static class AddItemFragment extends BaseDialogFragment implements OnClickListener {
-
-		private EditText mEditText;
-
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			switch (which) {
-				case DialogInterface.BUTTON_POSITIVE:
-					if (mFragment == null) return;
-					final ContentValues values = new ContentValues();
-					if (mEditText.length() <= 0) return;
-					final String text = mEditText.getText().toString();
-					values.put(Filters.TEXT, text);
-					getContentResolver().insert(mFragment.getContentUri(), values);
-					mFragment.getLoaderManager().restartLoader(0, null, mFragment);
-					break;
-			}
-
-		}
-
-		private FiltersFragment mFragment;
-		
-		public void setFiltersFragment(FiltersFragment fragment) {
-			mFragment = fragment;
-		}
-
-		@SuppressWarnings("deprecation")
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			final FrameLayout layout = new FrameLayout(getActivity());
-			mEditText = new EditText(getActivity());
-			layout.addView(mEditText, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT) {
-
-				{
-					final int margin = (int) (getResources().getDisplayMetrics().density * 16);
-					bottomMargin = margin;
-					leftMargin = margin;
-					rightMargin = margin;
-					topMargin = margin;
-					gravity = Gravity.CENTER;
-				}
-			});
-			builder.setTitle(R.string.add_rule);
-			builder.setView(layout);
-			builder.setPositiveButton(android.R.string.ok, this);
-			builder.setNegativeButton(android.R.string.cancel, this);
-			return builder.create();
-		}
 	}
 }

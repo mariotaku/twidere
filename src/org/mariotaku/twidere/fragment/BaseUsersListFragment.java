@@ -63,6 +63,11 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 		return mData;
 	}
 
+	@Override
+	public UsersAdapter getListAdapter() {
+		return mAdapter;
+	}
+
 	public abstract Loader<List<ParcelableUser>> newLoaderInstance();
 
 	@Override

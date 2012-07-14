@@ -10,8 +10,8 @@
 		android:layout_height="fill_parent"
 		android:layout_alignParentTop="true"
 		android:gravity="center"
-		android:horizontalSpacing="2dip"
+		android:horizontalSpacing="2dp"
 		android:numColumns="3"
-		android:verticalSpacing="4dip"/>
+		android:verticalSpacing="4dp"/>
 
 </RelativeLayout>

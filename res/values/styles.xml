@@ -20,8 +20,8 @@
 		<item name="android:background">@drawable/btn_default_holo</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
 		<item name="android:textColor">@color/primary_text_holo_dark</item>
-		<item name="android:minHeight">48dip</item>
-		<item name="android:minWidth">48dip</item>
+		<item name="android:minHeight">48dp</item>
+		<item name="android:minWidth">48dp</item>
 	</style>
 
 	<style name="Widget.Twidere.Button.Inset" parent="android:Widget.Button.Inset"/>
@@ -39,8 +39,8 @@
 		<item name="android:background">@drawable/btn_default_holo</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
 		<item name="android:textColor">@color/primary_text_holo_light</item>
-		<item name="android:minHeight">48dip</item>
-		<item name="android:minWidth">48dip</item>
+		<item name="android:minHeight">48dp</item>
+		<item name="android:minWidth">48dp</item>
 	</style>
 
 	<style name="Widget.Twidere.Light.Button.Inset"></style>
@@ -56,10 +56,10 @@
 
 	<style name="Widget.Holo.ProgressBar.Small" parent="android:Widget.ProgressBar.Small">
 		<item name="android:indeterminateDrawable">@drawable/progress_small_holo</item>
-		<item name="android:minWidth">16dip</item>
-		<item name="android:maxWidth">16dip</item>
-		<item name="android:minHeight">16dip</item>
-		<item name="android:maxHeight">16dip</item>
+		<item name="android:minWidth">16dp</item>
+		<item name="android:maxWidth">16dp</item>
+		<item name="android:minHeight">16dp</item>
+		<item name="android:maxHeight">16dp</item>
 	</style>
 
 	<style name="Widget.Holo.CompoundButton.Switch" parent="android:Widget.CompoundButton">
@@ -68,9 +68,9 @@
 		<item name="switchTextAppearance">@style/TextAppearance.Holo.Widget.Switch</item>
 		<item name="textOn">@string/capital_on</item>
 		<item name="textOff">@string/capital_off</item>
-		<item name="thumbTextPadding">12dip</item>
-		<item name="switchMinWidth">96dip</item>
-		<item name="switchPadding">16dip</item>
+		<item name="thumbTextPadding">12dp</item>
+		<item name="switchMinWidth">96dp</item>
+		<item name="switchPadding">16dp</item>
 	</style>
 
 	<style name="Widget.Holo.Light.CompoundButton.Switch" parent="Widget.Holo.CompoundButton.Switch">
@@ -81,8 +81,8 @@
 	<style name="Widget.TabPageIndicator" parent="@android:style/Widget">
 		<item name="android:gravity">center_horizontal</item>
 		<item name="android:background">@drawable/vpi__tab_indicator</item>
-		<item name="android:paddingLeft">8dip</item>
-		<item name="android:paddingRight">8dip</item>
+		<item name="android:paddingLeft">8dp</item>
+		<item name="android:paddingRight">8dp</item>
 		<item name="android:paddingTop">6dp</item>
 		<item name="android:paddingBottom">6dp</item>
 		<item name="android:orientation">horizontal</item>

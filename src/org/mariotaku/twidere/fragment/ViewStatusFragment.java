@@ -24,6 +24,10 @@ import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
+import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.openListTimeline;
+import static org.mariotaku.twidere.util.Utils.openTweetSearch;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -127,6 +131,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 		mNameView.setText(status.name);
 		mScreenNameView.setText(status.screen_name);
+		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(status.is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
 		mTextView.setText(status.text);
 		final TwidereLinkify linkify = new TwidereLinkify(mTextView);
 		linkify.setOnLinkClickListener(this);
@@ -134,7 +139,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
 		final boolean is_reply = status.in_reply_to_status_id > 0;
 		final String time = formatToLongTimeString(getActivity(), status.status_timestamp);
-		mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, status.source)));
+		mTimeAndSourceView.setText(!isNullOrEmpty(time) && !isNullOrEmpty(status.source) ? Html.fromHtml(getString(
+				R.string.time_source, time, status.source)) : isNullOrEmpty(time) ? (!isNullOrEmpty(status.source) ? Html.fromHtml(status.source) : null) : time);
 		mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
 		mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
 		if (is_reply) {
@@ -247,23 +253,29 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	public void onLinkClick(String link, int type) {
 		if (mStatus == null) return;
 		switch (type) {
-			case TwidereLinkify.LINK_TYPE_MENTIONS: {
-				Utils.openUserProfile(getActivity(), mStatus.account_id, -1, link);
+			case TwidereLinkify.LINK_TYPE_MENTION: {
+				openUserProfile(getActivity(), mStatus.account_id, -1, link);
 				break;
 			}
-			case TwidereLinkify.LINK_TYPE_HASHTAGS: {
-				Utils.openTweetSearch(getActivity(), mStatus.account_id, link);
+			case TwidereLinkify.LINK_TYPE_HASHTAG: {
+				openTweetSearch(getActivity(), mStatus.account_id, link);
 				break;
 			}
-			case TwidereLinkify.LINK_TYPE_IMAGES: {
+			case TwidereLinkify.LINK_TYPE_IMAGE: {
 				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
 				intent.setPackage(getActivity().getPackageName());
 				startActivity(intent);
 				break;
 			}
-			case TwidereLinkify.LINK_TYPE_LINKS: {
+			case TwidereLinkify.LINK_TYPE_LINK: {
 				final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
 				startActivity(intent);
+				break;
+			}
+			case TwidereLinkify.LINK_TYPE_LIST: {
+				final String[] mention_list = link.split("\\/");
+				if (mention_list == null || mention_list.length != 2) break;
+				openListTimeline(getActivity(), mStatus.account_id, -1, -1, mention_list[0], mention_list[1]);
 				break;
 			}
 		}

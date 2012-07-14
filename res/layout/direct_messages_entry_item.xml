@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:padding="4dp">
+	android:padding="6dp">
 
 	<org.mariotaku.twidere.view.RoundCorneredImageView
 		android:id="@+id/profile_image"
@@ -16,7 +16,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignTop="@+id/profile_image"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginLeft="4dp"
+		android:layout_marginLeft="6dp"
 		android:layout_toLeftOf="@+id/time"
 		android:layout_toRightOf="@+id/profile_image"
 		android:singleLine="true"
@@ -32,7 +32,6 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/name"
-		android:paddingBottom="2dp"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
@@ -43,9 +42,10 @@
 		android:layout_alignBaseline="@+id/name"
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginRight="4dp"
-		android:drawablePadding="2dp"
+		android:layout_marginRight="6dp"
+		android:drawablePadding="3dp"
 		android:gravity="center_vertical|right"
+		android:paddingTop="3dp"
 		android:textColor="?android:attr/textColorSecondary"/>
 
 	<TextView

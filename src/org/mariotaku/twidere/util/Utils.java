@@ -48,14 +48,15 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.fragment.ImagesPreviewFragment.ImageSpec;
+import org.mariotaku.twidere.fragment.ListTimelineFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
 import org.mariotaku.twidere.fragment.UserFriendsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
-import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
+import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -71,12 +72,15 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import twitter4j.DirectMessage;
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
+import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.URLEntity;
 import twitter4j.User;
+import twitter4j.UserList;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.TwipOModeAuthorization;
@@ -119,6 +123,51 @@ public final class Utils implements Constants {
 			return true;
 		}
 	};
+	
+	public static UserList findUserList(Twitter twitter, String screen_name, String list_name) throws TwitterException {
+		if (twitter == null || screen_name == null || list_name == null) return null;
+		final ResponseList<UserList> response = twitter.getUserLists(screen_name, -1);
+		for (UserList list : response) {
+			if (list_name.equals(list.getName())) return list;
+		}
+		return null;
+	}
+	
+	public static UserList findUserList(Twitter twitter, long user_id, String list_name) throws TwitterException {
+		if (twitter == null || user_id <= 0 || list_name == null) return null;
+		final ResponseList<UserList> response = twitter.getUserLists(user_id, -1);
+		for (UserList list : response) {
+			if (list_name.equals(list.getName())) return list;
+		}
+		return null;
+	}
+	
+	public static final int matcherStart(Matcher matcher, int group) {
+		try {
+			return matcher.start(group);
+		} catch (IllegalStateException e) {
+			// Ignore.
+		}
+		return -1;
+	}
+	
+	public static final int matcherEnd(Matcher matcher, int group) {
+		try {
+			return matcher.end(group);
+		} catch (IllegalStateException e) {
+			// Ignore.
+		}
+		return -1;
+	}
+	
+	public static final String matcherGroup(Matcher matcher, int group) {
+		try {
+			return matcher.group(group);
+		} catch (IllegalStateException e) {
+			// Ignore.
+		}
+		return null;
+	}
 
 	private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] { new X509TrustManager() {
 		@Override
@@ -1523,6 +1572,39 @@ public final class Utils implements Constants {
 			}
 			if (screen_name != null) {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+	
+	public static void openListTimeline(Activity activity, long account_id, int list_id, long user_id, String screen_name, String list_name) {
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new ListTimelineFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putInt(INTENT_KEY_LIST_ID, list_id);
+			args.putLong(INTENT_KEY_USER_ID, user_id);
+			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			args.putString(INTENT_KEY_LIST_NAME, list_name);
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_LIST_TIMELINE);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (list_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
+			}
+			if (user_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			if (list_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
 			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}

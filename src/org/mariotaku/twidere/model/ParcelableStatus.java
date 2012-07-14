@@ -210,7 +210,7 @@ public class ParcelableStatus implements Parcelable {
 		text_plain = tweet.getText();
 		retweet_count = -1;
 		in_reply_to_screen_name = tweet.getToUser();
-		in_reply_to_status_id = -1;
+		in_reply_to_status_id = tweet.getInReplyToStatusId();
 		in_reply_to_user_id = tweet.getToUserId();
 		source = tweet.getSource();
 		location = tweet.getGeoLocation();

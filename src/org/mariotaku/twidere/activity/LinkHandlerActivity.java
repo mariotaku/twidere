@@ -23,16 +23,19 @@ import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
+import org.mariotaku.twidere.fragment.ListMembersFragment;
+import org.mariotaku.twidere.fragment.ListSubscribersFragment;
+import org.mariotaku.twidere.fragment.ListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
 import org.mariotaku.twidere.fragment.UserFriendsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
-import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
 
@@ -58,6 +61,11 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final int CODE_USER_BLOCKS = 7;
 	private static final int CODE_CONVERSATION = 8;
 	private static final int CODE_DIRECT_MESSAGES_CONVERSATION = 9;
+	private static final int CODE_LIST_DETAILS = 10;
+	private static final int CODE_LIST_TYPES = 11;
+	private static final int CODE_LIST_TIMELINE = 12;
+	private static final int CODE_LIST_MEMBERS = 13;
+	private static final int CODE_LIST_SUBSCRIBERS = 14;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
@@ -69,6 +77,9 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_USER_BLOCKS, null, CODE_USER_BLOCKS);
 		URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, CODE_CONVERSATION);
 		URI_MATCHER.addURI(AUTHORITY_DIRECT_MESSAGES_CONVERSATION, null, CODE_DIRECT_MESSAGES_CONVERSATION);
+		URI_MATCHER.addURI(AUTHORITY_LIST_TIMELINE, null, CODE_LIST_TIMELINE);
+		URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERS, null, CODE_LIST_MEMBERS);
+		URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIBERS, null, CODE_LIST_SUBSCRIBERS);
 	}
 
 	private Fragment mFragment;
@@ -139,7 +150,7 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_USER_TIMELINE: {
 					setTitle(R.string.tweets);
-					fragment = new UserTimelineFragment();
+					fragment = new ViewConversationFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					if (!isNullOrEmpty(param_screen_name)) {
@@ -212,6 +223,63 @@ public class LinkHandlerActivity extends BaseActivity {
 					} else if (param_screen_name != null) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
+					break;
+				} case CODE_LIST_TIMELINE: {
+					//TODO set title
+					setTitle(R.string.tweets);
+					fragment = new ListTimelineFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
+					final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+					if (isNullOrEmpty(param_list_id)
+							&& (isNullOrEmpty(param_list_name) || isNullOrEmpty(param_screen_name)
+									&& isNullOrEmpty(param_user_id))) {
+						finish();
+						return false;
+					}
+					bundle.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
+					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
+					break;
+				} case CODE_LIST_MEMBERS: {
+					//TODO set title
+					setTitle(R.string.tweets);
+					fragment = new ListMembersFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
+					final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+					if (isNullOrEmpty(param_list_id)
+							&& (isNullOrEmpty(param_list_name) || isNullOrEmpty(param_screen_name)
+									&& isNullOrEmpty(param_user_id))) {
+						finish();
+						return false;
+					}
+					bundle.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
+					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
+					break;
+				} case CODE_LIST_SUBSCRIBERS: {
+					//TODO set title
+					setTitle(R.string.tweets);
+					fragment = new ListSubscribersFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
+					final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+					if (isNullOrEmpty(param_list_id)
+							&& (isNullOrEmpty(param_list_name) || isNullOrEmpty(param_screen_name)
+									&& isNullOrEmpty(param_user_id))) {
+						finish();
+						return false;
+					}
+					bundle.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
+					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
 				}
 				default: {

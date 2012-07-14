@@ -106,6 +106,16 @@ public class LazyImageLoader {
 			imageview.setImageResource(mFallbackRes);
 		}
 	}
+	
+	public String getCachedImagePath(URL url) {
+		if (mFileCache == null) return null;
+		final File f = mFileCache.getFile(url);
+		if (f != null && f.exists()) 
+			return f.getPath();
+		else
+			queuePhoto(url, null);
+		return null;
+	}
 
 	private void copyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
@@ -247,7 +257,7 @@ public class LazyImageLoader {
 			this.imagetoload = imagetoload;
 		}
 
-		public Bitmap getBitmap(URL url, ImageView imageview) {
+		public Bitmap getBitmap(URL url) {
 			if (url == null) return null;
 			final File f = mFileCache.getFile(url);
 
@@ -281,8 +291,8 @@ public class LazyImageLoader {
 
 		@Override
 		public void run() {
+			final Bitmap bmp = getBitmap(imagetoload.source);
 			if (imageViewReused(imagetoload) || imagetoload.source == null) return;
-			final Bitmap bmp = getBitmap(imagetoload.source, imagetoload.imageview);
 			mMemoryCache.put(imagetoload.source, bmp);
 			if (imageViewReused(imagetoload)) return;
 			final BitmapDisplayer bd = new BitmapDisplayer(bmp, imagetoload);

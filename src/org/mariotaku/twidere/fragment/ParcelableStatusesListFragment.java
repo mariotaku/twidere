@@ -59,7 +59,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public abstract Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args);
 
 	@Override
-	public final void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
 			final ArrayList<ParcelableStatus> data = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
 			if (data != null && getData() != null) {
@@ -70,12 +70,15 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
 				.getProfileImageLoader();
 		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
+		mAdapter.setData(getData());
 		super.onActivityCreated(savedInstanceState);
 	}
 
 	@Override
 	public final Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
-		setProgressBarIndeterminateVisibility(true);
+		if (!isLoaderUsed()) {
+			setProgressBarIndeterminateVisibility(true);
+		}
 		return newLoaderInstance(args);
 	}
 
@@ -89,9 +92,14 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		super.onDestroyView();
 	}
 
+	public boolean isLoaderUsed() {
+		return true;
+	}
+	
 	@Override
 	public final void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
 		super.onLoaderReset(loader);
+		if (!isLoaderUsed()) return;
 		onRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
 	}
@@ -99,6 +107,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	@Override
 	public final void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
 		super.onLoadFinished(loader, data);
+		if (!isLoaderUsed()) return;
 		mAdapter.setData(data);
 		onDataLoaded(loader, mAdapter);
 		onRefreshComplete();

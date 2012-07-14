@@ -23,7 +23,7 @@
 	android:gravity="center_vertical"
 	android:minHeight="48dp"
 	android:orientation="horizontal"
-	android:padding="4dip">
+	android:padding="6dp">
 
 	<TextView
 		android:id="@android:id/text1"
@@ -40,6 +40,6 @@
 		android:layout_height="wrap_content"
 		android:layout_weight="0"
 		android:singleLine="true"
-		android:textAppearance="?android:attr/textAppearanceSmall"/>
+		android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 </LinearLayout>
