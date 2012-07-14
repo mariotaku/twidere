@@ -1519,7 +1519,7 @@ public final class Utils implements Constants {
 
 	}
 
-	public static void openUserFollowing(Activity activity, long account_id, long user_id, String screen_name) {
+	public static void openUserFriends(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			final Fragment fragment = new UserFriendsFragment();
@@ -1536,7 +1536,7 @@ public final class Utils implements Constants {
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_USER_FOLLOWING);
+			builder.authority(AUTHORITY_USER_FRIENDS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			if (user_id != -1) {
 				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));

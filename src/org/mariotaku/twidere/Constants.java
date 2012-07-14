@@ -60,7 +60,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_USER_TIMELINE = "user_timeline";
 	public static final String AUTHORITY_USER_FAVORITES = "user_favorites";
 	public static final String AUTHORITY_USER_FOLLOWERS = "user_followers";
-	public static final String AUTHORITY_USER_FOLLOWING = "user_following";
+	public static final String AUTHORITY_USER_FRIENDS = "user_friends";
 	public static final String AUTHORITY_USER_BLOCKS = "user_blocks";
 	public static final String AUTHORITY_STATUS = "status";
 	public static final String AUTHORITY_CONVERSATION = "conversation";

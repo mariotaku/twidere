@@ -32,7 +32,7 @@ import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.openUserBlocks;
 import static org.mariotaku.twidere.util.Utils.openUserFavorites;
 import static org.mariotaku.twidere.util.Utils.openUserFollowers;
-import static org.mariotaku.twidere.util.Utils.openUserFollowing;
+import static org.mariotaku.twidere.util.Utils.openUserFriends;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 
 import java.io.File;
@@ -345,7 +345,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			case R.id.friends_container: {
 				if (mUser == null) return;
-				openUserFollowing(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
+				openUserFriends(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 				break;
 			}
 			case R.id.more_options: {

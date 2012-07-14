@@ -36,6 +36,7 @@ import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
 import org.mariotaku.twidere.fragment.UserFriendsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
+import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
 
@@ -57,7 +58,7 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final int CODE_USER_TIMELINE = 3;
 	private static final int CODE_USER_FAVORITES = 4;
 	private static final int CODE_USER_FOLLOWERS = 5;
-	private static final int CODE_USER_FOLLOWING = 6;
+	private static final int CODE_USER_FRIENDS = 6;
 	private static final int CODE_USER_BLOCKS = 7;
 	private static final int CODE_CONVERSATION = 8;
 	private static final int CODE_DIRECT_MESSAGES_CONVERSATION = 9;
@@ -72,7 +73,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_USER, null, CODE_USER);
 		URI_MATCHER.addURI(AUTHORITY_USER_TIMELINE, null, CODE_USER_TIMELINE);
 		URI_MATCHER.addURI(AUTHORITY_USER_FOLLOWERS, null, CODE_USER_FOLLOWERS);
-		URI_MATCHER.addURI(AUTHORITY_USER_FOLLOWING, null, CODE_USER_FOLLOWING);
+		URI_MATCHER.addURI(AUTHORITY_USER_FRIENDS, null, CODE_USER_FRIENDS);
 		URI_MATCHER.addURI(AUTHORITY_USER_FAVORITES, null, CODE_USER_FAVORITES);
 		URI_MATCHER.addURI(AUTHORITY_USER_BLOCKS, null, CODE_USER_BLOCKS);
 		URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, CODE_CONVERSATION);
@@ -150,7 +151,7 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_USER_TIMELINE: {
 					setTitle(R.string.tweets);
-					fragment = new ViewConversationFragment();
+					fragment = new UserTimelineFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					if (!isNullOrEmpty(param_screen_name)) {
@@ -187,7 +188,7 @@ public class LinkHandlerActivity extends BaseActivity {
 					}
 					break;
 				}
-				case CODE_USER_FOLLOWING: {
+				case CODE_USER_FRIENDS: {
 					setTitle(R.string.following);
 					fragment = new UserFriendsFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
