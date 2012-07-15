@@ -39,7 +39,10 @@ public class ListMembersLoader extends ParcelableUsersLoader {
 	private final long mAccountId, mUserId, mCursor;
 	private final String mScreenName, mListName;
 
-	public ListMembersLoader(Context context, long account_id, int list_id, long user_id, String screen_name, String list_name, long cursor, List<ParcelableUser> users_list) {
+	private long mNextCursor, mPrevCursor;
+
+	public ListMembersLoader(Context context, long account_id, int list_id, long user_id, String screen_name,
+			String list_name, long cursor, List<ParcelableUser> users_list) {
 		super(context, account_id, users_list);
 		mListId = list_id;
 		mCursor = cursor;
@@ -49,16 +52,14 @@ public class ListMembersLoader extends ParcelableUsersLoader {
 		mListName = list_name;
 	}
 
-	private long mNextCursor, mPrevCursor;
-	
 	public long getNextCursor() {
 		return mNextCursor;
 	}
-	
+
 	public long getPrevCursor() {
 		return mPrevCursor;
 	}
- 	
+
 	@Override
 	public List<ParcelableUser> getUsers() throws TwitterException {
 		final Twitter twitter = getTwitter();
@@ -68,19 +69,18 @@ public class ListMembersLoader extends ParcelableUsersLoader {
 			users = twitter.getUserListMembers(mListId, mCursor);
 		} else if (mUserId > 0) {
 			final UserList list = findUserList(twitter, mUserId, mListName);
-			if (list != null && list.getId() > 0)
+			if (list != null && list.getId() > 0) {
 				users = twitter.getUserListMembers(list.getId(), mCursor);
-			else
+			} else
 				return null;
 		} else if (mScreenName != null && mListName != null) {
 			final UserList list = findUserList(twitter, mScreenName, mListName);
-			if (list != null && list.getId() > 0)
+			if (list != null && list.getId() > 0) {
 				users = twitter.getUserListMembers(list.getId(), mCursor);
-			else
+			} else
 				return null;
-		} else {
+		} else
 			return null;
-		}
 		mNextCursor = users.getNextCursor();
 		mPrevCursor = users.getPreviousCursor();
 		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();

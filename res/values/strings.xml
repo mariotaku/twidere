@@ -218,5 +218,14 @@
 	<string name="refresh_on_start_summary">Refresh timeline, mentions on start.</string>
 	<string name="refresh_after_tweet">Refresh after tweet</string>
 	<string name="refresh_after_tweet_summary">Refresh timeline, mentions after you send a tweet.</string>
+	<string name="list_timeline">List timeline</string>
+	<string name="list_members">List members</string>
+	<string name="list_subscribers">List subscribers</string>
+	<string name="type_to_compose">Type to compose</string>
+	<string name="list_following_user">List following this user</string>
+	<string name="list_user_followed">List this user followed</string>
+	<string name="list_created_by_user">List created by this user</string>
+	<string name="report_errors_automatically">Report errors automatically</string>
+	<string name="report_errors_automatically_summary">Report errors automatically, it will not collect your personal data.</string>
 
 </resources>

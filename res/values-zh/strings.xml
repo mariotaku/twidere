@@ -199,8 +199,8 @@
 	<string name="other_settings">其他設定</string>
 	<string name="refresh_and_notifications">刷新與通知</string>
 	<string name="auto_refresh">自動刷新</string>
-	<string name="refresh_interval_summary">更小的刷新間隔將消耗更多的電量及數據流量！</string>
 	<string name="refresh_interval">刷新間隔</string>
+	<string name="refresh_interval_summary">更小的刷新間隔將消耗更多的電量及數據流量！</string>
 	<string name="content_to_refresh">刷新的內容</string>
 	<string name="content_to_nofity">通知的內容</string>
 	<string name="notifications_type">通知類型</string>
@@ -214,5 +214,18 @@
 	<string name="screen_name">用戶名</string>
 	<string name="sort_timeline_by_time">按時間順序排序時間綫</string>
 	<string name="sort_timeline_by_time_summary">這可能使得被轉推的推文顯示在錯誤的位置，不過如果你使用其他服務比如（Identi.ca），這個選項會有不少幫助。</string>
+	<string name="refresh_on_start">啓動時刷新</string>
+	<string name="refresh_on_start_summary">在啓動時刷新時間線和提及你的內容。</string>
+	<string name="refresh_after_tweet">發送推文後刷新</string>
+	<string name="refresh_after_tweet_summary">發送推文後，刷新時間線和提及你的內容。</string>
+	<string name="list_timeline">列表時間線</string>
+	<string name="list_members">列表成員</string>
+	<string name="list_subscribers">訂閱列表的用戶</string>
+	<string name="type_to_compose">鍵入訊息</string>
+	<string name="list_following_user">關注這個用戶的列表</string>
+	<string name="list_user_followed">這個用戶關注的列表</string>
+	<string name="list_created_by_user">這個用戶創建的列表</string>
+	<string name="report_errors_automatically">自動報告錯誤</string>
+	<string name="report_errors_automatically_summary">出現問題自動報告，這並不會收集你的個人訊息。</string>
 
 </resources>

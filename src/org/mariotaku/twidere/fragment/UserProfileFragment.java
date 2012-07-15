@@ -177,7 +177,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenName = user.getScreenName();
 		mNameView.setText(user.getName());
 		mScreenNameView.setText(user.getScreenName());
-		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(user.isProtected() ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
+		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(
+				user.isProtected() ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
 		final String description = user.getDescription();
 		mDescriptionContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(description) ? View.VISIBLE
 				: View.GONE);

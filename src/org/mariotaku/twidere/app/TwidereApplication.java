@@ -37,28 +37,24 @@ import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask.Status;
 import android.os.Build;
 
-@ReportsCrashes(formKey = "dEcwVVBoTDE0RXZaczFiMUxuek43WGc6MQ") 
+@ReportsCrashes(formKey = "dEcwVVBoTDE0RXZaczFiMUxuek43WGc6MQ")
 public class TwidereApplication extends Application implements Constants {
 
 	private LazyImageLoader mProfileImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private ClearCacheTask mClearCacheTask;
 	private MemCache mMemCache;
+	private SharedPreferences mPreferences;
 
 	public void clearCache() {
 		if (mClearCacheTask == null || mClearCacheTask.getStatus() == Status.FINISHED) {
 			mClearCacheTask = new ClearCacheTask(this, getAsyncTaskManager());
 			mClearCacheTask.execute();
 		}
-	}
-
-	@Override
-	public void onCreate() {
-		ACRA.init(this);
-		super.onCreate();
 	}
 
 	public AsyncTaskManager getAsyncTaskManager() {
@@ -86,6 +82,15 @@ public class TwidereApplication extends Application implements Constants {
 
 	public ServiceInterface getServiceInterface() {
 		return ServiceInterface.getInstance(this);
+	}
+
+	@Override
+	public void onCreate() {
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		if (mPreferences.getBoolean(PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY, false)) {
+			ACRA.init(this);
+		}
+		super.onCreate();
 	}
 
 	@Override

@@ -39,8 +39,8 @@ public class ListTimelineLoader extends Twitter4JStatusLoader {
 	private final String mScreenName, mListName;
 	private final int mListId;
 
-	public ListTimelineLoader(Context context, long account_id, int list_id, long user_id, String screen_name, String list_name, long max_id,
-			List<ParcelableStatus> data) {
+	public ListTimelineLoader(Context context, long account_id, int list_id, long user_id, String screen_name,
+			String list_name, long max_id, List<ParcelableStatus> data) {
 		super(context, account_id, max_id, data);
 		mListId = list_id;
 		mUserId = user_id;
@@ -52,16 +52,14 @@ public class ListTimelineLoader extends Twitter4JStatusLoader {
 	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
 		if (twitter == null) return null;
-		if (mListId > 0) {
+		if (mListId > 0)
 			return twitter.getUserListStatuses(mListId, paging);
-		} else if (mUserId > 0) {
+		else if (mUserId > 0) {
 			final UserList list = findUserList(twitter, mUserId, mListName);
-			if (list != null && list.getId() > 0)
-				return twitter.getUserListStatuses(list.getId(), paging);
+			if (list != null && list.getId() > 0) return twitter.getUserListStatuses(list.getId(), paging);
 		} else if (mScreenName != null && mListName != null) {
 			final UserList list = findUserList(twitter, mScreenName, mListName);
-			if (list != null && list.getId() > 0)
-				return twitter.getUserListStatuses(list.getId(), paging);
+			if (list != null && list.getId() > 0) return twitter.getUserListStatuses(list.getId(), paging);
 		}
 		return null;
 	}

@@ -56,6 +56,10 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		return -1;
 	}
 
+	public boolean isLoaderUsed() {
+		return true;
+	}
+
 	public abstract Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args);
 
 	@Override
@@ -76,7 +80,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public final Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
-		if (!isLoaderUsed()) {
+		if (isLoaderUsed()) {
 			setProgressBarIndeterminateVisibility(true);
 		}
 		return newLoaderInstance(args);
@@ -92,10 +96,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		super.onDestroyView();
 	}
 
-	public boolean isLoaderUsed() {
-		return true;
-	}
-	
 	@Override
 	public final void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
 		super.onLoaderReset(loader);

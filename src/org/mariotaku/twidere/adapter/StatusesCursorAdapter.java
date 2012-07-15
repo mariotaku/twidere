@@ -111,7 +111,8 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 			}
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				mImageLoader.displayImage(parseURL(cursor.getString(mIndices.profile_image_url)), holder.profile_image);
+				final String profile_image_url_string = cursor.getString(mIndices.profile_image_url);
+				mImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
 			}
 		}
 

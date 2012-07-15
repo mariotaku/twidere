@@ -179,13 +179,6 @@
 			android:key="refresh_interval"
 			android:summary="@string/refresh_interval_summary"
 			android:title="@string/refresh_interval"/>
-		<ListPreference
-			android:dependency="auto_refresh"
-			android:entries="@array/entries_refresh_interval"
-			android:entryValues="@array/values_refresh_interval"
-			android:key="refresh_interval"
-			android:summary="@string/refresh_interval_summary"
-			android:title="@string/refresh_interval"/>
 
 		<org.mariotaku.twidere.preference.RefreshContentPreference
 			android:dependency="auto_refresh"
@@ -215,6 +208,10 @@
 			android:key="sort_timeline_by_time"
 			android:summary="@string/sort_timeline_by_time_summary"
 			android:title="@string/sort_timeline_by_time"/>
+		<CheckBoxPreference
+			android:key="report_errors_automatically"
+			android:summary="@string/report_errors_automatically_summary"
+			android:title="@string/report_errors_automatically"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		sort_timeline_by_time=""

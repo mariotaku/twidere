@@ -48,7 +48,8 @@ public class ListTimelineFragment extends ParcelableStatusesListFragment {
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 			list_name = args.getString(INTENT_KEY_LIST_NAME);
 		}
-		return new ListTimelineLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, max_id, getData());
+		return new ListTimelineLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, max_id,
+				getData());
 	}
 
 	@Override

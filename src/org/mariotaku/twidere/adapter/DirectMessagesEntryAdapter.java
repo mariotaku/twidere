@@ -8,11 +8,10 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
-import java.net.URL;
-
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.DMConversationsEntryViewHolder;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
+import org.mariotaku.twidere.util.BaseAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.Context;
@@ -21,7 +20,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class DirectMessagesEntryAdapter extends SimpleCursorAdapter {
+public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements BaseAdapterInterface {
 
 	private boolean mDisplayProfileImage, mDisplayName;
 	private final LazyImageLoader mImageLoader;
@@ -40,7 +39,6 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter {
 		final boolean is_outgoing = cursor.getInt(ConversationsEntry.IDX_IS_OUTGOING) == 1;
 
 		final String name = mDisplayName ? cursor.getString(IDX_NAME) : cursor.getString(IDX_SCREEN_NAME);
-		final URL profile_image_url = parseURL(cursor.getString(IDX_PROFILE_IMAGE_URL));
 
 		holder.setTextSize(mTextSize);
 		holder.name.setText(name);
@@ -50,7 +48,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter {
 				: R.drawable.ic_indicator_incoming, 0);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
-			mImageLoader.displayImage(profile_image_url, holder.profile_image);
+			mImageLoader.displayImage(parseURL(cursor.getString(IDX_PROFILE_IMAGE_URL)), holder.profile_image);
 		}
 
 		super.bindView(view, context, cursor);
@@ -73,6 +71,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter {
 		return view;
 	}
 
+	@Override
 	public void setDisplayName(boolean display) {
 		if (display != mDisplayName) {
 			mDisplayName = display;
@@ -80,6 +79,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter {
 		}
 	}
 
+	@Override
 	public void setDisplayProfileImage(boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
@@ -87,6 +87,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter {
 		}
 	}
 
+	@Override
 	public void setTextSize(float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;

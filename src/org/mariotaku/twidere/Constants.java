@@ -127,10 +127,8 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_PROXY_PORT = "proxy_port";
 	public static final String PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED = "stop_service_after_closed";
 	public static final String PREFERENCE_KEY_SORT_TIMELINE_BY_TIME = "sort_timeline_by_time";
-
 	public static final String PREFERENCE_KEY_REFRESH_ON_START = "refresh_on_start";
 	public static final String PREFERENCE_KEY_REFRESH_AFTER_TWEET = "refresh_after_tweet";
-	
 	public static final String PREFERENCE_KEY_AUTO_REFRESH = "auto_refresh";
 	public static final String PREFERENCE_KEY_REFRESH_INTERVAL = "refresh_interval";
 	public static final String PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE = "refresh_enable_home_timeline";
@@ -139,10 +137,10 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE = "notification_enable_home_timeline";
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS = "notification_enable_mentions";
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES = "notification_enable_direct_messages";
-	
 	public static final String PREFERENCE_KEY_NOTIFICATIONS_HAVE_SOUND = "notifications_have_sound";
 	public static final String PREFERENCE_KEY_NOTIFICATIONS_HAVE_VIBRATION = "notifications_have_vibration";
 	public static final String PREFERENCE_KEY_NOTIFICATIONS_HAVE_LIGHTS = "notifications_have_lights";
+	public static final String PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY = "report_errors_automatically";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;

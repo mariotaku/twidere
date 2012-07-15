@@ -44,7 +44,8 @@ public class ListMembersFragment extends BaseUsersListFragment {
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 			list_name = args.getString(INTENT_KEY_LIST_NAME);
 		}
-		return new ListMembersLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, mCursor, getData());
+		return new ListMembersLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, mCursor,
+				getData());
 	}
 
 	@Override

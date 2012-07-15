@@ -124,7 +124,6 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		}
 	}
 
-	@Override
 	public void setShowLastItemAsGap(boolean gap) {
 		if (gap != mShowLastItemAsGap) {
 			mShowLastItemAsGap = gap;

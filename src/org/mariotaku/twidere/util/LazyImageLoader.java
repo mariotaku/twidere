@@ -22,6 +22,7 @@ package org.mariotaku.twidere.util;
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.getProxy;
+import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 
 import java.io.File;
@@ -44,8 +45,10 @@ import java.util.concurrent.Executors;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Environment;
 import android.widget.GridView;
@@ -68,14 +71,17 @@ public class LazyImageLoader {
 	private final MemoryCache mMemoryCache = new MemoryCache();
 	private final Context mContext;
 	private final FileCache mFileCache;
+	private final Resources mResources;
 	private final Map<ImageView, URL> mImageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, URL>());
 	private final ExecutorService mExecutorService;
 	private final int mFallbackRes;
 	private final int mRequiredWidth, mRequiredHeight;
+	private boolean mAntiAliasing;
 
 	public LazyImageLoader(Context context, String cache_dir_name, int fallback_image_res, int required_width,
 			int required_height) {
 		mContext = context;
+		mResources = context.getResources();
 		mFileCache = new FileCache(context, cache_dir_name);
 		mExecutorService = Executors.newFixedThreadPool(5);
 		mFallbackRes = fallback_image_res;
@@ -91,6 +97,10 @@ public class LazyImageLoader {
 		mMemoryCache.clear();
 	}
 
+	public void displayImage(String url, ImageView imageview) {
+		displayImage(parseURL(url), imageview);
+	}
+
 	public void displayImage(URL url, ImageView imageview) {
 		if (imageview == null) return;
 		if (url == null) {
@@ -100,21 +110,28 @@ public class LazyImageLoader {
 		mImageViews.put(imageview, url);
 		final Bitmap bitmap = mMemoryCache.get(url);
 		if (bitmap != null) {
-			imageview.setImageBitmap(bitmap);
+			final BitmapDrawable drawable = new BitmapDrawable(mResources, bitmap);
+			drawable.setAntiAlias(mAntiAliasing);
+			imageview.setImageDrawable(drawable);
 		} else {
 			queuePhoto(url, imageview);
 			imageview.setImageResource(mFallbackRes);
 		}
 	}
-	
+
 	public String getCachedImagePath(URL url) {
 		if (mFileCache == null) return null;
 		final File f = mFileCache.getFile(url);
-		if (f != null && f.exists()) 
+		if (f != null && f.exists())
 			return f.getPath();
-		else
+		else {
 			queuePhoto(url, null);
+		}
 		return null;
+	}
+
+	public void setAntiAliasing(boolean anti_alias) {
+		mAntiAliasing = anti_alias;
 	}
 
 	private void copyStream(InputStream is, OutputStream os) {

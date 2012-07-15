@@ -55,8 +55,8 @@ import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
 import org.mariotaku.twidere.fragment.UserFriendsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
-import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
+import org.mariotaku.twidere.fragment.ViewConversationFragment;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -123,51 +123,6 @@ public final class Utils implements Constants {
 			return true;
 		}
 	};
-	
-	public static UserList findUserList(Twitter twitter, String screen_name, String list_name) throws TwitterException {
-		if (twitter == null || screen_name == null || list_name == null) return null;
-		final ResponseList<UserList> response = twitter.getUserLists(screen_name, -1);
-		for (UserList list : response) {
-			if (list_name.equals(list.getName())) return list;
-		}
-		return null;
-	}
-	
-	public static UserList findUserList(Twitter twitter, long user_id, String list_name) throws TwitterException {
-		if (twitter == null || user_id <= 0 || list_name == null) return null;
-		final ResponseList<UserList> response = twitter.getUserLists(user_id, -1);
-		for (UserList list : response) {
-			if (list_name.equals(list.getName())) return list;
-		}
-		return null;
-	}
-	
-	public static final int matcherStart(Matcher matcher, int group) {
-		try {
-			return matcher.start(group);
-		} catch (IllegalStateException e) {
-			// Ignore.
-		}
-		return -1;
-	}
-	
-	public static final int matcherEnd(Matcher matcher, int group) {
-		try {
-			return matcher.end(group);
-		} catch (IllegalStateException e) {
-			// Ignore.
-		}
-		return -1;
-	}
-	
-	public static final String matcherGroup(Matcher matcher, int group) {
-		try {
-			return matcher.group(group);
-		} catch (IllegalStateException e) {
-			// Ignore.
-		}
-		return null;
-	}
 
 	private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] { new X509TrustManager() {
 		@Override
@@ -384,6 +339,24 @@ public final class Utils implements Constants {
 			cur.close();
 		}
 		return status;
+	}
+
+	public static UserList findUserList(Twitter twitter, long user_id, String list_name) throws TwitterException {
+		if (twitter == null || user_id <= 0 || list_name == null) return null;
+		final ResponseList<UserList> response = twitter.getUserLists(user_id, -1);
+		for (final UserList list : response) {
+			if (list_name.equals(list.getName())) return list;
+		}
+		return null;
+	}
+
+	public static UserList findUserList(Twitter twitter, String screen_name, String list_name) throws TwitterException {
+		if (twitter == null || screen_name == null || list_name == null) return null;
+		final ResponseList<UserList> response = twitter.getUserLists(screen_name, -1);
+		for (final UserList list : response) {
+			if (list_name.equals(list.getName())) return list;
+		}
+		return null;
 	}
 
 	/**
@@ -1370,6 +1343,33 @@ public final class Utils implements Constants {
 		return values;
 	}
 
+	public static final int matcherEnd(Matcher matcher, int group) {
+		try {
+			return matcher.end(group);
+		} catch (final IllegalStateException e) {
+			// Ignore.
+		}
+		return -1;
+	}
+
+	public static final String matcherGroup(Matcher matcher, int group) {
+		try {
+			return matcher.group(group);
+		} catch (final IllegalStateException e) {
+			// Ignore.
+		}
+		return null;
+	}
+
+	public static final int matcherStart(Matcher matcher, int group) {
+		try {
+			return matcher.start(group);
+		} catch (final IllegalStateException e) {
+			// Ignore.
+		}
+		return -1;
+	}
+
 	public static void notifyForUpdatedUri(Context context, Uri uri) {
 		switch (getTableId(uri)) {
 			case URI_STATUSES: {
@@ -1414,6 +1414,40 @@ public final class Utils implements Constants {
 			builder.authority(AUTHORITY_CONVERSATION);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	public static void openListTimeline(Activity activity, long account_id, int list_id, long user_id,
+			String screen_name, String list_name) {
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new ListTimelineFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putInt(INTENT_KEY_LIST_ID, list_id);
+			args.putLong(INTENT_KEY_USER_ID, user_id);
+			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			args.putString(INTENT_KEY_LIST_NAME, list_name);
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_LIST_TIMELINE);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (list_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
+			}
+			if (user_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			if (list_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
+			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
@@ -1573,39 +1607,6 @@ public final class Utils implements Constants {
 			}
 			if (screen_name != null) {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
-			}
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-	
-	public static void openListTimeline(Activity activity, long account_id, int list_id, long user_id, String screen_name, String list_name) {
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
-			final Fragment fragment = new ListTimelineFragment();
-			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putInt(INTENT_KEY_LIST_ID, list_id);
-			args.putLong(INTENT_KEY_USER_ID, user_id);
-			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			args.putString(INTENT_KEY_LIST_NAME, list_name);
-			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_LIST_TIMELINE);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (list_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
-			}
-			if (user_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
-			}
-			if (screen_name != null) {
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
-			}
-			if (list_name != null) {
-				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
 			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}

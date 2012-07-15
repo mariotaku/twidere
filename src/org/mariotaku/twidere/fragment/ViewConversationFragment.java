@@ -19,7 +19,8 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.*;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.util.List;
 
@@ -40,17 +41,24 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 
 	private static final int ADD_STATUS = 1;
 	private static final long INVALID_ID = -1;
-	
+
 	private ShowConversationTask mShowConversationTask;
 	private StatusHandler mStatusHandler;
-	
+
 	@Override
 	public boolean isListLoadFinished() {
 		return true;
 	}
-	
+
+	@Override
 	public boolean isLoaderUsed() {
 		return false;
+	}
+
+	@Override
+	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
+		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+		return new DummyParcelableStatusLoader(getActivity(), account_id, getData());
 	}
 
 	@Override
@@ -73,12 +81,6 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 		if (account_id != INVALID_ID && status_id != INVALID_ID) {
 			mShowConversationTask.execute();
 		}
-	}
-
-	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
-		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		return new DummyParcelableStatusLoader(getActivity(), account_id, getData());
 	}
 
 	@Override

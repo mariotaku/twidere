@@ -16,8 +16,7 @@
 			android:layout_height="fill_parent"
 			android:completionThreshold="1"
 			android:gravity="top"
-			android:hint="@string/tweet_hint"
-			android:singleLine="false"/>
+			android:hint="@string/tweet_hint"/>
 
 		<FrameLayout
 			android:layout_width="fill_parent"

@@ -138,38 +138,6 @@ public final class TweetStore implements Constants {
 
 	}
 
-	public static interface Trends extends BaseColumns {
-		
-		public static final String NAME = "name";
-		public static final String TIMESTAMP = "timestamp";
-		
-		public static final String[] COLUMNS = new String[] { _ID, NAME, TIMESTAMP};
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT};
-		
-		public static interface Daily extends Trends {
-			public static final String CONTENT_PATH = "daily_trends";
-
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
-		}
-		
-		public static interface Weekly extends Trends {
-			public static final String CONTENT_PATH = "weekly_trends";
-
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
-		}
-		
-		public static interface Local extends Trends {
-			public static final String CONTENT_PATH = "local_trends";
-
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
-			
-		}
-		
-	}
-	
 	public static interface CachedUsers extends BaseColumns {
 
 		public static final String CONTENT_PATH = "cached_users";
@@ -496,9 +464,9 @@ public final class TweetStore implements Constants {
 		 * Type: INTEGER (long)
 		 */
 		public static final String STATUS_TIMESTAMP = "status_timestamp";
-		
+
 		public static final String SORT_ORDER_TIMESTAMP_DESC = STATUS_TIMESTAMP + " DESC";
-		
+
 		public static final String SORT_ORDER_STATUS_ID_DESC = STATUS_ID + " DESC";
 
 		public static final String DEFAULT_SORT_ORDER = SORT_ORDER_STATUS_ID_DESC;
@@ -512,6 +480,38 @@ public final class TweetStore implements Constants {
 				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
 				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN,
 				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
+
+	}
+
+	public static interface Trends extends BaseColumns {
+
+		public static final String NAME = "name";
+		public static final String TIMESTAMP = "timestamp";
+
+		public static final String[] COLUMNS = new String[] { _ID, NAME, TIMESTAMP };
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT };
+
+		public static interface Daily extends Trends {
+			public static final String CONTENT_PATH = "daily_trends";
+
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+					CONTENT_PATH);
+		}
+
+		public static interface Local extends Trends {
+			public static final String CONTENT_PATH = "local_trends";
+
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+					CONTENT_PATH);
+
+		}
+
+		public static interface Weekly extends Trends {
+			public static final String CONTENT_PATH = "weekly_trends";
+
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+					CONTENT_PATH);
+		}
 
 	}
 }

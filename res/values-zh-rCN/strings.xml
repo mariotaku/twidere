@@ -131,7 +131,7 @@
 	<string name="retweet_success">转推成功</string>
 	<string name="cancel_retweet_success">取消转推成功</string>
 	<string name="delete_success">删除成功</string>
-	<string name="send_success">发送成功</string>
+	<string name="send_success">推文已发送</string>
 	<string name="favorite_success">收藏了这条推文</string>
 	<string name="unfavorite_success">取消收藏了这条推文</string>
 	<string name="follow_success">关注成功</string>
@@ -173,7 +173,7 @@
 	<string name="search_hint">搜索推文或用户</string>
 	<string name="remember_position">记住位置</string>
 	<string name="remember_position_summary">打开Twidere时，恢复到退出前列表/页面的位置</string>
-	<string name="user_blocked">你阻止了这个用户。</string>
+	<string name="user_blocked">你屏蔽了这个用户。</string>
 	<string name="user_unblocked">你解除了对这个用户的阻止。</string>
 	<string name="reported_user_for_spam">你已报告这个用户发送垃圾信息。</string>
 	<string name="filename_hint">文件名</string>
@@ -199,8 +199,8 @@
 	<string name="other_settings">其他设定</string>
 	<string name="refresh_and_notifications">刷新与通知</string>
 	<string name="auto_refresh">自动刷新</string>
-	<string name="refresh_interval_summary">更小的刷新间隔将消耗更多的电量及数据流量！</string>
 	<string name="refresh_interval">刷新间隔</string>
+	<string name="refresh_interval_summary">更小的刷新间隔将消耗更多的电量及数据流量！</string>
 	<string name="content_to_refresh">刷新的内容</string>
 	<string name="content_to_nofity">通知的内容</string>
 	<string name="notifications_type">通知类型</string>
@@ -213,6 +213,19 @@
 	<string name="load_earlier_messages">加载更早的私信</string>
 	<string name="screen_name">用户名</string>
 	<string name="sort_timeline_by_time">按时间顺序排序时间线</string>
-	<string name="sort_timeline_by_time_summary">这可能使得被转推的推文显示在错误的位置，不过如果你使用其他服务比如（Identi.ca），这个选项会有不少帮助。</string>
+	<string name="sort_timeline_by_time_summary">这可能使得被转推的推文显示在错误的位置，不过如果你使用其他服务比如Identi.ca，这个选项会有不少帮助。</string>
+	<string name="refresh_on_start">启动时刷新</string>
+	<string name="refresh_on_start_summary">在启动时刷新时间线和提及你的内容。</string>
+	<string name="refresh_after_tweet">发送推文后刷新</string>
+	<string name="refresh_after_tweet_summary">发送推文后刷新时间线和提及你的内容。</string>
+	<string name="list_timeline">列表时间线</string>
+	<string name="list_members">列表成员</string>
+	<string name="list_subscribers">订阅列表的用户</string>
+	<string name="type_to_compose">键入信息</string>
+	<string name="list_following_user">关注这个用户的列表</string>
+	<string name="list_user_followed">这个用户关注的列表</string>
+	<string name="list_created_by_user">这个用户创建的列表</string>
+	<string name="report_errors_automatically">自动报告错误</string>
+	<string name="report_errors_automatically_summary">出现问题自动报告，这并不会收集你的个人信息。</string>
 
 </resources>

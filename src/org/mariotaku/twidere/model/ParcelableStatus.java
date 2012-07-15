@@ -59,7 +59,7 @@ public class ParcelableStatus implements Parcelable {
 	public final boolean is_gap, is_retweet, is_favorite, is_protected, has_media;
 
 	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, name, screen_name,
-			in_reply_to_screen_name, source;
+			in_reply_to_screen_name, source, profile_image_url_string;
 	public final GeoLocation location;
 
 	public final Spanned text;
@@ -115,8 +115,8 @@ public class ParcelableStatus implements Parcelable {
 				.getString(indices.in_reply_to_screen_name) : null;
 		source = indices.source != -1 ? cursor.getString(indices.source) : null;
 		location = indices.location != -1 ? getGeoLocationFromString(cursor.getString(indices.location)) : null;
-		profile_image_url = indices.profile_image_url != -1 ? parseURL(cursor.getString(indices.profile_image_url))
-				: null;
+		profile_image_url_string = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
+		profile_image_url = parseURL(profile_image_url_string);
 
 		text = text_html != null ? Html.fromHtml(text_html) : null;
 	}
@@ -144,8 +144,9 @@ public class ParcelableStatus implements Parcelable {
 		screen_name = in.readString();
 		in_reply_to_screen_name = in.readString();
 		source = in.readString();
+		profile_image_url_string = in.readString();
 		location = (GeoLocation) in.readSerializable();
-		profile_image_url = (URL) in.readSerializable();
+		profile_image_url = parseURL(profile_image_url_string);
 
 		text = text_html != null ? Html.fromHtml(text_html) : null;
 	}
@@ -170,6 +171,7 @@ public class ParcelableStatus implements Parcelable {
 		name = user != null ? user.getName() : null;
 		screen_name = user != null ? user.getScreenName() : null;
 		profile_image_url = user != null ? user.getProfileImageURL() : null;
+		profile_image_url_string = profile_image_url != null ? profile_image_url.toString() : null;
 		is_protected = user != null ? user.isProtected() : false;
 		final MediaEntity[] medias = status.getMediaEntities();
 
@@ -201,7 +203,9 @@ public class ParcelableStatus implements Parcelable {
 		user_id = tweet.getFromUserId();
 		name = tweet.getFromUser();
 		screen_name = tweet.getFromUser();
-		profile_image_url = parseURL(tweet.getProfileImageUrl());
+		profile_image_url_string = tweet.getProfileImageUrl();
+		profile_image_url = parseURL(profile_image_url_string);
+
 		is_protected = false;
 		final MediaEntity[] medias = tweet.getMediaEntities();
 
@@ -254,8 +258,9 @@ public class ParcelableStatus implements Parcelable {
 		out.writeString(screen_name);
 		out.writeString(in_reply_to_screen_name);
 		out.writeString(source);
+		out.writeString(profile_image_url_string);
 		out.writeSerializable(location);
-		out.writeSerializable(profile_image_url);
+
 	}
 
 	private long getTime(Date date) {

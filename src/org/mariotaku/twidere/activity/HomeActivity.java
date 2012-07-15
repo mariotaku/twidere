@@ -202,7 +202,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			finish();
 			return;
 		}
-		
+
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
 
 		final Bundle bundle = getIntent().getExtras();
@@ -283,8 +283,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			// What the f**k are you think about? Stop service causes twidere
 			// slow and not stable!
 			// Well, all right... If you still want to enable this option, I
-			// have no responsibility
-			// for any problems occurred.
+			// have no responsibility for any problems occurred.
 			mService.shutdownService();
 		}
 	}

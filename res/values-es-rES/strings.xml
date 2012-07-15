@@ -45,7 +45,7 @@
   <string name="username">Nombre de usuario</string>
   <string name="password">Contraseña</string>
   <string name="label_tweetstore_provider">Proveedor de base de datos de Twidere</string>
-  <string name="label_backend_service">Solicitud de servicio de backend</string>
+  <string name="label_backend_service">Solicitud de servicio de extremo posterior</string>
   <string name="label_permission_group_access_twidere">Acceder a la aplicación de Twidere</string>
   <string name="label_permission_read_databases">Leer bases de datos de Twidere</string>
   <string name="label_permission_write_databases">Escribir las bases de datos Twidere</string>
@@ -193,4 +193,25 @@
   <string name="user_muted">Agregar este usuaio a la lista de filtros. Tu no veras tweets de este usuario en tu inicio / lista de menciones.</string>
   <string name="inbox">Mensaje</string>
   <string name="outbox">Mensajes enviados</string>
+  <string name="load_images">Cargar imagenes</string>
+  <string name="stop_service_after_closed">Detener el servicio despues de cerrar twidere</string>
+  <string name="stop_service_after_closed_summary">No sé por qué desea activar esta opción, pero si tienes cualquier problema después de activar esto, recuerda, es todo tu culpa.</string>
+  <string name="other_settings">Otras configuraciones</string>
+  <string name="refresh_and_notifications">Actualización y notificaciones</string>
+  <string name="auto_refresh">Actualización automática</string>
+  <string name="refresh_interval">Intervalo de actualización</string>
+  <string name="refresh_interval_summary">Intervalos menos de actualizacion consumen mas bateria y trafico de red!</string>
+  <string name="content_to_refresh">Contenido para actualizar</string>
+  <string name="content_to_nofity">Contenido para notificar</string>
+  <string name="notifications_type">Tipo de notificaciones</string>
+  <string name="notifications_type_summary">Esta opción no anulará la configuración del sistema.</string>
+  <string name="sound">Sonido</string>
+  <string name="vibration">Vibración</string>
+  <string name="lights">Luces</string>
+  <string name="notifications">Notificaciones</string>
+  <string name="new_notifications">Nuevas notificaciones</string>
+  <string name="load_earlier_messages">Cargar mensajes directos anteriores</string>
+  <string name="screen_name">Nombre en pantalla</string>
+  <string name="sort_timeline_by_time">Ordenar por linea del tiempo</string>
+  <string name="sort_timeline_by_time_summary">Esto puede causar que el status retweeteado se muestre en un lugar incorrecto, pero puede ser muy util si usa otro servicios como Identi.ca</string>
 </resources>

@@ -250,8 +250,6 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
 		final Object tag = view.getTag();
 		if (tag instanceof DMConversationViewHolder) {
-			final DMConversationViewHolder holder = (DMConversationViewHolder) tag;
-			if (holder.show_as_gap) return false;
 			final ParcelableDirectMessage dm = mSelectedDirectMessage = mAdapter.findItem(id);
 			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_direct_message);

@@ -30,30 +30,15 @@ public class DMConversationViewHolder {
 
 	public final ImageView profile_image_left, profile_image_right;
 	public final TextView name, text, time;
-	private final View content, gap_indicator;
-	public boolean show_as_gap;
 	private float text_size;
 
 	public DMConversationViewHolder(View view, Context context) {
-		content = view;
-		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image_left = (ImageView) view.findViewById(R.id.profile_image_left);
 		profile_image_right = (ImageView) view.findViewById(R.id.profile_image_right);
 		name = (TextView) view.findViewById(R.id.name);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
 
-	}
-
-	public void setShowAsGap(boolean show_gap) {
-		show_as_gap = show_gap;
-		profile_image_left.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		profile_image_right.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		text.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		time.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
-		content.setBackgroundResource(show_gap ? R.drawable.ic_list_gap : 0);
 	}
 
 	public void setTextSize(float text_size) {

@@ -346,6 +346,30 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
+	private Notification buildNotification(String message, int icon, Intent content_intent, Intent delete_intent) {
+		final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.setTicker(message);
+		builder.setContentTitle(getString(R.string.new_notifications));
+		builder.setContentText(message);
+		builder.setAutoCancel(true);
+		builder.setWhen(System.currentTimeMillis());
+		builder.setSmallIcon(icon);
+		builder.setDeleteIntent(PendingIntent.getBroadcast(this, 0, delete_intent, PendingIntent.FLAG_UPDATE_CURRENT));
+		builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent, PendingIntent.FLAG_UPDATE_CURRENT));
+		int defaults = 0;
+		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_SOUND, false)) {
+			defaults |= Notification.DEFAULT_SOUND;
+		}
+		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_VIBRATION, false)) {
+			defaults |= Notification.DEFAULT_VIBRATE;
+		}
+		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_LIGHTS, false)) {
+			defaults |= Notification.DEFAULT_LIGHTS;
+		}
+		builder.setDefaults(defaults);
+		return builder.getNotification();
+	}
+
 	private int getHomeTimeline(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
 		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
 		final GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids, is_auto_refresh);
@@ -811,7 +835,8 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private abstract class GetDirectMessagesTask extends ManagedAsyncTask<Void, Void, List<ListResponse<DirectMessage>>> {
+	private abstract class GetDirectMessagesTask extends
+			ManagedAsyncTask<Void, Void, List<ListResponse<DirectMessage>>> {
 
 		private long[] account_ids, max_ids;
 
@@ -832,7 +857,7 @@ public class TwidereService extends Service implements Constants {
 			if (account_ids == null) return result;
 
 			final boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
-			
+
 			int idx = 0;
 			final int load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
 					PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
@@ -859,7 +884,7 @@ public class TwidereService extends Service implements Constants {
 				idx++;
 			}
 			return result;
-			
+
 		}
 
 	}
@@ -1366,18 +1391,18 @@ public class TwidereService extends Service implements Constants {
 			responses = result;
 			this.uri = uri;
 		}
-		
+
 		@Override
 		protected SingleResponse<Bundle> doInBackground(Void... args) {
 			final ContentResolver resolver = getContentResolver();
 			boolean succeed = false;
 			final Uri query_uri = buildQueryUri(uri, false);
 			int total_items_inserted = 0;
-			for (ListResponse<DirectMessage> response : responses) {
+			for (final ListResponse<DirectMessage> response : responses) {
 				final long account_id = response.account_id;
 				final ResponseList<DirectMessage> messages = response.list;
-				final Cursor cur = resolver.query(uri, new String[0], DirectMessages.ACCOUNT_ID + " = " + account_id, null,
-						null);
+				final Cursor cur = resolver.query(uri, new String[0], DirectMessages.ACCOUNT_ID + " = " + account_id,
+						null, null);
 				boolean no_items_before = false;
 				if (cur != null) {
 					no_items_before = cur.getCount() <= 0;
@@ -1386,34 +1411,34 @@ public class TwidereService extends Service implements Constants {
 				if (messages != null) {
 					final List<ContentValues> values_list = new ArrayList<ContentValues>();
 					final List<Long> message_ids = new ArrayList<Long>();
-	
+
 					final long min_id = -1;
-	
+
 					for (final DirectMessage message : messages) {
 						if (message == null || message.getId() <= 0) {
 							continue;
 						}
 						message_ids.add(message.getId());
-	
+
 						values_list.add(makeDirectMessageContentValues(message, account_id));
-	
+
 					}
-	
+
 					int rows_deleted = -1;
-	
+
 					// Delete all rows conflicting before new data inserted.
 					{
 						final StringBuilder where = new StringBuilder();
 						where.append(DirectMessages.ACCOUNT_ID + " = " + account_id);
 						where.append(" AND ");
-						where.append(DirectMessages.MESSAGE_ID + " IN ( " + ListUtils.buildString(message_ids, ',', true)
-								+ " ) ");
+						where.append(DirectMessages.MESSAGE_ID + " IN ( "
+								+ ListUtils.buildString(message_ids, ',', true) + " ) ");
 						rows_deleted = resolver.delete(query_uri, where.toString(), null);
 					}
-	
+
 					// Insert previously fetched items.
 					resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
-	
+
 					// No row deleted, so I will insert a gap.
 					final boolean insert_gap = rows_deleted == 1 && message_ids.contains(response.max_id)
 							|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
@@ -1477,7 +1502,8 @@ public class TwidereService extends Service implements Constants {
 					final Bundle content_extras = new Bundle();
 					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_HOME);
 					content_intent.putExtras(content_extras);
-					mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE, buildNotification(message, R.drawable.ic_stat_tweet, content_intent, delete_intent));
+					mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE,
+							buildNotification(message, R.drawable.ic_stat_tweet, content_intent, delete_intent));
 				}
 			}
 			super.onPostExecute(response);
@@ -1514,30 +1540,13 @@ public class TwidereService extends Service implements Constants {
 					final Bundle content_extras = new Bundle();
 					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
 					content_intent.putExtras(content_extras);
-					mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, buildNotification(message, R.drawable.ic_stat_mention, content_intent, delete_intent));
+					mNotificationManager.notify(NOTIFICATION_ID_MENTIONS,
+							buildNotification(message, R.drawable.ic_stat_mention, content_intent, delete_intent));
 				}
 			}
 			super.onPostExecute(response);
 		}
 
-	}
-	
-	private Notification buildNotification(String message, int icon, Intent content_intent, Intent delete_intent) {
-		final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder.setTicker(message);
-		builder.setContentTitle(getString(R.string.new_notifications));
-		builder.setContentText(message);
-		builder.setAutoCancel(true);
-		builder.setWhen(System.currentTimeMillis());
-		builder.setSmallIcon(icon);
-		builder.setDeleteIntent(PendingIntent.getBroadcast(this, 0, delete_intent, PendingIntent.FLAG_UPDATE_CURRENT));
-		builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent, PendingIntent.FLAG_UPDATE_CURRENT));
-		int defaults = 0;
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_SOUND, false)) defaults |= Notification.DEFAULT_SOUND;
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_VIBRATION, false)) defaults |= Notification.DEFAULT_VIBRATE;
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_LIGHTS, false)) defaults |= Notification.DEFAULT_LIGHTS;
-		builder.setDefaults(defaults);
-		return builder.getNotification();
 	}
 
 	private class StoreReceivedDirectMessagesTask extends StoreDirectMessagesTask {
@@ -1570,7 +1579,10 @@ public class TwidereService extends Service implements Constants {
 					final Bundle content_extras = new Bundle(response.data);
 					content_extras.putBoolean(INTENT_KEY_FROM_NOTIFICATION, true);
 					content_intent.putExtras(content_extras);
-					mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, buildNotification(message, R.drawable.ic_stat_direct_message, content_intent, delete_intent));
+					mNotificationManager
+							.notify(NOTIFICATION_ID_DIRECT_MESSAGES,
+									buildNotification(message, R.drawable.ic_stat_direct_message, content_intent,
+											delete_intent));
 				}
 			}
 			super.onPostExecute(response);

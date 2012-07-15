@@ -36,6 +36,7 @@
 				android:layout_weight="1"
 				android:completionThreshold="1"
 				android:gravity="left|bottom"
+				android:hint="@string/type_to_compose"
 				android:inputType="textMultiLine"
 				android:minHeight="64dp"
 				android:singleLine="false"/>

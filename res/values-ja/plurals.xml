@@ -21,4 +21,16 @@
     <item quantity="one">1年</item>
     <item quantity="other"><xliff:g id="minutes">%d</xliff:g> 年</item>
   </plurals>
+  <plurals name="Ntweets">
+    <item quantity="one">新しいツイートが一件あります。</item>
+    <item quantity="other">新しいツイートが <xliff:g id="minutes">%d</xliff:g>+ 件あります。</item>
+  </plurals>
+  <plurals name="Nmentions">
+    <item quantity="one">自分宛ツイートがあります。</item>
+    <item quantity="other">自分宛ツイートが <xliff:g id="minutes">%d</xliff:g>+ 件あります。</item>
+  </plurals>
+  <plurals name="Ndirect_messages">
+    <item quantity="one">新着ダイレクトメッセージが一件あります。</item>
+    <item quantity="other">新着ダイレクトメッセージが <xliff:g id="minutes"> %d </xliff:g> + 件あります。</item>
+  </plurals>
 </resources>

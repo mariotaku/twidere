@@ -19,7 +19,8 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.*;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountScreenNames;
+import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
@@ -52,12 +53,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AbsListView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 
@@ -99,6 +100,28 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 		}
 	};
 
+	private ArrayAdapter<String> mAccountsAdapter;
+
+	private String mSelectedScreenName;
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.account_confirm: {
+				mAccountId = Utils.getAccountId(this, mSelectedScreenName);
+				final boolean is_my_activated_account = isMyActivatedAccount(this, mAccountId);
+				if (is_my_activated_account) {
+					mArguments.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+				}
+				mDirectMessagesContainer.setVisibility(is_my_activated_account ? View.VISIBLE : View.GONE);
+				mAccountSelectContainer.setVisibility(!is_my_activated_account ? View.VISIBLE : View.GONE);
+				getSupportLoaderManager().restartLoader(0, null, this);
+				break;
+			}
+		}
+
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -110,7 +133,9 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 		mAccountId = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : intent.getLongExtra(
 				INTENT_KEY_ACCOUNT_ID, -1);
 		mArguments.clear();
-		if (args != null) mArguments.putAll(args);
+		if (args != null) {
+			mArguments.putAll(args);
+		}
 		if (args != null && args.getBoolean(INTENT_KEY_FROM_NOTIFICATION)) {
 			mService.clearNewNotificationCount(NOTIFICATION_ID_DIRECT_MESSAGES);
 		}
@@ -130,9 +155,9 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 		mListView.setAdapter(mAdapter);
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
-		
+
 		final boolean is_my_activated_account = isMyActivatedAccount(this, mAccountId);
-		
+
 		if (is_my_activated_account) {
 			mArguments.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 		}
@@ -145,11 +170,9 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 			mAccountSelector.setAdapter(mAccountsAdapter);
 			mAccountSelector.setOnItemSelectedListener(this);
 		}
-		
+
 		getSupportLoaderManager().initLoader(0, null, this);
 	}
-	
-	private ArrayAdapter<String> mAccountsAdapter;
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -172,6 +195,11 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 	}
 
 	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+		mSelectedScreenName = mAccountsAdapter.getItem(pos);
+	}
+
+	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		mAdapter.swapCursor(null);
 	}
@@ -180,6 +208,11 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		mAdapter.swapCursor(cursor);
 
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		// Another interface callback
 	}
 
 	@Override
@@ -192,8 +225,8 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 			}
 			case MENU_REFRESH: {
 				if (mService == null || !is_my_activated_account) return false;
-				mService.getReceivedDirectMessages(new long[]{mAccountId}, null);
-				mService.getSentDirectMessages(new long[]{mAccountId}, null);
+				mService.getReceivedDirectMessages(new long[] { mAccountId }, null);
+				mService.getSentDirectMessages(new long[] { mAccountId }, null);
 				break;
 			}
 			case MENU_COMPOSE: {
@@ -211,12 +244,12 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 				inbox_cur.moveToFirst();
 				final long inbox_min_id = inbox_cur.getLong(0);
 				if (inbox_min_id > 0) {
-					mService.getReceivedDirectMessages(new long[]{mAccountId}, new long[]{inbox_min_id});
+					mService.getReceivedDirectMessages(new long[] { mAccountId }, new long[] { inbox_min_id });
 				}
 				outbox_cur.moveToFirst();
 				final long outbox_min_id = outbox_cur.getLong(0);
 				if (outbox_min_id > 0) {
-					mService.getSentDirectMessages(new long[]{mAccountId}, new long[]{outbox_min_id});
+					mService.getSentDirectMessages(new long[] { mAccountId }, new long[] { outbox_min_id });
 				}
 				inbox_cur.close();
 				outbox_cur.close();
@@ -339,33 +372,4 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
-
-	@Override
-	public void onClick(View view) {
-		switch (view.getId()) {
-			case R.id.account_confirm: {
-				mAccountId = Utils.getAccountId(this, mSelectedScreenName);
-				final boolean is_my_activated_account = isMyActivatedAccount(this, mAccountId);
-				if (is_my_activated_account) {
-					mArguments.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				}
-				mDirectMessagesContainer.setVisibility(is_my_activated_account ? View.VISIBLE : View.GONE);
-				mAccountSelectContainer.setVisibility(!is_my_activated_account ? View.VISIBLE : View.GONE);
-				getSupportLoaderManager().restartLoader(0, null, this);
-				break;
-			}
-		}
-		
-	}
-
-	private String mSelectedScreenName;
-	
-	public void onItemSelected(AdapterView<?> parent, View view, 
-            int pos, long id) {
-		mSelectedScreenName = mAccountsAdapter.getItem(pos);
-    }
-
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
-    }
 }

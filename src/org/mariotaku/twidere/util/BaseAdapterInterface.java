@@ -29,8 +29,6 @@ public interface BaseAdapterInterface extends ListAdapter {
 
 	public void setDisplayProfileImage(boolean display);
 
-	public void setShowLastItemAsGap(boolean gap);
-
 	public void setTextSize(float text_size);
 
 }

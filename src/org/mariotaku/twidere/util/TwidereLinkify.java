@@ -303,7 +303,7 @@ public class TwidereLinkify {
 
 		while (matcher.find()) {
 			final int start = matcherStart(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_AT);
-			final int username_end = matcherEnd(matcher,Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
+			final int username_end = matcherEnd(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
 			final int list_start = matcherStart(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
 			final int list_end = matcherEnd(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
 			final String mention = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);

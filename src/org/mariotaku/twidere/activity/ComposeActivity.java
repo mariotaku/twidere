@@ -33,7 +33,6 @@ import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.view.StatusComposeEditText;
 
 import android.app.Activity;
 import android.content.Context;
@@ -59,6 +58,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,7 +75,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private String mText;
 
 	private Uri mImageUri;
-	private StatusComposeEditText mEditText;
+	private EditText mEditText;
 	private TextView mTextCount;
 	private ImageView mImageThumbnailPreview;
 	private MenuBar mMenuBar;
@@ -182,7 +182,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 
-		mEditText = (StatusComposeEditText) findViewById(R.id.edit_text);
+		mEditText = (EditText) findViewById(R.id.edit_text);
 		mTextCount = (TextView) findViewById(R.id.text_count);
 		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
 		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);

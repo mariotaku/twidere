@@ -41,7 +41,7 @@ import android.view.ViewGroup;
 
 public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements DirectMessagesAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayName, mShowLastItemAsGap;
+	private boolean mDisplayProfileImage, mDisplayName;
 	private final LazyImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -62,31 +62,25 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		final long sender_id = cursor.getLong(mIndices.sender_id);
 
 		final boolean is_outgoing = account_id == sender_id;
-		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
-		final boolean is_last = cursor.getPosition() == getCount() - 1;
-		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1;
 
 		final String name = mDisplayName ? cursor.getString(mIndices.sender_name) : cursor
 				.getString(mIndices.sender_screen_name);
-		final URL sender_profile_image_url = parseURL(cursor.getString(mIndices.sender_profile_image_url));
 
-		holder.setShowAsGap(show_gap);
+		holder.setTextSize(mTextSize);
+		holder.name.setText(name);
+		holder.name.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
+		holder.text.setText(cursor.getString(mIndices.text));
+		holder.text.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
+		holder.time.setText(formatToLongTimeString(mContext, message_timestamp));
+		holder.time.setGravity(is_outgoing ? Gravity.RIGHT : Gravity.LEFT);
+		holder.profile_image_left.setVisibility(mDisplayProfileImage && is_outgoing ? View.VISIBLE : View.GONE);
+		holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
+		if (mDisplayProfileImage) {
+			final String sender_profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
+			final URL sender_profile_image_url = parseURL(sender_profile_image_url_string);
 
-		if (!show_gap) {
-
-			holder.setTextSize(mTextSize);
-			holder.name.setText(name);
-			holder.name.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
-			holder.text.setText(cursor.getString(mIndices.text));
-			holder.text.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
-			holder.time.setText(formatToLongTimeString(mContext, message_timestamp));
-			holder.time.setGravity(is_outgoing ? Gravity.RIGHT : Gravity.LEFT);
-			holder.profile_image_left.setVisibility(mDisplayProfileImage && is_outgoing ? View.VISIBLE : View.GONE);
-			holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
-			if (mDisplayProfileImage) {
-				mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_left);
-				mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_right);
-			}
+			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_left);
+			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_right);
 		}
 
 		super.bindView(view, context, cursor);
@@ -143,14 +137,6 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	public void setDisplayProfileImage(boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setShowLastItemAsGap(boolean gap) {
-		if (gap != mShowLastItemAsGap) {
-			mShowLastItemAsGap = gap;
 			notifyDataSetChanged();
 		}
 	}

@@ -21,7 +21,16 @@
     <item quantity="one">1 año</item>
     <item quantity="other"><xliff:g id="minutes"> %d </xliff:g> años</item>
   </plurals>
-  <plurals name="Ntweets"/>
-  <plurals name="Nmentions"/>
-  <plurals name="Ndirect_messages"/>
+  <plurals name="Ntweets">
+    <item quantity="one">Tienes un nuevo tweet</item>
+    <item quantity="other">Tiene tweets nuevos</item>
+  </plurals>
+  <plurals name="Nmentions">
+    <item quantity="one">Alguien lo ha mencionado</item>
+    <item quantity="other">Tiene menciones</item>
+  </plurals>
+  <plurals name="Ndirect_messages">
+    <item quantity="one">Tienes un nuevo mensaje directo</item>
+    <item quantity="other">Tienes mensajes directos</item>
+  </plurals>
 </resources>

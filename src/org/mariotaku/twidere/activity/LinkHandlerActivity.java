@@ -225,9 +225,9 @@ public class LinkHandlerActivity extends BaseActivity {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
 					break;
-				} case CODE_LIST_TIMELINE: {
-					//TODO set title
-					setTitle(R.string.tweets);
+				}
+				case CODE_LIST_TIMELINE: {
+					setTitle(R.string.list_timeline);
 					fragment = new ListTimelineFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
@@ -244,9 +244,9 @@ public class LinkHandlerActivity extends BaseActivity {
 					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
-				} case CODE_LIST_MEMBERS: {
-					//TODO set title
-					setTitle(R.string.tweets);
+				}
+				case CODE_LIST_MEMBERS: {
+					setTitle(R.string.list_members);
 					fragment = new ListMembersFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
@@ -263,9 +263,9 @@ public class LinkHandlerActivity extends BaseActivity {
 					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
-				} case CODE_LIST_SUBSCRIBERS: {
-					//TODO set title
-					setTitle(R.string.tweets);
+				}
+				case CODE_LIST_SUBSCRIBERS: {
+					setTitle(R.string.list_subscribers);
 					fragment = new ListSubscribersFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
