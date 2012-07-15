@@ -16,6 +16,8 @@ Twidere is a powerful twitter client for Android 1.6+, which gives you a full Ho
 * Multiple account support
 * Free and open source, without any ads!
 
+[https://play.google.com/store/apps/details?id=org.mariotaku.twidere http://www.android.com/images/brand/get_it_on_play_logo_large.png]
+
 ###Icon designers###
 
 [@lordfriend](https://twitter.com/#!/lordfriend)

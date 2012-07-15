@@ -464,7 +464,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			mLoggedId = user.getId();
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId)) return new Response(false, true, null);
 			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
-					mSearchBaseURL, null, Accounts.AUTH_TYPE_OAUTH);
+					mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL,mUploadBaseURL, null, Accounts.AUTH_TYPE_OAUTH);
 			resolver.insert(Accounts.CONTENT_URI, values);
 			return new Response(true, false, null);
 		}
@@ -557,7 +557,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
 				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL,
-						mSearchBaseURL, mPassword, Accounts.AUTH_TYPE_BASIC);
+						mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL,mUploadBaseURL, mPassword, Accounts.AUTH_TYPE_BASIC);
 				resolver.insert(Accounts.CONTENT_URI, values);
 				return new Response(false, false, true, Accounts.AUTH_TYPE_BASIC, null, null);
 
@@ -605,7 +605,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
 				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL,
-						mSearchBaseURL, null, Accounts.AUTH_TYPE_TWIP_O_MODE);
+						mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL,mUploadBaseURL, null, Accounts.AUTH_TYPE_TWIP_O_MODE);
 				resolver.insert(Accounts.CONTENT_URI, values);
 				return new Response(false, false, true, Accounts.AUTH_TYPE_TWIP_O_MODE, null, null);
 
@@ -634,7 +634,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 				return new Response(false, true, false, Accounts.AUTH_TYPE_XAUTH, null, null);
 			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
-					mSearchBaseURL, null, Accounts.AUTH_TYPE_XAUTH);
+					mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL,mUploadBaseURL, null, Accounts.AUTH_TYPE_XAUTH);
 			resolver.insert(Accounts.CONTENT_URI, values);
 			return new Response(false, false, true, Accounts.AUTH_TYPE_XAUTH, null, null);
 

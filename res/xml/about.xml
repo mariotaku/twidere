@@ -43,6 +43,13 @@
 				android:action="android.intent.action.VIEW"
 				android:data="http://zettahub.de"/>
 		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="Edward G"
+			android:title="Español">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="twidere://user?user_id=17852917"/>
+		</PreferenceScreen>
 		<PreferenceScreen android:title="Other Languages">
 			<intent
 				android:action="android.intent.action.VIEW"

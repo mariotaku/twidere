@@ -27,7 +27,7 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
-public class SearchUsersFragment extends BaseUsersListFragment {
+public class SearchUsersFragment extends BaseUsersFragment {
 
 	private int mPage = 1;
 

@@ -27,7 +27,7 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
-public class ListSubscribersFragment extends BaseUsersListFragment {
+public class ListSubscribersFragment extends BaseUsersFragment {
 
 	private long mCursor = -1;
 

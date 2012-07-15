@@ -483,7 +483,7 @@ public final class TweetStore implements Constants {
 
 	}
 
-	public static interface Trends extends BaseColumns {
+	public static interface CachedTrends extends BaseColumns {
 
 		public static final String NAME = "name";
 		public static final String TIMESTAMP = "timestamp";
@@ -491,14 +491,14 @@ public final class TweetStore implements Constants {
 		public static final String[] COLUMNS = new String[] { _ID, NAME, TIMESTAMP };
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT };
 
-		public static interface Daily extends Trends {
+		public static interface Daily extends CachedTrends {
 			public static final String CONTENT_PATH = "daily_trends";
 
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 					CONTENT_PATH);
 		}
 
-		public static interface Local extends Trends {
+		public static interface Local extends CachedTrends {
 			public static final String CONTENT_PATH = "local_trends";
 
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
@@ -506,7 +506,7 @@ public final class TweetStore implements Constants {
 
 		}
 
-		public static interface Weekly extends Trends {
+		public static interface Weekly extends CachedTrends {
 			public static final String CONTENT_PATH = "weekly_trends";
 
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),

@@ -63,6 +63,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
@@ -74,6 +75,8 @@ import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.ResponseList;
 import twitter4j.Status;
+import twitter4j.Trend;
+import twitter4j.Trends;
 import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -1223,7 +1226,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues makeAccountContentValues(int color, AccessToken access_token, User user,
-			String rest_api_base, String search_api_base, String basic_password, int auth_type) {
+			String rest_base_url,String oauth_base_url,String signing_rest_base_url,String signing_oauth_base_url, String search_base_url,String upload_base_url, String basic_password, int auth_type) {
 		if (user == null) throw new IllegalArgumentException("User can't be null!");
 		final ContentValues values = new ContentValues();
 		switch (auth_type) {
@@ -1253,13 +1256,12 @@ public final class Utils implements Constants {
 		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 		values.put(Accounts.USER_COLOR, color);
 		values.put(Accounts.IS_ACTIVATED, 1);
-		if (rest_api_base != null) {
-			values.put(Accounts.REST_BASE_URL, rest_api_base);
-		}
-		if (search_api_base != null) {
-			values.put(Accounts.SEARCH_BASE_URL, search_api_base);
-		}
-
+		values.put(Accounts.REST_BASE_URL, rest_base_url);
+		values.put(Accounts.SIGNING_REST_BASE_URL, signing_rest_base_url);
+		values.put(Accounts.SEARCH_BASE_URL, search_base_url);
+		values.put(Accounts.UPLOAD_BASE_URL, upload_base_url);
+		values.put(Accounts.OAUTH_BASE_URL, oauth_base_url);
+		values.put(Accounts.SIGNING_OAUTH_BASE_URL, signing_oauth_base_url);
 		return values;
 	}
 
@@ -1273,6 +1275,21 @@ public final class Utils implements Constants {
 		return values;
 	}
 
+	public static ContentValues[] makeTrendsContentValues(List<Trends> trends_list) {
+		final List<ContentValues> result_list = new ArrayList<ContentValues>();
+		for (Trends trends : trends_list) {
+			if (trends == null) continue;
+			final long timestamp = trends.getTrendAt().getTime();
+			for (Trend trend : trends.getTrends()) {
+				final ContentValues values = new ContentValues();
+				values.put(CachedTrends.NAME, trend.getName());
+				values.put(CachedTrends.TIMESTAMP, timestamp);
+				result_list.add(values);
+			}
+		}
+		return result_list.toArray(new ContentValues[result_list.size()]);
+	}
+	
 	public static ContentValues makeDirectMessageContentValues(DirectMessage message, long account_id) {
 		if (message == null || message.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();

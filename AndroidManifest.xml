@@ -338,7 +338,6 @@
 
 		<service
 			android:name=".service.TwidereService"
-			android:exported="false"
 			android:label="@string/label_backend_service">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SERVICE"/>

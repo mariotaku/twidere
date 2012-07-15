@@ -43,7 +43,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-abstract class BaseUsersListFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableUser>>,
+abstract class BaseUsersFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableUser>>,
 		OnItemClickListener, OnScrollListener {
 
 	private UsersAdapter mAdapter;
