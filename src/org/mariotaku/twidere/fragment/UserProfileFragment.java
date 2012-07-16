@@ -22,6 +22,8 @@ package org.mariotaku.twidere.fragment;
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
+import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
@@ -175,6 +177,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAccountId = account_id;
 		mUserId = user.getId();
 		mScreenName = user.getScreenName();
+		
+		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
+
+		mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_color : 0);
+		if (is_multiple_account_enabled) {
+			final Drawable d = mListView.getBackground();
+			if (d != null) {
+				d.mutate().setColorFilter(getAccountColor(getActivity(), account_id), PorterDuff.Mode.MULTIPLY);
+			}
+		}
+		
 		mNameView.setText(user.getName());
 		mScreenNameView.setText(user.getScreenName());
 		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(

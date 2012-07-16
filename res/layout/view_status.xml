@@ -4,6 +4,7 @@
 	android:layout_height="fill_parent">
 
 	<ScrollView
+		android:id="@+id/content_scroller"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:layout_above="@+id/menu_bar">

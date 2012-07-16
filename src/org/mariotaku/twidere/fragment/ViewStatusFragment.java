@@ -28,7 +28,7 @@ import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
-import static org.mariotaku.twidere.util.Utils.showErrorToast;
+import static org.mariotaku.twidere.util.Utils.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -58,6 +58,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -89,7 +91,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView;
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
-	private View mProfileView, mFollowIndicator, mImagesPreviewContainer;
+	private View mProfileView, mFollowIndicator, mImagesPreviewContainer, mContentScroller;
 	private MenuBar mMenuBar;
 	private ProgressBar mProgress;
 	private FollowInfoTask mFollowInfoTask;
@@ -127,7 +129,17 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mMenuBar.inflate(R.menu.menu_status);
 		setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
 		mMenuBar.show();
+		
+		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
 
+		mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_color : 0);
+		if (is_multiple_account_enabled) {
+			final Drawable d = mContentScroller.getBackground();
+			if (d != null) {
+				d.mutate().setColorFilter(getAccountColor(getActivity(), status.account_id), PorterDuff.Mode.MULTIPLY);
+			}
+		}
+		
 		mNameView.setText(status.name);
 		mScreenNameView.setText(status.screen_name);
 		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(
@@ -223,6 +235,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.view_status, container, false);
+		mContentScroller = view.findViewById(R.id.content_scroller);
 		mImagesPreviewContainer = view.findViewById(R.id.images_preview);
 		mLocationView = (TextView) view.findViewById(R.id.location_view);
 		mNameView = (TextView) view.findViewById(R.id.name);

@@ -156,6 +156,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
 			final ParcelableStatus status = getListAdapter().findItem(id);
+			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
@@ -353,6 +354,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	private void openStatus(ParcelableStatus status) {
+		if (status == null) return;
 		final long account_id = status.account_id, status_id = status.status_id;
 		final FragmentActivity activity = getActivity();
 		final Bundle bundle = new Bundle();

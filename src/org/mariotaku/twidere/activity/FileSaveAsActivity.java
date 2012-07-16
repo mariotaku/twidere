@@ -324,7 +324,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 					android.R.layout.simple_list_item_activated_1, parent, false);
 			final TextView text = (TextView) (view instanceof TextView ? view : view.findViewById(android.R.id.text1));
 			final File file = getItem(position);
-
+			if (file == null || text == null) return view;
 			text.setText(file.getName());
 			final int padding = (int) (4 * mContext.getResources().getDisplayMetrics().density);
 			text.setSingleLine(true);

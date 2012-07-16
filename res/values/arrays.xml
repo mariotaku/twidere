@@ -2,14 +2,14 @@
 <resources>
 
 	<string-array name="entries_refresh_interval">
-		<item>1 minute</item>
-		<item>5 minutes</item>
-		<item>10 minutes</item>
-		<item>15 minutes</item>
-		<item>30 minutes</item>
-		<item>1 hour</item>
-		<item>2 hours</item>
-		<item>4 hours</item>
+		<item>@string/item_1_minute</item>
+		<item>@string/item_5_minutes</item>
+		<item>@string/item_10_minutes</item>
+		<item>@string/item_15_minutes</item>
+		<item>@string/item_30_minutes</item>
+		<item>@string/item_1_hour</item>
+		<item>@string/item_2_hours</item>
+		<item>@string/item_4_hours</item>
 	</string-array>
 	<string-array name="values_refresh_interval">
 		<item>1</item>

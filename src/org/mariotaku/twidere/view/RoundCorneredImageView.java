@@ -51,7 +51,11 @@ public class RoundCorneredImageView extends ImageView {
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		canvas.clipPath(mPath);
+		try {
+			canvas.clipPath(mPath);
+		} catch (UnsupportedOperationException e) {
+			//This shouldn't happen, but in order to keep app running, I simply ignore this Exception.
+		}
 		super.onDraw(canvas);
 	}
 

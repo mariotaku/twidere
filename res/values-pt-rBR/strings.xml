@@ -57,8 +57,8 @@
   <string name="delete">Apagar</string>
   <string name="retweet">Retweetar</string>
   <string name="cancel_retweet">Cancelar retweet</string>
-  <string name="fav">Marcar como favorito</string>
-  <string name="unfav">Desmarcar como favorito</string>
+  <string name="fav">Favoritar</string>
+  <string name="unfav">DesFavoritar</string>
   <string name="reply">Responder</string>
   <string name="share">Compartilhar</string>
   <string name="share_via_twidere">Compartilhar pelo Twidere</string>
@@ -182,7 +182,27 @@
   <string name="file_saved_to">Arquivo salvado para <xliff:g id="filename">%s</xliff:g> .</string>
   <string name="proxy">Proxy</string>
   <string name="http_proxy">HTTP Proxy</string>
-  <string name="http_proxy_summary">Use HTTP Proxy para solicitações de API.</string>
   <string name="proxy_host">Proxy Host</string>
   <string name="proxy_port">Proxy Port</string>
+  <string name="block">Bloquear</string>
+  <string name="unblock">Desbloquear</string>
+  <string name="report_for_spam">Denunciar por spam</string>
+  <string name="mute">Mudo</string>
+  <string name="user_muted">Adicionar este usuário pra a lista de filtros. Você não irá ver tweets desse usuário em sua lista de tweets/lista de menções.</string>
+  <string name="inbox">Caixa de Entrada</string>
+  <string name="outbox">Caixa de Saída</string>
+  <string name="load_images">Carregar imagens</string>
+  <string name="other_settings">Outras Configurações</string>
+  <string name="auto_refresh">Atualização automática</string>
+  <string name="refresh_interval">Intervalo de atualização</string>
+  <string name="content_to_refresh">Conteúdo para atualizar</string>
+  <string name="content_to_nofity">Conteúdo para notificar</string>
+  <string name="notifications_type">Tipo de Notificações</string>
+  <string name="sound">Sons</string>
+  <string name="vibration">Vibração</string>
+  <string name="lights">Luzes</string>
+  <string name="notifications">Notificações</string>
+  <string name="new_notifications">Novas notificações</string>
+  <string name="refresh_on_start">Atualizar ao iniciar</string>
+  <string name="refresh_after_tweet">Atualizar depois de tweetar</string>
 </resources>

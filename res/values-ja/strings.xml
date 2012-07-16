@@ -200,8 +200,27 @@
   <string name="auto_refresh">自動再読み込み</string>
   <string name="refresh_interval">更新間隔</string>
   <string name="content_to_refresh">コンテンツ</string>
+  <string name="vibration">振動</string>
   <string name="notifications">通知</string>
   <string name="new_notifications">新しい通知</string>
   <string name="load_earlier_messages">以前のダイレクトメッセージを読み込む</string>
   <string name="screen_name">スクリーン名</string>
+  <string name="Nminutes_quantity_one">1分</string>
+  <string name="Nminutes_quantity_other"><xliff:g id="minutes">%d</xliff:g> 分</string>
+  <string name="Nhours_quantity_one">1時間</string>
+  <string name="Nhours_quantity_other"><xliff:g id="hours">%d</xliff:g> 時間</string>
+  <string name="Ndays_quantity_one">1日</string>
+  <string name="Ndays_quantity_other"><xliff:g id="days">%d</xliff:g> 日</string>
+  <string name="Nmonths_quantity_one">1ヶ月</string>
+  <string name="Nmonths_quantity_other"><xliff:g id="minutes">%d</xliff:g> ヶ月</string>
+  <string name="Nyears_quantity_one">1年</string>
+  <string name="Nyears_quantity_other"><xliff:g id="days">%d</xliff:g> 年</string>
+  <string name="item_1_minute">1分</string>
+  <string name="item_5_minutes">5分</string>
+  <string name="item_10_minutes">10分</string>
+  <string name="item_15_minutes">15分</string>
+  <string name="item_30_minutes">30分</string>
+  <string name="item_1_hour">1時間</string>
+  <string name="item_2_hours">2時間</string>
+  <string name="item_4_hours">4時間</string>
 </resources>

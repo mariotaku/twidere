@@ -214,4 +214,41 @@
   <string name="screen_name">Nombre en pantalla</string>
   <string name="sort_timeline_by_time">Ordenar por linea del tiempo</string>
   <string name="sort_timeline_by_time_summary">Esto puede causar que el status retweeteado se muestre en un lugar incorrecto, pero puede ser muy util si usa otro servicios como Identi.ca</string>
+  <string name="refresh_on_start">Actualizar el inicio</string>
+  <string name="refresh_on_start_summary">Actualizar inicio y menciones.</string>
+  <string name="refresh_after_tweet">Actualizar después de un tweet</string>
+  <string name="refresh_after_tweet_summary">Actualizar inicio, menciones despues de enviar un tweet.</string>
+  <string name="list_timeline">Lista de inicio</string>
+  <string name="list_members">Lista de miembros</string>
+  <string name="list_subscribers">Lista de subscriptores</string>
+  <string name="type_to_compose">Escriba para componer</string>
+  <string name="list_following_user">Lista de seguimiento de este usuario</string>
+  <string name="list_user_followed">Lista de este usuario seguido</string>
+  <string name="list_created_by_user">Lista creada por este usuario</string>
+  <string name="report_errors_automatically">reportar errores automaticamente</string>
+  <string name="report_errors_automatically_summary">reportar errores automaticamente, no se guardaran datos personales.</string>
+  <string name="Nminutes_quantity_one">1 minuto</string>
+  <string name="Nminutes_quantity_other"><xliff:g id="minutes">%d</xliff:g> minuto</string>
+  <string name="Nhours_quantity_one">1 hora</string>
+  <string name="Nhours_quantity_other"><xliff:g id="hours">%d</xliff:g> horas</string>
+  <string name="Ndays_quantity_one">1 dia</string>
+  <string name="Ndays_quantity_other"><xliff:g id="days">%d</xliff:g> dias</string>
+  <string name="Nmonths_quantity_one">1 mes</string>
+  <string name="Nmonths_quantity_other"><xliff:g id="months">%d</xliff:g> meses</string>
+  <string name="Nyears_quantity_one">1 año</string>
+  <string name="Nyears_quantity_other"><xliff:g id="years">%d</xliff:g> años</string>
+  <string name="Ntweets_quantity_one">Tienes un nuevo tweet.</string>
+  <string name="Ntweets_quantity_other">Tienes <xliff:g id="items">%d</xliff:g>+ nuevos tweets.</string>
+  <string name="Nmentions_quantity_one">Alguien te menciono.</string>
+  <string name="Nmentions_quantity_other">Tienes <xliff:g id="items">%d</xliff:g>+  menciones.</string>
+  <string name="Ndirect_messages_quantity_one">Tienes un nuevo mensaje directo.</string>
+  <string name="Ndirect_messages_quantity_other">Tu tienes <xliff:g id="items">%d</xliff:g>+ mensajes directos.</string>
+  <string name="item_1_minute">1 minuto</string>
+  <string name="item_5_minutes">5 minutos</string>
+  <string name="item_10_minutes">10 minutos</string>
+  <string name="item_15_minutes">15 minutos</string>
+  <string name="item_30_minutes">30 minutos</string>
+  <string name="item_1_hour">1 hora</string>
+  <string name="item_2_hours">2 horas</string>
+  <string name="item_4_hours">4 horas</string>
 </resources>

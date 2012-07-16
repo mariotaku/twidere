@@ -18,6 +18,9 @@
   <string name="rest_base_url">Pusat REST URL</string>
   <string name="search_base_url">Pusat URL Pencarian</string>
   <string name="upload_base_url">Pusat URL Unggah</string>
+  <string name="oauth_base_url">OAuth Base URL</string>
+  <string name="signing_oauth_base_url">Menandai OAuth Base URL</string>
+  <string name="signing_rest_base_url">Menandai REST Base URL</string>
   <string name="auth_type">Tipe otentikasi</string>
   <string name="oauth">OAuth</string>
   <string name="xauth">xAuth</string>
@@ -54,6 +57,8 @@
   <string name="delete">Hapus</string>
   <string name="retweet">Retweet</string>
   <string name="cancel_retweet">Batalkan retweet</string>
+  <string name="fav">Favorit</string>
+  <string name="unfav">Unfavorit</string>
   <string name="reply">Balas</string>
   <string name="share">Bagikan</string>
   <string name="share_via_twidere">Bagikan melalui Twidere</string>
@@ -78,7 +83,7 @@
   <string name="consumer_key_summary">Kode Consumer Key OAuth/xAuth, kosongkan untuk tetapan default.</string>
   <string name="consumer_secret">Kode Consumer Secret</string>
   <string name="consumer_secret_summary">Kode Consumer Secret untuk OAuth/xAuth, kosongkan untuk tetapan default.</string>
-  <string name="warn_expert_only">Mohon dperhatikan! Kode consumer key/secret yang salah akan mengakibatkan koneksi error!</string>
+  <string name="warn_expert_only">Mohon diperhatikan! Kode consumer key/secret yang salah akan mengakibatkan koneksi error!</string>
   <string name="ignore_ssl_error">Abaikan kesalahan SSL</string>
   <string name="ignore_ssl_error_summary">Abaikan kesalahan SSL, aktifkan jika anda mengalami masalah dengan server API custom.</string>
   <string name="gzip_compressing">Kompresi GZip</string>
@@ -174,12 +179,29 @@
   <string name="overwrite_confirm">Berkas sudah ada, timpa?</string>
   <string name="save_as">Simpan sebagai</string>
   <string name="please_wait">Tunggu sebentar.</string>
+  <string name="file_saved_to">File disimpan ke <xliff:g id="filename">%s</xliff:g>.</string>
+  <string name="proxy">Proxy</string>
   <string name="http_proxy">Proxy HTTP</string>
   <string name="http_proxy_summary">Gunakan Proxy HTTP untuk semua permintaan jaringan.</string>
+  <string name="proxy_host">Host Proxy</string>
   <string name="proxy_port">Port Proxy</string>
   <string name="block">Blok</string>
   <string name="unblock">Hilangkan Blokir</string>
+  <string name="report_for_spam">Laporkan sebagai spam</string>
+  <string name="mute">Bisu</string>
   <string name="user_muted">Pengguna ini sudah didaftarkan pada daftar filter. Anda tidak akan melihat tweets dari pengguna ini dalam timeline/mention.</string>
   <string name="inbox">Kotak masuk</string>
   <string name="outbox">Kotak keluar</string>
+  <string name="load_images">Memuat gambar</string>
+  <string name="stop_service_after_closed">Hentikan layanan setelah Twidere ditutup.</string>
+  <string name="stop_service_after_closed_summary">Saya tidak tahu mengapa anda ingin mengaktifkan ini, tapi jika terdapat masalah, ingat, itu adalah kesalahan anda.</string>
+  <string name="other_settings">Pengaturan lainnya</string>
+  <string name="refresh_and_notifications">Refresh &amp; Notifikasi</string>
+  <string name="auto_refresh">Refresh otomatis</string>
+  <string name="refresh_interval">Interval refresh</string>
+  <string name="content_to_refresh">Konten yang di-refresh</string>
+  <string name="notifications">Notifikasi</string>
+  <string name="new_notifications">Notifikasi baru</string>
+  <string name="load_earlier_messages">Muat direct message sebelumnya</string>
+  <string name="screen_name">Nama layar</string>
 </resources>

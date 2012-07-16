@@ -25,8 +25,8 @@ public interface StatusesAdapterInterface extends BaseAdapterInterface {
 
 	public ParcelableStatus findItem(long id);
 
-	public void setShowAccountColor(boolean show);
-
 	public void setShowLastItemAsGap(boolean gap);
+	
+	public void setShowAccountColor(boolean show);
 
 }
