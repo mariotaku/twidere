@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.TwidereLinkify.*;
+
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
@@ -310,6 +312,54 @@ public final class Utils implements Constants {
 		sAccountColors.clear();
 	}
 
+	public static ImageResult htmlHasImage(String html, boolean include_preview) {
+		if (html == null) return new ImageResult(false, null);
+		final Matcher m = PATTERN_ALL_AVALIABLE_IMAGES.matcher(html);
+		if (m.find()) {
+			if (!include_preview) return new ImageResult(true, null);
+			final String image_url = m.group();
+			String temp_thumbnail_url = null;
+			if (image_url.matches(STRING_PATTERN_IMGLY)) {
+				final Matcher url_m = PATTERN_IMGLY.matcher(image_url);
+				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(IMGLY_GROUP_ID)) : null;
+				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
+			} else if (image_url.matches(STRING_PATTERN_INSTAGRAM)) {
+				final Matcher url_m = PATTERN_INSTAGRAM.matcher(image_url);
+				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(INSTAGRAM_GROUP_ID)) : null;
+				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
+			} else if (image_url.matches(STRING_PATTERN_LOCKERZ_AND_PLIXI)) {
+				final ImageSpec spec =  getLockerzAndPlixiImage(image_url);
+				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
+			} else if (image_url.matches(STRING_PATTERN_SINA_WEIBO_IMAGES)) {
+				final ImageSpec spec =  getSinaWeiboImage(image_url);
+				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
+			} else if (image_url.matches(STRING_PATTERN_TWITPIC)) {
+				final Matcher url_m = PATTERN_TWITPIC.matcher(image_url);
+				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(TWITPIC_GROUP_ID)) : null;
+				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
+			} else if (image_url.matches(STRING_PATTERN_TWITTER_IMAGES)) {
+				final ImageSpec spec = getTwitterImage(image_url);
+				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
+			} else if (image_url.matches(STRING_PATTERN_YFROG)) {
+				final Matcher url_m = PATTERN_YFROG.matcher(image_url);
+				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(YFROG_GROUP_ID)) : null;
+				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
+			}
+			return new ImageResult(true, temp_thumbnail_url);
+		}
+		return new ImageResult(false, null);
+	}
+	
+	public static class ImageResult {
+		public final boolean has_image;
+		public final String matched_url;
+		public ImageResult(boolean has_image, String matched_url) {
+			this.has_image=has_image;
+			this.matched_url=matched_url;
+		}
+		
+	}
+	
 	public static ParcelableDirectMessage findDirectMessageInDatabases(Context context, long account_id, long message_id) {
 		if (context == null) return null;
 		final ContentResolver resolver = context.getContentResolver();
@@ -394,7 +444,7 @@ public final class Utils implements Constants {
 				}
 				final URL expanded_url = url_entity.getExpandedURL();
 				if (expanded_url != null) {
-					builder.addLink(expanded_url.toString(), start, end);
+					builder.addLink(expanded_url.toString(), url_entity.getDisplayURL(), start, end);
 				}
 			}
 		}
@@ -409,7 +459,7 @@ public final class Utils implements Constants {
 				}
 				final URL media_url = media_item.getMediaURL();
 				if (media_url != null) {
-					builder.addLink(media_url.toString(), start, end);
+					builder.addLink(media_url.toString(), media_item.getDisplayURL(), start, end);
 				}
 			}
 		}
@@ -519,7 +569,7 @@ public final class Utils implements Constants {
 				}
 				final URL expanded_url = url_entity.getExpandedURL();
 				if (expanded_url != null) {
-					builder.addLink(expanded_url.toString(), start, end);
+					builder.addLink(expanded_url.toString(), url_entity.getDisplayURL(), start, end);
 				}
 			}
 		}
@@ -534,7 +584,7 @@ public final class Utils implements Constants {
 				}
 				final URL media_url = media_item.getMediaURL();
 				if (media_url != null) {
-					builder.addLink(media_url.toString(), start, end);
+					builder.addLink(media_url.toString(), media_item.getDisplayURL(), start, end);
 				}
 			}
 		}
@@ -801,45 +851,45 @@ public final class Utils implements Constants {
 		final List<ImageSpec> images = new ArrayList<ImageSpec>();
 		// get instagram images
 		{
-			final Matcher matcher = TwidereLinkify.PATTERN_INSTAGRAM.matcher(status_string);
+			final Matcher matcher = PATTERN_INSTAGRAM.matcher(status_string);
 			while (matcher.find()) {
-				images.add(getInstagramImage(matcher.group(TwidereLinkify.INSTAGRAM_GROUP_ID)));
+				images.add(getInstagramImage(matcher.group(INSTAGRAM_GROUP_ID)));
 			}
 		}
 		{
-			final Matcher matcher = TwidereLinkify.PATTERN_TWITPIC.matcher(status_string);
+			final Matcher matcher = PATTERN_TWITPIC.matcher(status_string);
 			while (matcher.find()) {
-				images.add(getTwitpicImage(matcher.group(TwidereLinkify.TWITPIC_GROUP_ID)));
+				images.add(getTwitpicImage(matcher.group(TWITPIC_GROUP_ID)));
 			}
 		}
 		{
-			final Matcher matcher = TwidereLinkify.PATTERN_TWITTER_IMAGES.matcher(status_string);
+			final Matcher matcher = PATTERN_TWITTER_IMAGES.matcher(status_string);
 			while (matcher.find()) {
 				images.add(getTwitterImage(matcher.group()));
 			}
 		}
 		{
-			final Matcher matcher = TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI.matcher(status_string);
+			final Matcher matcher = PATTERN_LOCKERZ_AND_PLIXI.matcher(status_string);
 			while (matcher.find()) {
 				images.add(getLockerzAndPlixiImage(matcher.group()));
 			}
 		}
 		{
-			final Matcher matcher = TwidereLinkify.PATTERN_SINA_WEIBO_IMAGES.matcher(status_string);
+			final Matcher matcher = PATTERN_SINA_WEIBO_IMAGES.matcher(status_string);
 			while (matcher.find()) {
 				images.add(getSinaWeiboImage(matcher.group()));
 			}
 		}
 		{
-			final Matcher matcher = TwidereLinkify.PATTERN_IMGLY.matcher(status_string);
+			final Matcher matcher = PATTERN_IMGLY.matcher(status_string);
 			while (matcher.find()) {
-				images.add(getImglyImage(matcher.group(TwidereLinkify.IMGLY_GROUP_ID)));
+				images.add(getImglyImage(matcher.group(IMGLY_GROUP_ID)));
 			}
 		}
 		{
-			final Matcher matcher = TwidereLinkify.PATTERN_YFROG.matcher(status_string);
+			final Matcher matcher = PATTERN_YFROG.matcher(status_string);
 			while (matcher.find()) {
-				images.add(getYfrogImage(matcher.group(TwidereLinkify.YFROG_GROUP_ID)));
+				images.add(getYfrogImage(matcher.group(YFROG_GROUP_ID)));
 			}
 		}
 		return images;
@@ -1010,9 +1060,9 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getSinaWeiboImage(String url) {
 		if (isNullOrEmpty(url)) return null;
-		final String thumbnail_size = url.replaceAll("\\/" + TwidereLinkify.SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/",
+		final String thumbnail_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/",
 				"/thumbnail/");
-		final String full_size = url.replaceAll("\\/" + TwidereLinkify.SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/",
+		final String full_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/",
 				"/large/");
 		return new ImageSpec(thumbnail_size, full_size);
 	}

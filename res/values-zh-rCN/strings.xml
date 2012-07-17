@@ -50,8 +50,10 @@
 	<string name="label_permission_group_access_twidere">访问 Twidere 应用</string>
 	<string name="label_permission_read_databases">读取 Twidere 的数据库</string>
 	<string name="label_permission_write_databases">写入 Twidere 的数据库</string>
+	<string name="label_permission_access_service">访问 Twidere 的服务</string>
 	<string name="description_permission_read_databases">从数据库读取推文、草稿箱、帐号信息、私信等。</string>
 	<string name="description_permission_write_databases">向数据库写入推文、草稿箱、帐号信息、私信等。</string>
+	<string name="description_permission_access_service">为你刷新/发送推文和私信等。</string>
 	<string name="open_in_browser">在浏览器中打开</string>
 	<string name="just_now">刚刚</string>
 	<string name="tap_to_load_more">轻按以加载更多</string>
@@ -100,7 +102,7 @@
 	<string name="dark_theme">使用暗色主题</string>
 	<string name="dark_theme_summary">为 Twidere 使用暗色主题。</string>
 	<string name="display_profile_image">显示个人资料图片</string>
-	<string name="display_profile_image_summary">显示个人资料图片，关闭可以加快列表的滚动速度，以及减少数据流量。</string>
+	<string name="display_profile_image_summary">关闭可以加快列表的滚动速度，以及减少数据流量。</string>
 	<string name="in_reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="retweeted_by">由 <xliff:g id="user_name">%s</xliff:g> 转推</string>
 	<string name="reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
@@ -250,7 +252,9 @@
 	<string name="item_15_minutes">15分钟</string>
 	<string name="item_30_minutes">30分钟</string>
 	<string name="item_1_hour">1小时</string>
-	<string name="item_2_hours">2消失</string>
+	<string name="item_2_hours">2小时</string>
 	<string name="item_4_hours">4小时</string>
+	<string name="inline_image_preview">在推文列表中显示图片预览</string>
+	<string name="inline_image_preview_summary">关闭可以加快列表的滚动速度，以及减少数据流量。</string>
 
 </resources>

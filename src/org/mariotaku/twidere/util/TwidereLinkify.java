@@ -77,42 +77,46 @@ public class TwidereLinkify {
 
 	};
 
-	public static final Pattern PATTERN_IMAGES = Pattern.compile("(https?:\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp))",
-			Pattern.CASE_INSENSITIVE);
-
-	public static final Pattern PATTERN_TWITTER_IMAGES = Pattern.compile(
-			"(https?:\\/\\/p\\.twimg\\.com\\/([\\d\\w\\-_]+)\\.(png|jpeg|jpg|gif|bmp))", Pattern.CASE_INSENSITIVE);
-
 	public static final String SINA_WEIBO_IMAGES_AVALIABLE_SIZES = "(woriginal|large|thumbnail|bmiddle|mw600)";
 
-	public static final Pattern PATTERN_SINA_WEIBO_IMAGES = Pattern.compile("(https?:\\/\\/([\\w\\d]+\\.sinaimg\\.cn|[\\w\\d]+\\.sina\\.cn)\\/"
-			+ SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/(([\\d\\w]+)\\.(png|jpeg|jpg|gif|bmp)))",
-			Pattern.CASE_INSENSITIVE);
-
-	public static final Pattern PATTERN_LOCKERZ_AND_PLIXI = Pattern
-			.compile("https?:\\/\\/(plixi\\.com\\/p|lockerz\\.com\\/s)\\/(\\w+)\\/?");
-
-	public static final Pattern PATTERN_INSTAGRAM = Pattern.compile(
-			"(https?:\\/\\/(instagr\\.am|instagram\\.com)\\/p\\/([_\\-\\d\\w]+)\\/?)", Pattern.CASE_INSENSITIVE);
-
+	public static final String STRING_PATTERN_IMAGES = "(https?:\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp))";
+	public static final String STRING_PATTERN_TWITTER_IMAGES ="(https?:\\/\\/p\\.twimg\\.com\\/([\\d\\w\\-_]+)\\.(png|jpeg|jpg|gif|bmp))";
+	public static final String STRING_PATTERN_SINA_WEIBO_IMAGES = "(https?:\\/\\/([\\w\\d]+\\.sinaimg\\.cn|[\\w\\d]+\\.sina\\.cn)\\/"
+			+ SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/(([\\d\\w]+)\\.(png|jpeg|jpg|gif|bmp)))";
+	public static final String STRING_PATTERN_LOCKERZ_AND_PLIXI = "https?:\\/\\/(plixi\\.com\\/p|lockerz\\.com\\/s)\\/(\\w+)\\/?";
+	public static final String STRING_PATTERN_INSTAGRAM = "(https?:\\/\\/(instagr\\.am|instagram\\.com)\\/p\\/([_\\-\\d\\w]+)\\/?)";
+	public static final String STRING_PATTERN_TWITPIC = "(https?:\\/\\/twitpic\\.com\\/([\\d\\w]+)\\/?)";
+	public static final String STRING_PATTERN_IMGLY = "(https?:\\/\\/img\\.ly\\/([\\w\\d]+)\\/?)";
+	public static final String STRING_PATTERN_YFROG = "(https?:\\/\\/yfrog\\.com\\/([\\w\\d]+)\\/?)";
+			
+	public static final Pattern PATTERN_ALL_AVALIABLE_IMAGES = Pattern.compile("("+STRING_PATTERN_IMAGES+"|"
+	+STRING_PATTERN_TWITTER_IMAGES+"|"
+	+STRING_PATTERN_SINA_WEIBO_IMAGES+"|"
+	+STRING_PATTERN_LOCKERZ_AND_PLIXI+"|"
+	+STRING_PATTERN_INSTAGRAM+"|"
+	+STRING_PATTERN_TWITPIC+"|"
+	+STRING_PATTERN_IMGLY+"|"
+	+STRING_PATTERN_YFROG+")"
+	, Pattern.CASE_INSENSITIVE);
+	
+	public static final Pattern PATTERN_IMAGES = Pattern.compile(STRING_PATTERN_IMAGES, Pattern.CASE_INSENSITIVE);
+	public static final Pattern PATTERN_TWITTER_IMAGES = Pattern.compile(STRING_PATTERN_TWITTER_IMAGES, Pattern.CASE_INSENSITIVE);
+	public static final Pattern PATTERN_SINA_WEIBO_IMAGES = Pattern.compile(STRING_PATTERN_SINA_WEIBO_IMAGES, Pattern.CASE_INSENSITIVE);
+	public static final Pattern PATTERN_LOCKERZ_AND_PLIXI = Pattern.compile(STRING_PATTERN_LOCKERZ_AND_PLIXI, Pattern.CASE_INSENSITIVE);
+	
+	public static final Pattern PATTERN_INSTAGRAM = Pattern.compile(STRING_PATTERN_INSTAGRAM, Pattern.CASE_INSENSITIVE);
 	public static final int INSTAGRAM_GROUP_ALL = 1;
 	public static final int INSTAGRAM_GROUP_ID = 3;
 
-	public static final Pattern PATTERN_TWITPIC = Pattern.compile("(https?:\\/\\/twitpic\\.com\\/([\\d\\w]+)\\/?)",
-			Pattern.CASE_INSENSITIVE);
-
+	public static final Pattern PATTERN_TWITPIC = Pattern.compile(STRING_PATTERN_TWITPIC, Pattern.CASE_INSENSITIVE);
 	public static final int TWITPIC_GROUP_ALL = 1;
 	public static final int TWITPIC_GROUP_ID = 2;
-
-	public static final Pattern PATTERN_IMGLY = Pattern.compile("(https?:\\/\\/img\\.ly\\/([\\w\\d]+)\\/?)",
-			Pattern.CASE_INSENSITIVE);
-
+	
+	public static final Pattern PATTERN_IMGLY = Pattern.compile(STRING_PATTERN_IMGLY, Pattern.CASE_INSENSITIVE);
 	public static final int IMGLY_GROUP_ALL = 1;
 	public static final int IMGLY_GROUP_ID = 2;
 
-	public static final Pattern PATTERN_YFROG = Pattern.compile("(https?:\\/\\/yfrog\\.com\\/([\\w\\d]+)\\/?)",
-			Pattern.CASE_INSENSITIVE);
-
+	public static final Pattern PATTERN_YFROG = Pattern.compile(STRING_PATTERN_YFROG, Pattern.CASE_INSENSITIVE);
 	public static final int YFROG_GROUP_ALL = 1;
 	public static final int YFROG_GROUP_ID = 2;
 

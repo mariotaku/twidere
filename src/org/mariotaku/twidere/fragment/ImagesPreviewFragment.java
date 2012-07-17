@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.Context;
@@ -48,7 +49,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
-		mAdapter = new ImagesAdapter(getActivity());
+		mAdapter = new ImagesAdapter(getApplication());
 		mGallery.setAdapter(mAdapter);
 		mGallery.setOnItemClickListener(this);
 		mLoadImagesIndicator.setOnClickListener(this);
@@ -111,11 +112,8 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		private final LazyImageLoader mImageLoader;
 		private final LayoutInflater mInflater;
 
-		public ImagesAdapter(Context context) {
-			final int preview_image_width = getResources().getDimensionPixelSize(R.dimen.image_preview_width);
-			final int preview_image_height = getResources().getDimensionPixelSize(R.dimen.image_preview_height);
-			mImageLoader = new LazyImageLoader(context, DIR_NAME_CACHED_THUMBNAILS, R.drawable.image_preview_fallback,
-					preview_image_width, preview_image_height);
+		public ImagesAdapter(TwidereApplication context) {
+			mImageLoader = context.getPreviewImageLoader();
 			mInflater = LayoutInflater.from(context);
 		}
 

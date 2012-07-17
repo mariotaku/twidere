@@ -50,8 +50,10 @@
 	<string name="label_permission_group_access_twidere">Access Twidere application</string>
 	<string name="label_permission_read_databases">Read Twidere databases</string>
 	<string name="label_permission_write_databases">Write Twidere databases</string>
+	<string name="label_permission_access_service">Access Twidere service</string>
 	<string name="description_permission_read_databases">Read tweets, drafts, accounts, direct messages etc from databases.</string>
 	<string name="description_permission_write_databases">Write tweets, drafts, accounts, direct messages etc to databases.</string>
+	<string name="description_permission_access_service">Refresh/Send tweets, direct messages</string>
 	<string name="open_in_browser">Open in browser</string>
 	<string name="just_now">Just now</string>
 	<string name="tap_to_load_more">Tap to load more</string>
@@ -100,7 +102,7 @@
 	<string name="dark_theme">Use dark theme</string>
 	<string name="dark_theme_summary">Use dark theme for Twidere.</string>
 	<string name="display_profile_image">Display profile image</string>
-	<string name="display_profile_image_summary">Display profile image, uncheck this will increase list scroll speed and reduce traffic usage.</string>
+	<string name="display_profile_image_summary">Disable this will increase list scroll speed and reduce traffic usage.</string>
 	<string name="in_reply_to">In reply to <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="retweeted_by">Retweeted by <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="reply_to">Reply to <xliff:g id="user_name">%s</xliff:g></string>
@@ -252,5 +254,7 @@
 	<string name="item_1_hour">1 hour</string>
 	<string name="item_2_hours">2 hours</string>
 	<string name="item_4_hours">4 hours</string>
+	<string name="inline_image_preview">Inline image preview</string>
+	<string name="inline_image_preview_summary">Disable this will increase list scroll speed and reduce traffic usage.</string>
 
 </resources>

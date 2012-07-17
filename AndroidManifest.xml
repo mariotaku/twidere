@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="27"
+	android:versionCode="28"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -23,6 +23,12 @@
 		android:name="org.mariotaku.twidere.WRITE_DATABASES"
 		android:description="@string/description_permission_write_databases"
 		android:label="@string/label_permission_write_databases"
+		android:permissionGroup="org.mariotaku.twidere.ACCESS_APPLICATION"
+		android:protectionLevel="dangerous"/>
+	<permission
+		android:name="org.mariotaku.twidere.ACCESS_SERVICE"
+		android:description="@string/description_permission_access_service"
+		android:label="@string/label_permission_access_service"
 		android:permissionGroup="org.mariotaku.twidere.ACCESS_APPLICATION"
 		android:protectionLevel="dangerous"/>
 
@@ -47,6 +53,7 @@
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 	<uses-permission android:name="org.mariotaku.twidere.READ_DATABASES"/>
 	<uses-permission android:name="org.mariotaku.twidere.WRITE_DATABASES"/>
+	<uses-permission android:name="org.mariotaku.twidere.ACCESS_SERVICE"/>
 
 	<application
 		android:name=".app.TwidereApplication"
@@ -338,7 +345,8 @@
 
 		<service
 			android:name=".service.TwidereService"
-			android:label="@string/label_backend_service">
+			android:label="@string/label_backend_service"
+			android:permission="org.mariotaku.twidere.ACCESS_SERVICE">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SERVICE"/>
 

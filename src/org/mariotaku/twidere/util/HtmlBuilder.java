@@ -43,7 +43,7 @@ public class HtmlBuilder {
 		string_length = string.length();
 	}
 
-	public void addLink(String link, int start, int end) {
+	public void addLink(String link, String display, int start, int end) {
 		if (start >= end) {
 			if (strict) throw new IllegalArgumentException("start must lesser than end!");
 			return;
@@ -62,7 +62,7 @@ public class HtmlBuilder {
 				return;
 			}
 		}
-		links.add(new LinkSpec(link, start, end));
+		links.add(new LinkSpec(link, display, start, end));
 	}
 
 	public String build() {
@@ -79,7 +79,7 @@ public class HtmlBuilder {
 				builder.append(escapeHTMLString(string.substring(links.get(i - 1).end, spec.start)));
 			}
 			builder.append("<a href=\"" + spec.link + "\">");
-			builder.append(escapeHTMLString(string.substring(spec.start, spec.end)));
+			builder.append(spec.display == null ? escapeHTMLString(string.substring(spec.start, spec.end)) : spec.display);
 			builder.append("</a>");
 			if (i == links.size() - 1) {
 				builder.append(escapeHTMLString(string.substring(spec.end, string.length())));
@@ -155,11 +155,12 @@ public class HtmlBuilder {
 			}
 		};
 
-		final String link;
+		final String link, display;
 		final int start, end;
 
-		LinkSpec(String link, int start, int end) {
+		LinkSpec(String link, String display, int start, int end) {
 			this.link = link;
+			this.display = display;
 			this.start = start;
 			this.end = end;
 		}

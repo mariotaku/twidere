@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.formatTweetText;
 import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
+import static org.mariotaku.twidere.util.Utils.*;
 
 import java.net.URL;
 import java.util.Comparator;
@@ -59,12 +60,12 @@ public class ParcelableStatus implements Parcelable {
 	public final boolean is_gap, is_retweet, is_favorite, is_protected, has_media;
 
 	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, name, screen_name,
-			in_reply_to_screen_name, source, profile_image_url_string;
+			in_reply_to_screen_name, source, profile_image_url_string, image_preview_url_string;
 	public final GeoLocation location;
 
 	public final Spanned text;
 
-	public URL profile_image_url;
+	public final URL profile_image_url, image_preview_url;
 
 	public static final Comparator<ParcelableStatus> TIMESTAMP_COMPARATOR = new Comparator<ParcelableStatus>() {
 
@@ -103,11 +104,13 @@ public class ParcelableStatus implements Parcelable {
 		is_retweet = indices.is_retweet != -1 ? cursor.getInt(indices.is_retweet) == 1 : false;
 		is_favorite = indices.is_favorite != -1 ? cursor.getInt(indices.is_favorite) == 1 : false;
 		is_protected = indices.is_protected != -1 ? cursor.getInt(indices.is_protected) == 1 : false;
-		has_media = indices.has_media != -1 ? cursor.getInt(indices.has_media) == 1 : false;
+		
 		retweeted_by_name = indices.retweeted_by_name != -1 ? cursor.getString(indices.retweeted_by_name) : null;
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
 		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
+		final ImageResult preview = htmlHasImage(text_html, true);
+		has_media = (indices.has_media != -1 ? cursor.getInt(indices.has_media) == 1 : false) || preview.has_image;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		name = indices.name != -1 ? cursor.getString(indices.name) : null;
 		screen_name = indices.screen_name != -1 ? cursor.getString(indices.screen_name) : null;
@@ -119,6 +122,8 @@ public class ParcelableStatus implements Parcelable {
 		profile_image_url = parseURL(profile_image_url_string);
 
 		text = text_html != null ? Html.fromHtml(text_html) : null;
+		image_preview_url_string = preview.matched_url;
+		image_preview_url = parseURL(image_preview_url_string);
 	}
 
 	public ParcelableStatus(Parcel in) {
@@ -147,8 +152,10 @@ public class ParcelableStatus implements Parcelable {
 		profile_image_url_string = in.readString();
 		location = (GeoLocation) in.readSerializable();
 		profile_image_url = parseURL(profile_image_url_string);
-
+		image_preview_url_string = in.readString();
+		image_preview_url = parseURL(image_preview_url_string);
 		text = text_html != null ? Html.fromHtml(text_html) : null;
+		
 	}
 
 	public ParcelableStatus(Status status, long account_id, boolean is_gap) {
@@ -177,6 +184,7 @@ public class ParcelableStatus implements Parcelable {
 
 		status_timestamp = getTime(status.getCreatedAt());
 		text_html = formatStatusText(status);
+		final ImageResult preview = htmlHasImage(text_html, true);
 		text_plain = status.getText();
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();
@@ -185,9 +193,12 @@ public class ParcelableStatus implements Parcelable {
 		source = status.getSource();
 		location = status.getGeoLocation();
 		is_favorite = status.isFavorited();
-		has_media = medias != null && medias.length > 0;
+		has_media = medias != null && medias.length > 0 || preview.has_image;
 
 		text = text_html != null ? Html.fromHtml(text_html) : null;
+		
+		image_preview_url_string = preview.matched_url;
+		image_preview_url = parseURL(image_preview_url_string);
 	}
 
 	public ParcelableStatus(Tweet tweet, long account_id, boolean is_gap) {
@@ -211,6 +222,7 @@ public class ParcelableStatus implements Parcelable {
 
 		status_timestamp = getTime(tweet.getCreatedAt());
 		text_html = formatTweetText(tweet);
+		final ImageResult preview = htmlHasImage(text_html, true);
 		text_plain = tweet.getText();
 		retweet_count = -1;
 		in_reply_to_screen_name = tweet.getToUser();
@@ -219,9 +231,12 @@ public class ParcelableStatus implements Parcelable {
 		source = tweet.getSource();
 		location = tweet.getGeoLocation();
 		is_favorite = false;
-		has_media = medias != null && medias.length > 0;
+		has_media = medias != null && medias.length > 0 || preview.has_image;
 
 		text = text_html != null ? Html.fromHtml(text_html) : null;
+		
+		image_preview_url_string = preview.matched_url;
+		image_preview_url = parseURL(image_preview_url_string);
 	}
 
 	@Override

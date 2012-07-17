@@ -26,6 +26,11 @@
 			android:summary="@string/display_profile_image_summary"
 			android:title="@string/display_profile_image"/>
 		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="inline_image_preview"
+			android:summary="@string/inline_image_preview_summary"
+			android:title="@string/inline_image_preview"/>
+		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="display_name"
 			android:summaryOff="@string/display_name_summaryoff"

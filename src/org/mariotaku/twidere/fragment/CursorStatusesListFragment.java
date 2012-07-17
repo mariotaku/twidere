@@ -26,10 +26,9 @@ import static org.mariotaku.twidere.util.Utils.getLastStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.adapter.StatusesCursorAdapter;
+import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -40,7 +39,7 @@ import android.support.v4.content.Loader;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
 
-	private StatusesCursorAdapter mAdapter;
+	private CursorStatusesAdapter mAdapter;
 
 	public abstract Uri getContentUri();
 
@@ -56,7 +55,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public StatusesCursorAdapter getListAdapter() {
+	public CursorStatusesAdapter getListAdapter() {
 		return mAdapter;
 	}
 
@@ -67,16 +66,15 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
-				.getProfileImageLoader();
-		mAdapter = new StatusesCursorAdapter(getActivity(), imageloader);
+		final TwidereApplication app = getApplication();
+		mAdapter = new CursorStatusesAdapter(getActivity(), app != null ? app.getProfileImageLoader() : null, app != null ? app.getPreviewImageLoader() : null);
 		super.onActivityCreated(savedInstanceState);
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		final String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
-				Statuses.STATUS_TIMESTAMP, Statuses.TEXT_PLAIN, Statuses.NAME, Statuses.SCREEN_NAME,
+				Statuses.STATUS_TIMESTAMP, Statuses.TEXT, Statuses.TEXT_PLAIN, Statuses.NAME, Statuses.SCREEN_NAME,
 				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME, Statuses.IN_REPLY_TO_STATUS_ID,
 				Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID,
 				Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_FAVORITE,

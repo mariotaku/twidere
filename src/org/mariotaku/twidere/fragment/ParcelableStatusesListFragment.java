@@ -71,9 +71,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 				getData().addAll(data);
 			}
 		}
-		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
-				.getProfileImageLoader();
-		mAdapter = new ParcelableStatusesAdapter(getActivity(), imageloader);
+		final TwidereApplication app = getApplication();
+		mAdapter = new ParcelableStatusesAdapter(getActivity(), app != null ? app.getProfileImageLoader() : null, app != null ? app.getPreviewImageLoader() : null);
 		mAdapter.setData(getData());
 		super.onActivityCreated(savedInstanceState);
 	}

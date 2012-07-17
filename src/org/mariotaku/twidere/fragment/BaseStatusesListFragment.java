@@ -277,10 +277,12 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		super.onResume();
 		final StatusesAdapterInterface adapter = getListAdapter();
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		adapter.setDisplayProfileImage(display_profile_image);
+		adapter.setDisplayImagePreview(display_image_preview);
 		adapter.setDisplayName(display_name);
 		adapter.setTextSize(text_size);
 		adapter.setShowLastItemAsGap(!(mLoadMoreAutomatically || isListLoadFinished()));

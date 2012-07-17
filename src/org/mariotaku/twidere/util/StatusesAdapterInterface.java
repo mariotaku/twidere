@@ -28,5 +28,7 @@ public interface StatusesAdapterInterface extends BaseAdapterInterface {
 	public void setShowLastItemAsGap(boolean gap);
 	
 	public void setShowAccountColor(boolean show);
+	
+	public void setDisplayImagePreview(boolean preview);
 
 }

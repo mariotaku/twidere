@@ -39,15 +39,16 @@ import android.widget.ArrayAdapter;
 
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
-	private final LazyImageLoader mImageLoader;
+	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
+	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
 
-	public ParcelableStatusesAdapter(Context context, LazyImageLoader loader) {
+	public ParcelableStatusesAdapter(Context context, LazyImageLoader profile_image_loader, LazyImageLoader preview_loader) {
 		super(context, R.layout.status_list_item, R.id.text);
 		mContext = context;
-		mImageLoader = loader;
+		mProfileImageLoader = profile_image_loader;
+		mPreviewImageLoader = preview_loader;
 	}
 
 	@Override
@@ -120,7 +121,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			}
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				mImageLoader.displayImage(status.profile_image_url, holder.profile_image);
+				mProfileImageLoader.displayImage(status.profile_image_url, holder.profile_image);
+			}
+			holder.image_preview.setVisibility(mDisplayImagePreview && status.has_media && status.image_preview_url != null ? View.VISIBLE : View.GONE);
+			if (mDisplayImagePreview && status.has_media && status.image_preview_url != null) {
+				mPreviewImageLoader.displayImage(status.image_preview_url, holder.image_preview);
 			}
 		}
 
@@ -179,6 +184,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void setTextSize(float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setDisplayImagePreview(boolean preview) {
+		if (preview != mDisplayImagePreview) {
+			mDisplayImagePreview = preview;
 			notifyDataSetChanged();
 		}
 	}

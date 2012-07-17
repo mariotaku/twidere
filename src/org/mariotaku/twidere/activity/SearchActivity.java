@@ -60,6 +60,8 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 		super.onCreate(savedInstanceState);
 		final Intent intent = getIntent();
 		mArguments.clear();
+		mData = intent.getData();
+		boolean is_search_user = mData != null ? QUERY_PARAM_VALUE_USERS.equals(mData.getQueryParameter(QUERY_PARAM_TYPE)) : false;
 		final String query = Intent.ACTION_SEARCH.equals(intent.getAction()) ? intent
 				.getStringExtra(SearchManager.QUERY) : mData != null ? mData.getQueryParameter(QUERY_PARAM_QUERY)
 				: null;
@@ -104,6 +106,7 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 		mAdapter.add(new TabSpec(SearchUsersFragment.class, getString(R.string.search_users)));
 		mSpinner.setAdapter(mAdapter);
 		mSpinner.setOnItemSelectedListener(this);
+		mSpinner.setSelection(is_search_user ? 1 : 0);
 	}
 
 	@Override

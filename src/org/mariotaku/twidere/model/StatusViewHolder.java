@@ -30,7 +30,7 @@ import android.widget.TextView;
 
 public class StatusViewHolder {
 
-	public final ImageView profile_image;
+	public final ImageView profile_image, image_preview;
 	public final TextView name, text, time, reply_retweet_status;
 	private final View content, gap_indicator;
 	public boolean show_as_gap;
@@ -41,6 +41,7 @@ public class StatusViewHolder {
 		content = view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
+		image_preview = (ImageView) view.findViewById(R.id.image_preview);
 		name = (TextView) view.findViewById(R.id.name);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
@@ -69,6 +70,7 @@ public class StatusViewHolder {
 		content.setBackgroundResource(show_gap ? R.drawable.ic_list_gap
 				: account_color_enabled ? R.drawable.ic_label_color : 0);
 		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		image_preview.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		text.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		time.setVisibility(show_gap ? View.GONE : View.VISIBLE);

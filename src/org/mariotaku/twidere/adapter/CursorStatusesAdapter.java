@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseURL;
+import static org.mariotaku.twidere.util.Utils.*;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -39,18 +40,19 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class StatusesCursorAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface {
+public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
-	private final LazyImageLoader mImageLoader;
+	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
+	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
 	private StatusCursorIndices mIndices;
 
-	public StatusesCursorAdapter(Context context, LazyImageLoader loader) {
+	public CursorStatusesAdapter(Context context, LazyImageLoader profile_image_loader, LazyImageLoader preview_loader) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
-		mImageLoader = loader;
+		mProfileImageLoader = profile_image_loader;
+		mPreviewImageLoader = preview_loader;
 	}
 
 	@Override
@@ -59,10 +61,13 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 
 		final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
 				.getString(mIndices.retweeted_by_screen_name);
+		final String text = cursor.getString(mIndices.text);
 		final String text_plain = cursor.getString(mIndices.text_plain);
 		final String name = mDisplayName ? cursor.getString(mIndices.name) : cursor.getString(mIndices.screen_name);
 		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 
+		final ImageResult preview = htmlHasImage(text, mDisplayImagePreview);
+		
 		final long account_id = cursor.getLong(mIndices.account_id);
 		final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
 		final long retweet_count = cursor.getLong(mIndices.retweet_count);
@@ -70,7 +75,8 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
 		final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
 		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
-		final boolean has_media = cursor.getShort(mIndices.has_media) == 1;
+		
+		final boolean has_media = cursor.getShort(mIndices.has_media) == 1 || preview.has_image;
 		final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
 		final boolean is_retweet = !isNullOrEmpty(retweeted_by) && cursor.getShort(mIndices.is_retweet) == 1;
 		final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name)
@@ -112,7 +118,11 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				final String profile_image_url_string = cursor.getString(mIndices.profile_image_url);
-				mImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
+				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
+			}
+			holder.image_preview.setVisibility(mDisplayImagePreview && preview.has_image && preview.matched_url != null ? View.VISIBLE : View.GONE);
+			if (mDisplayImagePreview && preview.has_image && preview.matched_url != null) {
+				mPreviewImageLoader.displayImage(parseURL(preview.matched_url), holder.image_preview);
 			}
 		}
 
@@ -210,4 +220,12 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 		return super.swapCursor(cursor);
 	}
 
+
+	@Override
+	public void setDisplayImagePreview(boolean preview) {
+		if (preview != mDisplayImagePreview) {
+			mDisplayImagePreview = preview;
+			notifyDataSetChanged();
+		}
+	}
 }

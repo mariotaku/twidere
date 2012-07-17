@@ -44,7 +44,7 @@ import android.os.Build;
 @ReportsCrashes(formKey = "dEcwVVBoTDE0RXZaczFiMUxuek43WGc6MQ")
 public class TwidereApplication extends Application implements Constants {
 
-	private LazyImageLoader mProfileImageLoader;
+	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private ClearCacheTask mClearCacheTask;
 	private MemCache mMemCache;
@@ -78,6 +78,16 @@ public class TwidereApplication extends Application implements Constants {
 					R.drawable.ic_profile_image_default, profile_image_size, profile_image_size);
 		}
 		return mProfileImageLoader;
+	}
+	
+	public LazyImageLoader getPreviewImageLoader() {
+		if (mPreviewImageLoader == null) {
+			final int preview_image_width = getResources().getDimensionPixelSize(R.dimen.image_preview_width);
+			final int preview_image_height = getResources().getDimensionPixelSize(R.dimen.image_preview_height);
+			mPreviewImageLoader = new LazyImageLoader(this, DIR_NAME_CACHED_THUMBNAILS, R.drawable.image_preview_fallback,
+					preview_image_width, preview_image_height);
+		}
+		return mPreviewImageLoader;
 	}
 
 	public ServiceInterface getServiceInterface() {

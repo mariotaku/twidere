@@ -198,6 +198,7 @@
   <string name="content_to_refresh">Conteúdo para atualizar</string>
   <string name="content_to_nofity">Conteúdo para notificar</string>
   <string name="notifications_type">Tipo de Notificações</string>
+  <string name="notifications_type_summary">Essa opção NÃO vai substituir as suas configurações.</string>
   <string name="sound">Sons</string>
   <string name="vibration">Vibração</string>
   <string name="lights">Luzes</string>
@@ -205,4 +206,19 @@
   <string name="new_notifications">Novas notificações</string>
   <string name="refresh_on_start">Atualizar ao iniciar</string>
   <string name="refresh_after_tweet">Atualizar depois de tweetar</string>
+  <string name="Nminutes_quantity_one">1 min</string>
+  <string name="Nminutes_quantity_other"><xliff:g id="minutos">%d</xliff:g> min</string>
+  <string name="Nhours_quantity_one">1 hr</string>
+  <string name="Ndays_quantity_one">1 dia</string>
+  <string name="Nmonths_quantity_one">1 mês</string>
+  <string name="Nyears_quantity_one">1 ano</string>
+  <string name="Ntweets_quantity_one">Você tem um novo tweet.</string>
+  <string name="Nmentions_quantity_one">Alguém mencionou você.</string>
+  <string name="item_5_minutes">5 minutos</string>
+  <string name="item_10_minutes">10 minutos</string>
+  <string name="item_15_minutes">15 minutos</string>
+  <string name="item_30_minutes">30 minutos</string>
+  <string name="item_1_hour">1 hora</string>
+  <string name="item_2_hours">2 horas</string>
+  <string name="item_4_hours">4 horas</string>
 </resources>
