@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@id/actionbar"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:baselineAligned="false"
+	android:gravity="center_vertical"
+	android:orientation="horizontal">
+
+	<LinearLayout
+		android:id="@id/actionbar_home"
+		style="?actionBarItemHomeStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:layout_weight="0">
+
+		<ImageView
+			android:id="@id/actionbar_home_as_up_indicator"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:gravity="center_vertical|left"
+			android:scaleType="fitCenter"
+			android:src="?actionBarHomeAsUpIndicator"
+			android:visibility="invisible"/>
+
+		<ImageView
+			android:id="@id/actionbar_icon"
+			android:layout_width="32dp"
+			android:layout_height="fill_parent"
+			android:gravity="center_vertical|left"
+			android:scaleType="fitCenter"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@id/actionbar_title_view"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_weight="1"
+		android:gravity="center_vertical"
+		android:orientation="vertical">
+
+		<TextView
+			android:id="@id/actionbar_title"
+			style="?attr/actionBarTitleStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:ellipsize="marquee"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<TextView
+			android:id="@id/actionbar_subtitle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:ellipsize="marquee"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:visibility="gone"/>
+	</LinearLayout>
+
+	<FrameLayout
+		android:id="@id/actionbar_custom_view_container"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_weight="1"
+		android:gravity="center_vertical"
+		android:orientation="horizontal"
+		android:visibility="gone"/>
+
+	<ProgressBar
+		android:id="@id/actionbar_progress_indeterminate"
+		style="?actionBarIndeterminateProgressStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:layout_weight="0"
+		android:indeterminateOnly="true"
+		android:visibility="gone"/>
+
+	<LinearLayout
+		android:id="@id/actionbar_menu_buttons"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:layout_weight="0"
+		android:orientation="horizontal"/>
+
+</LinearLayout>

@@ -590,8 +590,9 @@ public class Autolink {
 	}
 
 	private static CharSequence escapeHTML(CharSequence text) {
-		final StringBuilder builder = new StringBuilder(text.length() * 2);
-		for (int i = 0; i < text.length(); i++) {
+		final int length = text.length();
+		final StringBuilder builder = new StringBuilder(length * 2);
+		for (int i = 0; i < length; i++) {
 			final char c = text.charAt(i);
 			switch (c) {
 				case '&':

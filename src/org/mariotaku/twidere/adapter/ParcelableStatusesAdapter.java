@@ -52,14 +52,16 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 	@Override
 	public ParcelableStatus findItem(long id) {
-		for (int i = 0; i < getCount(); i++) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) return getItem(i);
 		}
 		return null;
 	}
 
 	public ParcelableStatus findItemByStatusId(long status_id) {
-		for (int i = 0; i < getCount(); i++) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
 			final ParcelableStatus status = getItem(i);
 			if (status.status_id == status_id) return status;
 		}

@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.preference;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -11,8 +12,6 @@ import android.content.SharedPreferences;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.AttributeSet;
-
-import com.handmark.pulltorefresh.library.R;
 
 public class NotificationTypePreference extends Preference implements Constants, OnPreferenceClickListener,
 		OnMultiChoiceClickListener, OnClickListener {

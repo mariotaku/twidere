@@ -88,10 +88,12 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 	@Override
 	public ParcelableDirectMessage findItem(long id) {
-		for (int i = 0; i < getCount(); i++) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) {
-				final long account_id = getItem(i).getLong(mIndices.account_id);
-				final long message_id = getItem(i).getLong(mIndices.message_id);
+				final Cursor item = getItem(i);
+				final long account_id = item.getLong(mIndices.account_id);
+				final long message_id = item.getLong(mIndices.message_id);
 				return findDirectMessageInDatabases(mContext, account_id, message_id);
 			}
 		}
@@ -104,7 +106,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	public int findItemPositionByStatusId(long status_id) {
-		for (int i = 0; i < getCount(); i++) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
 			if (getItem(i).getLong(mIndices.message_id) == status_id) return i;
 		}
 		return -1;

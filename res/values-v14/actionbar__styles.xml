@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Widget.ActionBar" parent="android:Widget.Holo.ActionBar">
+		<item name="android:background">?actionBarBackground</item>
+	</style>
+
+	<style name="Widget.ActionBar.Light" parent="android:Widget.Holo.Light.ActionBar">
+		<item name="android:background">?actionBarBackground</item>
+	</style>
+
+	<style name="Widget.ActionBar.Light.Solid.Inverse" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+		<item name="android:background">?actionBarBackground</item>
+	</style>
+
+</resources>

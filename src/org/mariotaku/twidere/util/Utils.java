@@ -191,6 +191,7 @@ public final class Utils implements Constants {
 	}
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
+		if (context == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
 		final StringBuilder builder = new StringBuilder();
 		if (selection != null) {
@@ -222,6 +223,7 @@ public final class Utils implements Constants {
 	}
 
 	public static String buildFilterWhereClause(String table, String selection) {
+		if (table == null) return null;
 		final StringBuilder builder = new StringBuilder();
 		if (selection != null) {
 			builder.append(selection);
@@ -253,12 +255,14 @@ public final class Utils implements Constants {
 	}
 
 	public static Uri buildQueryUri(Uri uri, boolean notify) {
+		if (uri == null) return null;
 		final Uri.Builder uribuilder = uri.buildUpon();
 		uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify));
 		return uribuilder.build();
 	}
 
 	public static synchronized void cleanDatabasesByItemLimit(Context context) {
+		if (context == null) return;
 		final ContentResolver resolver = context.getContentResolver();
 		final int item_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
@@ -307,6 +311,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ParcelableDirectMessage findDirectMessageInDatabases(Context context, long account_id, long message_id) {
+		if (context == null) return null;
 		final ContentResolver resolver = context.getContentResolver();
 		ParcelableDirectMessage message = null;
 		final String where = DirectMessages.ACCOUNT_ID + " = " + account_id + " AND " + DirectMessages.MESSAGE_ID
@@ -326,6 +331,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ParcelableStatus findStatusInDatabases(Context context, long account_id, long status_id) {
+		if (context == null) return null;
 		final ContentResolver resolver = context.getContentResolver();
 		ParcelableStatus status = null;
 		final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = "
@@ -411,6 +417,7 @@ public final class Utils implements Constants {
 	}
 
 	public static String formatTimeStampString(Context context, long timestamp) {
+		if (context == null) return null;
 		final Time then = new Time();
 		then.set(timestamp);
 		final Time now = new Time();
@@ -431,6 +438,7 @@ public final class Utils implements Constants {
 
 	@SuppressWarnings("deprecation")
 	public static String formatTimeStampString(Context context, String date_time) {
+		if (context == null) return null;
 		return formatTimeStampString(context, Date.parse(date_time));
 	}
 
@@ -534,7 +542,7 @@ public final class Utils implements Constants {
 	}
 
 	public static int getAccountColor(Context context, long account_id) {
-
+		if (context == null) return Color.TRANSPARENT;
 		Integer color = sAccountColors.get(account_id);
 		if (color == null) {
 			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
@@ -553,6 +561,7 @@ public final class Utils implements Constants {
 	}
 
 	public static long getAccountId(Context context, String username) {
+		if (context == null) return -1;
 		long user_id = -1;
 
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
@@ -573,6 +582,8 @@ public final class Utils implements Constants {
 	@Deprecated
 	public static long getAccountIdForStatusId(Context context, long status_id) {
 
+		if (context == null) return -1;
+		
 		final String[] cols = new String[] { Statuses.ACCOUNT_ID };
 		final String where = Statuses.STATUS_ID + " = " + status_id;
 
@@ -593,7 +604,7 @@ public final class Utils implements Constants {
 	}
 
 	public static long[] getAccountIds(Context context) {
-		long[] accounts = new long[] {};
+		long[] accounts = new long[0];
 		if (context == null) return accounts;
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
 				null, null, null);
@@ -614,6 +625,7 @@ public final class Utils implements Constants {
 
 	public static String[] getAccountScreenNames(Context context) {
 		String[] accounts = new String[0];
+		if (context == null) return accounts;
 		final String[] cols = new String[] { Accounts.USERNAME };
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, null, null, null);
 		if (cur != null) {
@@ -632,7 +644,7 @@ public final class Utils implements Constants {
 	}
 
 	public static String getAccountUsername(Context context, long account_id) {
-
+		if (context == null) return null;
 		String username = null;
 
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USERNAME },
@@ -648,7 +660,8 @@ public final class Utils implements Constants {
 	}
 
 	public static long[] getActivatedAccountIds(Context context) {
-		long[] accounts = new long[] {};
+		long[] accounts = new long[0];
+		if (context == null) return accounts;
 		final String[] cols = new String[] { Accounts.USER_ID };
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1",
 				null, null);
@@ -669,6 +682,7 @@ public final class Utils implements Constants {
 
 	public static String[] getActivatedAccountScreenNames(Context context) {
 		String[] accounts = new String[0];
+		if (context == null) return accounts;
 		final String[] cols = new String[] { Accounts.USERNAME };
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1",
 				null, null);
@@ -688,7 +702,7 @@ public final class Utils implements Constants {
 	}
 
 	public static Bitmap getColorPreviewBitmap(Context context, int color) {
-
+		if (context == null) return null;
 		final float density = context.getResources().getDisplayMetrics().density;
 		final int width = (int) (32 * density), height = (int) (32 * density);
 
@@ -732,16 +746,19 @@ public final class Utils implements Constants {
 	}
 
 	public static long getDefaultAccountId(Context context) {
+		if (context == null) return -1;
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
 		return preferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
 	}
 
 	public static Twitter getDefaultTwitterInstance(Context context, boolean include_entities) {
+		if (context == null) return null;
 		return getDefaultTwitterInstance(context, include_entities, true);
 	}
 
 	public static Twitter getDefaultTwitterInstance(Context context, boolean include_entities, boolean include_rts) {
+		if (context == null) return null;
 		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, include_rts);
 	}
 
@@ -757,7 +774,7 @@ public final class Utils implements Constants {
 	}
 
 	public static String getImagePathFromUri(Context context, Uri uri) {
-		if (uri == null) return null;
+		if (context == null || uri == null) return null;
 
 		final String media_uri_start = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString();
 
@@ -843,7 +860,8 @@ public final class Utils implements Constants {
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static long[] getLastSortIds(Context context, Uri uri) {
+	public static long[] getLastStatusIdsFromDatabase(Context context, Uri uri) {
+		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
 		final String[] cols = new String[] { Statuses.STATUS_ID };
 		final ContentResolver resolver = context.getContentResolver();
@@ -879,7 +897,7 @@ public final class Utils implements Constants {
 	 */
 	@Deprecated
 	public static String getNameForStatusId(Context context, long status_id) {
-
+		if (context == null) return null;
 		final String[] cols = new String[] { Statuses.NAME };
 		final String where = Statuses.STATUS_ID + " = " + status_id;
 
@@ -914,6 +932,7 @@ public final class Utils implements Constants {
 	}
 
 	public static String getQuoteStatus(Context context, String screen_name, String text) {
+		if (context == null) return null;
 		String quote_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
 				PREFERENCE_KEY_QUOTE_FORMAT, PREFERENCE_DEFAULT_QUOTE_FORMAT);
 		if (isNullOrEmpty(quote_format)) {
@@ -927,6 +946,7 @@ public final class Utils implements Constants {
 	 */
 	@Deprecated
 	public static long getRetweetedByUserId(Context context, long status_id) {
+		if (context == null) return -1;
 		final String[] cols = new String[] { Statuses.RETWEETED_BY_ID };
 		final String where = Statuses.STATUS_ID + "=" + status_id;
 
@@ -947,6 +967,7 @@ public final class Utils implements Constants {
 	}
 
 	public static long getRetweetId(Context context, long status_id) {
+		if (context == null) return -1;
 		final String[] cols = new String[] { Statuses.RETWEET_ID };
 		final String where = Statuses.STATUS_ID + "=" + status_id;
 		for (final Uri uri : STATUSES_URIS) {
@@ -967,6 +988,7 @@ public final class Utils implements Constants {
 
 	@Deprecated
 	public static String getScreenNameForStatusId(Context context, long status_id) {
+		if (context == null) return null;
 		final String[] cols = new String[] { Statuses.SCREEN_NAME };
 		final String where = Statuses.STATUS_ID + " = " + status_id;
 
@@ -996,10 +1018,12 @@ public final class Utils implements Constants {
 	}
 
 	public static int getTableId(Uri uri) {
+		if (uri == null) return -1;
 		return CONTENT_PROVIDER_URI_MATCHER.match(uri);
 	}
 
 	public static String getTableNameForContentUri(Uri uri) {
+		if (uri == null) return null;
 		switch (getTableId(uri)) {
 			case URI_ACCOUNTS:
 				return TABLE_ACCOUNTS;
@@ -1052,6 +1076,7 @@ public final class Utils implements Constants {
 
 	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities,
 			boolean include_rts) {
+		if (context == null) return null;
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, true) : true;
@@ -1145,6 +1170,7 @@ public final class Utils implements Constants {
 
 	public static Twitter getTwitterInstance(Context context, String account_username, boolean include_entities,
 			boolean include_rts) {
+		if (context == null) return null;
 		final StringBuilder where = new StringBuilder();
 		where.append(Accounts.USERNAME + " = " + account_username);
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
@@ -1179,6 +1205,7 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isMyAccount(Context context, long account_id) {
+		if (context == null) return false;
 		for (final long id : getAccountIds(context)) {
 			if (id == account_id) return true;
 		}
@@ -1186,7 +1213,7 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isMyActivatedAccount(Context context, long account_id) {
-		if (account_id <= 0) return false;
+		if (context == null || account_id <= 0) return false;
 		for (final long id : getActivatedAccountIds(context)) {
 			if (id == account_id) return true;
 		}
@@ -1194,7 +1221,7 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isMyActivatedUserName(Context context, String screen_name) {
-		if (screen_name == null) return false;
+		if (context == null || screen_name == null) return false;
 		for (final String account_user_name : getActivatedAccountScreenNames(context)) {
 			if (account_user_name.equalsIgnoreCase(screen_name)) return true;
 		}
@@ -1202,10 +1229,12 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isMyRetweet(Context context, long account_id, long status_id) {
+		if (context == null) return false;
 		return account_id == getRetweetedByUserId(context, status_id);
 	}
 
 	public static boolean isMyUserName(Context context, String screen_name) {
+		if (context == null) return false;
 		for (final String account_screen_name : getAccountScreenNames(context)) {
 			if (account_screen_name.equalsIgnoreCase(screen_name)) return true;
 		}
@@ -1217,6 +1246,7 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isUserLoggedIn(Context context, long account_id) {
+		if (context == null) return false;
 		final long[] ids = getAccountIds(context);
 		if (ids == null) return false;
 		for (final long id : ids) {
@@ -1388,6 +1418,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void notifyForUpdatedUri(Context context, Uri uri) {
+		if (context == null) return;
 		switch (getTableId(uri)) {
 			case URI_STATUSES: {
 				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
@@ -1417,6 +1448,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void openConversation(Activity activity, long account_id, long status_id) {
+		if (activity == null) return;
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			final Fragment fragment = new ViewConversationFragment();
@@ -1437,6 +1469,7 @@ public final class Utils implements Constants {
 
 	public static void openListTimeline(Activity activity, long account_id, int list_id, long user_id,
 			String screen_name, String list_name) {
+		if (activity == null) return;
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			final Fragment fragment = new ListTimelineFragment();
@@ -1470,6 +1503,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void openTweetSearch(Activity activity, long account_id, String query) {
+		if (activity == null) return;
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			final Fragment fragment = new SearchTweetsFragment();
@@ -1494,6 +1528,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void openUserBlocks(Activity activity, long account_id) {
+		if (activity == null) return;
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			final Fragment fragment = new UserBlocksFragment();
@@ -1511,6 +1546,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void openUserFavorites(Activity activity, long account_id, long user_id, String screen_name) {
+		if (activity == null) return;
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			final Fragment fragment = new UserFavoritesFragment();
@@ -1541,6 +1577,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void openUserFollowers(Activity activity, long account_id, long user_id, String screen_name) {
+		if (activity == null) return;
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			final Fragment fragment = new UserFollowersFragment();
@@ -1571,6 +1608,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void openUserFriends(Activity activity, long account_id, long user_id, String screen_name) {
+		if (activity == null) return;
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			final Fragment fragment = new UserFriendsFragment();
@@ -1601,6 +1639,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void openUserProfile(Activity activity, long account_id, long user_id, String screen_name) {
+		if (activity == null) return;
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			final Fragment fragment = new UserProfileFragment();
@@ -1630,6 +1669,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void openUserTimeline(Activity activity, long account_id, long user_id, String screen_name) {
+		if (activity == null) return;
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			final Fragment fragment = new UserTimelineFragment();
@@ -1680,6 +1720,7 @@ public final class Utils implements Constants {
 	}
 
 	public static URL parseURL(String url_string) {
+		if (url_string == null) return null;
 		try {
 			return new URL(url_string);
 		} catch (final MalformedURLException e) {
@@ -1689,6 +1730,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void restartActivity(Activity activity, boolean animation) {
+		if (activity == null) return;
 		final int enter_anim = animation ? android.R.anim.fade_in : 0;
 		final int exit_anim = animation ? android.R.anim.fade_out : 0;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
@@ -1745,6 +1787,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void showErrorToast(Context context, Exception e, boolean long_message) {
+		if (context == null) return;
 		final String message = e != null ? context.getString(R.string.error_message, e.getLocalizedMessage()) : context
 				.getString(R.string.error_unknown_error);
 		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;

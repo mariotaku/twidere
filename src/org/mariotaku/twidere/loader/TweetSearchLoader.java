@@ -78,7 +78,8 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		if (tweets != null) {
 			Collections.sort(tweets, TWITTER4J_TWEET_ID_COMPARATOR);
 			int deleted_count = 0;
-			for (int i = 0; i < tweets.size(); i++) {
+			final int size = tweets.size();
+			for (int i = 0; i < size; i++) {
 				final Tweet status = tweets.get(i);
 				if (deleteStatus(status.getId())) {
 					deleted_count++;

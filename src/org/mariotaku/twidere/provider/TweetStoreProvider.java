@@ -278,7 +278,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 			stringBuilder.append(tableName);
 			stringBuilder.append(" (");
-			for (int n = 0, i = columns.length; n < i; n++) {
+			final int length = columns.length;
+			for (int n = 0, i = length; n < i; n++) {
 				if (n > 0) {
 					stringBuilder.append(", ");
 				}

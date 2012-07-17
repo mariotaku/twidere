@@ -159,8 +159,9 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		final long[] ids = new long[mActivatedUsersId.size()];
-		for (int i = 0; i < mActivatedUsersId.size(); i++) {
+		final int ids_size = mActivatedUsersId.size();
+		final long[] ids = new long[ids_size];
+		for (int i = 0; i < ids_size; i++) {
 			ids[i] = mActivatedUsersId.get(i);
 		}
 		outState.putLongArray(Constants.INTENT_KEY_IDS, ids);

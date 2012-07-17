@@ -27,7 +27,8 @@ public final class ArrayUtils {
 
 	public static String buildString(long[] array, char token, boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < array.length; i++) {
+		final int length = array.length;
+		for (int i = 0; i < length; i++) {
 			final String id_string = String.valueOf(array[i]);
 			if (id_string != null) {
 				if (i > 0) {
@@ -41,7 +42,8 @@ public final class ArrayUtils {
 
 	public static <T> String buildString(T[] array, char token, boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < array.length; i++) {
+		final int length = array.length;
+		for (int i = 0; i < length; i++) {
 			final String id_string = String.valueOf(array[i]);
 			if (id_string != null) {
 				if (i > 0) {
@@ -74,14 +76,16 @@ public final class ArrayUtils {
 	public static <T> boolean contentMatch(T[] array1, T[] array2) {
 		if (array1 == null || array2 == null) return array1 == array2;
 		if (array1.length != array2.length) return false;
-		for (int i = 0; i < array1.length; i++) {
+		final int length = array1.length;
+		for (int i = 0; i < length; i++) {
 			if (!contains(array2, array1[i])) return false;
 		}
 		return true;
 	}
 
 	public static int indexOf(long[] array, long value) {
-		for (int i = 0; i < array.length; i++) {
+		final int length = array.length;
+		for (int i = 0; i < length; i++) {
 			if (array[i] == value) return i;
 		}
 		return -1;

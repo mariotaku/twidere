@@ -22,9 +22,9 @@ package org.mariotaku.twidere.fragment;
 import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.BaseActivity;
+import org.mariotaku.twidere.app.TwidereApplication;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.IntentFilter;
@@ -39,9 +39,9 @@ public class BaseDialogFragment extends DialogFragment implements Constants {
 		return null;
 	}
 
-	public Application getApplication() {
+	public TwidereApplication getApplication() {
 		final Activity activity = getActivity();
-		if (activity != null) return activity.getApplication();
+		if (activity != null) return (TwidereApplication) activity.getApplication();
 		return null;
 	}
 

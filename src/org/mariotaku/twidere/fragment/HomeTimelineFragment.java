@@ -42,11 +42,15 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
+				if (isAdded() && !isDetached()) {
+					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
+				}
 			} else if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
 				onRefreshComplete();
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
+				if (isAdded() && !isDetached()) {
+					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
+				}
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				if (getServiceInterface().isHomeTimelineRefreshing()) {
 					setRefreshing(false);

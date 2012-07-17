@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="@dimen/actionbar_button_width"
+	android:layout_height="fill_parent"
+	android:background="@drawable/actionbar_item_background_holo_dark"
+	android:ellipsize="marquee"
+	android:gravity="center"
+	android:padding="4dp"
+	android:scaleType="center"/>

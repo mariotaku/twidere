@@ -62,7 +62,8 @@ public abstract class BaseUserListLoader extends AsyncTaskLoader<List<Parcelable
 		if (list_loaded != null) {
 			mNextCursor = list_loaded.getNextCursor();
 			mPrevCursor = list_loaded.getPreviousCursor();
-			for (int i = 0; i < list_loaded.size(); i++) {
+			final int list_size = list_loaded.size();
+			for (int i = 0; i < list_size; i++) {
 				final UserList user = list_loaded.get(i);
 				if (!hasId(user.getId())) {
 					mData.add(new ParcelableUserList(user, mAccountId, (mCursor + 1) * 20 + i));

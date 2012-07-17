@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Theme.Holo" parent="Theme.ActionBar">
+
+		<!-- Text styles -->
+		<item name="android:textAppearance">@style/TextAppearance.Holo</item>
+		<item name="android:textAppearanceInverse">@style/TextAppearance.Holo.Inverse</item>
+		<item name="android:textAppearanceLarge">@style/TextAppearance.Holo.Large</item>
+		<item name="android:textAppearanceMedium">@style/TextAppearance.Holo.Medium</item>
+		<item name="android:textAppearanceSmall">@style/TextAppearance.Holo.Small</item>
+		<item name="android:textAppearanceLargeInverse">@style/TextAppearance.Holo.Large.Inverse</item>
+		<item name="android:textAppearanceMediumInverse">@style/TextAppearance.Holo.Medium.Inverse</item>
+		<item name="android:textAppearanceSmallInverse">@style/TextAppearance.Holo.Small.Inverse</item>
+		<item name="android:textAppearanceButton">@style/TextAppearance.Holo.Widget.Button</item>
+
+		<!-- Window attributes -->
+		<item name="android:windowBackground">@drawable/background_holo_dark</item>
+
+		<!-- List attributes -->
+		<item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_dark</item>
+		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_dark</item>
+
+		<!-- Widget styles -->
+		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.AutoCompleteTextView</item>
+		<item name="android:checkboxStyle">@style/Widget.Holo.CompoundButton.CheckBox</item>
+		<item name="android:editTextStyle">@style/Widget.Holo.EditText</item>
+		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
+		<item name="android:listViewStyle">@style/Widget.Holo.ListView</item>
+		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
+		<item name="android:progressBarStyleSmall">@style/Widget.Holo.ProgressBar.Small</item>
+		<item name="android:progressBarStyleSmallTitle">@style/Widget.Holo.ProgressBar.Small.Title</item>
+		<item name="android:progressBarStyleLarge">@style/Widget.Holo.ProgressBar.Large</item>
+		<item name="android:progressBarStyleInverse">@style/Widget.Holo.ProgressBar.Inverse</item>
+		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.ProgressBar.Small.Inverse</item>
+		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
+		<item name="android:radioButtonStyle">@style/Widget.Holo.CompoundButton.RadioButton</item>
+		<item name="android:spinnerStyle">@style/Widget.Holo.Spinner</item>
+		<item name="android:spinnerItemStyle">@style/Widget.Holo.TextView.SpinnerItem</item>
+		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Widget.DropDownHint</item>
+	</style>
+
+	<style name="Theme.Holo.Light" parent="Theme.ActionBar.Light">
+
+		<!-- Text styles -->
+		<item name="android:textAppearance">@style/TextAppearance.Holo.Light</item>
+		<item name="android:textAppearanceInverse">@style/TextAppearance.Holo.Light.Inverse</item>
+		<item name="android:textAppearanceLarge">@style/TextAppearance.Holo.Light.Large</item>
+		<item name="android:textAppearanceMedium">@style/TextAppearance.Holo.Light.Medium</item>
+		<item name="android:textAppearanceSmall">@style/TextAppearance.Holo.Light.Small</item>
+		<item name="android:textAppearanceLargeInverse">@style/TextAppearance.Holo.Light.Large.Inverse</item>
+		<item name="android:textAppearanceMediumInverse">@style/TextAppearance.Holo.Light.Medium.Inverse</item>
+		<item name="android:textAppearanceSmallInverse">@style/TextAppearance.Holo.Light.Small.Inverse</item>
+		<item name="android:textAppearanceButton">@style/TextAppearance.Holo.Light.Widget.Button</item>
+
+		<!-- Window attributes -->
+		<item name="android:windowBackground">@drawable/background_holo_light</item>
+
+		<!-- List attributes -->
+		<item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
+		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_light</item>
+
+		<!-- Widget styles -->
+		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.Light.AutoCompleteTextView</item>
+		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
+		<item name="android:editTextStyle">@style/Widget.Holo.Light.EditText</item>
+		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
+		<item name="android:listViewStyle">@style/Widget.Holo.Light.ListView</item>
+		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
+		<item name="android:progressBarStyleSmall">@style/Widget.Holo.ProgressBar.Small</item>
+		<item name="android:progressBarStyleSmallTitle">@style/Widget.Holo.ProgressBar.Small.Title</item>
+		<item name="android:progressBarStyleLarge">@style/Widget.Holo.ProgressBar.Large</item>
+		<item name="android:progressBarStyleInverse">@style/Widget.Holo.ProgressBar.Inverse</item>
+		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.ProgressBar.Small.Inverse</item>
+		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
+		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
+		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>
+		<item name="android:spinnerItemStyle">@style/Widget.Holo.Light.TextView.SpinnerItem</item>
+		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Light.Widget.DropDownHint</item>
+	</style>
+
+	<style name="Theme.Holo.Light.DarkActionBar" parent="Theme.ActionBar.Light.DarkActionBar">
+
+		<!-- Text styles -->
+		<item name="android:textAppearance">@style/TextAppearance.Holo.Light</item>
+		<item name="android:textAppearanceInverse">@style/TextAppearance.Holo.Light.Inverse</item>
+		<item name="android:textAppearanceLarge">@style/TextAppearance.Holo.Light.Large</item>
+		<item name="android:textAppearanceMedium">@style/TextAppearance.Holo.Light.Medium</item>
+		<item name="android:textAppearanceSmall">@style/TextAppearance.Holo.Light.Small</item>
+		<item name="android:textAppearanceLargeInverse">@style/TextAppearance.Holo.Light.Large.Inverse</item>
+		<item name="android:textAppearanceMediumInverse">@style/TextAppearance.Holo.Light.Medium.Inverse</item>
+		<item name="android:textAppearanceSmallInverse">@style/TextAppearance.Holo.Light.Small.Inverse</item>
+		<item name="android:textAppearanceButton">@style/TextAppearance.Holo.Light.Widget.Button</item>
+
+		<!-- Window attributes -->
+		<item name="android:windowBackground">@drawable/background_holo_light</item>
+
+		<!-- List attributes -->
+		<item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
+		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_light</item>
+
+		<!-- Widget styles -->
+		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.Light.AutoCompleteTextView</item>
+		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
+		<item name="android:editTextStyle">@style/Widget.Holo.Light.EditText</item>
+		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
+		<item name="android:listViewStyle">@style/Widget.Holo.Light.ListView</item>
+		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
+		<item name="android:progressBarStyleSmall">@style/Widget.Holo.ProgressBar.Small</item>
+		<item name="android:progressBarStyleSmallTitle">@style/Widget.Holo.ProgressBar.Small.Title</item>
+		<item name="android:progressBarStyleLarge">@style/Widget.Holo.ProgressBar.Large</item>
+		<item name="android:progressBarStyleInverse">@style/Widget.Holo.ProgressBar.Inverse</item>
+		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.ProgressBar.Small.Inverse</item>
+		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
+		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
+		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>
+		<item name="android:spinnerItemStyle">@style/Widget.Holo.Light.TextView.SpinnerItem</item>
+		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Light.Widget.DropDownHint</item>
+	</style>
+
+	<style name="Theme.Holo.Dialog" parent="Theme.ActionBar.Dialog">
+
+		<!-- Text styles -->
+		<item name="android:textAppearance">@style/TextAppearance.Holo</item>
+		<item name="android:textAppearanceInverse">@style/TextAppearance.Holo.Inverse</item>
+		<item name="android:textAppearanceLarge">@style/TextAppearance.Holo.Large</item>
+		<item name="android:textAppearanceMedium">@style/TextAppearance.Holo.Medium</item>
+		<item name="android:textAppearanceSmall">@style/TextAppearance.Holo.Small</item>
+		<item name="android:textAppearanceLargeInverse">@style/TextAppearance.Holo.Large.Inverse</item>
+		<item name="android:textAppearanceMediumInverse">@style/TextAppearance.Holo.Medium.Inverse</item>
+		<item name="android:textAppearanceSmallInverse">@style/TextAppearance.Holo.Small.Inverse</item>
+		<item name="android:textAppearanceButton">@style/TextAppearance.Holo.Widget.Button</item>
+
+		<!-- List attributes -->
+		<item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_dark</item>
+		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_dark</item>
+
+		<!-- Widget styles -->
+		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.AutoCompleteTextView</item>
+		<item name="android:checkboxStyle">@style/Widget.Holo.CompoundButton.CheckBox</item>
+		<item name="android:editTextStyle">@style/Widget.Holo.EditText</item>
+		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
+		<item name="android:listViewStyle">@style/Widget.Holo.ListView</item>
+		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
+		<item name="android:progressBarStyleSmall">@style/Widget.Holo.ProgressBar.Small</item>
+		<item name="android:progressBarStyleSmallTitle">@style/Widget.Holo.ProgressBar.Small.Title</item>
+		<item name="android:progressBarStyleLarge">@style/Widget.Holo.ProgressBar.Large</item>
+		<item name="android:progressBarStyleInverse">@style/Widget.Holo.ProgressBar.Inverse</item>
+		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.ProgressBar.Small.Inverse</item>
+		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
+		<item name="android:radioButtonStyle">@style/Widget.Holo.CompoundButton.RadioButton</item>
+		<item name="android:spinnerStyle">@style/Widget.Holo.Spinner</item>
+		<item name="android:spinnerItemStyle">@style/Widget.Holo.TextView.SpinnerItem</item>
+		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Light.Widget.DropDownHint</item>
+	</style>
+
+	<style name="Theme.Holo.Light.Dialog" parent="Theme.ActionBar.Light.Dialog">
+
+		<!-- Text styles -->
+		<item name="android:textAppearance">@style/TextAppearance.Holo.Light</item>
+		<item name="android:textAppearanceInverse">@style/TextAppearance.Holo.Light.Inverse</item>
+		<item name="android:textAppearanceLarge">@style/TextAppearance.Holo.Light.Large</item>
+		<item name="android:textAppearanceMedium">@style/TextAppearance.Holo.Light.Medium</item>
+		<item name="android:textAppearanceSmall">@style/TextAppearance.Holo.Light.Small</item>
+		<item name="android:textAppearanceLargeInverse">@style/TextAppearance.Holo.Light.Large.Inverse</item>
+		<item name="android:textAppearanceMediumInverse">@style/TextAppearance.Holo.Light.Medium.Inverse</item>
+		<item name="android:textAppearanceSmallInverse">@style/TextAppearance.Holo.Light.Small.Inverse</item>
+		<item name="android:textAppearanceButton">@style/TextAppearance.Holo.Light.Widget.Button</item>
+
+		<!-- List attributes -->
+		<item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
+		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_light</item>
+
+		<!-- Widget styles -->
+		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.Light.AutoCompleteTextView</item>
+		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
+		<item name="android:editTextStyle">@style/Widget.Holo.Light.EditText</item>
+		<item name="android:gridViewStyle">@style/Widget.Holo.Light.GridView</item>
+		<item name="android:listViewStyle">@style/Widget.Holo.Light.ListView</item>
+		<item name="android:progressBarStyle">@style/Widget.Holo.Light.ProgressBar</item>
+		<item name="android:progressBarStyleSmall">@style/Widget.Holo.Light.ProgressBar.Small</item>
+		<item name="android:progressBarStyleSmallTitle">@style/Widget.Holo.Light.ProgressBar.Small.Title</item>
+		<item name="android:progressBarStyleLarge">@style/Widget.Holo.Light.ProgressBar.Large</item>
+		<item name="android:progressBarStyleInverse">@style/Widget.Holo.Light.ProgressBar.Inverse</item>
+		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.Light.ProgressBar.Small.Inverse</item>
+		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.Light.ProgressBar.Large.Inverse</item>
+		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
+		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>
+		<item name="android:spinnerItemStyle">@style/Widget.Holo.Light.TextView.SpinnerItem</item>
+		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Light.Widget.DropDownHint</item>
+	</style>
+
+</resources>

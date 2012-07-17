@@ -49,7 +49,8 @@ public class UserSearchLoader extends ParcelableUsersLoader {
 		if (twitter == null) return null;
 		final ResponseList<User> users = twitter.searchUsers(mQuery, mPage);
 		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();
-		for (int i = 0; i < users.size(); i++) {
+		final int size = users.size();
+		for (int i = 0; i < size; i++) {
 			result.add(new ParcelableUser(users.get(i), mAccountId, (mPage - 1) * 20 + i));
 		}
 		return result;

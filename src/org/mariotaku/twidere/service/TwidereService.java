@@ -1902,7 +1902,8 @@ public class TwidereService extends Service implements Constants {
 			} else {
 				showErrorToast(exception, true);
 				final StringBuilder ids_builder = new StringBuilder();
-				for (int i = 0; i < failed_account_ids.size(); i++) {
+				final int size = failed_account_ids.size();
+				for (int i = 0; i < size; i++) {
 					final String id_string = String.valueOf(failed_account_ids.get(i));
 					if (id_string != null) {
 						if (i > 0) {

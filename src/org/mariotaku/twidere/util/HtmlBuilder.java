@@ -54,7 +54,8 @@ public class HtmlBuilder {
 						+ ", end = " + end);
 			return;
 		}
-		for (int i = 0; i < links.size(); i++) {
+		final int links_size = links.size();
+		for (int i = 0; i < links_size; i++) {
 			final LinkSpec spec = links.get(i);
 			if (start >= spec.start && start <= spec.end || end >= spec.start && end <= spec.end) {
 				if (strict) throw new IllegalArgumentException("link already added in this range!");
@@ -68,7 +69,8 @@ public class HtmlBuilder {
 		if (links.size() == 0) return escapeHTMLString(string);
 		Collections.sort(links, LinkSpec.COMPARATOR);
 		final StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < links.size(); i++) {
+		final int links_size = links.size();
+		for (int i = 0; i < links_size; i++) {
 			final LinkSpec spec = links.get(i);
 			if (i == 0) {
 				builder.append(escapeHTMLString(string.substring(0, spec.start)));

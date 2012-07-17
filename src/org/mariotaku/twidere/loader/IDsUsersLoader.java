@@ -71,7 +71,7 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		final int count = max_id_idx + load_item_limit < ids.length ? load_item_limit : ids.length - max_id_idx;
 		final long[] ids_to_load = new long[count];
 		int temp_idx = max_id_idx;
-		for (int i = 0; i < ids_to_load.length; i++) {
+		for (int i = 0; i < count; i++) {
 			ids_to_load[i] = ids[temp_idx];
 			temp_idx++;
 		}

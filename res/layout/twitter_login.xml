@@ -28,7 +28,8 @@
 					android:ems="10"
 					android:hint="@string/username"
 					android:inputType="textPersonName"
-					android:singleLine="true"/>
+					android:singleLine="true"
+					android:typeface="monospace"/>
 
 				<EditText
 					android:id="@+id/password"
@@ -39,7 +40,8 @@
 					android:ems="10"
 					android:hint="@string/password"
 					android:inputType="textPassword"
-					android:singleLine="true"/>
+					android:singleLine="true"
+					android:typeface="monospace"/>
 			</LinearLayout>
 
 			<LinearLayout

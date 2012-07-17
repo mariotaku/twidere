@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.activity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -94,7 +93,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mResolver = getContentResolver();
-		mInterface = ServiceInterface.getInstance(this);
+		mInterface = getTwidereApplication().getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		setContentView(R.layout.drafts_list);
@@ -184,7 +183,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 				break;
 			}
 			case MENU_SEND_ALL: {
-				final List<DraftItem> drafts = new ArrayList<DraftItem>();
+				final ArrayList<DraftItem> drafts = new ArrayList<DraftItem>();
 				if (mCursor != null) {
 					mCursor.moveToFirst();
 					if (!mCursor.isAfterLast()) {
@@ -262,7 +261,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 			in_reply_to_status_id = mCursor.getLong(mCursor.getColumnIndex(Drafts.IN_REPLY_TO_STATUS_ID));
 			if (account_ids_string != null) {
 				final String[] ids_string_array = account_ids_string.split(";");
-				final List<Long> ids_list = new ArrayList<Long>();
+				final ArrayList<Long> ids_list = new ArrayList<Long>();
 				for (final String id_string : ids_string_array) {
 					try {
 						ids_list.add(Long.parseLong(id_string));
@@ -270,8 +269,9 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 						// Ignore.
 					}
 				}
-				account_ids = new long[ids_list.size()];
-				for (int i = 0; i < ids_list.size(); i++) {
+				final int list_size = ids_list.size();
+				account_ids = new long[list_size];
+				for (int i = 0; i < list_size; i++) {
 					account_ids[i] = ids_list.get(i);
 				}
 			} else {

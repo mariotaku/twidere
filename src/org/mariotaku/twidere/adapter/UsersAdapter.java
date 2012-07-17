@@ -47,14 +47,16 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	}
 
 	public ParcelableUser findItem(long id) {
-		for (int i = 0; i < getCount(); i++) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) return getItem(i);
 		}
 		return null;
 	}
 
 	public ParcelableUser findItemByUserId(long user_id) {
-		for (int i = 0; i < getCount(); i++) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
 			final ParcelableUser item = getItem(i);
 			if (item.user_id == user_id) return item;
 		}

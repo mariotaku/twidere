@@ -60,35 +60,7 @@ public class ColorAnalyser {
 	 * @return The rgb {@link Color} in integer (no alpha)
 	 */
 	public static int analyse(Bitmap bitmap, int width, int height) {
-
-		if (bitmap == null) return Color.WHITE;
-
-		int color = 0;
-
-		final HashMap<Float, Integer> colorsMap = new HashMap<Float, Integer>();
-		final ArrayList<Float> colorsScore = new ArrayList<Float>();
-
-		final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, false);
-
-		for (int y = 0; y < resized.getHeight(); y++) {
-			for (int x = 0; x < resized.getWidth(); x++) {
-				final int temp_color = resized.getPixel(x, y);
-				color = Color.argb(0xFF, Color.red(temp_color), Color.green(temp_color), Color.blue(temp_color));
-				final float[] hsv = new float[3];
-				Color.colorToHSV(color, hsv);
-
-				final float score = (hsv[1] * hsv[1] + 0.001f) * (hsv[2] * hsv[2]);
-
-				colorsMap.put(score, color);
-				colorsScore.add(score);
-			}
-		}
-
-		Collections.sort(colorsScore);
-		bitmap.recycle();
-		resized.recycle();
-		return colorsMap.get(colorsScore.get(colorsScore.size() - 1));
-
+		return analyse(bitmap, width, height, Color.WHITE);
 	}
 
 	/**
@@ -112,8 +84,10 @@ public class ColorAnalyser {
 
 		final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, false);
 
-		for (int y = 0; y < resized.getHeight(); y++) {
-			for (int x = 0; x < resized.getWidth(); x++) {
+		final int resized_height = resized.getHeight(), resized_width = resized.getWidth();
+		
+		for (int y = 0; y < resized_height; y++) {
+			for (int x = 0; x < resized_width; x++) {
 				final int temp_color = resized.getPixel(x, y);
 				color = Color.argb(0xFF, Color.red(temp_color), Color.green(temp_color), Color.blue(temp_color));
 				final float[] hsv = new float[3];

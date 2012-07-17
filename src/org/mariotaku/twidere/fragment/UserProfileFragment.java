@@ -249,7 +249,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		mService = ServiceInterface.getInstance(getActivity());
+		mService = getApplication().getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
@@ -317,11 +317,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		switch (view.getId()) {
 			case R.id.follow: {
 				if (mUser != null && mAccountId != mUser.getId()) {
-					final ServiceInterface service = ServiceInterface.getInstance(getActivity());
 					if (mFriendship.isSourceFollowingTarget()) {
-						service.destroyFriendship(mAccountId, mUser.getId());
+						mService.destroyFriendship(mAccountId, mUser.getId());
 					} else {
-						service.createFriendship(mAccountId, mUser.getId());
+						mService.createFriendship(mAccountId, mUser.getId());
 					}
 				}
 				break;
@@ -650,7 +649,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@SuppressWarnings("deprecation")
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			mService = ServiceInterface.getInstance(getActivity());
+			mService = getApplication().getServiceInterface();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
 			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 			mText = bundle != null ? bundle.getString(INTENT_KEY_TEXT) : null;
@@ -943,7 +942,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		public UserAction findItem(long id) {
-			for (int i = 0; i < getCount(); i++) {
+			final int count = getCount();
+			for (int i = 0; i < count; i++) {
 				if (id == getItemId(i)) return getItem(i);
 			}
 			return null;

@@ -121,7 +121,8 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 
 	@Override
 	public ParcelableStatus findItem(long id) {
-		for (int i = 0; i < getCount(); i++) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) {
 				final long account_id = getItem(i).getLong(mIndices.account_id);
 				final long status_id = getItem(i).getLong(mIndices.status_id);
@@ -137,7 +138,8 @@ public class StatusesCursorAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	public int findItemPositionByStatusId(long status_id) {
-		for (int i = 0; i < getCount(); i++) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
 			if (getItem(i).getLong(mIndices.status_id) == status_id) return i;
 		}
 		return -1;

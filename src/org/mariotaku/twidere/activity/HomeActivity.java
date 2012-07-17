@@ -47,6 +47,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
+import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
 import android.view.Menu;
@@ -353,8 +354,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 	@Override
 	public void onStart() {
-		if (!isDualPaneMode() && !mStateSaved) {
-			getSupportFragmentManager().popBackStackImmediate();
+		final FragmentManager fm = getSupportFragmentManager();
+		if (!isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
+			fm.popBackStackImmediate();
 		}
 		super.onStart();
 		mStateSaved = false;

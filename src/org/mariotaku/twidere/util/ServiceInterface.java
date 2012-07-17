@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.ServiceUtils.bindToService;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
 
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
@@ -381,10 +382,10 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		}
 		return -1;
 	}
-
-	public static ServiceInterface getInstance(Context context) {
+	
+	public static ServiceInterface getInstance(Application application) {
 		if (sInstance == null || !sInstance.test()) {
-			sInstance = new ServiceInterface(context);
+			sInstance = new ServiceInterface(application);
 		}
 		return sInstance;
 	}

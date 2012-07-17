@@ -733,7 +733,7 @@ public class ColorPickerView extends View {
 	private void init() {
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			SetLayerTypeAccessor.setLayerType(this, View.LAYER_TYPE_SOFTWARE, new Paint());
+			SetLayerTypeAccessor.setLayerType(this, View.LAYER_TYPE_SOFTWARE, null);
 		}
 		mDensity = getContext().getResources().getDisplayMetrics().density;
 		PALETTE_CIRCLE_TRACKER_RADIUS *= mDensity;

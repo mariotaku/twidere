@@ -50,6 +50,13 @@
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=17852917"/>
 		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="Debarun Sarkar"
+			android:title="हिन्दी">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="twidere://user?user_id=55809644"/>
+		</PreferenceScreen>
 		<PreferenceScreen android:title="Other Languages">
 			<intent
 				android:action="android.intent.action.VIEW"

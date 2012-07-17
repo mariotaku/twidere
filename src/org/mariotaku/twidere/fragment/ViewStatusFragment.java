@@ -20,6 +20,8 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
+import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
@@ -28,7 +30,7 @@ import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
-import static org.mariotaku.twidere.util.Utils.*;
+import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.IOException;
 import java.util.List;
@@ -65,6 +67,8 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -85,7 +89,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 	private long mAccountId, mStatusId;
 	private ImagesPreviewFragment mImagesPreviewFragment = new ImagesPreviewFragment();
-	private ServiceInterface mServiceInterface;
+	private ServiceInterface mService;
 	private SharedPreferences mPreferences;
 	private ContentResolver mResolver;
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView;
@@ -151,9 +155,14 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
 		final boolean is_reply = status.in_reply_to_status_id > 0;
 		final String time = formatToLongTimeString(getActivity(), status.status_timestamp);
-		mTimeAndSourceView.setText(!isNullOrEmpty(time) && !isNullOrEmpty(status.source) ? Html.fromHtml(getString(
-				R.string.time_source, time, status.source))
-				: isNullOrEmpty(time) ? !isNullOrEmpty(status.source) ? Html.fromHtml(status.source) : null : time);
+		final String source_html = status.source;
+		if (!isNullOrEmpty(time) && !isNullOrEmpty(source_html)) {
+			mTimeAndSourceView.setText(Html.fromHtml(getString(	R.string.time_source, time, status.source)));
+		} else if (isNullOrEmpty(time) && !isNullOrEmpty(source_html)) {
+			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.source, status.source)));
+		} else if (!isNullOrEmpty(time) && isNullOrEmpty(source_html)) {
+			mTimeAndSourceView.setText(time);
+		}
 		mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
 		mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
 		if (is_reply) {
@@ -165,12 +174,16 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		final List<ImageSpec> images = Utils.getImagesInStatus(status.text_html);
 		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		if (images.size() > 0) {
+			mImagesPreviewFragment.clear();
 			for (final ImageSpec spec : images) {
 				mImagesPreviewFragment.add(spec);
 			}
-			final FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.replace(R.id.images_preview, mImagesPreviewFragment);
-			ft.commit();
+			final FragmentManager fm = getFragmentManager();
+			if (!FragmentManagerTrojan.isStateSaved(fm)) {
+				final FragmentTransaction ft = fm.beginTransaction();
+				ft.replace(R.id.images_preview, mImagesPreviewFragment);
+				ft.commit();
+			}
 		}
 		mLocationView.setVisibility(status.location != null ? View.VISIBLE : View.GONE);
 
@@ -185,7 +198,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mServiceInterface = getApplication().getServiceInterface();
+		mService = getApplication().getServiceInterface();
 		mResolver = getContentResolver();
 		super.onActivityCreated(savedInstanceState);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
@@ -211,7 +224,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				break;
 			}
 			case R.id.follow: {
-				ServiceInterface.getInstance(getActivity()).createFriendship(mAccountId, mStatus.user_id);
+				mService.createFriendship(mAccountId, mStatus.user_id);
 				break;
 			}
 			case R.id.in_reply_to: {
@@ -312,11 +325,11 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			}
 			case MENU_RETWEET: {
 				if (isMyRetweet(getActivity(), mAccountId, mStatusId)) {
-					mServiceInterface.cancelRetweet(mAccountId, mStatusId);
+					mService.cancelRetweet(mAccountId, mStatusId);
 				} else {
 					final long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
 							: mStatus.status_id;
-					mServiceInterface.retweetStatus(mAccountId, id_to_retweet);
+					mService.retweetStatus(mAccountId, id_to_retweet);
 				}
 				break;
 			}
@@ -350,14 +363,14 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			}
 			case MENU_FAV: {
 				if (mStatus.is_favorite) {
-					mServiceInterface.destroyFavorite(mAccountId, mStatusId);
+					mService.destroyFavorite(mAccountId, mStatusId);
 				} else {
-					mServiceInterface.createFavorite(mAccountId, mStatusId);
+					mService.createFavorite(mAccountId, mStatusId);
 				}
 				break;
 			}
 			case MENU_DELETE: {
-				mServiceInterface.destroyStatus(mAccountId, mStatusId);
+				mService.destroyStatus(mAccountId, mStatusId);
 				break;
 			}
 			default:
@@ -533,7 +546,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				if (addresses.size() == 1) {
 					final Address address = addresses.get(0);
 					final StringBuilder builder = new StringBuilder();
-					for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+					final int max_idx = address.getMaxAddressLineIndex();
+					for (int i = 0; i < max_idx; i++) {
 						builder.append(address.getAddressLine(i));
 						if (i != address.getMaxAddressLineIndex() - 1) {
 							builder.append(", ");

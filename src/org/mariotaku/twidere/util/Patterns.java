@@ -224,7 +224,8 @@ public class Patterns {
 		final StringBuilder buffer = new StringBuilder();
 		final String matchingRegion = matcher.group();
 
-		for (int i = 0, size = matchingRegion.length(); i < size; i++) {
+		final int length = matchingRegion.length();
+		for (int i = 0, size = length; i < size; i++) {
 			final char character = matchingRegion.charAt(i);
 
 			if (character == '+' || Character.isDigit(character)) {

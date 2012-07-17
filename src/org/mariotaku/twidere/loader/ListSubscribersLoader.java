@@ -84,7 +84,8 @@ public class ListSubscribersLoader extends ParcelableUsersLoader {
 		mNextCursor = users.getNextCursor();
 		mPrevCursor = users.getPreviousCursor();
 		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();
-		for (int i = 0; i < users.size(); i++) {
+		final int size = users.size();
+		for (int i = 0; i < size; i++) {
 			result.add(new ParcelableUser(users.get(i), mAccountId, (mCursor + 1) * 20 + i));
 		}
 		return result;

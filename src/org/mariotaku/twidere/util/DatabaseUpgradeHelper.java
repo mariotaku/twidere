@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import android.content.ContentValues;
@@ -72,7 +71,8 @@ public final class DatabaseUpgradeHelper {
 
 		while (!cur.isAfterLast()) {
 			final ContentValues values = new ContentValues();
-			for (int i = 0; i < new_cols.length; i++) {
+			final int length = new_cols.length;
+			for (int i = 0; i < length; i++) {
 				final String new_col = new_cols[i];
 				final String new_type = new_types[i];
 				if (BaseColumns._ID.equals(new_col)) {
@@ -130,11 +130,12 @@ public final class DatabaseUpgradeHelper {
 
 		stringBuilder.append(tableName);
 		stringBuilder.append(" (");
-		for (int n = 0, i = columns.length; n < i; n++) {
-			if (n > 0) {
+		final int length = columns.length;
+		for (int i = 0; i < length; i++) {
+			if (i > 0) {
 				stringBuilder.append(", ");
 			}
-			stringBuilder.append(columns[n]).append(' ').append(types[n]);
+			stringBuilder.append(columns[i]).append(' ').append(types[i]);
 		}
 		return stringBuilder.append(");").toString();
 	}
@@ -145,7 +146,8 @@ public final class DatabaseUpgradeHelper {
 		final String[] types = new String[columns.length];
 		final StringBuilder builder = new StringBuilder();
 		builder.append("SELECT ");
-		for (int i = 0; i < columns.length; i++) {
+		final int columns_length = columns.length;
+		for (int i = 0, len = columns_length; i < len; i++) {
 			builder.append("typeof(" + columns[i] + ")");
 			if (i != columns.length - 1) {
 				builder.append(", ");
@@ -157,7 +159,8 @@ public final class DatabaseUpgradeHelper {
 
 		if (cur.getCount() > 0) {
 			cur.moveToFirst();
-			for (int i = 0; i < types.length; i++) {
+			final int types_length = types.length;
+			for (int i = 0; i < types_length; i++) {
 				types[i] = cur.getString(i);
 			}
 		} else {
@@ -217,9 +220,10 @@ public final class DatabaseUpgradeHelper {
 			throw new IllegalArgumentException("Length of columns and types not match!");
 		if (old_cols.length != new_cols.length) return true;
 		if (!ArrayUtils.contentMatch(old_cols, new_cols)) return true;
-		final Map<String, String> old_map = new HashMap<String, String>(), new_map = new HashMap<String, String>();
+		final HashMap<String, String> old_map = new HashMap<String, String>(), new_map = new HashMap<String, String>();
 		// I'm sure the length of four arrays are equal.
-		for (int i = 0; i < old_cols.length; i++) {
+		final int length = old_cols.length; 
+		for (int i = 0; i < length; i++) {
 			old_map.put(old_cols[i], old_types[i]);
 			new_map.put(new_cols[i], new_types[i]);
 		}

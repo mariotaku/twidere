@@ -59,7 +59,8 @@ public class AsyncTaskManager {
 	 * Cancel all tasks added, then clear all tasks.
 	 */
 	public void cancelAll() {
-		for (int i = 0; i < mTasks.size(); i++) {
+		final int size = mTasks.size();
+		for (int i = 0; i < size; i++) {
 			cancel(mTasks.keyAt(i));
 		}
 		mTasks.clear();
@@ -77,7 +78,8 @@ public class AsyncTaskManager {
 	public List<ManagedAsyncTask<?, ?, ?>> getTaskList() {
 		final List<ManagedAsyncTask<?, ?, ?>> list = new ArrayList<ManagedAsyncTask<?, ?, ?>>();
 
-		for (int i = 0; i < mTasks.size(); i++) {
+		final int size = mTasks.size();
+		for (int i = 0; i < size; i++) {
 			final ManagedAsyncTask task = mTasks.valueAt(i);
 			if (task != null) {
 				list.add(task);

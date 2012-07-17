@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Widget.Holo" parent="android:Widget"/>
+
+	<style name="Widget.Holo.Light"/>
+
+	<style name="Widget.Holo.EditText" parent="android:Widget.EditText">
+		<item name="android:background">@drawable/edit_text_holo_dark</item>
+		<item name="android:textColor">#ffffff</item>
+	</style>
+
+	<style name="Widget.Holo.Light.EditText" parent="android:Widget.EditText">
+		<item name="android:background">@drawable/edit_text_holo_light</item>
+		<item name="android:textColor">#000000</item>
+	</style>
+
+	<style name="Widget.Holo.CompoundButton.CheckBox" parent="android:Widget.CompoundButton.CheckBox">
+		<item name="android:button">@drawable/btn_checkbox_holo_dark</item>
+		<item name="android:textColor">#ffffff</item>
+	</style>
+
+	<style name="Widget.Holo.Light.CompoundButton.CheckBox" parent="android:Widget.CompoundButton.CheckBox">
+		<item name="android:button">@drawable/btn_checkbox_holo_light</item>
+		<item name="android:textColor">#000000</item>
+	</style>
+
+	<style name="Widget.Holo.CompoundButton.RadioButton" parent="android:Widget.CompoundButton.RadioButton">
+		<item name="android:button">@drawable/btn_radio_holo_dark</item>
+		<item name="android:textColor">#ffffff</item>
+	</style>
+
+	<style name="Widget.Holo.Light.CompoundButton.RadioButton" parent="android:Widget.CompoundButton.RadioButton">
+		<item name="android:button">@drawable/btn_radio_holo_light</item>
+		<item name="android:textColor">#000000</item>
+	</style>
+
+	<style name="Widget.Holo.ListView" parent="android:Widget.ListView">
+		<item name="android:cacheColorHint">#00000000</item>
+		<item name="android:divider">@drawable/list_divider_holo_dark</item>
+		<item name="android:listSelector">@drawable/list_selector_holo_dark</item>
+	</style>
+
+	<style name="Widget.Holo.Light.ListView" parent="android:Widget.ListView.White">
+		<item name="android:cacheColorHint">#00000000</item>
+		<item name="android:divider">@drawable/list_divider_holo_light</item>
+		<item name="android:listSelector">@drawable/list_selector_holo_light</item>
+	</style>
+
+	<style name="Widget.Holo.ProgressBar" parent="android:Widget.ProgressBar">
+		<item name="android:indeterminateDrawable">@drawable/progress_medium_holo</item>
+	</style>
+
+	<style name="Widget.Holo.ProgressBar.Small" parent="android:Widget.ProgressBar.Small">
+		<item name="android:indeterminateDrawable">@drawable/progress_small_holo</item>
+	</style>
+
+	<style name="Widget.Holo.ProgressBar.Large" parent="android:Widget.ProgressBar.Large">
+		<item name="android:indeterminateDrawable">@drawable/progress_large_holo</item>
+	</style>
+
+	<style name="Widget.Holo.Spinner" parent="android:Widget.Spinner">
+		<item name="android:background">@drawable/spinner_background_holo_dark</item>
+		<item name="android:dropDownSelector">@drawable/list_selector_holo_dark</item>
+		<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_dark</item>
+		<item name="android:dropDownVerticalOffset">0dip</item>
+		<item name="android:dropDownHorizontalOffset">0dip</item>
+		<item name="android:dropDownWidth">wrap_content</item>
+		<item name="android:gravity">left|center_vertical</item>
+	</style>
+
+	<style name="Widget.Holo.Light.Spinner" parent="@style/Widget.Holo.Spinner">
+		<item name="android:background">@drawable/spinner_background_holo_light</item>
+		<item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+		<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_light</item>
+	</style>
+
+	<style name="Widget.Holo.TextView.SpinnerItem" parent="android:Widget.TextView.SpinnerItem">
+		<item name="android:textAppearance">@style/TextAppearance.Holo.Widget.TextView.SpinnerItem</item>
+		<item name="android:paddingLeft">8dp</item>
+		<item name="android:paddingRight">8dp</item>
+	</style>
+
+	<style name="Widget.Holo.Light.TextView.SpinnerItem" parent="Widget.Holo.TextView.SpinnerItem"/>
+
+	<style name="Widget.Holo.AutoCompleteTextView" parent="Widget.Holo.EditText">
+		<item name="android:completionHintView">@layout/simple_dropdown_hint</item>
+		<item name="android:completionThreshold">2</item>
+		<item name="android:dropDownVerticalOffset">-6dip</item>
+		<item name="android:dropDownHorizontalOffset">0dip</item>
+		<item name="android:dropDownWidth">wrap_content</item>
+		<item name="android:dropDownSelector">@drawable/list_selector_holo_dark</item>
+		<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Widget.DropDownHint" parent="android:TextAppearance.Widget">
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textSize">14sp</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.Widget.DropDownHint" parent="TextAppearance.Holo.Widget.DropDownHint"></style>
+
+	<style name="Widget.Holo.ProgressBar.Small.Title"></style>
+
+	<style name="Widget.Holo.Light.ProgressBar.Small" parent="Widget.Holo.ProgressBar.Small"></style>
+
+	<style name="Widget.Holo.Light.ProgressBar.Small.Title" parent="Widget.Holo.ProgressBar.Small.Title"></style>
+
+	<style name="Widget.Holo.Light.ProgressBar.Large" parent="Widget.Holo.ProgressBar.Large"></style>
+
+	<style name="Widget.Holo.Light.ProgressBar.Inverse" parent="Widget.Holo.ProgressBar.Inverse"></style>
+
+	<style name="Widget.Holo.Light.ProgressBar.Small.Inverse" parent="Widget.Holo.ProgressBar.Small.Inverse"></style>
+
+	<style name="Widget.Holo.Light.ProgressBar.Large.Inverse" parent="Widget.Holo.ProgressBar.Large.Inverse"></style>
+
+	<style name="Widget.Holo.GridView" parent="android:Widget.GridView">
+		<item name="android:listSelector">@drawable/item_background_holo_dark</item>
+	</style>
+
+	<style name="Widget.Holo.ProgressBar.Inverse"></style>
+
+	<style name="Widget.Holo.ProgressBar.Small.Inverse"></style>
+
+	<style name="Widget.Holo.ProgressBar.Large.Inverse"></style>
+
+	<style name="Widget.Holo.Light.ProgressBar" parent="Widget.Holo.ProgressBar"></style>
+
+	<style name="Widget.Holo.Light.GridView" parent="Widget.Holo.GridView">
+		<item name="android:listSelector">@drawable/item_background_holo_light</item>
+	</style>
+
+	<style name="Widget.Holo.Light.AutoCompleteTextView" parent="Widget.Holo.Light.EditText">
+		<item name="android:completionHintView">@layout/simple_dropdown_hint</item>
+		<item name="android:completionThreshold">2</item>
+		<item name="android:dropDownVerticalOffset">-6dip</item>
+		<item name="android:dropDownHorizontalOffset">0dip</item>
+		<item name="android:dropDownWidth">wrap_content</item>
+		<item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+		<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_light</item>
+	</style>
+
+	<!-- Text Styles -->
+
+
+	<!-- Dark text styles -->
+
+	<style name="TextAppearance.Holo" parent="android:TextAppearance">
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/holo_blue_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Inverse" parent="android:TextAppearance.Inverse">
+		<item name="android:textColor">@color/primary_text_holo_light</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_light</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorLink">@color/holo_blue_light</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Large" parent="android:TextAppearance.Large">
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/holo_blue_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Medium" parent="android:TextAppearance.Medium">
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/holo_blue_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Small" parent="android:TextAppearance.Small">
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/holo_blue_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Large.Inverse">
+		<item name="android:textColor">@color/primary_text_holo_light</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_light</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorLink">@color/holo_blue_light</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Medium.Inverse">
+		<item name="android:textColor">@color/primary_text_holo_light</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_light</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorLink">@color/holo_blue_light</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Small.Inverse">
+		<item name="android:textColor">@color/primary_text_holo_light</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_light</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorLink">@color/holo_blue_light</item>
+	</style>
+
+	<style name="TextAppearance.Holo.SearchResult">
+		<item name="android:textStyle">normal</item>
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.SearchResult.Title">
+		<item name="android:textSize">18sp</item>
+	</style>
+
+	<style name="TextAppearance.Holo.SearchResult.Subtitle">
+		<item name="android:textSize">14sp</item>
+		<item name="android:textColor">@color/secondary_text_holo_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Widget" parent="android:TextAppearance.Widget"></style>
+
+	<style name="TextAppearance.Holo.Widget.Button" parent="android:TextAppearance.Small.Inverse">
+		<item name="android:textColor">@color/primary_text_light_nodisable</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Widget.TextView.SpinnerItem">
+		<item name="android:textColor">@color/primary_text_disable_only_holo_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Widget.TextView" parent="android:TextAppearance.Widget.TextView">
+		<item name="android:textColor">@color/primary_text_disable_only_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+	</style>
+
+	<!-- Light text styles -->
+	<style name="TextAppearance.Holo.Light" parent="TextAppearance.Holo">
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/holo_blue_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.Inverse">
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/holo_blue_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.Large" parent="TextAppearance.Holo.Large">
+		<item name="android:textColor">@color/primary_text_holo_light</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_light</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorLink">@color/holo_blue_light</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.Medium" parent="TextAppearance.Holo.Medium">
+		<item name="android:textColor">@color/primary_text_holo_light</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_light</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorLink">@color/holo_blue_light</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.Small" parent="TextAppearance.Holo.Small">
+		<item name="android:textColor">@color/primary_text_holo_light</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_light</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorLink">@color/holo_blue_light</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.Large.Inverse">
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/holo_blue_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.Medium.Inverse">
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/holo_blue_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.Small.Inverse">
+		<item name="android:textColor">@color/primary_text_holo_dark</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_dark</item>
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/holo_blue_dark</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.SearchResult" parent="TextAppearance.Holo.SearchResult">
+		<item name="android:textColor">@color/primary_text_holo_light</item>
+		<item name="android:textColorHint">@color/hint_foreground_holo_light</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.SearchResult.Title">
+		<item name="android:textSize">18sp</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.SearchResult.Subtitle">
+		<item name="android:textSize">14sp</item>
+		<item name="android:textColor">@color/secondary_text_holo_light</item>
+	</style>
+
+	<style name="TextAppearance.Holo.Light.Widget" parent="android:TextAppearance.Widget"></style>
+
+	<style name="TextAppearance.Holo.Light.Widget.Button"></style>
+
+	<style name="AlertDialog"></style>
+
+	<style name="AlertDialog.Holo">
+		<item name="android:fullDark">@drawable/dialog_full_holo_dark</item>
+		<item name="android:topDark">@drawable/dialog_top_holo_dark</item>
+		<item name="android:centerDark">@drawable/dialog_middle_holo_dark</item>
+		<item name="android:bottomDark">@drawable/dialog_bottom_holo_dark</item>
+		<item name="android:fullBright">@drawable/dialog_full_holo_dark</item>
+		<item name="android:topBright">@drawable/dialog_top_holo_dark</item>
+		<item name="android:centerBright">@drawable/dialog_middle_holo_dark</item>
+		<item name="android:bottomBright">@drawable/dialog_bottom_holo_dark</item>
+		<item name="android:bottomMedium">@drawable/dialog_bottom_holo_dark</item>
+		<item name="android:centerMedium">@drawable/dialog_middle_holo_dark</item>
+	</style>
+
+	<style name="AlertDialog.Holo.Light">
+		<item name="android:fullDark">@drawable/dialog_full_holo_light</item>
+		<item name="android:topDark">@drawable/dialog_top_holo_light</item>
+		<item name="android:centerDark">@drawable/dialog_middle_holo_light</item>
+		<item name="android:bottomDark">@drawable/dialog_bottom_holo_light</item>
+		<item name="android:fullBright">@drawable/dialog_full_holo_light</item>
+		<item name="android:topBright">@drawable/dialog_top_holo_light</item>
+		<item name="android:centerBright">@drawable/dialog_middle_holo_light</item>
+		<item name="android:bottomBright">@drawable/dialog_bottom_holo_light</item>
+		<item name="android:bottomMedium">@drawable/dialog_bottom_holo_light</item>
+		<item name="android:centerMedium">@drawable/dialog_middle_holo_light</item>
+	</style>
+
+</resources>

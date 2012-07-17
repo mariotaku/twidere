@@ -83,9 +83,9 @@ public class TwidereLinkify {
 	public static final Pattern PATTERN_TWITTER_IMAGES = Pattern.compile(
 			"(https?:\\/\\/p\\.twimg\\.com\\/([\\d\\w\\-_]+)\\.(png|jpeg|jpg|gif|bmp))", Pattern.CASE_INSENSITIVE);
 
-	public static final String SINA_WEIBO_IMAGES_AVALIABLE_SIZES = "(large|thumbnail|bmiddle|mw600)";
+	public static final String SINA_WEIBO_IMAGES_AVALIABLE_SIZES = "(woriginal|large|thumbnail|bmiddle|mw600)";
 
-	public static final Pattern PATTERN_SINA_WEIBO_IMAGES = Pattern.compile("(https?:\\/\\/[\\w\\d]+\\.sinaimg\\.cn\\/"
+	public static final Pattern PATTERN_SINA_WEIBO_IMAGES = Pattern.compile("(https?:\\/\\/([\\w\\d]+\\.sinaimg\\.cn|[\\w\\d]+\\.sina\\.cn)\\/"
 			+ SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/(([\\d\\w]+)\\.(png|jpeg|jpg|gif|bmp)))",
 			Pattern.CASE_INSENSITIVE);
 
@@ -362,7 +362,8 @@ public class TwidereLinkify {
 
 		boolean hasPrefix = false;
 
-		for (int i = 0; i < prefixes.length; i++) {
+		final int length = prefixes.length;
+		for (int i = 0; i < length; i++) {
 			if (url.regionMatches(true, 0, prefixes[i], 0, prefixes[i].length())) {
 				hasPrefix = true;
 

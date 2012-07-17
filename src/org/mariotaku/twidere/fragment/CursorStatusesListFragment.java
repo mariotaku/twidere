@@ -22,7 +22,7 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
 import static org.mariotaku.twidere.util.Utils.buildFilterWhereClause;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getLastSortIds;
+import static org.mariotaku.twidere.util.Utils.getLastStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 
 import org.mariotaku.twidere.activity.HomeActivity;
@@ -52,7 +52,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public long[] getLastStatusIds() {
-		return getLastSortIds(getActivity(), getContentUri());
+		return getLastStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
 
 	@Override

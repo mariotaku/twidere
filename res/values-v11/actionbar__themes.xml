@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Theme.ActionBar" parent="android:Theme.Holo">
+		<item name="android:actionBarStyle">@style/Widget.ActionBar</item>
+
+		<!-- for programmatic instantiation -->
+		<item name="actionBarBackground">@drawable/actionbar_bg_dark_holo</item>
+		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
+		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
+		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>
+		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
+		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
+		<item name="popupBackground">@drawable/popup_holo_dark</item>
+	</style>
+
+	<style name="Theme.ActionBar.Light" parent="android:Theme.Holo.Light">
+		<item name="android:actionBarStyle">@style/Widget.ActionBar.Light</item>
+
+		<!-- for programmatic instantiation -->
+		<item name="actionBarBackground">@drawable/actionbar_bg_light_holo</item>
+		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
+		<item name="actionBarItemStyle">@style/Widget.ActionBarItem.Light</item>
+		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem.Light</item>
+		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_light</item>
+		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_holo</item>
+		<item name="popupBackground">@drawable/popup_holo_light</item>
+	</style>
+
+	<style name="Theme.ActionBar.Light.DarkActionBar">
+		<item name="android:actionBarStyle">@style/Widget.ActionBar.Light.Solid.Inverse</item>
+		<!-- for programmatic instantiation -->
+
+		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_holo</item>
+		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
+		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
+		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_darkactionbar_holo</item>
+	</style>
+
+	<style name="Theme.ActionBar.Dialog" parent="android:Theme.Holo.Dialog">
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_holo</item>
+		<item name="popupBackground">@drawable/popup_holo_light</item>
+	</style>
+
+	<style name="Theme.ActionBar.Light.Dialog" parent="android:Theme.Holo.Light.Dialog">
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
+		<item name="popupBackground">@drawable/popup_holo_light</item>
+	</style>
+
+</resources>

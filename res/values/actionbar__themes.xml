@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Theme.ActionBar" parent="android:Theme">
+		<item name="android:windowTitleStyle">@style/WindowTitle.Holo</item>
+		<item name="android:windowTitleSize">@dimen/actionbar_height</item>
+		<item name="android:windowTitleBackgroundStyle">@style/Widget.ActionBar</item>
+		<item name="android:windowContentOverlay">@drawable/actionbar_shadow</item>
+
+		<!-- for programmatic instantiation -->
+		<item name="actionBarBackground">@drawable/actionbar_bg_dark_holo</item>
+		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
+		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
+		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>
+		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
+		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyle</item>
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
+		<item name="popupBackground">@drawable/popup_holo_dark</item>
+	</style>
+
+	<style name="Theme.ActionBar.Light" parent="android:Theme.Light">
+		<item name="android:windowTitleStyle">@style/WindowTitle.Holo</item>
+		<item name="android:windowTitleSize">@dimen/actionbar_height</item>
+		<item name="android:windowTitleBackgroundStyle">@style/Widget.ActionBar.Light</item>
+		<item name="android:windowContentOverlay">@drawable/actionbar_shadow</item>
+
+		<!-- for programmatic instantiation -->
+		<item name="actionBarBackground">@drawable/actionbar_bg_light_holo</item>
+		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
+		<item name="actionBarItemStyle">@style/Widget.ActionBarItem.Light</item>
+		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem.Light</item>
+		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_light</item>
+		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyle</item>
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_holo</item>
+		<item name="popupBackground">@drawable/popup_holo_light</item>
+	</style>
+
+	<style name="Theme.ActionBar.Light.DarkActionBar">
+		<item name="android:windowTitleStyle">@style/WindowTitle.Holo.Inverse</item>
+		<item name="android:windowTitleBackgroundStyle">@style/Widget.ActionBar.Light.Solid.Inverse</item>
+
+		<!-- for programmatic instantiation -->
+
+		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_holo</item>
+		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
+		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
+		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyle</item>
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_darkactionbar_holo</item>
+	</style>
+
+	<style name="Theme.ActionBar.Dialog" parent="android:Theme">
+		<item name="android:windowFrame">@null</item>
+		<item name="android:windowTitleStyle">@style/DialogWindowTitle.Holo</item>
+		<item name="android:windowBackground">@drawable/popup_holo_dark</item>
+		<item name="android:windowIsFloating">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_holo</item>
+		<item name="popupBackground">@drawable/popup_holo_light</item>
+	</style>
+
+	<style name="Theme.ActionBar.Light.Dialog" parent="android:Theme.Light">
+		<item name="android:windowFrame">@null</item>
+		<item name="android:windowTitleStyle">@style/DialogWindowTitle.Holo.Light</item>
+		<item name="android:windowBackground">@drawable/popup_holo_light</item>
+		<item name="android:windowIsFloating">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
+		<item name="popupBackground">@drawable/popup_holo_light</item>
+	</style>
+
+</resources>

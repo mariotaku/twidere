@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Theme.Holo" parent="Theme.ActionBar"/>
+
+	<style name="Theme.Holo.Light" parent="Theme.ActionBar.Light"/>
+
+	<style name="Theme.Holo.Light.DarkActionBar" parent="Theme.ActionBar.Light.DarkActionBar"/>
+
+	<style name="Theme.Holo.Dialog" parent="Theme.ActionBar.Dialog"/>
+
+	<style name="Theme.Holo.Light.Dialog" parent="Theme.ActionBar.Light.Dialog"/>
+
+</resources>

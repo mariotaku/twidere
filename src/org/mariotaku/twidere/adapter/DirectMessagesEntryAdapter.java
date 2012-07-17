@@ -55,7 +55,8 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	}
 
 	public long findConversationId(long id) {
-		for (int i = 0; i < getCount(); i++) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) return ((Cursor) getItem(i)).getLong(IDX_CONVERSATION_ID);
 		}
 		return -1;

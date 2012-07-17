@@ -28,7 +28,7 @@ public class Extractor {
 	public List<String> extractCashtags(String text) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
-		final List<String> extracted = new ArrayList<String>();
+		final ArrayList<String> extracted = new ArrayList<String>();
 		for (final Entity entity : extractCashtagsWithIndices(text)) {
 			extracted.add(entity.value);
 		}
@@ -50,7 +50,7 @@ public class Extractor {
 		// cashtag, so we can simply return an empty list.
 		if (text.indexOf('$') == -1) return Collections.emptyList();
 
-		final List<Entity> extracted = new ArrayList<Entity>();
+		final ArrayList<Entity> extracted = new ArrayList<Entity>();
 		final Matcher matcher = Regex.VALID_CASHTAG.matcher(text);
 
 		while (matcher.find()) {
@@ -67,7 +67,7 @@ public class Extractor {
 	 * @return list of extracted entities
 	 */
 	public List<Entity> extractEntitiesWithIndices(String text) {
-		final List<Entity> entities = new ArrayList<Entity>();
+		final ArrayList<Entity> entities = new ArrayList<Entity>();
 		entities.addAll(extractURLsWithIndices(text));
 		entities.addAll(extractHashtagsWithIndices(text, false));
 		entities.addAll(extractMentionsOrListsWithIndices(text));
@@ -90,7 +90,7 @@ public class Extractor {
 	public List<String> extractHashtags(String text, boolean exclude_duplicate) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
-		final List<String> extracted = new ArrayList<String>();
+		final ArrayList<String> extracted = new ArrayList<String>();
 		for (final Entity entity : extractHashtagsWithIndices(text)) {
 			if (!exclude_duplicate || !extracted.contains(entity.value)) {
 				extracted.add(entity.value);
@@ -124,7 +124,7 @@ public class Extractor {
 	public List<String> extractMentionedScreennames(String text, boolean exclude_duplicate) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
-		final List<String> extracted = new ArrayList<String>();
+		final ArrayList<String> extracted = new ArrayList<String>();
 		for (final Entity entity : extractMentionedScreennamesWithIndices(text)) {
 			if (!exclude_duplicate || !extracted.contains(entity.value)) {
 				extracted.add(entity.value);
@@ -141,7 +141,7 @@ public class Extractor {
 	 * @return List of usernames referenced (without the leading @ sign)
 	 */
 	public List<Entity> extractMentionedScreennamesWithIndices(String text) {
-		final List<Entity> extracted = new ArrayList<Entity>();
+		final ArrayList<Entity> extracted = new ArrayList<Entity>();
 		for (final Entity entity : extractMentionsOrListsWithIndices(text)) {
 			if (entity.listSlug == null) {
 				extracted.add(entity);
@@ -165,7 +165,7 @@ public class Extractor {
 		}
 		if (!found) return Collections.emptyList();
 
-		final List<Entity> extracted = new ArrayList<Entity>();
+		final ArrayList<Entity> extracted = new ArrayList<Entity>();
 		final Matcher matcher = Regex.VALID_MENTION_OR_LIST.matcher(text);
 		while (matcher.find()) {
 			final String after = text.substring(matcher.end());
@@ -215,7 +215,7 @@ public class Extractor {
 	public List<String> extractURLs(String text) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
-		final List<String> urls = new ArrayList<String>();
+		final ArrayList<String> urls = new ArrayList<String>();
 		for (final Entity entity : extractURLsWithIndices(text)) {
 			urls.add(entity.value);
 		}
@@ -237,7 +237,7 @@ public class Extractor {
 			// so we can simply return an empty list.
 			return Collections.emptyList();
 
-		final List<Entity> urls = new ArrayList<Entity>();
+		final ArrayList<Entity> urls = new ArrayList<Entity>();
 
 		final Matcher matcher = Regex.VALID_URL.matcher(text);
 		while (matcher.find()) {
@@ -343,7 +343,7 @@ public class Extractor {
 		}
 		if (!found) return Collections.emptyList();
 
-		final List<Entity> extracted = new ArrayList<Entity>();
+		final ArrayList<Entity> extracted = new ArrayList<Entity>();
 		final Matcher matcher = Regex.VALID_HASHTAG.matcher(text);
 
 		while (matcher.find()) {
