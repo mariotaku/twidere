@@ -144,7 +144,7 @@
   <string name="retry">Wiederholen</string>
   <string name="more">Mehr</string>
   <string name="quote_format">Zitat-Format</string>
-  <string name="quote_format_summary">Lege Zitat-format für Tweets fest.</string>
+  <string name="quote_format_summary">Lege Zitat-Format für Tweets fest.</string>
   <string name="quote_format_message">\"[TEXT]\" wird mit deinem Zitat ersetzt.</string>
   <string name="direct_messages">Direktnachrichten</string>
   <string name="capital_on">AN</string>
