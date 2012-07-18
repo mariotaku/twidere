@@ -13,6 +13,14 @@
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=57610574"/>
 		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="Donate to twidere to support my development"
+			android:title="Donate">
+			<intent
+				android:action="org.mariotaku.twidere.VIEW_WEBPAGE"
+				android:data="file:///android_asset/donate.html"
+				android:targetPackage="org.mariotaku.twidere"/>
+		</PreferenceScreen>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="TRANSLATORS">
 		<PreferenceScreen

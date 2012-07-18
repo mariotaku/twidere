@@ -235,7 +235,8 @@
 			android:summary="@string/license_summary"
 			android:title="@string/license">
 			<intent
-				android:action="org.mariotaku.twidere.LICENSE"
+				android:action="org.mariotaku.twidere.VIEW_WEBPAGE"
+				android:data="file:///android_asset/gpl-3.0-standalone.html"
 				android:targetPackage="org.mariotaku.twidere"/>
 		</PreferenceScreen>
 	</PreferenceCategory>

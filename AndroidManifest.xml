@@ -166,8 +166,13 @@
 			android:label="@string/browser">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.VIEW_WEBPAGE"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
+
+				<data android:scheme="file"/>
+				<data android:scheme="http"/>
+				<data android:scheme="https"/>
 			</intent-filter>
 		</activity>
 		<activity
@@ -176,17 +181,6 @@
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.ABOUT"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.LicenseActivity"
-			android:label="@string/license"
-			android:theme="@style/Theme.Twidere.Light.Dialog">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<action android:name="org.mariotaku.twidere.LICENSE"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

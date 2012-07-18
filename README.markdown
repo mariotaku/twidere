@@ -42,15 +42,6 @@ This netbook (HASEE Q130B, 1.6GHz Intel Atom N270, $300 in 2009) is nearly broke
 
 So, buy me a (piece of) RAM stick :)
 
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_donations">
-<input type="hidden" name="business" value="mariotaku.lee@gmail.com">
-<input type="hidden" name="lc" value="GB">
-<input type="hidden" name="item_name" value="Donate to twidere">
-<input type="hidden" name="no_note" value="0">
-<input type="hidden" name="currency_code" value="USD">
-<input type="hidden" name="bn" value="PP-DonationsBF:btn_donateCC_LG_global.gif:NonHostedGuest">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG_global.gif" border="0" name="submit" alt="PayPal — The safer, easier way to pay online.">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mariotaku.lee%40gmail%2ecom&lc=EE&item_name=Donate%20to%20Twidere&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG_global.gif"/></a>
+
 

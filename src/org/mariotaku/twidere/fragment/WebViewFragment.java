@@ -19,10 +19,15 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.showErrorToast;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.BaseActivity;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -78,6 +83,7 @@ public class WebViewFragment extends BaseFragment {
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
 			if (mActivity instanceof BaseActivity) {
+				mActivity.setTitle(view.getTitle());
 				((BaseActivity) mActivity).setSupportProgressBarIndeterminateVisibility(false);
 			}
 		}
@@ -89,10 +95,15 @@ public class WebViewFragment extends BaseFragment {
 				((BaseActivity) mActivity).setSupportProgressBarIndeterminateVisibility(true);
 			}
 		}
-
+		
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			return false;
+			try {
+				mActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+			} catch (ActivityNotFoundException e) {
+				showErrorToast(mActivity, e, false);
+			}
+			return true;
 		}
 	}
 }

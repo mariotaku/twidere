@@ -26,7 +26,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.MenuItem;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 public class BrowserActivity extends BaseActivity {
@@ -37,6 +39,8 @@ public class BrowserActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
+		setContentView(new FrameLayout(this));
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mUri = getIntent().getData();
 		if (mUri == null) {
 			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
@@ -50,5 +54,15 @@ public class BrowserActivity extends BaseActivity {
 		fragment.setArguments(bundle);
 		ft.replace(android.R.id.content, fragment);
 		ft.commit();
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				finish();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }
