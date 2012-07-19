@@ -67,7 +67,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 			mAdapter.closeCursor();
 			mAdapter = null;
 		}
-		setAdapter(null);
+		setAdapter(mAdapter);
 	}
 
 	private static class ScreenNameTokenizer implements Tokenizer {
