@@ -19,7 +19,26 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.TwidereLinkify.*;
+import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_ALL_AVALIABLE_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGLY;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INSTAGRAM;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_SINA_WEIBO_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITPIC;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_YFROG;
+import static org.mariotaku.twidere.util.TwidereLinkify.SINA_WEIBO_IMAGES_AVALIABLE_SIZES;
+import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_IMGLY;
+import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_INSTAGRAM;
+import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_LOCKERZ_AND_PLIXI;
+import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_SINA_WEIBO_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_TWITPIC;
+import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_TWITTER_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_YFROG;
+import static org.mariotaku.twidere.util.TwidereLinkify.TWITPIC_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.YFROG_GROUP_ID;
 
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -312,54 +331,6 @@ public final class Utils implements Constants {
 		sAccountColors.clear();
 	}
 
-	public static ImageResult htmlHasImage(String html, boolean include_preview) {
-		if (html == null) return new ImageResult(false, null);
-		final Matcher m = PATTERN_ALL_AVALIABLE_IMAGES.matcher(html);
-		if (m.find()) {
-			if (!include_preview) return new ImageResult(true, null);
-			final String image_url = m.group();
-			String temp_thumbnail_url = null;
-			if (image_url.matches(STRING_PATTERN_IMGLY)) {
-				final Matcher url_m = PATTERN_IMGLY.matcher(image_url);
-				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(IMGLY_GROUP_ID)) : null;
-				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
-			} else if (image_url.matches(STRING_PATTERN_INSTAGRAM)) {
-				final Matcher url_m = PATTERN_INSTAGRAM.matcher(image_url);
-				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(INSTAGRAM_GROUP_ID)) : null;
-				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
-			} else if (image_url.matches(STRING_PATTERN_LOCKERZ_AND_PLIXI)) {
-				final ImageSpec spec =  getLockerzAndPlixiImage(image_url);
-				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
-			} else if (image_url.matches(STRING_PATTERN_SINA_WEIBO_IMAGES)) {
-				final ImageSpec spec =  getSinaWeiboImage(image_url);
-				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
-			} else if (image_url.matches(STRING_PATTERN_TWITPIC)) {
-				final Matcher url_m = PATTERN_TWITPIC.matcher(image_url);
-				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(TWITPIC_GROUP_ID)) : null;
-				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
-			} else if (image_url.matches(STRING_PATTERN_TWITTER_IMAGES)) {
-				final ImageSpec spec = getTwitterImage(image_url);
-				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
-			} else if (image_url.matches(STRING_PATTERN_YFROG)) {
-				final Matcher url_m = PATTERN_YFROG.matcher(image_url);
-				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(YFROG_GROUP_ID)) : null;
-				if (spec != null) temp_thumbnail_url = spec.thumbnail_link;
-			}
-			return new ImageResult(true, temp_thumbnail_url);
-		}
-		return new ImageResult(false, null);
-	}
-	
-	public static class ImageResult {
-		public final boolean has_image;
-		public final String matched_url;
-		public ImageResult(boolean has_image, String matched_url) {
-			this.has_image=has_image;
-			this.matched_url=matched_url;
-		}
-		
-	}
-	
 	public static ParcelableDirectMessage findDirectMessageInDatabases(Context context, long account_id, long message_id) {
 		if (context == null) return null;
 		final ContentResolver resolver = context.getContentResolver();
@@ -633,7 +604,7 @@ public final class Utils implements Constants {
 	public static long getAccountIdForStatusId(Context context, long status_id) {
 
 		if (context == null) return -1;
-		
+
 		final String[] cols = new String[] { Statuses.ACCOUNT_ID };
 		final String where = Statuses.STATUS_ID + " = " + status_id;
 
@@ -1060,10 +1031,8 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getSinaWeiboImage(String url) {
 		if (isNullOrEmpty(url)) return null;
-		final String thumbnail_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/",
-				"/thumbnail/");
-		final String full_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/",
-				"/large/");
+		final String thumbnail_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/", "/thumbnail/");
+		final String full_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/", "/large/");
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
@@ -1129,11 +1098,16 @@ public final class Utils implements Constants {
 		if (context == null) return null;
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
-		final boolean enable_gzip_compressing = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, true) : true;
-		final boolean ignore_ssl_error = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false) : false;
-		final boolean enable_proxy = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false) : false;
-		final String consumer_key = preferences != null ? preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY) : CONSUMER_KEY;
-		final String consumer_secret = preferences != null ? preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET) : CONSUMER_SECRET;
+		final boolean enable_gzip_compressing = preferences != null ? preferences.getBoolean(
+				PREFERENCE_KEY_GZIP_COMPRESSING, true) : true;
+		final boolean ignore_ssl_error = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR,
+				false) : false;
+		final boolean enable_proxy = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false)
+				: false;
+		final String consumer_key = preferences != null ? preferences.getString(PREFERENCE_KEY_CONSUMER_KEY,
+				CONSUMER_KEY) : CONSUMER_KEY;
+		final String consumer_secret = preferences != null ? preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET,
+				CONSUMER_SECRET) : CONSUMER_SECRET;
 
 		Twitter twitter = null;
 		final StringBuilder where = new StringBuilder();
@@ -1254,6 +1228,58 @@ public final class Utils implements Constants {
 
 	}
 
+	public static ImageResult htmlHasImage(String html, boolean include_preview) {
+		if (html == null) return new ImageResult(false, null);
+		final Matcher m = PATTERN_ALL_AVALIABLE_IMAGES.matcher(html);
+		if (m.find()) {
+			if (!include_preview) return new ImageResult(true, null);
+			final String image_url = m.group();
+			String temp_thumbnail_url = null;
+			if (image_url.matches(STRING_PATTERN_IMGLY)) {
+				final Matcher url_m = PATTERN_IMGLY.matcher(image_url);
+				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(IMGLY_GROUP_ID)) : null;
+				if (spec != null) {
+					temp_thumbnail_url = spec.thumbnail_link;
+				}
+			} else if (image_url.matches(STRING_PATTERN_INSTAGRAM)) {
+				final Matcher url_m = PATTERN_INSTAGRAM.matcher(image_url);
+				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(INSTAGRAM_GROUP_ID)) : null;
+				if (spec != null) {
+					temp_thumbnail_url = spec.thumbnail_link;
+				}
+			} else if (image_url.matches(STRING_PATTERN_LOCKERZ_AND_PLIXI)) {
+				final ImageSpec spec = getLockerzAndPlixiImage(image_url);
+				if (spec != null) {
+					temp_thumbnail_url = spec.thumbnail_link;
+				}
+			} else if (image_url.matches(STRING_PATTERN_SINA_WEIBO_IMAGES)) {
+				final ImageSpec spec = getSinaWeiboImage(image_url);
+				if (spec != null) {
+					temp_thumbnail_url = spec.thumbnail_link;
+				}
+			} else if (image_url.matches(STRING_PATTERN_TWITPIC)) {
+				final Matcher url_m = PATTERN_TWITPIC.matcher(image_url);
+				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(TWITPIC_GROUP_ID)) : null;
+				if (spec != null) {
+					temp_thumbnail_url = spec.thumbnail_link;
+				}
+			} else if (image_url.matches(STRING_PATTERN_TWITTER_IMAGES)) {
+				final ImageSpec spec = getTwitterImage(image_url);
+				if (spec != null) {
+					temp_thumbnail_url = spec.thumbnail_link;
+				}
+			} else if (image_url.matches(STRING_PATTERN_YFROG)) {
+				final Matcher url_m = PATTERN_YFROG.matcher(image_url);
+				final ImageSpec spec = url_m.find() ? getTwitpicImage(url_m.group(YFROG_GROUP_ID)) : null;
+				if (spec != null) {
+					temp_thumbnail_url = spec.thumbnail_link;
+				}
+			}
+			return new ImageResult(true, temp_thumbnail_url);
+		}
+		return new ImageResult(false, null);
+	}
+
 	public static boolean isMyAccount(Context context, long account_id) {
 		if (context == null) return false;
 		for (final long id : getAccountIds(context)) {
@@ -1306,7 +1332,8 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues makeAccountContentValues(int color, AccessToken access_token, User user,
-			String rest_base_url,String oauth_base_url,String signing_rest_base_url,String signing_oauth_base_url, String search_base_url,String upload_base_url, String basic_password, int auth_type) {
+			String rest_base_url, String oauth_base_url, String signing_rest_base_url, String signing_oauth_base_url,
+			String search_base_url, String upload_base_url, String basic_password, int auth_type) {
 		if (user == null) throw new IllegalArgumentException("User can't be null!");
 		final ContentValues values = new ContentValues();
 		switch (auth_type) {
@@ -1355,21 +1382,6 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues[] makeTrendsContentValues(List<Trends> trends_list) {
-		final List<ContentValues> result_list = new ArrayList<ContentValues>();
-		for (Trends trends : trends_list) {
-			if (trends == null) continue;
-			final long timestamp = trends.getTrendAt().getTime();
-			for (Trend trend : trends.getTrends()) {
-				final ContentValues values = new ContentValues();
-				values.put(CachedTrends.NAME, trend.getName());
-				values.put(CachedTrends.TIMESTAMP, timestamp);
-				result_list.add(values);
-			}
-		}
-		return result_list.toArray(new ContentValues[result_list.size()]);
-	}
-	
 	public static ContentValues makeDirectMessageContentValues(DirectMessage message, long account_id) {
 		if (message == null || message.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
@@ -1438,6 +1450,23 @@ public final class Utils implements Constants {
 		values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
 		values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
 		return values;
+	}
+
+	public static ContentValues[] makeTrendsContentValues(List<Trends> trends_list) {
+		final List<ContentValues> result_list = new ArrayList<ContentValues>();
+		for (final Trends trends : trends_list) {
+			if (trends == null) {
+				continue;
+			}
+			final long timestamp = trends.getTrendAt().getTime();
+			for (final Trend trend : trends.getTrends()) {
+				final ContentValues values = new ContentValues();
+				values.put(CachedTrends.NAME, trend.getName());
+				values.put(CachedTrends.TIMESTAMP, timestamp);
+				result_list.add(values);
+			}
+		}
+		return result_list.toArray(new ContentValues[result_list.size()]);
 	}
 
 	public static final int matcherEnd(Matcher matcher, int group) {
@@ -1843,6 +1872,17 @@ public final class Utils implements Constants {
 		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
 		final Toast toast = Toast.makeText(context, message, length);
 		toast.show();
+	}
+
+	public static class ImageResult {
+		public final boolean has_image;
+		public final String matched_url;
+
+		public ImageResult(boolean has_image, String matched_url) {
+			this.has_image = has_image;
+			this.matched_url = matched_url;
+		}
+
 	}
 
 }

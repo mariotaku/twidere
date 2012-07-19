@@ -36,14 +36,11 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -135,25 +132,12 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			final FrameLayout layout = new FrameLayout(getActivity());
 			mEditText = new EditText(getActivity());
-			layout.addView(mEditText, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT) {
-
-				{
-					final int margin = (int) (getResources().getDisplayMetrics().density * 16);
-					bottomMargin = margin;
-					leftMargin = margin;
-					rightMargin = margin;
-					topMargin = margin;
-					gravity = Gravity.CENTER;
-				}
-			});
 			builder.setTitle(R.string.add_rule);
-			builder.setView(layout);
+			builder.setView(mEditText);
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();

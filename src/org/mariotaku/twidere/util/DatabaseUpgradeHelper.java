@@ -222,7 +222,7 @@ public final class DatabaseUpgradeHelper {
 		if (!ArrayUtils.contentMatch(old_cols, new_cols)) return true;
 		final HashMap<String, String> old_map = new HashMap<String, String>(), new_map = new HashMap<String, String>();
 		// I'm sure the length of four arrays are equal.
-		final int length = old_cols.length; 
+		final int length = old_cols.length;
 		for (int i = 0; i < length; i++) {
 			old_map.put(old_cols[i], old_types[i]);
 			new_map.put(new_cols[i], new_types[i]);

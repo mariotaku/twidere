@@ -79,7 +79,8 @@ public class HtmlBuilder {
 				builder.append(escapeHTMLString(string.substring(links.get(i - 1).end, spec.start)));
 			}
 			builder.append("<a href=\"" + spec.link + "\">");
-			builder.append(spec.display == null ? escapeHTMLString(string.substring(spec.start, spec.end)) : spec.display);
+			builder.append(spec.display == null ? escapeHTMLString(string.substring(spec.start, spec.end))
+					: spec.display);
 			builder.append("</a>");
 			if (i == links.size() - 1) {
 				builder.append(escapeHTMLString(string.substring(spec.end, string.length())));

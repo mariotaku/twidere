@@ -104,6 +104,11 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 			this.thumbnail_link = thumbnail_link;
 			this.image_link = image_link;
 		}
+
+		@Override
+		public String toString() {
+			return "ImageSpec(" + thumbnail_link + ", " + image_link + ")";
+		}
 	}
 
 	private class ImagesAdapter extends BaseAdapter {

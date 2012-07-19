@@ -93,7 +93,6 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		return mTitleView.getText();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void setBackgroundDrawable(Drawable d) {
 		if (mActionBarView != null) {

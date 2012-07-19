@@ -35,18 +35,26 @@ import android.widget.ListView;
 public class HomeTimelineFragment extends CursorStatusesListFragment {
 
 	private SharedPreferences mPreferences;
+	private long mMinIdToRefresh;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
+			final Bundle extras = intent.getExtras();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				if (isAdded() && !isDetached()) {
 					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 				}
 			} else if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
 				onRefreshComplete();
+				if (extras != null) {
+					mMinIdToRefresh = extras.getBoolean(INTENT_KEY_SUCCEED) ? extras.getLong(INTENT_KEY_MIN_ID, -1)
+							: -1;
+				} else {
+					mMinIdToRefresh = -1;
+				}
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
 				if (isAdded() && !isDetached()) {
 					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
@@ -94,6 +102,15 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 				list.setSelection(position);
 			}
 			mShouldRestorePositoin = false;
+			return;
+		}
+		if (mMinIdToRefresh > 0) {
+			final ListView list = getListView();
+			final int position = getListAdapter().findItemPositionByStatusId(mMinIdToRefresh);
+			if (position > -1 && position < list.getCount()) {
+				list.setSelection(position);
+			}
+			mMinIdToRefresh = -1;
 		}
 	}
 

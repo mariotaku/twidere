@@ -24,6 +24,7 @@ import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
+import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.File;
 
@@ -35,6 +36,7 @@ import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -250,8 +252,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 						final String content_type = getIntent().getType();
 						if (extra_stream != null && content_type != null && content_type.startsWith("image/")) {
 							final String real_path = getImagePathFromUri(this, extra_stream);
-							final File file = new File(real_path);
-							if (file.exists()) {
+							final File file = real_path != null ? new File(real_path) : null;
+							if (file != null && file.exists()) {
 								mImageUri = Uri.fromFile(file);
 								mIsImageAttached = true;
 								mIsPhotoAttached = false;
@@ -439,7 +441,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	private void pickImage() {
 		final Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-		startActivityForResult(i, REQUEST_PICK_IMAGE);
+		try {
+			startActivityForResult(i, REQUEST_PICK_IMAGE);
+		} catch (final ActivityNotFoundException e) {
+			showErrorToast(this, e, false);
+		}
 	}
 
 	private void reloadAttachedImageThumbnail(File file) {
@@ -489,7 +495,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
 			mImageUri = Uri.fromFile(file);
 			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
-			startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+			try {
+				startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+			} catch (final ActivityNotFoundException e) {
+				showErrorToast(this, e, false);
+			}
 		}
 	}
 

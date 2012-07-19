@@ -85,7 +85,7 @@ public class ColorAnalyser {
 		final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, false);
 
 		final int resized_height = resized.getHeight(), resized_width = resized.getWidth();
-		
+
 		for (int y = 0; y < resized_height; y++) {
 			for (int x = 0; x < resized_width; x++) {
 				final int temp_color = resized.getPixel(x, y);

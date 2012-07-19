@@ -103,6 +103,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_LOAD_ITEM_LIMIT = "load_item_limit";
 	public static final String PREFERENCE_KEY_TEXT_SIZE = "text_size";
 	public static final String PREFERENCE_KEY_DARK_THEME = "dark_theme";
+	public static final String PREFERENCE_KEY_SOLID_COLOR_BACKGROUND = "solid_color_background";
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	public static final String PREFERENCE_KEY_CLEAR_CACHE = "clear_cache";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
@@ -172,7 +173,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_EXTENTION_UPLOAD = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD";
 	public static final String INTENT_ACTION_EXTENTION_OPEN_STATUS = INTENT_PACKAGE_PREFIX + "EXTENSION_OPEN_STATUS";
 	public static final String INTENT_ACTION_EXTENTION_OPEN_USER = INTENT_PACKAGE_PREFIX + "EXTENSION_OPEN_USER";
-	
+
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "HOME_TIMELINE_DATABASE_UPDATED";
 	public static final String BROADCAST_MENTIONS_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
@@ -211,6 +212,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_USER_ID = "user_id";
 	public static final String INTENT_KEY_LIST_ID = "list_id";
 	public static final String INTENT_KEY_MAX_ID = "max_id";
+	public static final String INTENT_KEY_MIN_ID = "min_id";
 	public static final String INTENT_KEY_STATUS_ID = "status_id";
 	public static final String INTENT_KEY_SCREEN_NAME = "screen_name";
 	public static final String INTENT_KEY_LIST_NAME = "list_name";
@@ -322,7 +324,9 @@ public interface Constants extends TwitterConstants {
 	public static final String DIR_NAME_CACHED_THUMBNAILS = "cached_thumbnails";
 
 	public static final int PANE_LEFT = R.id.left_pane;
+	public static final int PANE_LEFT_CONTAINER = R.id.left_pane_container;
 	public static final int PANE_RIGHT = R.id.right_pane;
+	public static final int PANE_RIGHT_CONTAINER = R.id.right_pane_container;
 
 	public static final int NOTIFICATION_ID_HOME_TIMELINE = 1;
 	public static final int NOTIFICATION_ID_MENTIONS = 2;

@@ -44,7 +44,7 @@ public class IndicatorLayout extends FrameLayout implements AnimationListener {
 		super(context);
 
 		mArrowImageView = new ImageView(context);
-		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
 				FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
 		lp.topMargin = lp.bottomMargin = lp.leftMargin = lp.rightMargin = getResources().getDimensionPixelSize(
 				R.dimen.indicator_internal_padding);
@@ -88,21 +88,15 @@ public class IndicatorLayout extends FrameLayout implements AnimationListener {
 
 	}
 
-	public final boolean isVisible() {
-		Animation currentAnim = getAnimation();
-		if (null != currentAnim) {
-			return mInAnim == currentAnim;
-		}
-
-		return getVisibility() == View.VISIBLE;
-	}
-
 	public void hide() {
 		startAnimation(mOutAnim);
 	}
 
-	public void show() {
-		startAnimation(mInAnim);
+	public final boolean isVisible() {
+		final Animation currentAnim = getAnimation();
+		if (null != currentAnim) return mInAnim == currentAnim;
+
+		return getVisibility() == View.VISIBLE;
 	}
 
 	@Override
@@ -127,12 +121,16 @@ public class IndicatorLayout extends FrameLayout implements AnimationListener {
 		setVisibility(View.VISIBLE);
 	}
 
+	public void pullToRefresh() {
+		mArrowImageView.startAnimation(mResetRotateAnimation);
+	}
+
 	public void releaseToRefresh() {
 		mArrowImageView.startAnimation(mRotateAnimation);
 	}
 
-	public void pullToRefresh() {
-		mArrowImageView.startAnimation(mResetRotateAnimation);
+	public void show() {
+		startAnimation(mInAnim);
 	}
 
 }

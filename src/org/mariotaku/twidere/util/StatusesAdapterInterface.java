@@ -25,10 +25,10 @@ public interface StatusesAdapterInterface extends BaseAdapterInterface {
 
 	public ParcelableStatus findItem(long id);
 
-	public void setShowLastItemAsGap(boolean gap);
-	
-	public void setShowAccountColor(boolean show);
-	
 	public void setDisplayImagePreview(boolean preview);
+
+	public void setShowAccountColor(boolean show);
+
+	public void setShowLastItemAsGap(boolean gap);
 
 }

@@ -133,7 +133,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mMenuBar.inflate(R.menu.menu_status);
 		setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
 		mMenuBar.show();
-		
+
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
 
 		mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_color : 0);
@@ -143,7 +143,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				d.mutate().setColorFilter(getAccountColor(getActivity(), status.account_id), PorterDuff.Mode.MULTIPLY);
 			}
 		}
-		
+
 		mNameView.setText(status.name);
 		mScreenNameView.setText(status.screen_name);
 		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(
@@ -157,9 +157,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		final String time = formatToLongTimeString(getActivity(), status.status_timestamp);
 		final String source_html = status.source;
 		if (!isNullOrEmpty(time) && !isNullOrEmpty(source_html)) {
-			mTimeAndSourceView.setText(Html.fromHtml(getString(	R.string.time_source, time, status.source)));
+			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, source_html)));
 		} else if (isNullOrEmpty(time) && !isNullOrEmpty(source_html)) {
-			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.source, status.source)));
+			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.source, source_html)));
 		} else if (!isNullOrEmpty(time) && isNullOrEmpty(source_html)) {
 			mTimeAndSourceView.setText(time);
 		}

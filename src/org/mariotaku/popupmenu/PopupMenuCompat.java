@@ -28,7 +28,7 @@ import android.widget.PopupWindow;
 import android.widget.PopupWindow.OnDismissListener;
 
 public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnItemClickListener, OnTouchListener {
-	
+
 	private FrameLayout mRootView;
 	private ListView mListView;
 
@@ -201,8 +201,9 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	@SuppressWarnings("deprecation")
 	private void setAnchor(View anchor) {
 
-		int horizontal_gravity = 0, vertical_gravity = 0;
-		
+		final int horizontal_gravity = 0;
+		int vertical_gravity = 0;
+
 		preShow();
 
 		mDidAction = false;
@@ -218,10 +219,10 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 
 		final int widthSpec = MeasureSpec.makeMeasureSpec(LayoutParams.WRAP_CONTENT, MeasureSpec.EXACTLY);
 		final int heightSpec = MeasureSpec.makeMeasureSpec(LayoutParams.WRAP_CONTENT, MeasureSpec.EXACTLY);
-		
+
 		mRootView.measure(widthSpec, heightSpec);
 
-		int rootHeight = mRootView.getMeasuredHeight();
+		final int rootHeight = mRootView.getMeasuredHeight();
 
 		if (rootWidth == 0) {
 			rootWidth = mRootView.getMeasuredWidth();
@@ -288,7 +289,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	 * 
 	 */
 	private void setView() {
-		
+
 		mRootView = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.popup_list, null);
 		mRootView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		mListView = (ListView) mRootView.findViewById(android.R.id.list);

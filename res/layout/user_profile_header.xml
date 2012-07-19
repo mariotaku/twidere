@@ -58,6 +58,18 @@
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
+
+			<TextView
+				android:id="@+id/followed_you_indicator"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:text="@string/followed_you"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="?android:attr/textColorSecondary"
+				android:textSize="12dp"
+				android:textStyle="italic"
+				android:visibility="gone"/>
 		</LinearLayout>
 
 		<FrameLayout

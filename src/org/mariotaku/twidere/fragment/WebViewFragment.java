@@ -95,12 +95,12 @@ public class WebViewFragment extends BaseFragment {
 				((BaseActivity) mActivity).setSupportProgressBarIndeterminateVisibility(true);
 			}
 		}
-		
+
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			try {
 				mActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-			} catch (ActivityNotFoundException e) {
+			} catch (final ActivityNotFoundException e) {
 				showErrorToast(mActivity, e, false);
 			}
 			return true;

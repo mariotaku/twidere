@@ -102,6 +102,7 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 		@Override
 		protected TwitterException doInBackground(Void... params) {
 			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, true);
+			if (twitter == null) return null;
 			try {
 				twitter4j.Status status = twitter.showStatus(mStatusId);
 				mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, status));

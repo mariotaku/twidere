@@ -22,12 +22,14 @@ package org.mariotaku.twidere.model;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.formatTweetText;
 import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
+import static org.mariotaku.twidere.util.Utils.htmlHasImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
-import static org.mariotaku.twidere.util.Utils.*;
 
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Date;
+
+import org.mariotaku.twidere.util.Utils.ImageResult;
 
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
@@ -104,7 +106,7 @@ public class ParcelableStatus implements Parcelable {
 		is_retweet = indices.is_retweet != -1 ? cursor.getInt(indices.is_retweet) == 1 : false;
 		is_favorite = indices.is_favorite != -1 ? cursor.getInt(indices.is_favorite) == 1 : false;
 		is_protected = indices.is_protected != -1 ? cursor.getInt(indices.is_protected) == 1 : false;
-		
+
 		retweeted_by_name = indices.retweeted_by_name != -1 ? cursor.getString(indices.retweeted_by_name) : null;
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
@@ -150,12 +152,13 @@ public class ParcelableStatus implements Parcelable {
 		in_reply_to_screen_name = in.readString();
 		source = in.readString();
 		profile_image_url_string = in.readString();
-		location = (GeoLocation) in.readSerializable();
-		profile_image_url = parseURL(profile_image_url_string);
 		image_preview_url_string = in.readString();
+		location = (GeoLocation) in.readSerializable();
+
 		image_preview_url = parseURL(image_preview_url_string);
+		profile_image_url = parseURL(profile_image_url_string);
 		text = text_html != null ? Html.fromHtml(text_html) : null;
-		
+
 	}
 
 	public ParcelableStatus(Status status, long account_id, boolean is_gap) {
@@ -196,7 +199,7 @@ public class ParcelableStatus implements Parcelable {
 		has_media = medias != null && medias.length > 0 || preview.has_image;
 
 		text = text_html != null ? Html.fromHtml(text_html) : null;
-		
+
 		image_preview_url_string = preview.matched_url;
 		image_preview_url = parseURL(image_preview_url_string);
 	}
@@ -234,7 +237,7 @@ public class ParcelableStatus implements Parcelable {
 		has_media = medias != null && medias.length > 0 || preview.has_image;
 
 		text = text_html != null ? Html.fromHtml(text_html) : null;
-		
+
 		image_preview_url_string = preview.matched_url;
 		image_preview_url = parseURL(image_preview_url_string);
 	}
@@ -274,6 +277,7 @@ public class ParcelableStatus implements Parcelable {
 		out.writeString(in_reply_to_screen_name);
 		out.writeString(source);
 		out.writeString(profile_image_url_string);
+		out.writeString(image_preview_url_string);
 		out.writeSerializable(location);
 
 	}

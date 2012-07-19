@@ -61,7 +61,8 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 		final Intent intent = getIntent();
 		mArguments.clear();
 		mData = intent.getData();
-		boolean is_search_user = mData != null ? QUERY_PARAM_VALUE_USERS.equals(mData.getQueryParameter(QUERY_PARAM_TYPE)) : false;
+		final boolean is_search_user = mData != null ? QUERY_PARAM_VALUE_USERS.equals(mData
+				.getQueryParameter(QUERY_PARAM_TYPE)) : false;
 		final String query = Intent.ACTION_SEARCH.equals(intent.getAction()) ? intent
 				.getStringExtra(SearchManager.QUERY) : mData != null ? mData.getQueryParameter(QUERY_PARAM_QUERY)
 				: null;

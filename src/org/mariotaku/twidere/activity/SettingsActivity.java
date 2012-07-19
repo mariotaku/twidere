@@ -51,6 +51,7 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
 		addPreferencesFromResource(R.xml.settings);
 		findPreference(PREFERENCE_KEY_DARK_THEME).setOnPreferenceChangeListener(this);
+		findPreference(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_KEY_REFRESH_INTERVAL).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_KEY_AUTO_REFRESH).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_KEY_CLEAR_DATABASES).setOnPreferenceClickListener(this);
@@ -73,7 +74,7 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 		final ServiceInterface service = getTwidereApplication().getServiceInterface();
 		final String value_string = String.valueOf(newValue);
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		if (PREFERENCE_KEY_DARK_THEME.equals(key)) {
+		if (PREFERENCE_KEY_DARK_THEME.equals(key) || PREFERENCE_KEY_SOLID_COLOR_BACKGROUND.equals(key)) {
 			boolean show_anim = false;
 			try {
 				final float transition_animation = Settings.System.getFloat(getContentResolver(),

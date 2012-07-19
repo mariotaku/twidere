@@ -365,6 +365,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			final HomeActivity home_activity = (HomeActivity) activity;
 			if (mDetailFragment instanceof ViewStatusFragment && mDetailFragment.isAdded()) {
 				((ViewStatusFragment) mDetailFragment).displayStatus(status);
+				home_activity.bringRightPaneToFront();
 			} else {
 				mDetailFragment = new ViewStatusFragment();
 				final Bundle args = new Bundle(bundle);

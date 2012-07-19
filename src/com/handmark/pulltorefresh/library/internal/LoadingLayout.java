@@ -58,7 +58,8 @@ public class LoadingLayout extends FrameLayout {
 
 	public LoadingLayout(Context context, final Mode mode, TypedArray attrs) {
 		super(context);
-		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
+		final ViewGroup header = (ViewGroup) LayoutInflater.from(context)
+				.inflate(R.layout.pull_to_refresh_header, this);
 		mHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
 		mSubHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_sub_text);
 		mHeaderImage = (ImageView) header.findViewById(R.id.pull_to_refresh_image);
@@ -93,15 +94,15 @@ public class LoadingLayout extends FrameLayout {
 		}
 
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextColor)) {
-			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
+			final ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
 			setTextColor(null != colors ? colors : ColorStateList.valueOf(0xFF000000));
 		}
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderSubTextColor)) {
-			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
+			final ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
 			setSubTextColor(null != colors ? colors : ColorStateList.valueOf(0xFF000000));
 		}
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
-			Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
+			final Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
 			if (null != background) {
 				setBackgroundDrawable(background);
 			}
@@ -124,6 +125,26 @@ public class LoadingLayout extends FrameLayout {
 		reset();
 	}
 
+	public void onPullY(float scaleOfHeight) {
+		mHeaderImageMatrix.setRotate(scaleOfHeight * 90, mRotationPivotX, mRotationPivotY);
+		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+	}
+
+	public void pullToRefresh() {
+		mHeaderText.setText(Html.fromHtml(mPullLabel));
+	}
+
+	public void refreshing() {
+		mHeaderText.setText(Html.fromHtml(mRefreshingLabel));
+		mHeaderImage.startAnimation(mRotateAnimation);
+
+		mSubHeaderText.setVisibility(View.GONE);
+	}
+
+	public void releaseToRefresh() {
+		mHeaderText.setText(Html.fromHtml(mReleaseLabel));
+	}
+
 	public void reset() {
 		mHeaderText.setText(Html.fromHtml(mPullLabel));
 		mHeaderImage.setVisibility(View.VISIBLE);
@@ -138,19 +159,15 @@ public class LoadingLayout extends FrameLayout {
 		}
 	}
 
-	public void releaseToRefresh() {
-		mHeaderText.setText(Html.fromHtml(mReleaseLabel));
+	public void setLoadingDrawable(Drawable imageDrawable) {
+		// Set Drawable, and save width/height
+		mHeaderImage.setImageDrawable(imageDrawable);
+		mRotationPivotX = imageDrawable.getIntrinsicWidth() / 2f;
+		mRotationPivotY = imageDrawable.getIntrinsicHeight() / 2f;
 	}
 
 	public void setPullLabel(String pullLabel) {
 		mPullLabel = pullLabel;
-	}
-
-	public void refreshing() {
-		mHeaderText.setText(Html.fromHtml(mRefreshingLabel));
-		mHeaderImage.startAnimation(mRotateAnimation);
-
-		mSubHeaderText.setVisibility(View.GONE);
 	}
 
 	public void setRefreshingLabel(String refreshingLabel) {
@@ -159,34 +176,6 @@ public class LoadingLayout extends FrameLayout {
 
 	public void setReleaseLabel(String releaseLabel) {
 		mReleaseLabel = releaseLabel;
-	}
-
-	public void pullToRefresh() {
-		mHeaderText.setText(Html.fromHtml(mPullLabel));
-	}
-
-	public void setTextColor(ColorStateList color) {
-		mHeaderText.setTextColor(color);
-		mSubHeaderText.setTextColor(color);
-	}
-
-	public void setSubTextColor(ColorStateList color) {
-		mSubHeaderText.setTextColor(color);
-	}
-
-	public void setTextColor(int color) {
-		setTextColor(ColorStateList.valueOf(color));
-	}
-
-	public void setLoadingDrawable(Drawable imageDrawable) {
-		// Set Drawable, and save width/height
-		mHeaderImage.setImageDrawable(imageDrawable);
-		mRotationPivotX = imageDrawable.getIntrinsicWidth() / 2f;
-		mRotationPivotY = imageDrawable.getIntrinsicHeight() / 2f;
-	}
-
-	public void setSubTextColor(int color) {
-		setSubTextColor(ColorStateList.valueOf(color));
 	}
 
 	public void setSubHeaderText(CharSequence label) {
@@ -198,9 +187,21 @@ public class LoadingLayout extends FrameLayout {
 		}
 	}
 
-	public void onPullY(float scaleOfHeight) {
-		mHeaderImageMatrix.setRotate(scaleOfHeight * 90, mRotationPivotX, mRotationPivotY);
-		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+	public void setSubTextColor(ColorStateList color) {
+		mSubHeaderText.setTextColor(color);
+	}
+
+	public void setSubTextColor(int color) {
+		setSubTextColor(ColorStateList.valueOf(color));
+	}
+
+	public void setTextColor(ColorStateList color) {
+		mHeaderText.setTextColor(color);
+		mSubHeaderText.setTextColor(color);
+	}
+
+	public void setTextColor(int color) {
+		setTextColor(ColorStateList.valueOf(color));
 	}
 
 	private void resetImageRotation() {

@@ -57,6 +57,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		return ((InternalListView) getRefreshableView()).getContextMenuInfo();
 	}
 
+	@Override
 	public void setPullLabel(String pullLabel, Mode mode) {
 		super.setPullLabel(pullLabel, mode);
 
@@ -68,6 +69,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
+	@Override
 	public void setRefreshingLabel(String refreshingLabel, Mode mode) {
 		super.setRefreshingLabel(refreshingLabel, mode);
 
@@ -79,6 +81,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
+	@Override
 	public void setReleaseLabel(String releaseLabel, Mode mode) {
 		super.setReleaseLabel(releaseLabel, mode);
 
@@ -92,13 +95,13 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	@Override
 	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
-		ListView lv = new InternalListView(context, attrs);
+		final ListView lv = new InternalListView(context, attrs);
 
 		// Get Styles from attrs
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
+		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
 		// Create Loading Views ready for use later
-		FrameLayout frame = new FrameLayout(context);
+		final FrameLayout frame = new FrameLayout(context);
 		mHeaderLoadingView = new LoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
 		frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 		mHeaderLoadingView.setVisibility(View.GONE);
@@ -117,10 +120,12 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		return lv;
 	}
 
+	@Override
 	protected int getNumberInternalFooterViews() {
 		return null != mFooterLoadingView ? 1 : 0;
 	}
 
+	@Override
 	protected int getNumberInternalHeaderViews() {
 		return null != mHeaderLoadingView ? 1 : 0;
 	}
@@ -131,7 +136,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// If we're not showing the Refreshing view, or the list is empty, then
 		// the header/footer views won't show so we use the
 		// normal method
-		ListAdapter adapter = mRefreshableView.getAdapter();
+		final ListAdapter adapter = mRefreshableView.getAdapter();
 		if (!getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
 			super.resetHeader();
 			return;
@@ -186,7 +191,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// If we're not showing the Refreshing view, or the list is empty, then
 		// the header/footer views won't show so we use the
 		// normal method
-		ListAdapter adapter = mRefreshableView.getAdapter();
+		final ListAdapter adapter = mRefreshableView.getAdapter();
 		if (!getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
 			super.setRefreshingInternal(doScroll);
 			return;
@@ -253,11 +258,12 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			 */
 			try {
 				super.draw(canvas);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
 
+		@Override
 		public ContextMenuInfo getContextMenuInfo() {
 			return super.getContextMenuInfo();
 		}

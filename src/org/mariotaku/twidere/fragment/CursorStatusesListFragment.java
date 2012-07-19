@@ -67,7 +67,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		final TwidereApplication app = getApplication();
-		mAdapter = new CursorStatusesAdapter(getActivity(), app != null ? app.getProfileImageLoader() : null, app != null ? app.getPreviewImageLoader() : null);
+		mAdapter = new CursorStatusesAdapter(getActivity(), app != null ? app.getProfileImageLoader() : null,
+				app != null ? app.getPreviewImageLoader() : null);
 		super.onActivityCreated(savedInstanceState);
 	}
 

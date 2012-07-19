@@ -382,7 +382,7 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		}
 		return -1;
 	}
-	
+
 	public static ServiceInterface getInstance(Application application) {
 		if (sInstance == null || !sInstance.test()) {
 			sInstance = new ServiceInterface(application);

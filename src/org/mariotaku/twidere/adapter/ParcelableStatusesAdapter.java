@@ -44,7 +44,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private float mTextSize;
 	private final Context mContext;
 
-	public ParcelableStatusesAdapter(Context context, LazyImageLoader profile_image_loader, LazyImageLoader preview_loader) {
+	public ParcelableStatusesAdapter(Context context, LazyImageLoader profile_image_loader,
+			LazyImageLoader preview_loader) {
 		super(context, R.layout.status_list_item, R.id.text);
 		mContext = context;
 		mProfileImageLoader = profile_image_loader;
@@ -123,7 +124,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			if (mDisplayProfileImage) {
 				mProfileImageLoader.displayImage(status.profile_image_url, holder.profile_image);
 			}
-			holder.image_preview.setVisibility(mDisplayImagePreview && status.has_media && status.image_preview_url != null ? View.VISIBLE : View.GONE);
+			holder.image_preview.setVisibility(mDisplayImagePreview && status.has_media
+					&& status.image_preview_url != null ? View.VISIBLE : View.GONE);
 			if (mDisplayImagePreview && status.has_media && status.image_preview_url != null) {
 				mPreviewImageLoader.displayImage(status.image_preview_url, holder.image_preview);
 			}
@@ -145,6 +147,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			if (clear_old || findItemByStatusId(status.status_id) == null) {
 				add(status);
 			}
+		}
+	}
+
+	@Override
+	public void setDisplayImagePreview(boolean preview) {
+		if (preview != mDisplayImagePreview) {
+			mDisplayImagePreview = preview;
+			notifyDataSetChanged();
 		}
 	}
 
@@ -184,14 +194,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void setTextSize(float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setDisplayImagePreview(boolean preview) {
-		if (preview != mDisplayImagePreview) {
-			mDisplayImagePreview = preview;
 			notifyDataSetChanged();
 		}
 	}

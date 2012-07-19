@@ -33,6 +33,8 @@ import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.view.ExtendedFrameLayout;
+import org.mariotaku.twidere.view.ExtendedFrameLayout.TouchInterceptor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
@@ -52,6 +54,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -70,6 +73,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	private ImageButton mComposeButton;
 	private ServiceInterface mService;
 	private TabPageIndicator mIndicator;
+	private ExtendedFrameLayout mLeftPaneContainer, mRightPaneContainer;
+	private ViewGroup mLeftPaneLayer, mRightPaneLayer;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -84,14 +89,51 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	};
 
 	private boolean mProgressBarIndeterminateVisible = false;
-
 	private boolean mIsNavigateToDefaultAccount = false;
-	private boolean mStateSaved;
+
+	private final TouchInterceptor mLeftPaneTouchInterceptor = new TouchInterceptor() {
+
+		@Override
+		public void onInterceptTouchEvent(MotionEvent event) {
+			if (MotionEvent.ACTION_DOWN == event.getAction()) {
+				bringLeftPaneToFront();
+			}
+		}
+	};
+	private final TouchInterceptor mRightPaneTouchInterceptor = new TouchInterceptor() {
+
+		@Override
+		public void onInterceptTouchEvent(MotionEvent event) {
+			if (MotionEvent.ACTION_DOWN == event.getAction()) {
+				bringRightPaneToFront();
+			}
+		}
+	};
 
 	public static final int TAB_POSITION_HOME = 0;
 	public static final int TAB_POSITION_MENTIONS = 1;
 	public static final int TAB_POSITION_DISCOVER = 2;
 	public static final int TAB_POSITION_ME = 3;
+
+	public void bringLeftPaneToFront() {
+		if (mLeftPaneLayer == null || mRightPaneLayer == null || mLeftPaneContainer == null
+				|| mRightPaneContainer == null) return;
+		mLeftPaneLayer.bringToFront();
+		final int bg_res_id = isDarkTheme() ? R.drawable.bg_two_pane_compact_dark_left
+				: R.drawable.bg_two_pane_compact_light_left;
+		mLeftPaneContainer.setBackgroundResource(bg_res_id);
+		mRightPaneContainer.setBackgroundResource(0);
+	}
+
+	public void bringRightPaneToFront() {
+		if (mLeftPaneLayer == null || mRightPaneLayer == null || mLeftPaneContainer == null
+				|| mRightPaneContainer == null) return;
+		mRightPaneLayer.bringToFront();
+		final int bg_res_id = isDarkTheme() ? R.drawable.bg_two_pane_compact_dark_right
+				: R.drawable.bg_two_pane_compact_light_right;
+		mRightPaneContainer.setBackgroundResource(bg_res_id);
+		mLeftPaneContainer.setBackgroundResource(0);
+	}
 
 	public boolean checkDefaultAccountSet() {
 		boolean result = true;
@@ -119,7 +161,15 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	}
 
 	public boolean isDualPaneMode() {
-		return findViewById(PANE_LEFT) instanceof ViewGroup && findViewById(PANE_RIGHT) instanceof ViewGroup;
+		return findViewById(PANE_LEFT_CONTAINER) instanceof ViewGroup
+				&& findViewById(PANE_RIGHT_CONTAINER) instanceof ViewGroup;
+	}
+
+	public boolean isDualPaneModeCompact() {
+		final boolean is_dual_pane = isDualPaneMode();
+		if (!is_dual_pane) return false;
+		final View main_container = findViewById(R.id.main_container);
+		return is_dual_pane && main_container != null && main_container instanceof FrameLayout;
 	}
 
 	@Override
@@ -169,7 +219,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		final Fragment fragment = fm.findFragmentById(PANE_LEFT);
 		final View main_view = findViewById(R.id.main);
 		final boolean left_pane_used = fragment != null && fragment.isAdded();
-		main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
+		if (main_view != null) {
+			main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
+		}
 		setPagingEnabled(!left_pane_used);
 	}
 
@@ -190,12 +242,20 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		mService = getTwidereApplication().getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
-		mStateSaved = false;
 		final boolean home_display_icon = getResources().getBoolean(R.bool.home_display_icon);
 		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
 		setContentView(R.layout.main);
 		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
 		mComposeButton = (ImageButton) findViewById(R.id.button_compose);
+		if (isDualPaneModeCompact()) {
+			mLeftPaneContainer = (ExtendedFrameLayout) findViewById(R.id.left_pane_container);
+			mLeftPaneContainer.setTouchInterceptor(mLeftPaneTouchInterceptor);
+			mLeftPaneLayer = (ViewGroup) findViewById(R.id.left_pane_layer);
+			mRightPaneContainer = (ExtendedFrameLayout) findViewById(R.id.right_pane_container);
+			mRightPaneContainer.setTouchInterceptor(mRightPaneTouchInterceptor);
+			mRightPaneLayer = (ViewGroup) findViewById(R.id.right_pane_layer);
+			bringLeftPaneToFront();
+		}
 		final long[] account_ids = getAccountIds(this);
 
 		if (account_ids.length <= 0) {
@@ -323,7 +383,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	public void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		mStateSaved = false;
 	}
 
 	@Override
@@ -348,7 +407,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	public void onResume() {
 		super.onResume();
-		mStateSaved = false;
 		invalidateSupportOptionsMenu();
 	}
 
@@ -356,10 +414,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	public void onStart() {
 		final FragmentManager fm = getSupportFragmentManager();
 		if (!isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
-			fm.popBackStackImmediate();
+			// fm.popBackStackImmediate();
 		}
 		super.onStart();
-		mStateSaved = false;
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
@@ -370,7 +427,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		unregisterReceiver(mStateReceiver);
 		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
 		super.onStop();
-		mStateSaved = true;
 	}
 
 	public void setPagingEnabled(boolean enabled) {
@@ -389,9 +445,14 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	public void showAtPane(int pane, Fragment fragment, boolean addToBackStack) {
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		switch (pane) {
-			case PANE_LEFT:
+			case PANE_LEFT: {
+				bringLeftPaneToFront();
+				ft.replace(PANE_LEFT, fragment);
+				break;
+			}
 			case PANE_RIGHT: {
-				ft.replace(pane, fragment);
+				bringRightPaneToFront();
+				ft.replace(PANE_RIGHT, fragment);
 				break;
 			}
 		}
@@ -418,12 +479,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	protected void onPostResume() {
 		super.onPostResume();
-		mStateSaved = false;
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		mStateSaved = true;
 		super.onSaveInstanceState(outState);
 	}
 

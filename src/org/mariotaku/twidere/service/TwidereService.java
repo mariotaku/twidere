@@ -904,9 +904,15 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public Twitter getTwitter(long account_id) {
+			return getTwitterInstance(TwidereService.this, account_id, true, true);
+		}
+
+		@Override
 		protected void onPostExecute(List<ListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
-			mStoreStatusesTaskId = mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, is_auto_refresh), true);
+			mStoreStatusesTaskId = mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, is_auto_refresh,
+					shouldSetMinId()), true);
 			mGetHomeTimelineTaskId = -1;
 		}
 
@@ -932,9 +938,15 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public Twitter getTwitter(long account_id) {
+			return getTwitterInstance(TwidereService.this, account_id, true, false);
+		}
+
+		@Override
 		protected void onPostExecute(List<ListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
-			mStoreMentionsTaskId = mAsyncTaskManager.add(new StoreMentionsTask(responses, is_auto_refresh), true);
+			mStoreMentionsTaskId = mAsyncTaskManager.add(new StoreMentionsTask(responses, is_auto_refresh,
+					shouldSetMinId()), true);
 			mGetMentionsTaskId = -1;
 		}
 
@@ -993,6 +1005,8 @@ public class TwidereService extends Service implements Constants {
 
 		private long[] account_ids, max_ids;
 
+		private boolean should_set_min_id;
+
 		public GetStatusesTask(Uri uri, long[] account_ids, long[] max_ids) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
@@ -1002,6 +1016,12 @@ public class TwidereService extends Service implements Constants {
 		public abstract ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
 				throws TwitterException;
 
+		public abstract Twitter getTwitter(long account_id);
+
+		public boolean shouldSetMinId() {
+			return should_set_min_id;
+		}
+
 		@Override
 		protected List<ListResponse<twitter4j.Status>> doInBackground(Void... params) {
 
@@ -1010,12 +1030,13 @@ public class TwidereService extends Service implements Constants {
 			if (account_ids == null) return result;
 
 			final boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
+			should_set_min_id = !max_ids_valid;
 
 			int idx = 0;
 			final int load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
 					PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 			for (final long account_id : account_ids) {
-				final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, true);
+				final Twitter twitter = getTwitter(account_id);
 				if (twitter != null) {
 					try {
 						final Paging paging = new Paging();
@@ -1477,8 +1498,9 @@ public class TwidereService extends Service implements Constants {
 
 		private final boolean is_auto_refresh;
 
-		public StoreHomeTimelineTask(List<ListResponse<twitter4j.Status>> result, boolean is_auto_refresh) {
-			super(result, Statuses.CONTENT_URI);
+		public StoreHomeTimelineTask(List<ListResponse<twitter4j.Status>> result, boolean is_auto_refresh,
+				boolean should_set_min_id) {
+			super(result, Statuses.CONTENT_URI, should_set_min_id);
 			this.is_auto_refresh = is_auto_refresh;
 		}
 
@@ -1487,7 +1509,13 @@ public class TwidereService extends Service implements Constants {
 			mStoreStatusesTaskId = -1;
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
-			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed));
+			final Bundle extras = new Bundle();
+			extras.putBoolean(INTENT_KEY_SUCCEED, succeed);
+			if (shouldSetMinId() && getTotalItemsInserted() > 0) {
+				extras.putLong(INTENT_KEY_MIN_ID,
+						response != null && response.data != null ? response.data.getLong(INTENT_KEY_MIN_ID, -1) : -1);
+			}
+			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtras(extras));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false)) {
 				mNewStatusesCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
@@ -1515,8 +1543,9 @@ public class TwidereService extends Service implements Constants {
 
 		private final boolean is_auto_refresh;
 
-		public StoreMentionsTask(List<ListResponse<twitter4j.Status>> result, boolean is_auto_refresh) {
-			super(result, Mentions.CONTENT_URI);
+		public StoreMentionsTask(List<ListResponse<twitter4j.Status>> result, boolean is_auto_refresh,
+				boolean should_set_min_id) {
+			super(result, Mentions.CONTENT_URI, should_set_min_id);
 			this.is_auto_refresh = is_auto_refresh;
 		}
 
@@ -1525,7 +1554,13 @@ public class TwidereService extends Service implements Constants {
 			mStoreMentionsTaskId = -1;
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
-			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed));
+			final Bundle extras = new Bundle();
+			extras.putBoolean(INTENT_KEY_SUCCEED, succeed);
+			if (shouldSetMinId() && getTotalItemsInserted() > 0) {
+				extras.putLong(INTENT_KEY_MIN_ID,
+						response != null && response.data != null ? response.data.getLong(INTENT_KEY_MIN_ID, -1) : -1);
+			}
+			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtras(extras));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) {
 				mNewMentionsCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
@@ -1607,15 +1642,27 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class StoreStatusesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
+	private abstract class StoreStatusesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
 		private final List<ListResponse<twitter4j.Status>> responses;
 		private final Uri uri;
+		private final boolean should_set_min_id;
 
-		public StoreStatusesTask(List<ListResponse<twitter4j.Status>> result, Uri uri) {
+		int total_items_inserted = 0;
+
+		public StoreStatusesTask(List<ListResponse<twitter4j.Status>> result, Uri uri, boolean should_set_min_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			responses = result;
+			this.should_set_min_id = should_set_min_id;
 			this.uri = uri;
+		}
+
+		public int getTotalItemsInserted() {
+			return total_items_inserted;
+		}
+
+		public boolean shouldSetMinId() {
+			return should_set_min_id;
 		}
 
 		@Override
@@ -1623,7 +1670,8 @@ public class TwidereService extends Service implements Constants {
 			final ContentResolver resolver = getContentResolver();
 			boolean succeed = false;
 			final Uri query_uri = buildQueryUri(uri, false);
-			int total_items_inserted = 0;
+
+			long min_id_all = -1;
 			for (final ListResponse<twitter4j.Status> response : responses) {
 				final long account_id = response.account_id;
 				final ResponseList<twitter4j.Status> statuses = response.list;
@@ -1712,11 +1760,17 @@ public class TwidereService extends Service implements Constants {
 					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
 					resolver.update(query_uri, values, where.toString(), null);
 				}
+				if (min_id_all <= 0 || min_id > 0 && min_id < min_id_all) {
+					min_id_all = min_id;
+				}
 				succeed = true;
 			}
 			final Bundle bundle = new Bundle();
 			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
 			bundle.putInt(INTENT_KEY_ITEMS_INSERTED, total_items_inserted);
+			if (should_set_min_id && total_items_inserted > 0) {
+				bundle.putLong(INTENT_KEY_MIN_ID, min_id_all);
+			}
 			return new SingleResponse<Bundle>(-1, bundle, null);
 		}
 

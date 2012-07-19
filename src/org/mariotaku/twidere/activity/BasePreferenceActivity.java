@@ -35,18 +35,26 @@ import android.provider.Settings.SettingNotFoundException;
 
 class BasePreferenceActivity extends ActionBarPreferenceActivity implements Constants, ActivityThemeChangeInterface {
 
-	private int mThemeId;
+	private boolean mIsDarkTheme, mIsSolidColorBackground;
 
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();
 	}
 
+	public boolean isDarkTheme() {
+		return mIsDarkTheme;
+	}
+
+	public boolean isSolidColorBackground() {
+		return mIsSolidColorBackground;
+	}
+
 	@Override
 	public boolean isThemeChanged() {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final int new_theme_id = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere
-				: R.style.Theme_Twidere_Light;
-		return new_theme_id != mThemeId;
+		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
+		final boolean solid_color_background = preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
+		return is_dark_theme != mIsDarkTheme || solid_color_background != mIsSolidColorBackground;
 	}
 
 	@Override
@@ -68,14 +76,19 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 				e.printStackTrace();
 			}
 			restartActivity(this, show_anim);
+			return;
 		}
 	}
 
 	@Override
 	public void setTheme() {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere
-				: R.style.Theme_Twidere_Light;
-		setTheme(mThemeId);
+		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
+		mIsDarkTheme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
+		mIsSolidColorBackground = preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
+		setTheme(is_dark_theme ? R.style.Theme_Twidere : R.style.Theme_Twidere_Light);
+		if (mIsSolidColorBackground) {
+			getWindow().setBackgroundDrawableResource(is_dark_theme ? android.R.color.black : android.R.color.white);
+		}
 	}
 }

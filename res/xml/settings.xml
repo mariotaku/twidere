@@ -11,6 +11,11 @@
 			android:key="dark_theme"
 			android:summary="@string/dark_theme_summary"
 			android:title="@string/dark_theme"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="solid_color_background"
+			android:summary="@string/solid_color_background_summary"
+			android:title="@string/solid_color_background"/>
 
 		<org.mariotaku.preference.TextSizePreference
 			maxValue="24.0"

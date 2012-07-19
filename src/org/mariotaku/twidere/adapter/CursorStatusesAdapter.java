@@ -23,9 +23,9 @@ import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
+import static org.mariotaku.twidere.util.Utils.htmlHasImage;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseURL;
-import static org.mariotaku.twidere.util.Utils.*;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -33,6 +33,7 @@ import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
+import org.mariotaku.twidere.util.Utils.ImageResult;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -67,7 +68,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 
 		final ImageResult preview = htmlHasImage(text, mDisplayImagePreview);
-		
+
 		final long account_id = cursor.getLong(mIndices.account_id);
 		final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
 		final long retweet_count = cursor.getLong(mIndices.retweet_count);
@@ -75,7 +76,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
 		final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
 		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
-		
+
 		final boolean has_media = cursor.getShort(mIndices.has_media) == 1 || preview.has_image;
 		final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
 		final boolean is_retweet = !isNullOrEmpty(retweeted_by) && cursor.getShort(mIndices.is_retweet) == 1;
@@ -106,8 +107,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 			holder.reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
 			if (is_retweet) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by
-						+ (retweet_count > 1 ? " + " + (retweet_count - 1) : "")));
+				holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
+						R.string.retweeted_by_with_count, retweeted_by, retweet_count - 1) : mContext.getString(
+						R.string.retweeted_by, retweeted_by));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
 			} else if (is_reply) {
@@ -120,7 +122,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				final String profile_image_url_string = cursor.getString(mIndices.profile_image_url);
 				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
 			}
-			holder.image_preview.setVisibility(mDisplayImagePreview && preview.has_image && preview.matched_url != null ? View.VISIBLE : View.GONE);
+			holder.image_preview
+					.setVisibility(mDisplayImagePreview && preview.has_image && preview.matched_url != null ? View.VISIBLE
+							: View.GONE);
 			if (mDisplayImagePreview && preview.has_image && preview.matched_url != null) {
 				mPreviewImageLoader.displayImage(parseURL(preview.matched_url), holder.image_preview);
 			}
@@ -171,6 +175,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
+	public void setDisplayImagePreview(boolean preview) {
+		if (preview != mDisplayImagePreview) {
+			mDisplayImagePreview = preview;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
 	public void setDisplayName(boolean display) {
 		if (display != mDisplayName) {
 			mDisplayName = display;
@@ -218,14 +230,5 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			mIndices = null;
 		}
 		return super.swapCursor(cursor);
-	}
-
-
-	@Override
-	public void setDisplayImagePreview(boolean preview) {
-		if (preview != mDisplayImagePreview) {
-			mDisplayImagePreview = preview;
-			notifyDataSetChanged();
-		}
 	}
 }
