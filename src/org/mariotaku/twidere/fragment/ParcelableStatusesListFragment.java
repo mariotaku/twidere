@@ -26,6 +26,10 @@ import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.content.Loader;
@@ -33,6 +37,36 @@ import android.support.v4.content.Loader;
 public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
 	private ParcelableStatusesAdapter mAdapter;
+
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_STATUS_DESTROYED.equals(action)) {
+				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
+				final boolean succeed = intent.getBooleanExtra(INTENT_KEY_SUCCEED, false);
+				if (status_id > 0 && succeed) {
+					deleteStatus(status_id);
+				}
+			}
+			
+		}
+		
+	};
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_STATUS_DESTROYED);
+		registerReceiver(mStateReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
+	}
 
 	@Override
 	public final long[] getLastStatusIds() {
@@ -133,4 +167,16 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		super.onSaveInstanceState(outState);
 	}
 
+	private void deleteStatus(long status_id) {
+		if (status_id <= 0) return;
+		final List<ParcelableStatus> data = getData();
+		final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
+		for (final ParcelableStatus status : data) {
+			if (status.status_id == status_id || status.retweet_id == status_id) {
+				data_to_remove.add(status);
+			}
+		}
+		data.removeAll(data_to_remove);
+		mAdapter.setData(data, true);
+	}
 }

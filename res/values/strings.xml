@@ -260,5 +260,6 @@
 	<string name="solid_color_background">Solid color background</string>
 	<string name="solid_color_background_summary">This may useful if screen of your device is AMOLED.</string>
 	<string name="followed_you">Followed you</string>
+	<string name="user_list">User list</string>
 
 </resources>

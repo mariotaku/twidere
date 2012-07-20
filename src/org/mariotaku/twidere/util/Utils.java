@@ -69,6 +69,9 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.fragment.ImagesPreviewFragment.ImageSpec;
+import org.mariotaku.twidere.fragment.ListDetailsFragment;
+import org.mariotaku.twidere.fragment.ListMembersFragment;
+import org.mariotaku.twidere.fragment.ListSubscribersFragment;
 import org.mariotaku.twidere.fragment.ListTimelineFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
@@ -209,6 +212,25 @@ public final class Utils implements Constants {
 
 	private Utils() {
 		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
+	}
+	
+	public static ArrayList<Long> getStatusIdsInDatabase(Context context, Uri uri, long account_id) {
+		final ArrayList<Long> list = new ArrayList<Long>();
+		if (context == null) return list;
+		final ContentResolver resolver = context.getContentResolver(); 
+		final String where = Statuses.ACCOUNT_ID + " = " + account_id;
+		final String[] projection = new String[]{Statuses.STATUS_ID};
+		final Cursor cur = resolver.query(uri, projection, where, null, null);
+		if (cur != null) {
+			final int idx = cur.getColumnIndexOrThrow(Statuses.STATUS_ID);
+			cur.moveToFirst();
+			while (!cur.isAfterLast()) {
+				list.add(cur.getLong(idx));
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		return list;
 	}
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
@@ -377,6 +399,14 @@ public final class Utils implements Constants {
 		for (final UserList list : response) {
 			if (list_name.equals(list.getName())) return list;
 		}
+		return null;
+	}
+
+	public static UserList findUserList(Twitter twitter, long user_id, String screen_name, String list_name)
+			throws TwitterException {
+		if (user_id > 0)
+			return findUserList(twitter, user_id, list_name);
+		else if (screen_name != null) return findUserList(twitter, screen_name, list_name);
 		return null;
 	}
 
@@ -1542,6 +1572,111 @@ public final class Utils implements Constants {
 			builder.authority(AUTHORITY_CONVERSATION);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	public static void openListDetails(Activity activity, long account_id, int list_id, long user_id,
+			String screen_name, String list_name) {
+		if (activity == null) return;
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new ListDetailsFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putInt(INTENT_KEY_LIST_ID, list_id);
+			args.putLong(INTENT_KEY_USER_ID, user_id);
+			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			args.putString(INTENT_KEY_LIST_NAME, list_name);
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_LIST_DETAILS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (list_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
+			}
+			if (user_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			if (list_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	public static void openListMembers(Activity activity, long account_id, int list_id, long user_id,
+			String screen_name, String list_name) {
+		if (activity == null) return;
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new ListMembersFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putInt(INTENT_KEY_LIST_ID, list_id);
+			args.putLong(INTENT_KEY_USER_ID, user_id);
+			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			args.putString(INTENT_KEY_LIST_NAME, list_name);
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_LIST_MEMBERS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (list_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
+			}
+			if (user_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			if (list_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	public static void openListSubscribers(Activity activity, long account_id, int list_id, long user_id,
+			String screen_name, String list_name) {
+		if (activity == null) return;
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new ListSubscribersFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putInt(INTENT_KEY_LIST_ID, list_id);
+			args.putLong(INTENT_KEY_USER_ID, user_id);
+			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			args.putString(INTENT_KEY_LIST_NAME, list_name);
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_LIST_SUBSCRIBERS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (list_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
+			}
+			if (user_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			if (list_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
+			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}

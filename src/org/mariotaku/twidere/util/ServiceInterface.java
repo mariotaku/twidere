@@ -383,6 +383,17 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		return -1;
 	}
 
+	@Override
+	public int updateUserListDetails(long account_id, int list_id, boolean is_public, String name, String description) {
+		if (mService == null) return -1;
+		try {
+			return mService.updateUserListDetails(account_id, list_id, is_public, name, description);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
 	public static ServiceInterface getInstance(Application application) {
 		if (sInstance == null || !sInstance.test()) {
 			sInstance = new ServiceInterface(application);

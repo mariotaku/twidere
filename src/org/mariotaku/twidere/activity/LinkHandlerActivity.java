@@ -28,6 +28,7 @@ import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
+import org.mariotaku.twidere.fragment.ListDetailsFragment;
 import org.mariotaku.twidere.fragment.ListMembersFragment;
 import org.mariotaku.twidere.fragment.ListSubscribersFragment;
 import org.mariotaku.twidere.fragment.ListTimelineFragment;
@@ -78,6 +79,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_USER_BLOCKS, null, CODE_USER_BLOCKS);
 		URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, CODE_CONVERSATION);
 		URI_MATCHER.addURI(AUTHORITY_DIRECT_MESSAGES_CONVERSATION, null, CODE_DIRECT_MESSAGES_CONVERSATION);
+		URI_MATCHER.addURI(AUTHORITY_LIST_DETAILS, null, CODE_LIST_DETAILS);
 		URI_MATCHER.addURI(AUTHORITY_LIST_TIMELINE, null, CODE_LIST_TIMELINE);
 		URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERS, null, CODE_LIST_MEMBERS);
 		URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIBERS, null, CODE_LIST_SUBSCRIBERS);
@@ -224,6 +226,25 @@ public class LinkHandlerActivity extends BaseActivity {
 					} else if (param_screen_name != null) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
+					break;
+				}
+				case CODE_LIST_DETAILS: {
+					setTitle(R.string.user_list);
+					fragment = new ListDetailsFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
+					final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+					if (isNullOrEmpty(param_list_id)
+							&& (isNullOrEmpty(param_list_name) || isNullOrEmpty(param_screen_name)
+									&& isNullOrEmpty(param_user_id))) {
+						finish();
+						return false;
+					}
+					bundle.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
+					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
 				}
 				case CODE_LIST_TIMELINE: {

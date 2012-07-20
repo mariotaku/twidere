@@ -59,6 +59,7 @@ import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import twitter4j.UserList;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -343,6 +344,12 @@ public class TwidereService extends Service implements Constants {
 			boolean delete_image) {
 		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to,
 				delete_image);
+		return mAsyncTaskManager.add(task, true);
+	}
+
+	public int updateUserListDetails(long account_id, int list_id, boolean is_public, String name, String description) {
+		final UpdateUserListProfileTask task = new UpdateUserListProfileTask(account_id, list_id, is_public, name,
+				description);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -817,7 +824,8 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
-			if (result != null && result.data != null) {
+			final Intent intent = new Intent(BROADCAST_STATUS_DESTROYED);
+			if (result != null && result.data != null && result.data.getId() > 0) {
 				final long status_id = result.data.getId();
 				final ContentResolver resolver = getContentResolver();
 				final StringBuilder where = new StringBuilder();
@@ -826,10 +834,13 @@ public class TwidereService extends Service implements Constants {
 				for (final Uri uri : TweetStore.STATUSES_URIS) {
 					resolver.delete(uri, where.toString(), null);
 				}
+				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
+				intent.putExtra(INTENT_KEY_SUCCEED, true);
 				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
+			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -1388,6 +1399,12 @@ public class TwidereService extends Service implements Constants {
 
 		}
 
+		@Override
+		public int updateUserListDetails(long account_id, int list_id, boolean is_public, String name,
+				String description) {
+			return mService.get().updateUserListDetails(account_id, list_id, is_public, name, description);
+		}
+
 	}
 
 	private static final class SingleResponse<Data> {
@@ -1672,6 +1689,7 @@ public class TwidereService extends Service implements Constants {
 			final Uri query_uri = buildQueryUri(uri, false);
 
 			long min_id_all = -1;
+			final ArrayList<Long> newly_inserted_ids = new ArrayList<Long>();
 			for (final ListResponse<twitter4j.Status> response : responses) {
 				final long account_id = response.account_id;
 				final ResponseList<twitter4j.Status> statuses = response.list;
@@ -1729,13 +1747,19 @@ public class TwidereService extends Service implements Constants {
 
 				// Delete all rows conflicting before new data inserted.
 				{
+					final ArrayList<Long> ids_in_db = Utils.getStatusIdsInDatabase(TwidereService.this, query_uri, account_id);
+					final ArrayList<Long> account_newly_inserted = new ArrayList<Long>();
+					account_newly_inserted.addAll(status_ids);
+					account_newly_inserted.removeAll(ids_in_db);
+					newly_inserted_ids.addAll(account_newly_inserted);
 					final StringBuilder where = new StringBuilder();
+					final String ids_string = ListUtils.buildString(status_ids, ',', true);
 					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 					where.append(" AND ");
 					where.append("(");
-					where.append(Statuses.STATUS_ID + " IN ( " + ListUtils.buildString(status_ids, ',', true) + " ) ");
+					where.append(Statuses.STATUS_ID + " IN ( " + ids_string + " ) ");
 					where.append(" OR ");
-					where.append(Statuses.RETWEET_ID + " IN ( " + ListUtils.buildString(status_ids, ',', true) + " ) ");
+					where.append(Statuses.RETWEET_ID + " IN ( " + ids_string + " ) ");
 					where.append(")");
 					rows_deleted = resolver.delete(query_uri, where.toString(), null);
 				}
@@ -1769,7 +1793,7 @@ public class TwidereService extends Service implements Constants {
 			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
 			bundle.putInt(INTENT_KEY_ITEMS_INSERTED, total_items_inserted);
 			if (should_set_min_id && total_items_inserted > 0) {
-				bundle.putLong(INTENT_KEY_MIN_ID, min_id_all);
+				bundle.putLong(INTENT_KEY_MIN_ID, ListUtils.min(newly_inserted_ids));
 			}
 			return new SingleResponse<Bundle>(-1, bundle, null);
 		}
@@ -1982,6 +2006,54 @@ public class TwidereService extends Service implements Constants {
 				getHomeTimeline(activated_ids, null);
 				getMentions(activated_ids, null);
 			}
+		}
+
+	}
+
+	private class UpdateUserListProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+
+		private final long account_id;
+		private final int list_id;
+		private final boolean is_public;
+		private final String name, description;
+
+		public UpdateUserListProfileTask(long account_id, int list_id, boolean is_public, String name,
+				String description) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.name = name;
+			this.list_id = list_id;
+			this.is_public = is_public;
+			this.description = description;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(Void... params) {
+
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				try {
+					final UserList user = twitter.updateUserList(list_id, name, is_public, description);
+					return new SingleResponse<UserList>(account_id, user, null);
+				} catch (final TwitterException e) {
+					return new SingleResponse<UserList>(account_id, null, e);
+				}
+			}
+			return new SingleResponse<UserList>(account_id, null, null);
+		}
+
+		@Override
+		protected void onPostExecute(SingleResponse<UserList> result) {
+			final Intent intent = new Intent(BROADCAST_USER_LIST_DETAILS_UPDATED);
+			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
+			if (result != null && result.data != null && result.data.getId() > 0) {
+				Toast.makeText(TwidereService.this, R.string.profile_update_success, Toast.LENGTH_SHORT).show();
+				intent.putExtra(INTENT_KEY_SUCCEED, true);
+			} else {
+				showErrorToast(result.exception, true);
+			}
+			sendBroadcast(intent);
+			super.onPostExecute(result);
 		}
 
 	}

@@ -37,4 +37,17 @@ public class ListUtils {
 		}
 		return builder.toString();
 	}
+	
+	public static long min(List<Long> list) {
+		long min = -1;
+		for (long item : list) {
+			if (min == -1) {
+				min = item;
+			}
+			if (min > item) {
+				min = item;
+			}
+		}
+		return min;
+	}
 }

@@ -245,6 +245,9 @@
 					android:host="direct_messages_conversation"
 					android:scheme="twidere"/>
 				<data
+					android:host="list_details"
+					android:scheme="twidere"/>
+				<data
 					android:host="list_timeline"
 					android:scheme="twidere"/>
 				<data

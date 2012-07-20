@@ -342,7 +342,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		super.onDestroy();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED, false)) {
 			// What the f**k are you think about? Stop service causes twidere
-			// slow and not stable!
+			// slow and unstable!
 			// Well, all right... If you still want to enable this option, I
 			// have no responsibility for any problems occurred.
 			mService.shutdownService();

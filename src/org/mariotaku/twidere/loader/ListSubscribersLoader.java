@@ -67,20 +67,13 @@ public class ListSubscribersLoader extends ParcelableUsersLoader {
 		final PagableResponseList<User> users;
 		if (mListId > 0) {
 			users = twitter.getUserListSubscribers(mListId, mCursor);
-		} else if (mUserId > 0) {
-			final UserList list = findUserList(twitter, mUserId, mListName);
+		} else {
+			final UserList list = findUserList(twitter, mUserId, mScreenName, mListName);
 			if (list != null && list.getId() > 0) {
 				users = twitter.getUserListSubscribers(list.getId(), mCursor);
 			} else
 				return null;
-		} else if (mScreenName != null && mListName != null) {
-			final UserList list = findUserList(twitter, mScreenName, mListName);
-			if (list != null && list.getId() > 0) {
-				users = twitter.getUserListSubscribers(list.getId(), mCursor);
-			} else
-				return null;
-		} else
-			return null;
+		}
 		mNextCursor = users.getNextCursor();
 		mPrevCursor = users.getPreviousCursor();
 		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();

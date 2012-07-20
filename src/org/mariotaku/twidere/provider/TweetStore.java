@@ -262,6 +262,7 @@ public final class TweetStore implements Constants {
 					CONTENT_PATH);
 
 			public static final String MAX_TIMESTAMP = "max_timestamp";
+			public static final String MAX_STATUS_ID = "max_status_id";
 			public static final String MESSAGE_TIMESTAMP = "message_timestamp";
 			public static final String IS_OUTGOING = "is_outgoing";
 			public static final String NAME = "name";
@@ -272,27 +273,31 @@ public final class TweetStore implements Constants {
 
 			public static final int IDX__ID = 0;
 			public static final int IDX_MAX_TIMESTAMP = 1;
-			public static final int IDX_IS_OUTGOING = 3;
-			public static final int IDX_NAME = 4;
-			public static final int IDX_SCREEN_NAME = 5;
-			public static final int IDX_PROFILE_IMAGE_URL = 6;
-			public static final int IDX_TEXT = 7;
-			public static final int IDX_CONVERSATION_ID = 8;
-			public static final int IDX_MESSAGE_TIMESTAMP = 9;
+			public static final int IDX_MAX_STATUS_ID = 2;
+			public static final int IDX_ACCOUNT_ID = 3;
+			public static final int IDX_IS_OUTGOING = 4;
+			public static final int IDX_NAME = 5;
+			public static final int IDX_SCREEN_NAME = 6;
+			public static final int IDX_PROFILE_IMAGE_URL = 7;
+			public static final int IDX_TEXT = 8;
+			public static final int IDX_CONVERSATION_ID = 9;
+			public static final int IDX_MESSAGE_TIMESTAMP = 10;
 
 			public static String buildSQL(long account_id) {
 				final StringBuilder builder = new StringBuilder();
 				builder.append("SELECT * FROM(");
 				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP
+						+ ", MAX(" + DirectMessages.MESSAGE_ID + ") AS " + MAX_STATUS_ID 
 						+ ", " + ACCOUNT_ID + ", " + "0 AS " + IS_OUTGOING + ", " + DirectMessages.SENDER_NAME + " AS "
 						+ NAME + ", " + DirectMessages.SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
 						+ DirectMessages.SENDER_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", "
 						+ DirectMessages.SENDER_ID + " AS " + CONVERSATION_ID + ", " + DirectMessages.MESSAGE_TIMESTAMP);
 				builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
 				builder.append(" GROUP BY " + CONVERSATION_ID);
-				builder.append(" HAVING " + MAX_TIMESTAMP + " NOT NULL");
+				builder.append(" HAVING " + MAX_TIMESTAMP + " NOT NULL" + " AND " + MAX_STATUS_ID + " NOT NULL");
 				builder.append(" UNION ");
 				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP
+						+ ", MAX(" + DirectMessages.MESSAGE_ID + ") AS " + MAX_STATUS_ID
 						+ ", " + ACCOUNT_ID + ", " + "1 AS " + IS_OUTGOING + ", " + DirectMessages.RECIPIENT_NAME
 						+ " AS " + NAME + ", " + DirectMessages.RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
 						+ DirectMessages.RECIPIENT_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", "
@@ -300,11 +305,11 @@ public final class TweetStore implements Constants {
 						+ DirectMessages.MESSAGE_TIMESTAMP);
 				builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
 				builder.append(" GROUP BY " + CONVERSATION_ID);
-				builder.append(" HAVING " + MAX_TIMESTAMP + " NOT NULL");
+				builder.append(" HAVING " + MAX_TIMESTAMP + " NOT NULL" + " AND " + MAX_STATUS_ID + " NOT NULL");
 				builder.append(")");
 				builder.append(" GROUP BY " + CONVERSATION_ID);
 				builder.append(" HAVING " + DirectMessages.ACCOUNT_ID + " = " + account_id);
-				builder.append(" ORDER BY " + MESSAGE_TIMESTAMP + " DESC");
+				builder.append(" ORDER BY " + MAX_TIMESTAMP + " DESC, " + MAX_STATUS_ID + " DESC");
 				return builder.toString();
 			}
 		}

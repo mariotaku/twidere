@@ -77,15 +77,6 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
 				android:text="@string/follow"/>
-
-			<ProgressBar
-				android:id="@+id/follow_progress"
-				style="?android:attr/progressBarStyleSmall"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:layout_marginLeft="8dp"
-				android:layout_marginRight="8dp"/>
 		</FrameLayout>
 	</RelativeLayout>
 

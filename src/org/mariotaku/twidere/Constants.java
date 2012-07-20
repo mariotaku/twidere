@@ -188,6 +188,8 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_FRIENDSHIP_CHANGED = INTENT_PACKAGE_PREFIX + "FRIENDSHIP_CHANGED";
 	public static final String BROADCAST_BLOCKSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "BLOCKSTATE_CHANGED";
 	public static final String BROADCAST_PROFILE_UPDATED = INTENT_PACKAGE_PREFIX + "PROFILE_UPDATED";
+	public static final String BROADCAST_USER_LIST_DETAILS_UPDATED = INTENT_PACKAGE_PREFIX
+			+ "USER_LIST_DETAILS_UPDATED";
 	public static final String BROADCAST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DATABASE_UPDATED";
 	public static final String BROADCAST_FAVORITE_CHANGED = INTENT_PACKAGE_PREFIX + "FAVORITE_CHANGED";
 	public static final String BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED = INTENT_PACKAGE_PREFIX
@@ -198,6 +200,7 @@ public interface Constants extends TwitterConstants {
 			+ "RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED";
 	public static final String BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "SENT_DIRECT_MESSAGES_DATABASE_UPDATED";
+	public static final String BROADCAST_STATUS_DESTROYED = INTENT_PACKAGE_PREFIX + "STATUS_DESTROYED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -234,6 +237,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_INITIAL_TAB = "initial_tab";
 	public static final String INTENT_KEY_NOTIFICATION_ID = "notification_id";
 	public static final String INTENT_KEY_FROM_NOTIFICATION = "from_notification";
+	public static final String INTENT_KEY_IS_PUBLIC = "is_public";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;

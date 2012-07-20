@@ -27,6 +27,7 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.openListDetails;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
@@ -304,6 +305,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				if (mention_list == null || mention_list.length != 2) {
 					break;
 				}
+				openListDetails(getActivity(), mAccountId, -1, -1, mention_list[0], mention_list[1]);
 				break;
 			}
 		}
