@@ -26,8 +26,8 @@ import android.database.Cursor;
 public class StatusCursorIndices {
 
 	public final int account_id, status_id, status_timestamp, name, screen_name, text, text_plain, profile_image_url,
-			is_retweet, is_favorite, is_gap, location, has_media, is_protected, in_reply_to_status_id,
-			in_reply_to_user_id, in_reply_to_screen_name, retweeted_by_name, retweeted_by_screen_name, retweet_id,
+			is_retweet, is_favorite, is_gap, location, is_protected, in_reply_to_status_id,
+			in_reply_to_screen_name, retweeted_by_name, retweeted_by_screen_name, retweet_id,
 			retweeted_by_id, user_id, source, retweet_count;
 
 	public StatusCursorIndices(Cursor cursor) {
@@ -43,10 +43,8 @@ public class StatusCursorIndices {
 		is_retweet = cursor.getColumnIndex(Statuses.IS_RETWEET);
 		is_gap = cursor.getColumnIndex(Statuses.IS_GAP);
 		location = cursor.getColumnIndex(Statuses.LOCATION);
-		has_media = cursor.getColumnIndex(Statuses.HAS_MEDIA);
 		is_protected = cursor.getColumnIndex(Statuses.IS_PROTECTED);
 		in_reply_to_status_id = cursor.getColumnIndex(Statuses.IN_REPLY_TO_STATUS_ID);
-		in_reply_to_user_id = cursor.getColumnIndex(Statuses.IN_REPLY_TO_USER_ID);
 		in_reply_to_screen_name = cursor.getColumnIndex(Statuses.IN_REPLY_TO_SCREEN_NAME);
 		retweeted_by_name = cursor.getColumnIndex(Statuses.RETWEETED_BY_NAME);
 		retweeted_by_screen_name = cursor.getColumnIndex(Statuses.RETWEETED_BY_SCREEN_NAME);

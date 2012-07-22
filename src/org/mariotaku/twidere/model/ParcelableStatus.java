@@ -57,7 +57,7 @@ public class ParcelableStatus implements Parcelable {
 	};
 
 	public final long retweet_id, retweeted_by_id, status_id, account_id, user_id, status_timestamp, retweet_count,
-			in_reply_to_status_id, in_reply_to_user_id;
+			in_reply_to_status_id;
 
 	public final boolean is_gap, is_retweet, is_favorite, is_protected, has_media;
 
@@ -101,7 +101,6 @@ public class ParcelableStatus implements Parcelable {
 		retweet_count = indices.retweet_count != -1 ? cursor.getLong(indices.retweet_count) : -1;
 		in_reply_to_status_id = indices.in_reply_to_status_id != -1 ? cursor.getLong(indices.in_reply_to_status_id)
 				: -1;
-		in_reply_to_user_id = indices.in_reply_to_user_id != -1 ? cursor.getLong(indices.in_reply_to_user_id) : -1;
 		is_gap = indices.is_gap != -1 ? cursor.getInt(indices.is_gap) == 1 : false;
 		is_retweet = indices.is_retweet != -1 ? cursor.getInt(indices.is_retweet) == 1 : false;
 		is_favorite = indices.is_favorite != -1 ? cursor.getInt(indices.is_favorite) == 1 : false;
@@ -112,7 +111,7 @@ public class ParcelableStatus implements Parcelable {
 				.getString(indices.retweeted_by_screen_name) : null;
 		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
 		final ImageResult preview = htmlHasImage(text_html, true);
-		has_media = (indices.has_media != -1 ? cursor.getInt(indices.has_media) == 1 : false) || preview.has_image;
+		has_media = preview.has_image;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		name = indices.name != -1 ? cursor.getString(indices.name) : null;
 		screen_name = indices.screen_name != -1 ? cursor.getString(indices.screen_name) : null;
@@ -137,7 +136,6 @@ public class ParcelableStatus implements Parcelable {
 		status_timestamp = in.readLong();
 		retweet_count = in.readLong();
 		in_reply_to_status_id = in.readLong();
-		in_reply_to_user_id = in.readLong();
 		is_gap = in.readInt() == 1;
 		is_retweet = in.readInt() == 1;
 		is_favorite = in.readInt() == 1;
@@ -192,7 +190,6 @@ public class ParcelableStatus implements Parcelable {
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();
 		in_reply_to_status_id = status.getInReplyToStatusId();
-		in_reply_to_user_id = status.getInReplyToUserId();
 		source = status.getSource();
 		location = status.getGeoLocation();
 		is_favorite = status.isFavorited();
@@ -230,7 +227,6 @@ public class ParcelableStatus implements Parcelable {
 		retweet_count = -1;
 		in_reply_to_screen_name = tweet.getToUser();
 		in_reply_to_status_id = tweet.getInReplyToStatusId();
-		in_reply_to_user_id = tweet.getToUserId();
 		source = tweet.getSource();
 		location = tweet.getGeoLocation();
 		is_favorite = false;
@@ -262,7 +258,6 @@ public class ParcelableStatus implements Parcelable {
 		out.writeLong(status_timestamp);
 		out.writeLong(retweet_count);
 		out.writeLong(in_reply_to_status_id);
-		out.writeLong(in_reply_to_user_id);
 		out.writeInt(is_gap ? 1 : 0);
 		out.writeInt(is_retweet ? 1 : 0);
 		out.writeInt(is_favorite ? 1 : 0);

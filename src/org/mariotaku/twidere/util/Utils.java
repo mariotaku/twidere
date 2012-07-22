@@ -1473,12 +1473,10 @@ public final class Utils implements Constants {
 		values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
 		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
-		values.put(Statuses.IN_REPLY_TO_USER_ID, status.getInReplyToUserId());
 		values.put(Statuses.SOURCE, status.getSource());
 		values.put(Statuses.LOCATION, formatGeoLocationToString(status.getGeoLocation()));
 		values.put(Statuses.IS_RETWEET, is_retweet);
 		values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
-		values.put(Statuses.HAS_MEDIA, medias != null && medias.length > 0 ? 1 : 0);
 		return values;
 	}
 

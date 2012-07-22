@@ -77,7 +77,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
 		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
 
-		final boolean has_media = cursor.getShort(mIndices.has_media) == 1 || preview.has_image;
+		final boolean has_media = preview.has_image;
 		final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
 		final boolean is_retweet = !isNullOrEmpty(retweeted_by) && cursor.getShort(mIndices.is_retweet) == 1;
 		final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name)

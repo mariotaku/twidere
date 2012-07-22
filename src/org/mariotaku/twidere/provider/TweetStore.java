@@ -414,10 +414,14 @@ public final class TweetStore implements Constants {
 		public static final String ACCOUNT_ID = "account_id";
 
 		/**
-		 * Status content.<br>
+		 * Status content, in HTML. Please note, this is not actually original text.<br>
 		 * Type: TEXT
 		 */
 		public static final String TEXT = "text";
+		
+		/**
+		 *
+		 */
 		public static final String TEXT_PLAIN = "text_plain";
 
 		/**
@@ -463,15 +467,14 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String IS_FAVORITE = "is_favorite";
 
-		public static final String HAS_MEDIA = "has_media";
-		public static final String LOCATION = "location";
-
 		/**
 		 * Set to 1 if the status is a gap.<br>
 		 * Type: INTEGER (boolean)
 		 */
 		public static final String IS_GAP = "is_gap";
 
+		public static final String LOCATION = "location";
+		
 		/**
 		 * User's ID of the status.<br>
 		 * Type: INTEGER (long)
@@ -479,9 +482,7 @@ public final class TweetStore implements Constants {
 		public static final String USER_ID = "user_id";
 
 		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
-
-		public static final String IN_REPLY_TO_USER_ID = "in_reply_to_user_id";
-
+		
 		public static final String IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
 
 		public static final String SOURCE = "source";
@@ -491,7 +492,7 @@ public final class TweetStore implements Constants {
 		public static final String RETWEET_ID = "retweet_id";
 
 		public static final String RETWEETED_BY_ID = "retweeted_by_id";
-
+		
 		public static final String RETWEETED_BY_NAME = "retweeted_by_name";
 
 		public static final String RETWEETED_BY_SCREEN_NAME = "retweeted_by_screen_name";
@@ -509,14 +510,14 @@ public final class TweetStore implements Constants {
 		public static final String DEFAULT_SORT_ORDER = SORT_ORDER_STATUS_ID_DESC;
 
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
-				TEXT, TEXT_PLAIN, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID,
-				IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID,
-				RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, IS_RETWEET, IS_FAVORITE, HAS_MEDIA, IS_PROTECTED, IS_GAP };
+				TEXT, TEXT_PLAIN, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, 
+				IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID, RETWEETED_BY_NAME,
+				RETWEETED_BY_SCREEN_NAME, IS_RETWEET, IS_FAVORITE, IS_PROTECTED, IS_GAP };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
-				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
+				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
 				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN,
-				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
+				TYPE_BOOLEAN, TYPE_BOOLEAN };
 
 	}
 }
