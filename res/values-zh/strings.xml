@@ -259,4 +259,5 @@
   <string name="solid_color_background">純色背景</string>
   <string name="solid_color_background_summary">如果你的設備是AMOLED屏幕的話，啟用這個會有所幫助。</string>
   <string name="followed_you">關注了你</string>
+  <string name="user_list">用戶列表</string>
 </resources>

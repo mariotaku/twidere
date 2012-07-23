@@ -115,7 +115,7 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_USER_LIST_DETAILS_UPDATED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_LIST_ID, -1) == mUserListId
+				if (intent.getIntExtra(INTENT_KEY_LIST_ID, -1) == mUserListId
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					reloadUserListInfo();
 				}
@@ -473,66 +473,6 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class ListMembersAction extends UserListAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.list_members);
-		}
-
-		@Override
-		public void onClick() {
-			openListMembers(getActivity(), mAccountId, mUserListId, mUserId, mUserScreenName, mListName);
-		}
-
-	}
-
-	private class ListSubscribersAction extends UserListAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.list_subscribers);
-		}
-
-		@Override
-		public void onClick() {
-			openListSubscribers(getActivity(), mAccountId, mUserListId, mUserId, mUserScreenName, mListName);
-		}
-
-	}
-
-	private class ListTimelineAction extends UserListAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.list_timeline);
-		}
-
-		@Override
-		public String getSummary() {
-			// if (mUserList == null) return null;
-			// return String.valueOf(mUserList.getFavouritesCount());
-			return null;
-		}
-
-		@Override
-		public void onClick() {
-			if (mUserList == null) return;
-			openListTimeline(getActivity(), mAccountId, mUserListId, mUserId, mUserName, mListName);
-		}
-
-	}
-
-	private class Response<T> {
-		public final T value;
-		public final TwitterException exception;
-
-		public Response(T value, TwitterException exception) {
-			this.value = value;
-			this.exception = exception;
-		}
-	}
-
 	private class ListInfoTask extends AsyncTask<Void, Void, Response<UserList>> {
 
 		private final Twitter twitter;
@@ -594,6 +534,66 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 			super.onPreExecute();
 		}
 
+	}
+
+	private class ListMembersAction extends UserListAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.list_members);
+		}
+
+		@Override
+		public void onClick() {
+			openListMembers(getActivity(), mAccountId, mUserListId, mUserId, mUserScreenName, mListName);
+		}
+
+	}
+
+	private class ListSubscribersAction extends UserListAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.list_subscribers);
+		}
+
+		@Override
+		public void onClick() {
+			openListSubscribers(getActivity(), mAccountId, mUserListId, mUserId, mUserScreenName, mListName);
+		}
+
+	}
+
+	private class ListTimelineAction extends UserListAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.list_timeline);
+		}
+
+		@Override
+		public String getSummary() {
+			// if (mUserList == null) return null;
+			// return String.valueOf(mUserList.getFavouritesCount());
+			return null;
+		}
+
+		@Override
+		public void onClick() {
+			if (mUserList == null) return;
+			openListTimeline(getActivity(), mAccountId, mUserListId, mUserId, mUserName, mListName);
+		}
+
+	}
+
+	private class Response<T> {
+		public final T value;
+		public final TwitterException exception;
+
+		public Response(T value, TwitterException exception) {
+			this.value = value;
+			this.exception = exception;
+		}
 	}
 
 	private abstract class UserListAction {

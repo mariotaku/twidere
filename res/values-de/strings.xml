@@ -15,8 +15,17 @@
   <string name="tweet_hint">Schreibe etwas…</string>
   <string name="sign_up">Registrieren</string>
   <string name="sign_in">Einloggen</string>
+  <string name="rest_base_url">REST Basis URL</string>
+  <string name="search_base_url">Suche Basis URL</string>
+  <string name="upload_base_url">Upload Basis URL</string>
+  <string name="oauth_base_url">OAuth Basis URL</string>
+  <string name="signing_oauth_base_url">Signierende OAuth Basis URL</string>
+  <string name="signing_rest_base_url">Signierende REST Basis URL</string>
+  <string name="auth_type">Authentifizierungtyp</string>
   <string name="oauth">OAuth</string>
   <string name="xauth">xAuth</string>
+  <string name="basic">Einfach</string>
+  <string name="twip_o">twip O Modus</string>
   <string name="advanced">Erweitert</string>
   <string name="save">Speichern</string>
   <string name="edit">Bearbeiten</string>
@@ -36,18 +45,22 @@
   <string name="username">Benutzername</string>
   <string name="password">Passwort</string>
   <string name="label_tweetstore_provider">Twidere Datenbank Anbieter</string>
+  <string name="label_backend_service">Backend-Dienst der App</string>
   <string name="label_permission_group_access_twidere">Greife auf Twidere zu</string>
   <string name="label_permission_read_databases">Lese Twidere Datenbank aus</string>
   <string name="label_permission_write_databases">Schreibe in die Twidere Datenbank</string>
+  <string name="label_permission_access_service">Zugriff auf den Twidere-Dienst</string>
   <string name="description_permission_read_databases">Lese Tweets, Entwürfe, Accounts, Direktnachrichten etc. von Datenbank.</string>
   <string name="description_permission_write_databases">Schreibe Tweets, Entwürfe, Accounts, Direktnachrichten etc. zur Datenbank.</string>
+  <string name="description_permission_access_service">Aktualisieren/Senden von Tweets, Direktnachrichten</string>
   <string name="open_in_browser">Im Browser öffnen</string>
   <string name="just_now">Gerade</string>
   <string name="tap_to_load_more">Weitere Tweets laden</string>
   <string name="delete">Löschen</string>
   <string name="retweet">Retweet</string>
   <string name="cancel_retweet">Retweet abbrechen</string>
-  <string name="fav">Favorisieren</string>
+  <string name="fav">In Favoriten speichern</string>
+  <string name="unfav">Aus Favoriten entfernen</string>
   <string name="reply">Antworten</string>
   <string name="share">Teilen</string>
   <string name="share_via_twidere">Teile über Twidere</string>
@@ -88,12 +101,14 @@
   <string name="dark_theme">Benutze dunkles Theme</string>
   <string name="dark_theme_summary">Benutze das dunkle Theme für Twidere.</string>
   <string name="display_profile_image">Zeige Profilbilder</string>
-  <string name="display_profile_image_summary">Zeige Profilbilder, deaktiviere es, um Geschwindigkeit zu erhöhen und Datenverbrauch zu verringern</string>
+  <string name="display_profile_image_summary">Das Deaktivieren dieser Option beschleunigt die Listenscrollgeschwindigkeit und reduziert den Traffic.</string>
   <string name="in_reply_to">Als Antwort auf <xliff:g id="user_name">%s</xliff:g></string>
-  <string name="retweeted_by">Retweeted von <xliff:g id="user_name">%s</xliff:g></string>
+  <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweetete das</string>
+  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> und <xliff:g id="retweet_count">%2$d</xliff:g> weitere haben das retweetet</string>
   <string name="reply_to">Antworten <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Zitat <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
+  <string name="source">via <xliff:g id="source">%s</xliff:g></string>
   <string name="filter">Filter</string>
   <string name="filter_summary">Verberge Tweets von anderen Benutzern / Quellen oder durch Stichworte</string>
   <string name="users">Benutzer</string>
@@ -144,47 +159,56 @@
   <string name="retry">Wiederholen</string>
   <string name="more">Mehr</string>
   <string name="quote_format">Zitat-Format</string>
-  <string name="quote_format_summary">Lege Zitat-Format für Tweets fest.</string>
+  <string name="quote_format_summary">Lege Zitat-format für Tweets fest.</string>
   <string name="quote_format_message">\"[TEXT]\" wird mit deinem Zitat ersetzt.</string>
   <string name="direct_messages">Direktnachrichten</string>
   <string name="capital_on">AN</string>
   <string name="capital_off">AUS</string>
   <string name="blocked_users">Blockierte Benutzer</string>
-  <string name="set_as_default">Als Standard setzen</string>
-  <string name="default_account">Standard Account</string>
+  <string name="set_as_default">Als Standart setzen</string>
+  <string name="default_account">Standart Account</string>
   <string name="search_users">Suche Benutzer</string>
   <string name="search_tweets">Suche Tweets</string>
   <string name="created_at">Erstellt am</string>
-  <string name="set_default_account_hint">Bitte Standardaccount wählen.</string>
+  <string name="set_default_account_hint">Bitte ein Standardaccount wählen.</string>
   <string name="daily_trends">Tägliche Trends</string>
   <string name="weekly_trends">Wöchentliche Trends</string>
-  <string name="search_hint">Tweets oder User suchen</string>
-  <string name="remember_position">Position speichern</string>
-  <string name="remember_position_summary">Gwähltes Tab/Listenposition beim Beenden merken</string>
-  <string name="user_blocked">Dieser User wurde geblockt.</string>
-  <string name="user_unblocked">Diesen Nutzer nicht mehr blockieren.</string>
-  <string name="reported_user_for_spam">Dieser User wurde wegen Spam gemeldet.</string>
+  <string name="search_hint">Tweets oder Benutzer suchen</string>
+  <string name="remember_position">Position merken</string>
+  <string name="remember_position_summary">Listen/Tabposition beim Beenden merken</string>
+  <string name="user_blocked">Dieser Benutzer wurde blockiert.</string>
+  <string name="user_unblocked">Blockierung dieses Benutzers wurde aufgehoben.</string>
+  <string name="reported_user_for_spam">Dieser Benutzer wurde wegen Spam gemeldet.</string>
   <string name="filename_hint">Dateiname</string>
   <string name="overwrite_confirm">Datei existiert bereits. Soll die vorhandene Datei überschrieben werden?</string>
   <string name="save_as">Speichern als</string>
   <string name="please_wait">Bitte warten.</string>
+  <string name="file_saved_to">Datei gespeichert als <xliff:g id="filename">%s</xliff:g> .</string>
+  <string name="proxy">Proxy</string>
+  <string name="http_proxy">HTTP Proxy</string>
+  <string name="http_proxy_summary">HTTP Proxy für alle Netzwerkanfragen verwenden.</string>
+  <string name="proxy_host">Proxy Host</string>
+  <string name="proxy_port">Proxy Port</string>
   <string name="block">Blockieren</string>
+  <string name="unblock">Blockierung aufheben</string>
   <string name="report_for_spam">Wegen Spam melden</string>
   <string name="mute">Stumm schalten</string>
-  <string name="user_muted">User zur Filterliste hinzugefügt. Tweets dieses Users werden nicht mehr in Ihrer Zeitleiste / Erwähnungsliste angezeigt.</string>
-  <string name="inbox">Posteingang</string>
+  <string name="user_muted">Benutzer zur Filterliste hinzugefügt. Tweets dieses Benutzers werden nicht mehr in Ihrer Zeitleiste / Erwähnungsliste angezeigt.</string>
+  <string name="inbox">Eingang</string>
   <string name="outbox">Ausgang</string>
   <string name="load_images">Bilder laden</string>
   <string name="stop_service_after_closed">Dienst nach Schliessen von Twidere beenden.</string>
   <string name="stop_service_after_closed_summary">Warum auch immer Sie dies aktivieren möchten, denken Sie daran: Sollten Fehler auftreten, ist dies allein Ihre Schuld.</string>
   <string name="other_settings">Weitere Einstellungen</string>
-  <string name="refresh_and_notifications">Benachrichtigungen aktualisieren</string>
+  <string name="refresh_and_notifications">Aktualisierung &amp; Benachrichtigungen</string>
   <string name="auto_refresh">Automatisch aktualisieren</string>
   <string name="refresh_interval">Aktualisierungsintervall</string>
   <string name="refresh_interval_summary">Kürzere Aktualisierungsintervalle verbrauchen mehr Strom und Netzwerktraffic!</string>
   <string name="content_to_refresh">Zu aktualisierende Inhalte</string>
+  <string name="content_to_nofity">Inhalte für die Benachrichtigung</string>
+  <string name="notifications_type">Benachrichtigungstyp</string>
   <string name="notifications_type_summary">Diese Option ändert KEINE Systemeinstellungen.</string>
-  <string name="sound">Töne</string>
+  <string name="sound">Ton</string>
   <string name="vibration">Vibration</string>
   <string name="lights">Licht</string>
   <string name="notifications">Benachrichtigungen</string>
@@ -200,6 +224,10 @@
   <string name="list_timeline">Zeitleiste anzeigen</string>
   <string name="list_members">Mitglieder anzeigen</string>
   <string name="list_subscribers">Abonnenten anzeigen</string>
+  <string name="type_to_compose">Schreiben Sie etwas</string>
+  <string name="list_following_user">Liste diesem Benutzer folgend</string>
+  <string name="list_user_followed">Liste dieser Benutzer folgte</string>
+  <string name="list_created_by_user">Liste erstellt von diesem Benutzer</string>
   <string name="report_errors_automatically">Fehler automatisch melden</string>
   <string name="report_errors_automatically_summary">Fehler automatisch melden, es werden keine persönlichen Daten übermittelt.</string>
   <string name="Nminutes_quantity_one">1 Minute</string>
@@ -226,4 +254,10 @@
   <string name="item_1_hour">1 Stunde</string>
   <string name="item_2_hours">2 Stunden</string>
   <string name="item_4_hours">4 Stunden</string>
+  <string name="inline_image_preview">Inline Bildvorschau</string>
+  <string name="inline_image_preview_summary">Das Deaktivieren dieser Option beschleunigt die Listenscrollgeschwindigkeit und reduziert den Traffic.</string>
+  <string name="solid_color_background">Einfarbiger Hintergrund</string>
+  <string name="solid_color_background_summary">Das könnte nützlich sein, falls das Display deines Geräts ein AMOLED-Bildschirm ist.</string>
+  <string name="followed_you">Folgte Ihnen</string>
+  <string name="user_list">Benutzerliste</string>
 </resources>

@@ -40,7 +40,7 @@
   <string name="error_already_logged_in">U bent al ingelogd.</string>
   <string name="no_account_selected">U moet één of meerdere accounts selecteren.</string>
   <string name="error_unknown_error">Fout: onbekend, waarschijnlijk een bug.</string>
-  <string name="error_message">Fout: <xliff:g id="message">%s</xliff:g>;</string>
+  <string name="error_message">Fout: <xliff:g id="message">%s</xliff:g></string>
   <string name="select_account">Selecteer account</string>
   <string name="username">Gebruikersnaam</string>
   <string name="password">Wachtwoord</string>
@@ -49,8 +49,10 @@
   <string name="label_permission_group_access_twidere">Toegang tot Twidere applicatie</string>
   <string name="label_permission_read_databases">Lees Twidere databases</string>
   <string name="label_permission_write_databases">Schrijf Twidere databases</string>
+  <string name="label_permission_access_service">Toegang tot Twidere service</string>
   <string name="description_permission_read_databases">Lees tweets, concepten, accounts, directe berichten enz uit databases.</string>
   <string name="description_permission_write_databases">Schrijf tweets, concepten, accounts, directe berichten etc naar database.</string>
+  <string name="description_permission_access_service">Vernieuwen/Verzend tweets, Directe berichten</string>
   <string name="open_in_browser">In browser openen</string>
   <string name="just_now">Op dit moment</string>
   <string name="tap_to_load_more">Klik om meer te laden</string>
@@ -99,12 +101,12 @@
   <string name="dark_theme">Gebruik donkere thema</string>
   <string name="dark_theme_summary">Gebruik het donkere thema voor Twidere.</string>
   <string name="display_profile_image">Geef profielafbeeldingen weer</string>
-  <string name="display_profile_image_summary">Geef profielafbeeldingen weer, wanneer u dit uitschakeld, zal uw scroll-snelheid verhogen en dataverbruik verminderen.</string>
+  <string name="display_profile_image_summary">Uitschakelen verhoogt lijst scroll snelheid en verlaagt dataverkeer.</string>
   <string name="in_reply_to">In antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
-  <string name="retweeted_by">geretweet door <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="reply_to">Antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="quote_user">Quote <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g>;</string>
+  <string name="source">via <xliff:g id="source"> %s </xliff:g></string>
   <string name="filter">Filter</string>
   <string name="filter_summary">Verberg tweets van ongewenste gebruikers / bronnen of bepaalde trefwoorden</string>
   <string name="users">Gebruikers</string>
@@ -250,4 +252,8 @@
   <string name="item_1_hour">1 uur</string>
   <string name="item_2_hours">2 uur</string>
   <string name="item_4_hours">4 uur</string>
+  <string name="inline_image_preview">Voorvertoning interne afbeelding</string>
+  <string name="inline_image_preview_summary">Uitschakelen verhoogt lijst scroll snelheid en vermindert dataverkeer.</string>
+  <string name="solid_color_background_summary">Dit kan nuttig zijn als het scherm van uw toestel een AMOLED is.</string>
+  <string name="user_list">Gebruikerslijst</string>
 </resources>

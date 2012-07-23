@@ -99,9 +99,7 @@
   <string name="dark_theme">Utilizza il tema scuro</string>
   <string name="dark_theme_summary">Usa il tema scuro per Twidere.</string>
   <string name="display_profile_image">Mostra immagine profilo</string>
-  <string name="display_profile_image_summary">Mostra immagini profilo, disattiva per incrementare la velocità di scrolling e ridurre l\' utilizzo dati.</string>
   <string name="in_reply_to">Risposta a <xliff:g id="username"> %s </xliff:g></string>
-  <string name="retweeted_by">Retweet da <xliff:g id="user_name"> %s </xliff:g></string>
   <string name="reply_to">Risposta a <xliff:g id="user_name"> %s </xliff:g></string>
   <string name="quote_user">﻿Citazione di <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>

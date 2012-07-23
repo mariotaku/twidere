@@ -50,23 +50,10 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 					deleteStatus(status_id);
 				}
 			}
-			
+
 		}
-		
+
 	};
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_STATUS_DESTROYED);
-		registerReceiver(mStateReceiver, filter);
-	}
-
-	@Override
-	public void onStop() {
-		unregisterReceiver(mStateReceiver);
-		super.onStop();
-	}
 
 	@Override
 	public final long[] getLastStatusIds() {
@@ -165,6 +152,19 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			outState.putParcelableArrayList(INTENT_KEY_DATA, (ArrayList<? extends Parcelable>) getData());
 		}
 		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_STATUS_DESTROYED);
+		registerReceiver(mStateReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
 	}
 
 	private void deleteStatus(long status_id) {

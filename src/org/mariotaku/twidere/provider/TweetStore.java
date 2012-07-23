@@ -287,9 +287,9 @@ public final class TweetStore implements Constants {
 				final StringBuilder builder = new StringBuilder();
 				builder.append("SELECT * FROM(");
 				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP
-						+ ", MAX(" + DirectMessages.MESSAGE_ID + ") AS " + MAX_STATUS_ID 
-						+ ", " + ACCOUNT_ID + ", " + "0 AS " + IS_OUTGOING + ", " + DirectMessages.SENDER_NAME + " AS "
-						+ NAME + ", " + DirectMessages.SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
+						+ ", MAX(" + DirectMessages.MESSAGE_ID + ") AS " + MAX_STATUS_ID + ", " + ACCOUNT_ID + ", "
+						+ "0 AS " + IS_OUTGOING + ", " + DirectMessages.SENDER_NAME + " AS " + NAME + ", "
+						+ DirectMessages.SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
 						+ DirectMessages.SENDER_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", "
 						+ DirectMessages.SENDER_ID + " AS " + CONVERSATION_ID + ", " + DirectMessages.MESSAGE_TIMESTAMP);
 				builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
@@ -297,9 +297,9 @@ public final class TweetStore implements Constants {
 				builder.append(" HAVING " + MAX_TIMESTAMP + " NOT NULL" + " AND " + MAX_STATUS_ID + " NOT NULL");
 				builder.append(" UNION ");
 				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP
-						+ ", MAX(" + DirectMessages.MESSAGE_ID + ") AS " + MAX_STATUS_ID
-						+ ", " + ACCOUNT_ID + ", " + "1 AS " + IS_OUTGOING + ", " + DirectMessages.RECIPIENT_NAME
-						+ " AS " + NAME + ", " + DirectMessages.RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
+						+ ", MAX(" + DirectMessages.MESSAGE_ID + ") AS " + MAX_STATUS_ID + ", " + ACCOUNT_ID + ", "
+						+ "1 AS " + IS_OUTGOING + ", " + DirectMessages.RECIPIENT_NAME + " AS " + NAME + ", "
+						+ DirectMessages.RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
 						+ DirectMessages.RECIPIENT_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", "
 						+ DirectMessages.RECIPIENT_ID + " AS " + CONVERSATION_ID + ", "
 						+ DirectMessages.MESSAGE_TIMESTAMP);
@@ -414,11 +414,12 @@ public final class TweetStore implements Constants {
 		public static final String ACCOUNT_ID = "account_id";
 
 		/**
-		 * Status content, in HTML. Please note, this is not actually original text.<br>
+		 * Status content, in HTML. Please note, this is not actually original
+		 * text.<br>
 		 * Type: TEXT
 		 */
 		public static final String TEXT = "text";
-		
+
 		/**
 		 *
 		 */
@@ -474,7 +475,7 @@ public final class TweetStore implements Constants {
 		public static final String IS_GAP = "is_gap";
 
 		public static final String LOCATION = "location";
-		
+
 		/**
 		 * User's ID of the status.<br>
 		 * Type: INTEGER (long)
@@ -482,7 +483,7 @@ public final class TweetStore implements Constants {
 		public static final String USER_ID = "user_id";
 
 		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
-		
+
 		public static final String IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
 
 		public static final String SOURCE = "source";
@@ -492,7 +493,7 @@ public final class TweetStore implements Constants {
 		public static final String RETWEET_ID = "retweet_id";
 
 		public static final String RETWEETED_BY_ID = "retweeted_by_id";
-		
+
 		public static final String RETWEETED_BY_NAME = "retweeted_by_name";
 
 		public static final String RETWEETED_BY_SCREEN_NAME = "retweeted_by_screen_name";
@@ -510,14 +511,14 @@ public final class TweetStore implements Constants {
 		public static final String DEFAULT_SORT_ORDER = SORT_ORDER_STATUS_ID_DESC;
 
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
-				TEXT, TEXT_PLAIN, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, 
-				IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID, RETWEETED_BY_NAME,
+				TEXT, TEXT_PLAIN, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_SCREEN_NAME,
+				SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID, RETWEETED_BY_NAME,
 				RETWEETED_BY_SCREEN_NAME, IS_RETWEET, IS_FAVORITE, IS_PROTECTED, IS_GAP };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
-				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN,
-				TYPE_BOOLEAN, TYPE_BOOLEAN };
+				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
+				TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN,
+				TYPE_BOOLEAN };
 
 	}
 }

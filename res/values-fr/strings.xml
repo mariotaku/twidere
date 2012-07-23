@@ -80,9 +80,7 @@
   <string name="dark_theme">Utiliser un thème sombre</string>
   <string name="dark_theme_summary">Utiliser un thème sombre pour Twidere.</string>
   <string name="display_profile_image">Afficher les images de profil</string>
-  <string name="display_profile_image_summary">Affiche les images de profils, le désactiver augmentera la vitesse de défilement et réduira l\'utilisation de bande passante.</string>
   <string name="in_reply_to">En réponse à <xliff:g id="user_name">%s</xliff:g></string>
-  <string name="retweeted_by">Retweeté par <xliff:g id="user_name">%s</xliff:g></string>
   <string name="reply_to">Répondre à <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Citer <xliff:g id="user_name">%s</xliff:g></string>
   <string name="filter">Filtrer</string>

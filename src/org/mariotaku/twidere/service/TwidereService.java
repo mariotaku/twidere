@@ -1747,7 +1747,8 @@ public class TwidereService extends Service implements Constants {
 
 				// Delete all rows conflicting before new data inserted.
 				{
-					final ArrayList<Long> ids_in_db = Utils.getStatusIdsInDatabase(TwidereService.this, query_uri, account_id);
+					final ArrayList<Long> ids_in_db = Utils.getStatusIdsInDatabase(TwidereService.this, query_uri,
+							account_id);
 					final ArrayList<Long> account_newly_inserted = new ArrayList<Long>();
 					account_newly_inserted.addAll(status_ids);
 					account_newly_inserted.removeAll(ids_in_db);

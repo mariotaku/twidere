@@ -98,7 +98,11 @@ public class TwidereApplication extends Application implements Constants {
 	public void onCreate() {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY, true)) {
-			ACRA.init(this);
+			try {
+				ACRA.init(this);
+			} catch (final Exception e) {
+				// Ignore.
+			}
 		}
 		super.onCreate();
 	}

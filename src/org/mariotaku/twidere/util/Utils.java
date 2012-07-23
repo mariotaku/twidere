@@ -213,25 +213,6 @@ public final class Utils implements Constants {
 	private Utils() {
 		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
 	}
-	
-	public static ArrayList<Long> getStatusIdsInDatabase(Context context, Uri uri, long account_id) {
-		final ArrayList<Long> list = new ArrayList<Long>();
-		if (context == null) return list;
-		final ContentResolver resolver = context.getContentResolver(); 
-		final String where = Statuses.ACCOUNT_ID + " = " + account_id;
-		final String[] projection = new String[]{Statuses.STATUS_ID};
-		final Cursor cur = resolver.query(uri, projection, where, null, null);
-		if (cur != null) {
-			final int idx = cur.getColumnIndexOrThrow(Statuses.STATUS_ID);
-			cur.moveToFirst();
-			while (!cur.isAfterLast()) {
-				list.add(cur.getLong(idx));
-				cur.moveToNext();
-			}
-			cur.close();
-		}
-		return list;
-	}
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
 		if (context == null) return null;
@@ -1066,6 +1047,25 @@ public final class Utils implements Constants {
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
+	public static ArrayList<Long> getStatusIdsInDatabase(Context context, Uri uri, long account_id) {
+		final ArrayList<Long> list = new ArrayList<Long>();
+		if (context == null) return list;
+		final ContentResolver resolver = context.getContentResolver();
+		final String where = Statuses.ACCOUNT_ID + " = " + account_id;
+		final String[] projection = new String[] { Statuses.STATUS_ID };
+		final Cursor cur = resolver.query(uri, projection, where, null, null);
+		if (cur != null) {
+			final int idx = cur.getColumnIndexOrThrow(Statuses.STATUS_ID);
+			cur.moveToFirst();
+			while (!cur.isAfterLast()) {
+				list.add(cur.getLong(idx));
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		return list;
+	}
+
 	public static int getTableId(Uri uri) {
 		if (uri == null) return -1;
 		return CONTENT_PROVIDER_URI_MATCHER.match(uri);
@@ -1463,7 +1463,6 @@ public final class Utils implements Constants {
 			values.put(Statuses.IS_PROTECTED, user.isProtected() ? 1 : 0);
 			values.put(Statuses.PROFILE_IMAGE_URL, profile_image_url);
 		}
-		final MediaEntity[] medias = status.getMediaEntities();
 		values.put(Statuses.ACCOUNT_ID, account_id);
 		if (status.getCreatedAt() != null) {
 			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());

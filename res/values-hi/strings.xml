@@ -49,8 +49,10 @@
   <string name="label_permission_group_access_twidere">ट्विदेर प्रवेश</string>
   <string name="label_permission_read_databases">ट्विदेर डेटाबेस पढ़ें</string>
   <string name="label_permission_write_databases">ट्विदेर डेटाबेस लिखें</string>
+  <string name="label_permission_access_service">ट्विदेर सेवा का उपयोग</string>
   <string name="description_permission_read_databases">ट्वीट्स, ड्राफ्ट, खातों, डेटाबेस से सीधा संदेश, आदि पढ़ें.</string>
   <string name="description_permission_write_databases">ट्वीट्स, ड्राफ्ट, खातों, सीधे संदेश, आदि को डेटाबेस में लिखें|</string>
+  <string name="description_permission_access_service">ताज़ा करने तथा ट्विट भेजने के लिए, सीधा संदेश के लिए</string>
   <string name="open_in_browser">ब्राउज़र में खोलें</string>
   <string name="just_now">अभी</string>
   <string name="tap_to_load_more">छुए अधिक लोड करने के लिए।</string>
@@ -99,12 +101,14 @@
   <string name="dark_theme">अंधेरे थीम का प्रयोग करे</string>
   <string name="dark_theme_summary">ट्विदेर का अंधेरे थीम का प्रयोग करे |</string>
   <string name="display_profile_image">प्रोफ़ाइल छवि प्रदर्शित करें</string>
-  <string name="display_profile_image_summary">प्रोफ़ाइल छवि प्रदर्शित करे, अनचेक करने पर स्क्रॉल गति बढेगा और यातायात का उपयोग कम होगा|</string>
+  <string name="display_profile_image_summary">अक्षम करें पर, सूची स्क्रॉल गति बढ़ेगा और यातायात का उपयोग कम होगा|</string>
   <string name="in_reply_to">के विषय में उत्तर दें <xliff:g id="username">%s</xliff:g></string>
-  <string name="retweeted_by">द्वारा रीट्विट <xliff:g id="user_name">%s</xliff:g></string>
+  <string name="retweeted_by"><xliff:g id="user_name"> %s </xliff:g> यह रीट्वीट किया</string>
+  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> और <xliff:g id="retweet_count">%2$d</xliff:g> दुसरो ने यह  रीट्वीट किया</string>
   <string name="reply_to">को उत्तर दें <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">उद्धरण <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, द्वारा <xliff:g id="source">%2$s</xliff:g></string>
+  <string name="source"><xliff:g id="source"> %s </xliff:g> के द्वारा</string>
   <string name="filter">फ़िल्टर</string>
   <string name="filter_summary">अवांछित उपयोगकर्ताओं / स्रोतों से ट्वीट्स छुपाएँ या निर्दिष्ट खोजशब्दों</string>
   <string name="users">उपयोगकर्ता</string>
@@ -156,7 +160,7 @@
   <string name="more">अधिक</string>
   <string name="quote_format">उद्धरण का फॉर्मेट</string>
   <string name="quote_format_summary">ट्वीट्स के उद्धरण फॉर्मेट सेट करे|</string>
-  <string name="quote_format_message">\"[टेक्स्ट]\" को उद्धरण करने वाला ट्वीट से प्रतिस्थापित किया जाएगा|</string>
+  <string name="quote_format_message">\"[TEXT]\" के जगह उद्धरण के लिए चुना होया ट्वीट रख दिया जायेगा|</string>
   <string name="direct_messages">सीधा संदेश</string>
   <string name="capital_on">चालू</string>
   <string name="capital_off">बंद</string>
@@ -250,4 +254,10 @@
   <string name="item_1_hour">1 घंटा</string>
   <string name="item_2_hours">2 घंटे</string>
   <string name="item_4_hours">4 घंटे</string>
+  <string name="inline_image_preview">इनलाइन छवि पूर्वावलोकन</string>
+  <string name="inline_image_preview_summary">अक्षम करें पर, सूची स्क्रॉल गति बढ़ेगा और यातायात का उपयोग कम होगा|</string>
+  <string name="solid_color_background">ठोस रंग पृष्ठभूमि</string>
+  <string name="solid_color_background_summary">यह उपयोगी है अगर अपने डिवाइस की स्क्रीन AMOLED है|</string>
+  <string name="followed_you">ने फॉलो किया</string>
+  <string name="user_list">उपयोगकर्ता की सूची</string>
 </resources>

@@ -99,9 +99,7 @@
   <string name="dark_theme">Gunakan tema gelap</string>
   <string name="dark_theme_summary">Gunakan tema gelap untuk Twidere.</string>
   <string name="display_profile_image">Tampilkan gambar profil</string>
-  <string name="display_profile_image_summary">Tampilkan gambar profil, hapus centang ini akan meningkatkan kecepatan gulungan dan mengurangi penggunaan lalu lintas data.</string>
   <string name="in_reply_to">Balasan untuk <xliff:g id="username">%s</xliff:g></string>
-  <string name="retweeted_by">Diretweet oleh <xliff:g id="user_name">%s</xliff:g></string>
   <string name="reply_to">Balasan untuk <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Mengutip <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>

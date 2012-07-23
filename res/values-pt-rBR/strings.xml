@@ -99,9 +99,7 @@
   <string name="dark_theme">Usar o tema escuro</string>
   <string name="dark_theme_summary">Usar o tema Holo Dark no Twidere.</string>
   <string name="display_profile_image">Exibir a imagem de perfil</string>
-  <string name="display_profile_image_summary">Mostrar a imagem de perfil, desmarque se você quiser aumentar a velocidade de navegação e reduzir o tráfego de dados.</string>
   <string name="in_reply_to">Em resposta de <xliff:g id="user_name">%s</xliff:g></string>
-  <string name="retweeted_by">Retweetado por <xliff:g id="user_name">%s</xliff:g></string>
   <string name="reply_to">Responder para <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Citação <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>

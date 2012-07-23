@@ -99,9 +99,7 @@
   <string name="dark_theme">ダークテーマを適用</string>
   <string name="dark_theme_summary">ツイデレにダークテーマを適用する</string>
   <string name="display_profile_image">プロフィール画像を表示</string>
-  <string name="display_profile_image_summary">プロフィール画像を表示する。無効化にすればリストのスクロー速度を速くし、モバイルデータ通信量を抑えることができる。</string>
   <string name="in_reply_to"><xliff:g id="user_name">%s</xliff:g>さんへの返信</string>
-  <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g>さんがリツイート</string>
   <string name="reply_to"><xliff:g id="user_name">%s</xliff:g>さんへの返信</string>
   <string name="quote_user"><xliff:g id="user_name">%s</xliff:g>さんのツイートを引用</string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g><xliff:g id="source">%2$s</xliff:g>から</string>

@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -63,7 +64,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
 				.getString(mIndices.retweeted_by_screen_name);
 		final String text = cursor.getString(mIndices.text);
-		final String text_plain = cursor.getString(mIndices.text_plain);
 		final String name = mDisplayName ? cursor.getString(mIndices.name) : cursor.getString(mIndices.screen_name);
 		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 
@@ -97,7 +97,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 			holder.setTextSize(mTextSize);
 
-			holder.text.setText(text_plain);
+			holder.text.setText(unescapeHTML(text));
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(
 					is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
 			holder.name.setText(name);

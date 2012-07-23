@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
+import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 
 import android.content.BroadcastReceiver;
@@ -91,12 +92,20 @@ public class MentionsFragment extends CursorStatusesListFragment {
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		final ListView list = getListView();
+		final CursorStatusesAdapter adapter = getListAdapter();
+		long last_viewed_id = -1;
+		{
+			final int position = list.getFirstVisiblePosition();
+			if (position != 1) {
+				last_viewed_id = adapter.findItemIdByPosition(position);
+			}
+		}
 		super.onLoadFinished(loader, data);
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
 		if (mShouldRestorePositoin && remember_position) {
-			final ListView list = getListView();
 			final long status_id = mPreferences.getLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, -1);
-			final int position = getListAdapter().findItemPositionByStatusId(status_id);
+			final int position = adapter.findItemPositionByStatusId(status_id);
 			if (position > -1 && position < list.getCount()) {
 				list.setSelection(position);
 			}
@@ -104,8 +113,8 @@ public class MentionsFragment extends CursorStatusesListFragment {
 			return;
 		}
 		if (mMinIdToRefresh > 0) {
-			final ListView list = getListView();
-			final int position = getListAdapter().findItemPositionByStatusId(mMinIdToRefresh);
+			final int position = adapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id
+					: mMinIdToRefresh);
 			if (position > -1 && position < list.getCount()) {
 				list.setSelection(position);
 			}
