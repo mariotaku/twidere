@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
@@ -32,12 +33,14 @@ import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface {
+public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
@@ -53,7 +56,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	@Override
-	public ParcelableStatus findItem(long id) {
+	public ParcelableStatus findStatus(long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) return getItem(i);
@@ -83,6 +86,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		} else {
 			holder = new StatusViewHolder(view, mContext);
 			view.setTag(holder);
+			holder.profile_image.setOnClickListener(this);
 		}
 
 		final ParcelableStatus status = getItem(position);
@@ -123,6 +127,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				mProfileImageLoader.displayImage(status.profile_image_url, holder.profile_image);
+				holder.profile_image.setOnClickListener(this);
+				holder.profile_image.setTag(position);
 			}
 			holder.image_preview.setVisibility(mDisplayImagePreview && status.has_media
 					&& status.image_preview_url != null ? View.VISIBLE : View.GONE);
@@ -196,5 +202,20 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void onClick(View view) {
+		Object tag = view.getTag();
+		if (tag instanceof Integer && mContext instanceof Activity) {
+			ParcelableStatus status = getStatus((Integer)tag);
+			if (status == null) return;
+			openUserProfile((Activity) mContext, status.account_id, status.user_id, status.screen_name);
+		}
+	}
+
+	@Override
+	public ParcelableStatus getStatus(int position) {
+		return getItem(position);
 	}
 }

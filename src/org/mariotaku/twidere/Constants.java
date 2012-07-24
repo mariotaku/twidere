@@ -20,6 +20,7 @@
 package org.mariotaku.twidere;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
@@ -36,7 +37,7 @@ public interface Constants extends TwitterConstants {
 	public static final String LOGTAG = "Twidere";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 19;
+	public static final int DATABASES_VERSION = 20;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -143,6 +144,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATIONS_HAVE_VIBRATION = "notifications_have_vibration";
 	public static final String PREFERENCE_KEY_NOTIFICATIONS_HAVE_LIGHTS = "notifications_have_lights";
 	public static final String PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY = "report_errors_automatically";
+	public static final String PREFERENCE_KEY_LOCAL_TRENDS_WOEID = "local_trends_woeid";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
@@ -201,6 +203,7 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "SENT_DIRECT_MESSAGES_DATABASE_UPDATED";
 	public static final String BROADCAST_STATUS_DESTROYED = INTENT_PACKAGE_PREFIX + "STATUS_DESTROYED";
+	public static final String BROADCAST_TRENDS_UPDATED = INTENT_PACKAGE_PREFIX + "TRENDS_UPDATED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -308,6 +311,9 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION = DirectMessages.Conversation.CONTENT_PATH;
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = DirectMessages.Conversation.CONTENT_PATH_SCREEN_NAME;
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = DirectMessages.ConversationsEntry.CONTENT_PATH;
+	public static final String TABLE_TRENDS_DAILY = CachedTrends.Daily.CONTENT_PATH;
+	public static final String TABLE_TRENDS_WEEKLY = CachedTrends.Weekly.CONTENT_PATH;
+	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.CONTENT_PATH;
 
 	public static final int URI_ACCOUNTS = 1;
 	public static final int URI_STATUSES = 2;
@@ -323,6 +329,9 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_DIRECT_MESSAGES_CONVERSATION = 12;
 	public static final int URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = 13;
 	public static final int URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = 14;
+	public static final int URI_TRENDS_DAILY = 15;
+	public static final int URI_TRENDS_WEEKLY = 16;
+	public static final int URI_TRENDS_LOCAL = 17;
 
 	public static final String DIR_NAME_PROFILE_IMAGES = "profile_images";
 	public static final String DIR_NAME_CACHED_THUMBNAILS = "cached_thumbnails";

@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.htmlHasImage;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.twidere.R;
@@ -36,13 +37,15 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 import org.mariotaku.twidere.util.Utils.ImageResult;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface {
+public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
@@ -59,12 +62,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
+		final int position = cursor.getPosition();
 		final StatusViewHolder holder = (StatusViewHolder) view.getTag();
 
 		final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
 				.getString(mIndices.retweeted_by_screen_name);
 		final String text = cursor.getString(mIndices.text);
-		final String name = mDisplayName ? cursor.getString(mIndices.name) : cursor.getString(mIndices.screen_name);
+		final String screen_name = cursor.getString(mIndices.screen_name);
+		final String name = mDisplayName ? cursor.getString(mIndices.name) : screen_name;
 		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 
 		final ImageResult preview = htmlHasImage(text, mDisplayImagePreview);
@@ -83,7 +88,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name)
 				&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
 
-		final boolean is_last = cursor.getPosition() == getCount() - 1;
+		final boolean is_last = position == getCount() - 1;
 		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1;
 
 		holder.setShowAsGap(show_gap);
@@ -121,6 +126,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			if (mDisplayProfileImage) {
 				final String profile_image_url_string = cursor.getString(mIndices.profile_image_url);
 				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
+				holder.profile_image.setTag(position);
 			}
 			holder.image_preview
 					.setVisibility(mDisplayImagePreview && preview.has_image && preview.matched_url != null ? View.VISIBLE
@@ -134,16 +140,25 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public ParcelableStatus findItem(long id) {
+	public ParcelableStatus findStatus(long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) {
-				final long account_id = getItem(i).getLong(mIndices.account_id);
-				final long status_id = getItem(i).getLong(mIndices.status_id);
+				final Cursor cur = getItem(i);
+				final long account_id = cur.getLong(mIndices.account_id);
+				final long status_id = cur.getLong(mIndices.status_id);
 				return findStatusInDatabases(mContext, account_id, status_id);
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public ParcelableStatus getStatus(int position) {
+		final Cursor cur = getItem(position);
+		final long account_id = cur.getLong(mIndices.account_id);
+		final long status_id = cur.getLong(mIndices.status_id);
+		return findStatusInDatabases(mContext, account_id, status_id);
 	}
 
 	public long findItemIdByPosition(int position) {
@@ -169,7 +184,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
 		if (!(tag instanceof StatusViewHolder)) {
-			view.setTag(new StatusViewHolder(view, context));
+			final StatusViewHolder holder = new StatusViewHolder(view, context);
+			view.setTag(holder);
+			holder.profile_image.setOnClickListener(this);
 		}
 		return view;
 	}
@@ -230,5 +247,15 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			mIndices = null;
 		}
 		return super.swapCursor(cursor);
+	}
+	
+	@Override
+	public void onClick(View view) {
+		Object tag = view.getTag();
+		if (tag instanceof Integer && mContext instanceof Activity) {
+			ParcelableStatus status = getStatus((Integer)tag);
+			if (status == null) return;
+			openUserProfile((Activity) mContext, status.account_id, status.user_id, status.screen_name);
+		}
 	}
 }

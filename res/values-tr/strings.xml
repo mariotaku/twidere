@@ -73,7 +73,6 @@
   <string name="retry">Tekrar Dene</string>
   <string name="more">Dahası</string>
   <string name="quote_format">Alıntı Boyutu</string>
-  <string name="quote_format_summary">Tweetleriniz için alıntı boyutu belirleyin</string>
   <string name="quote_format_message">\"[TEXT]\" alıntı olarak Tweet edilecektir.</string>
   <string name="direct_messages">Yönlendirilen mesajlar</string>
   <string name="capital_on">AÇIK</string>

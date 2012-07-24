@@ -23,7 +23,9 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 
 public interface StatusesAdapterInterface extends BaseAdapterInterface {
 
-	public ParcelableStatus findItem(long id);
+	public ParcelableStatus findStatus(long id);
+	
+	public ParcelableStatus getStatus(int position);
 
 	public void setDisplayImagePreview(boolean preview);
 

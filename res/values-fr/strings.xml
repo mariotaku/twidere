@@ -130,7 +130,6 @@
   <string name="retry">Rééssayer</string>
   <string name="more">Plus</string>
   <string name="quote_format">Format de citation</string>
-  <string name="quote_format_summary">Définissez le format de citation pour vos tweets.</string>
   <string name="quote_format_message">\"[TEXT]\" sera remplacé par le tweet à citer.</string>
   <string name="direct_messages">Messages directs</string>
   <string name="blocked_users">Utilisateurs bloqués</string>

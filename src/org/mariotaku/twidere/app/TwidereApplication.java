@@ -32,7 +32,6 @@ import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
-import org.mariotaku.twidere.util.MemCache;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Application;
@@ -47,7 +46,6 @@ public class TwidereApplication extends Application implements Constants {
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private ClearCacheTask mClearCacheTask;
-	private MemCache mMemCache;
 	private SharedPreferences mPreferences;
 
 	public void clearCache() {
@@ -62,13 +60,6 @@ public class TwidereApplication extends Application implements Constants {
 			mAsyncTaskManager = new AsyncTaskManager();
 		}
 		return mAsyncTaskManager;
-	}
-
-	public MemCache getMemCache() {
-		if (mMemCache == null) {
-			mMemCache = MemCache.getInstance();
-		}
-		return mMemCache;
 	}
 
 	public LazyImageLoader getPreviewImageLoader() {
@@ -97,7 +88,7 @@ public class TwidereApplication extends Application implements Constants {
 	@Override
 	public void onCreate() {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY, true)) {
+		if (!isDebugBuild() && mPreferences.getBoolean(PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY, true)) {
 			try {
 				ACRA.init(this);
 			} catch (final Exception e) {
@@ -105,6 +96,10 @@ public class TwidereApplication extends Application implements Constants {
 			}
 		}
 		super.onCreate();
+	}
+	
+	public boolean isDebugBuild() {
+		return DEBUG;
 	}
 
 	@Override

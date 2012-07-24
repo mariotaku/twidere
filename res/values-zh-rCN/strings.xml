@@ -159,7 +159,6 @@
   <string name="retry">重试</string>
   <string name="more">更多</string>
   <string name="quote_format">引用格式</string>
-  <string name="quote_format_summary">设定推文引用的格式</string>
   <string name="quote_format_message">\"[TEXT]\" 将被替换成要引用的推文</string>
   <string name="direct_messages">私信</string>
   <string name="capital_on">开启</string>
@@ -173,6 +172,7 @@
   <string name="set_default_account_hint">请设定一个默认帐号。</string>
   <string name="daily_trends">本日话题</string>
   <string name="weekly_trends">本周话题</string>
+  <string name="local_trends">本地趋势</string>
   <string name="search_hint">搜索推文或用户</string>
   <string name="remember_position">记住位置</string>
   <string name="remember_position_summary">打开Twidere时，恢复到退出前列表/页面的位置</string>
@@ -260,4 +260,6 @@
   <string name="solid_color_background_summary">如果你的设备是AMOLED屏幕的话，启用这个会有所帮助。</string>
   <string name="followed_you">关注了你</string>
   <string name="user_list">用户列表</string>
+  <string name="trends_location">本地趋势的位置</string>
+  <string name="trends_location_summary">设定位置，以显示本地趋势。</string>
 </resources>

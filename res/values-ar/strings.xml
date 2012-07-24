@@ -154,7 +154,6 @@
   <string name="retry">إعادة المحاولة</string>
   <string name="more">المزيد</string>
   <string name="quote_format">تنسيق الإقتباس</string>
-  <string name="quote_format_summary">تعين طريقة الإقتباس للتغريدات.</string>
   <string name="quote_format_message">سوف يتم إستبدال \"[TEXT]\" بمحتوى التغريدة.</string>
   <string name="direct_messages">الرسائل المباشرة</string>
   <string name="capital_on">تشغيل</string>

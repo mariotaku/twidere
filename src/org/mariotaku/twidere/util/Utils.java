@@ -201,6 +201,10 @@ public final class Utils implements Constants {
 				+ "/#/*", URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY + "/#",
 				URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_DAILY, URI_TRENDS_DAILY);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_WEEKLY, URI_TRENDS_WEEKLY);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, URI_TRENDS_LOCAL);
+		
 	}
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
@@ -1102,6 +1106,12 @@ public final class Utils implements Constants {
 				return TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME;
 			case URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
 				return TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY;
+			case URI_TRENDS_DAILY:
+				return TABLE_TRENDS_DAILY;
+			case URI_TRENDS_WEEKLY:
+				return TABLE_TRENDS_WEEKLY;
+			case URI_TRENDS_LOCAL:
+				return TABLE_TRENDS_LOCAL;
 			default:
 				return null;
 		}
@@ -1480,6 +1490,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues[] makeTrendsContentValues(List<Trends> trends_list) {
+		if (trends_list == null) return new ContentValues[0];
 		final List<ContentValues> result_list = new ArrayList<ContentValues>();
 		for (final Trends trends : trends_list) {
 			if (trends == null) {

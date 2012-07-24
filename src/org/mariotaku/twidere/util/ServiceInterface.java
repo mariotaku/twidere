@@ -19,7 +19,9 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.ServiceUtils.bindToService;
+import static org.mariotaku.twidere.util.ServiceInterface.ServiceUtils.bindToService;
+
+import java.util.HashMap;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
@@ -27,11 +29,14 @@ import org.mariotaku.twidere.ITwidereService;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
 
 public final class ServiceInterface implements Constants, ITwidereService {
 
@@ -174,10 +179,32 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int getDailyTrends(long account_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.getDailyTrends(account_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public int getHomeTimeline(long[] account_ids, long[] max_ids) {
 		if (mService == null) return -1;
 		try {
 			return mService.getHomeTimeline(account_ids, max_ids);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int getLocalTrends(long account_id, int woeid) {
+		if (mService == null) return -1;
+		try {
+			return mService.getLocalTrends(account_id, woeid);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -218,6 +245,17 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int getWeeklyTrends(long account_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.getWeeklyTrends(account_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public boolean hasActivatedTask() {
 		if (mService == null) return false;
 		try {
@@ -229,10 +267,32 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public boolean isDailyTrendsRefreshing() {
+		if (mService == null) return false;
+		try {
+			return mService.isDailyTrendsRefreshing();
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
 	public boolean isHomeTimelineRefreshing() {
 		if (mService == null) return false;
 		try {
 			return mService.isHomeTimelineRefreshing();
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isLocalTrendsRefreshing() {
+		if (mService == null) return false;
+		try {
+			return mService.isLocalTrendsRefreshing();
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -266,6 +326,17 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return false;
 		try {
 			return mService.isSentDirectMessagesRefreshing();
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isWeeklyTrendsRefreshing() {
+		if (mService == null) return false;
+		try {
+			return mService.isWeeklyTrendsRefreshing();
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -399,5 +470,66 @@ public final class ServiceInterface implements Constants, ITwidereService {
 			sInstance = new ServiceInterface(application);
 		}
 		return sInstance;
+	}
+
+	public static class ServiceToken {
+
+		ContextWrapper wrapped_context;
+
+		ServiceToken(ContextWrapper context) {
+
+			wrapped_context = context;
+		}
+	}
+
+	public static final class ServiceUtils {
+
+		private static HashMap<Context, ServiceBinder> sConnectionMap = new HashMap<Context, ServiceBinder>();
+
+		public static ServiceToken bindToService(Context context) {
+
+			return bindToService(context, null);
+		}
+
+		public static ServiceToken bindToService(Context context, ServiceConnection callback) {
+
+			final Intent intent = new Intent(INTENT_ACTION_SERVICE);
+			final ContextWrapper cw = new ContextWrapper(context);
+			cw.startService(intent);
+			final ServiceBinder sb = new ServiceBinder(callback);
+			if (cw.bindService(intent, sb, 0)) {
+				sConnectionMap.put(cw, sb);
+				return new ServiceToken(cw);
+			}
+			Log.e(LOGTAG, "Failed to bind to service");
+			return null;
+		}
+
+		private static class ServiceBinder implements ServiceConnection {
+
+			private ServiceConnection mCallback;
+
+			public ServiceBinder(ServiceConnection callback) {
+
+				mCallback = callback;
+			}
+
+			@Override
+			public void onServiceConnected(ComponentName className, android.os.IBinder service) {
+
+				if (mCallback != null) {
+					mCallback.onServiceConnected(className, service);
+				}
+			}
+
+			@Override
+			public void onServiceDisconnected(ComponentName className) {
+
+				if (mCallback != null) {
+					mCallback.onServiceDisconnected(className);
+				}
+			}
+		}
+
 	}
 }

@@ -88,7 +88,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 	@Override
 	public CharSequence convertToString(Cursor cursor) {
 		if (mCursorClosed) return null;
-		return cursor.getString(mScreenNameIdx);
+		return cursor.getString(mScreenNameIdx) + " ";
 	}
 
 	public boolean isCursorClosed() {

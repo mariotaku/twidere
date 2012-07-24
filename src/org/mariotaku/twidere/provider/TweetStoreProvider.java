@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
@@ -227,6 +228,24 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				}
 				break;
 			}
+			case URI_TRENDS_DAILY: {
+				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
+					context.sendBroadcast(new Intent(BROADCAST_TRENDS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
+					break;
+				}
+			}
+			case URI_TRENDS_WEEKLY: {
+				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
+					context.sendBroadcast(new Intent(BROADCAST_TRENDS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
+				}
+				break;
+			}
+			case URI_TRENDS_LOCAL: {
+				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
+					context.sendBroadcast(new Intent(BROADCAST_TRENDS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
+				}
+				break;
+			}
 			default:
 				return;
 		}
@@ -255,6 +274,9 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 					DirectMessages.Inbox.TYPES, true));
 			db.execSQL(createTable(TABLE_DIRECT_MESSAGES_OUTBOX, DirectMessages.Outbox.COLUMNS,
 					DirectMessages.Outbox.TYPES, true));
+			db.execSQL(createTable(TABLE_TRENDS_DAILY, CachedTrends.Daily.COLUMNS, CachedTrends.Daily.TYPES, true));
+			db.execSQL(createTable(TABLE_TRENDS_WEEKLY, CachedTrends.Weekly.COLUMNS, CachedTrends.Weekly.TYPES, true));
+			db.execSQL(createTable(TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true));
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
@@ -300,6 +322,9 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			safeUpgrade(db, TABLE_DIRECT_MESSAGES_INBOX, DirectMessages.Inbox.COLUMNS, DirectMessages.Inbox.TYPES, true);
 			safeUpgrade(db, TABLE_DIRECT_MESSAGES_OUTBOX, DirectMessages.Outbox.COLUMNS, DirectMessages.Outbox.TYPES,
 					true);
+			safeUpgrade(db, TABLE_TRENDS_DAILY, CachedTrends.Daily.COLUMNS, CachedTrends.Daily.TYPES, true);
+			safeUpgrade(db, TABLE_TRENDS_WEEKLY, CachedTrends.Weekly.COLUMNS, CachedTrends.Weekly.TYPES, true);
+			safeUpgrade(db, TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true);
 		}
 
 	}

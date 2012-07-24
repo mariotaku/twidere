@@ -160,7 +160,6 @@
 	<string name="retry">Retry</string>
 	<string name="more">More</string>
 	<string name="quote_format">Quote format</string>
-	<string name="quote_format_summary">Set quote format for tweets.</string>
 	<string name="quote_format_message">\"[TEXT]\" will be replaced with tweet to quote.</string>
 	<string name="direct_messages">Direct messages</string>
 	<string name="capital_on">ON</string>
@@ -174,6 +173,7 @@
 	<string name="set_default_account_hint">Please set a default account.</string>
 	<string name="daily_trends">Daily trends</string>
 	<string name="weekly_trends">Weekly trends</string>
+	<string name="local_trends">Local trends</string>
 	<string name="search_hint">Search tweets or users</string>
 	<string name="remember_position">Remember position</string>
 	<string name="remember_position_summary">Remember list/tab position before closing Twidere</string>
@@ -261,5 +261,7 @@
 	<string name="solid_color_background_summary">This may useful if screen of your device is AMOLED.</string>
 	<string name="followed_you">Followed you</string>
 	<string name="user_list">User list</string>
+	<string name="trends_location">Trends location</string>
+	<string name="trends_location_summary">Set location for local trends.</string>
 
 </resources>

@@ -139,6 +139,7 @@ public class TwidereLinkify {
 
 	public TwidereLinkify(TextView view) {
 		this.view = view;
+		view.setMovementMethod(LinkMovementMethod.getInstance());
 	}
 
 	public final void addAllLinks() {

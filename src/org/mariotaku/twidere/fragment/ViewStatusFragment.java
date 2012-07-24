@@ -27,9 +27,6 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
-import static org.mariotaku.twidere.util.Utils.openListDetails;
-import static org.mariotaku.twidere.util.Utils.openTweetSearch;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -41,13 +38,10 @@ import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ImagesPreviewFragment.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.StatusCursorIndices;
-import org.mariotaku.twidere.provider.TweetStore;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.GeoLocation;
@@ -55,12 +49,10 @@ import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -85,14 +77,12 @@ import android.widget.TextView;
 
 import com.twitter.Extractor;
 
-public class ViewStatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener,
-		OnLinkClickListener {
+public class ViewStatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener {
 
 	private long mAccountId, mStatusId;
 	private ImagesPreviewFragment mImagesPreviewFragment = new ImagesPreviewFragment();
 	private ServiceInterface mService;
 	private SharedPreferences mPreferences;
-	private ContentResolver mResolver;
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView;
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
@@ -151,9 +141,8 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 				status.is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
 		mTextView.setText(status.text);
 		final TwidereLinkify linkify = new TwidereLinkify(mTextView);
-		linkify.setOnLinkClickListener(this);
+		linkify.setOnLinkClickListener(new OnLinkClickHandler(getActivity(), mAccountId));
 		linkify.addAllLinks();
-		mTextView.setMovementMethod(LinkMovementMethod.getInstance());
 		final boolean is_reply = status.in_reply_to_status_id > 0;
 		final String time = formatToLongTimeString(getActivity(), status.status_timestamp);
 		final String source_html = status.source;
@@ -200,7 +189,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getApplication().getServiceInterface();
-		mResolver = getContentResolver();
 		super.onActivityCreated(savedInstanceState);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		final Bundle bundle = getArguments();
@@ -275,40 +263,6 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			mFollowInfoTask.cancel(true);
 		}
 		super.onDestroyView();
-	}
-
-	@Override
-	public void onLinkClick(String link, int type) {
-		if (mStatus == null) return;
-		switch (type) {
-			case TwidereLinkify.LINK_TYPE_MENTION: {
-				openUserProfile(getActivity(), mStatus.account_id, -1, link);
-				break;
-			}
-			case TwidereLinkify.LINK_TYPE_HASHTAG: {
-				openTweetSearch(getActivity(), mStatus.account_id, link);
-				break;
-			}
-			case TwidereLinkify.LINK_TYPE_IMAGE: {
-				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
-				intent.setPackage(getActivity().getPackageName());
-				startActivity(intent);
-				break;
-			}
-			case TwidereLinkify.LINK_TYPE_LINK: {
-				final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-				startActivity(intent);
-				break;
-			}
-			case TwidereLinkify.LINK_TYPE_LIST: {
-				final String[] mention_list = link.split("\\/");
-				if (mention_list == null || mention_list.length != 2) {
-					break;
-				}
-				openListDetails(getActivity(), mAccountId, -1, -1, mention_list[0], mention_list[1]);
-				break;
-			}
-		}
 	}
 
 	@Override
@@ -483,25 +437,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			if (!omit_intent_extra) {
 				status = getArguments().getParcelable(INTENT_KEY_STATUS);
 				if (status != null) return new Response<ParcelableStatus>(status, null);
-
 			}
-			final String[] cols = Statuses.COLUMNS;
-			final String where = Statuses.STATUS_ID + " = " + mStatusId;
-
-			// Get status from databases.
-			for (final Uri uri : TweetStore.STATUSES_URIS) {
-				if (status != null) return new Response<ParcelableStatus>(status, null);
-				final Cursor cur = mResolver.query(uri, cols, where, null, null);
-				if (cur == null) {
-					break;
-				}
-
-				if (cur.getCount() > 0) {
-					cur.moveToFirst();
-					status = new ParcelableStatus(cur, new StatusCursorIndices(cur));
-				}
-				cur.close();
-			}
+			status = Utils.findStatusInDatabases(getActivity(), mAccountId, mStatusId);
+			if (status != null) return new Response<ParcelableStatus>(status, null);
 
 			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 			try {

@@ -27,6 +27,7 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
+import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
 import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 
@@ -41,6 +42,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
+import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
@@ -56,6 +58,7 @@ import twitter4j.GeoLocation;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.StatusUpdate;
+import twitter4j.Trends;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -98,8 +101,10 @@ public class TwidereService extends Service implements Constants {
 
 	private int mStoreReceivedDirectMessagesTaskId, mStoreSentDirectMessagesTaskId;
 
-	private NotificationManager mNotificationManager;
+	private int mGetLocalTrendsTaskId, mGetWeeklyTrendsTaskId, mGetDailyTrendsTaskId;
 
+	private int mStoreLocalTrendsTaskId, mStoreWeeklyTrendsTaskId, mStoreDailyTrendsTaskId;
+	private NotificationManager mNotificationManager;
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -120,6 +125,7 @@ public class TwidereService extends Service implements Constants {
 	};
 
 	private boolean mShouldShutdown = false;
+
 	private static final int ACTION_AUTO_REFRESH = 1;
 
 	@SuppressLint("HandlerLeak")
@@ -221,8 +227,20 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
+	public int getDailyTrends(long account_id) {
+		mAsyncTaskManager.cancel(mGetDailyTrendsTaskId);
+		final GetDailyTrendsTask task = new GetDailyTrendsTask(account_id);
+		return mGetDailyTrendsTaskId = mAsyncTaskManager.add(task, true);
+	}
+
 	public int getHomeTimeline(long[] account_ids, long[] max_ids) {
 		return getHomeTimeline(account_ids, max_ids, false);
+	}
+
+	public int getLocalTrends(long account_id, int woeid) {
+		mAsyncTaskManager.cancel(mGetLocalTrendsTaskId);
+		final GetLocalTrendsTask task = new GetLocalTrendsTask(account_id, woeid);
+		return mGetLocalTrendsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public int getMentions(long[] account_ids, long[] max_ids) {
@@ -239,13 +257,29 @@ public class TwidereService extends Service implements Constants {
 		return mGetSentDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
+	public int getWeeklyTrends(long account_id) {
+		mAsyncTaskManager.cancel(mGetWeeklyTrendsTaskId);
+		final GetWeeklyTrendsTask task = new GetWeeklyTrendsTask(account_id);
+		return mGetWeeklyTrendsTaskId = mAsyncTaskManager.add(task, true);
+	}
+
 	public boolean hasActivatedTask() {
 		return mAsyncTaskManager.hasActivatedTask();
+	}
+
+	public boolean isDailyTrendsRefreshing() {
+		return mAsyncTaskManager.isExcuting(mGetDailyTrendsTaskId)
+				|| mAsyncTaskManager.isExcuting(mStoreDailyTrendsTaskId);
 	}
 
 	public boolean isHomeTimelineRefreshing() {
 		return mAsyncTaskManager.isExcuting(mGetHomeTimelineTaskId)
 				|| mAsyncTaskManager.isExcuting(mStoreStatusesTaskId);
+	}
+
+	public boolean isLocalTrendsRefreshing() {
+		return mAsyncTaskManager.isExcuting(mGetLocalTrendsTaskId)
+				|| mAsyncTaskManager.isExcuting(mStoreLocalTrendsTaskId);
 	}
 
 	public boolean isMentionsRefreshing() {
@@ -260,6 +294,11 @@ public class TwidereService extends Service implements Constants {
 	public boolean isSentDirectMessagesRefreshing() {
 		return mAsyncTaskManager.isExcuting(mGetSentDirectMessagesTaskId)
 				|| mAsyncTaskManager.isExcuting(mStoreSentDirectMessagesTaskId);
+	}
+
+	public boolean isWeeklyTrendsRefreshing() {
+		return mAsyncTaskManager.isExcuting(mGetWeeklyTrendsTaskId)
+				|| mAsyncTaskManager.isExcuting(mStoreWeeklyTrendsTaskId);
 	}
 
 	@Override
@@ -398,6 +437,52 @@ public class TwidereService extends Service implements Constants {
 
 	private void showErrorToast(Exception e, boolean long_message) {
 		Utils.showErrorToast(this, e, long_message);
+	}
+
+	private class CacheUsersTask extends ManagedAsyncTask<Void, Void, Void> {
+
+		private final List<ListResponse<twitter4j.Status>> responses;
+
+		public CacheUsersTask(List<ListResponse<twitter4j.Status>> result) {
+			super(TwidereService.this, mAsyncTaskManager);
+			responses = result;
+		}
+
+		@Override
+		protected Void doInBackground(Void... args) {
+			final ContentResolver resolver = getContentResolver();
+
+			for (final ListResponse<twitter4j.Status> response : responses) {
+				final List<twitter4j.Status> statuses = response.list;
+				if (statuses == null || statuses.size() <= 0) {
+					continue;
+				}
+				final List<ContentValues> cached_users_list = new ArrayList<ContentValues>();
+				final List<Long> user_ids = new ArrayList<Long>();
+
+				for (final twitter4j.Status status : statuses) {
+					if (status == null) {
+						continue;
+					}
+					final User user = status.getUser();
+					final long user_id = user.getId();
+
+					if (!user_ids.contains(user_id)) {
+						user_ids.add(user_id);
+						cached_users_list.add(makeCachedUserContentValues(user));
+					}
+
+				}
+
+				resolver.delete(CachedUsers.CONTENT_URI,
+						CachedUsers.USER_ID + " IN (" + ListUtils.buildString(user_ids, ',', true) + " )", null);
+				resolver.bulkInsert(CachedUsers.CONTENT_URI,
+						cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
+
+			}
+			return null;
+		}
+
 	}
 
 	private class CancelRetweetTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
@@ -846,10 +931,31 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
+	private class GetDailyTrendsTask extends GetTrendsTask {
+
+		public GetDailyTrendsTask(long account_id) {
+			super(account_id);
+		}
+
+		@Override
+		public ResponseList<Trends> getTrends(Twitter twitter) throws TwitterException {
+			if (twitter == null) return null;
+			return twitter.getDailyTrends();
+		}
+
+		@Override
+		protected void onPostExecute(ListResponse<Trends> result) {
+			mStoreDailyTrendsTaskId = mAsyncTaskManager.add(new StoreDailyTrendsTask(result), true);
+			super.onPostExecute(result);
+
+		}
+
+	}
+
 	private abstract class GetDirectMessagesTask extends
 			ManagedAsyncTask<Void, Void, List<ListResponse<DirectMessage>>> {
 
-		private long[] account_ids, max_ids;
+		private final long[] account_ids, max_ids;
 
 		public GetDirectMessagesTask(Uri uri, long[] account_ids, long[] max_ids) {
 			super(TwidereService.this, mAsyncTaskManager);
@@ -934,6 +1040,33 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
+	private class GetLocalTrendsTask extends GetTrendsTask {
+
+		private final int woeid;
+
+		public GetLocalTrendsTask(long account_id, int woeid) {
+			super(account_id);
+			this.woeid = woeid;
+		}
+
+		@Override
+		public List<Trends> getTrends(Twitter twitter) throws TwitterException {
+			final ArrayList<Trends> trends_list = new ArrayList<Trends>();
+			if (twitter != null) {
+				trends_list.add(twitter.getLocationTrends(woeid));
+			}
+			return trends_list;
+		}
+
+		@Override
+		protected void onPostExecute(ListResponse<Trends> result) {
+			mStoreLocalTrendsTaskId = mAsyncTaskManager.add(new StoreLocalTrendsTask(result), true);
+			super.onPostExecute(result);
+
+		}
+
+	}
+
 	private class GetMentionsTask extends GetStatusesTask {
 
 		private final boolean is_auto_refresh;
@@ -1014,7 +1147,7 @@ public class TwidereService extends Service implements Constants {
 
 	private abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<ListResponse<twitter4j.Status>>> {
 
-		private long[] account_ids, max_ids;
+		private final long[] account_ids, max_ids;
 
 		private boolean should_set_min_id;
 
@@ -1073,12 +1206,59 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
+	private abstract class GetTrendsTask extends ManagedAsyncTask<Void, Void, ListResponse<Trends>> {
+
+		private final long account_id;
+
+		public GetTrendsTask(long account_id) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+		}
+
+		public abstract List<Trends> getTrends(Twitter twitter) throws TwitterException;
+
+		@Override
+		protected ListResponse<Trends> doInBackground(Void... params) {
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				try {
+					return new ListResponse<Trends>(account_id, -1, getTrends(twitter));
+				} catch (final TwitterException e) {
+					e.printStackTrace();
+				}
+			}
+			return null;
+		}
+
+	}
+
+	private class GetWeeklyTrendsTask extends GetTrendsTask {
+
+		public GetWeeklyTrendsTask(long account_id) {
+			super(account_id);
+		}
+
+		@Override
+		public ResponseList<Trends> getTrends(Twitter twitter) throws TwitterException {
+			if (twitter == null) return null;
+			return twitter.getWeeklyTrends();
+		}
+
+		@Override
+		protected void onPostExecute(ListResponse<Trends> result) {
+			mStoreWeeklyTrendsTaskId = mAsyncTaskManager.add(new StoreWeeklyTrendsTask(result), true);
+			super.onPostExecute(result);
+
+		}
+
+	}
+
 	private static final class ListResponse<Data> {
 
 		public final long account_id, max_id;
-		public final ResponseList<Data> list;
+		public final List<Data> list;
 
-		public ListResponse(long account_id, long max_id, ResponseList<Data> responselist) {
+		public ListResponse(long account_id, long max_id, List<Data> responselist) {
 			this.account_id = account_id;
 			this.max_id = max_id;
 			this.list = responselist;
@@ -1303,8 +1483,18 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public int getDailyTrends(long account_id) {
+			return mService.get().getDailyTrends(account_id);
+		}
+
+		@Override
 		public int getHomeTimeline(long[] account_ids, long[] max_ids) {
 			return mService.get().getHomeTimeline(account_ids, max_ids);
+		}
+
+		@Override
+		public int getLocalTrends(long account_id, int woeid) {
+			return mService.get().getLocalTrends(account_id, woeid);
 		}
 
 		@Override
@@ -1323,13 +1513,28 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public int getWeeklyTrends(long account_id) {
+			return mService.get().getWeeklyTrends(account_id);
+		}
+
+		@Override
 		public boolean hasActivatedTask() {
 			return mService.get().hasActivatedTask();
 		}
 
 		@Override
+		public boolean isDailyTrendsRefreshing() {
+			return mService.get().isDailyTrendsRefreshing();
+		}
+
+		@Override
 		public boolean isHomeTimelineRefreshing() {
 			return mService.get().isHomeTimelineRefreshing();
+		}
+
+		@Override
+		public boolean isLocalTrendsRefreshing() {
+			return mService.get().isLocalTrendsRefreshing();
 		}
 
 		@Override
@@ -1345,6 +1550,11 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public boolean isSentDirectMessagesRefreshing() {
 			return mService.get().isSentDirectMessagesRefreshing();
+		}
+
+		@Override
+		public boolean isWeeklyTrendsRefreshing() {
+			return mService.get().isWeeklyTrendsRefreshing();
 		}
 
 		@Override
@@ -1419,6 +1629,14 @@ public class TwidereService extends Service implements Constants {
 		}
 	}
 
+	private class StoreDailyTrendsTask extends StoreTrendsTask {
+
+		public StoreDailyTrendsTask(ListResponse<Trends> result) {
+			super(result, CachedTrends.Daily.CONTENT_URI);
+		}
+
+	}
+
 	private class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
 		private final List<ListResponse<DirectMessage>> responses;
@@ -1438,7 +1656,7 @@ public class TwidereService extends Service implements Constants {
 			int total_items_inserted = 0;
 			for (final ListResponse<DirectMessage> response : responses) {
 				final long account_id = response.account_id;
-				final ResponseList<DirectMessage> messages = response.list;
+				final List<DirectMessage> messages = response.list;
 				final Cursor cur = resolver.query(uri, new String[0], DirectMessages.ACCOUNT_ID + " = " + account_id,
 						null, null);
 				boolean no_items_before = false;
@@ -1552,6 +1770,14 @@ public class TwidereService extends Service implements Constants {
 				}
 			}
 			super.onPostExecute(response);
+		}
+
+	}
+
+	private class StoreLocalTrendsTask extends StoreTrendsTask {
+
+		public StoreLocalTrendsTask(ListResponse<Trends> result) {
+			super(result, CachedTrends.Local.CONTENT_URI);
 		}
 
 	}
@@ -1692,19 +1918,15 @@ public class TwidereService extends Service implements Constants {
 			final ArrayList<Long> newly_inserted_ids = new ArrayList<Long>();
 			for (final ListResponse<twitter4j.Status> response : responses) {
 				final long account_id = response.account_id;
-				final ResponseList<twitter4j.Status> statuses = response.list;
-				final Cursor cur = resolver.query(uri, new String[0], Statuses.ACCOUNT_ID + " = " + account_id, null,
-						null);
-				boolean no_items_before = false;
-				if (cur != null) {
-					no_items_before = cur.getCount() <= 0;
-					cur.close();
-				}
+				final List<twitter4j.Status> statuses = response.list;
 				if (statuses == null || statuses.size() <= 0) {
 					continue;
 				}
-				final List<ContentValues> values_list = new ArrayList<ContentValues>(), cached_users_list = new ArrayList<ContentValues>();
-				final List<Long> status_ids = new ArrayList<Long>(), retweet_ids = new ArrayList<Long>(), user_ids = new ArrayList<Long>();
+				final ArrayList<Long> ids_in_db = Utils.getStatusIdsInDatabase(TwidereService.this, query_uri,
+						account_id);
+				final boolean no_items_before = ids_in_db.size() <= 0;
+				final List<ContentValues> values_list = new ArrayList<ContentValues>();
+				final List<Long> status_ids = new ArrayList<Long>(), retweet_ids = new ArrayList<Long>();
 
 				long min_id = -1;
 
@@ -1712,16 +1934,10 @@ public class TwidereService extends Service implements Constants {
 					if (status == null) {
 						continue;
 					}
-					final User user = status.getUser();
-					final long user_id = user.getId();
 					final long status_id = status.getId();
 					final long retweet_id = status.getRetweetedStatus() != null ? status.getRetweetedStatus().getId()
 							: -1;
 
-					if (!user_ids.contains(user_id)) {
-						user_ids.add(user_id);
-						cached_users_list.add(makeCachedUserContentValues(user));
-					}
 					status_ids.add(status_id);
 
 					if ((retweet_id <= 0 || !retweet_ids.contains(retweet_id)) && !retweet_ids.contains(status_id)) {
@@ -1736,19 +1952,11 @@ public class TwidereService extends Service implements Constants {
 
 				}
 
-				{
-					resolver.delete(CachedUsers.CONTENT_URI,
-							CachedUsers.USER_ID + " IN (" + ListUtils.buildString(user_ids, ',', true) + " )", null);
-					resolver.bulkInsert(CachedUsers.CONTENT_URI,
-							cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
-				}
-
 				int rows_deleted = -1;
 
 				// Delete all rows conflicting before new data inserted.
 				{
-					final ArrayList<Long> ids_in_db = Utils.getStatusIdsInDatabase(TwidereService.this, query_uri,
-							account_id);
+
 					final ArrayList<Long> account_newly_inserted = new ArrayList<Long>();
 					account_newly_inserted.addAll(status_ids);
 					account_newly_inserted.removeAll(ids_in_db);
@@ -1805,6 +2013,55 @@ public class TwidereService extends Service implements Constants {
 				notifyForUpdatedUri(TwidereService.this, uri);
 			}
 			super.onPostExecute(response);
+			mAsyncTaskManager.add(new CacheUsersTask(responses), true);
+		}
+
+	}
+
+	private class StoreTrendsTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
+
+		private final ListResponse<Trends> response;
+		private final Uri uri;
+
+		public StoreTrendsTask(ListResponse<Trends> result, Uri uri) {
+			super(TwidereService.this, mAsyncTaskManager);
+			response = result;
+			this.uri = uri;
+		}
+
+		@Override
+		protected SingleResponse<Bundle> doInBackground(Void... args) {
+			final ContentResolver resolver = getContentResolver();
+			final Bundle bundle = new Bundle();
+			final Uri query_uri = buildQueryUri(uri, false);
+			final List<Trends> messages = response.list;
+			if (messages != null && messages.size() > 0) {
+				final ContentValues[] values_array = makeTrendsContentValues(messages);
+				resolver.delete(query_uri, null, null);
+				resolver.bulkInsert(query_uri, values_array);
+
+				bundle.putBoolean(INTENT_KEY_SUCCEED, true);
+			}
+			return new SingleResponse<Bundle>(-1, bundle, null);
+		}
+
+		@Override
+		protected void onPostExecute(SingleResponse<Bundle> response) {
+			final Intent intent = new Intent(BROADCAST_TRENDS_UPDATED);
+			if (response != null && response.data != null && response.data.getBoolean(INTENT_KEY_SUCCEED)) {
+				notifyForUpdatedUri(TwidereService.this, uri);
+				intent.putExtra(INTENT_KEY_SUCCEED, true);
+			}
+			super.onPostExecute(response);
+			sendBroadcast(intent);
+		}
+
+	}
+
+	private class StoreWeeklyTrendsTask extends StoreTrendsTask {
+
+		public StoreWeeklyTrendsTask(ListResponse<Trends> result) {
+			super(result, CachedTrends.Weekly.CONTENT_URI);
 		}
 
 	}

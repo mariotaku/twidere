@@ -127,6 +127,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		setListAdapter(getListAdapter());
 		setShowIndicator(false);
 		mListView = getListView();
+		//mListView.setFastScrollEnabled(true);
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
@@ -155,7 +156,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			final ParcelableStatus status = getListAdapter().findItem(id);
+			final ParcelableStatus status = getListAdapter().findStatus(id);
 			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
@@ -172,7 +173,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		if (tag instanceof StatusViewHolder) {
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			mSelectedStatus = getListAdapter().findItem(id);
+			mSelectedStatus = getListAdapter().findStatus(id);
 			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_status);
 			setMenuForStatus(getActivity(), mPopupMenu.getMenu(), mSelectedStatus);

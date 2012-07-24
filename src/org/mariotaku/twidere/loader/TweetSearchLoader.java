@@ -80,11 +80,11 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 			int deleted_count = 0;
 			final int size = tweets.size();
 			for (int i = 0; i < size; i++) {
-				final Tweet status = tweets.get(i);
-				if (deleteStatus(status.getId())) {
+				final Tweet tweet = tweets.get(i);
+				if (deleteStatus(tweet.getId())) {
 					deleted_count++;
 				}
-				data.add(new ParcelableStatus(status, account_id, i == tweets.size() - 1 ? deleted_count > 1 : false));
+				data.add(new ParcelableStatus(tweet, account_id, i == tweets.size() - 1 ? deleted_count > 1 : false));
 			}
 		}
 		Collections.sort(data, ParcelableStatus.STATUS_ID_COMPARATOR);

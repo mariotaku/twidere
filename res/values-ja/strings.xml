@@ -153,7 +153,6 @@
   <string name="retry">再試行</string>
   <string name="more">もっと</string>
   <string name="quote_format">引用形式</string>
-  <string name="quote_format_summary">ツイートの引用形式を設定</string>
   <string name="quote_format_message">\"[TEXT]\" は引用するツイートに書き換えられる</string>
   <string name="direct_messages">ダイレクトメッセージ</string>
   <string name="capital_on">オン</string>

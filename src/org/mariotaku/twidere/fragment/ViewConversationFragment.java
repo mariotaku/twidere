@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -28,7 +29,6 @@ import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.loader.DummyParcelableStatusLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
-import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.os.AsyncTask;
@@ -104,16 +104,29 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, true);
 			if (twitter == null) return null;
 			try {
-				twitter4j.Status status = twitter.showStatus(mStatusId);
-				mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, status));
-				long in_reply_to_id = status.getInReplyToStatusId();
+				ParcelableStatus p_status = findStatusInDatabases(getActivity(), mAccountId, mStatusId);
+				twitter4j.Status status = null;
+				if (p_status == null) {
+					status = twitter.showStatus(mStatusId);
+					if (status == null) return null;
+					p_status = new ParcelableStatus(status, mAccountId, false);
+				}
+				mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, p_status));
+				long in_reply_to_id = p_status.in_reply_to_status_id;
 				while (in_reply_to_id != -1) {
-					status = twitter.showStatus(in_reply_to_id);
-					if (status.getId() <= 0) {
+					p_status = findStatusInDatabases(getActivity(), mAccountId, in_reply_to_id);
+					if (p_status == null) {
+						status = twitter.showStatus(in_reply_to_id);
+						if (status == null) {
+							break;
+						}
+						p_status = new ParcelableStatus(status, mAccountId, false);
+					}
+					if (p_status.status_id <= 0) {
 						break;
 					}
-					mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, status));
-					in_reply_to_id = status.getInReplyToStatusId();
+					mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, p_status));
+					in_reply_to_id = p_status.in_reply_to_status_id;
 				}
 			} catch (final TwitterException e) {
 				return e;
@@ -141,11 +154,9 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 	private static class StatusHandler extends Handler {
 
 		private final ParcelableStatusesAdapter mAdapter;
-		private final long mAccountId;
 
 		public StatusHandler(ParcelableStatusesAdapter adapter, long account_id) {
 			mAdapter = adapter;
-			mAccountId = account_id;
 		}
 
 		@Override
@@ -153,8 +164,8 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 			switch (msg.what) {
 				case ADD_STATUS:
 					final Object obj = msg.obj;
-					if (obj instanceof Status) {
-						mAdapter.add(new ParcelableStatus((Status) obj, mAccountId, false));
+					if (obj instanceof ParcelableStatus) {
+						mAdapter.add((ParcelableStatus) obj);
 					}
 					break;
 			}

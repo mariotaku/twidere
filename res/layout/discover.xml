@@ -34,23 +34,9 @@
 			android:src="@drawable/ic_menu_refresh"/>
 	</LinearLayout>
 
-	<FrameLayout
-		android:id="@+id/trends_list_container"
+	<ListView
+		android:id="@android:id/list"
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
-
-		<ListView
-			android:id="@+id/trends_list"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:visibility="gone"/>
-
-		<ProgressBar
-			android:id="@+id/trends_progress"
-			style="?android:attr/progressBarStyleLarge"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"/>
-	</FrameLayout>
+		android:layout_height="fill_parent"/>
 
 </LinearLayout>
