@@ -22,13 +22,10 @@
   <string name="advanced">고급</string>
   <string name="save">저장</string>
   <string name="edit">수정</string>
-  <string name="test">테스트</string>
   <string name="login_to_twitter">트위터 로그인</string>
   <string name="edit_api">API 수정</string>
   <string name="home">홈</string>
   <string name="mentions">멘션</string>
-  <string name="discover">찾기</string>
-  <string name="me">나</string>
   <string name="error_occurred">다시 실행해 주세요. 오류가 발생했습니다.</string>
   <string name="error_already_logged_in">이미 로그인 했습니다.</string>
   <string name="no_account_selected">하나 이상의 계정을 선택해야 합니다.</string>
@@ -53,9 +50,7 @@
   <string name="reply">답변</string>
   <string name="share">공유</string>
   <string name="share_via_twidere">Twidere를 통해 공유</string>
-  <string name="view">보기</string>
   <string name="view_image">이미지</string>
-  <string name="view_media">미디어</string>
   <string name="view_map">지도</string>
   <string name="view_status">트윗 보기</string>
   <string name="view_conversation">대화</string>
@@ -85,7 +80,7 @@
   <string name="dark_theme">어두운 테마 사용</string>
   <string name="dark_theme_summary">Twidere에 어두운 테마를 적용합니다.</string>
   <string name="display_profile_image">프로필 이미지 표시</string>
-  <string name="display_profile_image_summary">비활성화하면 목록 스크롤 속도를 높이고 트래픽 사용을 줄일 수 있습니다.</string>
+  <string name="image_load_summary">비활성화하면 목록 스크롤 속도를 높이고 트래픽 사용을 줄일 수 있습니다.</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g>이(가) 리트윗함</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> 및 <xliff:g id="retweet_count">%2$d</xliff:g>여 명이 리트윗함</string>
   <string name="source"><xliff:g id="source"> %s </xliff:g>을(를) 통해</string>
@@ -230,7 +225,6 @@
   <string name="item_2_hours">2시간</string>
   <string name="item_4_hours">4시간</string>
   <string name="inline_image_preview">인라인 이미지 미리보기</string>
-  <string name="inline_image_preview_summary">비활성화하면 목록 스크롤 속도를 높이고 트래픽 사용을 줄일 수 있습니다.</string>
   <string name="solid_color_background">단색 배경</string>
   <string name="solid_color_background_summary">당신의 화면이 AMOLED 타입이라면 유용할 것입니다.</string>
   <string name="followed_you">당신이 팔로우함</string>

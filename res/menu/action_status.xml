@@ -25,6 +25,11 @@
 		android:icon="@drawable/ic_menu_star"
 		android:title="@string/fav"/>
 	<item
+		android:id="@id/conversation"
+		android:icon="@drawable/ic_menu_conversation"
+		android:title="@string/view_conversation"
+		android:visible="false"/>
+	<item
 		android:id="@id/share"
 		android:icon="@drawable/ic_menu_share"
 		android:title="@string/share"/>

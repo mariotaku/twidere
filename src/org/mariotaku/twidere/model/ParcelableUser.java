@@ -19,6 +19,9 @@
 
 package org.mariotaku.twidere.model;
 
+import static org.mariotaku.twidere.util.Utils.parseString;
+import static org.mariotaku.twidere.util.Utils.parseURL;
+
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Date;
@@ -45,7 +48,7 @@ public class ParcelableUser implements Parcelable {
 
 	public final boolean is_protected;
 
-	public final String description, name, screen_name, location;
+	public final String description, name, screen_name, location, profile_image_url_string;
 
 	public URL profile_image_url;
 
@@ -70,7 +73,8 @@ public class ParcelableUser implements Parcelable {
 		screen_name = in.readString();
 		description = in.readString();
 		location = in.readString();
-		profile_image_url = (URL) in.readSerializable();
+		profile_image_url_string = in.readString();
+		profile_image_url = parseURL(profile_image_url_string);
 	}
 
 	public ParcelableUser(User user, long account_id) {
@@ -88,6 +92,7 @@ public class ParcelableUser implements Parcelable {
 		description = user.getDescription();
 		location = user.getLocation();
 		profile_image_url = user.getProfileImageURL();
+		profile_image_url_string = parseString(profile_image_url);
 	}
 
 	@Override
@@ -110,8 +115,8 @@ public class ParcelableUser implements Parcelable {
 		out.writeString(name);
 		out.writeString(screen_name);
 		out.writeString(description);
-		out.writeSerializable(location);
-		out.writeSerializable(profile_image_url);
+		out.writeString(location);
+		out.writeString(profile_image_url_string);
 	}
 
 	private long getTime(Date date) {

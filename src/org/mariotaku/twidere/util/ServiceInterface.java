@@ -80,10 +80,10 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public void clearNewNotificationCount(int id) {
+	public void clearNotification(int id) {
 		if (mService == null) return;
 		try {
-			mService.clearNewNotificationCount(id);
+			mService.clearNotification(id);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -117,6 +117,17 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.createFriendship(account_id, user_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int deleteUserListMember(long account_id, int list_id, long user_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.deleteUserListMember(account_id, list_id, user_id);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}

@@ -52,7 +52,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-public class DiscoverFragment extends BaseListFragment implements OnClickListener, OnItemSelectedListener,
+public class TrendsFragment extends BaseListFragment implements OnClickListener, OnItemSelectedListener,
 		OnItemClickListener, LoaderCallbacks<Cursor> {
 
 	private long mAccountId;
@@ -74,7 +74,7 @@ public class DiscoverFragment extends BaseListFragment implements OnClickListene
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_TRENDS_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, DiscoverFragment.this);
+				getLoaderManager().restartLoader(0, null, TrendsFragment.this);
 			}
 		}
 	};
@@ -126,8 +126,8 @@ public class DiscoverFragment extends BaseListFragment implements OnClickListene
 			}
 		}
 		final String table = getTableNameForContentUri(uri);
-		final String where = table != null ? CachedTrends.TIMESTAMP + " = " + "(SELECT " + CachedTrends.TIMESTAMP + " FROM "
-				+ table + " ORDER BY " + CachedTrends.TIMESTAMP + " DESC LIMIT 1)" : null;
+		final String where = table != null ? CachedTrends.TIMESTAMP + " = " + "(SELECT " + CachedTrends.TIMESTAMP
+				+ " FROM " + table + " ORDER BY " + CachedTrends.TIMESTAMP + " DESC LIMIT 1)" : null;
 		return new CursorLoader(getActivity(), uri, CachedTrends.COLUMNS, where, null, null);
 	}
 

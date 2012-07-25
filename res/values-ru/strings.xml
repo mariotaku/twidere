@@ -15,13 +15,10 @@
   <string name="advanced">Расширенный</string>
   <string name="save">Сохранить</string>
   <string name="edit">Редактировать</string>
-  <string name="test">Проверка</string>
   <string name="login_to_twitter">Вход в Twitter</string>
   <string name="edit_api">Редактировать API</string>
   <string name="home">Дом</string>
   <string name="mentions">Упоминания</string>
-  <string name="discover">Исследовать</string>
-  <string name="me">Я</string>
   <string name="error_occurred">Произошла ошибка, пожалуйста, попробуйте еще раз.</string>
   <string name="error_already_logged_in">Вы уже вошли.</string>
   <string name="error_unknown_error">Ошибка: Неизвестная ошибка, вероятно, это проблема в программе.</string>

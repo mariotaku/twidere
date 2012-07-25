@@ -20,10 +20,12 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.util.List;
 
@@ -40,9 +42,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface, OnClickListener {
+public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface,
+		OnClickListener {
 
-	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowLastItemAsGap;
+	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mDisplayName,
+			mShowAccountColor, mShowLastItemAsGap;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -55,6 +59,15 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mPreviewImageLoader = preview_loader;
 	}
 
+	public ParcelableStatus findItemByStatusId(long status_id) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
+			final ParcelableStatus status = getItem(i);
+			if (status.status_id == status_id) return status;
+		}
+		return null;
+	}
+
 	@Override
 	public ParcelableStatus findStatus(long id) {
 		final int count = getCount();
@@ -64,13 +77,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		return null;
 	}
 
-	public ParcelableStatus findItemByStatusId(long status_id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			final ParcelableStatus status = getItem(i);
-			if (status.status_id == status_id) return status;
-		}
-		return null;
+	@Override
+	public ParcelableStatus getStatus(int position) {
+		return getItem(position);
 	}
 
 	@Override
@@ -114,8 +123,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
 			if (status.is_retweet && !isNullOrEmpty(retweeted_by)) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.retweeted_by, retweeted_by
-						+ (status.retweet_count > 1 ? " + " + (status.retweet_count - 1) : "")));
+				holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
+						R.string.retweeted_by_with_count, retweeted_by, status.retweet_count - 1) : mContext.getString(
+						R.string.retweeted_by, retweeted_by));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
 			} else if (status.in_reply_to_status_id > 0 && !isNullOrEmpty(status.in_reply_to_screen_name)) {
@@ -126,7 +136,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			}
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				mProfileImageLoader.displayImage(status.profile_image_url, holder.profile_image);
+				if (mDisplayHiResProfileImage) {
+					mProfileImageLoader.displayImage(
+							parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string)),
+							holder.profile_image);
+				} else {
+					mProfileImageLoader.displayImage(status.profile_image_url, holder.profile_image);
+				}
 				holder.profile_image.setOnClickListener(this);
 				holder.profile_image.setTag(position);
 			}
@@ -138,6 +154,16 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		}
 
 		return view;
+	}
+
+	@Override
+	public void onClick(View view) {
+		final Object tag = view.getTag();
+		if (tag instanceof Integer && mContext instanceof Activity) {
+			final ParcelableStatus status = getStatus((Integer) tag);
+			if (status == null) return;
+			openUserProfile((Activity) mContext, status.account_id, status.user_id, status.screen_name);
+		}
 	}
 
 	public void setData(List<ParcelableStatus> data) {
@@ -153,6 +179,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			if (clear_old || findItemByStatusId(status.status_id) == null) {
 				add(status);
 			}
+		}
+	}
+
+	@Override
+	public void setDisplayHiResProfileImage(boolean display) {
+		if (display != mDisplayHiResProfileImage) {
+			mDisplayHiResProfileImage = display;
+			notifyDataSetChanged();
 		}
 	}
 
@@ -202,20 +236,5 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
-	}
-
-	@Override
-	public void onClick(View view) {
-		Object tag = view.getTag();
-		if (tag instanceof Integer && mContext instanceof Activity) {
-			ParcelableStatus status = getStatus((Integer)tag);
-			if (status == null) return;
-			openUserProfile((Activity) mContext, status.account_id, status.user_id, status.screen_name);
-		}
-	}
-
-	@Override
-	public ParcelableStatus getStatus(int position) {
-		return getItem(position);
 	}
 }

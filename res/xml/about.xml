@@ -100,6 +100,13 @@
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=332135263"/>
 		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="Checked Japanese translation for Luigi Van"
+			android:title="Lin Yan">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="twidere://user?user_id=218536728"/>
+		</PreferenceScreen>
 	</PreferenceCategory>
 
 </PreferenceScreen>

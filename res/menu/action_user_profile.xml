@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
+		android:id="@id/mention"
+		android:icon="@drawable/ic_menu_mention"
+		android:title="@string/mention_this_user"/>
+	<item
 		android:id="@id/mute"
 		android:icon="@drawable/ic_menu_mute"
 		android:title="@string/mute"/>

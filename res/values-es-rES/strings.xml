@@ -29,13 +29,10 @@
   <string name="advanced">Avanzado</string>
   <string name="save">Guardar</string>
   <string name="edit">Editar</string>
-  <string name="test">Prueba</string>
   <string name="login_to_twitter">Iniciar sesion</string>
   <string name="edit_api">Editar API</string>
   <string name="home">Inicio</string>
   <string name="mentions">Menciones</string>
-  <string name="discover">Descubre</string>
-  <string name="me">Yo</string>
   <string name="error_occurred">A ocurrido un error, inténtelo de nuevo.</string>
   <string name="error_already_logged_in">Ya estás logeado.</string>
   <string name="no_account_selected">Debes seleccionar al menos una cuenta.</string>
@@ -64,9 +61,7 @@
   <string name="reply">Respuesta</string>
   <string name="share">Compartir</string>
   <string name="share_via_twidere">Compartir a través de Twidere</string>
-  <string name="view">Vista</string>
   <string name="view_image">Imagen</string>
-  <string name="view_media">Medios de comunicación</string>
   <string name="view_map">Mapa</string>
   <string name="view_status">Ver Tweet</string>
   <string name="view_conversation">Conversación</string>
@@ -101,7 +96,7 @@
   <string name="dark_theme">Usár Tema oscuro</string>
   <string name="dark_theme_summary">Usar tema oscuro para Twidere.</string>
   <string name="display_profile_image">Imagen de perfil para mostrar</string>
-  <string name="display_profile_image_summary">Mostrar imagen de perfil, si lo desactiva esto aumentará la velocidad de desplazamiento de la lista y reducir el uso del tráfico.</string>
+  <string name="image_load_summary">Mostrar imagen de perfil, si lo desactiva esto aumentará la velocidad de desplazamiento de la lista y reducir el uso del tráfico.</string>
   <string name="in_reply_to">En respuesta a <xliff:g id="user_name">%s</xliff:g></string>
   <string name="retweeted_by">Retweet por <xliff:g id="user_name">%s</xliff:g></string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> y <xliff:g id="retweet_count">%2$d</xliff:g> otros Retweets</string>
@@ -172,6 +167,7 @@
   <string name="set_default_account_hint">Configure una cuenta predeterminada.</string>
   <string name="daily_trends">Tendencias diarias</string>
   <string name="weekly_trends">Tendencias semanales</string>
+  <string name="local_trends">Tendencias Locales</string>
   <string name="search_hint">Búsqueda de tweets o usuarios</string>
   <string name="remember_position">Recuerde la posición</string>
   <string name="remember_position_summary">Recuerda la posición de la lista/ficha antes de cerrar Twidere</string>
@@ -253,10 +249,11 @@
   <string name="item_1_hour">1 hora</string>
   <string name="item_2_hours">2 horas</string>
   <string name="item_4_hours">4 horas</string>
-  <string name="inline_image_preview">Previsualización de la imagen en línea</string>
-  <string name="inline_image_preview_summary">Desactivando esta opcion incrementara la velocidad de la lista de desplazamiento y reducira el uso de trafico.</string>
+  <string name="inline_image_preview">Vista previa de imágenes en línea</string>
   <string name="solid_color_background">Fondo de color sólido</string>
   <string name="solid_color_background_summary">Esto puede muy útil si la pantalla de su dispositivo es AMOLED.</string>
-  <string name="followed_you">Seguidores</string>
+  <string name="followed_you">Te han seguido</string>
   <string name="user_list">Lista de usuarios</string>
+  <string name="trends_location">Ubicación de las tendencias</string>
+  <string name="trends_location_summary">Establecer ubicación de tendencias locales.</string>
 </resources>

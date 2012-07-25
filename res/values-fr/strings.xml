@@ -23,13 +23,10 @@
   <string name="advanced">Avancé</string>
   <string name="save">Enregistrer</string>
   <string name="edit">Modifier</string>
-  <string name="test">Test</string>
   <string name="login_to_twitter">Se connecter à Twitter</string>
   <string name="edit_api">Modifier l\'API</string>
   <string name="home">Accueil</string>
   <string name="mentions">Mentions</string>
-  <string name="discover">Découvrir</string>
-  <string name="me">Moi</string>
   <string name="error_occurred">Une erreur s\'est produite, veuillez réessayer.</string>
   <string name="error_already_logged_in">Vous êtes déjà connecté.</string>
   <string name="error_unknown_error">Erreur inconnue. Il y a probablement un bug.</string>
@@ -52,8 +49,6 @@
   <string name="reply">Répondre</string>
   <string name="share">Partager</string>
   <string name="share_via_twidere">Partager via Twidere</string>
-  <string name="view">Voir</string>
-  <string name="view_media">Média</string>
   <string name="view_map">Carte</string>
   <string name="view_status">Voir le tweet</string>
   <string name="view_user_profile">Profil de l\'utilisateur</string>

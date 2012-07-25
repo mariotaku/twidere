@@ -40,6 +40,7 @@ interface ITwidereService {
 	int createBlock(long account_id, long user_id);
 	int destroyBlock(long account_id, long user_id);
 	int reportSpam(long account_id, long max_id);
+	int deleteUserListMember(long account_id, int list_id, long user_id);
 	int updateProfile(long account_id, String name, String url, String location, String description);
 	int updateProfileImage(long account_id, in Uri image_uri, boolean delete_image);
 	int updateUserListDetails(long account_id, int list_id, boolean is_public, String name, String description);
@@ -55,5 +56,5 @@ interface ITwidereService {
 	boolean startAutoRefresh();
 	void stopAutoRefresh();
 	void shutdownService();
-	void clearNewNotificationCount(int id);
+	void clearNotification(int id);
 }

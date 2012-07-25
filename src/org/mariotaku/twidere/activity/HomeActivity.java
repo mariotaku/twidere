@@ -27,9 +27,9 @@ import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.fragment.AccountsFragment;
-import org.mariotaku.twidere.fragment.DiscoverFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
+import org.mariotaku.twidere.fragment.TrendsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -51,6 +51,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -63,7 +64,8 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class HomeActivity extends BaseActivity implements OnClickListener, OnBackStackChangedListener {
+public class HomeActivity extends BaseActivity implements OnClickListener, OnBackStackChangedListener,
+		OnPageChangeListener {
 
 	private ExtendedViewPager mViewPager;
 	private SharedPreferences mPreferences;
@@ -277,11 +279,11 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			switch (initial_tab) {
 				case TAB_POSITION_HOME: {
-					mService.clearNewNotificationCount(NOTIFICATION_ID_HOME_TIMELINE);
+					mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
 					break;
 				}
 				case TAB_POSITION_MENTIONS: {
-					mService.clearNewNotificationCount(NOTIFICATION_ID_MENTIONS);
+					mService.clearNotification(NOTIFICATION_ID_MENTIONS);
 					break;
 				}
 			}
@@ -299,13 +301,14 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 				R.drawable.ic_tab_home);
 		mAdapter.addTab(MentionsFragment.class, null, tab_display_label ? getString(R.string.mentions) : null,
 				R.drawable.ic_tab_connect);
-		mAdapter.addTab(DiscoverFragment.class, null, tab_display_label ? getString(R.string.discover) : null,
+		mAdapter.addTab(TrendsFragment.class, null, tab_display_label ? getString(R.string.trends) : null,
 				R.drawable.ic_tab_discover);
-		mAdapter.addTab(AccountsFragment.class, null, tab_display_label ? getString(R.string.me) : null,
+		mAdapter.addTab(AccountsFragment.class, null, tab_display_label ? getString(R.string.accounts) : null,
 				R.drawable.ic_tab_me);
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOffscreenPageLimit(3);
 		mIndicator.setViewPager(mViewPager);
+		mIndicator.setOnPageChangeListener(this);
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
@@ -378,6 +381,31 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			}
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int state) {
+
+	}
+
+	@Override
+	public void onPageSelected(int position) {
+		switch (position) {
+			case TAB_POSITION_HOME: {
+				mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
+				break;
+			}
+			case TAB_POSITION_MENTIONS: {
+				mService.clearNotification(NOTIFICATION_ID_MENTIONS);
+				break;
+			}
+		}
+
 	}
 
 	@Override

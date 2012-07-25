@@ -14,7 +14,7 @@
   <string name="remove_photo">写真を削除</string>
   <string name="tweet_hint">何をしていますか？</string>
   <string name="sign_up">新規登録</string>
-  <string name="sign_in">ログイン</string>
+  <string name="sign_in">サインイン</string>
   <string name="rest_base_url">REST Base URL</string>
   <string name="search_base_url">検索Base URL</string>
   <string name="upload_base_url">アップロードBase URL</string>
@@ -26,18 +26,15 @@
   <string name="xauth">xAuth</string>
   <string name="basic">Basic</string>
   <string name="twip_o">twip O モード</string>
-  <string name="advanced">高度な設定</string>
+  <string name="advanced">詳細設定</string>
   <string name="save">保存</string>
   <string name="edit">編集</string>
-  <string name="test">テスト</string>
-  <string name="login_to_twitter">ツイッターにログイン</string>
+  <string name="login_to_twitter">ツイッターにサインイン</string>
   <string name="edit_api">APIを編集</string>
   <string name="home">ホーム</string>
   <string name="mentions">つながり</string>
-  <string name="discover">見つける</string>
-  <string name="me">私</string>
   <string name="error_occurred">エラーが発生しました。もう一度お試しください。</string>
-  <string name="error_already_logged_in">あなたは既にログインしています。</string>
+  <string name="error_already_logged_in">あなたは既にサインインしています。</string>
   <string name="no_account_selected">アカウント選択なし</string>
   <string name="error_unknown_error">エラー：未知のエラー、これはバッグかもしれませんが…</string>
   <string name="error_message">エラー：<xliff:g id="message">%s</xliff:g></string>
@@ -49,8 +46,10 @@
   <string name="label_permission_group_access_twidere">ツイデレ アプリ　をアクセス</string>
   <string name="label_permission_read_databases">データベースの読み込み</string>
   <string name="label_permission_write_databases">データベースの書み込み</string>
+  <string name="label_permission_access_service">ツイデレサビースをアクセス</string>
   <string name="description_permission_read_databases">データベースからツイート、下書き、アカウント情報またはダイレクトメッセージを読み込む。</string>
   <string name="description_permission_write_databases">データベースにツイート、下書き、アカウント情報またはダイレクトメッセージなどを書き込む。</string>
+  <string name="description_permission_access_service">ツイート、DMを送信/更新する</string>
   <string name="open_in_browser">ブラウザで開く</string>
   <string name="just_now">たった今</string>
   <string name="tap_to_load_more">タップしてツイートを読み込む</string>
@@ -62,9 +61,7 @@
   <string name="reply">返信</string>
   <string name="share">共有</string>
   <string name="share_via_twidere">ツイデレ経由で共有</string>
-  <string name="view">ビュー</string>
   <string name="view_image">画像</string>
-  <string name="view_media">メディア</string>
   <string name="view_map">地図</string>
   <string name="view_status">ツイート</string>
   <string name="view_conversation">会話</string>
@@ -99,10 +96,14 @@
   <string name="dark_theme">ダークテーマを適用</string>
   <string name="dark_theme_summary">ツイデレにダークテーマを適用する</string>
   <string name="display_profile_image">プロフィール画像を表示</string>
+  <string name="image_load_summary">プロフィール画像を表示する。無効にするとリストのスクロール速度を速くなり、モバイルデータ通信量を抑えることができる。</string>
   <string name="in_reply_to"><xliff:g id="user_name">%s</xliff:g>さんへの返信</string>
+  <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> さんがリツイート</string>
+  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> と他 <xliff:g id="retweet_count">%2$d</xliff:g> 人がリツイート</string>
   <string name="reply_to"><xliff:g id="user_name">%s</xliff:g>さんへの返信</string>
   <string name="quote_user"><xliff:g id="user_name">%s</xliff:g>さんのツイートを引用</string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g><xliff:g id="source">%2$s</xliff:g>から</string>
+  <string name="source">via <xliff:g id="source">%s</xliff:g></string>
   <string name="filter">フィルター</string>
   <string name="filter_summary">見たくないユーザー、ソースまた特定キーワードの含むツイートを隠す。</string>
   <string name="users">ユーザー</string>
@@ -113,15 +114,15 @@
   <string name="set_color">色を設定</string>
   <string name="pick_color">色を選択</string>
   <string name="follow">フォロー</string>
-  <string name="unfollow">アンフォロー</string>
+  <string name="unfollow">フォローを解除</string>
   <string name="bottom_compose_button">つぶやきボタンを下に置く</string>
   <string name="bottom_compose_button_summary">つぶやきボタンを下に置く。携帯を片手でうまく使えない場合すごく役立つ。</string>
   <string name="leftside_compose_button">つぶやきボタンを左に置く</string>
   <string name="leftside_compose_button_summary">つぶやきボタンを左に置く。</string>
   <string name="load_item_limit">ツイートの読み込み上限</string>
-  <string name="load_item_limit_summary">一回に読み込むツイートの数を制限</string>
+  <string name="load_item_limit_summary">一回に読み込むツイートの数を制限する。</string>
   <string name="load_more_automatically">ツイートの自動読み込み</string>
-  <string name="load_more_automatically_summary">自動的に新しいコンテンツを読み込む（写真、マップ、ツイート）</string>
+  <string name="load_more_automatically_summary">自動的に新しいコンテンツを読み込む（写真、マップ、ツイート）。</string>
   <string name="quote">引用</string>
   <string name="add_rule">ルールを追加</string>
   <string name="longclick_to_delete">長押して削除</string>
@@ -132,15 +133,15 @@
   <string name="favorite_success">お気に入りに登録しました</string>
   <string name="unfavorite_success">お気に入りから削除しました</string>
   <string name="follow_success">フォローしました</string>
-  <string name="unfollow_success">アンフォローしました</string>
+  <string name="unfollow_success">フォローを解除しました</string>
   <string name="profile_update_success">プロフィールを更新しました</string>
   <string name="profile_image_update_success">プロフィール画像を更新しました</string>
   <string name="display_name">名前を表示</string>
-  <string name="display_name_summaryon">名前を表示する</string>
+  <string name="display_name_summaryon">名前を表示する。</string>
   <string name="display_name_summaryoff">ユーザー名を表示する。</string>
   <string name="text_size">フォントサイズ</string>
-  <string name="text_size_summary">ツイートのフォントサイズ</string>
-  <string name="cannot_get_location">位置情報が取得できません</string>
+  <string name="text_size_summary">ツイートのフォントサイズ。</string>
+  <string name="cannot_get_location">位置情報が取得できません。</string>
   <string name="drafts">下書き</string>
   <string name="send_all">全てを送信</string>
   <string name="delete_all">すべてを削除</string>
@@ -153,7 +154,7 @@
   <string name="retry">再試行</string>
   <string name="more">もっと</string>
   <string name="quote_format">引用形式</string>
-  <string name="quote_format_message">\"[TEXT]\" は引用するツイートに書き換えられる</string>
+  <string name="quote_format_message">\"[TEXT]\" は引用するツイートに書き換えられる。</string>
   <string name="direct_messages">ダイレクトメッセージ</string>
   <string name="capital_on">オン</string>
   <string name="capital_off">オフ</string>
@@ -166,9 +167,10 @@
   <string name="set_default_account_hint">デフォルトアカウントを選んでください。</string>
   <string name="daily_trends">デーリー・トレンド</string>
   <string name="weekly_trends">ウィークリート・レンド</string>
+  <string name="local_trends">ローカルトレンド</string>
   <string name="search_hint">ツイートまたユーザーを検索</string>
   <string name="remember_position">位置を記憶</string>
-  <string name="remember_position_summary">ツイデレを閉じる前にリスト/タブの位置を記憶する</string>
+  <string name="remember_position_summary">ツイデレを閉じる前にリスト/タブの位置を記憶する。</string>
   <string name="user_blocked">ブロックを解除</string>
   <string name="user_unblocked">このユーザーのブロックを解除しました。</string>
   <string name="reported_user_for_spam">スパムとして報告</string>
@@ -183,25 +185,46 @@
   <string name="proxy_host">ホスト</string>
   <string name="proxy_port">ポート番号</string>
   <string name="block">ブロック</string>
-  <string name="unblock">ブロックを解除Unblock</string>
-  <string name="report_for_spam">スパムとして報告Report for spam</string>
+  <string name="unblock">ブロックを解除</string>
+  <string name="report_for_spam">スパムとして報告</string>
   <string name="mute">非表示</string>
   <string name="user_muted">このユーザーをフィルターリストに追加する。ホーム / つながり にこのユーザーのツイートを非表示にする。</string>
   <string name="inbox">受信箱</string>
   <string name="outbox">送信箱</string>
   <string name="load_images">画像を読み込む</string>
-  <string name="stop_service_after_closed">ツイデレを終了した後でサービスを停止</string>
+  <string name="stop_service_after_closed">終了してサービスを停止</string>
   <string name="stop_service_after_closed_summary">無効にするほうが良いです。</string>
   <string name="other_settings">他の設定</string>
   <string name="refresh_and_notifications">再読み込み &amp; 通知</string>
   <string name="auto_refresh">自動再読み込み</string>
   <string name="refresh_interval">更新間隔</string>
+  <string name="refresh_interval_summary">短い更新間隔は消費電力やモバイルデータ通信量を上げます。慎重に設定してください。</string>
   <string name="content_to_refresh">コンテンツ</string>
+  <string name="content_to_nofity">通知のコンテンツを変更することができる。</string>
+  <string name="notifications_type">通知のタイプ</string>
+  <string name="notifications_type_summary">システム設定（音、振動）とは関係ありません。</string>
+  <string name="sound">音</string>
   <string name="vibration">振動</string>
+  <string name="lights">LED通知</string>
   <string name="notifications">通知</string>
   <string name="new_notifications">新しい通知</string>
   <string name="load_earlier_messages">以前のダイレクトメッセージを読み込む</string>
-  <string name="screen_name">スクリーン名</string>
+  <string name="screen_name">ユーザー名</string>
+  <string name="sort_timeline_by_time">タイムラインを時間順に並び替える</string>
+  <string name="sort_timeline_by_time_summary">タイムラインでリツイートしたアイテムの位置ズレを起こるかもしれませんが, 他のサビース（例えばIdenti.caとか）を利用している時、この機能を有効にすることをお勧めします。</string>
+  <string name="refresh_on_start">起動時に更新</string>
+  <string name="refresh_on_start_summary">起動時にホーム / つながりを更新する。</string>
+  <string name="refresh_after_tweet">リツイートした後更新</string>
+  <string name="refresh_after_tweet_summary">リツイートした後ですぐにタイムラインを更新する。</string>
+  <string name="list_timeline">リストタイムライン</string>
+  <string name="list_members">リスト内アカウント</string>
+  <string name="list_subscribers">リストフォロー数</string>
+  <string name="type_to_compose">メッセージを入力</string>
+  <string name="list_following_user">このユーザーが追加されているリスト</string>
+  <string name="list_user_followed">リストフォロー</string>
+  <string name="list_created_by_user">このユーザーが作成したリスト</string>
+  <string name="report_errors_automatically">エラー報告の自動送信</string>
+  <string name="report_errors_automatically_summary">エラー報告を自動的に送信します。個人データを収集することはありません。</string>
   <string name="Nminutes_quantity_one">1分</string>
   <string name="Nminutes_quantity_other"><xliff:g id="minutes">%d</xliff:g> 分</string>
   <string name="Nhours_quantity_one">1時間</string>
@@ -209,9 +232,15 @@
   <string name="Ndays_quantity_one">1日</string>
   <string name="Ndays_quantity_other"><xliff:g id="days">%d</xliff:g> 日</string>
   <string name="Nmonths_quantity_one">1ヶ月</string>
-  <string name="Nmonths_quantity_other"><xliff:g id="minutes">%d</xliff:g> ヶ月</string>
+  <string name="Nmonths_quantity_other"><xliff:g id="months">%d</xliff:g> ヶ月</string>
   <string name="Nyears_quantity_one">1年</string>
-  <string name="Nyears_quantity_other"><xliff:g id="days">%d</xliff:g> 年</string>
+  <string name="Nyears_quantity_other"><xliff:g id="years">%d</xliff:g> 年</string>
+  <string name="Ntweets_quantity_one">新しいツイートが一件あります。</string>
+  <string name="Ntweets_quantity_other">新しいツイートが <xliff:g id="items">%d</xliff:g>+ 件あります。</string>
+  <string name="Nmentions_quantity_one">自分宛ツイートがあります。</string>
+  <string name="Nmentions_quantity_other">自分宛ツイートが <xliff:g id="items">%d</xliff:g>+ 件あります。</string>
+  <string name="Ndirect_messages_quantity_one">新着DMが一件あります。</string>
+  <string name="Ndirect_messages_quantity_other">新着DMが <xliff:g id="items"> %d </xliff:g>+ 件あります。</string>
   <string name="item_1_minute">1分</string>
   <string name="item_5_minutes">5分</string>
   <string name="item_10_minutes">10分</string>
@@ -220,4 +249,15 @@
   <string name="item_1_hour">1時間</string>
   <string name="item_2_hours">2時間</string>
   <string name="item_4_hours">4時間</string>
+  <string name="inline_image_preview">インライン画像プレビュー</string>
+  <string name="solid_color_background">単色の背景</string>
+  <string name="solid_color_background_summary">アモレッド搭載した機種ならこの機能を有効にすることをお勧めします。</string>
+  <string name="followed_you">あなたをフォロー中</string>
+  <string name="user_list">ユーザーリスト</string>
+  <string name="trends_location">トレンドの場所</string>
+  <string name="trends_location_summary">ローカルトレンドの場所を変更する。</string>
+  <string name="trends">トレンド</string>
+  <string name="accounts">アカウント</string>
+  <string name="hires_profile_image">高解像度プロファイル画像</string>
+  <string name="mention_this_user">このユーザー宛にツイート</string>
 </resources>

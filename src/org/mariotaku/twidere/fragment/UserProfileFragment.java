@@ -24,7 +24,9 @@ import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
+import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
@@ -36,8 +38,11 @@ import static org.mariotaku.twidere.util.Utils.openUserBlocks;
 import static org.mariotaku.twidere.util.Utils.openUserFavorites;
 import static org.mariotaku.twidere.util.Utils.openUserFollowers;
 import static org.mariotaku.twidere.util.Utils.openUserFriends;
+import static org.mariotaku.twidere.util.Utils.openUserListTypes;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
+import static org.mariotaku.twidere.util.Utils.parseString;
+import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.io.File;
 import java.net.URL;
@@ -58,7 +63,6 @@ import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import twitter4j.conf.Configuration;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -104,6 +108,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener {
 
 	private LazyImageLoader mProfileImageLoader;
+
 	private ImageView mProfileImageView;
 	private GetFriendshipTask mFollowInfoTask;
 	private View mFollowContainer, mMoreOptionsContainer;
@@ -113,8 +118,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mTweetsContainer, mFollowersContainer, mFriendsContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress, mListProgress;
 	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
-
 	private UserProfileActionAdapter mAdapter;
+
 	private ListView mListView;
 	private UserInfoTask mUserInfoTask;
 	private View mHeaderView;
@@ -122,28 +127,28 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private Relationship mFriendship;
 	private final DialogFragment mDialogFragment = new EditTextDialogFragment();
 	private Uri mImageUri;
-
 	private User mUser = null;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (mUser == null) return;
 			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId
+				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.getId()
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					showFollowInfo(true);
 				}
 			}
 			if (BROADCAST_BLOCKSTATE_CHANGED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId
+				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.getId()
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					showFollowInfo(true);
 				}
 			}
 			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mAccountId
+				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.getId()
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					reloadUserInfo();
 				}
@@ -168,6 +173,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private PopupMenu mPopupMenu;
 
 	private boolean mFollowInfoDisplayed = false;
+
+	private SharedPreferences mPreferences;
 
 	public void changeUser(long account_id, User user) {
 		if (user == null || getActivity() == null || !isMyActivatedAccount(getActivity(), account_id)) return;
@@ -217,7 +224,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mTweetCount.setText(String.valueOf(user.getStatusesCount()));
 		mFollowersCount.setText(String.valueOf(user.getFollowersCount()));
 		mFriendsCount.setText(String.valueOf(user.getFriendsCount()));
-		mProfileImageLoader.displayImage(user.getProfileImageURL(), mProfileImageView);
+		// final boolean display_profile_image =
+		// mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		// mProfileImageView.setVisibility(display_profile_image ? View.VISIBLE
+		// : View.GONE);
+		// if (display_profile_image) {
+		final URL profile_image_url = user.getProfileImageURL();
+		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
+		mProfileImageLoader.displayImage(
+				hires_profile_image ? parseURL(getBiggerTwitterProfileImage(parseString(profile_image_url)))
+						: profile_image_url, mProfileImageView);
+		// }
 		mUser = user;
 		mAdapter.notifyDataSetChanged();
 		showFollowInfo(false);
@@ -257,6 +274,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mService = getApplication().getServiceInterface();
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
@@ -269,6 +287,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mProfileImageLoader = getApplication().getProfileImageLoader();
 		mAdapter = new UserProfileActionAdapter(getActivity());
 		mAdapter.add(new FavoritesAction());
+		mAdapter.add(new UserListTypesAction());
 		if (isMyActivatedAccount(getActivity(), user_id) || isMyActivatedUserName(getActivity(), screen_name)) {
 			mAdapter.add(new UserBlocksAction());
 			mAdapter.add(new DirectMessagesAction());
@@ -344,9 +363,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case R.id.profile_image_container: {
 				final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 				if (twitter != null) {
-					final Configuration conf = twitter.getConfiguration();
-					final Uri uri = Uri.parse(conf.getRestBaseURL() + "/users/profile_image?screen_name="
-							+ mUser.getScreenName() + "&size=original");
+					final Uri uri = Uri.parse(getOriginalTwitterProfileImage(parseString(mUser.getProfileImageURL())));
 					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, uri);
 					intent.setPackage(getActivity().getPackageName());
 					startActivity(intent);
@@ -591,6 +608,22 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				Toast.makeText(getActivity(), R.string.user_muted, Toast.LENGTH_SHORT).show();
 				break;
 			}
+			case MENU_MENTION: {
+				if (mUser == null) {
+					break;
+				}
+				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Bundle bundle = new Bundle();
+				final String name = mUser.getName();
+				final String screen_name = mUser.getScreenName();
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+				bundle.putString(INTENT_KEY_TEXT, "@" + screen_name + " ");
+				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
+				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+				intent.putExtras(bundle);
+				startActivity(intent);
+				break;
+			}
 		}
 		return true;
 	}
@@ -696,7 +729,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mType = bundle != null ? bundle.getInt(INTENT_KEY_TYPE, -1) : -1;
 			mTitle = bundle != null ? bundle.getString(INTENT_KEY_TITLE) : null;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			mEditText = new EditText(getActivity());
+			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.edittext_default_style, null);
+			builder.setView(view);
+			mEditText = (EditText) view.findViewById(R.id.edit_text);
 			if (mText != null) {
 				mEditText.setText(mText);
 			}
@@ -721,7 +756,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			mEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(limit) });
 			builder.setTitle(mTitle);
-			builder.setView(mEditText);
+			builder.setView(view);
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();
@@ -963,6 +998,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mRetryButton.setVisibility(View.GONE);
 			setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
+		}
+
+	}
+
+	private class UserListTypesAction extends UserAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.user_list);
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null) return;
+			openUserListTypes(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
 	}

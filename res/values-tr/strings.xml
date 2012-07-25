@@ -15,13 +15,10 @@
   <string name="advanced">Gelişmiş</string>
   <string name="save">Kaydet</string>
   <string name="edit">Düzenle</string>
-  <string name="test">Sınama</string>
   <string name="login_to_twitter">Twitter\'e giriş yap</string>
   <string name="edit_api">API düzenle</string>
   <string name="home">Anasayfa</string>
   <string name="mentions">Konuşulanlar</string>
-  <string name="discover">Keşfet</string>
-  <string name="me">Ben</string>
   <string name="error_occurred">Bir hata oluştu, lütfen daha sonra deneyin.</string>
   <string name="error_already_logged_in">Zaten giriş yaptınız</string>
   <string name="no_account_selected">You must select one account or more.</string>
@@ -34,7 +31,6 @@
   <string name="delete">Sil</string>
   <string name="share">Paylaş</string>
   <string name="view_image">Resim</string>
-  <string name="view_media">Medya</string>
   <string name="view_map">Harita</string>
   <string name="view_conversation">Görüşme</string>
   <string name="view_user_profile">Kullanıcı profili</string>

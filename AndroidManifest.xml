@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="30"
+	android:versionCode="31"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -248,6 +248,9 @@
 					android:host="list_details"
 					android:scheme="twidere"/>
 				<data
+					android:host="list_types"
+					android:scheme="twidere"/>
+				<data
 					android:host="list_timeline"
 					android:scheme="twidere"/>
 				<data
@@ -255,6 +258,15 @@
 					android:scheme="twidere"/>
 				<data
 					android:host="list_subscribers"
+					android:scheme="twidere"/>
+				<data
+					android:host="list_created"
+					android:scheme="twidere"/>
+				<data
+					android:host="list_subscriptions"
+					android:scheme="twidere"/>
+				<data
+					android:host="list_memberships"
 					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>

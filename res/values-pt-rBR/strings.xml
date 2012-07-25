@@ -29,13 +29,10 @@
   <string name="advanced">Avançado</string>
   <string name="save">Salvar</string>
   <string name="edit">Editar</string>
-  <string name="test">Testar</string>
   <string name="login_to_twitter">Login no Twitter</string>
   <string name="edit_api">Editar API</string>
   <string name="home">Início</string>
   <string name="mentions">Menções</string>
-  <string name="discover">Descobrir</string>
-  <string name="me">Eu</string>
   <string name="error_occurred">Ocorreu um erro, por favor tente novamente.</string>
   <string name="error_already_logged_in">Você já fez login.</string>
   <string name="no_account_selected">Você precisa selecionar pelo menos uma conta.</string>
@@ -62,9 +59,7 @@
   <string name="reply">Responder</string>
   <string name="share">Compartilhar</string>
   <string name="share_via_twidere">Compartilhar pelo Twidere</string>
-  <string name="view">Ver</string>
   <string name="view_image">Imagem</string>
-  <string name="view_media">Mídia</string>
   <string name="view_map">Mapa</string>
   <string name="view_status">Ver tweet</string>
   <string name="view_conversation">Conversa</string>

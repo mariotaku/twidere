@@ -1,7 +1,7 @@
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.Utils.openListDetails;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
+import static org.mariotaku.twidere.util.Utils.openUserListDetails;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import org.mariotaku.twidere.fragment.ViewStatusFragment;
@@ -50,7 +50,7 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 				if (mention_list == null || mention_list.length != 2) {
 					break;
 				}
-				openListDetails(activity, account_id, -1, -1, mention_list[0], mention_list[1]);
+				openUserListDetails(activity, account_id, -1, -1, mention_list[0], mention_list[1]);
 				break;
 			}
 		}

@@ -30,13 +30,10 @@
 	<string name="advanced">Advanced</string>
 	<string name="save">Save</string>
 	<string name="edit">Edit</string>
-	<string name="test">Test</string>
 	<string name="login_to_twitter">Login to Twitter</string>
 	<string name="edit_api">Edit API</string>
 	<string name="home">Home</string>
 	<string name="mentions">Mentions</string>
-	<string name="discover">Discover</string>
-	<string name="me">Me</string>
 	<string name="error_occurred">An error occurred, please try again.</string>
 	<string name="error_already_logged_in">You are already logged in.</string>
 	<string name="no_account_selected">You must select at least one account.</string>
@@ -65,9 +62,7 @@
 	<string name="reply">Reply</string>
 	<string name="share">Share</string>
 	<string name="share_via_twidere">Share via Twidere</string>
-	<string name="view">View</string>
 	<string name="view_image">Image</string>
-	<string name="view_media">Media</string>
 	<string name="view_map">Map</string>
 	<string name="view_status">View tweet</string>
 	<string name="view_conversation">Conversation</string>
@@ -102,7 +97,7 @@
 	<string name="dark_theme">Use dark theme</string>
 	<string name="dark_theme_summary">Use dark theme for Twidere.</string>
 	<string name="display_profile_image">Display profile image</string>
-	<string name="display_profile_image_summary">Disable this will increase list scroll speed and reduce traffic usage.</string>
+	<string name="image_load_summary">Disable this will increase list scroll speed and reduce traffic usage.</string>
 	<string name="in_reply_to">In reply to <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweeted this</string>
 	<string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> and <xliff:g id="retweet_count">%2$d</xliff:g> others retweeted this</string>
@@ -256,12 +251,15 @@
 	<string name="item_2_hours">2 hours</string>
 	<string name="item_4_hours">4 hours</string>
 	<string name="inline_image_preview">Inline image preview</string>
-	<string name="inline_image_preview_summary">Disable this will increase list scroll speed and reduce traffic usage.</string>
 	<string name="solid_color_background">Solid color background</string>
 	<string name="solid_color_background_summary">This may useful if screen of your device is AMOLED.</string>
 	<string name="followed_you">Followed you</string>
 	<string name="user_list">User list</string>
 	<string name="trends_location">Trends location</string>
 	<string name="trends_location_summary">Set location for local trends.</string>
+	<string name="trends">Trends</string>
+	<string name="accounts">Accounts</string>
+	<string name="hires_profile_image">Hi-res profile image</string>
+	<string name="mention_this_user">Mention this user</string>
 
 </resources>

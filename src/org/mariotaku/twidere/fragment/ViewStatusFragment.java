@@ -22,11 +22,13 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -160,7 +162,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		}
 
 		final LazyImageLoader imageloader = getApplication().getProfileImageLoader();
-		imageloader.displayImage(status.profile_image_url, mProfileImageView);
+		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
+		imageloader.displayImage(
+				hires_profile_image ? parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string))
+						: status.profile_image_url, mProfileImageView);
 		final List<ImageSpec> images = Utils.getImagesInStatus(status.text_html);
 		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		if (images.size() > 0) {

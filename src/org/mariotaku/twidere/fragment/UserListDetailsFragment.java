@@ -22,15 +22,20 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.findUserList;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
-import static org.mariotaku.twidere.util.Utils.openListMembers;
-import static org.mariotaku.twidere.util.Utils.openListSubscribers;
-import static org.mariotaku.twidere.util.Utils.openListTimeline;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
+import static org.mariotaku.twidere.util.Utils.openUserListMembers;
+import static org.mariotaku.twidere.util.Utils.openUserListSubscribers;
+import static org.mariotaku.twidere.util.Utils.openUserListTimeline;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.parseString;
+import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
+
+import java.net.URL;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -76,7 +81,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class ListDetailsFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
+public class UserListDetailsFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
 		OnItemClickListener, OnItemLongClickListener, OnLinkClickListener {
 
 	private LazyImageLoader mProfileImageLoader;
@@ -123,7 +128,7 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 		}
 	};
 
-	public void changeUser(long account_id, UserList user_list) {
+	public void changeUserList(long account_id, UserList user_list) {
 		if (user_list == null || getActivity() == null || !isMyActivatedAccount(getActivity(), account_id)) return;
 		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
 			mUserInfoTask.cancel(true);
@@ -161,7 +166,11 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 		linkify.setOnLinkClickListener(this);
 		linkify.addAllLinks();
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
-		mProfileImageLoader.displayImage(user.getProfileImageURL(), mProfileImageView);
+		final URL profile_image_url = user.getProfileImageURL();
+		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
+		mProfileImageLoader.displayImage(
+				hires_profile_image ? parseURL(getBiggerTwitterProfileImage(parseString(profile_image_url)))
+						: profile_image_url, mProfileImageView);
 		mUserList = user_list;
 		mFollowButton.setText(user_list.isFollowing() ? R.string.unfollow : R.string.follow);
 		mAdapter.notifyDataSetChanged();
@@ -439,7 +448,9 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 			mTitle = bundle != null ? bundle.getString(INTENT_KEY_TITLE) : null;
 			mIsPublic = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_PUBLIC) : true;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			mEditText = new EditText(getActivity());
+			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.edittext_default_style, null);
+			builder.setView(view);
+			mEditText = (EditText) view.findViewById(R.id.edit_text);
 			if (mText != null) {
 				mEditText.setText(mText);
 			}
@@ -456,7 +467,6 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 			}
 			mEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(limit) });
 			builder.setTitle(mTitle);
-			builder.setView(mEditText);
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();
@@ -514,7 +524,7 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 			if (result.value != null) {
 				final UserList user = result.value;
 				setListShown(true);
-				changeUser(mAccountId, user);
+				changeUserList(mAccountId, user);
 				mRetryButton.setVisibility(View.GONE);
 			} else {
 				showErrorToast(getActivity(), result.exception, false);
@@ -545,7 +555,7 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onClick() {
-			openListMembers(getActivity(), mAccountId, mUserListId, mUserId, mUserScreenName, mListName);
+			openUserListMembers(getActivity(), mAccountId, mUserListId, mUserId, mUserScreenName, mListName);
 		}
 
 	}
@@ -559,7 +569,7 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onClick() {
-			openListSubscribers(getActivity(), mAccountId, mUserListId, mUserId, mUserScreenName, mListName);
+			openUserListSubscribers(getActivity(), mAccountId, mUserListId, mUserId, mUserScreenName, mListName);
 		}
 
 	}
@@ -581,7 +591,7 @@ public class ListDetailsFragment extends BaseListFragment implements OnClickList
 		@Override
 		public void onClick() {
 			if (mUserList == null) return;
-			openListTimeline(getActivity(), mAccountId, mUserListId, mUserId, mUserName, mListName);
+			openUserListTimeline(getActivity(), mAccountId, mUserListId, mUserId, mUserName, mListName);
 		}
 
 	}

@@ -21,13 +21,13 @@ package org.mariotaku.twidere.fragment;
 
 import java.util.List;
 
-import org.mariotaku.twidere.loader.ListMembersLoader;
+import org.mariotaku.twidere.loader.ListSubscribersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
-public class ListMembersFragment extends BaseUsersFragment {
+public class UserListSubscribersFragment extends BaseUsersFragment {
 
 	private long mCursor = -1;
 
@@ -44,7 +44,7 @@ public class ListMembersFragment extends BaseUsersFragment {
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 			list_name = args.getString(INTENT_KEY_LIST_NAME);
 		}
-		return new ListMembersLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, mCursor,
+		return new ListSubscribersLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, mCursor,
 				getData());
 	}
 
@@ -64,10 +64,14 @@ public class ListMembersFragment extends BaseUsersFragment {
 
 	@Override
 	public void onLoadFinished(Loader<List<ParcelableUser>> loader, List<ParcelableUser> data) {
-		if (loader instanceof ListMembersLoader) {
-			final long cursor = ((ListMembersLoader) loader).getNextCursor();
-			getListAdapter().setShowLastItemAsGap(cursor != mCursor);
-			mCursor = cursor;
+		if (loader instanceof ListSubscribersLoader) {
+			final long cursor = ((ListSubscribersLoader) loader).getNextCursor();
+			final boolean all_items_loaded = cursor != -2 && cursor == mCursor;
+			getListAdapter().setShowLastItemAsGap(!all_items_loaded);
+			setAllItemsLoaded(all_items_loaded);
+			if (cursor != -2) {
+				mCursor = cursor;
+			}
 		}
 		super.onLoadFinished(loader, data);
 	}

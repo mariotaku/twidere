@@ -19,7 +19,7 @@
 
 		<org.mariotaku.preference.TextSizePreference
 			maxValue="24.0"
-			minValue="14.0"
+			minValue="12.0"
 			android:defaultValue="14.0"
 			android:key="text_size"
 			android:summary="@string/text_size_summary"
@@ -28,12 +28,18 @@
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="display_profile_image"
-			android:summary="@string/display_profile_image_summary"
+			android:summary="@string/image_load_summary"
 			android:title="@string/display_profile_image"/>
 		<CheckBoxPreference
 			android:defaultValue="false"
+			android:dependency="display_profile_image"
+			android:key="hires_profile_image"
+			android:summary="@string/image_load_summary"
+			android:title="@string/hires_profile_image"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
 			android:key="inline_image_preview"
-			android:summary="@string/inline_image_preview_summary"
+			android:summary="@string/image_load_summary"
 			android:title="@string/inline_image_preview"/>
 		<CheckBoxPreference
 			android:defaultValue="true"

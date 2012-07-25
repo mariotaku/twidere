@@ -39,7 +39,10 @@ public class ListMembersLoader extends ParcelableUsersLoader {
 	private final long mAccountId, mUserId, mCursor;
 	private final String mScreenName, mListName;
 
-	private long mNextCursor, mPrevCursor;
+	private long mOwnerId;
+	private int mUserListId;
+
+	private long mNextCursor = -2, mPrevCursor = -2;
 
 	public ListMembersLoader(Context context, long account_id, int list_id, long user_id, String screen_name,
 			String list_name, long cursor, List<ParcelableUser> users_list) {
@@ -56,8 +59,16 @@ public class ListMembersLoader extends ParcelableUsersLoader {
 		return mNextCursor;
 	}
 
+	public long getOwnerId() {
+		return mOwnerId;
+	}
+
 	public long getPrevCursor() {
 		return mPrevCursor;
+	}
+
+	public int getUserListId() {
+		return mUserListId;
 	}
 
 	@Override
@@ -66,10 +77,25 @@ public class ListMembersLoader extends ParcelableUsersLoader {
 		if (twitter == null) return null;
 		final PagableResponseList<User> users;
 		if (mListId > 0) {
+			if (mUserListId <= 0) {
+				mUserListId = mListId;
+			}
+			if (mOwnerId <= 0) {
+				final UserList list = twitter.showUserList(mListId);
+				final User owner = list != null ? list.getUser() : null;
+				mOwnerId = owner != null ? owner.getId() : -1;
+			}
 			users = twitter.getUserListMembers(mListId, mCursor);
 		} else {
 			final UserList list = findUserList(twitter, mUserId, mScreenName, mListName);
+			if (mOwnerId <= 0) {
+				final User owner = list.getUser();
+				mOwnerId = owner != null ? owner.getId() : -1;
+			}
 			if (list != null && list.getId() > 0) {
+				if (mUserListId <= 0) {
+					mUserListId = list.getId();
+				}
 				users = twitter.getUserListMembers(list.getId(), mCursor);
 			} else
 				return null;

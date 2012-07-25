@@ -118,6 +118,13 @@ public class TwidereLinkify {
 	public static final int YFROG_GROUP_ALL = 1;
 	public static final int YFROG_GROUP_ID = 2;
 
+	public static final String TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES = "(bigger|normal|mini)";
+	public static final String STRING_PATTERN_TWITTER_PROFILE_IMAGES = "(https?:\\/\\/([\\w\\d]+)\\.twimg\\.com\\/profile_images\\/([\\d\\w\\-_]+)\\/([\\d\\w\\-_]+)_"
+			+ TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES + "(\\.?(png|jpg|jpeg|gif|bmp))?)";
+
+	public static final Pattern PATTERN_TWITTER_PROFILE_IMAGES = Pattern.compile(STRING_PATTERN_TWITTER_PROFILE_IMAGES,
+			Pattern.CASE_INSENSITIVE);
+
 	private final TextView view;
 
 	private OnLinkClickListener mOnLinkClickListener;

@@ -28,7 +28,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
-public class ListTimelineFragment extends ParcelableStatusesListFragment {
+public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 
 	@Override
 	public boolean isListLoadFinished() {

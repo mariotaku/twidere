@@ -97,7 +97,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 		long last_viewed_id = -1;
 		{
 			final int position = list.getFirstVisiblePosition();
-			if (position != 1) {
+			if (position > 0) {
 				last_viewed_id = adapter.findItemIdByPosition(position);
 			}
 		}
@@ -115,7 +115,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 		if (mMinIdToRefresh > 0) {
 			final int position = adapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id
 					: mMinIdToRefresh);
-			if (position > -1 && position < list.getCount()) {
+			if (position >= 0 && position < list.getCount()) {
 				list.setSelection(position);
 			}
 			mMinIdToRefresh = -1;

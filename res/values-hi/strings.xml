@@ -29,13 +29,10 @@
   <string name="advanced">उन्नत</string>
   <string name="save">सेव</string>
   <string name="edit">एडिट</string>
-  <string name="test">टेस्ट</string>
   <string name="login_to_twitter">ट्विट्टर में लोंग इन करे</string>
   <string name="edit_api">API एडिट करे</string>
   <string name="home">घर</string>
   <string name="mentions">ज़िक्र</string>
-  <string name="discover">खोजे</string>
-  <string name="me">मै</string>
   <string name="error_occurred">एक एर्रोर हुई है, फिर कोशिश करें |</string>
   <string name="error_already_logged_in">आप पहले से ही अंदर लॉग इन हैं |</string>
   <string name="no_account_selected">आपको कम से कम एक खाते का चयन करना होगा |</string>
@@ -64,9 +61,7 @@
   <string name="reply">जवाब</string>
   <string name="share">शेयर</string>
   <string name="share_via_twidere">त्विदेर के माध्यम से शेयर</string>
-  <string name="view">देखे</string>
   <string name="view_image">छवि</string>
-  <string name="view_media">मीडिया</string>
   <string name="view_map">नक्शा</string>
   <string name="view_status">ट्वीट देखे</string>
   <string name="view_conversation">बातचीत</string>
@@ -101,7 +96,7 @@
   <string name="dark_theme">अंधेरे थीम का प्रयोग करे</string>
   <string name="dark_theme_summary">ट्विदेर का अंधेरे थीम का प्रयोग करे |</string>
   <string name="display_profile_image">प्रोफ़ाइल छवि प्रदर्शित करें</string>
-  <string name="display_profile_image_summary">अक्षम करें पर, सूची स्क्रॉल गति बढ़ेगा और यातायात का उपयोग कम होगा|</string>
+  <string name="image_load_summary">अक्षम करें पर, सूची स्क्रॉल गति बढ़ेगा और यातायात का उपयोग कम होगा|</string>
   <string name="in_reply_to">के विषय में उत्तर दें <xliff:g id="username">%s</xliff:g></string>
   <string name="retweeted_by"><xliff:g id="user_name"> %s </xliff:g> यह रीट्वीट किया</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> और <xliff:g id="retweet_count">%2$d</xliff:g> दुसरो ने यह  रीट्वीट किया</string>
@@ -254,7 +249,6 @@
   <string name="item_2_hours">2 घंटे</string>
   <string name="item_4_hours">4 घंटे</string>
   <string name="inline_image_preview">इनलाइन छवि पूर्वावलोकन</string>
-  <string name="inline_image_preview_summary">अक्षम करें पर, सूची स्क्रॉल गति बढ़ेगा और यातायात का उपयोग कम होगा|</string>
   <string name="solid_color_background">ठोस रंग पृष्ठभूमि</string>
   <string name="solid_color_background_summary">यह उपयोगी है अगर अपने डिवाइस की स्क्रीन AMOLED है|</string>
   <string name="followed_you">ने फॉलो किया</string>

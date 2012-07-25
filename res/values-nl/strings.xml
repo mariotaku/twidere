@@ -29,13 +29,10 @@
   <string name="advanced">Geavanceerd</string>
   <string name="save">Bewaar</string>
   <string name="edit">Bewerk</string>
-  <string name="test">Test</string>
   <string name="login_to_twitter">Log in bij Twitter</string>
   <string name="edit_api">Bewerk API</string>
   <string name="home">Thuis</string>
   <string name="mentions">Vermeldingen</string>
-  <string name="discover">Ontdekken</string>
-  <string name="me">Ik</string>
   <string name="error_occurred">Er is iets misgegaan, probeer opnieuw.</string>
   <string name="error_already_logged_in">U bent al ingelogd.</string>
   <string name="no_account_selected">U moet één of meerdere accounts selecteren.</string>
@@ -64,9 +61,7 @@
   <string name="reply">Antwoord</string>
   <string name="share">Delen</string>
   <string name="share_via_twidere">Deel via Twidere</string>
-  <string name="view">Bekijk</string>
   <string name="view_image">Afbeelding</string>
-  <string name="view_media">Media</string>
   <string name="view_map">Kaart</string>
   <string name="view_status">Bekijk tweet</string>
   <string name="view_conversation">Conversatie</string>
@@ -101,7 +96,7 @@
   <string name="dark_theme">Gebruik donkere thema</string>
   <string name="dark_theme_summary">Gebruik het donkere thema voor Twidere.</string>
   <string name="display_profile_image">Geef profielafbeeldingen weer</string>
-  <string name="display_profile_image_summary">Uitschakelen verhoogt lijst scroll snelheid en verlaagt dataverkeer.</string>
+  <string name="image_load_summary">Uitschakelen verhoogt lijst scroll snelheid en verlaagt dataverkeer.</string>
   <string name="in_reply_to">In antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="reply_to">Antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="quote_user">Quote <xliff:g id="user_name">%s</xliff:g>;</string>
@@ -252,7 +247,6 @@
   <string name="item_2_hours">2 uur</string>
   <string name="item_4_hours">4 uur</string>
   <string name="inline_image_preview">Voorvertoning interne afbeelding</string>
-  <string name="inline_image_preview_summary">Uitschakelen verhoogt lijst scroll snelheid en vermindert dataverkeer.</string>
   <string name="solid_color_background_summary">Dit kan nuttig zijn als het scherm van uw toestel een AMOLED is.</string>
   <string name="user_list">Gebruikerslijst</string>
 </resources>

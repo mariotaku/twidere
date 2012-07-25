@@ -19,6 +19,9 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.parseURL;
+
 import java.util.List;
 
 import org.mariotaku.twidere.R;
@@ -35,14 +38,14 @@ import android.widget.ArrayAdapter;
 
 public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
 
-	private final LazyImageLoader mImageLoader;
-	private boolean mDisplayProfileImage, mShowLastItemAsGap, mDisplayName;
+	private final LazyImageLoader mProfileImageLoader;
+	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mShowLastItemAsGap, mDisplayName;
 	private float mTextSize;
 
 	public UsersAdapter(Context context) {
 		super(context, R.layout.user_list_item, R.id.description);
 		final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
-		mImageLoader = application.getProfileImageLoader();
+		mProfileImageLoader = application.getProfileImageLoader();
 		application.getServiceInterface();
 	}
 
@@ -84,7 +87,13 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 					user.is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				mImageLoader.displayImage(user.profile_image_url, holder.profile_image);
+				if (mDisplayHiResProfileImage) {
+					mProfileImageLoader
+							.displayImage(parseURL(getBiggerTwitterProfileImage(user.profile_image_url_string)),
+									holder.profile_image);
+				} else {
+					mProfileImageLoader.displayImage(user.profile_image_url, holder.profile_image);
+				}
 			}
 		}
 		return view;
@@ -107,6 +116,14 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			if (clear_old || findItemByUserId(user.user_id) == null) {
 				add(user);
 			}
+		}
+	}
+
+	@Override
+	public void setDisplayHiResProfileImage(boolean display) {
+		if (display != mDisplayHiResProfileImage) {
+			mDisplayHiResProfileImage = display;
+			notifyDataSetChanged();
 		}
 	}
 
@@ -140,5 +157,4 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			notifyDataSetChanged();
 		}
 	}
-
 }

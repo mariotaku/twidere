@@ -22,7 +22,7 @@ package org.mariotaku.twidere.model;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.formatTweetText;
 import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
-import static org.mariotaku.twidere.util.Utils.htmlHasImage;
+import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.net.URL;
@@ -110,7 +110,7 @@ public class ParcelableStatus implements Parcelable {
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
 		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
-		final ImageResult preview = htmlHasImage(text_html, true);
+		final ImageResult preview = getPreviewImage(text_html, true);
 		has_media = preview.has_image;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		name = indices.name != -1 ? cursor.getString(indices.name) : null;
@@ -185,7 +185,7 @@ public class ParcelableStatus implements Parcelable {
 
 		status_timestamp = getTime(status.getCreatedAt());
 		text_html = formatStatusText(status);
-		final ImageResult preview = htmlHasImage(text_html, true);
+		final ImageResult preview = getPreviewImage(text_html, true);
 		text_plain = status.getText();
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();
@@ -222,7 +222,7 @@ public class ParcelableStatus implements Parcelable {
 
 		status_timestamp = getTime(tweet.getCreatedAt());
 		text_html = formatTweetText(tweet);
-		final ImageResult preview = htmlHasImage(text_html, true);
+		final ImageResult preview = getPreviewImage(text_html, true);
 		text_plain = tweet.getText();
 		retweet_count = -1;
 		in_reply_to_screen_name = tweet.getToUser();

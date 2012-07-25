@@ -41,23 +41,28 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 abstract class BaseUsersFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableUser>>,
-		OnItemClickListener, OnScrollListener {
+		OnItemClickListener, OnScrollListener, OnItemLongClickListener {
 
 	private UsersAdapter mAdapter;
+
 	private SharedPreferences mPreferences;
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
 	private long mAccountId;
 	private final ArrayList<ParcelableUser> mData = new ArrayList<ParcelableUser>();
-
 	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true;
 
 	private Fragment mDetailFragment;
 
 	private boolean mAllItemsLoaded = false;
+
+	public long getAccountId() {
+		return mAccountId;
+	}
 
 	public final ArrayList<ParcelableUser> getData() {
 		return mData;
@@ -84,6 +89,7 @@ abstract class BaseUsersFragment extends BaseListFragment implements LoaderCallb
 		}
 		mAccountId = account_id;
 		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
 		mListView.setOnScrollListener(this);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
@@ -121,6 +127,11 @@ abstract class BaseUsersFragment extends BaseListFragment implements LoaderCallb
 	}
 
 	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		return false;
+	}
+
+	@Override
 	public void onLoaderReset(Loader<List<ParcelableUser>> loader) {
 		setProgressBarIndeterminateVisibility(false);
 	}
@@ -140,10 +151,12 @@ abstract class BaseUsersFragment extends BaseListFragment implements LoaderCallb
 	public void onResume() {
 		super.onResume();
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		mAdapter.setDisplayProfileImage(display_profile_image);
+		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setDisplayName(display_name);
 		mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
@@ -176,6 +189,10 @@ abstract class BaseUsersFragment extends BaseListFragment implements LoaderCallb
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	}
+
+	public void setAllItemsLoaded(boolean loaded) {
+		mAllItemsLoaded = loaded;
 	}
 
 	private void openUserProfile(long user_id, String screen_name) {

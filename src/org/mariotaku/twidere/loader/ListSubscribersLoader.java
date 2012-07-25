@@ -39,7 +39,7 @@ public class ListSubscribersLoader extends ParcelableUsersLoader {
 	private final long mAccountId, mUserId, mCursor;
 	private final String mScreenName, mListName;
 
-	private long mNextCursor, mPrevCursor;
+	private long mNextCursor = -2, mPrevCursor = -2;
 
 	public ListSubscribersLoader(Context context, long account_id, int list_id, long user_id, String screen_name,
 			String list_name, long cursor, List<ParcelableUser> users_list) {

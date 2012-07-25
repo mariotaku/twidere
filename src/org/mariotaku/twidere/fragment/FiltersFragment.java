@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 
 import android.app.AlertDialog;
@@ -36,11 +37,12 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -112,9 +114,11 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 	public static class AddItemFragment extends BaseDialogFragment implements OnClickListener {
 
-		private EditText mEditText;
+		private AutoCompleteTextView mEditText;
 
 		private FiltersFragment mFragment;
+
+		private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
 
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
@@ -134,10 +138,17 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			mEditText = new EditText(getActivity());
+			final Context context = getActivity();
+			final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			final View view = LayoutInflater.from(context).inflate(R.layout.auto_complete_textview_default_style, null);
+			builder.setView(view);
+			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
+			if (mFragment instanceof FilteredUsersFragment) {
+				mUserAutoCompleteAdapter = new UserAutoCompleteAdapter(getActivity());
+				mEditText.setAdapter(mUserAutoCompleteAdapter);
+				mEditText.setThreshold(1);
+			}
 			builder.setTitle(R.string.add_rule);
-			builder.setView(mEditText);
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();

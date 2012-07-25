@@ -29,13 +29,10 @@
   <string name="advanced">Lanjutan</string>
   <string name="save">Simpan</string>
   <string name="edit">Sunting</string>
-  <string name="test">Coba</string>
   <string name="login_to_twitter">Login ke Twitter</string>
   <string name="edit_api">Sunting API</string>
   <string name="home">Beranda</string>
   <string name="mentions">Menyebutkan</string>
-  <string name="discover">Temukan</string>
-  <string name="me">Saya</string>
   <string name="error_occurred">Terjadi kesalahan, silahkan coba lagi.</string>
   <string name="error_already_logged_in">Anda sudah login.</string>
   <string name="no_account_selected">Anda harus memilih setidaknya satu akun.</string>
@@ -62,9 +59,7 @@
   <string name="reply">Balas</string>
   <string name="share">Bagikan</string>
   <string name="share_via_twidere">Bagikan melalui Twidere</string>
-  <string name="view">Tampilkan</string>
   <string name="view_image">Gambar</string>
-  <string name="view_media">Media</string>
   <string name="view_map">Peta</string>
   <string name="view_status">Tampilkan tweet</string>
   <string name="view_conversation">Percakapan</string>

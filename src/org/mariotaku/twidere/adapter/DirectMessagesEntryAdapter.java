@@ -6,6 +6,7 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_SCREEN_NAME;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_TEXT;
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.twidere.R;
@@ -22,13 +23,13 @@ import android.view.ViewGroup;
 
 public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements BaseAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayName;
-	private final LazyImageLoader mImageLoader;
+	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName;
+	private final LazyImageLoader mProfileImageLoader;
 	private float mTextSize;
 
 	public DirectMessagesEntryAdapter(Context context, LazyImageLoader loader) {
 		super(context, R.layout.direct_messages_entry_item, null, new String[0], new int[0], 0);
-		mImageLoader = loader;
+		mProfileImageLoader = loader;
 	}
 
 	@Override
@@ -48,7 +49,13 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 				: R.drawable.ic_indicator_incoming, 0);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
-			mImageLoader.displayImage(parseURL(cursor.getString(IDX_PROFILE_IMAGE_URL)), holder.profile_image);
+			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
+			if (mDisplayHiResProfileImage) {
+				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
+						holder.profile_image);
+			} else {
+				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
+			}
 		}
 
 		super.bindView(view, context, cursor);
@@ -70,6 +77,14 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 			view.setTag(new DMConversationsEntryViewHolder(view, context));
 		}
 		return view;
+	}
+
+	@Override
+	public void setDisplayHiResProfileImage(boolean display) {
+		if (display != mDisplayHiResProfileImage) {
+			mDisplayHiResProfileImage = display;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override

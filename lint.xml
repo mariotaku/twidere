@@ -12,6 +12,7 @@
     <issue id="PxUsage" severity="error" />
     <issue id="ScrollViewCount" severity="error" />
     <issue id="SdCardPath" severity="error" />
+    <issue id="UnusedResources" severity="error" />
     <issue id="ViewConstructor">
         <ignore path="src/com/handmark/pulltorefresh/library/internal/LoadingLayout.java" />
     </issue>

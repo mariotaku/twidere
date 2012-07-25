@@ -19,8 +19,10 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -29,18 +31,20 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 
-public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
+public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Constants {
 
 	private Cursor mCursor;
 
 	private final ContentResolver mResolver;
-	private final LazyImageLoader mImageLoader;
+	private final LazyImageLoader mProfileImageLoader;
+	private final SharedPreferences mPreferences;
 	private static final String[] FROM = new String[] { CachedUsers.NAME, CachedUsers.SCREEN_NAME };
 	private static final int[] TO = new int[] { android.R.id.text1, android.R.id.text2 };
 
@@ -48,20 +52,34 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 
 	private boolean mCursorClosed = false;
 
+	private final boolean mDisplayProfileImage, mDisplayHiResProfileImage;
+
 	public UserAutoCompleteAdapter(Context context) {
 		super(context, R.layout.user_autocomplete_list_item, null, FROM, TO, 0);
+		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = context.getContentResolver();
 		final Context app_context = context.getApplicationContext();
-		mImageLoader = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context)
+		mProfileImageLoader = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context)
 				.getProfileImageLoader() : null;
+		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mDisplayHiResProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 	}
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		if (mCursorClosed) return;
+
 		final ImageView image_view = (ImageView) view.findViewById(android.R.id.icon);
-		if (mImageLoader != null) {
-			mImageLoader.displayImage(parseURL(cursor.getString(mProfileImageUrlIdx)), image_view);
+		image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+		if (mDisplayProfileImage && mProfileImageLoader != null) {
+			final String profile_image_url_string = cursor.getString(mProfileImageUrlIdx);
+			mProfileImageLoader.displayImage(parseURL(cursor.getString(mProfileImageUrlIdx)), image_view);
+			if (mDisplayHiResProfileImage) {
+				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
+						image_view);
+			} else {
+				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), image_view);
+			}
 		}
 		super.bindView(view, context, cursor);
 	}
@@ -88,7 +106,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter {
 	@Override
 	public CharSequence convertToString(Cursor cursor) {
 		if (mCursorClosed) return null;
-		return cursor.getString(mScreenNameIdx) + " ";
+		return cursor.getString(mScreenNameIdx);
 	}
 
 	public boolean isCursorClosed() {

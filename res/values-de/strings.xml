@@ -29,13 +29,10 @@
   <string name="advanced">Erweitert</string>
   <string name="save">Speichern</string>
   <string name="edit">Bearbeiten</string>
-  <string name="test">Test</string>
   <string name="login_to_twitter">In Twitter einloggen</string>
   <string name="edit_api">API bearbeiten</string>
   <string name="home">Startseite</string>
   <string name="mentions">Erwähnungen</string>
-  <string name="discover">Entdecke</string>
-  <string name="me">Ich</string>
   <string name="error_occurred">Ein Fehler ist aufgetreten, versuche es erneut.</string>
   <string name="error_already_logged_in">Du bist schon eingeloggt.</string>
   <string name="no_account_selected">Sie müssen mindestens ein Account wählen.</string>
@@ -64,9 +61,7 @@
   <string name="reply">Antworten</string>
   <string name="share">Teilen</string>
   <string name="share_via_twidere">Teile über Twidere</string>
-  <string name="view">Ansehen</string>
   <string name="view_image">Bild</string>
-  <string name="view_media">Medien</string>
   <string name="view_map">Karte</string>
   <string name="view_status">Tweet</string>
   <string name="view_conversation">Konversation</string>
@@ -101,7 +96,7 @@
   <string name="dark_theme">Benutze dunkles Theme</string>
   <string name="dark_theme_summary">Benutze das dunkle Theme für Twidere.</string>
   <string name="display_profile_image">Zeige Profilbilder</string>
-  <string name="display_profile_image_summary">Das Deaktivieren dieser Option beschleunigt die Listenscrollgeschwindigkeit und reduziert den Traffic.</string>
+  <string name="image_load_summary">Das Deaktivieren dieser Option beschleunigt die Listenscrollgeschwindigkeit und reduziert den Traffic.</string>
   <string name="in_reply_to">Als Antwort auf <xliff:g id="user_name">%s</xliff:g></string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweetete das</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> und <xliff:g id="retweet_count">%2$d</xliff:g> weitere haben das retweetet</string>
@@ -254,7 +249,6 @@
   <string name="item_2_hours">2 Stunden</string>
   <string name="item_4_hours">4 Stunden</string>
   <string name="inline_image_preview">Inline Bildvorschau</string>
-  <string name="inline_image_preview_summary">Das Deaktivieren dieser Option beschleunigt die Listenscrollgeschwindigkeit und reduziert den Traffic.</string>
   <string name="solid_color_background">Einfarbiger Hintergrund</string>
   <string name="solid_color_background_summary">Das könnte nützlich sein, falls das Display deines Geräts ein AMOLED-Bildschirm ist.</string>
   <string name="followed_you">Folgte Ihnen</string>

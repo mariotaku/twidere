@@ -29,13 +29,10 @@
   <string name="advanced">高级</string>
   <string name="save">保存</string>
   <string name="edit">编辑</string>
-  <string name="test">测试</string>
   <string name="login_to_twitter">登录到 Twitter</string>
   <string name="edit_api">编辑 API</string>
   <string name="home">主页</string>
   <string name="mentions">提及</string>
-  <string name="discover">发现</string>
-  <string name="me">我</string>
   <string name="error_occurred">发生错误，请重试。</string>
   <string name="error_already_logged_in">你已经登录。</string>
   <string name="no_account_selected">你必须至少选择一个帐号。</string>
@@ -64,9 +61,7 @@
   <string name="reply">回复</string>
   <string name="share">分享</string>
   <string name="share_via_twidere">通过 Twidere 分享</string>
-  <string name="view">查看</string>
   <string name="view_image">图像</string>
-  <string name="view_media">媒体</string>
   <string name="view_map">地图</string>
   <string name="view_status">推文</string>
   <string name="view_conversation">对话</string>
@@ -101,7 +96,7 @@
   <string name="dark_theme">使用暗色主题</string>
   <string name="dark_theme_summary">为 Twidere 使用暗色主题。</string>
   <string name="display_profile_image">显示个人资料图片</string>
-  <string name="display_profile_image_summary">关闭可以加快列表的滚动速度，以及减少数据流量。</string>
+  <string name="image_load_summary">关闭可以加快列表的滚动速度，以及减少数据流量。</string>
   <string name="in_reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> 转推了这个</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> 和其他 <xliff:g id="retweet_count">%2$d</xliff:g> 人转推了这个</string>
@@ -255,11 +250,14 @@
   <string name="item_2_hours">2小时</string>
   <string name="item_4_hours">4小时</string>
   <string name="inline_image_preview">在推文列表中显示图片预览</string>
-  <string name="inline_image_preview_summary">关闭可以加快列表的滚动速度，以及减少数据流量。</string>
   <string name="solid_color_background">纯色背景</string>
   <string name="solid_color_background_summary">如果你的设备是AMOLED屏幕的话，启用这个会有所帮助。</string>
   <string name="followed_you">关注了你</string>
   <string name="user_list">用户列表</string>
   <string name="trends_location">本地趋势的位置</string>
   <string name="trends_location_summary">设定位置，以显示本地趋势。</string>
+  <string name="trends">话题</string>
+  <string name="accounts">帐号</string>
+  <string name="hires_profile_image">高质量个人资料图片</string>
+  <string name="mention_this_user">提及这个用户</string>
 </resources>

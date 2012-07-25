@@ -10,7 +10,7 @@ import twitter4j.TwitterException;
 import twitter4j.UserList;
 import android.content.Context;
 
-public class UserListMembershipsLoader extends BaseUserListLoader {
+public class UserListMembershipsLoader extends BaseUserListsLoader {
 
 	private final long mUserId;
 	private final String mScreenName;

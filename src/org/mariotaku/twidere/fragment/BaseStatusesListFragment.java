@@ -22,6 +22,7 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
+import static org.mariotaku.twidere.util.Utils.openConversation;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
 import java.util.List;
@@ -127,7 +128,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		setListAdapter(getListAdapter());
 		setShowIndicator(false);
 		mListView = getListView();
-		//mListView.setFastScrollEnabled(true);
+		// mListView.setFastScrollEnabled(true);
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
@@ -257,6 +258,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 					}
 					break;
 				}
+				case MENU_CONVERSATION: {
+					openConversation(getActivity(), account_id, status_id);
+					break;
+				}
 				case MENU_DELETE: {
 					mServiceInterface.destroyStatus(account_id, status_id);
 					break;
@@ -278,11 +283,13 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		super.onResume();
 		final StatusesAdapterInterface adapter = getListAdapter();
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		adapter.setDisplayProfileImage(display_profile_image);
+		adapter.setDisplayHiResProfileImage(hires_profile_image);
 		adapter.setDisplayImagePreview(display_image_preview);
 		adapter.setDisplayName(display_name);
 		adapter.setTextSize(text_size);

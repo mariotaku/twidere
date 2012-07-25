@@ -15,7 +15,7 @@ import twitter4j.UserList;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
-public abstract class BaseUserListLoader extends AsyncTaskLoader<List<ParcelableUserList>> {
+public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<ParcelableUserList>> {
 
 	final List<ParcelableUserList> mData = new ArrayList<ParcelableUserList>();
 	final Twitter mTwitter;
@@ -23,7 +23,7 @@ public abstract class BaseUserListLoader extends AsyncTaskLoader<List<Parcelable
 
 	private long mNextCursor, mPrevCursor;
 
-	public BaseUserListLoader(Context context, long account_id, long cursor, List<ParcelableUserList> data) {
+	public BaseUserListsLoader(Context context, long account_id, long cursor, List<ParcelableUserList> data) {
 		super(context);
 		if (data != null) {
 			mData.addAll(data);
@@ -74,11 +74,15 @@ public abstract class BaseUserListLoader extends AsyncTaskLoader<List<Parcelable
 		return mData;
 	}
 
+	@Override
+	public void onStartLoading() {
+		forceLoad();
+	}
+
 	private boolean hasId(int id) {
 		for (final ParcelableUserList user : mData) {
 			if (user.list_id == id) return true;
 		}
 		return false;
 	}
-
 }

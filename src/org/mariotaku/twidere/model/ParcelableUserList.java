@@ -19,6 +19,9 @@
 
 package org.mariotaku.twidere.model;
 
+import static org.mariotaku.twidere.util.Utils.parseString;
+import static org.mariotaku.twidere.util.Utils.parseURL;
+
 import java.net.URL;
 import java.util.Comparator;
 
@@ -47,7 +50,7 @@ public class ParcelableUserList implements Parcelable {
 
 	public final boolean is_public, is_following;
 
-	public final String description, name, user_screen_name, user_name;
+	public final String description, name, user_screen_name, user_name, user_profile_image_url_string;
 
 	public URL user_profile_image_url;
 
@@ -73,7 +76,8 @@ public class ParcelableUserList implements Parcelable {
 		user_id = in.readLong();
 		user_name = in.readString();
 		user_screen_name = in.readString();
-		user_profile_image_url = (URL) in.readSerializable();
+		user_profile_image_url_string = in.readString();
+		user_profile_image_url = parseURL(user_profile_image_url_string);
 	}
 
 	public ParcelableUserList(UserList user, long account_id) {
@@ -93,6 +97,7 @@ public class ParcelableUserList implements Parcelable {
 		user_name = user.getName();
 		user_screen_name = user.getScreenName();
 		user_profile_image_url = user.getProfileImageURL();
+		user_profile_image_url_string = parseString(user_profile_image_url);
 	}
 
 	@Override
@@ -117,7 +122,7 @@ public class ParcelableUserList implements Parcelable {
 		out.writeLong(user_id);
 		out.writeString(user_name);
 		out.writeString(user_screen_name);
-		out.writeSerializable(user_profile_image_url);
+		out.writeString(user_profile_image_url_string);
 
 	}
 

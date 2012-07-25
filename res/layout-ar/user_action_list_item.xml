@@ -21,22 +21,25 @@
 	android:layout_centerVertical="true"
 	android:layout_toRightOf="@android:id/icon"
 	android:gravity="center_vertical"
-	android:minHeight="?android:attr/listPreferredItemHeight"
-	android:orientation="vertical"
-	android:padding="4dp">
-
-	<TextView
-		android:id="@android:id/text1"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:ellipsize="marquee"
-		android:singleLine="true"
-		android:textAppearance="?android:attr/textAppearanceLarge"/>
+	android:minHeight="48dp"
+	android:orientation="horizontal"
+	android:padding="6dp">
 
 	<TextView
 		android:id="@android:id/text2"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:textAppearance="?android:attr/textAppearanceSmall"/>
+		android:layout_weight="0"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+	<TextView
+		android:id="@android:id/text1"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:ellipsize="marquee"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 </LinearLayout>

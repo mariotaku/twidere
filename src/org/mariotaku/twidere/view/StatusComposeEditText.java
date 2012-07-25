@@ -118,14 +118,14 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 			}
 
 			if (i > 0 && text.charAt(i - 1) == ' ')
-				return text;
+				return text + " ";
 			else {
 				if (text instanceof Spanned) {
-					final SpannableString sp = new SpannableString(text);
+					final SpannableString sp = new SpannableString(text + " ");
 					TextUtils.copySpansFrom((Spanned) text, 0, text.length(), Object.class, sp, 0);
 					return sp;
 				} else
-					return text;
+					return text + " ";
 			}
 		}
 	}

@@ -28,14 +28,18 @@ import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
-import org.mariotaku.twidere.fragment.ListDetailsFragment;
-import org.mariotaku.twidere.fragment.ListMembersFragment;
-import org.mariotaku.twidere.fragment.ListSubscribersFragment;
-import org.mariotaku.twidere.fragment.ListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
 import org.mariotaku.twidere.fragment.UserFriendsFragment;
+import org.mariotaku.twidere.fragment.UserListCreatedFragment;
+import org.mariotaku.twidere.fragment.UserListDetailsFragment;
+import org.mariotaku.twidere.fragment.UserListMembersFragment;
+import org.mariotaku.twidere.fragment.UserListMembershipsFragment;
+import org.mariotaku.twidere.fragment.UserListSubscribersFragment;
+import org.mariotaku.twidere.fragment.UserListSubscriptionsFragment;
+import org.mariotaku.twidere.fragment.UserListTimelineFragment;
+import org.mariotaku.twidere.fragment.UserListTypesFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.ViewConversationFragment;
@@ -68,6 +72,9 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final int CODE_LIST_TIMELINE = 12;
 	private static final int CODE_LIST_MEMBERS = 13;
 	private static final int CODE_LIST_SUBSCRIBERS = 14;
+	private static final int CODE_LIST_CREATED = 15;
+	private static final int CODE_LIST_SUBSCRIPTIONS = 16;
+	private static final int CODE_LIST_MEMBERSHIPS = 17;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
@@ -80,9 +87,13 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, CODE_CONVERSATION);
 		URI_MATCHER.addURI(AUTHORITY_DIRECT_MESSAGES_CONVERSATION, null, CODE_DIRECT_MESSAGES_CONVERSATION);
 		URI_MATCHER.addURI(AUTHORITY_LIST_DETAILS, null, CODE_LIST_DETAILS);
+		URI_MATCHER.addURI(AUTHORITY_LIST_TYPES, null, CODE_LIST_TYPES);
 		URI_MATCHER.addURI(AUTHORITY_LIST_TIMELINE, null, CODE_LIST_TIMELINE);
 		URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERS, null, CODE_LIST_MEMBERS);
 		URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIBERS, null, CODE_LIST_SUBSCRIBERS);
+		URI_MATCHER.addURI(AUTHORITY_LIST_CREATED, null, CODE_LIST_CREATED);
+		URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIPTIONS, null, CODE_LIST_SUBSCRIPTIONS);
+		URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERSHIPS, null, CODE_LIST_MEMBERSHIPS);
 	}
 
 	private Fragment mFragment;
@@ -230,7 +241,7 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_LIST_DETAILS: {
 					setTitle(R.string.user_list);
-					fragment = new ListDetailsFragment();
+					fragment = new UserListDetailsFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
@@ -247,9 +258,22 @@ public class LinkHandlerActivity extends BaseActivity {
 					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
 				}
+				case CODE_LIST_TYPES: {
+					setTitle(R.string.user_list);
+					fragment = new UserListTypesFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					if (isNullOrEmpty(param_screen_name) && isNullOrEmpty(param_user_id)) {
+						finish();
+						return false;
+					}
+					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					break;
+				}
 				case CODE_LIST_TIMELINE: {
 					setTitle(R.string.list_timeline);
-					fragment = new ListTimelineFragment();
+					fragment = new UserListTimelineFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
@@ -268,7 +292,7 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_LIST_MEMBERS: {
 					setTitle(R.string.list_members);
-					fragment = new ListMembersFragment();
+					fragment = new UserListMembersFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
@@ -287,7 +311,7 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_LIST_SUBSCRIBERS: {
 					setTitle(R.string.list_subscribers);
-					fragment = new ListSubscribersFragment();
+					fragment = new UserListSubscribersFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
@@ -302,6 +326,45 @@ public class LinkHandlerActivity extends BaseActivity {
 					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
 					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
+					break;
+				}
+				case CODE_LIST_CREATED: {
+					setTitle(R.string.list_created_by_user);
+					fragment = new UserListCreatedFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					if (isNullOrEmpty(param_screen_name) && isNullOrEmpty(param_user_id)) {
+						finish();
+						return false;
+					}
+					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					break;
+				}
+				case CODE_LIST_SUBSCRIPTIONS: {
+					setTitle(R.string.list_user_followed);
+					fragment = new UserListSubscriptionsFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					if (isNullOrEmpty(param_screen_name) && isNullOrEmpty(param_user_id)) {
+						finish();
+						return false;
+					}
+					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					break;
+				}
+				case CODE_LIST_MEMBERSHIPS: {
+					setTitle(R.string.list_following_user);
+					fragment = new UserListMembershipsFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					if (isNullOrEmpty(param_screen_name) && isNullOrEmpty(param_user_id)) {
+						finish();
+						return false;
+					}
+					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					break;
 				}
 				default: {

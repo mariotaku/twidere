@@ -117,7 +117,7 @@ public class TwidereService extends Service implements Constants {
 			} else if (BROADCAST_NOTIFICATION_CLEARED.equals(action)) {
 				final Bundle extras = intent.getExtras();
 				if (extras != null && extras.containsKey(INTENT_KEY_NOTIFICATION_ID)) {
-					clearNewNotificationCount(extras.getInt(INTENT_KEY_NOTIFICATION_ID));
+					clearNotification(extras.getInt(INTENT_KEY_NOTIFICATION_ID));
 				}
 			}
 		}
@@ -170,7 +170,7 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public void clearNewNotificationCount(int id) {
+	public void clearNotification(int id) {
 		switch (id) {
 			case NOTIFICATION_ID_HOME_TIMELINE: {
 				mNewStatusesCount = 0;
@@ -185,6 +185,7 @@ public class TwidereService extends Service implements Constants {
 				break;
 			}
 		}
+		mNotificationManager.cancel(id);
 	}
 
 	public int createBlock(long account_id, long user_id) {
@@ -199,6 +200,11 @@ public class TwidereService extends Service implements Constants {
 
 	public int createFriendship(long account_id, long user_id) {
 		final CreateFriendshipTask task = new CreateFriendshipTask(account_id, user_id);
+		return mAsyncTaskManager.add(task, true);
+	}
+
+	public int deleteUserListMember(long account_id, int list_id, long user_id) {
+		final DeleteUserListMemberTask task = new DeleteUserListMemberTask(account_id, list_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -686,6 +692,51 @@ public class TwidereService extends Service implements Constants {
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
+	}
+
+	private class DeleteUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+
+		private final long account_id, user_id;
+		private final int list_id;
+
+		public DeleteUserListMemberTask(long account_id, int list_id, long user_id) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.list_id = list_id;
+			this.user_id = user_id;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(Void... params) {
+
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				try {
+					final UserList list = twitter.deleteUserListMember(list_id, user_id);
+					return new SingleResponse<UserList>(account_id, list, null);
+				} catch (final TwitterException e) {
+					return new SingleResponse<UserList>(account_id, null, e);
+				}
+			}
+			return new SingleResponse<UserList>(account_id, null, null);
+		}
+
+		@Override
+		protected void onPostExecute(SingleResponse<UserList> result) {
+			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
+			if (succeed) {
+				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(result.exception, true);
+			}
+			final Intent intent = new Intent(BROADCAST_USER_LIST_MEMBER_DELETED);
+			intent.putExtra(INTENT_KEY_USER_ID, user_id);
+			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -1227,7 +1278,7 @@ public class TwidereService extends Service implements Constants {
 					e.printStackTrace();
 				}
 			}
-			return null;
+			return new ListResponse<Trends>(account_id, -1, null);
 		}
 
 	}
@@ -1438,8 +1489,8 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		public void clearNewNotificationCount(int id) {
-			mService.get().clearNewNotificationCount(id);
+		public void clearNotification(int id) {
+			mService.get().clearNotification(id);
 		}
 
 		@Override
@@ -1455,6 +1506,11 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public int createFriendship(long account_id, long user_id) {
 			return mService.get().createFriendship(account_id, user_id);
+		}
+
+		@Override
+		public int deleteUserListMember(long account_id, int list_id, long user_id) {
+			return mService.get().deleteUserListMember(account_id, list_id, user_id);
 		}
 
 		@Override
@@ -1614,7 +1670,6 @@ public class TwidereService extends Service implements Constants {
 				String description) {
 			return mService.get().updateUserListDetails(account_id, list_id, is_public, name, description);
 		}
-
 	}
 
 	private static final class SingleResponse<Data> {
@@ -1914,7 +1969,6 @@ public class TwidereService extends Service implements Constants {
 			boolean succeed = false;
 			final Uri query_uri = buildQueryUri(uri, false);
 
-			long min_id_all = -1;
 			final ArrayList<Long> newly_inserted_ids = new ArrayList<Long>();
 			for (final ListResponse<twitter4j.Status> response : responses) {
 				final long account_id = response.account_id;
@@ -1992,9 +2046,8 @@ public class TwidereService extends Service implements Constants {
 					where.append(Statuses.ACCOUNT_ID + "=" + account_id);
 					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
 					resolver.update(query_uri, values, where.toString(), null);
-				}
-				if (min_id_all <= 0 || min_id > 0 && min_id < min_id_all) {
-					min_id_all = min_id;
+					// Ignore gaps
+					newly_inserted_ids.remove(min_id);
 				}
 				succeed = true;
 			}
@@ -2031,16 +2084,19 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected SingleResponse<Bundle> doInBackground(Void... args) {
-			final ContentResolver resolver = getContentResolver();
 			final Bundle bundle = new Bundle();
-			final Uri query_uri = buildQueryUri(uri, false);
-			final List<Trends> messages = response.list;
-			if (messages != null && messages.size() > 0) {
-				final ContentValues[] values_array = makeTrendsContentValues(messages);
-				resolver.delete(query_uri, null, null);
-				resolver.bulkInsert(query_uri, values_array);
+			if (response != null) {
+				final ContentResolver resolver = getContentResolver();
 
-				bundle.putBoolean(INTENT_KEY_SUCCEED, true);
+				final Uri query_uri = buildQueryUri(uri, false);
+				final List<Trends> messages = response.list;
+				if (messages != null && messages.size() > 0) {
+					final ContentValues[] values_array = makeTrendsContentValues(messages);
+					resolver.delete(query_uri, null, null);
+					resolver.bulkInsert(query_uri, values_array);
+
+					bundle.putBoolean(INTENT_KEY_SUCCEED, true);
+				}
 			}
 			return new SingleResponse<Bundle>(-1, bundle, null);
 		}

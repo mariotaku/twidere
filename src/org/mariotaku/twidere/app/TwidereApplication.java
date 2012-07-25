@@ -85,6 +85,10 @@ public class TwidereApplication extends Application implements Constants {
 		return ServiceInterface.getInstance(this);
 	}
 
+	public boolean isDebugBuild() {
+		return DEBUG;
+	}
+
 	@Override
 	public void onCreate() {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
@@ -96,10 +100,6 @@ public class TwidereApplication extends Application implements Constants {
 			}
 		}
 		super.onCreate();
-	}
-	
-	public boolean isDebugBuild() {
-		return DEBUG;
 	}
 
 	@Override

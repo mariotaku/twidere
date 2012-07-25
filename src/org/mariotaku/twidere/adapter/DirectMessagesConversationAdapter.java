@@ -21,6 +21,7 @@ package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.findDirectMessageInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.net.URL;
@@ -41,7 +42,7 @@ import android.view.ViewGroup;
 
 public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements DirectMessagesAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayName;
+	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName;
 	private final LazyImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -77,7 +78,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String sender_profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
-			final URL sender_profile_image_url = parseURL(sender_profile_image_url_string);
+			final URL sender_profile_image_url = parseURL(mDisplayHiResProfileImage ? getBiggerTwitterProfileImage(sender_profile_image_url_string)
+					: sender_profile_image_url_string);
 
 			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_left);
 			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_right);
@@ -126,6 +128,14 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			view.setTag(new DMConversationViewHolder(view, context));
 		}
 		return view;
+	}
+
+	@Override
+	public void setDisplayHiResProfileImage(boolean display) {
+		if (display != mDisplayHiResProfileImage) {
+			mDisplayHiResProfileImage = display;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override

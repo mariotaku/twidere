@@ -69,10 +69,13 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_SEARCH = "search";
 	public static final String AUTHORITY_MAP = "map";
 	public static final String AUTHORITY_LIST_DETAILS = "list_details";
-	public static final String AUTHORITY_LIST_TYPE = "list_type";
+	public static final String AUTHORITY_LIST_TYPES = "list_types";
 	public static final String AUTHORITY_LIST_TIMELINE = "list_timeline";
 	public static final String AUTHORITY_LIST_MEMBERS = "list_members";
 	public static final String AUTHORITY_LIST_SUBSCRIBERS = "list_subscribers";
+	public static final String AUTHORITY_LIST_CREATED = "list_created";
+	public static final String AUTHORITY_LIST_SUBSCRIPTIONS = "list_subscriptions";
+	public static final String AUTHORITY_LIST_MEMBERSHIPS = "list_memberships";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -145,6 +148,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATIONS_HAVE_LIGHTS = "notifications_have_lights";
 	public static final String PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY = "report_errors_automatically";
 	public static final String PREFERENCE_KEY_LOCAL_TRENDS_WOEID = "local_trends_woeid";
+	public static final String PREFERENCE_KEY_HIRES_PROFILE_IMAGE = "hires_profile_image";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
@@ -204,6 +208,7 @@ public interface Constants extends TwitterConstants {
 			+ "SENT_DIRECT_MESSAGES_DATABASE_UPDATED";
 	public static final String BROADCAST_STATUS_DESTROYED = INTENT_PACKAGE_PREFIX + "STATUS_DESTROYED";
 	public static final String BROADCAST_TRENDS_UPDATED = INTENT_PACKAGE_PREFIX + "TRENDS_UPDATED";
+	public static final String BROADCAST_USER_LIST_MEMBER_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_MEMBER_DELETED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -282,6 +287,8 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_REFRESH = R.id.refresh;
 	public static final int MENU_LOAD_MORE = R.id.load_more;
 	public static final int MENU_DIRECT_MESSAGES = R.id.direct_messages;
+	public static final int MENU_CONVERSATION = R.id.conversation;
+	public static final int MENU_MENTION = R.id.mention;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

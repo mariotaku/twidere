@@ -36,6 +36,23 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 
 	private SharedPreferences mPreferences;
 
+	private int mCheckedWoeId = 1;
+
+	private GetAvailableTrendsTask mGetAvailableTrendsTask;
+
+	private final AvailableTrendsAdapter mAdapter;
+
+	private static final Comparator<Location> LOCATION_COMPATATOR = new Comparator<Location>() {
+
+		@Override
+		public int compare(Location object1, Location object2) {
+			return object1.getWoeid() - object2.getWoeid();
+		}
+
+	};
+
+	private AlertDialog mDialog;
+
 	public TrendsLocationPreference(Context context) {
 		this(context, null);
 	}
@@ -64,8 +81,6 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 		}
 	}
 
-	private int mCheckedWoeId = 1;
-	
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
 		mPreferences = getSharedPreferences();
@@ -78,20 +93,25 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 		mGetAvailableTrendsTask.execute();
 		return true;
 	}
-	
-	private GetAvailableTrendsTask mGetAvailableTrendsTask;
-	
-	private final AvailableTrendsAdapter mAdapter;
-	
+
 	class AvailableTrendsAdapter extends BaseAdapter {
 
 		private final ArrayList<Location> mData = new ArrayList<Location>();
 		private final LayoutInflater mInflater;
-		
+
 		public AvailableTrendsAdapter(Context context) {
 			mInflater = LayoutInflater.from(context);
 		}
-		
+
+		public int findItemPosition(int woeid) {
+			final int count = getCount();
+			for (int i = 0; i < count; i++) {
+				final Location item = getItem(i);
+				if (item.getWoeid() == woeid) return i;
+			}
+			return -1;
+		}
+
 		@Override
 		public int getCount() {
 			return mData.size();
@@ -102,31 +122,11 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 			return mData.get(position);
 		}
 
-		public int findItemPosition(int woeid) {
-			final int count = getCount();
-			for (int i = 0; i < count; i++) {
-				final Location item = getItem(i);
-				if (item.getWoeid() == woeid) {
-					return i;
-				}
-			}
-			return -1;
-		}
-		
 		@Override
 		public long getItemId(int position) {
 			return getItem(position).hashCode();
 		}
 
-		public void setData(List<Location> data) {
-			mData.clear();
-			if (data != null) {
-				mData.addAll(data);
-			}
-			Collections.sort(mData, LOCATION_COMPATATOR);
-			notifyDataSetChanged();
-		}
-		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final View view = convertView != null ? convertView : mInflater.inflate(
@@ -140,25 +140,40 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 			return view;
 		}
 
-	}
-	
-	private static final Comparator<Location> LOCATION_COMPATATOR = new Comparator<Location>() {
-
-		@Override
-		public int compare(Location object1, Location object2) {
-			return object1.getWoeid() - object2.getWoeid();
+		public void setData(List<Location> data) {
+			mData.clear();
+			if (data != null) {
+				mData.addAll(data);
+			}
+			Collections.sort(mData, LOCATION_COMPATATOR);
+			notifyDataSetChanged();
 		}
-		
-	};
-	
-	private AlertDialog mDialog;
+
+	}
 
 	class GetAvailableTrendsTask extends AsyncTask<Void, Void, ResponseList<Location>> implements OnCancelListener {
 
 		private final ProgressDialog mProgress;
-		
+
 		public GetAvailableTrendsTask(Context context) {
 			mProgress = new ProgressDialog(context);
+		}
+
+		@Override
+		public void onCancel(DialogInterface dialog) {
+			cancel(true);
+		}
+
+		@Override
+		protected ResponseList<Location> doInBackground(Void... args) {
+			final Twitter twitter = getDefaultTwitterInstance(getContext(), false);
+			if (twitter == null) return null;
+			try {
+				return twitter.getAvailableTrends();
+			} catch (final TwitterException e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 
 		@Override
@@ -170,7 +185,8 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 			if (result == null) return;
 			final AlertDialog.Builder selector_builder = new AlertDialog.Builder(getContext());
 			selector_builder.setTitle(getTitle());
-			selector_builder.setSingleChoiceItems(mAdapter, mAdapter.findItemPosition(mCheckedWoeId), TrendsLocationPreference.this);
+			selector_builder.setSingleChoiceItems(mAdapter, mAdapter.findItemPosition(mCheckedWoeId),
+					TrendsLocationPreference.this);
 			mDialog = selector_builder.show();
 		}
 
@@ -184,22 +200,5 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 			mProgress.show();
 		}
 
-		@Override
-		protected ResponseList<Location> doInBackground(Void... args) {
-			final Twitter twitter = getDefaultTwitterInstance(getContext(), false);
-			if (twitter == null) return null;
-			try {
-				return twitter.getAvailableTrends();
-			} catch (TwitterException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		public void onCancel(DialogInterface dialog) {
-			cancel(true);
-		}
-		
 	}
 }
