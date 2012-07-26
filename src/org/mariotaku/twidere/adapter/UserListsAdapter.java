@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.List;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.model.UserViewHolder;
+import org.mariotaku.twidere.model.UserListViewHolder;
 import org.mariotaku.twidere.util.BaseAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
@@ -41,14 +42,20 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	private final LazyImageLoader mProfileImageLoader;
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mShowLastItemAsGap, mDisplayName;
 	private float mTextSize;
+	private boolean mForceSSLConnection;
 
 	public UserListsAdapter(Context context) {
-		super(context, R.layout.user_list_item, R.id.description);
+		super(context, R.layout.user_list_list_item, R.id.description);
 		final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
 		mProfileImageLoader = application.getProfileImageLoader();
 		application.getServiceInterface();
 	}
 
+	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
+	}
+	
 	public ParcelableUserList findItem(long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
@@ -70,27 +77,27 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	public View getView(int position, View convertView, ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
 		final Object tag = view.getTag();
-		UserViewHolder holder = null;
-		if (tag instanceof UserViewHolder) {
-			holder = (UserViewHolder) tag;
+		UserListViewHolder holder = null;
+		if (tag instanceof UserListViewHolder) {
+			holder = (UserListViewHolder) tag;
 		} else {
-			holder = new UserViewHolder(view);
+			holder = new UserListViewHolder(view);
 			view.setTag(holder);
 		}
 		final boolean show_gap = mShowLastItemAsGap && position == getCount() - 1;
 		holder.setShowAsGap(show_gap);
 		if (!show_gap) {
-			final ParcelableUserList user = getItem(position);
+			final ParcelableUserList user_list = getItem(position);
 			holder.setTextSize(mTextSize);
-			holder.name.setText((mDisplayName ? user.user_name : user.user_screen_name) + "/" + user.name);
+			holder.name.setText(user_list.name);
+			holder.owner.setText(mDisplayName ? user_list.user_name : user_list.user_screen_name);
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(
-							parseURL(getBiggerTwitterProfileImage(user.user_profile_image_url_string)),
+					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(user_list.user_profile_image_url_string, mForceSSLConnection)),
 							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(user.user_profile_image_url, holder.profile_image);
+					mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(user_list.user_profile_image_url_string, mForceSSLConnection)), holder.profile_image);
 				}
 			}
 		}

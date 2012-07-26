@@ -7,6 +7,7 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_TEXT;
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.twidere.R;
@@ -26,6 +27,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName;
 	private final LazyImageLoader mProfileImageLoader;
 	private float mTextSize;
+	private boolean mForceSSLConnection;
 
 	public DirectMessagesEntryAdapter(Context context, LazyImageLoader loader) {
 		super(context, R.layout.direct_messages_entry_item, null, new String[0], new int[0], 0);
@@ -51,10 +53,10 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
+				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
+				mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(profile_image_url_string, mForceSSLConnection)), holder.profile_image);
 			}
 		}
 
@@ -109,5 +111,10 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
+	}
+	
+	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
 	}
 }

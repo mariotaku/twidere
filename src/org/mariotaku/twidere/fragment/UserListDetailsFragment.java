@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.findUserList;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
@@ -35,9 +36,11 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
-import java.net.URL;
-
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
+import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereLinkify;
@@ -65,6 +68,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.InputFilter;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -74,6 +78,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -82,28 +87,27 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class UserListDetailsFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener, OnLinkClickListener {
+		OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemClickListener {
 
 	private LazyImageLoader mProfileImageLoader;
 	private ImageView mProfileImageView;
 	private TextView mListNameView, mUserNameView, mDescriptionView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer;
 	private ProgressBar mListProgress;
-	private Button mFollowButton, mRetryButton;
+	private Button mFollowMoreButton, mRetryButton;
 
 	private UserProfileActionAdapter mAdapter;
 	private ListView mListView;
 	private ListInfoTask mUserInfoTask;
 	private View mHeaderView;
 	private long mAccountId, mUserId;
-	private Relationship mFriendship;
 	private final DialogFragment mDialogFragment = new EditTextDialogFragment();
 
 	private UserList mUserList = null;
 
 	private static final int TYPE_NAME = 1;
-
 	private static final int TYPE_DESCRIPTION = 2;
+	private static final int TYPE_MEMBER_SCREEN_NAME = 3;
 
 	private int mUserListId;
 
@@ -114,12 +118,19 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	private SharedPreferences mPreferences;
 	private boolean mDisplayName;
 
+	private PopupMenu mPopupMenu;
+
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_USER_LIST_DETAILS_UPDATED.equals(action)) {
+				if (intent.getIntExtra(INTENT_KEY_LIST_ID, -1) == mUserListId
+						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+					reloadUserListInfo();
+				}
+			} else if (BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED.equals(action)) {
 				if (intent.getIntExtra(INTENT_KEY_LIST_ID, -1) == mUserListId
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					reloadUserListInfo();
@@ -146,6 +157,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mListName = user_list.getName();
 
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
+		final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 
 		mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_color : 0);
 		if (is_multiple_account_enabled) {
@@ -162,17 +174,22 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				: View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
-		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView);
+		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView, force_ssl_connection);
 		linkify.setOnLinkClickListener(this);
 		linkify.addAllLinks();
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
-		final URL profile_image_url = user.getProfileImageURL();
+		final String profile_image_url_string = parseString(user.getProfileImageURL());
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		mProfileImageLoader.displayImage(
-				hires_profile_image ? parseURL(getBiggerTwitterProfileImage(parseString(profile_image_url)))
-						: profile_image_url, mProfileImageView);
+				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string, force_ssl_connection) : getNormalTwitterProfileImage(profile_image_url_string, force_ssl_connection)), mProfileImageView);
 		mUserList = user_list;
-		mFollowButton.setText(user_list.isFollowing() ? R.string.unfollow : R.string.follow);
+		if (mUserId == mAccountId) {
+			mFollowMoreButton.setText(R.string.more);
+			mFollowMoreButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.expander_open_holo, 0);
+		} else {
+			mFollowMoreButton.setText(user_list.isFollowing() ? R.string.unfollow : R.string.follow);
+			mFollowMoreButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+		}
 		mAdapter.notifyDataSetChanged();
 	}
 
@@ -230,7 +247,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mProfileImageContainer.setOnLongClickListener(this);
 		mNameContainer.setOnClickListener(this);
 		mNameContainer.setOnLongClickListener(this);
-		mFollowButton.setOnClickListener(this);
+		mFollowMoreButton.setOnClickListener(this);
 		mRetryButton.setOnClickListener(this);
 		setListAdapter(null);
 		mListView = getListView();
@@ -245,13 +262,19 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-			case R.id.follow: {
-				if (mUserList != null && mAccountId != mUserList.getId()) {
-					if (mFriendship.isSourceFollowingTarget()) {
-						mService.destroyFriendship(mAccountId, mUserList.getId());
+			case R.id.follow_more: {
+				if (mUserList == null) return;
+				if (mAccountId != mUserId) {
+					if (mUserList.isFollowing()) {
+						mService.destroyUserListSubscription(mAccountId, mUserList.getId());
 					} else {
-						mService.createFriendship(mAccountId, mUserList.getId());
+						mService.createUserListSubscription(mAccountId, mUserList.getId());
 					}
+				} else {
+					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+					mPopupMenu.inflate(R.menu.action_user_list_details);
+					mPopupMenu.setOnMenuItemClickListener(this);
+					mPopupMenu.show();
 				}
 				break;
 			}
@@ -279,7 +302,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mProfileImageContainer = mHeaderView.findViewById(R.id.profile_image_container);
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
-		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
+		mFollowMoreButton = (Button) mHeaderView.findViewById(R.id.follow_more);
 		final View view = inflater.inflate(R.layout.user_profile, null, false);
 		mRetryButton = (Button) view.findViewById(R.id.retry);
 		mListProgress = (ProgressBar) view.findViewById(R.id.list_progress);
@@ -297,7 +320,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		final UserListAction action = mAdapter.findItem(id);
+		final ListAction action = mAdapter.findItem(id);
 		if (action != null) {
 			action.onClick();
 		}
@@ -305,7 +328,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
-		final UserListAction action = mAdapter.findItem(id);
+		final ListAction action = mAdapter.findItem(id);
 		if (action != null) return action.onLongClick();
 		return false;
 	}
@@ -314,7 +337,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	public void onLinkClick(String link, int type) {
 		if (mUserList == null) return;
 		switch (type) {
-			case TwidereLinkify.LINK_TYPE_MENTION: {
+			case TwidereLinkify.LINK_TYPE_MENTION_LIST: {
 				openUserProfile(getActivity(), mAccountId, -1, link);
 				break;
 			}
@@ -322,7 +345,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				openTweetSearch(getActivity(), mAccountId, link);
 				break;
 			}
-			case TwidereLinkify.LINK_TYPE_IMAGE: {
+			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
 				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
 				intent.setPackage(getActivity().getPackageName());
 				startActivity(intent);
@@ -382,6 +405,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_USER_LIST_DETAILS_UPDATED);
+		filter.addAction(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 	}
 
@@ -406,7 +430,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	public static class EditTextDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
-		private EditText mEditText;
+		
+		private AutoCompleteTextView mEditText;
 		private String mText;
 		private int mType;
 		private String mTitle;
@@ -414,6 +439,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		private ServiceInterface mService;
 		private boolean mIsPublic;
 		private int mListId;
+		private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
 
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
@@ -428,6 +454,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 						}
 						case TYPE_DESCRIPTION: {
 							mService.updateUserListDetails(mAccountId, mListId, mIsPublic, null, mText);
+							break;
+						}
+						case TYPE_MEMBER_SCREEN_NAME: {
+							if (mText == null || mText.length() <= 0) return;
+							mService.addUserListMember(mAccountId, mListId, -1, mText);
 							break;
 						}
 					}
@@ -448,9 +479,9 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			mTitle = bundle != null ? bundle.getString(INTENT_KEY_TITLE) : null;
 			mIsPublic = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_PUBLIC) : true;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.edittext_default_style, null);
+			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.auto_complete_textview_default_style, null);
 			builder.setView(view);
-			mEditText = (EditText) view.findViewById(R.id.edit_text);
+			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
 			if (mText != null) {
 				mEditText.setText(mText);
 			}
@@ -462,6 +493,13 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				}
 				case TYPE_DESCRIPTION: {
 					limit = 160;
+					break;
+				}
+				case TYPE_MEMBER_SCREEN_NAME: {
+					limit = 20;
+					mUserAutoCompleteAdapter = new UserAutoCompleteAdapter(getActivity());
+					mEditText.setAdapter(mUserAutoCompleteAdapter);
+					mEditText.setThreshold(1);
 					break;
 				}
 			}
@@ -546,11 +584,17 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	private class ListMembersAction extends UserListAction {
+	private class ListMembersAction extends ListAction {
 
 		@Override
 		public String getName() {
 			return getString(R.string.list_members);
+		}
+		
+		@Override
+		public String getSummary() {
+			if (mUserList == null) return null;
+			return String.valueOf(mUserList.getMemberCount());
 		}
 
 		@Override
@@ -560,8 +604,14 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	private class ListSubscribersAction extends UserListAction {
+	private class ListSubscribersAction extends ListAction {
 
+		@Override
+		public String getSummary() {
+			if (mUserList == null) return null;
+			return String.valueOf(mUserList.getSubscriberCount());
+		}
+		
 		@Override
 		public String getName() {
 			return getString(R.string.list_subscribers);
@@ -574,18 +624,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	private class ListTimelineAction extends UserListAction {
+	private class ListTimelineAction extends ListAction {
 
 		@Override
 		public String getName() {
 			return getString(R.string.list_timeline);
-		}
-
-		@Override
-		public String getSummary() {
-			// if (mUserList == null) return null;
-			// return String.valueOf(mUserList.getFavouritesCount());
-			return null;
 		}
 
 		@Override
@@ -606,34 +649,13 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 	}
 
-	private abstract class UserListAction {
-		public abstract String getName();
-
-		public String getSummary() {
-			return null;
-		}
-
-		public void onClick() {
-
-		}
-
-		public boolean onLongClick() {
-			return false;
-		}
-
-		@Override
-		public final String toString() {
-			return getName();
-		}
-	}
-
-	private class UserProfileActionAdapter extends ArrayAdapter<UserListAction> {
+	private class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
 
 		public UserProfileActionAdapter(Context context) {
 			super(context, R.layout.user_action_list_item, android.R.id.text1);
 		}
 
-		public UserListAction findItem(long id) {
+		public ListAction findItem(long id) {
 			final int count = getCount();
 			for (int i = 0; i < count; i++) {
 				if (id == getItemId(i)) return getItem(i);
@@ -651,5 +673,27 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			return view;
 		}
 
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_ADD: {
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+				args.putString(INTENT_KEY_TEXT, "");
+				args.putString(INTENT_KEY_TITLE, getString(R.string.screen_name));
+				args.putBoolean(INTENT_KEY_IS_PUBLIC, mUserList.isPublic());
+				args.putInt(INTENT_KEY_LIST_ID, mUserList.getId());
+				args.putInt(INTENT_KEY_TYPE, TYPE_MEMBER_SCREEN_NAME);
+				mDialogFragment.setArguments(args);
+				mDialogFragment.show(getFragmentManager(), "add_member");
+				break;
+			}
+			case MENU_DELETE: {
+				break;
+			}
+		}
+		return true;
 	}
 }

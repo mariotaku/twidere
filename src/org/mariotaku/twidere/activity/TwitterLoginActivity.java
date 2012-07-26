@@ -58,6 +58,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -105,6 +107,34 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+	}
+	
+	private boolean mBackPressed = false;
+
+	private Handler mBackPressedHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			mBackPressed = false;
+		}
+		
+	};
+	
+	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
+	
+	@Override
+	public void onBackPressed() {
+		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
+			mBackPressedHandler.removeMessages(MESSAGE_ID_BACK_TIMEOUT);
+			if (!mBackPressed) {
+				Toast.makeText(this, R.string.signing_in_please_wait, Toast.LENGTH_SHORT).show();
+				mBackPressed = true;
+				mBackPressedHandler.sendEmptyMessageDelayed(MESSAGE_ID_BACK_TIMEOUT, 3000L);
+				return;
+			}
+			mBackPressed = false;
+		}
+		super.onBackPressed();
 	}
 
 	@Override
@@ -481,7 +511,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				startActivity(intent);
 				finish();
 			} else if (result.is_logged_in) {
-
+				Toast.makeText(TwitterLoginActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(TwitterLoginActivity.this, result.exception, true);
 			}
@@ -539,16 +569,14 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 			final Twitter twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(mUsername,
 					mPassword));
-			boolean account_valid = false;
 			User user = null;
 			try {
-				account_valid = twitter.test();
 				user = twitter.verifyCredentials();
 			} catch (final TwitterException e) {
 				return new Response(false, false, false, Accounts.AUTH_TYPE_BASIC, null, e);
 			}
 
-			if (account_valid && user != null) {
+			if (user != null && user.getId() > 0) {
 				final String profile_image_url = user.getProfileImageURL().toString();
 				if (!mUserColorSet) {
 					analyseUserProfileColor(profile_image_url);
@@ -588,16 +616,14 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			setAPI(cb);
 
 			final Twitter twitter = new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
-			boolean account_valid = false;
 			User user = null;
 			try {
-				account_valid = twitter.test();
 				user = twitter.verifyCredentials();
 			} catch (final TwitterException e) {
 				return new Response(false, false, false, Accounts.AUTH_TYPE_TWIP_O_MODE, null, e);
 			}
 
-			if (account_valid && user != null) {
+			if (user != null && user.getId() > 0) {
 				final String profile_image_url = parseString(user.getProfileImageURL());
 				if (!mUserColorSet) {
 					analyseUserProfileColor(profile_image_url);

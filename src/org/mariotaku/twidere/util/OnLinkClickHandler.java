@@ -26,7 +26,7 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 	public void onLinkClick(String link, int type) {
 		if (activity == null) return;
 		switch (type) {
-			case TwidereLinkify.LINK_TYPE_MENTION: {
+			case TwidereLinkify.LINK_TYPE_MENTION_LIST: {
 				openUserProfile(activity, account_id, -1, link);
 				break;
 			}
@@ -34,7 +34,7 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 				openTweetSearch(activity, account_id, link);
 				break;
 			}
-			case TwidereLinkify.LINK_TYPE_IMAGE: {
+			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
 				final Intent intent = new Intent(ViewStatusFragment.INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
 				intent.setPackage(activity.getPackageName());
 				activity.startActivity(intent);

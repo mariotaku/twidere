@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	private final LazyImageLoader mProfileImageLoader;
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mShowLastItemAsGap, mDisplayName;
 	private float mTextSize;
+	private boolean mForceSSLConnection;
 
 	public UsersAdapter(Context context) {
 		super(context, R.layout.user_list_item, R.id.description);
@@ -88,17 +90,21 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader
-							.displayImage(parseURL(getBiggerTwitterProfileImage(user.profile_image_url_string)),
-									holder.profile_image);
+					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(user.profile_image_url_string, mForceSSLConnection)),
+							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(user.profile_image_url, holder.profile_image);
+					mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(user.profile_image_url_string, mForceSSLConnection)), holder.profile_image);
 				}
 			}
 		}
 		return view;
 	}
 
+	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
+	}
+	
 	public boolean isGap(int position) {
 		return mShowLastItemAsGap && position == getCount() - 1;
 	}

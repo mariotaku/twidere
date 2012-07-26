@@ -22,6 +22,7 @@ package org.mariotaku.twidere.adapter;
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -50,6 +51,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
+	private boolean mForceSSLConnection;
 
 	public ParcelableStatusesAdapter(Context context, LazyImageLoader profile_image_loader,
 			LazyImageLoader preview_loader) {
@@ -137,11 +139,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(
-							parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string)),
+					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string, mForceSSLConnection)),
 							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(status.profile_image_url, holder.profile_image);
+					mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(status.profile_image_url_string, mForceSSLConnection)), holder.profile_image);
 				}
 				holder.profile_image.setOnClickListener(this);
 				holder.profile_image.setTag(position);
@@ -154,6 +155,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		}
 
 		return view;
+	}
+	
+	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
 	}
 
 	@Override

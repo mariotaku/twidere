@@ -31,6 +31,8 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -92,11 +94,15 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 
 		private final long mAccountId, mStatusId;
 		private final StatusHandler mHandler;
+		private final SharedPreferences mPreferences;
+		private final boolean mForceSSLConnection;
 
 		public ShowConversationTask(StatusHandler handler, long account_id, long status_id) {
 			mHandler = handler;
 			mAccountId = account_id;
 			mStatusId = status_id;
+			mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			mForceSSLConnection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 		}
 
 		@Override
@@ -109,7 +115,7 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 				if (p_status == null) {
 					status = twitter.showStatus(mStatusId);
 					if (status == null) return null;
-					p_status = new ParcelableStatus(status, mAccountId, false);
+					p_status = new ParcelableStatus(status, mAccountId, false, mForceSSLConnection);
 				}
 				mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, p_status));
 				long in_reply_to_id = p_status.in_reply_to_status_id;
@@ -120,7 +126,7 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 						if (status == null) {
 							break;
 						}
-						p_status = new ParcelableStatus(status, mAccountId, false);
+						p_status = new ParcelableStatus(status, mAccountId, false, mForceSSLConnection);
 					}
 					if (p_status.status_id <= 0) {
 						break;

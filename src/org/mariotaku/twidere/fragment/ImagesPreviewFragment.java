@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.Context;
@@ -95,20 +96,6 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		mAdapter.clear();
 		mAdapter.addAll(mData);
 		mLoadImagesIndicator.setVisibility(View.GONE);
-	}
-
-	public static class ImageSpec {
-		public final String thumbnail_link, image_link;
-
-		public ImageSpec(String thumbnail_link, String image_link) {
-			this.thumbnail_link = thumbnail_link;
-			this.image_link = image_link;
-		}
-
-		@Override
-		public String toString() {
-			return "ImageSpec(" + thumbnail_link + ", " + image_link + ")";
-		}
 	}
 
 	private class ImagesAdapter extends BaseAdapter {

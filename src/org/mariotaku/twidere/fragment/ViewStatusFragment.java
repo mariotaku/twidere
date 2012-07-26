@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
@@ -38,7 +39,7 @@ import java.util.List;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.ImagesPreviewFragment.ImageSpec;
+import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
@@ -94,7 +95,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	private FollowInfoTask mFollowInfoTask;
 	private GetStatusTask mGetStatusTask;
 	private ParcelableStatus mStatus;
-	private boolean mLoadMoreAutomatically;
+	private boolean mLoadMoreAutomatically, mForceSSLConnection;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -128,6 +129,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mMenuBar.show();
 
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
+		final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 
 		mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_color : 0);
 		if (is_multiple_account_enabled) {
@@ -142,7 +144,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(
 				status.is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
 		mTextView.setText(status.text);
-		final TwidereLinkify linkify = new TwidereLinkify(mTextView);
+		final TwidereLinkify linkify = new TwidereLinkify(mTextView, force_ssl_connection);
 		linkify.setOnLinkClickListener(new OnLinkClickHandler(getActivity(), mAccountId));
 		linkify.addAllLinks();
 		final boolean is_reply = status.in_reply_to_status_id > 0;
@@ -163,10 +165,9 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 		final LazyImageLoader imageloader = getApplication().getProfileImageLoader();
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
-		imageloader.displayImage(
-				hires_profile_image ? parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string))
-						: status.profile_image_url, mProfileImageView);
-		final List<ImageSpec> images = Utils.getImagesInStatus(status.text_html);
+		
+		imageloader.displayImage(parseURL(hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string, force_ssl_connection) : getNormalTwitterProfileImage(status.profile_image_url_string, force_ssl_connection)), mProfileImageView);
+		final List<ImageSpec> images = Utils.getImagesInStatus(status.text_html, force_ssl_connection);
 		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		if (images.size() > 0) {
 			mImagesPreviewFragment.clear();
@@ -196,6 +197,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 		mService = getApplication().getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
+		mForceSSLConnection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
@@ -449,7 +451,7 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 			try {
 				return new Response<ParcelableStatus>(new ParcelableStatus(twitter.showStatus(mStatusId), mAccountId,
-						false), null);
+						false, mForceSSLConnection), null);
 			} catch (final TwitterException e) {
 				return new Response<ParcelableStatus>(null, e);
 			}

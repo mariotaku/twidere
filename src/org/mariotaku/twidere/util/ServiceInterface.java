@@ -543,4 +543,34 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		}
 
 	}
+	
+	public int createUserListSubscription(long account_id, int list_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.createUserListSubscription(account_id, list_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
+	public int destroyUserListSubscription(long account_id, int list_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.destroyUserListSubscription(account_id, list_id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
+	public int addUserListMember(long account_id, int list_id, long user_id, String screen_name) {
+		if (mService == null) return -1;
+		try {
+			return mService.addUserListMember(account_id, list_id, user_id, screen_name);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 }

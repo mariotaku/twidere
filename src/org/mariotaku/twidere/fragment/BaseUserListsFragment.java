@@ -65,6 +65,14 @@ abstract class BaseUserListsFragment extends BaseListFragment implements LoaderC
 	public long getAccountId() {
 		return mAccountId;
 	}
+	
+	public long getUserId() {
+		return mUserId;
+	}
+	
+	public String getScreenName() {
+		return mScreenName;
+	}
 
 	public long getCursor() {
 		return mCursor;
@@ -92,7 +100,9 @@ abstract class BaseUserListsFragment extends BaseListFragment implements LoaderC
 			mScreenName = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		mAdapter = new UserListsAdapter(getActivity());
+		setListAdapter(null);
 		mListView = getListView();
+		addHeaders(mListView);
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		if (mAccountId != account_id) {
 			mAdapter.clear();
@@ -104,6 +114,10 @@ abstract class BaseUserListsFragment extends BaseListFragment implements LoaderC
 		mListView.setOnScrollListener(this);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
+	}
+	
+	public void addHeaders(ListView list) {
+		
 	}
 
 	@Override
@@ -122,7 +136,7 @@ abstract class BaseUserListsFragment extends BaseListFragment implements LoaderC
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		final ParcelableUserList user_list = mAdapter.getItem(position);
+		final ParcelableUserList user_list = mAdapter.findItem(id);
 		if (user_list == null) return;
 		if (mAdapter.isGap(position) && !mLoadMoreAutomatically) {
 			final Bundle args = getArguments();
@@ -162,11 +176,13 @@ abstract class BaseUserListsFragment extends BaseListFragment implements LoaderC
 	@Override
 	public void onResume() {
 		super.onResume();
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
+		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
+		final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
+		mAdapter.setForceSSLConnection(force_ssl_connection);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
 		mAdapter.setTextSize(text_size);

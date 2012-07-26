@@ -117,13 +117,16 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	public static final int TAB_POSITION_DISCOVER = 2;
 	public static final int TAB_POSITION_ME = 3;
 
+	private int getPaneBackground() {
+		final boolean dark = isDarkTheme(), solid = isSolidColorBackground();
+		return dark ? (solid ? android.R.color.black : R.drawable.background_holo_dark) : (solid ? android.R.color.white : R.drawable.background_holo_light);
+	}
+	
 	public void bringLeftPaneToFront() {
 		if (mLeftPaneLayer == null || mRightPaneLayer == null || mLeftPaneContainer == null
 				|| mRightPaneContainer == null) return;
 		mLeftPaneLayer.bringToFront();
-		final int bg_res_id = isDarkTheme() ? R.drawable.bg_two_pane_compact_dark_left
-				: R.drawable.bg_two_pane_compact_light_left;
-		mLeftPaneContainer.setBackgroundResource(bg_res_id);
+		mLeftPaneContainer.setBackgroundResource(getPaneBackground());
 		mRightPaneContainer.setBackgroundResource(0);
 	}
 
@@ -131,9 +134,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		if (mLeftPaneLayer == null || mRightPaneLayer == null || mLeftPaneContainer == null
 				|| mRightPaneContainer == null) return;
 		mRightPaneLayer.bringToFront();
-		final int bg_res_id = isDarkTheme() ? R.drawable.bg_two_pane_compact_dark_right
-				: R.drawable.bg_two_pane_compact_light_right;
-		mRightPaneContainer.setBackgroundResource(bg_res_id);
+		mRightPaneContainer.setBackgroundResource(getPaneBackground());
 		mLeftPaneContainer.setBackgroundResource(0);
 	}
 

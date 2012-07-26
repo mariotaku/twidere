@@ -5,6 +5,7 @@ import static org.mariotaku.twidere.util.Utils.openUserListMemberships;
 import static org.mariotaku.twidere.util.Utils.openUserListSubscriptions;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.model.ListAction;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -46,19 +47,6 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 		final ListAction action = mAdapter.findItem(id);
 		if (action != null) {
 			action.onClick();
-		}
-	}
-
-	private abstract class ListAction {
-		public abstract String getName();
-
-		public void onClick() {
-
-		}
-
-		@Override
-		public final String toString() {
-			return getName();
 		}
 	}
 

@@ -742,6 +742,162 @@ public class TwidereService extends Service implements Constants {
 		}
 
 	}
+	
+	public int addUserListMember(long account_id, int list_id, long user_id, String screen_name) {
+		final AddUserListMemberTask task = new AddUserListMemberTask(account_id, list_id, user_id, screen_name);
+		return mAsyncTaskManager.add(task, true);
+	}
+	
+	private class AddUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+
+		private final long account_id, user_id;
+		private final int list_id;
+		private final String screen_name;
+
+		public AddUserListMemberTask(long account_id, int list_id, long user_id, String screen_name) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.list_id = list_id;
+			this.user_id = user_id;
+			this.screen_name = screen_name;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(Void... params) {
+
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				try {
+					if (user_id > 0) {
+						final UserList list = twitter.addUserListMember(list_id, user_id);
+						return new SingleResponse<UserList>(account_id, list, null);
+					} else if (screen_name != null) {
+						final User user = twitter.showUser(screen_name);
+						if (user != null && user.getId() > 0) {
+							final UserList list = twitter.addUserListMember(list_id, user.getId());
+							return new SingleResponse<UserList>(account_id, list, null);
+						}
+					}
+				} catch (final TwitterException e) {
+					return new SingleResponse<UserList>(account_id, null, e);
+				}
+			}
+			return new SingleResponse<UserList>(account_id, null, null);
+		}
+
+		@Override
+		protected void onPostExecute(SingleResponse<UserList> result) {
+			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
+			if (succeed) {
+				Toast.makeText(TwidereService.this, R.string.add_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(result.exception, true);
+			}
+			final Intent intent = new Intent(BROADCAST_USER_LIST_MEMBER_DELETED);
+			intent.putExtra(INTENT_KEY_USER_ID, user_id);
+			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
+			sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
+	}
+	
+	private class DestroyUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+
+		private final long account_id;
+		private final int list_id;
+
+		public DestroyUserListSubscriptionTask(long account_id, int list_id) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.list_id = list_id;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(Void... params) {
+
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				try {
+					final UserList list = twitter.destroyUserListSubscription(list_id);
+					return new SingleResponse<UserList>(account_id, list, null);
+				} catch (final TwitterException e) {
+					return new SingleResponse<UserList>(account_id, null, e);
+				}
+			}
+			return new SingleResponse<UserList>(account_id, null, null);
+		}
+
+		@Override
+		protected void onPostExecute(SingleResponse<UserList> result) {
+			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
+			if (succeed) {
+				Toast.makeText(TwidereService.this, R.string.unfollow_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(result.exception, true);
+			}
+			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
+			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
+			sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
+	}
+	
+	public int createUserListSubscription(long account_id, int list_id) {
+		final CreateUserListSubscriptionTask task = new CreateUserListSubscriptionTask(account_id, list_id);
+		return mAsyncTaskManager.add(task, true);
+	}
+	
+	public int destroyUserListSubscription(long account_id, int list_id) {
+		final DestroyUserListSubscriptionTask task = new DestroyUserListSubscriptionTask(account_id, list_id);
+		return mAsyncTaskManager.add(task, true);
+	}
+	
+	private class CreateUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+
+		private final long account_id;
+		private final int list_id;
+
+		public CreateUserListSubscriptionTask(long account_id, int list_id) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.list_id = list_id;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(Void... params) {
+
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				try {
+					final UserList list = twitter.createUserListSubscription(list_id);
+					return new SingleResponse<UserList>(account_id, list, null);
+				} catch (final TwitterException e) {
+					return new SingleResponse<UserList>(account_id, null, e);
+				}
+			}
+			return new SingleResponse<UserList>(account_id, null, null);
+		}
+
+		@Override
+		protected void onPostExecute(SingleResponse<UserList> result) {
+			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
+			if (succeed) {
+				Toast.makeText(TwidereService.this, R.string.follow_success, Toast.LENGTH_SHORT).show();
+			} else {
+				showErrorToast(result.exception, true);
+			}
+			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
+			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
+			sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
+	}
 
 	private class DestroyBlockTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
@@ -1483,6 +1639,14 @@ public class TwidereService extends Service implements Constants {
 			mService = new WeakReference<TwidereService>(service);
 		}
 
+		public int createUserListSubscription(long account_id, int list_id) {
+			return mService.get().createUserListSubscription(account_id, list_id);
+		}
+		
+		public int destroyUserListSubscription(long account_id, int list_id) {
+			return mService.get().destroyUserListSubscription(account_id, list_id);
+		}
+		
 		@Override
 		public int cancelRetweet(long account_id, long status_id) {
 			return mService.get().cancelRetweet(account_id, status_id);
@@ -1623,6 +1787,10 @@ public class TwidereService extends Service implements Constants {
 			return mService.get().retweetStatus(account_id, status_id);
 		}
 
+		public int addUserListMember(long account_id, int list_id, long user_id, String screen_name) {
+			return mService.get().addUserListMember(account_id, list_id, user_id, screen_name);
+		}
+		
 		@Override
 		public int sendDirectMessage(long account_id, String screen_name, long user_id, String message) {
 			return mService.get().sendDirectMessage(account_id, screen_name, user_id, message);

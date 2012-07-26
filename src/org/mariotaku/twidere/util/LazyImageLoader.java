@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.SoftReference;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -43,12 +44,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.mariotaku.twidere.Constants;
+
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Environment;
 import android.widget.GridView;
@@ -66,29 +68,37 @@ import android.widget.ListView;
  * @author mariotaku
  * 
  */
-public class LazyImageLoader {
+public class LazyImageLoader implements Constants{
 
 	private final MemoryCache mMemoryCache = new MemoryCache();
 	private final Context mContext;
 	private final FileCache mFileCache;
-	private final Resources mResources;
 	private final Map<ImageView, URL> mImageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, URL>());
 	private final ExecutorService mExecutorService;
 	private final int mFallbackRes;
 	private final int mRequiredWidth, mRequiredHeight;
-	private boolean mAntiAliasing;
+	private boolean mIgnoreSSLError;
+	private Proxy mProxy;
+	private final SharedPreferences mPreferences;
 
 	public LazyImageLoader(Context context, String cache_dir_name, int fallback_image_res, int required_width,
 			int required_height) {
 		mContext = context;
-		mResources = context.getResources();
 		mFileCache = new FileCache(context, cache_dir_name);
 		mExecutorService = Executors.newFixedThreadPool(5);
 		mFallbackRes = fallback_image_res;
 		mRequiredWidth = required_width % 2 == 0 ? required_width : required_width + 1;
 		mRequiredHeight = required_height % 2 == 0 ? required_height : required_height + 1;
+		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mProxy = getProxy(context);
+		mIgnoreSSLError = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 	}
 
+	public void reloadConnectivitySettings() {
+		mProxy = getProxy(mContext);
+		mIgnoreSSLError = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+	}
+	
 	public void clearFileCache() {
 		mFileCache.clear();
 	}
@@ -110,9 +120,7 @@ public class LazyImageLoader {
 		mImageViews.put(imageview, url);
 		final Bitmap bitmap = mMemoryCache.get(url);
 		if (bitmap != null) {
-			final BitmapDrawable drawable = new BitmapDrawable(mResources, bitmap);
-			drawable.setAntiAlias(mAntiAliasing);
-			imageview.setImageDrawable(drawable);
+			imageview.setImageBitmap(bitmap);
 		} else {
 			queuePhoto(url, imageview);
 			imageview.setImageResource(mFallbackRes);
@@ -130,9 +138,6 @@ public class LazyImageLoader {
 		return null;
 	}
 
-	public void setAntiAliasing(boolean anti_alias) {
-		mAntiAliasing = anti_alias;
-	}
 
 	private void copyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
@@ -285,8 +290,8 @@ public class LazyImageLoader {
 			// from web
 			try {
 				Bitmap bitmap = null;
-				final HttpURLConnection conn = (HttpURLConnection) url.openConnection(getProxy(mContext));
-				setIgnoreSSLError(conn);
+				final HttpURLConnection conn = (HttpURLConnection) url.openConnection(mProxy);
+				if (mIgnoreSSLError) setIgnoreSSLError(conn);
 				conn.setConnectTimeout(30000);
 				conn.setReadTimeout(30000);
 				conn.setInstanceFollowRedirects(true);

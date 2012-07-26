@@ -61,22 +61,20 @@
 		</LinearLayout>
 
 		<FrameLayout
-			android:id="@+id/follow_container"
+			android:id="@+id/follow_more_container"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@+id/profile_image_container"
 			android:layout_alignParentRight="true"
 			android:layout_alignTop="@+id/profile_image_container"
-			android:layout_margin="4dp"
-			android:visibility="gone">
+			android:layout_margin="4dp">
 
 			<Button
-				android:id="@+id/follow"
+				android:id="@+id/follow_more"
 				style="?android:attr/buttonStyleSmall"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:text="@string/follow"/>
+				android:layout_gravity="center"/>
 		</FrameLayout>
 	</RelativeLayout>
 

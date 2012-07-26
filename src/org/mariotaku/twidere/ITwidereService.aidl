@@ -37,9 +37,12 @@ interface ITwidereService {
 	int destroyFavorite(long account_id, long status_id);
 	int createFriendship(long account_id, long user_id);
 	int destroyFriendship(long account_id, long user_id);
+	int createUserListSubscription(long account_id, int list_id);
+	int destroyUserListSubscription(long account_id, int list_id);
 	int createBlock(long account_id, long user_id);
 	int destroyBlock(long account_id, long user_id);
 	int reportSpam(long account_id, long max_id);
+	int addUserListMember(long account_id, int list_id, long user_id, String screen_name);
 	int deleteUserListMember(long account_id, int list_id, long user_id);
 	int updateProfile(long account_id, String name, String url, String location, String description);
 	int updateProfileImage(long account_id, in Uri image_uri, boolean delete_image);

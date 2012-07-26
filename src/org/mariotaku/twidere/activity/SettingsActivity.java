@@ -27,10 +27,8 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.content.ContentResolver;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -52,8 +50,6 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 		addPreferencesFromResource(R.xml.settings);
 		findPreference(PREFERENCE_KEY_DARK_THEME).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND).setOnPreferenceChangeListener(this);
-		findPreference(PREFERENCE_KEY_REFRESH_INTERVAL).setOnPreferenceChangeListener(this);
-		findPreference(PREFERENCE_KEY_AUTO_REFRESH).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_KEY_CLEAR_DATABASES).setOnPreferenceClickListener(this);
 		findPreference(PREFERENCE_KEY_CLEAR_CACHE).setOnPreferenceClickListener(this);
 	}
@@ -71,9 +67,6 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
 		final String key = preference.getKey();
-		final ServiceInterface service = getTwidereApplication().getServiceInterface();
-		final String value_string = String.valueOf(newValue);
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		if (PREFERENCE_KEY_DARK_THEME.equals(key) || PREFERENCE_KEY_SOLID_COLOR_BACKGROUND.equals(key)) {
 			boolean show_anim = false;
 			try {
@@ -84,23 +77,6 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 				e.printStackTrace();
 			}
 			restartActivity(this, show_anim);
-		} else if (PREFERENCE_KEY_REFRESH_INTERVAL.equals(key)) {
-			if (!newValue.equals(preferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30"))) {
-				service.stopAutoRefresh();
-				try {
-					Integer.parseInt(value_string);
-					preferences.edit().putString(PREFERENCE_KEY_REFRESH_INTERVAL, value_string).commit();
-					service.startAutoRefresh();
-				} catch (final Exception e) {
-					// ignore.
-				}
-			}
-		} else if (PREFERENCE_KEY_AUTO_REFRESH.equals(key)) {
-			final boolean value_boolean = Boolean.valueOf(value_string);
-			service.stopAutoRefresh();
-			if (value_boolean) {
-				service.startAutoRefresh();
-			}
 		}
 		return true;
 	}

@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.model;
 
+import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.formatTweetText;
 import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
@@ -28,8 +29,6 @@ import static org.mariotaku.twidere.util.Utils.parseURL;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Date;
-
-import org.mariotaku.twidere.util.Utils.ImageResult;
 
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
@@ -91,7 +90,7 @@ public class ParcelableStatus implements Parcelable {
 		}
 	};
 
-	public ParcelableStatus(Cursor cursor, StatusCursorIndices indices) {
+	public ParcelableStatus(Cursor cursor, StatusCursorIndices indices, boolean force_ssl) {
 		retweet_id = indices.retweet_id != -1 ? cursor.getLong(indices.retweet_id) : -1;
 		retweeted_by_id = indices.retweeted_by_id != -1 ? cursor.getLong(indices.retweeted_by_id) : -1;
 		status_id = indices.status_id != -1 ? cursor.getLong(indices.status_id) : -1;
@@ -110,7 +109,7 @@ public class ParcelableStatus implements Parcelable {
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
 		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
-		final ImageResult preview = getPreviewImage(text_html, true);
+		final PreviewImage preview = getPreviewImage(text_html, true, force_ssl);
 		has_media = preview.has_image;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		name = indices.name != -1 ? cursor.getString(indices.name) : null;
@@ -159,7 +158,7 @@ public class ParcelableStatus implements Parcelable {
 
 	}
 
-	public ParcelableStatus(Status status, long account_id, boolean is_gap) {
+	public ParcelableStatus(Status status, long account_id, boolean is_gap, boolean force_ssl) {
 
 		this.is_gap = is_gap;
 		status_id = status.getId();
@@ -185,7 +184,7 @@ public class ParcelableStatus implements Parcelable {
 
 		status_timestamp = getTime(status.getCreatedAt());
 		text_html = formatStatusText(status);
-		final ImageResult preview = getPreviewImage(text_html, true);
+		final PreviewImage preview = getPreviewImage(text_html, true, force_ssl);
 		text_plain = status.getText();
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();
@@ -201,7 +200,7 @@ public class ParcelableStatus implements Parcelable {
 		image_preview_url = parseURL(image_preview_url_string);
 	}
 
-	public ParcelableStatus(Tweet tweet, long account_id, boolean is_gap) {
+	public ParcelableStatus(Tweet tweet, long account_id, boolean is_gap, boolean force_ssl) {
 
 		this.is_gap = is_gap;
 		status_id = tweet.getId();
@@ -222,7 +221,7 @@ public class ParcelableStatus implements Parcelable {
 
 		status_timestamp = getTime(tweet.getCreatedAt());
 		text_html = formatTweetText(tweet);
-		final ImageResult preview = getPreviewImage(text_html, true);
+		final PreviewImage preview = getPreviewImage(text_html, true, force_ssl);
 		text_plain = tweet.getText();
 		retweet_count = -1;
 		in_reply_to_screen_name = tweet.getToUser();
@@ -245,7 +244,7 @@ public class ParcelableStatus implements Parcelable {
 
 	@Override
 	public String toString() {
-		return text_plain;
+		return unescapeHTML(text_html);
 	}
 
 	@Override

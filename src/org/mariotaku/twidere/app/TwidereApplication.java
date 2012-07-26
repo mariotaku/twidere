@@ -37,16 +37,18 @@ import org.mariotaku.twidere.util.ServiceInterface;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask.Status;
 import android.os.Build;
 
 @ReportsCrashes(formKey = "dEcwVVBoTDE0RXZaczFiMUxuek43WGc6MQ")
-public class TwidereApplication extends Application implements Constants {
+public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private ClearCacheTask mClearCacheTask;
 	private SharedPreferences mPreferences;
+	private ServiceInterface mServiceInterface;
 
 	public void clearCache() {
 		if (mClearCacheTask == null || mClearCacheTask.getStatus() == Status.FINISHED) {
@@ -60,6 +62,15 @@ public class TwidereApplication extends Application implements Constants {
 			mAsyncTaskManager = new AsyncTaskManager();
 		}
 		return mAsyncTaskManager;
+	}
+	
+	public void reloadConnectivitySettings() {
+		if (mPreviewImageLoader == null) {
+			mPreviewImageLoader.reloadConnectivitySettings();
+		}
+		if (mProfileImageLoader == null) {
+			mProfileImageLoader.reloadConnectivitySettings();
+		}
 	}
 
 	public LazyImageLoader getPreviewImageLoader() {
@@ -82,7 +93,8 @@ public class TwidereApplication extends Application implements Constants {
 	}
 
 	public ServiceInterface getServiceInterface() {
-		return ServiceInterface.getInstance(this);
+		if (mServiceInterface != null) return mServiceInterface;
+		return mServiceInterface = ServiceInterface.getInstance(this);
 	}
 
 	public boolean isDebugBuild() {
@@ -99,7 +111,9 @@ public class TwidereApplication extends Application implements Constants {
 				// Ignore.
 			}
 		}
+		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		super.onCreate();
+		mServiceInterface = ServiceInterface.getInstance(this);
 	}
 
 	@Override
@@ -149,5 +163,17 @@ public class TwidereApplication extends Application implements Constants {
 			f.delete();
 		}
 
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+		if (mServiceInterface != null && (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key))) {
+			mServiceInterface.stopAutoRefresh();
+			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+				mServiceInterface.startAutoRefresh();
+			}
+		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_FORCE_SSL_CONNECTION.equals(key)) {
+			reloadConnectivitySettings();
+		}
 	}
 }

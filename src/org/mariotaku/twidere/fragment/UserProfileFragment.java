@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
+import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
@@ -50,6 +51,7 @@ import java.net.URL;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
@@ -129,6 +131,26 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private Uri mImageUri;
 	private User mUser = null;
 
+	private static final int TYPE_NAME = 1;
+
+	private static final int TYPE_URL = 2;
+
+	private static final int TYPE_LOCATION = 3;
+
+	private static final int TYPE_DESCRIPTION = 4;
+
+	private long mUserId;
+
+	private String mScreenName;
+
+	private ServiceInterface mService;
+
+	private PopupMenu mPopupMenu;
+
+	private boolean mFollowInfoDisplayed = false;
+
+	private SharedPreferences mPreferences;
+	
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -156,26 +178,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	};
 
-	private static final int TYPE_NAME = 1;
-
-	private static final int TYPE_URL = 2;
-
-	private static final int TYPE_LOCATION = 3;
-
-	private static final int TYPE_DESCRIPTION = 4;
-
-	private long mUserId;
-
-	private String mScreenName;
-
-	private ServiceInterface mService;
-
-	private PopupMenu mPopupMenu;
-
-	private boolean mFollowInfoDisplayed = false;
-
-	private SharedPreferences mPreferences;
-
 	public void changeUser(long account_id, User user) {
 		if (user == null || getActivity() == null || !isMyActivatedAccount(getActivity(), account_id)) return;
 		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
@@ -189,6 +191,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenName = user.getScreenName();
 
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
+		final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 
 		mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_color : 0);
 		if (is_multiple_account_enabled) {
@@ -207,7 +210,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				: View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
-		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView);
+		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView, force_ssl_connection);
 		linkify.setOnLinkClickListener(this);
 		linkify.addAllLinks();
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -229,11 +232,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		// mProfileImageView.setVisibility(display_profile_image ? View.VISIBLE
 		// : View.GONE);
 		// if (display_profile_image) {
-		final URL profile_image_url = user.getProfileImageURL();
+		final String profile_image_url_string = parseString(user.getProfileImageURL());
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
-		mProfileImageLoader.displayImage(
-				hires_profile_image ? parseURL(getBiggerTwitterProfileImage(parseString(profile_image_url)))
-						: profile_image_url, mProfileImageView);
+		mProfileImageLoader.displayImage(parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string, force_ssl_connection) : getNormalTwitterProfileImage(profile_image_url_string, force_ssl_connection)), mProfileImageView);
 		// }
 		mUser = user;
 		mAdapter.notifyDataSetChanged();
@@ -363,7 +364,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case R.id.profile_image_container: {
 				final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 				if (twitter != null) {
-					final Uri uri = Uri.parse(getOriginalTwitterProfileImage(parseString(mUser.getProfileImageURL())));
+					final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
+					final Uri uri = Uri.parse(getOriginalTwitterProfileImage(parseString(mUser.getProfileImageURL()), force_ssl_connection));
 					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, uri);
 					intent.setPackage(getActivity().getPackageName());
 					startActivity(intent);
@@ -458,7 +460,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		final UserAction action = mAdapter.findItem(id);
+		final ListAction action = mAdapter.findItem(id);
 		if (action != null) {
 			action.onClick();
 		}
@@ -466,7 +468,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
-		final UserAction action = mAdapter.findItem(id);
+		final ListAction action = mAdapter.findItem(id);
 		if (action != null) return action.onLongClick();
 		return false;
 	}
@@ -475,7 +477,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	public void onLinkClick(String link, int type) {
 		if (mUser == null) return;
 		switch (type) {
-			case TwidereLinkify.LINK_TYPE_MENTION: {
+			case TwidereLinkify.LINK_TYPE_MENTION_LIST: {
 				openUserProfile(getActivity(), mAccountId, -1, link);
 				break;
 			}
@@ -483,7 +485,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				openTweetSearch(getActivity(), mAccountId, link);
 				break;
 			}
-			case TwidereLinkify.LINK_TYPE_IMAGE: {
+			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
 				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
 				intent.setPackage(getActivity().getPackageName());
 				startActivity(intent);
@@ -773,7 +775,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class DirectMessagesAction extends UserAction {
+	private class DirectMessagesAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -792,7 +794,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class FavoritesAction extends UserAction {
+	private class FavoritesAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -887,28 +889,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
-	private abstract class UserAction {
-		public abstract String getName();
-
-		public String getSummary() {
-			return null;
-		}
-
-		public void onClick() {
-
-		}
-
-		public boolean onLongClick() {
-			return false;
-		}
-
-		@Override
-		public final String toString() {
-			return getName();
-		}
-	}
-
-	private class UserBlocksAction extends UserAction {
+	private class UserBlocksAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -1002,7 +983,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class UserListTypesAction extends UserAction {
+	private class UserListTypesAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -1017,13 +998,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class UserProfileActionAdapter extends ArrayAdapter<UserAction> {
+	private class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
 
 		public UserProfileActionAdapter(Context context) {
 			super(context, R.layout.user_action_list_item, android.R.id.text1);
 		}
 
-		public UserAction findItem(long id) {
+		public ListAction findItem(long id) {
 			final int count = getCount();
 			for (int i = 0; i < count; i++) {
 				if (id == getItemId(i)) return getItem(i);

@@ -261,5 +261,12 @@
 	<string name="accounts">Accounts</string>
 	<string name="hires_profile_image">Hi-res profile image</string>
 	<string name="mention_this_user">Mention this user</string>
+	<string name="signing_in_please_wait">Signing in, please wait or press BACK again to quit.</string>
+	<string name="force_ssl_connection">Force SSL connection</string>
+	<string name="force_ssl_connection_summary">Force using SSL in API and some other requests.</string>
+	<string name="connectivity">Connectivity</string>
+	<string name="add_member">Add member</string>
+	<string name="add_success">Add success</string>
+	<string name="new_user_list">New user list</string>
 
 </resources>

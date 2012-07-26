@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.getTypeIcon;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
@@ -32,11 +33,11 @@ import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
-import org.mariotaku.twidere.util.Utils.ImageResult;
 
 import android.app.Activity;
 import android.content.Context;
@@ -54,6 +55,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	private float mTextSize;
 	private final Context mContext;
 	private StatusCursorIndices mIndices;
+	private boolean mForceSSLConnection;
 
 	public CursorStatusesAdapter(Context context, LazyImageLoader profile_image_loader, LazyImageLoader preview_loader) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
@@ -74,7 +76,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final String name = mDisplayName ? cursor.getString(mIndices.name) : screen_name;
 		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 
-		final ImageResult preview = getPreviewImage(text, mDisplayImagePreview);
+		final PreviewImage preview = getPreviewImage(text, mDisplayImagePreview, mForceSSLConnection);
 
 		final long account_id = cursor.getLong(mIndices.account_id);
 		final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
@@ -128,10 +130,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			if (mDisplayProfileImage) {
 				final String profile_image_url_string = cursor.getString(mIndices.profile_image_url);
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
+					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
 							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
+					mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(profile_image_url_string, mForceSSLConnection)), holder.profile_image);
 				}
 				holder.profile_image.setTag(position);
 			}
@@ -273,5 +275,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			mIndices = null;
 		}
 		return super.swapCursor(cursor);
+	}
+
+	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
 	}
 }
