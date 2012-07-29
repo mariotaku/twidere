@@ -41,12 +41,13 @@ import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.model.ListAction;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 
-import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -80,6 +81,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -87,7 +89,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class UserListDetailsFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemClickListener {
+		OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemClickListener, Panes.Right {
 
 	private LazyImageLoader mProfileImageLoader;
 	private ImageView mProfileImageView;
@@ -101,13 +103,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	private ListInfoTask mUserInfoTask;
 	private View mHeaderView;
 	private long mAccountId, mUserId;
-	private final DialogFragment mDialogFragment = new EditTextDialogFragment();
+	private final DialogFragment mAddMemberDialogFragment = new AddMemberDialogFragment(),
+			mEditUserListDialogFragment = new EditUserListDialogFragment();
 
 	private UserList mUserList = null;
-
-	private static final int TYPE_NAME = 1;
-	private static final int TYPE_DESCRIPTION = 2;
-	private static final int TYPE_MEMBER_SCREEN_NAME = 3;
 
 	private int mUserListId;
 
@@ -181,7 +180,9 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		final String profile_image_url_string = parseString(user.getProfileImageURL());
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		mProfileImageLoader.displayImage(
-				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string, force_ssl_connection) : getNormalTwitterProfileImage(profile_image_url_string, force_ssl_connection)), mProfileImageView);
+				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string,
+						force_ssl_connection) : getNormalTwitterProfileImage(profile_image_url_string,
+						force_ssl_connection)), mProfileImageView);
 		mUserList = user_list;
 		if (mUserId == mAccountId) {
 			mFollowMoreButton.setText(R.string.more);
@@ -372,32 +373,49 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mUserId);
 		if (!is_my_activated_account) return false;
 		switch (view.getId()) {
-			case R.id.name_container: {
+			case R.id.name_container:
+			case R.id.description_container:
 				final Bundle args = new Bundle();
 				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				args.putString(INTENT_KEY_TEXT, mUserList.getName());
-				args.putString(INTENT_KEY_TITLE, getString(R.string.name));
-				args.putBoolean(INTENT_KEY_IS_PUBLIC, mUserList.isPublic());
-				args.putInt(INTENT_KEY_LIST_ID, mUserList.getId());
-				args.putInt(INTENT_KEY_TYPE, TYPE_NAME);
-				mDialogFragment.setArguments(args);
-				mDialogFragment.show(getFragmentManager(), "edit_name");
-				return true;
-			}
-			case R.id.description_container: {
-				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				args.putString(INTENT_KEY_TEXT, mUserList.getDescription());
+				args.putString(INTENT_KEY_LIST_NAME, mUserList.getName());
+				args.putString(INTENT_KEY_DESCRIPTION, mUserList.getDescription());
 				args.putString(INTENT_KEY_TITLE, getString(R.string.description));
 				args.putBoolean(INTENT_KEY_IS_PUBLIC, mUserList.isPublic());
 				args.putInt(INTENT_KEY_LIST_ID, mUserList.getId());
-				args.putInt(INTENT_KEY_TYPE, TYPE_DESCRIPTION);
-				mDialogFragment.setArguments(args);
-				mDialogFragment.show(getFragmentManager(), "edit_description");
+				mEditUserListDialogFragment.setArguments(args);
+				mEditUserListDialogFragment.show(getFragmentManager(), "edit_user_list_details");
 				return true;
-			}
 		}
 		return false;
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_ADD: {
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+				args.putString(INTENT_KEY_TEXT, "");
+				args.putInt(INTENT_KEY_LIST_ID, mUserList.getId());
+				mAddMemberDialogFragment.setArguments(args);
+				mAddMemberDialogFragment.show(getFragmentManager(), "add_member");
+				break;
+			}
+			case MENU_DELETE: {
+				if (mUserId != mAccountId) return false;
+				mService.destroyUserList(mAccountId, mUserListId);
+				break;
+			}
+			case MENU_EXTENSIONS: {
+				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
+				final Bundle extras = new Bundle();
+				extras.putParcelable(INTENT_KEY_USER_LIST, new ParcelableUserList(mUserList, mAccountId));
+				intent.putExtras(extras);
+				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+				break;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -429,15 +447,12 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		getUserInfo(mAccountId, mUserListId, mUserName, mUserId, mUserName);
 	}
 
-	public static class EditTextDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
-		
+	public static class AddMemberDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
+
 		private AutoCompleteTextView mEditText;
 		private String mText;
-		private int mType;
-		private String mTitle;
 		private long mAccountId;
 		private ServiceInterface mService;
-		private boolean mIsPublic;
 		private int mListId;
 		private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
 
@@ -446,22 +461,9 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			if (mListId <= 0 || mAccountId <= 0) return;
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
-					mText = mEditText.getText().toString();
-					switch (mType) {
-						case TYPE_NAME: {
-							mService.updateUserListDetails(mAccountId, mListId, mIsPublic, mText, null);
-							break;
-						}
-						case TYPE_DESCRIPTION: {
-							mService.updateUserListDetails(mAccountId, mListId, mIsPublic, null, mText);
-							break;
-						}
-						case TYPE_MEMBER_SCREEN_NAME: {
-							if (mText == null || mText.length() <= 0) return;
-							mService.addUserListMember(mAccountId, mListId, -1, mText);
-							break;
-						}
-					}
+					mText = parseString(mEditText.getText());
+					if (mText == null || mText.length() <= 0) return;
+					mService.addUserListMember(mAccountId, mListId, -1, mText);
 					break;
 				}
 			}
@@ -475,36 +477,19 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 			mListId = bundle != null ? bundle.getInt(INTENT_KEY_LIST_ID, -1) : -1;
 			mText = bundle != null ? bundle.getString(INTENT_KEY_TEXT) : null;
-			mType = bundle != null ? bundle.getInt(INTENT_KEY_TYPE, -1) : -1;
-			mTitle = bundle != null ? bundle.getString(INTENT_KEY_TITLE) : null;
-			mIsPublic = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_PUBLIC) : true;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.auto_complete_textview_default_style, null);
+			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.auto_complete_textview_default_style,
+					null);
 			builder.setView(view);
 			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
 			if (mText != null) {
 				mEditText.setText(mText);
 			}
-			int limit = 140;
-			switch (mType) {
-				case TYPE_NAME: {
-					limit = 20;
-					break;
-				}
-				case TYPE_DESCRIPTION: {
-					limit = 160;
-					break;
-				}
-				case TYPE_MEMBER_SCREEN_NAME: {
-					limit = 20;
-					mUserAutoCompleteAdapter = new UserAutoCompleteAdapter(getActivity());
-					mEditText.setAdapter(mUserAutoCompleteAdapter);
-					mEditText.setThreshold(1);
-					break;
-				}
-			}
-			mEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(limit) });
-			builder.setTitle(mTitle);
+			mUserAutoCompleteAdapter = new UserAutoCompleteAdapter(getActivity());
+			mEditText.setAdapter(mUserAutoCompleteAdapter);
+			mEditText.setThreshold(1);
+			mEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) });
+			builder.setTitle(R.string.screen_name);
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();
@@ -513,9 +498,75 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		@Override
 		public void onSaveInstanceState(Bundle outState) {
 			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+			outState.putInt(INTENT_KEY_LIST_ID, mListId);
 			outState.putString(INTENT_KEY_TEXT, mText);
-			outState.putInt(INTENT_KEY_TYPE, mType);
-			outState.putString(INTENT_KEY_TITLE, mTitle);
+			super.onSaveInstanceState(outState);
+		}
+
+	}
+
+	public static class EditUserListDialogFragment extends BaseDialogFragment implements
+			DialogInterface.OnClickListener {
+
+		private EditText mEditName, mEditDescription;
+		private CheckBox mPublicCheckBox;
+		private String mName, mDescription;
+		private long mAccountId;
+		private int mListId;
+		private boolean mIsPublic;
+		private ServiceInterface mService;
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			if (mAccountId <= 0) return;
+			switch (which) {
+				case DialogInterface.BUTTON_POSITIVE: {
+					mName = parseString(mEditName.getText());
+					mDescription = parseString(mEditDescription.getText());
+					mIsPublic = mPublicCheckBox.isChecked();
+					if (mName == null || mName.length() <= 0) return;
+					mService.updateUserListDetails(mAccountId, mListId, mIsPublic, mName, mDescription);
+					break;
+				}
+			}
+
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			mService = getApplication().getServiceInterface();
+			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
+			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+			mListId = bundle != null ? bundle.getInt(INTENT_KEY_LIST_ID, -1) : -1;
+			mName = bundle != null ? bundle.getString(INTENT_KEY_LIST_NAME) : null;
+			mDescription = bundle != null ? bundle.getString(INTENT_KEY_DESCRIPTION) : null;
+			mIsPublic = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_PUBLIC, true) : true;
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.user_list_detail_dialog_view, null);
+			builder.setView(view);
+			mEditName = (EditText) view.findViewById(R.id.name);
+			mEditDescription = (EditText) view.findViewById(R.id.description);
+			mPublicCheckBox = (CheckBox) view.findViewById(R.id.is_public);
+			if (mName != null) {
+				mEditName.setText(mName);
+			}
+			if (mDescription != null) {
+				mEditDescription.setText(mDescription);
+			}
+			mPublicCheckBox.setChecked(mIsPublic);
+			builder.setTitle(R.string.user_list);
+			builder.setPositiveButton(android.R.string.ok, this);
+			builder.setNegativeButton(android.R.string.cancel, this);
+			return builder.create();
+		}
+
+		@Override
+		public void onSaveInstanceState(Bundle outState) {
+			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+			outState.putInt(INTENT_KEY_LIST_ID, mListId);
+			outState.putString(INTENT_KEY_LIST_NAME, mName);
+			outState.putString(INTENT_KEY_DESCRIPTION, mDescription);
+			outState.putBoolean(INTENT_KEY_IS_PUBLIC, mIsPublic);
 			super.onSaveInstanceState(outState);
 		}
 
@@ -590,7 +641,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		public String getName() {
 			return getString(R.string.list_members);
 		}
-		
+
 		@Override
 		public String getSummary() {
 			if (mUserList == null) return null;
@@ -607,14 +658,14 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	private class ListSubscribersAction extends ListAction {
 
 		@Override
+		public String getName() {
+			return getString(R.string.list_subscribers);
+		}
+
+		@Override
 		public String getSummary() {
 			if (mUserList == null) return null;
 			return String.valueOf(mUserList.getSubscriberCount());
-		}
-		
-		@Override
-		public String getName() {
-			return getString(R.string.list_subscribers);
 		}
 
 		@Override
@@ -673,27 +724,5 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			return view;
 		}
 
-	}
-
-	@Override
-	public boolean onMenuItemClick(MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_ADD: {
-				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				args.putString(INTENT_KEY_TEXT, "");
-				args.putString(INTENT_KEY_TITLE, getString(R.string.screen_name));
-				args.putBoolean(INTENT_KEY_IS_PUBLIC, mUserList.isPublic());
-				args.putInt(INTENT_KEY_LIST_ID, mUserList.getId());
-				args.putInt(INTENT_KEY_TYPE, TYPE_MEMBER_SCREEN_NAME);
-				mDialogFragment.setArguments(args);
-				mDialogFragment.show(getFragmentManager(), "add_member");
-				break;
-			}
-			case MENU_DELETE: {
-				break;
-			}
-		}
-		return true;
 	}
 }

@@ -19,5 +19,9 @@
 				android:title="@string/delete"/>
 		</menu>
 	</item>
+	<item
+		android:id="@id/extensions"
+		android:icon="@drawable/ic_menu_extension"
+		android:title="@string/extensions"/>
 
 </menu>

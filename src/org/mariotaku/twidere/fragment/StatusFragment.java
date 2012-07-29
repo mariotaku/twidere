@@ -40,6 +40,8 @@ import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ImageSpec;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
@@ -47,7 +49,6 @@ import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.Utils;
 
-import twitter4j.GeoLocation;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -80,12 +81,13 @@ import android.widget.TextView;
 
 import com.twitter.Extractor;
 
-public class ViewStatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener {
+public class StatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener, Panes.Right {
 
 	private long mAccountId, mStatusId;
 	private ImagesPreviewFragment mImagesPreviewFragment = new ImagesPreviewFragment();
 	private ServiceInterface mService;
 	private SharedPreferences mPreferences;
+	private LazyImageLoader mProfileImageLoader;
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView;
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
@@ -163,10 +165,12 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			mInReplyToView.setText(getString(R.string.in_reply_to, status.in_reply_to_screen_name));
 		}
 
-		final LazyImageLoader imageloader = getApplication().getProfileImageLoader();
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
-		
-		imageloader.displayImage(parseURL(hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string, force_ssl_connection) : getNormalTwitterProfileImage(status.profile_image_url_string, force_ssl_connection)), mProfileImageView);
+
+		mProfileImageLoader.displayImage(
+				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string,
+						force_ssl_connection) : getNormalTwitterProfileImage(status.profile_image_url_string,
+						force_ssl_connection)), mProfileImageView);
 		final List<ImageSpec> images = Utils.getImagesInStatus(status.text_html, force_ssl_connection);
 		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		if (images.size() > 0) {
@@ -195,20 +199,28 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getApplication().getServiceInterface();
+		mProfileImageLoader = getApplication().getProfileImageLoader();
 		super.onActivityCreated(savedInstanceState);
+		setRetainInstance(true);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		mForceSSLConnection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
+			mStatus = bundle.getParcelable(INTENT_KEY_STATUS);
 		}
 		mInReplyToView.setOnClickListener(this);
 		mFollowButton.setOnClickListener(this);
 		mProfileView.setOnClickListener(this);
 		mLocationView.setOnClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(this);
-		getStatus(false);
+		if (mStatus != null) {
+			displayStatus(mStatus);
+		} else {
+			getStatus(false);
+		}
+
 	}
 
 	@Override
@@ -229,11 +241,13 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			}
 			case R.id.location_view: {
 				if (mStatus.location == null) return;
+				final ParcelableLocation location = mStatus.location;
+				if (location == null || !location.isValid()) return;
 				final Uri.Builder builder = new Uri.Builder();
 				builder.scheme(SCHEME_TWIDERE);
 				builder.authority(AUTHORITY_MAP);
-				builder.appendQueryParameter(QUERY_PARAM_LAT, String.valueOf(mStatus.location.getLatitude()));
-				builder.appendQueryParameter(QUERY_PARAM_LNG, String.valueOf(mStatus.location.getLongitude()));
+				builder.appendQueryParameter(QUERY_PARAM_LAT, String.valueOf(location.latitude));
+				builder.appendQueryParameter(QUERY_PARAM_LNG, String.valueOf(location.longitude));
 				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				break;
 			}
@@ -263,11 +277,17 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 
 	@Override
 	public void onDestroyView() {
+		mStatus = null;
+		mAccountId = -1;
+		mStatusId = -1;
 		if (mGetStatusTask != null) {
 			mGetStatusTask.cancel(true);
 		}
 		if (mFollowInfoTask != null) {
 			mFollowInfoTask.cancel(true);
+		}
+		if (mLocationInfoTask != null) {
+			mLocationInfoTask.cancel(true);
 		}
 		super.onDestroyView();
 	}
@@ -334,6 +354,14 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			}
 			case MENU_DELETE: {
 				mService.destroyStatus(mAccountId, mStatusId);
+				break;
+			}
+			case MENU_EXTENSIONS: {
+				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
+				final Bundle extras = new Bundle();
+				extras.putParcelable(INTENT_KEY_STATUS, mStatus);
+				intent.putExtras(extras);
+				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
 				break;
 			}
 			default:
@@ -485,11 +513,10 @@ public class ViewStatusFragment extends BaseFragment implements OnClickListener,
 			if (mStatus == null || mStatus.location == null) return null;
 			final Twitter twitter = getTwitterInstance(getActivity(), mStatus.account_id, false);
 			if (twitter == null) return null;
-			final GeoLocation location = mStatus.location;
+			final ParcelableLocation location = mStatus.location;
 			try {
 				final Geocoder coder = new Geocoder(getActivity());
-				final List<Address> addresses = coder.getFromLocation(location.getLatitude(), location.getLongitude(),
-						1);
+				final List<Address> addresses = coder.getFromLocation(location.latitude, location.longitude, 1);
 				if (addresses.size() == 1) {
 					final Address address = addresses.get(0);
 					final StringBuilder builder = new StringBuilder();

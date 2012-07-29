@@ -22,7 +22,6 @@ package org.mariotaku.twidere.model;
 import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.formatTweetText;
-import static org.mariotaku.twidere.util.Utils.getGeoLocationFromString;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
@@ -30,7 +29,6 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.Date;
 
-import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.Tweet;
@@ -61,8 +59,8 @@ public class ParcelableStatus implements Parcelable {
 	public final boolean is_gap, is_retweet, is_favorite, is_protected, has_media;
 
 	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, name, screen_name,
-			in_reply_to_screen_name, source, profile_image_url_string, image_preview_url_string;
-	public final GeoLocation location;
+			in_reply_to_screen_name, source, profile_image_url_string, image_preview_url_string, location_string;
+	public final ParcelableLocation location;
 
 	public final Spanned text;
 
@@ -117,7 +115,8 @@ public class ParcelableStatus implements Parcelable {
 		in_reply_to_screen_name = indices.in_reply_to_screen_name != -1 ? cursor
 				.getString(indices.in_reply_to_screen_name) : null;
 		source = indices.source != -1 ? cursor.getString(indices.source) : null;
-		location = indices.location != -1 ? getGeoLocationFromString(cursor.getString(indices.location)) : null;
+		location_string = cursor.getString(indices.location);
+		location = indices.location != -1 ? new ParcelableLocation(location_string) : null;
 		profile_image_url_string = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
 		profile_image_url = parseURL(profile_image_url_string);
 
@@ -150,8 +149,8 @@ public class ParcelableStatus implements Parcelable {
 		source = in.readString();
 		profile_image_url_string = in.readString();
 		image_preview_url_string = in.readString();
-		location = (GeoLocation) in.readSerializable();
-
+		location_string = in.readString();
+		location = new ParcelableLocation(location_string);
 		image_preview_url = parseURL(image_preview_url_string);
 		profile_image_url = parseURL(profile_image_url_string);
 		text = text_html != null ? Html.fromHtml(text_html) : null;
@@ -190,12 +189,11 @@ public class ParcelableStatus implements Parcelable {
 		in_reply_to_screen_name = status.getInReplyToScreenName();
 		in_reply_to_status_id = status.getInReplyToStatusId();
 		source = status.getSource();
-		location = status.getGeoLocation();
+		location = new ParcelableLocation(status.getGeoLocation());
+		location_string = location.toString();
 		is_favorite = status.isFavorited();
 		has_media = medias != null && medias.length > 0 || preview.has_image;
-
 		text = text_html != null ? Html.fromHtml(text_html) : null;
-
 		image_preview_url_string = preview.matched_url;
 		image_preview_url = parseURL(image_preview_url_string);
 	}
@@ -227,7 +225,8 @@ public class ParcelableStatus implements Parcelable {
 		in_reply_to_screen_name = tweet.getToUser();
 		in_reply_to_status_id = tweet.getInReplyToStatusId();
 		source = tweet.getSource();
-		location = tweet.getGeoLocation();
+		location = new ParcelableLocation(tweet.getGeoLocation());
+		location_string = location.toString();
 		is_favorite = false;
 		has_media = medias != null && medias.length > 0 || preview.has_image;
 
@@ -272,8 +271,7 @@ public class ParcelableStatus implements Parcelable {
 		out.writeString(source);
 		out.writeString(profile_image_url_string);
 		out.writeString(image_preview_url_string);
-		out.writeSerializable(location);
-
+		out.writeString(location_string);
 	}
 
 	private long getTime(Date date) {

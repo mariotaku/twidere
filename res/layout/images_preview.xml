@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
 	<Gallery
 		android:id="@+id/preview_gallery"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"/>
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
 
 	<FrameLayout
 		android:id="@+id/load_images"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
 		android:background="@drawable/item_background_holo_light">
 
 		<TextView

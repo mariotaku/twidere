@@ -57,7 +57,7 @@ public class UserListViewHolder {
 			this.text_size = text_size;
 			description.setTextSize(text_size);
 			name.setTextSize(text_size * 1.05f);
-			owner.setTextSize(text_size * 0.65f); 
+			owner.setTextSize(text_size * 0.65f);
 		}
 	}
 

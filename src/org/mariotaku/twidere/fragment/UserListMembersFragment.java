@@ -42,15 +42,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
-public class UserListMembersFragment extends BaseUsersFragment implements OnMenuItemClickListener {
+public class UserListMembersFragment extends BaseUsersListFragment implements OnMenuItemClickListener {
 
 	private long mCursor = -1, mOwnerId = -1;
 	private int mUserListId = -1;
+	private ParcelableUser mSelectedUser;
 
 	private PopupMenu mPopupMenu;
 	private ServiceInterface mService;
-
-	private ParcelableUser mSelectedUser;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -136,13 +135,23 @@ public class UserListMembersFragment extends BaseUsersFragment implements OnMenu
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
+		if (mSelectedUser == null) return false;
 		switch (item.getItemId()) {
 			case MENU_DELETE: {
-				if (mSelectedUser == null) {
-					break;
-				}
 				mService.deleteUserListMember(getAccountId(), mUserListId, mSelectedUser.user_id);
-				return true;
+				break;
+			}
+			case MENU_VIEW_PROFILE: {
+				openUserProfile(mSelectedUser.user_id, mSelectedUser.screen_name);
+				break;
+			}
+			case MENU_EXTENSIONS: {
+				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
+				final Bundle extras = new Bundle();
+				extras.putParcelable(INTENT_KEY_USER, mSelectedUser);
+				intent.putExtras(extras);
+				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+				break;
 			}
 		}
 		return false;

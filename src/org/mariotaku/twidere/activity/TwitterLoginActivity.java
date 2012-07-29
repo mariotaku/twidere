@@ -99,16 +99,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	private long mLoggedId;
 
-	@Override
-	public void afterTextChanged(Editable s) {
-
-	}
-
-	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-	}
-	
 	private boolean mBackPressed = false;
 
 	private Handler mBackPressedHandler = new Handler() {
@@ -117,24 +107,19 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		public void handleMessage(Message msg) {
 			mBackPressed = false;
 		}
-		
+
 	};
-	
+
 	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
-	
+
 	@Override
-	public void onBackPressed() {
-		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
-			mBackPressedHandler.removeMessages(MESSAGE_ID_BACK_TIMEOUT);
-			if (!mBackPressed) {
-				Toast.makeText(this, R.string.signing_in_please_wait, Toast.LENGTH_SHORT).show();
-				mBackPressed = true;
-				mBackPressedHandler.sendEmptyMessageDelayed(MESSAGE_ID_BACK_TIMEOUT, 3000L);
-				return;
-			}
-			mBackPressed = false;
-		}
-		super.onBackPressed();
+	public void afterTextChanged(Editable s) {
+
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
 	}
 
 	@Override
@@ -196,6 +181,21 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
+			mBackPressedHandler.removeMessages(MESSAGE_ID_BACK_TIMEOUT);
+			if (!mBackPressed) {
+				Toast.makeText(this, R.string.signing_in_please_wait, Toast.LENGTH_SHORT).show();
+				mBackPressed = true;
+				mBackPressedHandler.sendEmptyMessageDelayed(MESSAGE_ID_BACK_TIMEOUT, 3000L);
+				return;
+			}
+			mBackPressed = false;
+		}
+		super.onBackPressed();
 	}
 
 	@Override
@@ -496,7 +496,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
 					mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL, null,
 					Accounts.AUTH_TYPE_OAUTH);
-			resolver.insert(Accounts.CONTENT_URI, values);
+			if (values != null) {
+				resolver.insert(Accounts.CONTENT_URI, values);
+			}
 			return new Response(true, false, null);
 		}
 
@@ -588,7 +590,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL,
 						mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL,
 						mPassword, Accounts.AUTH_TYPE_BASIC);
-				resolver.insert(Accounts.CONTENT_URI, values);
+				if (values != null) {
+					resolver.insert(Accounts.CONTENT_URI, values);
+				}
 				return new Response(false, false, true, Accounts.AUTH_TYPE_BASIC, null, null);
 
 			}
@@ -635,7 +639,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL,
 						mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL, null,
 						Accounts.AUTH_TYPE_TWIP_O_MODE);
-				resolver.insert(Accounts.CONTENT_URI, values);
+				if (values != null) {
+					resolver.insert(Accounts.CONTENT_URI, values);
+				}
 				return new Response(false, false, true, Accounts.AUTH_TYPE_TWIP_O_MODE, null, null);
 
 			}
@@ -665,7 +671,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
 					mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL, null,
 					Accounts.AUTH_TYPE_XAUTH);
-			resolver.insert(Accounts.CONTENT_URI, values);
+			if (values != null) {
+				resolver.insert(Accounts.CONTENT_URI, values);
+			}
 			return new Response(false, false, true, Accounts.AUTH_TYPE_XAUTH, null, null);
 
 		}

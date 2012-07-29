@@ -78,7 +78,7 @@
 		<!-- layout_width/height must be set in code -->
 		<item name="android:scaleType">center</item>
 		<item name="android:layout_width">56dp</item>
-		<item name="android:layout_height">fill_parent</item>
+		<item name="android:layout_height">match_parent</item>
 		<item name="android:background">@drawable/actionbar_item_background_holo_dark</item>
 	</style>
 

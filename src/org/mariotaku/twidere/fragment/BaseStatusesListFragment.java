@@ -31,6 +31,7 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.AsyncTaskManager;
@@ -60,7 +61,7 @@ import android.widget.ListView;
 import com.twitter.Extractor;
 
 abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
-		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
+		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left {
 
 	private ServiceInterface mServiceInterface;
 
@@ -198,76 +199,82 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
-		if (mSelectedStatus != null) {
-			final long status_id = mSelectedStatus.status_id;
-			final String text_plain = mSelectedStatus.text_plain;
-			final String screen_name = mSelectedStatus.screen_name;
-			final String name = mSelectedStatus.name;
-			final long account_id = mSelectedStatus.account_id;
-			switch (item.getItemId()) {
-				case MENU_SHARE: {
-					final Intent intent = new Intent(Intent.ACTION_SEND);
-					intent.setType("text/plain");
-					intent.putExtra(Intent.EXTRA_TEXT, "@" + screen_name + ": " + text_plain);
-					startActivity(Intent.createChooser(intent, getString(R.string.share)));
-					break;
+		final ParcelableStatus status = mSelectedStatus;
+		if (status == null) return false;
+		final long status_id = status.status_id;
+		final String text_plain = status.text_plain;
+		final String screen_name = status.screen_name;
+		final String name = status.name;
+		final long account_id = status.account_id;
+		switch (item.getItemId()) {
+			case MENU_SHARE: {
+				final Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				intent.putExtra(Intent.EXTRA_TEXT, "@" + screen_name + ": " + text_plain);
+				startActivity(Intent.createChooser(intent, getString(R.string.share)));
+				break;
+			}
+			case MENU_RETWEET: {
+				if (isMyRetweet(getActivity(), account_id, status_id)) {
+					mServiceInterface.cancelRetweet(account_id, status_id);
+				} else {
+					final long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
+							: mSelectedStatus.status_id;
+					mServiceInterface.retweetStatus(account_id, id_to_retweet);
 				}
-				case MENU_RETWEET: {
-					if (isMyRetweet(getActivity(), account_id, status_id)) {
-						mServiceInterface.cancelRetweet(account_id, status_id);
-					} else {
-						final long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
-								: mSelectedStatus.status_id;
-						mServiceInterface.retweetStatus(account_id, id_to_retweet);
-					}
-					break;
+				break;
+			}
+			case MENU_QUOTE: {
+				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Bundle bundle = new Bundle();
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
+				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
+				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+				bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
+				bundle.putString(INTENT_KEY_TEXT, getQuoteStatus(getActivity(), screen_name, text_plain));
+				intent.putExtras(bundle);
+				startActivity(intent);
+				break;
+			}
+			case MENU_REPLY: {
+				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Bundle bundle = new Bundle();
+				final List<String> mentions = new Extractor().extractMentionedScreennames(text_plain);
+				mentions.remove(screen_name);
+				mentions.add(0, screen_name);
+				bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
+				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
+				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+				intent.putExtras(bundle);
+				startActivity(intent);
+				break;
+			}
+			case MENU_FAV: {
+				if (mSelectedStatus.is_favorite) {
+					mServiceInterface.destroyFavorite(account_id, status_id);
+				} else {
+					mServiceInterface.createFavorite(account_id, status_id);
 				}
-				case MENU_QUOTE: {
-					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-					final Bundle bundle = new Bundle();
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
-					bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
-					bundle.putString(INTENT_KEY_TEXT, getQuoteStatus(getActivity(), screen_name, text_plain));
-					intent.putExtras(bundle);
-					startActivity(intent);
-					break;
-				}
-				case MENU_REPLY: {
-					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-					final Bundle bundle = new Bundle();
-					final List<String> mentions = new Extractor().extractMentionedScreennames(text_plain);
-					mentions.remove(screen_name);
-					mentions.add(0, screen_name);
-					bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
-					intent.putExtras(bundle);
-					startActivity(intent);
-					break;
-				}
-				case MENU_FAV: {
-					if (mSelectedStatus.is_favorite) {
-						mServiceInterface.destroyFavorite(account_id, status_id);
-					} else {
-						mServiceInterface.createFavorite(account_id, status_id);
-					}
-					break;
-				}
-				case MENU_CONVERSATION: {
-					openConversation(getActivity(), account_id, status_id);
-					break;
-				}
-				case MENU_DELETE: {
-					mServiceInterface.destroyStatus(account_id, status_id);
-					break;
-				}
-				default:
-					return false;
+				break;
+			}
+			case MENU_CONVERSATION: {
+				openConversation(getActivity(), account_id, status_id);
+				break;
+			}
+			case MENU_DELETE: {
+				mServiceInterface.destroyStatus(account_id, status_id);
+				break;
+			}
+			case MENU_EXTENSIONS: {
+				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
+				final Bundle extras = new Bundle();
+				extras.putParcelable(INTENT_KEY_STATUS, status);
+				intent.putExtras(extras);
+				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+				break;
 			}
 		}
 		return true;
@@ -373,11 +380,11 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		bundle.putParcelable(INTENT_KEY_STATUS, status);
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
-			if (mDetailFragment instanceof ViewStatusFragment && mDetailFragment.isAdded()) {
-				((ViewStatusFragment) mDetailFragment).displayStatus(status);
+			if (mDetailFragment instanceof StatusFragment && mDetailFragment.isAdded()) {
+				((StatusFragment) mDetailFragment).displayStatus(status);
 				home_activity.bringRightPaneToFront();
 			} else {
-				mDetailFragment = new ViewStatusFragment();
+				mDetailFragment = new StatusFragment();
 				final Bundle args = new Bundle(bundle);
 				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 				args.putLong(INTENT_KEY_STATUS_ID, status_id);

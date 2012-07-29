@@ -68,7 +68,6 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		super(context);
 	}
 
-	@SuppressWarnings("deprecation")
 	public TabPageIndicator(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setHorizontalScrollBarEnabled(false);
@@ -77,7 +76,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 
 		mTabLayout = new LinearLayout(getContext());
 		addView(mTabLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-				ViewGroup.LayoutParams.FILL_PARENT));
+				ViewGroup.LayoutParams.MATCH_PARENT));
 	}
 
 	public void notifyDataSetChanged() {
@@ -213,7 +212,6 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		setCurrentItem(initialPosition);
 	}
 
-	@SuppressWarnings("deprecation")
 	private void addTab(int icon, int index) {
 		// Workaround for not being able to pass a defStyle on pre-3.0
 		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
@@ -221,10 +219,9 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		tabView.setFocusable(true);
 		tabView.setOnClickListener(mTabClickListener);
 
-		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.FILL_PARENT, 1));
+		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
 	}
 
-	@SuppressWarnings("deprecation")
 	private void addTab(String text, int index) {
 		// Workaround for not being able to pass a defStyle on pre-3.0
 		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
@@ -232,10 +229,9 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		tabView.setFocusable(true);
 		tabView.setOnClickListener(mTabClickListener);
 
-		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.FILL_PARENT, 1));
+		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
 	}
 
-	@SuppressWarnings("deprecation")
 	private void addTab(String text, int icon, int index) {
 		// Workaround for not being able to pass a defStyle on pre-3.0
 		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
@@ -243,7 +239,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		tabView.setFocusable(true);
 		tabView.setOnClickListener(mTabClickListener);
 
-		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.FILL_PARENT, 1));
+		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
 	}
 
 	private void animateToTab(final int position) {

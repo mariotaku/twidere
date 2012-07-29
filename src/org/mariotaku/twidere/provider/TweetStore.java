@@ -261,6 +261,7 @@ public final class TweetStore implements Constants {
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 					CONTENT_PATH);
 
+			public static final String MAX_TIMESTAMP_TEMP = "max_timestamp_temp";
 			public static final String MAX_TIMESTAMP = "max_timestamp";
 			public static final String MAX_STATUS_ID = "max_status_id";
 			public static final String MESSAGE_TIMESTAMP = "message_timestamp";
@@ -285,31 +286,31 @@ public final class TweetStore implements Constants {
 
 			public static String buildSQL(long account_id) {
 				final StringBuilder builder = new StringBuilder();
-				builder.append("SELECT * FROM(");
-				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP
-						+ ", MAX(" + DirectMessages.MESSAGE_ID + ") AS " + MAX_STATUS_ID + ", " + ACCOUNT_ID + ", "
-						+ "0 AS " + IS_OUTGOING + ", " + DirectMessages.SENDER_NAME + " AS " + NAME + ", "
-						+ DirectMessages.SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
-						+ DirectMessages.SENDER_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", "
-						+ DirectMessages.SENDER_ID + " AS " + CONVERSATION_ID + ", " + DirectMessages.MESSAGE_TIMESTAMP);
+				builder.append("SELECT " + _ID + ", MAX(" + MAX_TIMESTAMP_TEMP + ") AS" + MAX_TIMESTAMP + ", "
+						+ MAX_STATUS_ID + ", " + ACCOUNT_ID + ", " + IS_OUTGOING + ", " + NAME + ", " + SCREEN_NAME
+						+ ", " + PROFILE_IMAGE_URL + ", " + TEXT + ", " + CONVERSATION_ID + ", " + MESSAGE_TIMESTAMP);
+				builder.append(" FROM(");
+				builder.append("SELECT " + _ID + ", MAX(" + MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP_TEMP + ", MAX("
+						+ MESSAGE_ID + ") AS " + MAX_STATUS_ID + ", " + ACCOUNT_ID + ", " + "0 AS " + IS_OUTGOING
+						+ ", " + SENDER_NAME + " AS " + NAME + ", " + SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
+						+ SENDER_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", " + SENDER_ID
+						+ " AS " + CONVERSATION_ID + ", " + MESSAGE_TIMESTAMP);
 				builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
 				builder.append(" GROUP BY " + CONVERSATION_ID);
-				builder.append(" HAVING " + MAX_TIMESTAMP + " NOT NULL" + " AND " + MAX_STATUS_ID + " NOT NULL");
+				builder.append(" HAVING " + MAX_TIMESTAMP_TEMP + " NOT NULL" + " AND " + MAX_STATUS_ID + " NOT NULL");
 				builder.append(" UNION ");
-				builder.append("SELECT " + _ID + ", MAX(" + DirectMessages.MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP
-						+ ", MAX(" + DirectMessages.MESSAGE_ID + ") AS " + MAX_STATUS_ID + ", " + ACCOUNT_ID + ", "
-						+ "1 AS " + IS_OUTGOING + ", " + DirectMessages.RECIPIENT_NAME + " AS " + NAME + ", "
-						+ DirectMessages.RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", "
-						+ DirectMessages.RECIPIENT_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", "
-						+ DirectMessages.RECIPIENT_ID + " AS " + CONVERSATION_ID + ", "
-						+ DirectMessages.MESSAGE_TIMESTAMP);
+				builder.append("SELECT " + _ID + ", MAX(" + MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP_TEMP + ", MAX("
+						+ MESSAGE_ID + ") AS " + MAX_STATUS_ID + ", " + ACCOUNT_ID + ", " + "1 AS " + IS_OUTGOING
+						+ ", " + RECIPIENT_NAME + " AS " + NAME + ", " + RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME
+						+ ", " + RECIPIENT_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", "
+						+ RECIPIENT_ID + " AS " + CONVERSATION_ID + ", " + MESSAGE_TIMESTAMP);
 				builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
 				builder.append(" GROUP BY " + CONVERSATION_ID);
-				builder.append(" HAVING " + MAX_TIMESTAMP + " NOT NULL" + " AND " + MAX_STATUS_ID + " NOT NULL");
+				builder.append(" HAVING " + MAX_TIMESTAMP_TEMP + " NOT NULL" + " AND " + MAX_STATUS_ID + " NOT NULL");
 				builder.append(")");
 				builder.append(" GROUP BY " + CONVERSATION_ID);
-				builder.append(" HAVING " + DirectMessages.ACCOUNT_ID + " = " + account_id);
-				builder.append(" ORDER BY " + MAX_TIMESTAMP + " DESC, " + MAX_STATUS_ID + " DESC");
+				builder.append(" HAVING " + ACCOUNT_ID + " = " + account_id);
+				builder.append(" ORDER BY " + MAX_TIMESTAMP_TEMP + " DESC, " + MAX_STATUS_ID + " DESC");
 				return builder.toString();
 			}
 		}

@@ -6,6 +6,11 @@
 		android:icon="@drawable/ic_menu_mention"
 		android:title="@string/mention_this_user"/>
 	<item
+		android:id="@id/send_direct_message"
+		android:icon="@drawable/ic_menu_compose"
+		android:title="@string/send_direct_message"
+		android:visible="false"/>
+	<item
 		android:id="@id/mute"
 		android:icon="@drawable/ic_menu_mute"
 		android:title="@string/mute"/>
@@ -27,5 +32,9 @@
 				android:title="@string/report_for_spam"/>
 		</menu>
 	</item>
+	<item
+		android:id="@id/extensions"
+		android:icon="@drawable/ic_menu_extension"
+		android:title="@string/extensions"/>
 
 </menu>

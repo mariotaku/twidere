@@ -3,18 +3,18 @@
 
 	<ScrollView
 		android:layout_width="300dp"
-		android:layout_height="fill_parent"
+		android:layout_height="match_parent"
 		android:layout_gravity="center">
 
 		<RelativeLayout
-			android:layout_width="fill_parent"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
 			android:gravity="center">
 
 			<LinearLayout
 				android:id="@+id/username_password"
-				android:layout_width="fill_parent"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_alignParentLeft="true"
 				android:orientation="vertical"
@@ -23,7 +23,7 @@
 				<EditText
 					android:id="@+id/username"
 					style="?editTextStyle"
-					android:layout_width="fill_parent"
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:ems="10"
 					android:hint="@string/username"
@@ -34,7 +34,7 @@
 				<EditText
 					android:id="@+id/password"
 					style="?editTextStyle"
-					android:layout_width="fill_parent"
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="8dp"
 					android:ems="10"
@@ -46,7 +46,7 @@
 
 			<LinearLayout
 				android:id="@+id/sign_in_sign_up"
-				android:layout_width="fill_parent"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_alignParentLeft="true"
 				android:layout_below="@+id/username_password"
@@ -55,7 +55,7 @@
 
 				<Button
 					android:id="@+id/sign_in"
-					android:layout_width="fill_parent"
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
 					android:minHeight="48dp"
@@ -64,7 +64,7 @@
 
 				<Button
 					android:id="@+id/sign_up"
-					android:layout_width="fill_parent"
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
 					android:minHeight="48dp"

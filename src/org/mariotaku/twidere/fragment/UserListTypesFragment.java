@@ -6,6 +6,7 @@ import static org.mariotaku.twidere.util.Utils.openUserListSubscriptions;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ListAction;
+import org.mariotaku.twidere.model.Panes;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class UserListTypesFragment extends BaseListFragment implements OnItemClickListener {
+public class UserListTypesFragment extends BaseListFragment implements OnItemClickListener, Panes.Left {
 
 	private UserProfileActionAdapter mAdapter;
 	private ListView mListView;

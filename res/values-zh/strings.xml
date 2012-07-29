@@ -260,4 +260,19 @@
   <string name="accounts">帳號</string>
   <string name="hires_profile_image">高質量個人資料圖片</string>
   <string name="mention_this_user">提及這個用戶</string>
+  <string name="signing_in_please_wait">正在登錄，請稍等或按BACK退出。</string>
+  <string name="force_ssl_connection">強制SSL連接</string>
+  <string name="force_ssl_connection_summary">強制在API請求和其他一些地方使用SSL。</string>
+  <string name="connectivity">連接性</string>
+  <string name="add_member">添加成員</string>
+  <string name="add_success">添加成功</string>
+  <string name="create_success">創建成功</string>
+  <string name="new_user_list">新用戶列表</string>
+  <string name="is_public">公開</string>
+  <string name="send_direct_message">發送私信</string>
+  <string name="extensions">擴展</string>
+  <string name="open_with_extensions">使用擴展打開</string>
+  <string name="view_user_list">查看用戶列表</string>
+  <string name="open">打開</string>
+  <string name="uninstall">卸載</string>
 </resources>

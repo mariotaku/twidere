@@ -82,9 +82,8 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 		final ImageButton actionButton = (ImageButton) LayoutInflater.from(mContext).inflate(R.layout.menu_button_item,
 				null);
 
-		@SuppressWarnings("deprecation")
 		final LayoutParams params = new LayoutParams((int) getResources().getDimension(R.dimen.actionbar_button_width),
-				ViewGroup.LayoutParams.FILL_PARENT);
+				ViewGroup.LayoutParams.MATCH_PARENT);
 		params.weight = 1;
 
 		actionButton.setLayoutParams(params);

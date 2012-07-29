@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
@@ -47,11 +48,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mDisplayName,
-			mShowAccountColor, mShowLastItemAsGap;
+			mShowAccountColor, mShowLastItemAsGap, mForceSSLConnection, mGapDisallowed;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
-	private boolean mForceSSLConnection;
 
 	public ParcelableStatusesAdapter(Context context, LazyImageLoader profile_image_loader,
 			LazyImageLoader preview_loader) {
@@ -104,7 +104,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 		final CharSequence retweeted_by = mDisplayName ? status.retweeted_by_name : status.retweeted_by_screen_name;
 		final boolean is_last = position == getCount() - 1;
-		final boolean show_gap = status.is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1;
+		final boolean show_gap = (status.is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1)
+				&& !mGapDisallowed;
 
 		holder.setShowAsGap(show_gap);
 		holder.setAccountColorEnabled(mShowAccountColor);
@@ -121,7 +122,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.name.setText(mDisplayName ? status.name : status.screen_name);
 			holder.time.setText(formatToShortTimeString(mContext, status.status_timestamp));
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					getTypeIcon(status.is_favorite, status.location != null, status.has_media), 0);
+					getTypeIcon(status.is_favorite, isValidLocation(status.location), status.has_media), 0);
 			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
 			if (status.is_retweet && !isNullOrEmpty(retweeted_by)) {
@@ -139,10 +140,15 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string, mForceSSLConnection)),
-							holder.profile_image);
+					mProfileImageLoader
+							.displayImage(
+									parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string,
+											mForceSSLConnection)), holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(status.profile_image_url_string, mForceSSLConnection)), holder.profile_image);
+					mProfileImageLoader
+							.displayImage(
+									parseURL(getNormalTwitterProfileImage(status.profile_image_url_string,
+											mForceSSLConnection)), holder.profile_image);
 				}
 				holder.profile_image.setOnClickListener(this);
 				holder.profile_image.setTag(position);
@@ -155,11 +161,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		}
 
 		return view;
-	}
-	
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
 	}
 
 	@Override
@@ -218,6 +219,20 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
+	}
+
+	@Override
+	public void setGapDisallowed(boolean disallowed) {
+		if (mGapDisallowed != disallowed) {
+			mGapDisallowed = disallowed;
+			notifyDataSetChanged();
+		}
+
 	}
 
 	@Override

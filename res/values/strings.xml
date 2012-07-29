@@ -267,6 +267,14 @@
 	<string name="connectivity">Connectivity</string>
 	<string name="add_member">Add member</string>
 	<string name="add_success">Add success</string>
+	<string name="create_success">Create success</string>
 	<string name="new_user_list">New user list</string>
+	<string name="is_public">Public</string>
+	<string name="send_direct_message">Send DM</string>
+	<string name="extensions">Extensions</string>
+	<string name="open_with_extensions">Open with extensions</string>
+	<string name="view_user_list">View user list</string>
+	<string name="open">Open</string>
+	<string name="uninstall">Uninstall</string>
 
 </resources>

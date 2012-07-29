@@ -375,36 +375,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		refreshLoadingViewsHeight();
 	}
 
-	/**
-	 * Set the drawable used in the loading layout. This is the same as calling
-	 * <code>setLoadingDrawable(drawable, Mode.BOTH)</code>
-	 * 
-	 * @param drawable - Drawable to display
-	 */
-	public void setLoadingDrawable(Drawable drawable) {
-		setLoadingDrawable(drawable, Mode.BOTH);
-	}
-
-	/**
-	 * Set the drawable used in the loading layout.
-	 * 
-	 * @param drawable - Drawable to display
-	 * @param mode - Controls which Header/Footer Views will be updated.
-	 *            <code>Mode.BOTH</code> will update all available, other values
-	 *            will update the relevant View.
-	 */
-	public void setLoadingDrawable(Drawable drawable, Mode mode) {
-		if (null != mHeaderLayout && mode.canPullDown()) {
-			mHeaderLayout.setLoadingDrawable(drawable);
-		}
-		if (null != mFooterLayout && mode.canPullUp()) {
-			mFooterLayout.setLoadingDrawable(drawable);
-		}
-
-		// The Loading Height may have changed, so refresh
-		refreshLoadingViewsHeight();
-	}
-
 	@Override
 	public void setLongClickable(boolean longClickable) {
 		getRefreshableView().setLongClickable(longClickable);
@@ -564,7 +534,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	protected void addRefreshableView(Context context, T refreshableView) {
-		addView(refreshableView, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
+		addView(refreshableView, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f));
 	}
 
 	/**
@@ -753,7 +723,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			removeView(mHeaderLayout);
 		}
 		if (mMode.canPullDown()) {
-			addView(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+			addView(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 		}
 
@@ -762,7 +732,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			removeView(mFooterLayout);
 		}
 		if (mMode.canPullUp()) {
-			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 
 		}
@@ -833,7 +803,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private void measureView(View child) {
 		ViewGroup.LayoutParams p = child.getLayoutParams();
 		if (p == null) {
-			p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+			p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 		}
 
 		final int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0, p.width);
@@ -871,16 +841,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		setHeaderScroll(newHeight);
 
 		if (newHeight != 0) {
-
-			final float scale = Math.abs(newHeight) / (float) mHeaderHeight;
-			switch (mCurrentMode) {
-				case PULL_UP_TO_REFRESH:
-					mFooterLayout.onPullY(scale);
-					break;
-				case PULL_DOWN_TO_REFRESH:
-					mHeaderLayout.onPullY(scale);
-					break;
-			}
 
 			if (mState == PULL_TO_REFRESH && mHeaderHeight < Math.abs(newHeight)) {
 				mState = RELEASE_TO_REFRESH;

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/profile"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
 	android:orientation="vertical">
 
 	<RelativeLayout
 		android:id="@+id/profile_name_container"
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="center_vertical"
 		android:orientation="horizontal">
@@ -31,12 +31,12 @@
 
 		<LinearLayout
 			android:id="@+id/name_container"
-			android:layout_width="fill_parent"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@+id/profile_image_container"
 			android:layout_alignTop="@+id/profile_image_container"
 			android:layout_alignWithParentIfMissing="true"
-			android:layout_toLeftOf="@+id/follow_container"
+			android:layout_toLeftOf="@+id/follow_more_container"
 			android:layout_toRightOf="@+id/profile_image_container"
 			android:background="@drawable/item_background_holo_light"
 			android:gravity="center_vertical"
@@ -80,28 +80,28 @@
 
 	<LinearLayout
 		android:id="@+id/description_container"
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="@drawable/item_background_holo_light"
 		android:orientation="vertical"
 		android:padding="4dp">
 
 		<TextView
-			android:layout_width="fill_parent"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/description"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 		<TextView
 			android:id="@+id/description"
-			android:layout_width="fill_parent"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
 	</LinearLayout>
 
 	<View
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="0.2dp"
 		android:background="#40808080"/>
 

@@ -22,20 +22,25 @@ package org.mariotaku.twidere.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.adapter.UserListsAdapter;
-import org.mariotaku.twidere.loader.BaseUserListsLoader;
-import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.adapter.UsersAdapter;
+import org.mariotaku.twidere.loader.IDsUsersLoader;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableUser;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -44,65 +49,48 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-abstract class BaseUserListsFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableUserList>>,
-		OnItemClickListener, OnScrollListener, OnItemLongClickListener {
+abstract class BaseUsersListFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableUser>>,
+		OnItemClickListener, OnScrollListener, OnItemLongClickListener, Panes.Left, OnMenuItemClickListener {
 
-	private UserListsAdapter mAdapter;
+	private UsersAdapter mAdapter;
 
 	private SharedPreferences mPreferences;
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
-	private long mAccountId, mUserId;
-	private String mScreenName;
-	private final ArrayList<ParcelableUserList> mData = new ArrayList<ParcelableUserList>();
+	private long mAccountId;
+	private final ArrayList<ParcelableUser> mData = new ArrayList<ParcelableUser>();
 	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true;
 
 	private Fragment mDetailFragment;
 
+	private ParcelableUser mSelectedUser;
+
+	private PopupMenu mPopupMenu;
+
 	private boolean mAllItemsLoaded = false;
-	private long mCursor = -1;
 
 	public long getAccountId() {
 		return mAccountId;
 	}
-	
-	public long getUserId() {
-		return mUserId;
-	}
-	
-	public String getScreenName() {
-		return mScreenName;
-	}
 
-	public long getCursor() {
-		return mCursor;
-	}
-
-	public final ArrayList<ParcelableUserList> getData() {
+	public final ArrayList<ParcelableUser> getData() {
 		return mData;
 	}
 
 	@Override
-	public UserListsAdapter getListAdapter() {
+	public UsersAdapter getListAdapter() {
 		return mAdapter;
 	}
 
-	public abstract Loader<List<ParcelableUserList>> newLoaderInstance(long account_id, long user_id, String screen_name);
+	public abstract Loader<List<ParcelableUser>> newLoaderInstance();
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
-		if (args != null) {
-			mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			mUserId = args.getLong(INTENT_KEY_USER_ID, -1);
-			mScreenName = args.getString(INTENT_KEY_SCREEN_NAME);
-		}
-		mAdapter = new UserListsAdapter(getActivity());
-		setListAdapter(null);
+		mAdapter = new UsersAdapter(getActivity());
 		mListView = getListView();
-		addHeaders(mListView);
+		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		if (mAccountId != account_id) {
 			mAdapter.clear();
@@ -115,10 +103,6 @@ abstract class BaseUserListsFragment extends BaseListFragment implements LoaderC
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
 	}
-	
-	public void addHeaders(ListView list) {
-		
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -129,48 +113,75 @@ abstract class BaseUserListsFragment extends BaseListFragment implements LoaderC
 	}
 
 	@Override
-	public Loader<List<ParcelableUserList>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<ParcelableUser>> onCreateLoader(int id, Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
-		return newLoaderInstance(mAccountId, mUserId, mScreenName);
+		return newLoaderInstance();
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		final ParcelableUserList user_list = mAdapter.findItem(id);
-		if (user_list == null) return;
+		final ParcelableUser user = mAdapter.getItem(position);
+		if (user == null) return;
 		if (mAdapter.isGap(position) && !mLoadMoreAutomatically) {
 			final Bundle args = getArguments();
+			if (args != null) {
+				args.putLong(INTENT_KEY_MAX_ID, user.user_id);
+			}
 			if (!getLoaderManager().hasRunningLoaders()) {
 				getLoaderManager().restartLoader(0, args, this);
 			}
 		} else {
-			openListDetails(getActivity(), mAccountId, user_list.list_id, user_list.user_id,
-					user_list.user_screen_name, user_list.name);
+			openUserProfile(user.user_id, user.screen_name);
 		}
 	}
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		return false;
+		mSelectedUser = null;
+		final UsersAdapter adapter = getListAdapter();
+		if (adapter.isGap(position)) return false;
+		mSelectedUser = adapter.getItem(position);
+		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+		mPopupMenu.inflate(R.menu.action_user);
+		mPopupMenu.setOnMenuItemClickListener(this);
+		mPopupMenu.show();
+		return true;
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<ParcelableUserList>> loader) {
+	public void onLoaderReset(Loader<List<ParcelableUser>> loader) {
 		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<ParcelableUserList>> loader, List<ParcelableUserList> data) {
+	public void onLoadFinished(Loader<List<ParcelableUser>> loader, List<ParcelableUser> data) {
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
-		if (loader instanceof BaseUserListsLoader) {
-			final long cursor = ((BaseUserListsLoader) loader).getNextCursor();
-			mAllItemsLoaded = cursor != -2 && cursor == mCursor;
+		if (loader instanceof IDsUsersLoader) {
+			final long[] ids = ((IDsUsersLoader) loader).getIDsArray();
+			mAllItemsLoaded = ids != null && ids.length == mAdapter.getCount();
 			mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
-			if (cursor != -2) {
-				mCursor = cursor;
+		}
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		if (mSelectedUser == null) return false;
+		switch (item.getItemId()) {
+			case MENU_VIEW_PROFILE: {
+				openUserProfile(mSelectedUser.user_id, mSelectedUser.screen_name);
+				break;
+			}
+			case MENU_EXTENSIONS: {
+				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
+				final Bundle extras = new Bundle();
+				extras.putParcelable(INTENT_KEY_USER, mSelectedUser);
+				intent.putExtras(extras);
+				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+				break;
 			}
 		}
+		return true;
 	}
 
 	@Override
@@ -219,46 +230,42 @@ abstract class BaseUserListsFragment extends BaseListFragment implements LoaderC
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 	}
 
+	@Override
+	public void onStop() {
+		if (mPopupMenu != null) {
+			mPopupMenu.dismiss();
+		}
+		super.onStop();
+	}
+
 	public void setAllItemsLoaded(boolean loaded) {
 		mAllItemsLoaded = loaded;
 	}
 
-	private void openListDetails(Activity activity, long account_id, int list_id, long user_id, String screen_name,
-			String list_name) {
-		if (activity == null) return;
+	protected void openUserProfile(long user_id, String screen_name) {
+		final FragmentActivity activity = getActivity();
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			if (mDetailFragment instanceof UserProfileFragment && mDetailFragment.isAdded()) {
 				((UserProfileFragment) mDetailFragment).getUserInfo(mAccountId, user_id, screen_name);
 			} else {
-				mDetailFragment = new UserListDetailsFragment();
+				mDetailFragment = new UserProfileFragment();
 				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-				args.putInt(INTENT_KEY_LIST_ID, list_id);
+				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 				args.putLong(INTENT_KEY_USER_ID, user_id);
 				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-				args.putString(INTENT_KEY_LIST_NAME, list_name);
 				mDetailFragment.setArguments(args);
 				home_activity.showAtPane(HomeActivity.PANE_RIGHT, mDetailFragment, true);
 			}
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_LIST_DETAILS);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (list_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
-			}
-			if (user_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
-			}
-			if (screen_name != null) {
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
-			}
-			if (list_name != null) {
-				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
-			}
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+			builder.authority(AUTHORITY_USER);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
+			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
+
 }

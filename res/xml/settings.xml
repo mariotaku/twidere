@@ -229,6 +229,14 @@
 	<PreferenceCategory
 		android:key="cat_other_settings"
 		android:title="@string/other_settings">
+		<PreferenceScreen
+			android:key="extensions"
+			android:title="@string/extensions">
+			<intent
+				android:action="org.mariotaku.twidere.EXTENSIONS"
+				android:targetPackage="org.mariotaku.twidere"/>
+		</PreferenceScreen>
+
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="stop_service_after_closed"
@@ -246,10 +254,10 @@
 			android:title="@string/report_errors_automatically"/>
 	</PreferenceCategory>
 	<PreferenceCategory
-		sort_timeline_by_time=""
 		android:key="cat_about"
 		android:title="@string/about">
 		<PreferenceScreen
+			android:key="about"
 			android:summary="@string/about_summary"
 			android:title="@string/about">
 			<intent
@@ -257,6 +265,7 @@
 				android:targetPackage="org.mariotaku.twidere"/>
 		</PreferenceScreen>
 		<PreferenceScreen
+			android:key="license"
 			android:summary="@string/license_summary"
 			android:title="@string/license">
 			<intent

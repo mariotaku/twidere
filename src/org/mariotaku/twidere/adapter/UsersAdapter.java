@@ -90,21 +90,19 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(user.profile_image_url_string, mForceSSLConnection)),
+					mProfileImageLoader.displayImage(
+							parseURL(getBiggerTwitterProfileImage(user.profile_image_url_string, mForceSSLConnection)),
 							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(user.profile_image_url_string, mForceSSLConnection)), holder.profile_image);
+					mProfileImageLoader.displayImage(
+							parseURL(getNormalTwitterProfileImage(user.profile_image_url_string, mForceSSLConnection)),
+							holder.profile_image);
 				}
 			}
 		}
 		return view;
 	}
 
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
-	}
-	
 	public boolean isGap(int position) {
 		return mShowLastItemAsGap && position == getCount() - 1;
 	}
@@ -147,6 +145,11 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
 	}
 
 	public void setShowLastItemAsGap(boolean gap) {

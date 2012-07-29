@@ -27,7 +27,9 @@ import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
+import org.mariotaku.twidere.fragment.StatusFragment;
 import org.mariotaku.twidere.fragment.UserBlocksFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
@@ -42,8 +44,6 @@ import org.mariotaku.twidere.fragment.UserListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserListTypesFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
-import org.mariotaku.twidere.fragment.ViewConversationFragment;
-import org.mariotaku.twidere.fragment.ViewStatusFragment;
 
 import android.content.Intent;
 import android.content.UriMatcher;
@@ -141,7 +141,7 @@ public class LinkHandlerActivity extends BaseActivity {
 			switch (URI_MATCHER.match(uri)) {
 				case CODE_STATUS: {
 					setTitle(R.string.view_status);
-					fragment = new ViewStatusFragment();
+					fragment = new StatusFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
 					if (extras != null) {
 						bundle.putAll(extras);
@@ -221,7 +221,7 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_CONVERSATION: {
 					setTitle(R.string.view_conversation);
-					fragment = new ViewConversationFragment();
+					fragment = new ConversationFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
 					break;

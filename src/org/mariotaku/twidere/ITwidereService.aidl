@@ -39,6 +39,8 @@ interface ITwidereService {
 	int destroyFriendship(long account_id, long user_id);
 	int createUserListSubscription(long account_id, int list_id);
 	int destroyUserListSubscription(long account_id, int list_id);
+	int createUserList(long account_id, String list_name, boolean is_public, String description);
+	int destroyUserList(long account_id, int list_id);
 	int createBlock(long account_id, long user_id);
 	int destroyBlock(long account_id, long user_id);
 	int reportSpam(long account_id, long max_id);

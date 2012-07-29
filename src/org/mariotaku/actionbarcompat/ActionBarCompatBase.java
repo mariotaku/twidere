@@ -168,7 +168,6 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	 * {@link com.android.actionbarcompat.ActionBarHelperBase#setRefreshActionItemState(boolean)}
 	 * .
 	 */
-	@SuppressWarnings("deprecation")
 	private View addActionItemCompatFromMenuItem(final MenuItem item) {
 
 		if (mActionMenuView == null || item == null) return null;
@@ -178,7 +177,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		// actionButton.setVisibility(item.isVisible() ? View.VISIBLE :
 		// View.GONE);
 		actionButton.setLayoutParams(new ViewGroup.LayoutParams((int) mActivity.getResources().getDimension(
-				R.dimen.actionbar_button_width), ViewGroup.LayoutParams.FILL_PARENT));
+				R.dimen.actionbar_button_width), ViewGroup.LayoutParams.MATCH_PARENT));
 		actionButton.setId(item.getItemId());
 		actionButton.setImageDrawable(item.getIcon());
 		actionButton.setScaleType(ScaleType.CENTER);

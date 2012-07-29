@@ -96,7 +96,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 		mInterface = getTwidereApplication().getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		setContentView(R.layout.drafts_list);
+		setContentView(R.layout.base_list);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mAdapter = new DraftsAdapter(this);
 		mListView = (ListView) findViewById(android.R.id.list);

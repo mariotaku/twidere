@@ -4,7 +4,7 @@ import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserListDetails;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
-import org.mariotaku.twidere.fragment.ViewStatusFragment;
+import org.mariotaku.twidere.fragment.StatusFragment;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 
 import android.app.Activity;
@@ -35,7 +35,7 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				final Intent intent = new Intent(ViewStatusFragment.INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
+				final Intent intent = new Intent(StatusFragment.INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
 				intent.setPackage(activity.getPackageName());
 				activity.startActivity(intent);
 				break;

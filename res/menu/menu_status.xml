@@ -2,19 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@id/share"
-		android:icon="@drawable/ic_menu_share"
-		android:showAsAction="always"
-		android:title="@string/share"/>
-	<item
 		android:id="@id/reply"
 		android:icon="@drawable/ic_menu_reply"
-		android:showAsAction="always"
 		android:title="@string/reply"/>
 	<item
 		android:id="@id/retweet_submenu"
 		android:icon="@drawable/ic_menu_retweet"
-		android:showAsAction="always"
 		android:title="@string/retweet">
 		<menu>
 			<item
@@ -30,22 +23,35 @@
 	<item
 		android:id="@id/fav"
 		android:icon="@drawable/ic_menu_star"
-		android:showAsAction="always"
 		android:title="@string/fav"/>
 	<item
-		android:id="@+id/delete_submenu"
-		android:icon="@drawable/ic_menu_delete"
-		android:showAsAction="always"
-		android:title="@string/delete"
-		android:visible="false">
+		android:id="@+id/more_submenu"
+		android:icon="@drawable/ic_menu_more"
+		android:title="@string/more">
 		<menu>
 			<item
-				android:icon="@drawable/ic_menu_close_clear_cancel"
-				android:title="@android:string/cancel"/>
+				android:id="@id/share"
+				android:icon="@drawable/ic_menu_share"
+				android:title="@string/share"/>
 			<item
-				android:id="@id/delete"
+				android:id="@id/extensions"
+				android:icon="@drawable/ic_menu_extension"
+				android:title="@string/extensions"/>
+			<item
+				android:id="@+id/delete_submenu"
 				android:icon="@drawable/ic_menu_delete"
-				android:title="@string/delete"/>
+				android:title="@string/delete"
+				android:visible="false">
+				<menu>
+					<item
+						android:icon="@drawable/ic_menu_close_clear_cancel"
+						android:title="@android:string/cancel"/>
+					<item
+						android:id="@id/delete"
+						android:icon="@drawable/ic_menu_delete"
+						android:title="@string/delete"/>
+				</menu>
+			</item>
 		</menu>
 	</item>
 

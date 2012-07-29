@@ -23,7 +23,6 @@ import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
 import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
 import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -62,7 +61,6 @@ public class PullToRefreshListFragment extends BaseListFragment implements OnRef
 	 * behavior of ListFragment. In particular, this is currently the only way
 	 * to have the built-in indeterminant progress state be shown.
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final Context context = getActivity();
@@ -81,8 +79,8 @@ public class PullToRefreshListFragment extends BaseListFragment implements OnRef
 		pframe.addView(progress, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT));
 
-		root.addView(pframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-				ViewGroup.LayoutParams.FILL_PARENT));
+		root.addView(pframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
 
 		// ------------------------------------------------------------------
 
@@ -92,8 +90,8 @@ public class PullToRefreshListFragment extends BaseListFragment implements OnRef
 		final TextView tv = new TextView(getActivity());
 		tv.setId(INTERNAL_EMPTY_ID);
 		tv.setGravity(Gravity.CENTER);
-		lframe.addView(tv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-				ViewGroup.LayoutParams.FILL_PARENT));
+		lframe.addView(tv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
 
 		final PullToRefreshListView plv = new PullToRefreshListView(context);
 		plv.setOnRefreshListener(this);
@@ -102,16 +100,16 @@ public class PullToRefreshListFragment extends BaseListFragment implements OnRef
 		final ListView lv = plv.getRefreshableView();
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
-		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-				ViewGroup.LayoutParams.FILL_PARENT));
+		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
 
-		root.addView(lframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-				ViewGroup.LayoutParams.FILL_PARENT));
+		root.addView(lframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
 
 		// ------------------------------------------------------------------
 
-		root.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-				ViewGroup.LayoutParams.FILL_PARENT));
+		root.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
 
 		return root;
 	}
@@ -128,30 +126,6 @@ public class PullToRefreshListFragment extends BaseListFragment implements OnRef
 	public final void onRefreshComplete() {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.onRefreshComplete();
-	}
-
-	/**
-	 * Set the drawable used in the loading layout. This is the same as calling
-	 * <code>setLoadingDrawable(drawable, Mode.BOTH)</code>
-	 * 
-	 * @param drawable - Drawable to display
-	 */
-	public final void setLoadingDrawable(Drawable drawable) {
-		if (mPullToRefreshListView == null) return;
-		mPullToRefreshListView.setLoadingDrawable(drawable);
-	}
-
-	/**
-	 * Set the drawable used in the loading layout.
-	 * 
-	 * @param drawable - Drawable to display
-	 * @param mode - Controls which Header/Footer Views will be updated.
-	 *            <code>Mode.BOTH</code> will update all available, other values
-	 *            will update the relevant View.
-	 */
-	public final void setLoadingDrawable(Drawable drawable, Mode mode) {
-		if (mPullToRefreshListView == null) return;
-		mPullToRefreshListView.setLoadingDrawable(drawable, mode);
 	}
 
 	/**

@@ -63,22 +63,13 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		}
 		return mAsyncTaskManager;
 	}
-	
-	public void reloadConnectivitySettings() {
-		if (mPreviewImageLoader == null) {
-			mPreviewImageLoader.reloadConnectivitySettings();
-		}
-		if (mProfileImageLoader == null) {
-			mProfileImageLoader.reloadConnectivitySettings();
-		}
-	}
 
 	public LazyImageLoader getPreviewImageLoader() {
 		if (mPreviewImageLoader == null) {
 			final int preview_image_width = getResources().getDimensionPixelSize(R.dimen.image_preview_width);
 			final int preview_image_height = getResources().getDimensionPixelSize(R.dimen.image_preview_height);
 			mPreviewImageLoader = new LazyImageLoader(this, DIR_NAME_CACHED_THUMBNAILS,
-					R.drawable.image_preview_fallback, preview_image_width, preview_image_height);
+					R.drawable.image_preview_fallback, preview_image_width, preview_image_height, 30);
 		}
 		return mPreviewImageLoader;
 	}
@@ -87,7 +78,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		if (mProfileImageLoader == null) {
 			final int profile_image_size = getResources().getDimensionPixelSize(R.dimen.profile_image_size);
 			mProfileImageLoader = new LazyImageLoader(this, DIR_NAME_PROFILE_IMAGES,
-					R.drawable.ic_profile_image_default, profile_image_size, profile_image_size);
+					R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, 60);
 		}
 		return mProfileImageLoader;
 	}
@@ -124,6 +115,28 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		super.onLowMemory();
 	}
 
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+		if (mServiceInterface != null
+				&& (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key))) {
+			mServiceInterface.stopAutoRefresh();
+			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+				mServiceInterface.startAutoRefresh();
+			}
+		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_FORCE_SSL_CONNECTION.equals(key)) {
+			reloadConnectivitySettings();
+		}
+	}
+
+	public void reloadConnectivitySettings() {
+		if (mPreviewImageLoader != null) {
+			mPreviewImageLoader.reloadConnectivitySettings();
+		}
+		if (mProfileImageLoader != null) {
+			mProfileImageLoader.reloadConnectivitySettings();
+		}
+	}
+
 	private static class ClearCacheTask extends ManagedAsyncTask<Void, Void, Void> {
 
 		private final Context context;
@@ -135,6 +148,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 		@Override
 		protected Void doInBackground(Void... args) {
+			if (context == null) return null;
 			final File external_cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
 					.getExternalCacheDir(context) : getExternalStorageDirectory() != null ? new File(
 					getExternalStorageDirectory().getPath() + "/Android/data/" + context.getPackageName() + "/cache/")
@@ -163,17 +177,5 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			f.delete();
 		}
 
-	}
-
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-		if (mServiceInterface != null && (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key))) {
-			mServiceInterface.stopAutoRefresh();
-			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-				mServiceInterface.startAutoRefresh();
-			}
-		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_FORCE_SSL_CONNECTION.equals(key)) {
-			reloadConnectivitySettings();
-		}
 	}
 }

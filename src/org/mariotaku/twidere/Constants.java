@@ -175,11 +175,15 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_DIRECT_MESSAGES = INTENT_PACKAGE_PREFIX + "DIRECT_MESSAGES";
 	public static final String INTENT_ACTION_SAVE_FILE = INTENT_PACKAGE_PREFIX + "SAVE_FILE";
 	public static final String INTENT_ACTION_VIEW_WEBPAGE = INTENT_PACKAGE_PREFIX + "VIEW_WEBPAGE";
+	public static final String INTENT_ACTION_EXTENSIONS = INTENT_PACKAGE_PREFIX + "EXTENSIONS";
 
-	public static final String INTENT_ACTION_EXTENTION_EDIT_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_EDIT_IMAGE";
-	public static final String INTENT_ACTION_EXTENTION_UPLOAD = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD";
-	public static final String INTENT_ACTION_EXTENTION_OPEN_STATUS = INTENT_PACKAGE_PREFIX + "EXTENSION_OPEN_STATUS";
-	public static final String INTENT_ACTION_EXTENTION_OPEN_USER = INTENT_PACKAGE_PREFIX + "EXTENSION_OPEN_USER";
+	public static final String INTENT_ACTION_EXTENSION_EDIT_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_EDIT_IMAGE";
+	public static final String INTENT_ACTION_EXTENSION_UPLOAD = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD";
+	public static final String INTENT_ACTION_EXTENSION_OPEN_STATUS = INTENT_PACKAGE_PREFIX + "EXTENSION_OPEN_STATUS";
+	public static final String INTENT_ACTION_EXTENSION_OPEN_USER = INTENT_PACKAGE_PREFIX + "EXTENSION_OPEN_USER";
+	public static final String INTENT_ACTION_EXTENSION_OPEN_USER_LIST = INTENT_PACKAGE_PREFIX
+			+ "EXTENSION_OPEN_USER_LIST";
+	public static final String INTENT_ACTION_EXTENSION_SETTINGS = INTENT_PACKAGE_PREFIX + "EXTENSION_SETTINGS";
 
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "HOME_TIMELINE_DATABASE_UPDATED";
@@ -210,7 +214,10 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_STATUS_DESTROYED = INTENT_PACKAGE_PREFIX + "STATUS_DESTROYED";
 	public static final String BROADCAST_TRENDS_UPDATED = INTENT_PACKAGE_PREFIX + "TRENDS_UPDATED";
 	public static final String BROADCAST_USER_LIST_MEMBER_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_MEMBER_DELETED";
-	public static final String BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED = INTENT_PACKAGE_PREFIX + "USER_LIST_SUBSCRIPTION_CHANGED";
+	public static final String BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED = INTENT_PACKAGE_PREFIX
+			+ "USER_LIST_SUBSCRIPTION_CHANGED";
+	public static final String BROADCAST_USER_LIST_CREATED = INTENT_PACKAGE_PREFIX + "USER_LIST_CREATED";
+	public static final String BROADCAST_USER_LIST_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_DELETED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -229,6 +236,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_STATUS_ID = "status_id";
 	public static final String INTENT_KEY_SCREEN_NAME = "screen_name";
 	public static final String INTENT_KEY_LIST_NAME = "list_name";
+	public static final String INTENT_KEY_DESCRIPTION = "description";
 	public static final String INTENT_KEY_IN_REPLY_TO_ID = "in_reply_to_id";
 	public static final String INTENT_KEY_IN_REPLY_TO_NAME = "in_reply_to_name";
 	public static final String INTENT_KEY_IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
@@ -248,6 +256,8 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_NOTIFICATION_ID = "notification_id";
 	public static final String INTENT_KEY_FROM_NOTIFICATION = "from_notification";
 	public static final String INTENT_KEY_IS_PUBLIC = "is_public";
+	public static final String INTENT_KEY_USER = "user";
+	public static final String INTENT_KEY_USER_LIST = "user_list";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -291,6 +301,9 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_DIRECT_MESSAGES = R.id.direct_messages;
 	public static final int MENU_CONVERSATION = R.id.conversation;
 	public static final int MENU_MENTION = R.id.mention;
+	public static final int MENU_SEND_DIRECT_MESSAGE = R.id.send_direct_message;
+	public static final int MENU_EXTENSIONS = R.id.extensions;
+	public static final int MENU_VIEW_USER_LIST = R.id.view_user_list;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

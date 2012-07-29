@@ -167,7 +167,6 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 			return bm;
 		}
 
-		@SuppressWarnings("deprecation")
 		private void init(Context context, int color) {
 
 			// To fight color branding.
@@ -178,7 +177,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 
 			mColorPicker = new ColorPickerView(context);
 
-			mContentView.addView(mColorPicker, LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+			mContentView.addView(mColorPicker, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
 			mContentView.setPadding(Math.round(mColorPicker.getDrawingOffset()), 0,
 					Math.round(mColorPicker.getDrawingOffset()), 0);

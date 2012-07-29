@@ -53,10 +53,13 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
+				mProfileImageLoader.displayImage(
+						parseURL(getBiggerTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(profile_image_url_string, mForceSSLConnection)), holder.profile_image);
+				mProfileImageLoader.displayImage(
+						parseURL(getNormalTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
+						holder.profile_image);
 			}
 		}
 
@@ -106,15 +109,15 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	}
 
 	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
+	}
+
+	@Override
 	public void setTextSize(float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
-	}
-	
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
 	}
 }

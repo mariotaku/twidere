@@ -28,6 +28,7 @@ import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getTimestampFromDate;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
@@ -52,6 +53,8 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ListAction;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
@@ -88,6 +91,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.InputFilter;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -107,7 +111,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener {
+		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right {
 
 	private LazyImageLoader mProfileImageLoader;
 
@@ -150,7 +154,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private boolean mFollowInfoDisplayed = false;
 
 	private SharedPreferences mPreferences;
-	
+
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -179,7 +183,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	};
 
 	public void changeUser(long account_id, User user) {
-		if (user == null || getActivity() == null || !isMyActivatedAccount(getActivity(), account_id)) return;
+		if (user == null || user.getId() <= 0 || getActivity() == null
+				|| !isMyActivatedAccount(getActivity(), account_id)) return;
 		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
 			mUserInfoTask.cancel(true);
 		}
@@ -223,7 +228,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mURLContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(url) ? View.VISIBLE : View.GONE);
 		mURLContainer.setOnLongClickListener(this);
 		mURLView.setText(url);
-		mCreatedAtView.setText(formatToLongTimeString(getActivity(), user.getCreatedAt().getTime()));
+		mCreatedAtView.setText(formatToLongTimeString(getActivity(), getTimestampFromDate(user.getCreatedAt())));
 		mTweetCount.setText(String.valueOf(user.getStatusesCount()));
 		mFollowersCount.setText(String.valueOf(user.getFollowersCount()));
 		mFriendsCount.setText(String.valueOf(user.getFriendsCount()));
@@ -234,7 +239,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		// if (display_profile_image) {
 		final String profile_image_url_string = parseString(user.getProfileImageURL());
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
-		mProfileImageLoader.displayImage(parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string, force_ssl_connection) : getNormalTwitterProfileImage(profile_image_url_string, force_ssl_connection)), mProfileImageView);
+		mProfileImageLoader.displayImage(
+				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string,
+						force_ssl_connection) : getNormalTwitterProfileImage(profile_image_url_string,
+						force_ssl_connection)), mProfileImageView);
 		// }
 		mUser = user;
 		mAdapter.notifyDataSetChanged();
@@ -364,8 +372,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case R.id.profile_image_container: {
 				final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 				if (twitter != null) {
-					final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
-					final Uri uri = Uri.parse(getOriginalTwitterProfileImage(parseString(mUser.getProfileImageURL()), force_ssl_connection));
+					final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION,
+							false);
+					final Uri uri = Uri.parse(getOriginalTwitterProfileImage(parseString(mUser.getProfileImageURL()),
+							force_ssl_connection));
 					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, uri);
 					intent.setPackage(getActivity().getPackageName());
 					startActivity(intent);
@@ -392,16 +402,22 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				if (!isMyActivatedAccount(getActivity(), mUser.getId())) {
 					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 					mPopupMenu.inflate(R.menu.action_user_profile);
-					final MenuItem blockItem = mPopupMenu.getMenu().findItem(MENU_BLOCK);
-					if (blockItem == null) return;
-					final Drawable blockIcon = blockItem.getIcon();
-					if (mFriendship.isSourceBlockingTarget()) {
-						blockItem.setTitle(R.string.unblock);
-						blockIcon.setColorFilter(getResources().getColor(R.color.holo_blue_bright),
-								PorterDuff.Mode.MULTIPLY);
-					} else {
-						blockItem.setTitle(R.string.block);
-						blockIcon.clearColorFilter();
+					final Menu menu = mPopupMenu.getMenu();
+					final MenuItem blockItem = menu.findItem(MENU_BLOCK);
+					if (blockItem != null) {
+						final Drawable blockIcon = blockItem.getIcon();
+						if (mFriendship.isSourceBlockingTarget()) {
+							blockItem.setTitle(R.string.unblock);
+							blockIcon.setColorFilter(getResources().getColor(R.color.holo_blue_bright),
+									PorterDuff.Mode.MULTIPLY);
+						} else {
+							blockItem.setTitle(R.string.block);
+							blockIcon.clearColorFilter();
+						}
+					}
+					final MenuItem sendDirectMessageItem = menu.findItem(MENU_SEND_DIRECT_MESSAGE);
+					if (sendDirectMessageItem != null) {
+						sendDirectMessageItem.setVisible(mFriendship.isTargetFollowingSource());
 					}
 					mPopupMenu.setOnMenuItemClickListener(this);
 					mPopupMenu.show();
@@ -566,6 +582,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
+		if (mUser == null || mService == null) return false;
 		switch (item.getItemId()) {
 			case MENU_TAKE_PHOTO: {
 				takePhoto();
@@ -576,7 +593,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case MENU_BLOCK: {
-				if (mService == null || mUser == null || mFriendship == null) {
+				if (mService == null || mFriendship == null) {
 					break;
 				}
 				if (mFriendship.isSourceBlockingTarget()) {
@@ -587,16 +604,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case MENU_REPORT_SPAM: {
-				if (mService == null || mUser == null) {
-					break;
-				}
 				mService.reportSpam(mAccountId, mUser.getId());
 				break;
 			}
 			case MENU_MUTE: {
-				if (mUser == null) {
-					break;
-				}
 				final String screen_name = mUser.getScreenName();
 				final Uri uri = Filters.Users.CONTENT_URI;
 				final ContentValues values = new ContentValues();
@@ -611,9 +622,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case MENU_MENTION: {
-				if (mUser == null) {
-					break;
-				}
 				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 				final Bundle bundle = new Bundle();
 				final String name = mUser.getName();
@@ -624,6 +632,23 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
 				intent.putExtras(bundle);
 				startActivity(intent);
+				break;
+			}
+			case MENU_SEND_DIRECT_MESSAGE: {
+				final Uri.Builder builder = new Uri.Builder();
+				builder.scheme(SCHEME_TWIDERE);
+				builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
+				builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(mUser.getId()));
+				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+				break;
+			}
+			case MENU_EXTENSIONS: {
+				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
+				final Bundle extras = new Bundle();
+				extras.putParcelable(INTENT_KEY_USER, new ParcelableUser(mUser, mAccountId));
+				intent.putExtras(extras);
+				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
 				break;
 			}
 		}
@@ -946,22 +971,25 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		protected void onPostExecute(Response<User> result) {
 			if (result == null) return;
 			if (getActivity() == null) return;
-			if (result.value != null) {
+			if (result.value != null && result.value.getId() > 0) {
 				final User user = result.value;
 				final ContentResolver resolver = getContentResolver();
-				resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + result.value.getId(), null);
-				resolver.insert(CachedUsers.CONTENT_URI, makeCachedUserContentValues(result.value));
+				final ContentValues cached_values = makeCachedUserContentValues(result.value);
+				if (cached_values != null) {
+					resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + result.value.getId(), null);
+					resolver.insert(CachedUsers.CONTENT_URI, makeCachedUserContentValues(result.value));
+				}
 				setListShown(true);
 				changeUser(mAccountId, user);
 				mRetryButton.setVisibility(View.GONE);
-				if (isMyAccount(getActivity(), mUser.getId())) {
+				if (isMyAccount(getActivity(), user.getId())) {
 					final ContentValues values = new ContentValues();
 					final URL profile_image_url = user.getProfileImageURL();
 					if (profile_image_url != null) {
 						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url.toString());
 					}
-					values.put(Accounts.USERNAME, mUser.getScreenName());
-					final String where = Accounts.USER_ID + " = " + mUser.getId();
+					values.put(Accounts.USERNAME, user.getScreenName());
+					final String where = Accounts.USER_ID + " = " + user.getId();
 					getContentResolver().update(Accounts.CONTENT_URI, values, where, null);
 				}
 			} else {

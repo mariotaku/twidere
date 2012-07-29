@@ -22,6 +22,7 @@ package org.mariotaku.twidere.loader;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
@@ -56,22 +57,19 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 		return false;
 	}
 
-	public void reloadConnectivitySettings() {
-		mForceSSLConnection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
-	}
-	
-	public boolean isForceSSLConnection() {
-		return mForceSSLConnection;
-	}
-	
-	public boolean deleteStatus(long status_id) {
+	public synchronized boolean deleteStatus(long status_id) {
 		final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
 		for (final ParcelableStatus status : mData) {
 			if (status.status_id == status_id) {
 				data_to_remove.add(status);
 			}
 		}
-		return mData.removeAll(data_to_remove);
+		try {
+			return mData.removeAll(data_to_remove);
+		} catch (final ConcurrentModificationException e) {
+			// This shouldn't happen.
+		}
+		return false;
 	}
 
 	public long getAccountId() {
@@ -86,12 +84,20 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 		return mTwitter;
 	}
 
+	public boolean isForceSSLConnection() {
+		return mForceSSLConnection;
+	}
+
 	@Override
 	public abstract List<ParcelableStatus> loadInBackground();
 
 	@Override
 	public void onStartLoading() {
 		forceLoad();
+	}
+
+	public void reloadConnectivitySettings() {
+		mForceSSLConnection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 	}
 
 }

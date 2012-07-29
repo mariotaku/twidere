@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -53,7 +54,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 public class TrendsFragment extends BaseListFragment implements OnClickListener, OnItemSelectedListener,
-		OnItemClickListener, LoaderCallbacks<Cursor> {
+		OnItemClickListener, LoaderCallbacks<Cursor>, Panes.Left {
 
 	private long mAccountId;
 	private ListView mListView;
@@ -148,7 +149,9 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-		getLoaderManager().restartLoader(0, null, this);
+		if (isAdded()) {
+			getLoaderManager().restartLoader(0, null, this);
+		}
 	}
 
 	@Override

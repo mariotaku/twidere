@@ -50,12 +50,11 @@ import android.view.ViewGroup;
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mDisplayName,
-			mShowAccountColor, mShowLastItemAsGap;
+			mShowAccountColor, mShowLastItemAsGap, mForceSSLConnection, mGapDisallowed;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
 	private StatusCursorIndices mIndices;
-	private boolean mForceSSLConnection;
 
 	public CursorStatusesAdapter(Context context, LazyImageLoader profile_image_loader, LazyImageLoader preview_loader) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
@@ -93,7 +92,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
 
 		final boolean is_last = position == getCount() - 1;
-		final boolean show_gap = is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1;
+		final boolean show_gap = (is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1)
+				&& !mGapDisallowed;
 
 		holder.setShowAsGap(show_gap);
 		holder.setAccountColorEnabled(mShowAccountColor);
@@ -130,10 +130,13 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			if (mDisplayProfileImage) {
 				final String profile_image_url_string = cursor.getString(mIndices.profile_image_url);
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
+					mProfileImageLoader.displayImage(
+							parseURL(getBiggerTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
 							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(profile_image_url_string, mForceSSLConnection)), holder.profile_image);
+					mProfileImageLoader.displayImage(
+							parseURL(getNormalTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
+							holder.profile_image);
 				}
 				holder.profile_image.setTag(position);
 			}
@@ -244,6 +247,20 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
+	}
+
+	@Override
+	public void setGapDisallowed(boolean disallowed) {
+		if (mGapDisallowed != disallowed) {
+			mGapDisallowed = disallowed;
+			notifyDataSetChanged();
+		}
+
+	}
+
+	@Override
 	public void setShowAccountColor(boolean show) {
 		if (show != mShowAccountColor) {
 			mShowAccountColor = show;
@@ -275,10 +292,5 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			mIndices = null;
 		}
 		return super.swapCursor(cursor);
-	}
-
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
 	}
 }

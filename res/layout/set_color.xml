@@ -6,8 +6,8 @@
 
 	<GridView
 		android:id="@+id/colors_grid"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
 		android:layout_alignParentTop="true"
 		android:gravity="center"
 		android:horizontalSpacing="2dp"

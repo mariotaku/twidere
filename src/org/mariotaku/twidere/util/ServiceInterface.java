@@ -63,6 +63,17 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int addUserListMember(long account_id, int list_id, long user_id, String screen_name) {
+		if (mService == null) return -1;
+		try {
+			return mService.addUserListMember(account_id, list_id, user_id, screen_name);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public IBinder asBinder() {
 		// Useless here
 		return mService.asBinder();
@@ -117,6 +128,28 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.createFriendship(account_id, user_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int createUserList(long account_id, String list_name, boolean is_public, String description) {
+		if (mService == null) return -1;
+		try {
+			return mService.createUserList(account_id, list_name, is_public, description);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int createUserListSubscription(long account_id, int list_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.createUserListSubscription(account_id, list_id);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -183,6 +216,28 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return -1;
 		try {
 			return mService.destroyStatus(account_id, status_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int destroyUserList(long account_id, int list_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.destroyUserList(account_id, list_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int destroyUserListSubscription(long account_id, int list_id) {
+		if (mService == null) return -1;
+		try {
+			return mService.destroyUserListSubscription(account_id, list_id);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -542,35 +597,5 @@ public final class ServiceInterface implements Constants, ITwidereService {
 			}
 		}
 
-	}
-	
-	public int createUserListSubscription(long account_id, int list_id) {
-		if (mService == null) return -1;
-		try {
-			return mService.createUserListSubscription(account_id, list_id);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
-	
-	public int destroyUserListSubscription(long account_id, int list_id) {
-		if (mService == null) return -1;
-		try {
-			return mService.destroyUserListSubscription(account_id, list_id);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
-	
-	public int addUserListMember(long account_id, int list_id, long user_id, String screen_name) {
-		if (mService == null) return -1;
-		try {
-			return mService.addUserListMember(account_id, list_id, user_id, screen_name);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		return -1;
 	}
 }

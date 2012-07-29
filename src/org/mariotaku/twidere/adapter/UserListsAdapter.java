@@ -51,11 +51,6 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		application.getServiceInterface();
 	}
 
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
-	}
-	
 	public ParcelableUserList findItem(long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
@@ -94,10 +89,13 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(user_list.user_profile_image_url_string, mForceSSLConnection)),
-							holder.profile_image);
+					mProfileImageLoader.displayImage(
+							parseURL(getBiggerTwitterProfileImage(user_list.user_profile_image_url_string,
+									mForceSSLConnection)), holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(user_list.user_profile_image_url_string, mForceSSLConnection)), holder.profile_image);
+					mProfileImageLoader.displayImage(
+							parseURL(getNormalTwitterProfileImage(user_list.user_profile_image_url_string,
+									mForceSSLConnection)), holder.profile_image);
 				}
 			}
 		}
@@ -106,6 +104,14 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 
 	public boolean isGap(int position) {
 		return mShowLastItemAsGap && position == getCount() - 1;
+	}
+
+	public boolean isGap(long id) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
+			if (getItemId(i) == id) return mShowLastItemAsGap && i == getCount() - 1;
+		}
+		return false;
 	}
 
 	public void setData(List<ParcelableUserList> data) {
@@ -146,6 +152,11 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
 	}
 
 	public void setShowLastItemAsGap(boolean gap) {

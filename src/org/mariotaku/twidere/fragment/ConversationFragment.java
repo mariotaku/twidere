@@ -39,13 +39,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.Loader;
 
-public class ViewConversationFragment extends ParcelableStatusesListFragment {
+public class ConversationFragment extends ParcelableStatusesListFragment {
 
 	private static final int ADD_STATUS = 1;
 	private static final long INVALID_ID = -1;
 
 	private ShowConversationTask mShowConversationTask;
 	private StatusHandler mStatusHandler;
+	private ParcelableStatusesAdapter mAdapter;
 
 	@Override
 	public boolean isListLoadFinished() {
@@ -67,6 +68,8 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setPullToRefreshEnabled(false);
+		mAdapter = getListAdapter();
+		mAdapter.setGapDisallowed(true);
 		Bundle bundle = getArguments();
 		if (bundle == null) {
 			bundle = new Bundle();
@@ -77,7 +80,7 @@ public class ViewConversationFragment extends ParcelableStatusesListFragment {
 		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
 			mShowConversationTask.cancel(true);
 		}
-		mStatusHandler = new StatusHandler(getListAdapter(), account_id);
+		mStatusHandler = new StatusHandler(mAdapter, account_id);
 		mShowConversationTask = new ShowConversationTask(mStatusHandler, account_id, status_id);
 
 		if (account_id != INVALID_ID && status_id != INVALID_ID) {

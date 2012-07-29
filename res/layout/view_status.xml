@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
 	<ScrollView
 		android:id="@+id/content_scroller"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
 		android:layout_above="@+id/menu_bar">
 
 		<LinearLayout
-			android:layout_width="fill_parent"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
 
 			<RelativeLayout
 				android:id="@+id/profile"
-				android:layout_width="fill_parent"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:background="@drawable/item_background_holo_light"
 				android:padding="8dp">
@@ -83,7 +83,7 @@
 
 			<TextView
 				android:id="@+id/in_reply_to"
-				android:layout_width="fill_parent"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:background="@drawable/item_background_holo_light"
 				android:drawableLeft="@drawable/ic_indicator_reply"
@@ -96,7 +96,7 @@
 
 			<TextView
 				android:id="@+id/text"
-				android:layout_width="fill_parent"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_margin="8dp"
 				android:singleLine="false"
@@ -105,12 +105,12 @@
 
 			<FrameLayout
 				android:id="@+id/images_preview"
-				android:layout_width="fill_parent"
+				android:layout_width="match_parent"
 				android:layout_height="144dp"/>
 
 			<TextView
 				android:id="@+id/location_view"
-				android:layout_width="fill_parent"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:background="@drawable/item_background_holo_light"
 				android:drawableLeft="@drawable/ic_indicator_has_location"
@@ -124,7 +124,7 @@
 
 			<TextView
 				android:id="@+id/time_source"
-				android:layout_width="fill_parent"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:padding="8dp"
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
@@ -133,7 +133,7 @@
 
 	<org.mariotaku.menubar.MenuBar
 		android:id="@+id/menu_bar"
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="48dp"
 		android:layout_alignParentBottom="true"
 		android:background="?menuBarBackground"/>

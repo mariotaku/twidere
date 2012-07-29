@@ -10,12 +10,12 @@
 
 	<org.mariotaku.twidere.view.ImageViewer
 		android:id="@+id/image_viewer"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"/>
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
 
 	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
 		<ImageButton
 			android:id="@+id/close"

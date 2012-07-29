@@ -28,10 +28,10 @@ public interface BaseAdapterInterface extends ListAdapter {
 	public void setDisplayHiResProfileImage(boolean display);
 
 	public void setDisplayName(boolean display);
-	
-	public void setForceSSLConnection(boolean force_ssl);
 
 	public void setDisplayProfileImage(boolean display);
+
+	public void setForceSSLConnection(boolean force_ssl);
 
 	public void setTextSize(float text_size);
 

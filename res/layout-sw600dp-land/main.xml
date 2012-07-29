@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
 	android:baselineAligned="false"
 	android:orientation="horizontal">
 
 	<org.mariotaku.twidere.view.ExtendedFrameLayout
 		android:id="@+id/left_pane_container"
 		android:layout_width="0dp"
-		android:layout_height="fill_parent"
+		android:layout_height="match_parent"
 		android:layout_weight="4">
 
 		<FrameLayout
 			android:id="@+id/main"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent">
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
 			<org.mariotaku.twidere.view.ExtendedViewPager
 				android:id="@+id/pager"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:layerType="software"/>
 
 			<ImageButton
@@ -34,26 +34,26 @@
 
 		<FrameLayout
 			android:id="@+id/left_pane"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent">
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 		</FrameLayout>
 	</org.mariotaku.twidere.view.ExtendedFrameLayout>
 
 	<View
 		android:layout_width="0.2dp"
-		android:layout_height="fill_parent"
+		android:layout_height="match_parent"
 		android:background="#40808080"/>
 
 	<org.mariotaku.twidere.view.ExtendedFrameLayout
 		android:id="@+id/right_pane_container"
 		android:layout_width="0dp"
-		android:layout_height="fill_parent"
+		android:layout_height="match_parent"
 		android:layout_weight="5">
 
 		<FrameLayout
 			android:id="@+id/right_pane"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"/>
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
 	</org.mariotaku.twidere.view.ExtendedFrameLayout>
 
 </LinearLayout>

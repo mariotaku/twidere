@@ -68,9 +68,9 @@ import android.widget.ListView;
  * @author mariotaku
  * 
  */
-public class LazyImageLoader implements Constants{
+public class LazyImageLoader implements Constants {
 
-	private final MemoryCache mMemoryCache = new MemoryCache();
+	private final MemoryCache mMemoryCache;
 	private final Context mContext;
 	private final FileCache mFileCache;
 	private final Map<ImageView, URL> mImageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, URL>());
@@ -82,8 +82,9 @@ public class LazyImageLoader implements Constants{
 	private final SharedPreferences mPreferences;
 
 	public LazyImageLoader(Context context, String cache_dir_name, int fallback_image_res, int required_width,
-			int required_height) {
+			int required_height, int mem_cache_capacity) {
 		mContext = context;
+		mMemoryCache = new MemoryCache(mem_cache_capacity);
 		mFileCache = new FileCache(context, cache_dir_name);
 		mExecutorService = Executors.newFixedThreadPool(5);
 		mFallbackRes = fallback_image_res;
@@ -94,11 +95,6 @@ public class LazyImageLoader implements Constants{
 		mIgnoreSSLError = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 	}
 
-	public void reloadConnectivitySettings() {
-		mProxy = getProxy(mContext);
-		mIgnoreSSLError = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-	}
-	
 	public void clearFileCache() {
 		mFileCache.clear();
 	}
@@ -138,6 +134,10 @@ public class LazyImageLoader implements Constants{
 		return null;
 	}
 
+	public void reloadConnectivitySettings() {
+		mProxy = getProxy(mContext);
+		mIgnoreSSLError = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+	}
 
 	private void copyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
@@ -291,7 +291,9 @@ public class LazyImageLoader implements Constants{
 			try {
 				Bitmap bitmap = null;
 				final HttpURLConnection conn = (HttpURLConnection) url.openConnection(mProxy);
-				if (mIgnoreSSLError) setIgnoreSSLError(conn);
+				if (mIgnoreSSLError) {
+					setIgnoreSSLError(conn);
+				}
 				conn.setConnectTimeout(30000);
 				conn.setReadTimeout(30000);
 				conn.setInstanceFollowRedirects(true);
@@ -335,24 +337,29 @@ public class LazyImageLoader implements Constants{
 
 	private static class MemoryCache {
 
-		private static final int MAX_CACHE_CAPACITY = 60;
+		private final int mMaxCapacity;
+		private final Map<URL, SoftReference<Bitmap>> mSoftCache;
+		private final Map<URL, Bitmap> mHardCache;
 
-		private final Map<URL, SoftReference<Bitmap>> mSoftCache = new ConcurrentHashMap<URL, SoftReference<Bitmap>>();
+		public MemoryCache(int max_capacity) {
+			mMaxCapacity = max_capacity;
+			mSoftCache = new ConcurrentHashMap<URL, SoftReference<Bitmap>>();
+			mHardCache = new LinkedHashMap<URL, Bitmap>(mMaxCapacity / 3, 0.75f, true) {
 
-		private final Map<URL, Bitmap> mHardCache = new LinkedHashMap<URL, Bitmap>(MAX_CACHE_CAPACITY / 2, 0.75f, true) {
+				private static final long serialVersionUID = 1347795807259717646L;
 
-			private static final long serialVersionUID = 1347795807259717646L;
-
-			@Override
-			protected boolean removeEldestEntry(LinkedHashMap.Entry<URL, Bitmap> eldest) {
-				// Moves the last used item in the hard cache to the soft cache.
-				if (size() > MAX_CACHE_CAPACITY) {
-					mSoftCache.put(eldest.getKey(), new SoftReference<Bitmap>(eldest.getValue()));
-					return true;
-				} else
-					return false;
-			}
-		};
+				@Override
+				protected boolean removeEldestEntry(LinkedHashMap.Entry<URL, Bitmap> eldest) {
+					// Moves the last used item in the hard cache to the soft
+					// cache.
+					if (size() > mMaxCapacity) {
+						mSoftCache.put(eldest.getKey(), new SoftReference<Bitmap>(eldest.getValue()));
+						return true;
+					} else
+						return false;
+				}
+			};
+		}
 
 		public void clear() {
 			mHardCache.clear();

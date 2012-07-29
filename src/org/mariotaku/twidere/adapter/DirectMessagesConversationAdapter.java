@@ -80,8 +80,9 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String sender_profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
-			final URL sender_profile_image_url = parseURL(mDisplayHiResProfileImage ? getBiggerTwitterProfileImage(sender_profile_image_url_string, mForceSSLConnection)
-					: getNormalTwitterProfileImage(sender_profile_image_url_string, mForceSSLConnection));
+			final URL sender_profile_image_url = parseURL(mDisplayHiResProfileImage ? getBiggerTwitterProfileImage(
+					sender_profile_image_url_string, mForceSSLConnection) : getNormalTwitterProfileImage(
+					sender_profile_image_url_string, mForceSSLConnection));
 
 			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_left);
 			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_right);
@@ -157,6 +158,11 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	@Override
+	public void setForceSSLConnection(boolean force_ssl) {
+		mForceSSLConnection = force_ssl;
+	}
+
+	@Override
 	public void setTextSize(float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
@@ -172,10 +178,5 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			mIndices = null;
 		}
 		return super.swapCursor(cursor);
-	}
-
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
 	}
 }

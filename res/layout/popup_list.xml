@@ -6,7 +6,7 @@
 	<ListView
 		android:id="@android:id/list"
 		android:layout_width="160dp"
-		android:layout_height="fill_parent"
+		android:layout_height="match_parent"
 		android:maxHeight="240dp"/>
 
 </FrameLayout>

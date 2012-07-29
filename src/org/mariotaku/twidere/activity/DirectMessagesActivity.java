@@ -19,17 +19,18 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountScreenNames;
+import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationsEntryUri;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.DirectMessagesEntryAdapter;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.util.Utils;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -46,6 +47,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,7 +59,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -92,7 +93,7 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 			final String action = intent.getAction();
 			if (BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)
 					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
-				getSupportLoaderManager().restartLoader(0, null, DirectMessagesActivity.this);
+				getSupportLoaderManager().restartLoader(LOADER_ID_DIRECT_MESSAGES, null, DirectMessagesActivity.this);
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				setProgressBarIndeterminateVisibility(mService.isReceivedDirectMessagesRefreshing()
 						|| mService.isSentDirectMessagesRefreshing());
@@ -100,22 +101,26 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 		}
 	};
 
-	private ArrayAdapter<String> mAccountsAdapter;
+	private AccountsAdapter mAccountsAdapter;
+	private Cursor mAccountsCursor;
 
-	private String mSelectedScreenName;
+	private final static int LOADER_ID_ACCOUNTS = 1;
+
+	private final static int LOADER_ID_DIRECT_MESSAGES = 2;
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.account_confirm: {
-				mAccountId = Utils.getAccountId(this, mSelectedScreenName);
+				if (mAccountsCursor == null || mAccountsCursor.isClosed()) return;
+				mAccountId = mAccountsCursor.getLong(mAccountsCursor.getColumnIndex(Accounts.USER_ID));
 				final boolean is_my_activated_account = isMyActivatedAccount(this, mAccountId);
 				if (is_my_activated_account) {
 					mArguments.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 				}
 				mDirectMessagesContainer.setVisibility(is_my_activated_account ? View.VISIBLE : View.GONE);
 				mAccountSelectContainer.setVisibility(!is_my_activated_account ? View.VISIBLE : View.GONE);
-				getSupportLoaderManager().restartLoader(0, null, this);
+				getSupportLoaderManager().restartLoader(LOADER_ID_DIRECT_MESSAGES, null, this);
 				break;
 			}
 		}
@@ -154,6 +159,12 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
 
+		final long[] activated_ids = getActivatedAccountIds(this);
+
+		if (!isMyActivatedAccount(this, mAccountId) && activated_ids.length == 1) {
+			mAccountId = activated_ids[0];
+		}
+
 		final boolean is_my_activated_account = isMyActivatedAccount(this, mAccountId);
 
 		if (is_my_activated_account) {
@@ -162,20 +173,31 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 		mDirectMessagesContainer.setVisibility(is_my_activated_account ? View.VISIBLE : View.GONE);
 		mAccountSelectContainer.setVisibility(!is_my_activated_account ? View.VISIBLE : View.GONE);
 		if (!is_my_activated_account) {
-			final String[] account_screen_names = getActivatedAccountScreenNames(this);
-			mAccountsAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, account_screen_names);
-			mAccountsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			mAccountsAdapter = new AccountsAdapter(this);
 			mAccountSelector.setAdapter(mAccountsAdapter);
 			mAccountSelector.setOnItemSelectedListener(this);
+			getSupportLoaderManager().initLoader(LOADER_ID_ACCOUNTS, null, this);
 		}
 
-		getSupportLoaderManager().initLoader(0, null, this);
+		getSupportLoaderManager().initLoader(LOADER_ID_DIRECT_MESSAGES, null, this);
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		final Uri uri = Utils.buildDirectMessageConversationsEntryUri(mAccountId);
-		return new CursorLoader(this, uri, null, null, null, null);
+		switch (id) {
+			case LOADER_ID_ACCOUNTS: {
+				final Uri uri = Accounts.CONTENT_URI;
+				final String[] cols = Accounts.COLUMNS;
+				final String where = Accounts.IS_ACTIVATED + " = 1";
+				return new CursorLoader(DirectMessagesActivity.this, uri, cols, where, null, null);
+			}
+			case LOADER_ID_DIRECT_MESSAGES:
+			default: {
+				final Uri uri = buildDirectMessageConversationsEntryUri(mAccountId);
+				return new CursorLoader(this, uri, null, null, null, null);
+			}
+		}
+
 	}
 
 	@Override
@@ -194,18 +216,34 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-		mSelectedScreenName = mAccountsAdapter.getItem(pos);
+		if (mAccountsCursor == null || mAccountsCursor.isClosed()) return;
+		mAccountsCursor.moveToPosition(pos);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mAdapter.swapCursor(null);
+		switch (loader.getId()) {
+			case LOADER_ID_ACCOUNTS: {
+				mAccountsCursor = null;
+				mAccountsAdapter.changeCursor(null);
+			}
+			case LOADER_ID_DIRECT_MESSAGES: {
+				mAdapter.changeCursor(null);
+			}
+		}
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		mAdapter.swapCursor(cursor);
-
+		switch (loader.getId()) {
+			case LOADER_ID_ACCOUNTS: {
+				mAccountsCursor = cursor;
+				mAccountsAdapter.changeCursor(cursor);
+			}
+			case LOADER_ID_DIRECT_MESSAGES: {
+				mAdapter.changeCursor(cursor);
+			}
+		}
 	}
 
 	@Override
@@ -373,5 +411,15 @@ public class DirectMessagesActivity extends BaseActivity implements LoaderCallba
 			builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
 			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
+	}
+
+	private static class AccountsAdapter extends SimpleCursorAdapter {
+
+		public AccountsAdapter(Context context) {
+			super(context, R.layout.spinner_item, null, new String[] { Accounts.USERNAME },
+					new int[] { android.R.id.text1 }, 0);
+			setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		}
+
 	}
 }

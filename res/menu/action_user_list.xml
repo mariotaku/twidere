@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item
+		android:id="@id/view_user_list"
+		android:icon="@drawable/ic_menu_list"
+		android:title="@string/view_user_list"/>
+	<item
+		android:id="@id/extensions"
+		android:icon="@drawable/ic_menu_extension"
+		android:title="@string/extensions"/>
+
+</menu>

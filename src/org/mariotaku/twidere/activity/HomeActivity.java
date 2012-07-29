@@ -30,6 +30,7 @@ import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.TrendsFragment;
+import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -46,8 +47,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.BackStackEntryTrojan;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
@@ -117,11 +120,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	public static final int TAB_POSITION_DISCOVER = 2;
 	public static final int TAB_POSITION_ME = 3;
 
-	private int getPaneBackground() {
-		final boolean dark = isDarkTheme(), solid = isSolidColorBackground();
-		return dark ? (solid ? android.R.color.black : R.drawable.background_holo_dark) : (solid ? android.R.color.white : R.drawable.background_holo_light);
-	}
-	
 	public void bringLeftPaneToFront() {
 		if (mLeftPaneLayer == null || mRightPaneLayer == null || mLeftPaneContainer == null
 				|| mRightPaneContainer == null) return;
@@ -219,13 +217,26 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	public void onBackStackChanged() {
 		if (!isDualPaneMode()) return;
 		final FragmentManager fm = getSupportFragmentManager();
-		final Fragment fragment = fm.findFragmentById(PANE_LEFT);
+		final Fragment left_pane_fragment = fm.findFragmentById(PANE_LEFT);
 		final View main_view = findViewById(R.id.main);
-		final boolean left_pane_used = fragment != null && fragment.isAdded();
+		final boolean left_pane_used = left_pane_fragment != null && left_pane_fragment.isAdded();
 		if (main_view != null) {
 			main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
 		}
 		setPagingEnabled(!left_pane_used);
+		if (isDualPaneModeCompact()) {
+			final int count = fm.getBackStackEntryCount();
+			if (count > 0) {
+				final BackStackEntry entry = fm.getBackStackEntryAt(count - 1);
+				if (entry == null) return;
+				final Fragment fragment = BackStackEntryTrojan.getFragmentInBackStackRecord(entry);
+				if (fragment instanceof Panes.Left) {
+					bringLeftPaneToFront();
+				} else if (fragment instanceof Panes.Right) {
+					bringRightPaneToFront();
+				}
+			}
+		}
 	}
 
 	@Override
@@ -357,7 +368,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				navigateToTop();
+				getSupportFragmentManager().popBackStack();
 				break;
 			}
 			case MENU_COMPOSE: {
@@ -475,12 +486,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		switch (pane) {
 			case PANE_LEFT: {
-				bringLeftPaneToFront();
+				// bringLeftPaneToFront();
 				ft.replace(PANE_LEFT, fragment);
 				break;
 			}
 			case PANE_RIGHT: {
-				bringRightPaneToFront();
+				// bringRightPaneToFront();
 				ft.replace(PANE_RIGHT, fragment);
 				break;
 			}
@@ -515,10 +526,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		super.onSaveInstanceState(outState);
 	}
 
-	private void navigateToTop() {
-		if (isDualPaneMode()) {
-			getSupportFragmentManager().popBackStack();
-		}
+	private int getPaneBackground() {
+		final boolean dark = isDarkTheme(), solid = isSolidColorBackground();
+		return dark ? solid ? android.R.color.black : R.drawable.background_holo_dark : solid ? android.R.color.white
+				: R.drawable.background_holo_light;
 	}
 
 }

@@ -65,8 +65,8 @@ public class TwidereLinkify {
 	public static final int LINK_TYPE_ALL_AVAILABLE_IMAGE = 5;
 	public static final int LINK_TYPE_LIST = 6;
 
-	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_MENTION_LIST, LINK_TYPE_HASHTAG, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION,
-			LINK_TYPE_LINK, LINK_TYPE_ALL_AVAILABLE_IMAGE
+	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_MENTION_LIST, LINK_TYPE_HASHTAG,
+			LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_LINK, LINK_TYPE_ALL_AVAILABLE_IMAGE
 
 	};
 
@@ -87,7 +87,8 @@ public class TwidereLinkify {
 	public static final Pattern PATTERN_ALL_AVALIABLE_IMAGES = Pattern.compile("(" + STRING_PATTERN_IMAGES + "|"
 			+ STRING_PATTERN_TWITTER_IMAGES + "|" + STRING_PATTERN_SINA_WEIBO_IMAGES + "|"
 			+ STRING_PATTERN_LOCKERZ_AND_PLIXI + "|" + STRING_PATTERN_INSTAGRAM + "|" + STRING_PATTERN_TWITPIC + "|"
-			+ STRING_PATTERN_IMGLY + "|" + STRING_PATTERN_YFROG + "|" + STRING_PATTERN_TWITGOO + "|" + STRING_PATTERN_MOBYPICTURE + ")", Pattern.CASE_INSENSITIVE);
+			+ STRING_PATTERN_IMGLY + "|" + STRING_PATTERN_YFROG + "|" + STRING_PATTERN_TWITGOO + "|"
+			+ STRING_PATTERN_MOBYPICTURE + ")", Pattern.CASE_INSENSITIVE);
 
 	public static final Pattern PATTERN_IMAGES = Pattern.compile(STRING_PATTERN_IMAGES, Pattern.CASE_INSENSITIVE);
 	public static final Pattern PATTERN_TWITTER_IMAGES = Pattern.compile(STRING_PATTERN_TWITTER_IMAGES,
@@ -112,15 +113,16 @@ public class TwidereLinkify {
 	public static final Pattern PATTERN_YFROG = Pattern.compile(STRING_PATTERN_YFROG, Pattern.CASE_INSENSITIVE);
 	public static final int YFROG_GROUP_ALL = 1;
 	public static final int YFROG_GROUP_ID = 2;
-	
+
 	public static final Pattern PATTERN_TWITGOO = Pattern.compile(STRING_PATTERN_TWITGOO, Pattern.CASE_INSENSITIVE);
 	public static final int TWITGOO_GROUP_ALL = 1;
 	public static final int TWITGOO_GROUP_ID = 2;
-	
-	public static final Pattern PATTERN_MOBYPICTURE = Pattern.compile(STRING_PATTERN_MOBYPICTURE, Pattern.CASE_INSENSITIVE);
+
+	public static final Pattern PATTERN_MOBYPICTURE = Pattern.compile(STRING_PATTERN_MOBYPICTURE,
+			Pattern.CASE_INSENSITIVE);
 	public static final int MOBYPICTURE_GROUP_VALID = 2;
 	public static final int MOBYPICTURE_GROUP_ID = 3;
-	
+
 	public static final String TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES = "(bigger|normal|mini)";
 	public static final String STRING_PATTERN_TWITTER_PROFILE_IMAGES = "(https?:\\/\\/([\\w\\d]+)\\.twimg\\.com\\/profile_images\\/([\\d\\w\\-_]+)\\/([\\d\\w\\-_]+)_"
 			+ TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES + "(\\.?(png|jpg|jpeg|gif|bmp))?)";
@@ -214,7 +216,9 @@ public class TwidereLinkify {
 					final Matcher matcher = PATTERN_ALL_AVALIABLE_IMAGES.matcher(span.getURL());
 					if (matcher.matches()) {
 						final ImageSpec spec = getAllAvailableImage(matcher.group(), force_ssl);
-						if (spec == null) break;
+						if (spec == null) {
+							break;
+						}
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
 						final String url = spec.image_link;

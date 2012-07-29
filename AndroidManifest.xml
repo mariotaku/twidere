@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="31"
+	android:versionCode="32"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -348,6 +348,15 @@
 			android:label="@string/save_as">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SAVE_FILE"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.ExtensionsListActivity"
+			android:label="@string/extensions">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.EXTENSIONS"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
