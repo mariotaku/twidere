@@ -58,13 +58,13 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 	}
 
 	public synchronized boolean deleteStatus(long status_id) {
-		final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
-		for (final ParcelableStatus status : mData) {
-			if (status.status_id == status_id) {
-				data_to_remove.add(status);
-			}
-		}
 		try {
+			final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
+			for (final ParcelableStatus status : mData) {
+				if (status.status_id == status_id) {
+					data_to_remove.add(status);
+				}
+			}
 			return mData.removeAll(data_to_remove);
 		} catch (final ConcurrentModificationException e) {
 			// This shouldn't happen.

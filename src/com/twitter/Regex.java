@@ -172,6 +172,9 @@ public class Regex {
   public static final Pattern VALID_TCO_URL = Pattern.compile("^https?:\\/\\/t\\.co\\/[a-z0-9]+", Pattern.CASE_INSENSITIVE);
   public static final Pattern INVALID_URL_WITHOUT_PROTOCOL_MATCH_BEGIN = Pattern.compile("[-_./]$");
 
-  public static final Pattern VALID_CASHTAG = Pattern.compile("(?:^|" + UNICODE_SPACES + ")" + DOLLAR_SIGN_CHAR + "(" + CASHTAG + ")" +"(?=$|\\s|\\p{Punct})", Pattern.CASE_INSENSITIVE);
-  public static final int VALID_CASHTAG_GROUP_CASHTAG = 1;
+  public static final Pattern VALID_CASHTAG = Pattern.compile("((?:^|" + UNICODE_SPACES + ")((" + DOLLAR_SIGN_CHAR + ")(" + CASHTAG + "))" +"(?=$|\\s|\\p{Punct}))", Pattern.CASE_INSENSITIVE);
+
+  public static final int VALID_CASHTAG_GROUP_CASHTAG_FULL = 2;
+  public static final int VALID_CASHTAG_GROUP_CASH = 3;
+  public static final int VALID_CASHTAG_GROUP_TAG = 4;
 }

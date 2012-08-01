@@ -1,144 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-	<ScrollView
-		android:id="@+id/content_scroller"
+	<RelativeLayout
+		android:id="@+id/content"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_above="@+id/menu_bar">
+		android:layout_height="match_parent">
 
-		<LinearLayout
+		<ScrollView
+			android:id="@+id/content_scroller"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical">
+			android:layout_height="match_parent"
+			android:layout_above="@+id/menu_bar">
 
-			<RelativeLayout
-				android:id="@+id/profile"
+			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:background="@drawable/item_background_holo_light"
-				android:padding="8dp">
+				android:orientation="vertical">
 
-				<org.mariotaku.twidere.view.RoundCorneredImageView
-					android:id="@+id/profile_image"
-					android:layout_width="@dimen/profile_image_size"
-					android:layout_height="@dimen/profile_image_size"
-					android:layout_alignParentRight="true"
-					android:scaleType="fitCenter"/>
-
-				<LinearLayout
-					android:layout_width="wrap_content"
+				<RelativeLayout
+					android:id="@+id/profile"
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:layout_alignBottom="@+id/profile_image"
-					android:layout_alignTop="@+id/profile_image"
-					android:layout_toLeftOf="@+id/profile_image"
-					android:layout_toRightOf="@+id/follow_indicator"
-					android:gravity="center_vertical"
-					android:orientation="vertical"
-					android:paddingLeft="8dp"
-					android:paddingRight="4dp">
+					android:background="@drawable/item_background_holo_light"
+					android:padding="8dp">
 
-					<TextView
-						android:id="@+id/name"
+					<org.mariotaku.twidere.view.RoundCorneredImageView
+						android:id="@+id/profile_image"
+						android:layout_width="@dimen/profile_image_size"
+						android:layout_height="@dimen/profile_image_size"
+						android:layout_alignParentRight="true"
+						android:scaleType="fitCenter"/>
+
+					<LinearLayout
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:singleLine="true"
-						android:textAppearance="?android:attr/textAppearanceMedium"/>
+						android:layout_alignBottom="@+id/profile_image"
+						android:layout_alignTop="@+id/profile_image"
+						android:layout_toLeftOf="@+id/profile_image"
+						android:layout_toRightOf="@+id/follow_indicator"
+						android:gravity="center_vertical"
+						android:orientation="vertical"
+						android:paddingLeft="8dp"
+						android:paddingRight="4dp">
 
-					<TextView
-						android:id="@+id/screen_name"
+						<TextView
+							android:id="@+id/name"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:singleLine="true"
+							android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+						<TextView
+							android:id="@+id/screen_name"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:singleLine="true"
+							android:textAppearance="?android:attr/textAppearanceSmall"
+							android:textColor="?android:attr/textColorSecondary"/>
+					</LinearLayout>
+
+					<FrameLayout
+						android:id="@+id/follow_indicator"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:singleLine="true"
-						android:textAppearance="?android:attr/textAppearanceSmall"
-						android:textColor="?android:attr/textColorSecondary"/>
-				</LinearLayout>
+						android:layout_alignParentLeft="true"
+						android:layout_centerVertical="true"
+						android:visibility="gone">
+
+						<Button
+							android:id="@+id/follow"
+							style="?android:attr/buttonStyleSmall"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="@string/follow"/>
+
+						<ProgressBar
+							android:id="@+id/follow_info_progress"
+							style="?android:attr/progressBarStyleSmall"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_gravity="center"
+							android:layout_marginLeft="8dp"
+							android:layout_marginRight="8dp"/>
+					</FrameLayout>
+				</RelativeLayout>
+
+				<TextView
+					android:id="@+id/in_reply_to"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="@drawable/item_background_holo_light"
+					android:drawableLeft="@drawable/ic_indicator_reply"
+					android:drawablePadding="4dp"
+					android:gravity="center_vertical|right"
+					android:padding="8dp"
+					android:singleLine="true"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:visibility="gone"/>
+
+				<TextView
+					android:id="@+id/text"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_margin="8dp"
+					android:gravity="right"
+					android:singleLine="false"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:textIsSelectable="true"/>
 
 				<FrameLayout
-					android:id="@+id/follow_indicator"
-					android:layout_width="wrap_content"
+					android:id="@+id/images_preview"
+					android:layout_width="match_parent"
+					android:layout_height="144dp"/>
+
+				<TextView
+					android:id="@+id/retweet_view"
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:layout_alignParentLeft="true"
-					android:layout_centerVertical="true"
-					android:visibility="gone">
+					android:background="@drawable/item_background_holo_light"
+					android:drawableLeft="@drawable/ic_indicator_retweet"
+					android:drawablePadding="4dp"
+					android:gravity="center_vertical|right"
+					android:padding="8dp"
+					android:singleLine="true"
+					android:text="@string/users_retweeted_this"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:visibility="gone"/>
 
-					<Button
-						android:id="@+id/follow"
-						style="?android:attr/buttonStyleSmall"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="@string/follow"/>
+				<TextView
+					android:id="@+id/location_view"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="@drawable/item_background_holo_light"
+					android:drawableLeft="@drawable/ic_indicator_has_location"
+					android:drawablePadding="4dp"
+					android:gravity="center_vertical|right"
+					android:padding="8dp"
+					android:singleLine="true"
+					android:text="@string/view_map"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:visibility="gone"/>
 
-					<ProgressBar
-						android:id="@+id/progress"
-						style="?android:attr/progressBarStyleSmall"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center"
-						android:layout_marginLeft="8dp"
-						android:layout_marginRight="8dp"/>
-				</FrameLayout>
-			</RelativeLayout>
+				<TextView
+					android:id="@+id/time_source"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="right"
+					android:padding="8dp"
+					android:textAppearance="?android:attr/textAppearanceSmall"/>
+			</LinearLayout>
+		</ScrollView>
 
-			<TextView
-				android:id="@+id/in_reply_to"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@drawable/item_background_holo_light"
-				android:drawableLeft="@drawable/ic_indicator_reply"
-				android:drawablePadding="4dp"
-				android:gravity="center_vertical|right"
-				android:padding="8dp"
-				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:visibility="gone"/>
+		<org.mariotaku.menubar.MenuBar
+			android:id="@+id/menu_bar"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:layout_alignParentBottom="true"
+			android:background="?menuBarBackground"/>
+	</RelativeLayout>
 
-			<TextView
-				android:id="@+id/text"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_margin="8dp"
-				android:gravity="right"
-				android:singleLine="false"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textIsSelectable="true"/>
+	<ProgressBar
+		android:id="@+id/status_load_progress"
+		style="?android:attr/progressBarStyleLarge"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:visibility="gone"/>
 
-			<FrameLayout
-				android:id="@+id/images_preview"
-				android:layout_width="match_parent"
-				android:layout_height="144dp"/>
-
-			<TextView
-				android:id="@+id/location_view"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@drawable/item_background_holo_light"
-				android:drawableLeft="@drawable/ic_indicator_has_location"
-				android:drawablePadding="4dp"
-				android:gravity="center_vertical|right"
-				android:padding="8dp"
-				android:singleLine="true"
-				android:text="@string/view_map"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:visibility="gone"/>
-
-			<TextView
-				android:id="@+id/time_source"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:gravity="right"
-				android:padding="8dp"
-				android:textAppearance="?android:attr/textAppearanceSmall"/>
-		</LinearLayout>
-	</ScrollView>
-
-	<org.mariotaku.menubar.MenuBar
-		android:id="@+id/menu_bar"
-		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:layout_alignParentBottom="true"
-		android:background="?menuBarBackground"/>
-
-</RelativeLayout>
+</FrameLayout>

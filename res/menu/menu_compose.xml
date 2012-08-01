@@ -4,17 +4,14 @@
 	<item
 		android:id="@id/add_location"
 		android:icon="@drawable/ic_menu_mylocation"
-		android:showAsAction="always"
 		android:title="@string/add_location"/>
 	<item
 		android:id="@id/take_photo"
 		android:icon="@drawable/ic_menu_camera"
-		android:showAsAction="always"
 		android:title="@string/take_photo"/>
 	<item
 		android:id="@id/add_image"
 		android:icon="@drawable/ic_menu_gallery"
-		android:showAsAction="always"
 		android:title="@string/add_image"/>
 	<item
 		android:id="@+id/more"
@@ -24,13 +21,15 @@
 			<item
 				android:id="@id/select_account"
 				android:icon="@drawable/ic_menu_accounts"
-				android:showAsAction="never"
 				android:title="@string/select_account"/>
 			<item
 				android:id="@id/drafts"
 				android:icon="@drawable/ic_menu_save"
-				android:showAsAction="never"
 				android:title="@string/drafts"/>
+			<item
+				android:id="@id/extensions"
+				android:icon="@drawable/ic_menu_extension"
+				android:title="@string/extensions"/>
 		</menu>
 	</item>
 

@@ -37,7 +37,7 @@ public interface Constants extends TwitterConstants {
 	public static final String LOGTAG = "Twidere";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 20;
+	public static final int DATABASES_VERSION = 21;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -76,6 +76,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_LIST_CREATED = "list_created";
 	public static final String AUTHORITY_LIST_SUBSCRIPTIONS = "list_subscriptions";
 	public static final String AUTHORITY_LIST_MEMBERSHIPS = "list_memberships";
+	public static final String AUTHORITY_USERS_RETWEETED_STATUS = "users_retweeted_status";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -183,6 +184,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_EXTENSION_OPEN_USER = INTENT_PACKAGE_PREFIX + "EXTENSION_OPEN_USER";
 	public static final String INTENT_ACTION_EXTENSION_OPEN_USER_LIST = INTENT_PACKAGE_PREFIX
 			+ "EXTENSION_OPEN_USER_LIST";
+	public static final String INTENT_ACTION_EXTENSION_COMPOSE = INTENT_PACKAGE_PREFIX + "EXTENSION_COMPOSE";
 	public static final String INTENT_ACTION_EXTENSION_SETTINGS = INTENT_PACKAGE_PREFIX + "EXTENSION_SETTINGS";
 
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
@@ -258,6 +260,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_IS_PUBLIC = "is_public";
 	public static final String INTENT_KEY_USER = "user";
 	public static final String INTENT_KEY_USER_LIST = "user_list";
+	public static final String INTENT_KEY_APPEND_TEXT = "append_text";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -313,6 +316,8 @@ public interface Constants extends TwitterConstants {
 	public static final int REQUEST_GOTO_AUTHORIZATION = 6;
 	public static final int REQUEST_SET_COLOR = 7;
 	public static final int REQUEST_SAVE_FILE = 8;
+	public static final int REQUEST_EXTENSION_EDIT_IMAGE = 9;
+	public static final int REQUEST_EXTENSION_COMPOSE = 10;
 
 	public static final int RESULT_UNKNOWN_ERROR = -1;
 	public static final int RESULT_SUCCESS = 0;

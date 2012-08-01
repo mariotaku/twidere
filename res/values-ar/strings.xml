@@ -19,6 +19,8 @@
   <string name="search_base_url">عنوان البحث</string>
   <string name="upload_base_url">عنوان الرفع</string>
   <string name="oauth_base_url">عنوان OAuth</string>
+  <string name="signing_oauth_base_url">توقيع رابط قاعدة الـOAuth</string>
+  <string name="signing_rest_base_url">توقيع رابط قاعدة الـREST</string>
   <string name="auth_type">نوع Auth</string>
   <string name="oauth">OAuth</string>
   <string name="xauth">xAuth</string>
@@ -40,6 +42,7 @@
   <string name="username">اسم المستخدم</string>
   <string name="password">كلمة المرور</string>
   <string name="label_tweetstore_provider">مزود قاعدة بيانات Twidere</string>
+  <string name="label_backend_service">الخدمة الخلفية للتطبيق</string>
   <string name="label_permission_group_access_twidere">الوصول لتطبيق Twidere</string>
   <string name="label_permission_read_databases">قراءة قاعدة بينات Twidere</string>
   <string name="label_permission_write_databases">كتابة قاعدة بيانات Twidere</string>
@@ -95,6 +98,8 @@
   <string name="display_profile_image">عرض صورة الملف الشخضي</string>
   <string name="image_load_summary">سيؤدي تعطيل هذا الخيار لزيادة سرعة الانتقال بين التغريدات وتقليل إستخدام البيانات.</string>
   <string name="in_reply_to">رداً على <xliff:g id="user_name">%s</xliff:g></string>
+  <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> أعاد التغريدة</string>
+  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> و <xliff:g id="retweet_count">%2$d</xliff:g> قاموا بإعادة التغريدة</string>
   <string name="reply_to">الرد على <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">إقتباس <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, عَبر <xliff:g id="source">%2$s</xliff:g></string>
@@ -162,6 +167,7 @@
   <string name="set_default_account_hint">يرجى إختيار الحساب الإفتراضي.</string>
   <string name="daily_trends">التداولات اليومية</string>
   <string name="weekly_trends">التداولات الأسبوعية</string>
+  <string name="local_trends">التداولات المحلية</string>
   <string name="search_hint">البحث في التغريدات أو المستخدمين</string>
   <string name="remember_position">تذكر المكان</string>
   <string name="remember_position_summary">Twidere تذكر مكان القائمة/اللسان قبل إغلاق </string>
@@ -246,4 +252,30 @@
   <string name="item_2_hours">ساعتان</string>
   <string name="item_4_hours">4 ساعات</string>
   <string name="inline_image_preview">معاينة الصورة في الخط الزمني مباشرة</string>
+  <string name="solid_color_background">خلفية غير متدرجة</string>
+  <string name="solid_color_background_summary">هذا سيكون مفيداً إذا كانت شاشة جهازك من نوع AMOLED.</string>
+  <string name="followed_you">يُتابعك</string>
+  <string name="user_list">قائمة المستخدم</string>
+  <string name="trends_location">موقع التداولات</string>
+  <string name="trends_location_summary">تعيين موقع التداولات المحلية.</string>
+  <string name="trends">التداولات</string>
+  <string name="accounts">الحسابات</string>
+  <string name="hires_profile_image">صور شخصية عالية الدقة</string>
+  <string name="mention_this_user">الإشارة لهذا المستخدم</string>
+  <string name="signing_in_please_wait">جارِ تسجيل الدخول ، رجاءً إنتظر أو إنقر على زر العودة للخروج.</string>
+  <string name="force_ssl_connection">فرض الإتصال بـSSL</string>
+  <string name="force_ssl_connection_summary">فرض إستخدام SSL في الـAPI وبعض الطلبات الأخرى.</string>
+  <string name="connectivity">الإتصال</string>
+  <string name="add_member">إضافة عضو</string>
+  <string name="add_success">تم الإضافة بنجاح</string>
+  <string name="create_success">تم الإنشاء بنجاح</string>
+  <string name="new_user_list">قائمة مستخدمين جديدة</string>
+  <string name="is_public">عام</string>
+  <string name="send_direct_message">إرسال رسالة مباشرة</string>
+  <string name="extensions">الملحقات</string>
+  <string name="open_with_extensions">فتح مع الملحقات</string>
+  <string name="view_user_list">عرض قائمة المستخدمين</string>
+  <string name="open">فتح</string>
+  <string name="uninstall">إلغاء التنصيب</string>
+  <string name="users_retweeted_this">المستخدمين الذين قاموا بإعادة التغريد</string>
 </resources>

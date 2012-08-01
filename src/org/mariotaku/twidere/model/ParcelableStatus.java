@@ -56,7 +56,7 @@ public class ParcelableStatus implements Parcelable {
 	public final long retweet_id, retweeted_by_id, status_id, account_id, user_id, status_timestamp, retweet_count,
 			in_reply_to_status_id;
 
-	public final boolean is_gap, is_retweet, is_favorite, is_protected, has_media;
+	public final boolean is_gap, is_retweet, is_favorite, is_protected, is_verified, has_media;
 
 	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, name, screen_name,
 			in_reply_to_screen_name, source, profile_image_url_string, image_preview_url_string, location_string;
@@ -102,7 +102,7 @@ public class ParcelableStatus implements Parcelable {
 		is_retweet = indices.is_retweet != -1 ? cursor.getInt(indices.is_retweet) == 1 : false;
 		is_favorite = indices.is_favorite != -1 ? cursor.getInt(indices.is_favorite) == 1 : false;
 		is_protected = indices.is_protected != -1 ? cursor.getInt(indices.is_protected) == 1 : false;
-
+		is_verified = indices.is_verified != -1 ? cursor.getInt(indices.is_verified) == 1 : false;
 		retweeted_by_name = indices.retweeted_by_name != -1 ? cursor.getString(indices.retweeted_by_name) : null;
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
@@ -138,6 +138,7 @@ public class ParcelableStatus implements Parcelable {
 		is_retweet = in.readInt() == 1;
 		is_favorite = in.readInt() == 1;
 		is_protected = in.readInt() == 1;
+		is_verified = in.readInt() == 1;
 		has_media = in.readInt() == 1;
 		retweeted_by_name = in.readString();
 		retweeted_by_screen_name = in.readString();
@@ -179,6 +180,7 @@ public class ParcelableStatus implements Parcelable {
 		profile_image_url = user != null ? user.getProfileImageURL() : null;
 		profile_image_url_string = profile_image_url != null ? profile_image_url.toString() : null;
 		is_protected = user != null ? user.isProtected() : false;
+		is_verified = user != null ? user.isVerified() : false;
 		final MediaEntity[] medias = status.getMediaEntities();
 
 		status_timestamp = getTime(status.getCreatedAt());
@@ -215,6 +217,7 @@ public class ParcelableStatus implements Parcelable {
 		profile_image_url = parseURL(profile_image_url_string);
 
 		is_protected = false;
+		is_verified = false;
 		final MediaEntity[] medias = tweet.getMediaEntities();
 
 		status_timestamp = getTime(tweet.getCreatedAt());
@@ -260,6 +263,7 @@ public class ParcelableStatus implements Parcelable {
 		out.writeInt(is_retweet ? 1 : 0);
 		out.writeInt(is_favorite ? 1 : 0);
 		out.writeInt(is_protected ? 1 : 0);
+		out.writeInt(is_verified ? 1 : 0);
 		out.writeInt(has_media ? 1 : 0);
 		out.writeString(retweeted_by_name);
 		out.writeString(retweeted_by_screen_name);

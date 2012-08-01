@@ -167,6 +167,7 @@
   <string name="set_default_account_hint">Bitte ein Standardaccount wählen.</string>
   <string name="daily_trends">Tägliche Trends</string>
   <string name="weekly_trends">Wöchentliche Trends</string>
+  <string name="local_trends">Lokale Trends</string>
   <string name="search_hint">Tweets oder Benutzer suchen</string>
   <string name="remember_position">Position merken</string>
   <string name="remember_position_summary">Listen/Tabposition beim Beenden merken</string>
@@ -253,4 +254,26 @@
   <string name="solid_color_background_summary">Das könnte nützlich sein, falls das Display deines Geräts ein AMOLED-Bildschirm ist.</string>
   <string name="followed_you">Folgte Ihnen</string>
   <string name="user_list">Benutzerliste</string>
+  <string name="trends_location">Standort für Trends</string>
+  <string name="trends_location_summary">Standort für lokale Trends auswählen.</string>
+  <string name="trends">Trends</string>
+  <string name="accounts">Konten</string>
+  <string name="hires_profile_image">Hochauflösendes Profilbild</string>
+  <string name="mention_this_user">Erwähne diesen Benutzer</string>
+  <string name="signing_in_please_wait">Anmeldung, bitte warten oder ZURÜCK zum Beenden drücken.</string>
+  <string name="force_ssl_connection">SSL Verbindung erzwingen</string>
+  <string name="force_ssl_connection_summary">Verwendung von SSL in der API und einigen anderen Anfragen erzwingen.</string>
+  <string name="connectivity">Konnektivität</string>
+  <string name="add_member">Mitglied hinzufügen</string>
+  <string name="add_success">Erfolgreich hinzugefügt</string>
+  <string name="create_success">Erfolgreich erstellt</string>
+  <string name="new_user_list">Neue Beutzerliste</string>
+  <string name="is_public">Öffentlich</string>
+  <string name="send_direct_message">Direktnachricht senden</string>
+  <string name="extensions">Erweiterungen</string>
+  <string name="open_with_extensions">Mit Erweiterungen öffnen</string>
+  <string name="view_user_list">Benutzerliste einsehen</string>
+  <string name="open">Öffnen</string>
+  <string name="uninstall">Deinstallieren</string>
+  <string name="users_retweeted_this">Benutzer retweeteten dies</string>
 </resources>

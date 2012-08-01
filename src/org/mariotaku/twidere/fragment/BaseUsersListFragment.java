@@ -82,6 +82,10 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 		return mAdapter;
 	}
 
+	public SharedPreferences getSharedPreferences() {
+		return mPreferences;
+	}
+
 	public abstract Loader<List<ParcelableUser>> newLoaderInstance();
 
 	@Override
@@ -160,8 +164,8 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 		if (loader instanceof IDsUsersLoader) {
 			final long[] ids = ((IDsUsersLoader) loader).getIDsArray();
 			mAllItemsLoaded = ids != null && ids.length == mAdapter.getCount();
-			mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
 		}
+		mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
 	}
 
 	@Override

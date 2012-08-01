@@ -43,6 +43,7 @@ import org.mariotaku.twidere.fragment.UserListSubscriptionsFragment;
 import org.mariotaku.twidere.fragment.UserListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserListTypesFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
+import org.mariotaku.twidere.fragment.UserRetweetedStatusFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 
 import android.content.Intent;
@@ -75,6 +76,7 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final int CODE_LIST_CREATED = 15;
 	private static final int CODE_LIST_SUBSCRIPTIONS = 16;
 	private static final int CODE_LIST_MEMBERSHIPS = 17;
+	private static final int CODE_USERS_RETWEETED_STATUS = 18;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
@@ -94,6 +96,7 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_LIST_CREATED, null, CODE_LIST_CREATED);
 		URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIPTIONS, null, CODE_LIST_SUBSCRIPTIONS);
 		URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERSHIPS, null, CODE_LIST_MEMBERSHIPS);
+		URI_MATCHER.addURI(AUTHORITY_USERS_RETWEETED_STATUS, null, CODE_USERS_RETWEETED_STATUS);
 	}
 
 	private Fragment mFragment;
@@ -365,6 +368,13 @@ public class LinkHandlerActivity extends BaseActivity {
 					}
 					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
 					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					break;
+				}
+				case CODE_USERS_RETWEETED_STATUS: {
+					setTitle(R.string.users_retweeted_this);
+					fragment = new UserRetweetedStatusFragment();
+					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
+					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
 					break;
 				}
 				default: {

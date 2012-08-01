@@ -24,6 +24,7 @@ import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
+import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.File;
@@ -31,6 +32,7 @@ import java.io.File;
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
+import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -68,7 +70,7 @@ import android.widget.Toast;
 import com.twitter.Validator;
 
 public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
-		OnClickListener, OnLongClickListener {
+		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener {
 
 	private ActionBar mActionBar;
 
@@ -91,6 +93,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private String mInReplyToScreenName, mInReplyToName;
 	private boolean mIsQuote;
 	private final Validator mValidator = new Validator();
+	private PopupMenu mPopupMenu;
 
 	private AttachedImageThumbnailTask mAttachedImageThumbnailTask;
 
@@ -114,7 +117,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
 		switch (requestCode) {
-			case REQUEST_TAKE_PHOTO:
+			case REQUEST_TAKE_PHOTO: {
 				if (resultCode == Activity.RESULT_OK) {
 					final File file = new File(mImageUri.getPath());
 					if (file.exists()) {
@@ -128,7 +131,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					setMenu(mMenuBar.getMenu());
 				}
 				break;
-			case REQUEST_PICK_IMAGE:
+			}
+			case REQUEST_PICK_IMAGE: {
 				if (resultCode == Activity.RESULT_OK) {
 					final Uri uri = intent.getData();
 					final File file = uri == null ? null : new File(getImagePathFromUri(this, uri));
@@ -144,7 +148,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					setMenu(mMenuBar.getMenu());
 				}
 				break;
-			case REQUEST_SELECT_ACCOUNT:
+			}
+			case REQUEST_SELECT_ACCOUNT: {
 				if (resultCode == Activity.RESULT_OK) {
 					final Bundle bundle = intent.getExtras();
 					if (bundle == null) {
@@ -156,6 +161,39 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					}
 				}
 				break;
+			}
+			case REQUEST_EXTENSION_EDIT_IMAGE: {
+				if (resultCode == Activity.RESULT_OK) {
+					final Uri uri = intent.getData();
+					final File file = uri == null ? null : new File(getImagePathFromUri(this, uri));
+					if (file != null && file.exists()) {
+						mImageUri = Uri.fromFile(file);
+						reloadAttachedImageThumbnail(file);
+					} else {
+						break;
+					}
+					setMenu(mMenuBar.getMenu());
+				}
+				break;
+			}
+			case REQUEST_EXTENSION_COMPOSE: {
+				if (resultCode == Activity.RESULT_OK) {
+					final Bundle extras = intent.getExtras();
+					if (extras == null) {
+						break;
+					}
+					final String text = extras.getString(INTENT_KEY_TEXT);
+					final String append = extras.getString(INTENT_KEY_APPEND_TEXT);
+					if (text != null) {
+						mEditText.setText(text);
+						mText = parseString(mEditText.getText());
+					} else if (append != null) {
+						mEditText.append(append);
+						mText = parseString(mEditText.getText());
+					}
+				}
+				break;
+			}
 		}
 
 	}
@@ -243,7 +281,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				if (extras != null) {
 					if (mText == null) {
 						final CharSequence extra_text = extras.getCharSequence(Intent.EXTRA_TEXT);
-						mText = extra_text != null ? String.valueOf(extra_text) : "";
+						mText = extra_text != null ? parseString(extra_text) : "";
 					} else {
 						mText = bundle.getString(INTENT_KEY_TEXT);
 					}
@@ -315,7 +353,19 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public boolean onLongClick(View view) {
-		return true;
+		switch (view.getId()) {
+			case R.id.image_thumbnail_preview: {
+				if (mPopupMenu != null) {
+					mPopupMenu.dismiss();
+				}
+				mPopupMenu = PopupMenu.getInstance(this, view);
+				mPopupMenu.inflate(R.menu.action_attached_image);
+				mPopupMenu.setOnMenuItemClickListener(this);
+				mPopupMenu.show();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -350,6 +400,52 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
 			}
+			case MENU_DELETE: {
+				if (mImageUri == null) return false;
+				if (mIsImageAttached && !mIsPhotoAttached) {
+					mImageUri = null;
+
+				} else if (mIsPhotoAttached && !mIsImageAttached) {
+					final File image_file = mImageUri != null && "file".equals(mImageUri.getScheme()) ? new File(
+							mImageUri.getPath()) : null;
+					if (image_file != null) {
+						image_file.delete();
+					}
+					mImageUri = null;
+				}
+				mIsPhotoAttached = false;
+				mIsImageAttached = false;
+				reloadAttachedImageThumbnail(null);
+				setMenu(mMenuBar.getMenu());
+				break;
+			}
+			case MENU_EDIT: {
+				if (mImageUri == null) return false;
+				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_EDIT_IMAGE);
+				intent.setData(mImageUri);
+				startActivityForResult(Intent.createChooser(intent, getString(R.string.open_with_extensions)),
+						REQUEST_EXTENSION_EDIT_IMAGE);
+				break;
+			}
+			case MENU_EXTENSIONS: {
+				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
+				final Bundle extras = new Bundle();
+				extras.putString(INTENT_KEY_TEXT, parseString(mEditText.getText()));
+				extras.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mInReplyToScreenName);
+				extras.putString(INTENT_KEY_IN_REPLY_TO_NAME, mInReplyToName);
+				String screen_name = null;
+				if (mAccountId > 0) {
+					screen_name = getAccountUsername(this, mAccountId);
+				} else if (mAccountIds != null && mAccountIds.length > 0) {
+					screen_name = getAccountUsername(this, mAccountIds[0]);
+				}
+				extras.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				extras.putLong(INTENT_KEY_IN_REPLY_TO_ID, mInReplyToStatusId);
+				intent.putExtras(extras);
+				startActivityForResult(Intent.createChooser(intent, getString(R.string.open_with_extensions)),
+						REQUEST_EXTENSION_COMPOSE);
+				break;
+			}
 		}
 		return true;
 	}
@@ -362,7 +458,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				break;
 			}
 			case MENU_SEND: {
-				final String text = mEditText != null ? mEditText.getText().toString() : null;
+				final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 				if (mValidator.isValidTweet(text)) {
 					final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 					mService.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
@@ -378,9 +474,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		final String text = mEditText != null ? String.valueOf(mEditText.getText()) : null;
+		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (mTextCount != null) {
-			mTextCount.setText(String.valueOf(mValidator.getTweetLength(text)));
+			mTextCount.setText(parseString(mValidator.getTweetLength(text)));
 		}
 		final MenuItem sendItem = menu.findItem(MENU_SEND);
 		sendItem.setEnabled(mValidator.isValidTweet(text));
@@ -397,7 +493,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		mText = mEditText.getText().toString();
+		mText = parseString(mEditText.getText());
 		outState.putLongArray(INTENT_KEY_IDS, mAccountIds);
 		outState.putString(INTENT_KEY_TEXT, mText);
 		outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
@@ -419,6 +515,14 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		invalidateSupportOptionsMenu();
+	}
+
+	@Override
+	protected void onStop() {
+		if (mPopupMenu != null) {
+			mPopupMenu.dismiss();
+		}
+		super.onStop();
 	}
 
 	/**
@@ -530,6 +634,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 		@Override
 		protected void onPostExecute(Bitmap result) {
+			mImageThumbnailPreview.setVisibility(result != null ? View.VISIBLE : View.GONE);
 			mImageThumbnailPreview.setImageBitmap(result);
 			super.onPostExecute(result);
 		}

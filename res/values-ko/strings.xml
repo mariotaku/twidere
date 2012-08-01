@@ -15,10 +15,17 @@
   <string name="tweet_hint">무슨 일인가요?</string>
   <string name="sign_up">가입</string>
   <string name="sign_in">로그인</string>
+  <string name="rest_base_url">REST Base URL</string>
+  <string name="search_base_url">Search Base URL</string>
+  <string name="upload_base_url">Upload Base URL</string>
+  <string name="oauth_base_url">OAuth Base URL</string>
+  <string name="signing_oauth_base_url">Signing OAuth Base URL</string>
+  <string name="signing_rest_base_url">Signing REST Base URL</string>
   <string name="auth_type">인증 유형</string>
   <string name="oauth">OAuth</string>
   <string name="xauth">xAuth</string>
   <string name="basic">기본</string>
+  <string name="twip_o">twip O 모드</string>
   <string name="advanced">고급</string>
   <string name="save">저장</string>
   <string name="edit">수정</string>
@@ -35,10 +42,14 @@
   <string name="username">사용자명</string>
   <string name="password">패스워드</string>
   <string name="label_tweetstore_provider">Twidere 데이터베이스 공급자</string>
+  <string name="label_backend_service">응용 프로그램 백 엔드 서비스</string>
+  <string name="label_permission_group_access_twidere">Twidere 응용 프로그램에 액세스</string>
   <string name="label_permission_read_databases">Twidere 데이터베이스 읽기</string>
   <string name="label_permission_write_databases">Twidere 데이터베이스 쓰기</string>
+  <string name="label_permission_access_service">Twidere 서비스에 액세스</string>
   <string name="description_permission_read_databases">데이터베이스에서 트윗, 보관글, 계정, 다이렉트 메시지 읽기.</string>
   <string name="description_permission_write_databases">데이터베이스에 트윗, 보관글, 계정, 다이렉트 메시지 쓰기.</string>
+  <string name="description_permission_access_service">새로 고침/짹짹을 보낼, DM</string>
   <string name="open_in_browser">브라우저에서 열기</string>
   <string name="just_now">방금 전</string>
   <string name="tap_to_load_more">더 보기</string>
@@ -65,6 +76,8 @@
   <string name="license">오픈소스 라이센스</string>
   <string name="license_summary">Twidere의 라이센스는 GPLv3을 따릅니다.</string>
   <string name="api">API</string>
+  <string name="consumer_key">Consumer key</string>
+  <string name="consumer_secret">Consumer secret</string>
   <string name="ignore_ssl_error">SSL 오류 무시</string>
   <string name="ignore_ssl_error_summary">SSL 오류를 무시합니다. 사용자 지정 API 서버에 문제가 있는 경우 활성화하세요.</string>
   <string name="gzip_compressing">GZip 압축</string>
@@ -83,8 +96,10 @@
   <string name="image_load_summary">비활성화하면 목록 스크롤 속도를 높이고 트래픽 사용을 줄일 수 있습니다.</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g>이(가) 리트윗함</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> 및 <xliff:g id="retweet_count">%2$d</xliff:g>여 명이 리트윗함</string>
+  <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source"><xliff:g id="source"> %s </xliff:g>을(를) 통해</string>
   <string name="filter">필터</string>
+  <string name="filter_summary">숨기기를 원치 않는 사용자 로부터 짹짹 / 소스 또는 지정 된 키워드를 포함</string>
   <string name="users">사용자</string>
   <string name="keywords">키워드</string>
   <string name="sources">소스</string>
@@ -133,6 +148,7 @@
   <string name="retry">다시 시도</string>
   <string name="more">더 많이</string>
   <string name="quote_format">인용 포맷</string>
+  <string name="quote_format_message">\"[TEXT]\" 인용 하는 짹짹으로 바뀝니다.</string>
   <string name="direct_messages">다이렉트 메시지</string>
   <string name="capital_on">ON</string>
   <string name="capital_off">OFF</string>
@@ -145,6 +161,7 @@
   <string name="set_default_account_hint">기본 계정을 설정하세요.</string>
   <string name="daily_trends">일일 트렌드</string>
   <string name="weekly_trends">주간 트렌드</string>
+  <string name="local_trends">지역 동향</string>
   <string name="search_hint">트윗이나 사용자 검색</string>
   <string name="remember_position">위치 기억하기</string>
   <string name="remember_position_summary">Twidere를 종료하기 전에 목록, 탭의 위치를 기억합니다</string>
@@ -229,4 +246,20 @@
   <string name="solid_color_background_summary">당신의 화면이 AMOLED 타입이라면 유용할 것입니다.</string>
   <string name="followed_you">당신이 팔로우함</string>
   <string name="user_list">사용자 목록</string>
+  <string name="trends">동향</string>
+  <string name="accounts">계정</string>
+  <string name="hires_profile_image">하이-해상도 프로필 이미지</string>
+  <string name="force_ssl_connection">SSL 연결을 강제로</string>
+  <string name="connectivity">연결</string>
+  <string name="add_member">구성원 추가</string>
+  <string name="add_success">성공적으로 추가</string>
+  <string name="create_success">성공을 만드는합니다</string>
+  <string name="new_user_list">새 목록 만들기</string>
+  <string name="is_public">공공의</string>
+  <string name="send_direct_message">DM 보내기</string>
+  <string name="extensions">플러그인</string>
+  <string name="open_with_extensions">플러그인으로 열기</string>
+  <string name="view_user_list">사용자 목록 보기</string>
+  <string name="open">오픈</string>
+  <string name="uninstall">제거</string>
 </resources>

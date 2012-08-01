@@ -24,7 +24,8 @@ import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getTypeIcon;
+import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
@@ -118,11 +119,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(
-					status.is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
+					getUserTypeIconRes(status.is_verified, status.is_protected), 0, 0, 0);
 			holder.name.setText(mDisplayName ? status.name : status.screen_name);
 			holder.time.setText(formatToShortTimeString(mContext, status.status_timestamp));
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					getTypeIcon(status.is_favorite, isValidLocation(status.location), status.has_media), 0);
+					getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media), 0);
 			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
 			if (status.is_retweet && !isNullOrEmpty(retweeted_by)) {

@@ -19,16 +19,22 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.openConversation;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.openUserRetweetedStatus;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
@@ -47,7 +53,6 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -88,12 +93,13 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	private ServiceInterface mService;
 	private SharedPreferences mPreferences;
 	private LazyImageLoader mProfileImageLoader;
-	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView;
+	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView,
+			mRetweetedStatusView;
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
-	private View mProfileView, mFollowIndicator, mImagesPreviewContainer, mContentScroller;
+	private View mStatusContent, mProfileView, mFollowIndicator, mImagesPreviewContainer, mContentScroller;
 	private MenuBar mMenuBar;
-	private ProgressBar mProgress;
+	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
 	private FollowInfoTask mFollowInfoTask;
 	private GetStatusTask mGetStatusTask;
 	private ParcelableStatus mStatus;
@@ -144,7 +150,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		mNameView.setText(status.name);
 		mScreenNameView.setText(status.screen_name);
 		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(
-				status.is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
+				getUserTypeIconRes(status.is_verified, status.is_protected), 0, 0, 0);
 		mTextView.setText(status.text);
 		final TwidereLinkify linkify = new TwidereLinkify(mTextView, force_ssl_connection);
 		linkify.setOnLinkClickListener(new OnLinkClickHandler(getActivity(), mAccountId));
@@ -171,7 +177,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string,
 						force_ssl_connection) : getNormalTwitterProfileImage(status.profile_image_url_string,
 						force_ssl_connection)), mProfileImageView);
-		final List<ImageSpec> images = Utils.getImagesInStatus(status.text_html, force_ssl_connection);
+		final List<ImageSpec> images = getImagesInStatus(status.text_html, force_ssl_connection);
 		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		if (images.size() > 0) {
 			mImagesPreviewFragment.clear();
@@ -185,7 +191,13 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				ft.commit();
 			}
 		}
-		mLocationView.setVisibility(status.location != null ? View.VISIBLE : View.GONE);
+		if (status.retweet_id > 0) {
+			final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+			final String retweeted_by = display_name ? status.retweeted_by_name : status.retweeted_by_screen_name;
+			mRetweetedStatusView.setText(status.retweet_count > 1 ? getString(R.string.retweeted_by_with_count,
+					retweeted_by, status.retweet_count - 1) : getString(R.string.retweeted_by, retweeted_by));
+		}
+		mLocationView.setVisibility(ParcelableLocation.isValidLocation(status.location) ? View.VISIBLE : View.GONE);
 
 		if (mLoadMoreAutomatically) {
 			showFollowInfo(true);
@@ -214,6 +226,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		mFollowButton.setOnClickListener(this);
 		mProfileView.setOnClickListener(this);
 		mLocationView.setOnClickListener(this);
+		mRetweetedStatusView.setOnClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(this);
 		if (mStatus != null) {
 			displayStatus(mStatus);
@@ -228,7 +241,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		if (mStatus == null) return;
 		switch (view.getId()) {
 			case R.id.profile: {
-				Utils.openUserProfile(getActivity(), mStatus.account_id, mStatus.user_id, null);
+				openUserProfile(getActivity(), mStatus.account_id, mStatus.user_id, null);
 				break;
 			}
 			case R.id.follow: {
@@ -236,7 +249,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				break;
 			}
 			case R.id.in_reply_to: {
-				Utils.openConversation(getActivity(), mStatus.account_id, mStatus.status_id);
+				openConversation(getActivity(), mStatus.account_id, mStatus.status_id);
 				break;
 			}
 			case R.id.location_view: {
@@ -251,6 +264,11 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				break;
 			}
+			case R.id.retweet_view: {
+				openUserRetweetedStatus(getActivity(), mStatus.account_id, mStatus.retweet_id > 0 ? mStatus.retweet_id
+						: mStatus.status_id);
+				break;
+			}
 		}
 
 	}
@@ -258,9 +276,12 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.view_status, container, false);
+		mStatusContent = view.findViewById(R.id.content);
+		mStatusLoadProgress = (ProgressBar) view.findViewById(R.id.status_load_progress);
 		mContentScroller = view.findViewById(R.id.content_scroller);
 		mImagesPreviewContainer = view.findViewById(R.id.images_preview);
 		mLocationView = (TextView) view.findViewById(R.id.location_view);
+		mRetweetedStatusView = (TextView) view.findViewById(R.id.retweet_view);
 		mNameView = (TextView) view.findViewById(R.id.name);
 		mScreenNameView = (TextView) view.findViewById(R.id.screen_name);
 		mTextView = (TextView) view.findViewById(R.id.text);
@@ -269,7 +290,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		mInReplyToView = (TextView) view.findViewById(R.id.in_reply_to);
 		mFollowButton = (Button) view.findViewById(R.id.follow);
 		mFollowIndicator = view.findViewById(R.id.follow_indicator);
-		mProgress = (ProgressBar) view.findViewById(R.id.progress);
+		mFollowInfoProgress = (ProgressBar) view.findViewById(R.id.follow_info_progress);
 		mProfileView = view.findViewById(R.id.profile);
 		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
 		return view;
@@ -429,7 +450,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 					mFollowInfoDisplayed = true;
 				}
 			}
-			mProgress.setVisibility(View.GONE);
+			mFollowInfoProgress.setVisibility(View.GONE);
 			super.onPostExecute(result);
 			mFollowInfoTask = null;
 		}
@@ -439,7 +460,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			if (getActivity() == null) return;
 			mFollowIndicator.setVisibility(View.VISIBLE);
 			mFollowButton.setVisibility(View.GONE);
-			mProgress.setVisibility(View.VISIBLE);
+			mFollowInfoProgress.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
 
@@ -473,7 +494,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				status = getArguments().getParcelable(INTENT_KEY_STATUS);
 				if (status != null) return new Response<ParcelableStatus>(status, null);
 			}
-			status = Utils.findStatusInDatabases(getActivity(), mAccountId, mStatusId);
+			status = findStatusInDatabases(getActivity(), mAccountId, mStatusId);
 			if (status != null) return new Response<ParcelableStatus>(status, null);
 
 			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
@@ -492,6 +513,9 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				showErrorToast(getActivity(), result.exception, true);
 			} else {
 				displayStatus(result.value);
+				mStatusLoadProgress.setVisibility(View.GONE);
+				mStatusContent.setVisibility(View.VISIBLE);
+				mStatusContent.setEnabled(true);
 			}
 			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);
@@ -500,6 +524,9 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		@Override
 		protected void onPreExecute() {
 			if (getActivity() == null) return;
+			mStatusLoadProgress.setVisibility(View.VISIBLE);
+			mStatusContent.setVisibility(View.INVISIBLE);
+			mStatusContent.setEnabled(false);
 			setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}
@@ -510,10 +537,9 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 		@Override
 		protected String doInBackground(Void... params) {
-			if (mStatus == null || mStatus.location == null) return null;
-			final Twitter twitter = getTwitterInstance(getActivity(), mStatus.account_id, false);
-			if (twitter == null) return null;
+			if (getActivity() == null || mStatus == null) return null;
 			final ParcelableLocation location = mStatus.location;
+			if (location == null) return null;
 			try {
 				final Geocoder coder = new Geocoder(getActivity());
 				final List<Address> addresses = coder.getFromLocation(location.latitude, location.longitude, 1);

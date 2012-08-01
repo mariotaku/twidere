@@ -158,7 +158,7 @@
   <string name="direct_messages">私信</string>
   <string name="capital_on">开启</string>
   <string name="capital_off">关闭</string>
-  <string name="blocked_users">屏蔽的用户</string>
+  <string name="blocked_users">已阻止的用户</string>
   <string name="set_as_default">设置为默认</string>
   <string name="default_account">默认帐号</string>
   <string name="search_users">搜索用户</string>
@@ -171,7 +171,7 @@
   <string name="search_hint">搜索推文或用户</string>
   <string name="remember_position">记住位置</string>
   <string name="remember_position_summary">打开Twidere时，恢复到退出前列表/页面的位置</string>
-  <string name="user_blocked">你屏蔽了这个用户。</string>
+  <string name="user_blocked">你阻止了这个用户。</string>
   <string name="user_unblocked">你解除了对这个用户的阻止。</string>
   <string name="reported_user_for_spam">你已报告这个用户发送垃圾信息。</string>
   <string name="filename_hint">文件名</string>
@@ -275,4 +275,5 @@
   <string name="view_user_list">查看用户列表</string>
   <string name="open">打开</string>
   <string name="uninstall">卸载</string>
+  <string name="users_retweeted_this">转推了这条推文的用户</string>
 </resources>

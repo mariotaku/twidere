@@ -21,6 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,12 +32,19 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.ListView;
 
-public class MentionsFragment extends CursorStatusesListFragment {
+public class MentionsFragment extends CursorStatusesListFragment implements OnTouchListener {
 
 	private SharedPreferences mPreferences;
+	private ListView mListView;
+	private ServiceInterface mService;
+	
 	private long mMinIdToRefresh;
+	private boolean mShouldRestorePosition = false;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -71,8 +79,6 @@ public class MentionsFragment extends CursorStatusesListFragment {
 		}
 	};
 
-	private boolean mShouldRestorePositoin = false;
-
 	@Override
 	public Uri getContentUri() {
 		return Mentions.CONTENT_URI;
@@ -86,37 +92,39 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mShouldRestorePositoin = true;
+		mShouldRestorePosition = true;
 		super.onActivityCreated(savedInstanceState);
+		mListView = getListView();
+		mListView.setOnTouchListener(this);
+		mService = getServiceInterface();
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		final ListView list = getListView();
 		final CursorStatusesAdapter adapter = getListAdapter();
 		long last_viewed_id = -1;
 		{
-			final int position = list.getFirstVisiblePosition();
+			final int position = mListView.getFirstVisiblePosition();
 			if (position > 0) {
 				last_viewed_id = adapter.findItemIdByPosition(position);
 			}
 		}
 		super.onLoadFinished(loader, data);
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
-		if (mShouldRestorePositoin && remember_position) {
+		if (mShouldRestorePosition && remember_position) {
 			final long status_id = mPreferences.getLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, -1);
 			final int position = adapter.findItemPositionByStatusId(status_id);
-			if (position > -1 && position < list.getCount()) {
-				list.setSelection(position);
+			if (position > -1 && position < mListView.getCount()) {
+				mListView.setSelection(position);
 			}
-			mShouldRestorePositoin = false;
+			mShouldRestorePosition = false;
 			return;
 		}
 		if (mMinIdToRefresh > 0) {
 			final int position = adapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id
 					: mMinIdToRefresh);
-			if (position >= 0 && position < list.getCount()) {
-				list.setSelection(position);
+			if (position >= 0 && position < mListView.getCount()) {
+				mListView.setSelection(position);
 			}
 			mMinIdToRefresh = -1;
 		}
@@ -145,6 +153,17 @@ public class MentionsFragment extends CursorStatusesListFragment {
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
 		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
 		super.onStop();
+	}
+
+	@Override
+	public boolean onTouch(View view, MotionEvent ev) {
+		switch (ev.getAction()) {
+			case MotionEvent.ACTION_DOWN:{
+				mService.clearNotification(NOTIFICATION_ID_MENTIONS);
+				break;
+			}
+		}
+		return false;
 	}
 
 }

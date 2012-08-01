@@ -127,6 +127,8 @@
   <string name="quote_format">Format de citation</string>
   <string name="quote_format_message">\"[TEXT]\" sera remplacé par le tweet à citer.</string>
   <string name="direct_messages">Messages directs</string>
+  <string name="capital_on">ON</string>
+  <string name="capital_off">OFF</string>
   <string name="blocked_users">Utilisateurs bloqués</string>
   <string name="set_as_default">Définir par défaut</string>
   <string name="default_account">Compte par défaut</string>

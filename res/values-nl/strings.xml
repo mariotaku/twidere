@@ -98,6 +98,8 @@
   <string name="display_profile_image">Geef profielafbeeldingen weer</string>
   <string name="image_load_summary">Uitschakelen verhoogt lijst scroll snelheid en verlaagt dataverkeer.</string>
   <string name="in_reply_to">In antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
+  <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweet dit</string>
+  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> en <xliff:g id="retweet_count">%2$d</xliff:g> anderen retweet dit</string>
   <string name="reply_to">Antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="quote_user">Quote <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g>;</string>
@@ -165,6 +167,7 @@
   <string name="set_default_account_hint">Stel een standaardaccount in.</string>
   <string name="daily_trends">Dagelijkse trends</string>
   <string name="weekly_trends">Wekelijkse trends</string>
+  <string name="local_trends">Lokale trends</string>
   <string name="search_hint">Zoek tweets of gebruikers</string>
   <string name="remember_position">Onthoud positie</string>
   <string name="remember_position_summary">Onthoud lijst of tab positie voor afsluiten Twidere</string>
@@ -247,6 +250,30 @@
   <string name="item_2_hours">2 uur</string>
   <string name="item_4_hours">4 uur</string>
   <string name="inline_image_preview">Voorvertoning interne afbeelding</string>
+  <string name="solid_color_background">Effen kleur achtergrond</string>
   <string name="solid_color_background_summary">Dit kan nuttig zijn als het scherm van uw toestel een AMOLED is.</string>
+  <string name="followed_you">Volgde jou</string>
   <string name="user_list">Gebruikerslijst</string>
+  <string name="trends_location">Trends locatie</string>
+  <string name="trends_location_summary">Stel locatie in voor lokale trends.</string>
+  <string name="trends">Trends</string>
+  <string name="accounts">Accounts</string>
+  <string name="hires_profile_image">Hi-res profielafbeelding</string>
+  <string name="mention_this_user">Vermeld deze gebruiker</string>
+  <string name="signing_in_please_wait">Bezig met inloggen, even geduld alstublieft of druk op TERUG om te stoppen.</string>
+  <string name="force_ssl_connection">Forceer SSL-verbinding</string>
+  <string name="force_ssl_connection_summary">Werking met behulp van SSL in API en sommige andere verzoeken.</string>
+  <string name="connectivity">Connectiviteit</string>
+  <string name="add_member">Voeg lid toe</string>
+  <string name="add_success">Toevoegen van succes</string>
+  <string name="create_success">Succes maken</string>
+  <string name="new_user_list">Nieuwe gebruikerslijst</string>
+  <string name="is_public">Openbaar</string>
+  <string name="send_direct_message">Stuur DM</string>
+  <string name="extensions">Uitbreidingen</string>
+  <string name="open_with_extensions">Open met uitbreidingen</string>
+  <string name="view_user_list">Bekijk gebruikerslijst</string>
+  <string name="open">Open</string>
+  <string name="uninstall">Verwijder</string>
+  <string name="users_retweeted_this">Gebruikers retweet dit</string>
 </resources>

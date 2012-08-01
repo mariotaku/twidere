@@ -92,6 +92,7 @@ import org.mariotaku.twidere.fragment.UserListSubscriptionsFragment;
 import org.mariotaku.twidere.fragment.UserListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserListTypesFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
+import org.mariotaku.twidere.fragment.UserRetweetedStatusFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ImageSpec;
@@ -1217,6 +1218,15 @@ public final class Utils implements Constants {
 		return list;
 	}
 
+	public static int getStatusTypeIconRes(boolean is_fav, boolean has_location, boolean has_media) {
+		if (is_fav)
+			return R.drawable.ic_indicator_starred;
+		else if (has_media)
+			return R.drawable.ic_indicator_has_media;
+		else if (has_location) return R.drawable.ic_indicator_has_location;
+		return 0;
+	}
+
 	public static int getTableId(Uri uri) {
 		if (uri == null) return -1;
 		return CONTENT_PROVIDER_URI_MATCHER.match(uri);
@@ -1414,16 +1424,14 @@ public final class Utils implements Constants {
 			}
 			cur.close();
 		}
-		if (account_id != -1) return getTwitterInstance(context, account_id, include_entities, include_rts);
+		if (account_id > 0) return getTwitterInstance(context, account_id, include_entities, include_rts);
 		return null;
 	}
 
-	public static int getTypeIcon(boolean is_fav, boolean has_location, boolean has_media) {
-		if (is_fav)
-			return R.drawable.ic_indicator_starred;
-		else if (has_media)
-			return R.drawable.ic_indicator_has_media;
-		else if (has_location) return R.drawable.ic_indicator_has_location;
+	public static int getUserTypeIconRes(boolean is_verified, boolean is_protected) {
+		if (is_verified)
+			return R.drawable.ic_indicator_verified;
+		else if (is_protected) return R.drawable.ic_indicator_is_protected;
 		return 0;
 	}
 
@@ -1583,6 +1591,7 @@ public final class Utils implements Constants {
 			values.put(Statuses.NAME, name);
 			values.put(Statuses.SCREEN_NAME, screen_name);
 			values.put(Statuses.IS_PROTECTED, user.isProtected() ? 1 : 0);
+			values.put(Statuses.IS_VERIFIED, user.isVerified() ? 1 : 0);
 			values.put(Statuses.PROFILE_IMAGE_URL, profile_image_url);
 		}
 		values.put(Statuses.ACCOUNT_ID, account_id);
@@ -1746,7 +1755,7 @@ public final class Utils implements Constants {
 			final Fragment fragment = new UserFavoritesFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			if (user_id != -1) {
+			if (user_id > 0) {
 				args.putLong(INTENT_KEY_USER_ID, user_id);
 			}
 			if (screen_name != null) {
@@ -1759,7 +1768,7 @@ public final class Utils implements Constants {
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_FAVORITES);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (user_id != -1) {
+			if (user_id > 0) {
 				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
 			}
 			if (screen_name != null) {
@@ -1777,7 +1786,7 @@ public final class Utils implements Constants {
 			final Fragment fragment = new UserFollowersFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			if (user_id != -1) {
+			if (user_id > 0) {
 				args.putLong(INTENT_KEY_USER_ID, user_id);
 			}
 			if (screen_name != null) {
@@ -1790,7 +1799,7 @@ public final class Utils implements Constants {
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_FOLLOWERS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (user_id != -1) {
+			if (user_id > 0) {
 				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
 			}
 			if (screen_name != null) {
@@ -1808,7 +1817,7 @@ public final class Utils implements Constants {
 			final Fragment fragment = new UserFriendsFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			if (user_id != -1) {
+			if (user_id > 0) {
 				args.putLong(INTENT_KEY_USER_ID, user_id);
 			}
 			if (screen_name != null) {
@@ -1821,7 +1830,7 @@ public final class Utils implements Constants {
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_FRIENDS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (user_id != -1) {
+			if (user_id > 0) {
 				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
 			}
 			if (screen_name != null) {
@@ -2083,7 +2092,7 @@ public final class Utils implements Constants {
 			final Fragment fragment = new UserProfileFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			if (user_id != -1) {
+			if (user_id > 0) {
 				args.putLong(INTENT_KEY_USER_ID, user_id);
 			}
 			if (screen_name != null) {
@@ -2096,11 +2105,35 @@ public final class Utils implements Constants {
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (user_id != -1) {
+			if (user_id > 0) {
 				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
 			}
 			if (screen_name != null) {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	public static void openUserRetweetedStatus(Activity activity, long account_id, long status_id) {
+		if (activity == null) return;
+		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
+			final HomeActivity home_activity = (HomeActivity) activity;
+			final Fragment fragment = new UserRetweetedStatusFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (status_id > 0) {
+				args.putLong(INTENT_KEY_STATUS_ID, status_id);
+			}
+			fragment.setArguments(args);
+			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USERS_RETWEETED_STATUS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (status_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
 			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
@@ -2113,7 +2146,7 @@ public final class Utils implements Constants {
 			final Fragment fragment = new UserTimelineFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			if (user_id != -1) {
+			if (user_id > 0) {
 				args.putLong(INTENT_KEY_USER_ID, user_id);
 			}
 			if (screen_name != null) {
@@ -2126,7 +2159,7 @@ public final class Utils implements Constants {
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_TIMELINE);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (user_id != -1) {
+			if (user_id > 0) {
 				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
 			}
 			if (screen_name != null) {

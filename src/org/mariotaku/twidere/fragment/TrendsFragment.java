@@ -149,7 +149,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-		if (isAdded()) {
+		if (getActivity() != null && isAdded()) {
 			getLoaderManager().restartLoader(0, null, this);
 		}
 	}

@@ -53,6 +53,10 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 				openUserListDetails(activity, account_id, -1, -1, mention_list[0], mention_list[1]);
 				break;
 			}
+			case TwidereLinkify.LINK_TYPE_CASHTAG: {
+				openTweetSearch(activity, account_id, link);
+				break;
+			}
 		}
 	}
 }

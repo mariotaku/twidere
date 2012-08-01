@@ -30,6 +30,7 @@ import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTimestampFromDate;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedUserName;
@@ -209,7 +210,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mNameView.setText(user.getName());
 		mScreenNameView.setText(user.getScreenName());
 		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(
-				user.isProtected() ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
+				getUserTypeIconRes(user.isVerified(), user.isProtected()), 0, 0, 0);
 		final String description = user.getDescription();
 		mDescriptionContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(description) ? View.VISIBLE
 				: View.GONE);
@@ -659,6 +660,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_FRIENDSHIP_CHANGED);
+		filter.addAction(BROADCAST_BLOCKSTATE_CHANGED);
 		filter.addAction(BROADCAST_PROFILE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
 	}

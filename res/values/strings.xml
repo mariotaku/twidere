@@ -276,5 +276,6 @@
 	<string name="view_user_list">View user list</string>
 	<string name="open">Open</string>
 	<string name="uninstall">Uninstall</string>
+	<string name="users_retweeted_this">Users retweeted this</string>
 
 </resources>

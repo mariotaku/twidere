@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
+import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.util.List;
 
@@ -44,19 +45,38 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDiskIOException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 
 public final class TweetStoreProvider extends ContentProvider implements Constants {
 
 	private SQLiteDatabase database;
+
+	private final Handler mErrorToastHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.obj instanceof Exception) {
+				showErrorToast(getContext(), (Exception) msg.obj, false);
+			}
+			super.handleMessage(msg);
+		}
+
+	};
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		final String table = getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
-			result = database.delete(table, selection, selectionArgs);
+			try {
+				result = database.delete(table, selection, selectionArgs);
+			} catch (final SQLiteDiskIOException e) {
+				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
+			}
 		}
 		if (result > 0) {
 			onDatabaseUpdated(uri, false);
@@ -83,7 +103,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			return null;
 		final long row_id = database.insert(table, null, values);
 		onDatabaseUpdated(uri, true);
-		return Uri.withAppendedPath(uri, String.valueOf(row_id));
+		try {
+			return Uri.withAppendedPath(uri, String.valueOf(row_id));
+		} catch (final SQLiteDiskIOException e) {
+			mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
+		}
+		return null;
 	}
 
 	@Override
@@ -119,7 +144,11 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			}
 			sql_builder.append(" ORDER BY "
 					+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
-			return database.rawQuery(sql_builder.toString(), selectionArgs);
+			try {
+				return database.rawQuery(sql_builder.toString(), selectionArgs);
+			} catch (final SQLiteDiskIOException e) {
+				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
+			}
 		} else if (TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME.equals(table)) {
 			// read-only here.
 			final List<String> segments = uri.getPathSegments();
@@ -142,7 +171,11 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			}
 			sql_builder.append(" ORDER BY "
 					+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
-			return database.rawQuery(sql_builder.toString(), selectionArgs);
+			try {
+				return database.rawQuery(sql_builder.toString(), selectionArgs);
+			} catch (final SQLiteDiskIOException e) {
+				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
+			}
 		} else if (TABLE_DIRECT_MESSAGES.equals(table)) {
 			// read-only here.
 			final StringBuilder sql_builder = new StringBuilder();
@@ -158,12 +191,26 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				sql_builder.append(" WHERE " + selection);
 			}
 			sql_builder.append(" ORDER BY " + (sortOrder != null ? sortOrder : DirectMessages.DEFAULT_SORT_ORDER));
-			return database.rawQuery(sql_builder.toString(), selectionArgs);
-		} else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) // read-only
-																			// here.
-			return database.rawQuery(DirectMessages.ConversationsEntry.buildSQL(parseInt(uri.getLastPathSegment())),
-					null);
-		return database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
+			try {
+				return database.rawQuery(sql_builder.toString(), selectionArgs);
+			} catch (final SQLiteDiskIOException e) {
+				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
+			}
+		} else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) {
+			try {
+				return database.rawQuery(
+						DirectMessages.ConversationsEntry.buildSQL(parseInt(uri.getLastPathSegment())), null);
+			} catch (final SQLiteDiskIOException e) {
+				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
+			}
+		} else {
+			try {
+				return database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
+			} catch (final SQLiteDiskIOException e) {
+				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -179,7 +226,11 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) // read-only
 																				// here.
 				return 0;
-			result = database.update(table, values, selection, selectionArgs);
+			try {
+				result = database.update(table, values, selection, selectionArgs);
+			} catch (final SQLiteDiskIOException e) {
+				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
+			}
 		}
 		if (result > 0) {
 			onDatabaseUpdated(uri, false);
@@ -311,20 +362,21 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		}
 
 		private void handleVersionChange(SQLiteDatabase db) {
-			safeUpgrade(db, TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, true);
-			safeUpgrade(db, TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, true);
-			safeUpgrade(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, true);
-			safeUpgrade(db, TABLE_DRAFTS, Drafts.COLUMNS, Drafts.TYPES, true);
-			safeUpgrade(db, TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES, true);
-			safeUpgrade(db, TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES, true);
-			safeUpgrade(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true);
-			safeUpgrade(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true);
-			safeUpgrade(db, TABLE_DIRECT_MESSAGES_INBOX, DirectMessages.Inbox.COLUMNS, DirectMessages.Inbox.TYPES, true);
+			safeUpgrade(db, TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, true, false);
+			safeUpgrade(db, TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, true, true);
+			safeUpgrade(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, true, true);
+			safeUpgrade(db, TABLE_DRAFTS, Drafts.COLUMNS, Drafts.TYPES, true, false);
+			safeUpgrade(db, TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES, true, true);
+			safeUpgrade(db, TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES, true, false);
+			safeUpgrade(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true, false);
+			safeUpgrade(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true, false);
+			safeUpgrade(db, TABLE_DIRECT_MESSAGES_INBOX, DirectMessages.Inbox.COLUMNS, DirectMessages.Inbox.TYPES,
+					true, true);
 			safeUpgrade(db, TABLE_DIRECT_MESSAGES_OUTBOX, DirectMessages.Outbox.COLUMNS, DirectMessages.Outbox.TYPES,
-					true);
-			safeUpgrade(db, TABLE_TRENDS_DAILY, CachedTrends.Daily.COLUMNS, CachedTrends.Daily.TYPES, true);
-			safeUpgrade(db, TABLE_TRENDS_WEEKLY, CachedTrends.Weekly.COLUMNS, CachedTrends.Weekly.TYPES, true);
-			safeUpgrade(db, TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true);
+					true, true);
+			safeUpgrade(db, TABLE_TRENDS_DAILY, CachedTrends.Daily.COLUMNS, CachedTrends.Daily.TYPES, true, true);
+			safeUpgrade(db, TABLE_TRENDS_WEEKLY, CachedTrends.Weekly.COLUMNS, CachedTrends.Weekly.TYPES, true, true);
+			safeUpgrade(db, TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true, true);
 		}
 
 	}

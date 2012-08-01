@@ -88,8 +88,8 @@
   <string name="storage">ストレージ</string>
   <string name="database_item_limit">アイテム制限</string>
   <string name="database_item_limit_summary">各アカウントのデータベースに格納されているアイテムの上限。もっと小さな値に設定すると、領域を節約して読み込み速度を上げることができる。</string>
-  <string name="clear_cache">カッシュを消去</string>
-  <string name="clear_cache_summary">プロフィール画像のカッシュを消去</string>
+  <string name="clear_cache">キャッシュを消去</string>
+  <string name="clear_cache_summary">プロフィール画像のキャッシュを消去</string>
   <string name="clear_databases">データベースをクリア</string>
   <string name="clear_databases_summary">データを完全に消去する。ご心配なく、あなたのアカウント情報は失いません。</string>
   <string name="look_and_feel">テーマ</string>
@@ -152,7 +152,7 @@
   <string name="name">名前</string>
   <string name="refresh">再読込</string>
   <string name="retry">再試行</string>
-  <string name="more">もっと</string>
+  <string name="more">設定</string>
   <string name="quote_format">引用形式</string>
   <string name="quote_format_message">\"[TEXT]\" は引用するツイートに書き換えられる。</string>
   <string name="direct_messages">ダイレクトメッセージ</string>
@@ -186,7 +186,7 @@
   <string name="proxy_port">ポート番号</string>
   <string name="block">ブロック</string>
   <string name="unblock">ブロックを解除</string>
-  <string name="report_for_spam">スパムとして報告</string>
+  <string name="report_for_spam">スパムを報告</string>
   <string name="mute">非表示</string>
   <string name="user_muted">このユーザーをフィルターリストに追加する。ホーム / つながり にこのユーザーのツイートを非表示にする。</string>
   <string name="inbox">受信箱</string>
@@ -195,12 +195,12 @@
   <string name="stop_service_after_closed">終了してサービスを停止</string>
   <string name="stop_service_after_closed_summary">無効にするほうが良いです。</string>
   <string name="other_settings">他の設定</string>
-  <string name="refresh_and_notifications">再読み込み &amp; 通知</string>
-  <string name="auto_refresh">自動再読み込み</string>
+  <string name="refresh_and_notifications">更新 &amp; 通知</string>
+  <string name="auto_refresh">自動更新</string>
   <string name="refresh_interval">更新間隔</string>
   <string name="refresh_interval_summary">短い更新間隔は消費電力やモバイルデータ通信量を上げます。慎重に設定してください。</string>
   <string name="content_to_refresh">コンテンツ</string>
-  <string name="content_to_nofity">通知のコンテンツを変更することができる。</string>
+  <string name="content_to_nofity">通知のコンテンツを変更</string>
   <string name="notifications_type">通知のタイプ</string>
   <string name="notifications_type_summary">システム設定（音、振動）とは関係ありません。</string>
   <string name="sound">音</string>
@@ -260,4 +260,20 @@
   <string name="accounts">アカウント</string>
   <string name="hires_profile_image">高解像度プロファイル画像</string>
   <string name="mention_this_user">このユーザー宛にツイート</string>
+  <string name="signing_in_please_wait">サインインしています、しばらくお待ちください。もう一度戻るボタンを押すと終了します。</string>
+  <string name="force_ssl_connection">SSL通信の強制設定</string>
+  <string name="force_ssl_connection_summary">APIと他のリクエストを強制的にSSL通信にする</string>
+  <string name="connectivity">接続性</string>
+  <string name="add_member">ユーザーを追加</string>
+  <string name="add_success">追加しました</string>
+  <string name="create_success">作成しました</string>
+  <string name="new_user_list">新規リスト作成</string>
+  <string name="is_public">公開</string>
+  <string name="send_direct_message">DMを送信</string>
+  <string name="extensions">拡張機能</string>
+  <string name="open_with_extensions">拡張機能で開く</string>
+  <string name="view_user_list">ユーザーリストを表示</string>
+  <string name="open">開く</string>
+  <string name="uninstall">アンインストール</string>
+  <string name="users_retweeted_this">ユーザーがこれをリツイートしました</string>
 </resources>

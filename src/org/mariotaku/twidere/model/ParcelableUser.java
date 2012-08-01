@@ -46,7 +46,7 @@ public class ParcelableUser implements Parcelable {
 
 	public final long account_id, user_id, created_at, position;
 
-	public final boolean is_protected;
+	public final boolean is_protected, is_verified;
 
 	public final String description, name, screen_name, location, profile_image_url_string;
 
@@ -69,6 +69,7 @@ public class ParcelableUser implements Parcelable {
 		user_id = in.readLong();
 		created_at = in.readLong();
 		is_protected = in.readInt() == 1;
+		is_verified = in.readInt() == 1;
 		name = in.readString();
 		screen_name = in.readString();
 		description = in.readString();
@@ -87,6 +88,7 @@ public class ParcelableUser implements Parcelable {
 		user_id = user.getId();
 		created_at = getTime(user.getCreatedAt());
 		is_protected = user.isProtected();
+		is_verified = user.isVerified();
 		name = user.getName();
 		screen_name = user.getScreenName();
 		description = user.getDescription();
@@ -112,6 +114,7 @@ public class ParcelableUser implements Parcelable {
 		out.writeLong(user_id);
 		out.writeLong(created_at);
 		out.writeInt(is_protected ? 1 : 0);
+		out.writeInt(is_verified ? 1 : 0);
 		out.writeString(name);
 		out.writeString(screen_name);
 		out.writeString(description);

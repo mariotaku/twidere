@@ -43,10 +43,12 @@ public final class DatabaseUpgradeHelper {
 	private static final int FIELD_TYPE_BLOB = 4;
 
 	public static void safeUpgrade(SQLiteDatabase db, String table, String[] new_cols, String[] new_types,
-			boolean fast_upgrade) {
+			boolean fast_upgrade, boolean drop_directly) {
 
 		if (new_cols == null || new_types == null || new_cols.length != new_types.length)
 			throw new IllegalArgumentException("Invalid parameters, length of columns and types not match.");
+
+		final List<ContentValues> values_list = new ArrayList<ContentValues>();
 
 		// First, create the table if not exists.
 		db.execSQL(createTable(table, new_cols, new_types, true));
@@ -67,49 +69,52 @@ public final class DatabaseUpgradeHelper {
 			}
 		}
 
-		final List<ContentValues> values_list = new ArrayList<ContentValues>();
+		// If drop_directly set to true, we will not backup any data actually.
+		if (!drop_directly) {
 
-		while (!cur.isAfterLast()) {
-			final ContentValues values = new ContentValues();
-			final int length = new_cols.length;
-			for (int i = 0; i < length; i++) {
-				final String new_col = new_cols[i];
-				final String new_type = new_types[i];
-				if (BaseColumns._ID.equals(new_col)) {
-					continue;
-				}
+			while (!cur.isAfterLast()) {
+				final ContentValues values = new ContentValues();
+				final int length = new_cols.length;
+				for (int i = 0; i < length; i++) {
+					final String new_col = new_cols[i];
+					final String new_type = new_types[i];
+					if (BaseColumns._ID.equals(new_col)) {
+						continue;
+					}
 
-				final int idx = cur.getColumnIndex(new_col);
+					final int idx = cur.getColumnIndex(new_col);
 
-				if (ArrayUtils.contains(old_cols, new_col)) {
-					final String old_type = getTypeString(db, table, new_col);
-					final boolean compatible = isTypeCompatible(old_type, new_type, false);
-					if (compatible && idx > -1) {
-						switch (getTypeInt(new_type)) {
-							case FIELD_TYPE_INTEGER:
-								values.put(new_col, cur.getLong(idx));
-								break;
-							case FIELD_TYPE_FLOAT:
-								values.put(new_col, cur.getFloat(idx));
-								break;
-							case FIELD_TYPE_STRING:
-								values.put(new_col, cur.getString(idx));
-								break;
-							case FIELD_TYPE_BLOB:
-								values.put(new_col, cur.getBlob(idx));
-								break;
-							case FIELD_TYPE_NULL:
-							default:
-								break;
+					if (ArrayUtils.contains(old_cols, new_col)) {
+						final String old_type = getTypeString(db, table, new_col);
+						final boolean compatible = isTypeCompatible(old_type, new_type, false);
+						if (compatible && idx > -1) {
+							switch (getTypeInt(new_type)) {
+								case FIELD_TYPE_INTEGER:
+									values.put(new_col, cur.getLong(idx));
+									break;
+								case FIELD_TYPE_FLOAT:
+									values.put(new_col, cur.getFloat(idx));
+									break;
+								case FIELD_TYPE_STRING:
+									values.put(new_col, cur.getString(idx));
+									break;
+								case FIELD_TYPE_BLOB:
+									values.put(new_col, cur.getBlob(idx));
+									break;
+								case FIELD_TYPE_NULL:
+								default:
+									break;
+							}
 						}
 					}
-				}
 
+				}
+				values_list.add(values);
+				cur.moveToNext();
 			}
-			values_list.add(values);
-			cur.moveToNext();
 		}
 		cur.close();
+
 		// OK, now we got all data can be moved from old table, so we will
 		// delete the old table and create a new one.
 		db.execSQL("DROP TABLE IF EXISTS " + table);

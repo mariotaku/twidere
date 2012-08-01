@@ -60,10 +60,17 @@
 		</PreferenceScreen>
 		<PreferenceScreen
 			android:summary="Debarun Sarkar"
-			android:title="हिन्दी">
+			android:title="Hindi">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=55809644"/>
+		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="lipilee"
+			android:title="Hungarian">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="twidere://user?user_id=14698389"/>
 		</PreferenceScreen>
 		<PreferenceScreen android:title="Other Languages">
 			<intent

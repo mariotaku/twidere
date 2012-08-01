@@ -54,7 +54,7 @@ public class Extractor {
 		final Matcher matcher = Regex.VALID_CASHTAG.matcher(text);
 
 		while (matcher.find()) {
-			extracted.add(new Entity(matcher, Entity.Type.CASHTAG, Regex.VALID_CASHTAG_GROUP_CASHTAG));
+			extracted.add(new Entity(matcher, Entity.Type.CASHTAG, Regex.VALID_CASHTAG_GROUP_CASHTAG_FULL));
 		}
 
 		return extracted;

@@ -78,7 +78,6 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 				finish();
 				break;
 		}
-
 	}
 
 	@Override
@@ -138,12 +137,10 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		if (mCursor == null || mCursor.isClosed()) return;
 		final int choise_mode = mListView.getChoiceMode();
 		if (choise_mode == ListView.CHOICE_MODE_NONE) return;
 
-		if (choise_mode == ListView.CHOICE_MODE_SINGLE) {
-			mActivatedUsersId.clear();
-		}
 		final SparseBooleanArray checkedpositions = mListView.getCheckedItemPositions();
 		final boolean checked = checkedpositions.get(position, false);
 		mCursor.moveToPosition(position);

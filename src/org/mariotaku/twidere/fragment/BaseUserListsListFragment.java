@@ -162,7 +162,7 @@ abstract class BaseUserListsListFragment extends BaseListFragment implements Loa
 		mSelectedUserList = null;
 		final UserListsAdapter adapter = getListAdapter();
 		if (adapter.isGap(position)) return false;
-		mSelectedUserList = adapter.getItem(position);
+		mSelectedUserList = adapter.findItem(id);
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user_list);
 		mPopupMenu.setOnMenuItemClickListener(this);

@@ -64,9 +64,10 @@ public class TwidereLinkify {
 	public static final int LINK_TYPE_LINK = 4;
 	public static final int LINK_TYPE_ALL_AVAILABLE_IMAGE = 5;
 	public static final int LINK_TYPE_LIST = 6;
+	public static final int LINK_TYPE_CASHTAG = 7;
 
 	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_MENTION_LIST, LINK_TYPE_HASHTAG,
-			LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_LINK, LINK_TYPE_ALL_AVAILABLE_IMAGE
+			LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_LINK, LINK_TYPE_ALL_AVAILABLE_IMAGE, LINK_TYPE_CASHTAG
 
 	};
 
@@ -228,6 +229,10 @@ public class TwidereLinkify {
 				}
 				break;
 			}
+			case LINK_TYPE_CASHTAG: {
+				addCashtagLinks(string);
+				break;
+			}
 			default: {
 				return;
 			}
@@ -244,6 +249,22 @@ public class TwidereLinkify {
 
 	public void setOnLinkClickListener(OnLinkClickListener listener) {
 		mOnLinkClickListener = listener;
+	}
+
+	private final boolean addCashtagLinks(Spannable spannable) {
+		boolean hasMatches = false;
+		final Matcher matcher = Regex.VALID_CASHTAG.matcher(spannable);
+
+		while (matcher.find()) {
+			final int start = matcherStart(matcher, Regex.VALID_CASHTAG_GROUP_CASHTAG_FULL);
+			final int end = matcherEnd(matcher, Regex.VALID_CASHTAG_GROUP_CASHTAG_FULL);
+			final String url = matcherGroup(matcher, Regex.VALID_CASHTAG_GROUP_TAG);
+
+			applyLink(url, start, end, spannable, LINK_TYPE_HASHTAG);
+			hasMatches = true;
+		}
+
+		return hasMatches;
 	}
 
 	private final boolean addHashtagLinks(Spannable spannable) {

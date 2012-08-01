@@ -35,6 +35,8 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
@@ -63,7 +65,6 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.UserList;
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -90,21 +91,22 @@ public class TwidereService extends Service implements Constants {
 	private final ServiceStub mBinder = new ServiceStub(this);
 
 	private AsyncTaskManager mAsyncTaskManager;
+	private SharedPreferences mPreferences;
+	private NotificationManager mNotificationManager;
+	private AutoRefreshTask mAutoRefreshTask;
+	private AutoRefreshHandler mAutoRefreshHandler;
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
-
 	private int mStoreStatusesTaskId, mStoreMentionsTaskId;
-
-	private SharedPreferences mPreferences;
-
 	private int mGetReceivedDirectMessagesTaskId, mGetSentDirectMessagesTaskId;
-
 	private int mStoreReceivedDirectMessagesTaskId, mStoreSentDirectMessagesTaskId;
-
 	private int mGetLocalTrendsTaskId, mGetWeeklyTrendsTaskId, mGetDailyTrendsTaskId;
-
 	private int mStoreLocalTrendsTaskId, mStoreWeeklyTrendsTaskId, mStoreDailyTrendsTaskId;
-	private NotificationManager mNotificationManager;
+
+	private boolean mShouldShutdown = false;
+
+	private static final int ACTION_AUTO_REFRESH = 1;
+
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -124,46 +126,9 @@ public class TwidereService extends Service implements Constants {
 
 	};
 
-	private boolean mShouldShutdown = false;
+	private Timer mAutoRefreshTimer = new Timer();;
 
-	private static final int ACTION_AUTO_REFRESH = 1;
-
-	@SuppressLint("HandlerLeak")
-	private final Handler mHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-				case ACTION_AUTO_REFRESH: {
-					final long[] activated_ids = getActivatedAccountIds(TwidereService.this);
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
-						if (!isHomeTimelineRefreshing()) {
-							getHomeTimeline(activated_ids, null, true);
-						}
-					}
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
-						if (!isMentionsRefreshing()) {
-							getMentions(activated_ids, null, true);
-						}
-					}
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
-						if (!isReceivedDirectMessagesRefreshing()) {
-							getReceivedDirectMessages(activated_ids, null, true);
-						}
-					}
-					mHandler.removeMessages(ACTION_AUTO_REFRESH);
-					final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
-					if (update_interval <= 0 || !mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-						break;
-					}
-					mHandler.sendEmptyMessageDelayed(ACTION_AUTO_REFRESH, update_interval);
-					break;
-				}
-			}
-		}
-	};
-
-	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
+	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;;
 
 	public int addUserListMember(long account_id, int list_id, long user_id, String screen_name) {
 		final AddUserListMemberTask task = new AddUserListMemberTask(account_id, list_id, user_id, screen_name);
@@ -343,9 +308,11 @@ public class TwidereService extends Service implements Constants {
 		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		mAutoRefreshHandler = new AutoRefreshHandler(this);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		filter.addAction(BROADCAST_NOTIFICATION_CLEARED);
 		registerReceiver(mStateReceiver, filter);
+
 		startAutoRefresh();
 	}
 
@@ -387,17 +354,33 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public boolean startAutoRefresh() {
+		if (mAutoRefreshTimer != null) {
+			mAutoRefreshTimer.cancel();
+		}
+		mAutoRefreshTimer = new Timer();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
 			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
 			if (update_interval <= 0) return false;
-			mHandler.sendEmptyMessageDelayed(ACTION_AUTO_REFRESH, update_interval);
+			mAutoRefreshTask = new AutoRefreshTask(mAutoRefreshHandler);
+			mAutoRefreshTimer.scheduleAtFixedRate(mAutoRefreshTask, update_interval, update_interval);
 			return true;
 		}
 		return false;
 	}
 
 	public void stopAutoRefresh() {
-		mHandler.removeMessages(ACTION_AUTO_REFRESH);
+		if (mAutoRefreshTimer != null) {
+			mAutoRefreshTimer.cancel();
+			mAutoRefreshTimer = null;
+		}
+	}
+
+	public boolean test() {
+		try {
+			return startService(new Intent(INTENT_ACTION_SERVICE)) != null;
+		} catch (final Exception e) {
+			return false;
+		}
 	}
 
 	public int updateProfile(long account_id, String name, String url, String location, String description) {
@@ -521,6 +504,57 @@ public class TwidereService extends Service implements Constants {
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
+		}
+
+	}
+
+	private final static class AutoRefreshHandler extends Handler {
+
+		private final TwidereService mContext;
+		private final SharedPreferences mPreferences;
+
+		public AutoRefreshHandler(TwidereService context) {
+			mContext = context;
+			mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case ACTION_AUTO_REFRESH: {
+					final long[] activated_ids = getActivatedAccountIds(mContext);
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
+						if (!mContext.isHomeTimelineRefreshing()) {
+							mContext.getHomeTimeline(activated_ids, null, true);
+						}
+					}
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
+						if (!mContext.isMentionsRefreshing()) {
+							mContext.getMentions(activated_ids, null, true);
+						}
+					}
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
+						if (!mContext.isReceivedDirectMessagesRefreshing()) {
+							mContext.getReceivedDirectMessages(activated_ids, null, true);
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	private final static class AutoRefreshTask extends TimerTask {
+
+		private final AutoRefreshHandler mHandler;
+
+		public AutoRefreshTask(AutoRefreshHandler handler) {
+			mHandler = handler;
+		}
+
+		@Override
+		public void run() {
+			mHandler.sendEmptyMessage(ACTION_AUTO_REFRESH);
 		}
 
 	}
@@ -1928,7 +1962,7 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		public boolean test() {
-			return true;
+			return mService.get().test();
 		}
 
 		@Override

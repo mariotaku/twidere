@@ -167,6 +167,7 @@
   <string name="set_default_account_hint">कृपया एक डिफ़ॉल्ट खाता सेट करें |</string>
   <string name="daily_trends">दैनिक रुझान</string>
   <string name="weekly_trends">साप्ताहिक रुझान</string>
+  <string name="local_trends">स्थानीय रुझान</string>
   <string name="search_hint">उपयोगकर्ताओं या ट्वीट्स खोजे</string>
   <string name="remember_position">स्थिति याद रखें</string>
   <string name="remember_position_summary">ट्विदेर बंद करने से पहले सूची/स्थिति टैब याद रखे</string>
@@ -253,4 +254,26 @@
   <string name="solid_color_background_summary">यह उपयोगी है अगर अपने डिवाइस की स्क्रीन AMOLED है|</string>
   <string name="followed_you">ने फॉलो किया</string>
   <string name="user_list">उपयोगकर्ता की सूची</string>
+  <string name="trends_location">रुझान स्थान</string>
+  <string name="trends_location_summary">स्थानीय रुझान के लिए स्थान निर्धारित करें।</string>
+  <string name="trends">रुझान</string>
+  <string name="accounts">खातों</string>
+  <string name="hires_profile_image">उच्च रिज़ॉल्यूशन प्रोफ़ाइल छवि</string>
+  <string name="mention_this_user">इस उपयोगकर्ता का उल्लेख करे</string>
+  <string name="signing_in_please_wait">साइन इन हो रहा है, कृपया प्रतीक्षा करें या BACK फिर से दबाये छोड़नेके लिए|</string>
+  <string name="force_ssl_connection">SSL कनेक्शन प्रभावित करे</string>
+  <string name="force_ssl_connection_summary">SSL API तथा कुछ अन्य अनुरोधो के लिए प्रभावित करे|</string>
+  <string name="connectivity">कनेक्टिविटी</string>
+  <string name="add_member">सदस्य जोड़ें</string>
+  <string name="add_success">जोड़ना सफल</string>
+  <string name="create_success">बनाना सफल</string>
+  <string name="new_user_list">नई उपयोगकर्ता सूची</string>
+  <string name="is_public">सार्वजनिक</string>
+  <string name="send_direct_message">DM भेजें</string>
+  <string name="extensions">एक्सटेंशन</string>
+  <string name="open_with_extensions">एक्सटेंशन के साथ खोले</string>
+  <string name="view_user_list">उपयोगकर्ता सूची देखें</string>
+  <string name="open">खोले</string>
+  <string name="uninstall">अनइनस्टाल</string>
+  <string name="users_retweeted_this">उपयोगकर्ताओं ने यह रीट्वीट किया</string>
 </resources>

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="32"
+	android:versionCode="33"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -267,6 +267,9 @@
 					android:scheme="twidere"/>
 				<data
 					android:host="list_memberships"
+					android:scheme="twidere"/>
+				<data
+					android:host="users_retweeted_status"
 					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>

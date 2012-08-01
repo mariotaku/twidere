@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item
+		android:id="@id/edit"
+		android:icon="@drawable/ic_menu_extension"
+		android:title="@string/extensions"/>
+	<item
+		android:icon="@drawable/ic_menu_delete"
+		android:title="@string/delete">
+		<menu>
+			<item
+				android:icon="@drawable/ic_menu_close_clear_cancel"
+				android:title="@android:string/cancel"/>
+			<item
+				android:id="@id/delete"
+				android:icon="@drawable/ic_menu_delete"
+				android:title="@string/delete"/>
+		</menu>
+	</item>
+
+</menu>

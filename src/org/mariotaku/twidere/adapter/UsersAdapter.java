@@ -68,6 +68,15 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		return null;
 	}
 
+	public int findItemPositionByUserId(long user_id) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
+			final ParcelableUser item = getItem(i);
+			if (item.user_id == user_id) return i;
+		}
+		return -1;
+	}
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);

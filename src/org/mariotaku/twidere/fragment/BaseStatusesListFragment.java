@@ -324,7 +324,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		}
 
 	}
-
+	
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		switch (scrollState) {

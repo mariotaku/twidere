@@ -26,7 +26,8 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
-import static org.mariotaku.twidere.util.Utils.getTypeIcon;
+import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
@@ -84,6 +85,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
 		final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
 		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
+		final boolean is_verified = cursor.getShort(mIndices.is_verified) == 1;
 
 		final boolean has_media = preview.has_image;
 		final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
@@ -107,12 +109,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			holder.setTextSize(mTextSize);
 
 			holder.text.setText(unescapeHTML(text));
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(
-					is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(is_verified, is_protected), 0, 0, 0);
 			holder.name.setText(name);
 			holder.time.setText(formatToShortTimeString(mContext, status_timestamp));
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					getTypeIcon(is_favorite, has_location, has_media), 0);
+					getStatusTypeIconRes(is_favorite, has_location, has_media), 0);
 
 			holder.reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
 			if (is_retweet) {

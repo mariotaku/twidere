@@ -49,7 +49,7 @@ public class ExtensionsListActivity extends BaseActivity implements Constants, L
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base_list);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -301,7 +301,7 @@ public class ExtensionsListActivity extends BaseActivity implements Constants, L
 
 			final ResolveInfo info = getItem(position);
 			viewholder.text1.setText(info.loadLabel(pm));
-			viewholder.text2.setText(info.activityInfo.applicationInfo.loadDescription(pm));
+			viewholder.text2.setText(info.activityInfo.applicationInfo.loadLabel(pm));
 			viewholder.icon.setImageDrawable(info.loadIcon(pm));
 			return view;
 		}

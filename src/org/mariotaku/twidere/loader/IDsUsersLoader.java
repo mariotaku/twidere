@@ -38,11 +38,17 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 
 	private final long mMaxId, mAccountId;
 	private IDs mIDs;
+	private final SharedPreferences mPreferences;
+	private int mLoadItemLimit;
 
 	public IDsUsersLoader(Context context, long account_id, long max_id, List<ParcelableUser> users_list) {
 		super(context, account_id, users_list);
 		mAccountId = account_id;
 		mMaxId = max_id;
+		mPreferences = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final int prefs_load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
+				PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
+		mLoadItemLimit = prefs_load_item_limit > 100 ? 100 : prefs_load_item_limit;
 	}
 
 	public abstract IDs getIDs() throws TwitterException;
@@ -51,15 +57,14 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		return mIDs != null ? mIDs.getIDs() : null;
 	}
 
+	public int getLoadItemLimit() {
+		return mLoadItemLimit;
+	}
+
 	@Override
 	public List<ParcelableUser> getUsers() throws TwitterException {
 		final Twitter twitter = getTwitter();
 		if (twitter == null) return null;
-		final SharedPreferences prefs = getContext()
-				.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final int prefs_load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
-				PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-		final int load_item_limit = prefs_load_item_limit > 100 ? 100 : prefs_load_item_limit;
 		if (mIDs == null) {
 			mIDs = getIDs();
 			if (mIDs == null) return null;
@@ -68,7 +73,7 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		final int max_id_idx = mMaxId > 0 ? ArrayUtils.indexOf(ids, mMaxId) : 0;
 		if (max_id_idx < 0) return null;
 		if (max_id_idx == ids.length - 1) return Collections.emptyList();
-		final int count = max_id_idx + load_item_limit < ids.length ? load_item_limit : ids.length - max_id_idx;
+		final int count = max_id_idx + mLoadItemLimit < ids.length ? mLoadItemLimit : ids.length - max_id_idx;
 		final long[] ids_to_load = new long[count];
 		int temp_idx = max_id_idx;
 		for (int i = 0; i < count; i++) {
