@@ -15,27 +15,18 @@
 			android:id="@+id/left_pane_container"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="5">
+			android:layout_weight="@integer/pane_left_content_weight">
 
 			<FrameLayout
 				android:id="@+id/main"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent">
 
-				<org.mariotaku.twidere.view.ExtendedViewPager
-					android:id="@+id/pager"
+				<ListView
+					android:id="@android:id/list"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:layerType="software"/>
-
-				<ImageButton
-					android:id="@+id/button_compose"
-					android:layout_width="56dp"
-					android:layout_height="56dp"
-					android:layout_gravity="bottom|right"
-					android:contentDescription="@string/compose"
-					android:onClick="onClick"
-					android:src="@drawable/ic_menu_tweet"/>
 			</FrameLayout>
 
 			<FrameLayout
@@ -47,7 +38,7 @@
 		<View
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="3"
+			android:layout_weight="@integer/pane_left_shadow_weight"
 			android:background="@drawable/two_panes_shadow_left"/>
 	</LinearLayout>
 
@@ -61,14 +52,14 @@
 		<View
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="3"
+			android:layout_weight="@integer/pane_right_shadow_weight"
 			android:background="@drawable/two_panes_shadow_right"/>
 
 		<org.mariotaku.twidere.view.ExtendedFrameLayout
 			android:id="@+id/right_pane_container"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="5">
+			android:layout_weight="@integer/pane_right_content_weight">
 
 			<FrameLayout
 				android:id="@+id/right_pane"

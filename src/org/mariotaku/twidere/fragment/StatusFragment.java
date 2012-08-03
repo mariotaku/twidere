@@ -120,6 +120,11 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				if (status_id > 0 && status_id == mStatusId) {
 					getStatus(true);
 				}
+			} else if (BROADCAST_RETWEET_CHANGED.equals(action)) {
+				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
+				if (status_id > 0 && status_id == mStatusId) {
+					getStatus(true);
+				}
 			}
 		}
 	};
@@ -397,6 +402,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_FRIENDSHIP_CHANGED);
 		filter.addAction(BROADCAST_FAVORITE_CHANGED);
+		filter.addAction(BROADCAST_RETWEET_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 	}
 

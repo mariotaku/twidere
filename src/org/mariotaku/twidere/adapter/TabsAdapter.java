@@ -20,8 +20,10 @@
 package org.mariotaku.twidere.adapter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.view.TabPageIndicator.TitleProvider;
 
 import android.content.Context;
@@ -33,22 +35,37 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider {
 
-	private final ArrayList<TabInfo> mTabsInfo = new ArrayList<TabInfo>();
+	private final ArrayList<TabSpec> mTabsInfo = new ArrayList<TabSpec>();
 
 	private final Context mContext;
 
 	public TabsAdapter(Context context, FragmentManager fm) {
 		super(fm);
 		mContext = context;
+		clear();
+	}
+	
+	public void clear() {
 		mTabsInfo.clear();
+		notifyDataSetChanged();
 	}
 
+	public void addTab(Class<? extends Fragment> cls, Bundle args, String name, Integer icon, int position) {
+		addTab(new TabSpec(name, icon, cls, args, position));
+	}
+	
+	@Deprecated
 	public void addTab(Class<? extends Fragment> cls, Bundle args, String name, Integer icon) {
-
-		if (cls == null) throw new IllegalArgumentException("Fragment cannot be null!");
-		if (name == null && icon == null)
-			throw new IllegalArgumentException("You must specify a name or icon for this tab!");
-		mTabsInfo.add(new TabInfo(name, icon, cls, args));
+		addTab(new TabSpec(name, icon, cls, args));
+	}
+	
+	public void addTab(TabSpec spec) {
+		mTabsInfo.add(spec);
+		notifyDataSetChanged();
+	}
+	
+	public void addTabs(Collection<? extends TabSpec> specs) {
+		mTabsInfo.addAll(specs);
 		notifyDataSetChanged();
 	}
 
@@ -85,24 +102,6 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	@Override
 	public void onPageSelected(int position) {
 
-	}
-
-	private class TabInfo {
-
-		private final String name;
-		private final Integer icon;
-		private final Class<? extends Fragment> cls;
-		private final Bundle args;
-
-		public TabInfo(String name, Integer icon, Class<? extends Fragment> cls, Bundle args) {
-			if (name == null && icon == null)
-				throw new IllegalArgumentException("You must specify a name or icon for this tab!");
-			this.name = name;
-			this.icon = icon;
-			this.cls = cls;
-			this.args = args;
-
-		}
 	}
 
 }

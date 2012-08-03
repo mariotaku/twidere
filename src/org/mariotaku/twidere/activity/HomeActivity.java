@@ -22,6 +22,7 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getTabs;
 
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
@@ -30,12 +31,10 @@ import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.TrendsFragment;
-import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
-import org.mariotaku.twidere.view.ExtendedFrameLayout;
-import org.mariotaku.twidere.view.ExtendedFrameLayout.TouchInterceptor;
+import org.mariotaku.twidere.util.SetHomeButtonEnabledAccessor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
@@ -46,29 +45,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.BackStackEntryTrojan;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.BackStackEntry;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentManagerTrojan;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class HomeActivity extends BaseActivity implements OnClickListener, OnBackStackChangedListener,
-		OnPageChangeListener {
+public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener {
 
 	private ExtendedViewPager mViewPager;
 	private SharedPreferences mPreferences;
@@ -78,8 +71,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	private ImageButton mComposeButton;
 	private ServiceInterface mService;
 	private TabPageIndicator mIndicator;
-	private ExtendedFrameLayout mLeftPaneContainer, mRightPaneContainer;
-	private ViewGroup mLeftPaneLayer, mRightPaneLayer;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -96,45 +87,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	private boolean mProgressBarIndeterminateVisible = false;
 	private boolean mIsNavigateToDefaultAccount = false;
 
-	private final TouchInterceptor mLeftPaneTouchInterceptor = new TouchInterceptor() {
-
-		@Override
-		public void onInterceptTouchEvent(MotionEvent event) {
-			if (MotionEvent.ACTION_DOWN == event.getAction()) {
-				bringLeftPaneToFront();
-			}
-		}
-	};
-	private final TouchInterceptor mRightPaneTouchInterceptor = new TouchInterceptor() {
-
-		@Override
-		public void onInterceptTouchEvent(MotionEvent event) {
-			if (MotionEvent.ACTION_DOWN == event.getAction()) {
-				bringRightPaneToFront();
-			}
-		}
-	};
-
+	private boolean mDisplayAppIcon;
+	
 	public static final int TAB_POSITION_HOME = 0;
 	public static final int TAB_POSITION_MENTIONS = 1;
-	public static final int TAB_POSITION_DISCOVER = 2;
-	public static final int TAB_POSITION_ME = 3;
-
-	public void bringLeftPaneToFront() {
-		if (mLeftPaneLayer == null || mRightPaneLayer == null || mLeftPaneContainer == null
-				|| mRightPaneContainer == null) return;
-		mLeftPaneLayer.bringToFront();
-		mLeftPaneContainer.setBackgroundResource(getPaneBackground());
-		mRightPaneContainer.setBackgroundResource(0);
-	}
-
-	public void bringRightPaneToFront() {
-		if (mLeftPaneLayer == null || mRightPaneLayer == null || mLeftPaneContainer == null
-				|| mRightPaneContainer == null) return;
-		mRightPaneLayer.bringToFront();
-		mRightPaneContainer.setBackgroundResource(getPaneBackground());
-		mLeftPaneContainer.setBackgroundResource(0);
-	}
+	public static final int TAB_POSITION_TRENDS = 2;
+	public static final int TAB_POSITION_ACCOUNTS = 3;
 
 	public boolean checkDefaultAccountSet() {
 		boolean result = true;
@@ -146,7 +104,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 				mIndicator.setPagingEnabled(true);
 				mIsNavigateToDefaultAccount = false;
 			} else if (activated_ids.length > 1) {
-				mViewPager.setCurrentItem(TAB_POSITION_ME, false);
+				mViewPager.setCurrentItem(TAB_POSITION_ACCOUNTS, false);
 				mIndicator.setPagingEnabled(false);
 				if (!mIsNavigateToDefaultAccount) {
 					Toast.makeText(this, R.string.set_default_account_hint, Toast.LENGTH_LONG).show();
@@ -159,18 +117,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			mIsNavigateToDefaultAccount = false;
 		}
 		return result;
-	}
-
-	public boolean isDualPaneMode() {
-		return findViewById(PANE_LEFT_CONTAINER) instanceof ViewGroup
-				&& findViewById(PANE_RIGHT_CONTAINER) instanceof ViewGroup;
-	}
-
-	public boolean isDualPaneModeCompact() {
-		final boolean is_dual_pane = isDualPaneMode();
-		if (!is_dual_pane) return false;
-		final View main_container = findViewById(R.id.main_container);
-		return is_dual_pane && main_container != null && main_container instanceof FrameLayout;
 	}
 
 	@Override
@@ -224,19 +170,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 			main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
 		}
 		setPagingEnabled(!left_pane_used);
-		if (isDualPaneModeCompact()) {
-			final int count = fm.getBackStackEntryCount();
-			if (count > 0) {
-				final BackStackEntry entry = fm.getBackStackEntryAt(count - 1);
-				if (entry == null) return;
-				final Fragment fragment = BackStackEntryTrojan.getFragmentInBackStackRecord(entry);
-				if (fragment instanceof Panes.Left) {
-					bringLeftPaneToFront();
-				} else if (fragment instanceof Panes.Right) {
-					bringRightPaneToFront();
-				}
-			}
+		if (mActionBar != null && mDisplayAppIcon) {
+			mActionBar.setDisplayHomeAsUpEnabled(fm.getBackStackEntryCount() > 0);
 		}
+		super.onBackStackChanged();
 	}
 
 	@Override
@@ -250,36 +187,29 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 	}
 
+	
+	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
+		mComposeButton = (ImageButton) findViewById(R.id.button_compose);
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		mService = getTwidereApplication().getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
-		final boolean home_display_icon = getResources().getBoolean(R.bool.home_display_icon);
-		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
+		mDisplayAppIcon = getResources().getBoolean(R.bool.home_display_icon);
 		setContentView(R.layout.main);
-		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
-		mComposeButton = (ImageButton) findViewById(R.id.button_compose);
-		if (isDualPaneModeCompact()) {
-			mLeftPaneContainer = (ExtendedFrameLayout) findViewById(R.id.left_pane_container);
-			mLeftPaneContainer.setTouchInterceptor(mLeftPaneTouchInterceptor);
-			mLeftPaneLayer = (ViewGroup) findViewById(R.id.left_pane_layer);
-			mRightPaneContainer = (ExtendedFrameLayout) findViewById(R.id.right_pane_container);
-			mRightPaneContainer.setTouchInterceptor(mRightPaneTouchInterceptor);
-			mRightPaneLayer = (ViewGroup) findViewById(R.id.right_pane_layer);
-			bringLeftPaneToFront();
-		}
 		final long[] account_ids = getAccountIds(this);
-
 		if (account_ids.length <= 0) {
 			startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
 			finish();
 			return;
 		}
-
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
-
 		final Bundle bundle = getIntent().getExtras();
 		int initial_tab = -1;
 		if (bundle != null) {
@@ -304,19 +234,15 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		mActionBar.setCustomView(R.layout.home_tabs);
 		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setDisplayShowHomeEnabled(home_display_icon);
+		mActionBar.setDisplayShowHomeEnabled(mDisplayAppIcon);
+		if (mDisplayAppIcon && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			SetHomeButtonEnabledAccessor.setHomeButtonEnabled(this, true);
+		}
 		final View view = mActionBar.getCustomView();
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mAdapter = new TabsAdapter(this, getSupportFragmentManager());
-		mAdapter.addTab(HomeTimelineFragment.class, null, tab_display_label ? getString(R.string.home) : null,
-				R.drawable.ic_tab_home);
-		mAdapter.addTab(MentionsFragment.class, null, tab_display_label ? getString(R.string.mentions) : null,
-				R.drawable.ic_tab_connect);
-		mAdapter.addTab(TrendsFragment.class, null, tab_display_label ? getString(R.string.trends) : null,
-				R.drawable.ic_tab_discover);
-		mAdapter.addTab(AccountsFragment.class, null, tab_display_label ? getString(R.string.accounts) : null,
-				R.drawable.ic_tab_me);
+		addTabs();
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOffscreenPageLimit(3);
 		mIndicator.setViewPager(mViewPager);
@@ -348,6 +274,20 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 
 	public void onDefaultAccountSet() {
 		mIsNavigateToDefaultAccount = false;
+	}
+	
+	private void addTabs() {
+		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
+		mAdapter.clear();
+		mAdapter.addTab(HomeTimelineFragment.class, null, tab_display_label ? getString(R.string.home) : null,
+				R.drawable.ic_tab_home, TAB_POSITION_HOME);
+		mAdapter.addTab(MentionsFragment.class, null, tab_display_label ? getString(R.string.mentions) : null,
+				R.drawable.ic_tab_mention, TAB_POSITION_MENTIONS);
+		mAdapter.addTab(TrendsFragment.class, null, tab_display_label ? getString(R.string.trends) : null,
+				R.drawable.ic_tab_trends, TAB_POSITION_TRENDS);
+		mAdapter.addTab(AccountsFragment.class, null, tab_display_label ? getString(R.string.accounts) : null,
+				R.drawable.ic_tab_accounts, TAB_POSITION_ACCOUNTS);
+		mAdapter.addTabs(getTabs(this));
 	}
 
 	@Override
@@ -421,11 +361,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	}
 
 	@Override
-	public void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-	}
-
-	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		final boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
 		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
@@ -482,27 +417,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 		mProgress.setVisibility(visible || mService.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
 	}
 
-	public void showAtPane(int pane, Fragment fragment, boolean addToBackStack) {
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		switch (pane) {
-			case PANE_LEFT: {
-				// bringLeftPaneToFront();
-				ft.replace(PANE_LEFT, fragment);
-				break;
-			}
-			case PANE_RIGHT: {
-				// bringRightPaneToFront();
-				ft.replace(PANE_RIGHT, fragment);
-				break;
-			}
-		}
-		if (addToBackStack) {
-			ft.addToBackStack(null);
-		}
-		ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		ft.commit();
-	}
-
 	@Override
 	protected void onNewIntent(Intent intent) {
 		final Bundle bundle = intent.getExtras();
@@ -524,12 +438,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnBac
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-	}
-
-	private int getPaneBackground() {
-		final boolean dark = isDarkTheme(), solid = isSolidColorBackground();
-		return dark ? solid ? android.R.color.black : R.drawable.background_holo_dark : solid ? android.R.color.white
-				: R.drawable.background_holo_light;
 	}
 
 }

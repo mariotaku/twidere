@@ -28,9 +28,11 @@ import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ConversationFragment;
-import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
+import org.mariotaku.twidere.fragment.DMConversationFragment;
+import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
+import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
-import org.mariotaku.twidere.fragment.UserBlocksFragment;
+import org.mariotaku.twidere.fragment.UserBlocksListFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
 import org.mariotaku.twidere.fragment.UserFriendsFragment;
@@ -77,6 +79,8 @@ public class LinkHandlerActivity extends BaseActivity {
 	private static final int CODE_LIST_SUBSCRIPTIONS = 16;
 	private static final int CODE_LIST_MEMBERSHIPS = 17;
 	private static final int CODE_USERS_RETWEETED_STATUS = 18;
+	private static final int CODE_SAVED_SEARCHES = 19;
+	private static final int CODE_RETWEETED_TO_ME = 20;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
@@ -97,6 +101,8 @@ public class LinkHandlerActivity extends BaseActivity {
 		URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIPTIONS, null, CODE_LIST_SUBSCRIPTIONS);
 		URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERSHIPS, null, CODE_LIST_MEMBERSHIPS);
 		URI_MATCHER.addURI(AUTHORITY_USERS_RETWEETED_STATUS, null, CODE_USERS_RETWEETED_STATUS);
+		URI_MATCHER.addURI(AUTHORITY_SAVED_SEARCHES, null, CODE_SAVED_SEARCHES);
+		URI_MATCHER.addURI(AUTHORITY_RETWEETED_TO_ME, null, CODE_RETWEETED_TO_ME);
 	}
 
 	private Fragment mFragment;
@@ -219,7 +225,7 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_USER_BLOCKS: {
 					setTitle(R.string.blocked_users);
-					fragment = new UserBlocksFragment();
+					fragment = new UserBlocksListFragment();
 					break;
 				}
 				case CODE_CONVERSATION: {
@@ -231,7 +237,7 @@ public class LinkHandlerActivity extends BaseActivity {
 				}
 				case CODE_DIRECT_MESSAGES_CONVERSATION: {
 					setTitle(R.string.direct_messages);
-					fragment = new DirectMessagesConversationFragment();
+					fragment = new DMConversationFragment();
 					final String param_conversation_id = uri.getQueryParameter(QUERY_PARAM_CONVERSATION_ID);
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final long conversation_id = parseLong(param_conversation_id);
@@ -375,6 +381,16 @@ public class LinkHandlerActivity extends BaseActivity {
 					fragment = new UserRetweetedStatusFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
+					break;
+				}
+				case CODE_SAVED_SEARCHES: {
+					setTitle(R.string.saved_searches);
+					fragment = new SavedSearchesListFragment();
+					break;
+				}
+				case CODE_RETWEETED_TO_ME: {
+					setTitle(R.string.retweeted_to_me);
+					fragment = new RetweetedToMeFragment();
 					break;
 				}
 				default: {

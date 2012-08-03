@@ -277,5 +277,10 @@
 	<string name="open">Open</string>
 	<string name="uninstall">Uninstall</string>
 	<string name="users_retweeted_this">Users retweeted this</string>
+	<string name="saved_searches">Saved searches</string>
+	<string name="add_saved_search">Add saved search</string>
+	<string name="custom_tabs">Custom tabs</string>
+	<string name="retweeted_to_me">Retweeted timeline</string>
+	<string name="add_tab">Add tab</string>
 
 </resources>

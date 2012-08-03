@@ -29,6 +29,7 @@ import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.DMConversationViewHolder;
+import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -64,8 +65,9 @@ import android.widget.ListView;
 
 import com.twitter.Validator;
 
-public class DirectMessagesConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>,
-		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener {
+public class DMConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>,
+		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener,
+		Panes.Right {
 
 	private ServiceInterface mService;
 
@@ -92,7 +94,7 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 			final String action = intent.getAction();
 			if (BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)
 					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, mArguments, DirectMessagesConversationFragment.this);
+				getLoaderManager().restartLoader(0, mArguments, DMConversationFragment.this);
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				setProgressBarIndeterminateVisibility(mService.isReceivedDirectMessagesRefreshing()
 						|| mService.isSentDirectMessagesRefreshing());

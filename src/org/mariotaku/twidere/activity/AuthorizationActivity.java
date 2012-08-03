@@ -30,6 +30,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -57,6 +58,7 @@ public class AuthorizationActivity extends BaseActivity {
 		}
 
 		setContentView(R.layout.webview);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mWebView = (WebView) findViewById(R.id.webview);
 		mWebView.getSettings().setBuiltInZoomControls(true);
 		mWebView.loadUrl(authUrl.toString());
@@ -78,6 +80,16 @@ public class AuthorizationActivity extends BaseActivity {
 			WebViewProxySettings.resetProxy(mWebView);
 		}
 
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				finish();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	private class AuthorizationWebViewClient extends WebViewClient {

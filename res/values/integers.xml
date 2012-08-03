@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<item name="pane_left_content_weight" type="integer">5</item>
+	<item name="pane_left_shadow_weight" type="integer">3</item>
+	<item name="pane_right_content_weight" type="integer">5</item>
+	<item name="pane_right_shadow_weight" type="integer">3</item>
+
+</resources>

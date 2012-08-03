@@ -653,6 +653,10 @@ public class TwidereService extends Service implements Constants {
 					}
 				}
 				Toast.makeText(TwidereService.this, R.string.cancel_retweet_success, Toast.LENGTH_SHORT).show();
+				final Intent intent = new Intent(BROADCAST_RETWEET_CHANGED);
+				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
+				intent.putExtra(INTENT_KEY_RETWEETED, false);
+				sendBroadcast(intent);
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -1682,26 +1686,28 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
 			final ContentResolver resolver = getContentResolver();
-
-			if (result.data != null) {
+			if (result.data != null && result.data.getId() > 0) {
 				final User user = result.data.getUser();
-				final twitter4j.Status retweeted_status = result.data.getRetweetedStatus();
-				if (user != null && retweeted_status != null) {
+				if (user != null) {
 					final ContentValues values = new ContentValues();
 					values.put(Statuses.RETWEET_ID, result.data.getId());
 					values.put(Statuses.RETWEETED_BY_ID, user.getId());
 					values.put(Statuses.RETWEETED_BY_NAME, user.getName());
 					values.put(Statuses.RETWEETED_BY_SCREEN_NAME, user.getScreenName());
-					values.put(Statuses.RETWEET_COUNT, retweeted_status.getRetweetCount());
+					values.put(Statuses.RETWEET_COUNT, result.data.getRetweetCount());
 					values.put(Statuses.IS_RETWEET, 1);
 					final StringBuilder where = new StringBuilder();
-					where.append(Statuses.STATUS_ID + " = " + retweeted_status.getId());
-					where.append(" OR " + Statuses.RETWEET_ID + " = " + retweeted_status.getId());
+					where.append(Statuses.STATUS_ID + " = " + status_id);
+					where.append(" OR " + Statuses.RETWEET_ID + " = " + status_id);
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
 						resolver.update(uri, values, where.toString(), null);
 					}
 				}
 				Toast.makeText(TwidereService.this, R.string.retweet_success, Toast.LENGTH_SHORT).show();
+				final Intent intent = new Intent(BROADCAST_RETWEET_CHANGED);
+				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
+				intent.putExtra(INTENT_KEY_RETWEETED, true);
+				sendBroadcast(intent);
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -2133,7 +2139,9 @@ public class TwidereService extends Service implements Constants {
 					final Bundle delete_extras = new Bundle();
 					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_HOME_TIMELINE);
 					delete_intent.putExtras(delete_extras);
-					final Intent content_intent = new Intent(INTENT_ACTION_HOME);
+					final Intent content_intent = new Intent(TwidereService.this, HomeActivity.class);
+					content_intent.setAction(Intent.ACTION_MAIN);
+					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 					final Bundle content_extras = new Bundle();
 					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_HOME);
 					content_intent.putExtras(content_extras);
@@ -2186,7 +2194,9 @@ public class TwidereService extends Service implements Constants {
 					final Bundle delete_extras = new Bundle();
 					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
 					delete_intent.putExtras(delete_extras);
-					final Intent content_intent = new Intent(INTENT_ACTION_HOME);
+					final Intent content_intent = new Intent(TwidereService.this, HomeActivity.class);
+					content_intent.setAction(Intent.ACTION_MAIN);
+					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 					final Bundle content_extras = new Bundle();
 					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
 					content_intent.putExtras(content_extras);

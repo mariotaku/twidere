@@ -49,8 +49,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-abstract class BaseUserListsListFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableUserList>>,
-		OnItemClickListener, OnScrollListener, OnItemLongClickListener, Panes.Left, OnMenuItemClickListener {
+abstract class BaseUserListsListFragment extends PullToRefreshListFragment implements
+		LoaderCallbacks<List<ParcelableUserList>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
+		Panes.Left, OnMenuItemClickListener {
 
 	private UserListsAdapter mAdapter;
 
@@ -126,6 +127,7 @@ abstract class BaseUserListsListFragment extends BaseListFragment implements Loa
 		mListView.setOnScrollListener(this);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
+		setListShown(false);
 	}
 
 	@Override
@@ -187,6 +189,8 @@ abstract class BaseUserListsListFragment extends BaseListFragment implements Loa
 				mCursor = cursor;
 			}
 		}
+		onRefreshComplete();
+		setListShown(true);
 	}
 
 	@Override
@@ -208,6 +212,11 @@ abstract class BaseUserListsListFragment extends BaseListFragment implements Loa
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public void onRefresh() {
+		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 
 	@Override

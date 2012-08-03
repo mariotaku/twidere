@@ -49,8 +49,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-abstract class BaseUsersListFragment extends BaseListFragment implements LoaderCallbacks<List<ParcelableUser>>,
-		OnItemClickListener, OnScrollListener, OnItemLongClickListener, Panes.Left, OnMenuItemClickListener {
+abstract class BaseUsersListFragment extends PullToRefreshListFragment implements
+		LoaderCallbacks<List<ParcelableUser>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
+		Panes.Left, OnMenuItemClickListener {
 
 	private UsersAdapter mAdapter;
 
@@ -106,6 +107,7 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 		mListView.setOnScrollListener(this);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
+		setListShown(false);
 	}
 
 	@Override
@@ -124,7 +126,7 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		final ParcelableUser user = mAdapter.getItem(position);
+		final ParcelableUser user = mAdapter.findItem(id);
 		if (user == null) return;
 		if (mAdapter.isGap(position) && !mLoadMoreAutomatically) {
 			final Bundle args = getArguments();
@@ -166,6 +168,8 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 			mAllItemsLoaded = ids != null && ids.length == mAdapter.getCount();
 		}
 		mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
+		onRefreshComplete();
+		setListShown(true);
 	}
 
 	@Override
@@ -186,6 +190,11 @@ abstract class BaseUsersListFragment extends BaseListFragment implements LoaderC
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public void onRefresh() {
+		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 
 	@Override

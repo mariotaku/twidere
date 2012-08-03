@@ -17,27 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.fragment;
+package org.mariotaku.twidere.loader;
 
 import java.util.List;
 
-import org.mariotaku.twidere.loader.UserBlocksLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.model.ParcelableStatus;
 
-import android.os.Bundle;
-import android.support.v4.content.Loader;
+import twitter4j.Paging;
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import android.content.Context;
 
-public class UserBlocksFragment extends BaseUsersListFragment {
+public class RetweetedToMeLoader extends Twitter4JStatusLoader {
+
+	public RetweetedToMeLoader(Context context, long account_id, long max_id,
+			List<ParcelableStatus> data) {
+		super(context, account_id, max_id, data);
+	}
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance() {
-		final Bundle args = getArguments();
-		long account_id = -1, max_id = -1;
-		if (args != null) {
-			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-		}
-		return new UserBlocksLoader(getActivity(), account_id, max_id, getData());
+	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
+		final Twitter twitter = getTwitter();
+		if (twitter == null) return null;
+		return twitter.getRetweetedToMe(paging);
 	}
 
 }

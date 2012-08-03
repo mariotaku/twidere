@@ -49,7 +49,7 @@ import android.widget.Spinner;
 public class SearchActivity extends BaseActivity implements OnItemSelectedListener {
 
 	private ActionBar mActionBar;
-	private ArrayAdapter<TabSpec> mAdapter;
+	private ArrayAdapter<SpinnerSpec> mAdapter;
 	private Spinner mSpinner;
 	private Uri mData;
 	private final Bundle mArguments = new Bundle();
@@ -101,10 +101,10 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 		mActionBar.setCustomView(R.layout.actionbar_spinner_navigation);
 		final View view = mActionBar.getCustomView();
 		mSpinner = (Spinner) view.findViewById(R.id.navigate);
-		mAdapter = new ArrayAdapter<TabSpec>(this, R.layout.spinner_item_white_text);
+		mAdapter = new ArrayAdapter<SpinnerSpec>(this, R.layout.spinner_item_white_text);
 		mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-		mAdapter.add(new TabSpec(SearchTweetsFragment.class, getString(R.string.search_tweets)));
-		mAdapter.add(new TabSpec(SearchUsersFragment.class, getString(R.string.search_users)));
+		mAdapter.add(new SpinnerSpec(SearchTweetsFragment.class, getString(R.string.search_tweets)));
+		mAdapter.add(new SpinnerSpec(SearchUsersFragment.class, getString(R.string.search_users)));
 		mSpinner.setAdapter(mAdapter);
 		mSpinner.setOnItemSelectedListener(this);
 		mSpinner.setSelection(is_search_user ? 1 : 0);
@@ -135,11 +135,11 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 		return super.onOptionsItemSelected(item);
 	}
 
-	private static class TabSpec {
+	private static class SpinnerSpec {
 		public final Class<? extends Fragment> cls;
 		public final String name;
 
-		public TabSpec(Class<? extends Fragment> cls, String name) {
+		public SpinnerSpec(Class<? extends Fragment> cls, String name) {
 			this.cls = cls;
 			this.name = name;
 		}

@@ -45,7 +45,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 
 	private boolean mShouldRestorePosition = false;
 	private long mMinIdToRefresh;
-	
+
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -78,7 +78,6 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 				}
 		}
 	};
-
 
 	@Override
 	public Uri getContentUri() {
@@ -157,11 +156,11 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, status_id).commit();
 		super.onStop();
 	}
-	
+
 	@Override
 	public boolean onTouch(View view, MotionEvent ev) {
 		switch (ev.getAction()) {
-			case MotionEvent.ACTION_DOWN:{
+			case MotionEvent.ACTION_DOWN: {
 				mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
 				break;
 			}

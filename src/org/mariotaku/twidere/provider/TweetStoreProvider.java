@@ -37,6 +37,7 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.provider.TweetStore.Tabs;
 import org.mariotaku.twidere.util.ArrayUtils;
 
 import android.content.ContentProvider;
@@ -328,6 +329,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			db.execSQL(createTable(TABLE_TRENDS_DAILY, CachedTrends.Daily.COLUMNS, CachedTrends.Daily.TYPES, true));
 			db.execSQL(createTable(TABLE_TRENDS_WEEKLY, CachedTrends.Weekly.COLUMNS, CachedTrends.Weekly.TYPES, true));
 			db.execSQL(createTable(TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true));
+			db.execSQL(createTable(TABLE_TABS, Tabs.COLUMNS, Tabs.TYPES, false));
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
@@ -377,6 +379,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			safeUpgrade(db, TABLE_TRENDS_DAILY, CachedTrends.Daily.COLUMNS, CachedTrends.Daily.TYPES, true, true);
 			safeUpgrade(db, TABLE_TRENDS_WEEKLY, CachedTrends.Weekly.COLUMNS, CachedTrends.Weekly.TYPES, true, true);
 			safeUpgrade(db, TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true, true);
+			safeUpgrade(db, TABLE_TABS, Tabs.COLUMNS, Tabs.TYPES, true, false);
 		}
 
 	}

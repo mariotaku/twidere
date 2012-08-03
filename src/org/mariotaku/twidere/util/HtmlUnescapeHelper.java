@@ -302,7 +302,7 @@ public class HtmlUnescapeHelper {
 	public static String unescapeHTML(String s) {
 		if (s == null) return null;
 		s = s.replaceAll("<br\\/>", "\n").replaceAll("<!--.*?--> |<[^>]+>", "");
-		final StringBuffer result = new StringBuffer(s.length());
+		final StringBuilder result = new StringBuilder();
 		int ampInd = s.indexOf("&");
 		int lastEnd = 0;
 		while (ampInd >= 0) {

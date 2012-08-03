@@ -22,7 +22,6 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -32,7 +31,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
-import com.handmark.pulltorefresh.library.internal.IndicatorLayout;
 
 public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extends PullToRefreshBase<T> implements
 		OnScrollListener {
@@ -44,9 +42,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	private OnLastItemVisibleListener mOnLastItemVisibleListener;
 	private View mEmptyView;
 	private FrameLayout mRefreshableViewHolder;
-
-	private IndicatorLayout mIndicatorIvTop;
-	private IndicatorLayout mIndicatorIvBottom;
 
 	private boolean mShowIndicator;
 
@@ -107,11 +102,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 					mOnLastItemVisibleListener.onLastItemVisible();
 				}
 			}
-		}
-
-		// If we're showing the indicator, check positions...
-		if (getShowIndicatorInternal()) {
-			updateIndicatorViewsVisibility();
 		}
 
 		// Finally call OnScrollListener if we have one
@@ -175,26 +165,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		mOnScrollListener = listener;
 	};
 
-	/**
-	 * Sets whether an indicator graphic should be displayed when the View is in
-	 * a state where a Pull-to-Refresh can happen. An example of this state is
-	 * when the Adapter View is scrolled to the top and the mode is set to
-	 * {@link Mode#PULL_DOWN_TO_REFRESH}
-	 * 
-	 * @param showIndicator - true if the indicators should be shown.
-	 */
-	public void setShowIndicator(boolean showIndicator) {
-		mShowIndicator = showIndicator;
-
-		if (getShowIndicatorInternal()) {
-			// If we're set to Show Indicator, add/update them
-			addIndicatorViews();
-		} else {
-			// If not, then remove then
-			removeIndicatorViews();
-		}
-	}
-
 	@Override
 	protected void addRefreshableView(Context context, T refreshableView) {
 		mRefreshableViewHolder = new FrameLayout(context);
@@ -243,104 +213,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		return isLastItemVisible();
 	}
 
-	@Override
-	protected void onPullToRefresh() {
-		super.onPullToRefresh();
-
-		if (getShowIndicatorInternal()) {
-			switch (getCurrentMode()) {
-				case PULL_UP_TO_REFRESH:
-					mIndicatorIvBottom.pullToRefresh();
-					break;
-				case PULL_DOWN_TO_REFRESH:
-					mIndicatorIvTop.pullToRefresh();
-					break;
-			}
-		}
-	}
-
-	@Override
-	protected void onReleaseToRefresh() {
-		super.onReleaseToRefresh();
-
-		if (getShowIndicatorInternal()) {
-			switch (getCurrentMode()) {
-				case PULL_UP_TO_REFRESH:
-					mIndicatorIvBottom.releaseToRefresh();
-					break;
-				case PULL_DOWN_TO_REFRESH:
-					mIndicatorIvTop.releaseToRefresh();
-					break;
-			}
-		}
-	}
-
-	@Override
-	protected void resetHeader() {
-		super.resetHeader();
-
-		if (getShowIndicatorInternal()) {
-			updateIndicatorViewsVisibility();
-		}
-	}
-
-	@Override
-	protected void setRefreshingInternal(boolean doScroll) {
-		super.setRefreshingInternal(doScroll);
-
-		if (getShowIndicatorInternal()) {
-			updateIndicatorViewsVisibility();
-		}
-	}
-
-	@Override
-	protected void updateUIForMode() {
-		super.updateUIForMode();
-
-		// Check Indicator Views consistent with new Mode
-		if (getShowIndicatorInternal()) {
-			addIndicatorViews();
-		}
-	}
-
-	private void addIndicatorViews() {
-		final Mode mode = getMode();
-
-		if (mode.canPullDown() && null == mIndicatorIvTop) {
-			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvTop = new IndicatorLayout(getContext(), Mode.PULL_DOWN_TO_REFRESH);
-			final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
-			params.rightMargin = getResources().getDimensionPixelSize(R.dimen.indicator_right_padding);
-			params.gravity = Gravity.TOP | Gravity.RIGHT;
-			mRefreshableViewHolder.addView(mIndicatorIvTop, params);
-
-		} else if (!mode.canPullDown() && null != mIndicatorIvTop) {
-			// If we can't pull down, but have a View then remove it
-			mRefreshableViewHolder.removeView(mIndicatorIvTop);
-			mIndicatorIvTop = null;
-		}
-
-		if (mode.canPullUp() && null == mIndicatorIvBottom) {
-			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvBottom = new IndicatorLayout(getContext(), Mode.PULL_UP_TO_REFRESH);
-			final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
-			params.rightMargin = getResources().getDimensionPixelSize(R.dimen.indicator_right_padding);
-			params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-			mRefreshableViewHolder.addView(mIndicatorIvBottom, params);
-
-		} else if (!mode.canPullUp() && null != mIndicatorIvBottom) {
-			// If we can't pull down, but have a View then remove it
-			mRefreshableViewHolder.removeView(mIndicatorIvBottom);
-			mIndicatorIvBottom = null;
-		}
-	}
-
-	private boolean getShowIndicatorInternal() {
-		return mShowIndicator && isPullToRefreshEnabled();
-	}
-
 	private boolean isFirstItemVisible() {
 		if (mRefreshableView.getCount() <= getNumberInternalViews())
 			return true;
@@ -375,41 +247,4 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		return false;
 	}
 
-	private void removeIndicatorViews() {
-		if (null != mIndicatorIvTop) {
-			mRefreshableViewHolder.removeView(mIndicatorIvTop);
-			mIndicatorIvTop = null;
-		}
-
-		if (null != mIndicatorIvBottom) {
-			mRefreshableViewHolder.removeView(mIndicatorIvBottom);
-			mIndicatorIvBottom = null;
-		}
-	}
-
-	private void updateIndicatorViewsVisibility() {
-		if (null != mIndicatorIvTop) {
-			if (!isRefreshing() && isReadyForPullDown()) {
-				if (!mIndicatorIvTop.isVisible()) {
-					mIndicatorIvTop.show();
-				}
-			} else {
-				if (mIndicatorIvTop.isVisible()) {
-					mIndicatorIvTop.hide();
-				}
-			}
-		}
-
-		if (null != mIndicatorIvBottom) {
-			if (!isRefreshing() && isReadyForPullUp()) {
-				if (!mIndicatorIvBottom.isVisible()) {
-					mIndicatorIvBottom.show();
-				}
-			} else {
-				if (mIndicatorIvBottom.isVisible()) {
-					mIndicatorIvBottom.hide();
-				}
-			}
-		}
-	}
 }

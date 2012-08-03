@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openConversation;
+import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
 import java.util.List;
@@ -30,7 +31,6 @@ import java.util.List;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
@@ -41,12 +41,9 @@ import org.mariotaku.twidere.util.StatusesAdapterInterface;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
@@ -82,8 +79,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mActivityFirstCreated,
 			mNotReachedBottomBefore = true;
-
-	private Fragment mDetailFragment;
 
 	private static final long TICKER_DURATION = 5000L;
 
@@ -127,13 +122,12 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mServiceInterface = getApplication().getServiceInterface();
 		setListAdapter(getListAdapter());
-		setShowIndicator(false);
 		mListView = getListView();
-		// mListView.setFastScrollEnabled(true);
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		getLoaderManager().initLoader(0, getArguments(), this);
+		setListShown(false);
 	}
 
 	@Override
@@ -164,7 +158,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
-				openStatus(status);
+				openStatus(getActivity(), status);
 			}
 		}
 	}
@@ -195,6 +189,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	@Override
 	public void onLoadFinished(Loader<Data> loader, Data data) {
 		mData = data;
+		setListShown(true);
 	}
 
 	@Override
@@ -324,7 +319,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		}
 
 	}
-	
+
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		switch (scrollState) {
@@ -370,37 +365,5 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
-	}
-
-	private void openStatus(ParcelableStatus status) {
-		if (status == null) return;
-		final long account_id = status.account_id, status_id = status.status_id;
-		final FragmentActivity activity = getActivity();
-		final Bundle bundle = new Bundle();
-		bundle.putParcelable(INTENT_KEY_STATUS, status);
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
-			if (mDetailFragment instanceof StatusFragment && mDetailFragment.isAdded()) {
-				((StatusFragment) mDetailFragment).displayStatus(status);
-				home_activity.bringRightPaneToFront();
-			} else {
-				mDetailFragment = new StatusFragment();
-				final Bundle args = new Bundle(bundle);
-				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-				args.putLong(INTENT_KEY_STATUS_ID, status_id);
-				mDetailFragment.setArguments(args);
-				home_activity.showAtPane(HomeActivity.PANE_RIGHT, mDetailFragment, true);
-			}
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_STATUS);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
-			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-
-			intent.putExtras(bundle);
-			startActivity(intent);
-		}
 	}
 }

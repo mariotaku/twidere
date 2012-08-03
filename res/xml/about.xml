@@ -24,53 +24,53 @@
 	</PreferenceCategory>
 	<PreferenceCategory android:title="TRANSLATORS">
 		<PreferenceScreen
-			android:summary="Luigi Van"
-			android:title="日本語">
+			android:summary="Japanese"
+			android:title="Luigi Van">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="http://about.me/fdb713"/>
 		</PreferenceScreen>
 		<PreferenceScreen
-			android:summary="Cem Uluer"
-			android:title="Deutsch">
+			android:summary="Deutsch, Türkçe"
+			android:title="Cem Uluer">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="http://zettahub.de"/>
 		</PreferenceScreen>
 		<PreferenceScreen
-			android:summary="Marc Plano-Lesay"
-			android:title="Français">
+			android:summary="Français"
+			android:title="Marc Plano-Lesay">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=250570612"/>
 		</PreferenceScreen>
 		<PreferenceScreen
-			android:summary="Cem Uluer"
-			android:title="Türkçe">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="http://zettahub.de"/>
-		</PreferenceScreen>
-		<PreferenceScreen
-			android:summary="Edward G"
-			android:title="Español">
+			android:summary="Español"
+			android:title="Edward G">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=17852917"/>
 		</PreferenceScreen>
 		<PreferenceScreen
-			android:summary="Debarun Sarkar"
-			android:title="Hindi">
+			android:summary="Hindi"
+			android:title="Debarun Sarkar">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=55809644"/>
 		</PreferenceScreen>
 		<PreferenceScreen
-			android:summary="lipilee"
-			android:title="Hungarian">
+			android:summary="Hungarian"
+			android:title="lipilee">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=14698389"/>
+		</PreferenceScreen>
+		<PreferenceScreen
+			android:summary="Deutsch"
+			android:title="MaZe">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="http://identi.ca/mightypirate"/>
 		</PreferenceScreen>
 		<PreferenceScreen android:title="Other Languages">
 			<intent

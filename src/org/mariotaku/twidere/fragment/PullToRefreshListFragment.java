@@ -214,19 +214,6 @@ public class PullToRefreshListFragment extends BaseListFragment implements OnRef
 	}
 
 	/**
-	 * Sets whether an indicator graphic should be displayed when the View is in
-	 * a state where a Pull-to-Refresh can happen. An example of this state is
-	 * when the Adapter View is scrolled to the top and the mode is set to
-	 * {@link Mode#PULL_DOWN_TO_REFRESH}
-	 * 
-	 * @param showIndicator - true if the indicators should be shown.
-	 */
-	public final void setShowIndicator(boolean showIndicator) {
-		if (mPullToRefreshListView == null) return;
-		mPullToRefreshListView.setShowIndicator(showIndicator);
-	}
-
-	/**
 	 * A mutator to enable/disable whether the 'Refreshing' View should be
 	 * automatically shown when refreshing.
 	 * 

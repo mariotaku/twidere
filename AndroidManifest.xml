@@ -271,6 +271,12 @@
 				<data
 					android:host="users_retweeted_status"
 					android:scheme="twidere"/>
+				<data
+					android:host="saved_searches"
+					android:scheme="twidere"/>
+				<data
+					android:host="retweeted_to_me"
+					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>
 		<activity
@@ -360,6 +366,15 @@
 			android:label="@string/extensions">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.EXTENSIONS"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.CustomTabsActivity"
+			android:label="@string/custom_tabs">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.CUSTOM_TABS"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

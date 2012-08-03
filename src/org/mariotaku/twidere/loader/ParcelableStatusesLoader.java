@@ -89,9 +89,6 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 	}
 
 	@Override
-	public abstract List<ParcelableStatus> loadInBackground();
-
-	@Override
 	public void onStartLoading() {
 		forceLoad();
 	}

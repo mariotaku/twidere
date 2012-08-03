@@ -63,7 +63,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 
 import javax.net.ssl.HostnameVerifier;
@@ -74,12 +76,20 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.fragment.ConversationFragment;
+import org.mariotaku.twidere.fragment.DMConversationFragment;
+import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
+import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
-import org.mariotaku.twidere.fragment.UserBlocksFragment;
+import org.mariotaku.twidere.fragment.SearchUsersFragment;
+import org.mariotaku.twidere.fragment.StatusFragment;
+import org.mariotaku.twidere.fragment.UserBlocksListFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
 import org.mariotaku.twidere.fragment.UserFriendsFragment;
@@ -101,6 +111,7 @@ import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
+import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
@@ -109,6 +120,7 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
 import twitter4j.DirectMessage;
 import twitter4j.MediaEntity;
@@ -151,6 +163,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -158,6 +171,9 @@ import android.widget.Toast;
 public final class Utils implements Constants {
 
 	private static UriMatcher CONTENT_PROVIDER_URI_MATCHER;
+	public static final HashMap<String, Class<? extends Fragment>> CUSTOM_TABS_FRAGMENT_MAP;
+	public static final HashMap<String, Integer> CUSTOM_TABS_TYPE_NAME_MAP;
+	public static final HashMap<String, Integer> CUSTOM_TABS_ICON_NAME_MAP;
 
 	private static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new HostnameVerifier() {
 		@Override
@@ -220,7 +236,124 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_WEEKLY, URI_TRENDS_WEEKLY);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, URI_TRENDS_LOCAL);
 
+		CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();
+		
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_CREATED, UserListCreatedFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERS, UserListMembersFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERSHIPS, UserListMembershipsFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_SUBSCRIBERS, UserListSubscribersFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_SUBSCRIPTIONS, UserListSubscriptionsFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_TIMELINE, UserListTimelineFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_RETWEETED_TO_ME, RetweetedToMeFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SAVED_SEARCHES, SavedSearchesListFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SEARCH_TWEETS, SearchTweetsFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SEARCH_USERS, SearchUsersFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FAVORITES, UserFavoritesFragment.class);
+		
+		CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>(); 
+		
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_CREATED, R.string.list_created_by_user);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_MEMBERS, R.string.list_members);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_MEMBERSHIPS, R.string.list_following_user);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_SUBSCRIBERS, R.string.list_subscribers);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_SUBSCRIPTIONS, R.string.list_user_followed);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_TIMELINE, R.string.list_timeline);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_RETWEETED_TO_ME, R.string.retweeted_to_me);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SAVED_SEARCHES, R.string.saved_searches);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SEARCH_TWEETS, R.string.search_tweets);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SEARCH_USERS, R.string.search_users);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FAVORITES, R.string.favorites);
+		
+		CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
+		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);
+		CUSTOM_TABS_ICON_NAME_MAP.put("heart", R.drawable.ic_tab_heart);
+		CUSTOM_TABS_ICON_NAME_MAP.put("home", R.drawable.ic_tab_home);
+		CUSTOM_TABS_ICON_NAME_MAP.put("list", R.drawable.ic_tab_list);
 	}
+	
+	public static int getTabIcon(String type) {
+		if (type == null) return R.drawable.ic_tab_list;
+		final Integer value = CUSTOM_TABS_ICON_NAME_MAP.get(type);
+		return value != null ? value : R.drawable.ic_tab_list;
+	}
+	
+	public static String getTabTypeName(Context context, String type) {
+		if (context == null) return null;
+		final Integer res_id = CUSTOM_TABS_TYPE_NAME_MAP.get(type);
+		return res_id != null ? context.getString(res_id) : null;
+	}
+	
+	public static List<TabSpec> getTabs(Context context) {
+		if (context == null) return Collections.emptyList();
+		final ArrayList<TabSpec> tabs = new ArrayList<TabSpec>();
+		final ContentResolver resolver = context.getContentResolver();
+		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, null, null, Tabs.DEFAULT_SORT_ORDER);
+		if (cur != null) {
+			cur.moveToFirst();
+			final int idx_name = cur.getColumnIndex(Tabs.NAME), idx_icon = cur.getColumnIndex(Tabs.ICON), idx_type = cur.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS), idx_position = cur.getColumnIndex(Tabs.POSITION);
+			while (!cur.isAfterLast()) {
+				final int position = cur.getInt(idx_position) + HomeActivity.TAB_POSITION_ACCOUNTS;
+				final String icon_type = cur.getString(idx_icon);
+				final String type = cur.getString(idx_type);
+				final String name = cur.getString(idx_name);
+				final Bundle args = parseArguments(cur.getString(idx_arguments));
+				final Class<? extends Fragment> fragment = CUSTOM_TABS_FRAGMENT_MAP.get(type);
+				if (name != null && fragment != null) {
+					tabs.add(new TabSpec(name, getTabIcon(icon_type), fragment, args, position));
+				}
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		return tabs;
+	}
+	
+	
+	public static Bundle parseArguments(String string) {
+		final Bundle bundle = new Bundle();
+		if (string != null) {
+			try {
+				final JSONObject json = new JSONObject(string);
+				final Iterator<?> it = json.keys();
+				for (Object key_obj = null;!it.hasNext(); key_obj = it.next()) {
+					if (key_obj == null) continue;
+					final String key = key_obj.toString();
+					final Object value = json.get(key);
+					if (value instanceof Boolean) {
+						bundle.putBoolean(key, (Boolean) value);
+					} else if (value instanceof Integer) {
+						bundle.putInt(key, (Integer) value);
+					} else if (value instanceof Long) {
+						bundle.putLong(key, (Long) value);
+					} else if (value instanceof String) {
+						bundle.putString(key, (String) value);
+					} else {
+						Log.w(LOGTAG, "Unknown type " + value.getClass().getSimpleName() + " in arguments key " + key);
+					}
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (ClassCastException e) {
+				e.printStackTrace();
+			}
+		}
+		return bundle;
+	}
+	
+	public static String buildArguments(Bundle args) {
+		final Set<String> keys = args.keySet();
+		final JSONObject json = new JSONObject();
+		for (String key: keys) {
+			final Object value = args.get(key);
+			try {
+				json.put(key, value);
+			} catch (JSONException e) {
+				Log.w(LOGTAG, "Unknown type " + value.getClass().getSimpleName() + " in arguments key " + key);
+			}
+		}
+		return json.toString();
+	}
+	
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 
@@ -231,6 +364,31 @@ public final class Utils implements Constants {
 
 	private Utils() {
 		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
+	}
+
+	public static void openDirectMessagesConversation(Activity activity, long account_id, long conversation_id) {
+		if (activity == null) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
+			if (details_fragment instanceof DMConversationFragment && details_fragment.isAdded()) {
+				((DMConversationFragment) details_fragment).showConversation(account_id, conversation_id);
+			} else {
+				final Fragment fragment = new DMConversationFragment();
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+				args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+				fragment.setArguments(args);
+				dual_pane_activity.showAtPane(PANE_RIGHT, fragment, true);
+			}
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
 	}
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
@@ -1269,6 +1427,8 @@ public final class Utils implements Constants {
 				return TABLE_TRENDS_WEEKLY;
 			case URI_TRENDS_LOCAL:
 				return TABLE_TRENDS_LOCAL;
+			case URI_TABS: 
+				return TABLE_TABS;
 			default:
 				return null;
 		}
@@ -1687,14 +1847,14 @@ public final class Utils implements Constants {
 
 	public static void openConversation(Activity activity, long account_id, long status_id) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new ConversationFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			args.putLong(INTENT_KEY_STATUS_ID, status_id);
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -1705,10 +1865,42 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void openStatus(Activity activity, ParcelableStatus status) {
+		if (activity == null || status == null) return;
+		final long account_id = status.account_id, status_id = status.status_id;
+		final Bundle bundle = new Bundle();
+		bundle.putParcelable(INTENT_KEY_STATUS, status);
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
+			if (details_fragment instanceof StatusFragment && details_fragment.isAdded()) {
+				((StatusFragment) details_fragment).displayStatus(status);
+				dual_pane_activity.bringRightPaneToFront();
+			} else {
+				final Fragment fragment = new StatusFragment();
+				final Bundle args = new Bundle(bundle);
+				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+				args.putLong(INTENT_KEY_STATUS_ID, status_id);
+				fragment.setArguments(args);
+				dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
+			}
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_STATUS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+
+			intent.putExtras(bundle);
+			activity.startActivity(intent);
+		}
+	}
+
 	public static void openTweetSearch(Activity activity, long account_id, String query) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new SearchTweetsFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -1716,7 +1908,7 @@ public final class Utils implements Constants {
 				args.putString(INTENT_KEY_QUERY, query);
 			}
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -1732,13 +1924,13 @@ public final class Utils implements Constants {
 
 	public static void openUserBlocks(Activity activity, long account_id) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
-			final Fragment fragment = new UserBlocksFragment();
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new UserBlocksListFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -1747,11 +1939,29 @@ public final class Utils implements Constants {
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
+	
+	public static void openSavedSearches(Activity activity, long account_id) {
+		if (activity == null) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new SavedSearchesListFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_SAVED_SEARCHES);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
 
 	public static void openUserFavorites(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserFavoritesFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -1762,7 +1972,7 @@ public final class Utils implements Constants {
 				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -1781,8 +1991,8 @@ public final class Utils implements Constants {
 
 	public static void openUserFollowers(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserFollowersFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -1793,7 +2003,7 @@ public final class Utils implements Constants {
 				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -1812,8 +2022,8 @@ public final class Utils implements Constants {
 
 	public static void openUserFriends(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserFriendsFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -1824,7 +2034,7 @@ public final class Utils implements Constants {
 				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -1843,15 +2053,15 @@ public final class Utils implements Constants {
 
 	public static void openUserListCreated(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListCreatedFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			args.putLong(INTENT_KEY_USER_ID, user_id);
 			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -1870,8 +2080,8 @@ public final class Utils implements Constants {
 	public static void openUserListDetails(Activity activity, long account_id, int list_id, long user_id,
 			String screen_name, String list_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListDetailsFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -1880,7 +2090,7 @@ public final class Utils implements Constants {
 			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			args.putString(INTENT_KEY_LIST_NAME, list_name);
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -1905,8 +2115,8 @@ public final class Utils implements Constants {
 	public static void openUserListMembers(Activity activity, long account_id, int list_id, long user_id,
 			String screen_name, String list_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListMembersFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -1915,7 +2125,7 @@ public final class Utils implements Constants {
 			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			args.putString(INTENT_KEY_LIST_NAME, list_name);
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -1939,15 +2149,15 @@ public final class Utils implements Constants {
 
 	public static void openUserListMemberships(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListMembershipsFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			args.putLong(INTENT_KEY_USER_ID, user_id);
 			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -1966,8 +2176,8 @@ public final class Utils implements Constants {
 	public static void openUserListSubscribers(Activity activity, long account_id, int list_id, long user_id,
 			String screen_name, String list_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListSubscribersFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -1976,7 +2186,7 @@ public final class Utils implements Constants {
 			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			args.putString(INTENT_KEY_LIST_NAME, list_name);
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -2000,15 +2210,15 @@ public final class Utils implements Constants {
 
 	public static void openUserListSubscriptions(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListSubscriptionsFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			args.putLong(INTENT_KEY_USER_ID, user_id);
 			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -2027,8 +2237,8 @@ public final class Utils implements Constants {
 	public static void openUserListTimeline(Activity activity, long account_id, int list_id, long user_id,
 			String screen_name, String list_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListTimelineFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -2037,7 +2247,7 @@ public final class Utils implements Constants {
 			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			args.putString(INTENT_KEY_LIST_NAME, list_name);
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -2061,15 +2271,15 @@ public final class Utils implements Constants {
 
 	public static void openUserListTypes(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListTypesFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			args.putLong(INTENT_KEY_USER_ID, user_id);
 			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -2087,8 +2297,8 @@ public final class Utils implements Constants {
 
 	public static void openUserProfile(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserProfileFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -2099,7 +2309,7 @@ public final class Utils implements Constants {
 				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_RIGHT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -2117,8 +2327,8 @@ public final class Utils implements Constants {
 
 	public static void openUserRetweetedStatus(Activity activity, long account_id, long status_id) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserRetweetedStatusFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -2126,7 +2336,7 @@ public final class Utils implements Constants {
 				args.putLong(INTENT_KEY_STATUS_ID, status_id);
 			}
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
@@ -2141,8 +2351,8 @@ public final class Utils implements Constants {
 
 	public static void openUserTimeline(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity == null) return;
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserTimelineFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
@@ -2153,7 +2363,7 @@ public final class Utils implements Constants {
 				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
-			home_activity.showAtPane(HomeActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);

@@ -27,6 +27,7 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
 import twitter4j.TwitterConstants;
 
@@ -37,7 +38,7 @@ public interface Constants extends TwitterConstants {
 	public static final String LOGTAG = "Twidere";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 21;
+	public static final int DATABASES_VERSION = 22;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -77,6 +78,10 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_LIST_SUBSCRIPTIONS = "list_subscriptions";
 	public static final String AUTHORITY_LIST_MEMBERSHIPS = "list_memberships";
 	public static final String AUTHORITY_USERS_RETWEETED_STATUS = "users_retweeted_status";
+	public static final String AUTHORITY_SAVED_SEARCHES = "saved_searches";
+	public static final String AUTHORITY_RETWEETED_TO_ME = "retweeted_to_me";
+	public static final String AUTHORITY_SEARCH_USERS = "search_users";
+	public static final String AUTHORITY_SEARCH_TWEETS = "search_tweets";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -177,6 +182,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_SAVE_FILE = INTENT_PACKAGE_PREFIX + "SAVE_FILE";
 	public static final String INTENT_ACTION_VIEW_WEBPAGE = INTENT_PACKAGE_PREFIX + "VIEW_WEBPAGE";
 	public static final String INTENT_ACTION_EXTENSIONS = INTENT_PACKAGE_PREFIX + "EXTENSIONS";
+	public static final String INTENT_ACTION_CUSTOM_TABS = INTENT_PACKAGE_PREFIX + "CUSTOM_TABS";
 
 	public static final String INTENT_ACTION_EXTENSION_EDIT_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_EDIT_IMAGE";
 	public static final String INTENT_ACTION_EXTENSION_UPLOAD = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD";
@@ -205,6 +211,7 @@ public interface Constants extends TwitterConstants {
 			+ "USER_LIST_DETAILS_UPDATED";
 	public static final String BROADCAST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DATABASE_UPDATED";
 	public static final String BROADCAST_FAVORITE_CHANGED = INTENT_PACKAGE_PREFIX + "FAVORITE_CHANGED";
+	public static final String BROADCAST_RETWEET_CHANGED = INTENT_PACKAGE_PREFIX + "RETWEET_CHANGED";
 	public static final String BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED = INTENT_PACKAGE_PREFIX
 			+ "RECEIVED_DIRECT_MESSAGES_REFRESHED";
 	public static final String BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED = INTENT_PACKAGE_PREFIX
@@ -251,6 +258,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_IS_SHARE = "is_share";
 	public static final String INTENT_KEY_STATUS = "status";
 	public static final String INTENT_KEY_FAVORITED = "favorited";
+	public static final String INTENT_KEY_RETWEETED = "retweeted";
 	public static final String INTENT_KEY_FILENAME = "filename";
 	public static final String INTENT_KEY_FILE_SOURCE = "file_source";
 	public static final String INTENT_KEY_ITEMS_INSERTED = "items_inserted";
@@ -341,6 +349,7 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_TRENDS_DAILY = CachedTrends.Daily.CONTENT_PATH;
 	public static final String TABLE_TRENDS_WEEKLY = CachedTrends.Weekly.CONTENT_PATH;
 	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.CONTENT_PATH;
+	public static final String TABLE_TABS = Tabs.CONTENT_PATH;
 
 	public static final int URI_ACCOUNTS = 1;
 	public static final int URI_STATUSES = 2;
@@ -359,6 +368,7 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_TRENDS_DAILY = 15;
 	public static final int URI_TRENDS_WEEKLY = 16;
 	public static final int URI_TRENDS_LOCAL = 17;
+	public static final int URI_TABS = 18;
 
 	public static final String DIR_NAME_PROFILE_IMAGES = "profile_images";
 	public static final String DIR_NAME_CACHED_THUMBNAILS = "cached_thumbnails";
@@ -371,4 +381,8 @@ public interface Constants extends TwitterConstants {
 	public static final int NOTIFICATION_ID_HOME_TIMELINE = 1;
 	public static final int NOTIFICATION_ID_MENTIONS = 2;
 	public static final int NOTIFICATION_ID_DIRECT_MESSAGES = 3;
+
+	public static final int[] TABS_ICONS_RES = new int[] {R.drawable.ic_tab_accounts, R.drawable.ic_tab_heart, R.drawable.ic_tab_home, R.drawable.ic_tab_list, R.drawable.ic_tab_mention, R.drawable.ic_tab_message
+		,R.drawable.ic_tab_person, R.drawable.ic_tab_pin, R.drawable.ic_tab_star, R.drawable.ic_tab_trends, R.drawable.ic_tab_twitter};
+	
 }

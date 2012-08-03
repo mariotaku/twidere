@@ -36,6 +36,7 @@ import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedUserName;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
+import static org.mariotaku.twidere.util.Utils.openSavedSearches;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserBlocks;
 import static org.mariotaku.twidere.util.Utils.openUserFavorites;
@@ -117,7 +118,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private LazyImageLoader mProfileImageLoader;
 
 	private ImageView mProfileImageView;
-	private GetFriendshipTask mFollowInfoTask;
+	private GetFriendshipTask mGetFriendshipTask;
 	private View mFollowContainer, mMoreOptionsContainer;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowedYouIndicator;
@@ -165,13 +166,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
 				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.getId()
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
-					showFollowInfo(true);
+					getFriendship();
 				}
 			}
 			if (BROADCAST_BLOCKSTATE_CHANGED.equals(action)) {
 				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.getId()
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
-					showFollowInfo(true);
+					getFriendship();
 				}
 			}
 			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
@@ -184,6 +185,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	};
 
 	public void changeUser(long account_id, User user) {
+		mFriendship = null;
 		if (user == null || user.getId() <= 0 || getActivity() == null
 				|| !isMyActivatedAccount(getActivity(), account_id)) return;
 		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
@@ -247,7 +249,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		// }
 		mUser = user;
 		mAdapter.notifyDataSetChanged();
-		showFollowInfo(false);
+		getFriendship();
 	}
 
 	public void getUserInfo(long account_id, long user_id, String screen_name) {
@@ -299,8 +301,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAdapter.add(new FavoritesAction());
 		mAdapter.add(new UserListTypesAction());
 		if (isMyActivatedAccount(getActivity(), user_id) || isMyActivatedUserName(getActivity(), screen_name)) {
-			mAdapter.add(new UserBlocksAction());
+			mAdapter.add(new SavedSearchesAction());
 			mAdapter.add(new DirectMessagesAction());
+			mAdapter.add(new UserBlocksAction());
 		}
 		mProfileImageContainer.setOnClickListener(this);
 		mProfileImageContainer.setOnLongClickListener(this);
@@ -466,8 +469,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	@Override
 	public void onDestroyView() {
 		mUser = null;
-		if (mFollowInfoTask != null) {
-			mFollowInfoTask.cancel(true);
+		mFriendship = null;
+		if (mGetFriendshipTask != null) {
+			mGetFriendshipTask.cancel(true);
 		}
 		if (mUserInfoTask != null) {
 			mUserInfoTask.cancel(true);
@@ -690,13 +694,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		getUserInfo(mAccountId, mUserId, mScreenName);
 	}
 
-	private void showFollowInfo(boolean force) {
-		if (mFollowInfoDisplayed && !force) return;
-		if (mFollowInfoTask != null) {
-			mFollowInfoTask.cancel(true);
+	private void getFriendship() {
+		if (mGetFriendshipTask != null) {
+			mGetFriendshipTask.cancel(true);
 		}
-		mFollowInfoTask = new GetFriendshipTask();
-		mFollowInfoTask.execute();
+		mGetFriendshipTask = new GetFriendshipTask();
+		mGetFriendshipTask.execute();
 	}
 
 	private void takePhoto() {
@@ -878,7 +881,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mFollowProgress.setVisibility(View.GONE);
 			mMoreOptionsProgress.setVisibility(View.GONE);
 			super.onPostExecute(result);
-			mFollowInfoTask = null;
+			mGetFriendshipTask = null;
 		}
 
 		@Override
@@ -927,6 +930,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public void onClick() {
 			if (mUser == null) return;
 			openUserBlocks(getActivity(), mAccountId);
+		}
+
+	}
+	
+	private class SavedSearchesAction extends ListAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.saved_searches);
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null) return;
+			openSavedSearches(getActivity(), mAccountId);
 		}
 
 	}

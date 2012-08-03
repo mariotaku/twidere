@@ -42,7 +42,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	private SharedPreferences mPreferences;
 	private ListView mListView;
 	private ServiceInterface mService;
-	
+
 	private long mMinIdToRefresh;
 	private boolean mShouldRestorePosition = false;
 
@@ -158,7 +158,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	@Override
 	public boolean onTouch(View view, MotionEvent ev) {
 		switch (ev.getAction()) {
-			case MotionEvent.ACTION_DOWN:{
+			case MotionEvent.ACTION_DOWN: {
 				mService.clearNotification(NOTIFICATION_ID_MENTIONS);
 				break;
 			}

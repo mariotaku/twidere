@@ -3262,7 +3262,7 @@ org.mariotaku.twidere.activity.SearchActivity -> org.mariotaku.twidere.activity.
     void onItemSelected(android.widget.AdapterView,android.view.View,int,long) -> onItemSelected
     void onNothingSelected(android.widget.AdapterView) -> onNothingSelected
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-org.mariotaku.twidere.activity.SearchActivity$TabSpec -> org.mariotaku.twidere.activity.w:
+org.mariotaku.twidere.activity.SpinnerSpec -> org.mariotaku.twidere.activity.w:
     java.lang.Class cls -> a
     java.lang.String name -> b
     java.lang.String toString() -> toString
@@ -3470,16 +3470,16 @@ org.mariotaku.twidere.adapter.TabsAdapter -> org.mariotaku.twidere.a.d:
     java.lang.String getTitle(int) -> c
     void onPageReselected(int) -> d
     void onPageSelected(int) -> e
-org.mariotaku.twidere.adapter.TabsAdapter$TabInfo -> org.mariotaku.twidere.a.e:
+org.mariotaku.twidere.adapter.TabSpec -> org.mariotaku.twidere.a.e:
     java.lang.String name -> b
     java.lang.Integer icon -> c
     java.lang.Class cls -> d
     android.os.Bundle args -> e
     org.mariotaku.twidere.adapter.TabsAdapter this$0 -> a
-    java.lang.Integer access$0(org.mariotaku.twidere.adapter.TabsAdapter$TabInfo) -> a
-    java.lang.Class access$1(org.mariotaku.twidere.adapter.TabsAdapter$TabInfo) -> b
-    android.os.Bundle access$2(org.mariotaku.twidere.adapter.TabsAdapter$TabInfo) -> c
-    java.lang.String access$3(org.mariotaku.twidere.adapter.TabsAdapter$TabInfo) -> d
+    java.lang.Integer access$0(org.mariotaku.twidere.adapter.TabSpec) -> a
+    java.lang.Class access$1(org.mariotaku.twidere.adapter.TabSpec) -> b
+    android.os.Bundle access$2(org.mariotaku.twidere.adapter.TabSpec) -> c
+    java.lang.String access$3(org.mariotaku.twidere.adapter.TabSpec) -> d
 org.mariotaku.twidere.adapter.UserAutoCompleteAdapter -> org.mariotaku.twidere.a.f:
     android.database.Cursor mCursor -> m
     android.content.ContentResolver mResolver -> n
@@ -4063,7 +4063,7 @@ org.mariotaku.twidere.fragment.SearchUsersFragment -> org.mariotaku.twidere.b.aw
     void onResume() -> p
     void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-org.mariotaku.twidere.fragment.UserBlocksFragment -> org.mariotaku.twidere.b.ax:
+org.mariotaku.twidere.fragment.UserBlocksListFragment -> org.mariotaku.twidere.b.ax:
     android.support.v4.content.Loader newLoaderInstance() -> z
     void onCreate(android.os.Bundle) -> a
     void onLoaderReset(android.support.v4.content.Loader) -> a
