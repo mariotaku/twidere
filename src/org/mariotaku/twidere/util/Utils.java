@@ -49,6 +49,7 @@ import static org.mariotaku.twidere.util.TwidereLinkify.TWITPIC_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES;
 import static org.mariotaku.twidere.util.TwidereLinkify.YFROG_GROUP_ID;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
@@ -84,6 +85,7 @@ import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
+import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
@@ -150,11 +152,13 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -235,9 +239,10 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_DAILY, URI_TRENDS_DAILY);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_WEEKLY, URI_TRENDS_WEEKLY);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, URI_TRENDS_LOCAL);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TABS, URI_TABS);
 
 		CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();
-		
+
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_CREATED, UserListCreatedFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERS, UserListMembersFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERSHIPS, UserListMembershipsFragment.class);
@@ -249,9 +254,13 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SEARCH_TWEETS, SearchTweetsFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SEARCH_USERS, SearchUsersFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FAVORITES, UserFavoritesFragment.class);
-		
-		CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>(); 
-		
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_TIMELINE, UserTimelineFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FOLLOWERS, UserFollowersFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FRIENDS, UserFriendsFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_DIRECT_MESSAGES, DirectMessagesFragment.class);
+
+		CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
+
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_CREATED, R.string.list_created_by_user);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_MEMBERS, R.string.list_members);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_MEMBERSHIPS, R.string.list_following_user);
@@ -263,97 +272,31 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SEARCH_TWEETS, R.string.search_tweets);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SEARCH_USERS, R.string.search_users);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FAVORITES, R.string.favorites);
-		
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_TIMELINE, R.string.user_timeline);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FOLLOWERS, R.string.followers);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FRIENDS, R.string.following);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_DIRECT_MESSAGES, R.string.direct_messages);
+
 		CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
+
 		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);
+		CUSTOM_TABS_ICON_NAME_MAP.put("fire", R.drawable.ic_tab_fire);
+		CUSTOM_TABS_ICON_NAME_MAP.put("hasmter", R.drawable.ic_tab_hasmter);
 		CUSTOM_TABS_ICON_NAME_MAP.put("heart", R.drawable.ic_tab_heart);
 		CUSTOM_TABS_ICON_NAME_MAP.put("home", R.drawable.ic_tab_home);
 		CUSTOM_TABS_ICON_NAME_MAP.put("list", R.drawable.ic_tab_list);
+		CUSTOM_TABS_ICON_NAME_MAP.put("mention", R.drawable.ic_tab_mention);
+		CUSTOM_TABS_ICON_NAME_MAP.put("message", R.drawable.ic_tab_message);
+		CUSTOM_TABS_ICON_NAME_MAP.put("neko", R.drawable.ic_tab_neko);
+		CUSTOM_TABS_ICON_NAME_MAP.put("person", R.drawable.ic_tab_person);
+		CUSTOM_TABS_ICON_NAME_MAP.put("pin", R.drawable.ic_tab_pin);
+		CUSTOM_TABS_ICON_NAME_MAP.put("ribbon", R.drawable.ic_tab_ribbon);
+		CUSTOM_TABS_ICON_NAME_MAP.put("star", R.drawable.ic_tab_star);
+		CUSTOM_TABS_ICON_NAME_MAP.put("trends", R.drawable.ic_tab_trends);
+		CUSTOM_TABS_ICON_NAME_MAP.put("twitter", R.drawable.ic_tab_twitter);
+		CUSTOM_TABS_ICON_NAME_MAP.put(ICON_SPECIAL_TYPE_CUSTOMIZE, -1);
+
 	}
-	
-	public static int getTabIcon(String type) {
-		if (type == null) return R.drawable.ic_tab_list;
-		final Integer value = CUSTOM_TABS_ICON_NAME_MAP.get(type);
-		return value != null ? value : R.drawable.ic_tab_list;
-	}
-	
-	public static String getTabTypeName(Context context, String type) {
-		if (context == null) return null;
-		final Integer res_id = CUSTOM_TABS_TYPE_NAME_MAP.get(type);
-		return res_id != null ? context.getString(res_id) : null;
-	}
-	
-	public static List<TabSpec> getTabs(Context context) {
-		if (context == null) return Collections.emptyList();
-		final ArrayList<TabSpec> tabs = new ArrayList<TabSpec>();
-		final ContentResolver resolver = context.getContentResolver();
-		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, null, null, Tabs.DEFAULT_SORT_ORDER);
-		if (cur != null) {
-			cur.moveToFirst();
-			final int idx_name = cur.getColumnIndex(Tabs.NAME), idx_icon = cur.getColumnIndex(Tabs.ICON), idx_type = cur.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS), idx_position = cur.getColumnIndex(Tabs.POSITION);
-			while (!cur.isAfterLast()) {
-				final int position = cur.getInt(idx_position) + HomeActivity.TAB_POSITION_ACCOUNTS;
-				final String icon_type = cur.getString(idx_icon);
-				final String type = cur.getString(idx_type);
-				final String name = cur.getString(idx_name);
-				final Bundle args = parseArguments(cur.getString(idx_arguments));
-				final Class<? extends Fragment> fragment = CUSTOM_TABS_FRAGMENT_MAP.get(type);
-				if (name != null && fragment != null) {
-					tabs.add(new TabSpec(name, getTabIcon(icon_type), fragment, args, position));
-				}
-				cur.moveToNext();
-			}
-			cur.close();
-		}
-		return tabs;
-	}
-	
-	
-	public static Bundle parseArguments(String string) {
-		final Bundle bundle = new Bundle();
-		if (string != null) {
-			try {
-				final JSONObject json = new JSONObject(string);
-				final Iterator<?> it = json.keys();
-				for (Object key_obj = null;!it.hasNext(); key_obj = it.next()) {
-					if (key_obj == null) continue;
-					final String key = key_obj.toString();
-					final Object value = json.get(key);
-					if (value instanceof Boolean) {
-						bundle.putBoolean(key, (Boolean) value);
-					} else if (value instanceof Integer) {
-						bundle.putInt(key, (Integer) value);
-					} else if (value instanceof Long) {
-						bundle.putLong(key, (Long) value);
-					} else if (value instanceof String) {
-						bundle.putString(key, (String) value);
-					} else {
-						Log.w(LOGTAG, "Unknown type " + value.getClass().getSimpleName() + " in arguments key " + key);
-					}
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			} catch (ClassCastException e) {
-				e.printStackTrace();
-			}
-		}
-		return bundle;
-	}
-	
-	public static String buildArguments(Bundle args) {
-		final Set<String> keys = args.keySet();
-		final JSONObject json = new JSONObject();
-		for (String key: keys) {
-			final Object value = args.get(key);
-			try {
-				json.put(key, value);
-			} catch (JSONException e) {
-				Log.w(LOGTAG, "Unknown type " + value.getClass().getSimpleName() + " in arguments key " + key);
-			}
-		}
-		return json.toString();
-	}
-	
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 
@@ -364,31 +307,6 @@ public final class Utils implements Constants {
 
 	private Utils() {
 		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
-	}
-
-	public static void openDirectMessagesConversation(Activity activity, long account_id, long conversation_id) {
-		if (activity == null) return;
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
-			if (details_fragment instanceof DMConversationFragment && details_fragment.isAdded()) {
-				((DMConversationFragment) details_fragment).showConversation(account_id, conversation_id);
-			} else {
-				final Fragment fragment = new DMConversationFragment();
-				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-				args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
-				fragment.setArguments(args);
-				dual_pane_activity.showAtPane(PANE_RIGHT, fragment, true);
-			}
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
 	}
 
 	public static String buildActivatedStatsWhereClause(Context context, String selection) {
@@ -405,6 +323,34 @@ public final class Utils implements Constants {
 		builder.append(" )");
 
 		return builder.toString();
+	}
+
+	public static String buildArguments(Bundle args) {
+		final Set<String> keys = args.keySet();
+		final JSONObject json = new JSONObject();
+		for (final String key : keys) {
+			final Object value = args.get(key);
+			if (value == null) {
+				continue;
+			}
+			try {
+				if (value instanceof Boolean) {
+					json.put(key, args.getBoolean(key));
+				} else if (value instanceof Integer) {
+					json.put(key, args.getInt(key));
+				} else if (value instanceof Long) {
+					json.put(key, args.getLong(key));
+				} else if (value instanceof String) {
+					json.put(key, args.getString(key));
+				} else {
+					Log.w(LOGTAG, "Unknown type " + (value != null ? value.getClass().getSimpleName() : null)
+							+ " in arguments key " + key);
+				}
+			} catch (final JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return json.toString();
 	}
 
 	public static Uri buildDirectMessageConversationsEntryUri(long account_id) {
@@ -460,6 +406,16 @@ public final class Utils implements Constants {
 		final Uri.Builder uribuilder = uri.buildUpon();
 		uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify));
 		return uribuilder.build();
+	}
+
+	public static boolean bundleEquals(Bundle args1, Bundle args2) {
+		if (args1 == null || args2 == null) return args1 == args2;
+		final Iterator<String> keys = args1.keySet().iterator();
+		while (keys.hasNext()) {
+			final String key = keys.next();
+			if (!objectEquals(args1.get(key), args2.get(key))) return false;
+		}
+		return true;
 	}
 
 	public static synchronized void cleanDatabasesByItemLimit(Context context) {
@@ -1190,10 +1146,10 @@ public final class Utils implements Constants {
 	}
 
 	public static PreviewImage getPreviewImage(String html, boolean include_preview, boolean force_ssl) {
-		if (html == null) return new PreviewImage(false, null);
+		if (html == null) return new PreviewImage(false, null, null);
 		final Matcher m = PATTERN_ALL_AVALIABLE_IMAGES.matcher(html);
 		if (m.find()) {
-			if (!include_preview) return new PreviewImage(true, null);
+			if (!include_preview) return new PreviewImage(true, null, null);
 			final String image_url = m.group();
 			String temp_thumbnail_url = null;
 			if (image_url.matches(STRING_PATTERN_IMGLY)) {
@@ -1254,9 +1210,9 @@ public final class Utils implements Constants {
 					temp_thumbnail_url = spec.thumbnail_link;
 				}
 			}
-			return new PreviewImage(true, temp_thumbnail_url);
+			return new PreviewImage(true, temp_thumbnail_url, image_url);
 		}
-		return new PreviewImage(false, null);
+		return new PreviewImage(false, null, null);
 	}
 
 	public static Proxy getProxy(Context context) {
@@ -1385,6 +1341,42 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
+	public static Drawable getTabIconDrawable(Context context, Object icon_obj) {
+		if (context == null) return null;
+		final Resources res = context.getResources();
+		if (icon_obj instanceof Integer) {
+			try {
+				return res.getDrawable((Integer) icon_obj);
+			} catch (final Resources.NotFoundException e) {
+				// Ignore.
+			}
+		} else if (icon_obj instanceof Bitmap)
+			return new BitmapDrawable(res, (Bitmap) icon_obj);
+		else if (icon_obj instanceof Drawable)
+			return (Drawable) icon_obj;
+		else if (icon_obj instanceof File) {
+			final Bitmap b = getTabIconFromFile((File) icon_obj, res);
+			if (b != null) return new BitmapDrawable(res, b);
+		}
+		return res.getDrawable(R.drawable.ic_tab_list);
+	}
+
+	public static Object getTabIconObject(String type) {
+		if (type == null) return R.drawable.ic_tab_list;
+		final Integer value = CUSTOM_TABS_ICON_NAME_MAP.get(type);
+		if (value != null)
+			return value;
+		else if (type.contains("/")) {
+			try {
+				final File file = new File(type);
+				if (file.exists()) return file;
+			} catch (final Exception e) {
+				return R.drawable.ic_tab_list;
+			}
+		}
+		return R.drawable.ic_tab_list;
+	}
+
 	public static int getTableId(Uri uri) {
 		if (uri == null) return -1;
 		return CONTENT_PROVIDER_URI_MATCHER.match(uri);
@@ -1427,11 +1419,44 @@ public final class Utils implements Constants {
 				return TABLE_TRENDS_WEEKLY;
 			case URI_TRENDS_LOCAL:
 				return TABLE_TRENDS_LOCAL;
-			case URI_TABS: 
+			case URI_TABS:
 				return TABLE_TABS;
 			default:
 				return null;
 		}
+	}
+
+	public static List<TabSpec> getTabs(Context context) {
+		if (context == null) return Collections.emptyList();
+		final ArrayList<TabSpec> tabs = new ArrayList<TabSpec>();
+		final ContentResolver resolver = context.getContentResolver();
+		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, null, null, Tabs.DEFAULT_SORT_ORDER);
+		if (cur != null) {
+			cur.moveToFirst();
+			final int idx_name = cur.getColumnIndex(Tabs.NAME), idx_icon = cur.getColumnIndex(Tabs.ICON), idx_type = cur
+					.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS), idx_position = cur
+					.getColumnIndex(Tabs.POSITION);
+			while (!cur.isAfterLast()) {
+				final int position = cur.getInt(idx_position) + HomeActivity.TAB_POSITION_ACCOUNTS + 1;
+				final String icon_type = cur.getString(idx_icon);
+				final String type = cur.getString(idx_type);
+				final String name = cur.getString(idx_name);
+				final Bundle args = parseArguments(cur.getString(idx_arguments));
+				final Class<? extends Fragment> fragment = CUSTOM_TABS_FRAGMENT_MAP.get(type);
+				if (name != null && fragment != null) {
+					tabs.add(new TabSpec(name, getTabIconObject(icon_type), fragment, args, position));
+				}
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		return tabs;
+	}
+
+	public static String getTabTypeName(Context context, String type) {
+		if (context == null) return null;
+		final Integer res_id = CUSTOM_TABS_TYPE_NAME_MAP.get(type);
+		return res_id != null ? context.getString(res_id) : null;
 	}
 
 	public static long getTimestampFromDate(Date date) {
@@ -1845,6 +1870,11 @@ public final class Utils implements Constants {
 		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
 	}
 
+	public static boolean objectEquals(Object object1, Object object2) {
+		if (object1 == null || object2 == null) return object1 == object2;
+		return object1.equals(object2);
+	}
+
 	public static void openConversation(Activity activity, long account_id, long status_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
@@ -1861,6 +1891,49 @@ public final class Utils implements Constants {
 			builder.authority(AUTHORITY_CONVERSATION);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	public static void openDirectMessagesConversation(Activity activity, long account_id, long conversation_id) {
+		if (activity == null) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
+			if (details_fragment instanceof DMConversationFragment && details_fragment.isAdded()) {
+				((DMConversationFragment) details_fragment).showConversation(account_id, conversation_id);
+			} else {
+				final Fragment fragment = new DMConversationFragment();
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+				args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+				fragment.setArguments(args);
+				dual_pane_activity.showAtPane(PANE_RIGHT, fragment, true);
+			}
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
+	public static void openSavedSearches(Activity activity, long account_id) {
+		if (activity == null) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new SavedSearchesListFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_SAVED_SEARCHES);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
@@ -1935,24 +2008,6 @@ public final class Utils implements Constants {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER_BLOCKS);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-	
-	public static void openSavedSearches(Activity activity, long account_id) {
-		if (activity == null) return;
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new SavedSearchesListFragment();
-			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_SAVED_SEARCHES);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
@@ -2380,6 +2435,45 @@ public final class Utils implements Constants {
 
 	}
 
+	public static Bundle parseArguments(String string) {
+		final Bundle bundle = new Bundle();
+		if (string != null) {
+			try {
+				final JSONObject json = new JSONObject(string);
+				final Iterator<?> it = json.keys();
+				while (it.hasNext()) {
+					final Object key_obj = it.next();
+					if (key_obj == null) {
+						continue;
+					}
+					final String key = key_obj.toString();
+					final Object value = json.get(key);
+					if (value instanceof Boolean) {
+						bundle.putBoolean(key, json.getBoolean(key));
+					} else if (value instanceof Integer) {
+						// FIXME Simple workaround for account_id
+						if (INTENT_KEY_ACCOUNT_ID.equals(key)) {
+							bundle.putLong(key, json.getLong(key));
+						} else {
+							bundle.putInt(key, json.getInt(key));
+						}
+					} else if (value instanceof Long) {
+						bundle.putLong(key, json.getLong(key));
+					} else if (value instanceof String) {
+						bundle.putString(key, json.getString(key));
+					} else {
+						Log.w(LOGTAG, "Unknown type " + value.getClass().getSimpleName() + " in arguments key " + key);
+					}
+				}
+			} catch (final JSONException e) {
+				e.printStackTrace();
+			} catch (final ClassCastException e) {
+				e.printStackTrace();
+			}
+		}
+		return bundle;
+	}
+
 	public static double parseDouble(String source) {
 		if (source == null) return -1;
 		try {
@@ -2506,6 +2600,18 @@ public final class Utils implements Constants {
 	public static String trimLineBreak(String orig) {
 		if (orig == null) return null;
 		return orig.replaceAll("\\n+", "\n");
+	}
+
+	private static Bitmap getTabIconFromFile(File file, Resources res) {
+		if (file == null || !file.exists()) return null;
+		final String path = file.getPath();
+		final BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path, o);
+		if (o.outHeight <= 0 || o.outWidth <= 0) return null;
+		final BitmapFactory.Options o2 = new BitmapFactory.Options();
+		o2.inSampleSize = (int) (Math.max(o.outWidth, o.outHeight) / (48 * res.getDisplayMetrics().density));
+		return BitmapFactory.decodeFile(path, o2);
 	}
 
 }

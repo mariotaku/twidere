@@ -32,8 +32,7 @@ import android.content.Context;
 
 public class RetweetedToMeLoader extends Twitter4JStatusLoader {
 
-	public RetweetedToMeLoader(Context context, long account_id, long max_id,
-			List<ParcelableStatus> data) {
+	public RetweetedToMeLoader(Context context, long account_id, long max_id, List<ParcelableStatus> data) {
 		super(context, account_id, max_id, data);
 	}
 

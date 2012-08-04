@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/main_container"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<LinearLayout
+		android:id="@+id/left_pane_layer"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:baselineAligned="false"
+		android:orientation="horizontal">
+
+		<org.mariotaku.twidere.view.ExtendedFrameLayout
+			android:id="@+id/left_pane_container"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="@integer/pane_left_content_weight">
+
+			<FrameLayout
+				android:id="@+id/main"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+
+				<ListView
+					android:id="@android:id/list"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layerType="software"/>
+			</FrameLayout>
+
+			<FrameLayout
+				android:id="@+id/left_pane"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+		</org.mariotaku.twidere.view.ExtendedFrameLayout>
+
+		<View
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="@integer/pane_left_shadow_weight"
+			android:background="@drawable/two_panes_shadow_left"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/right_pane_layer"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:baselineAligned="false"
+		android:orientation="horizontal">
+
+		<View
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="@integer/pane_right_shadow_weight"
+			android:background="@drawable/two_panes_shadow_right"/>
+
+		<org.mariotaku.twidere.view.ExtendedFrameLayout
+			android:id="@+id/right_pane_container"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="@integer/pane_right_content_weight">
+
+			<FrameLayout
+				android:id="@+id/right_pane"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+		</org.mariotaku.twidere.view.ExtendedFrameLayout>
+	</LinearLayout>
+
+</FrameLayout>

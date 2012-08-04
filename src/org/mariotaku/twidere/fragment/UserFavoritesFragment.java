@@ -25,12 +25,33 @@ import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.loader.UserFavoritesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
 public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 
 	private boolean isAllItemsLoaded = false;
+	private long mUserId;
+
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_FAVORITE_CHANGED.equals(action)) {
+				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
+				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUserId && status_id > 0
+						&& !intent.getBooleanExtra(INTENT_KEY_FAVORITED, true)) {
+					deleteStatus(status_id);
+				}
+			}
+		}
+
+	};
 
 	@Override
 	public boolean isListLoadFinished() {
@@ -44,6 +65,9 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 		if (args != null) {
 			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+			if (user_id > 0) {
+				mUserId = user_id;
+			}
 			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
@@ -57,8 +81,24 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
 		if (loader instanceof UserFavoritesLoader) {
 			final int total = ((UserFavoritesLoader) loader).getTotalItemsCount();
+			if (mUserId <= 0) {
+				mUserId = ((UserFavoritesLoader) loader).getUserId();
+			}
 			isAllItemsLoaded = total != -1 && total == adapter.getCount();
 		}
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_FAVORITE_CHANGED);
+		registerReceiver(mStateReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
 	}
 
 }

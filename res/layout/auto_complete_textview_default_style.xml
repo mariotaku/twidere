@@ -9,6 +9,7 @@
 		style="?android:editTextStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:completionThreshold="1"
 		android:singleLine="true"/>
 
 </FrameLayout>

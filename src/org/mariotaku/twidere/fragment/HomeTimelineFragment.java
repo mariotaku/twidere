@@ -72,10 +72,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 				if (getServiceInterface().isHomeTimelineRefreshing()) {
 					setRefreshing(false);
 				}
-			} else if ((HomeTimelineFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
-				if (getListView() != null) {
-					getListView().setSelection(0);
-				}
+			}
 		}
 	};
 
@@ -111,7 +108,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 			}
 		}
 		super.onLoadFinished(loader, data);
-		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
+		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		if (mShouldRestorePosition && remember_position) {
 
 			final long status_id = mPreferences.getLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, -1);
@@ -139,7 +136,6 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
-		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		registerReceiver(mStatusReceiver, filter);
 		if (getServiceInterface().isHomeTimelineRefreshing()) {
 			setRefreshing(false);

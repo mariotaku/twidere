@@ -47,5 +47,7 @@
 	<item name="send_direct_message" type="id"/>
 	<item name="extensions" type="id"/>
 	<item name="view_user_list" type="id"/>
+	<item name="up" type="id"/>
+	<item name="down" type="id"/>
 
 </resources>

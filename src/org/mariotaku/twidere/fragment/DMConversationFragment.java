@@ -65,9 +65,8 @@ import android.widget.ListView;
 
 import com.twitter.Validator;
 
-public class DMConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>,
-		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener,
-		Panes.Right {
+public class DMConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>, OnItemClickListener,
+		OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener, Panes.Right {
 
 	private ServiceInterface mService;
 

@@ -38,7 +38,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public class PullToRefreshListFragment extends BaseListFragment implements OnRefreshListener {
+public abstract class PullToRefreshListFragment extends BaseListFragment implements OnRefreshListener {
 
 	private PullToRefreshListView mPullToRefreshListView;
 
@@ -115,9 +115,7 @@ public class PullToRefreshListFragment extends BaseListFragment implements OnRef
 	}
 
 	@Override
-	public void onRefresh() {
-
-	}
+	public abstract void onRefresh();
 
 	/**
 	 * Mark the current Refresh as complete. Will Reset the UI and hide the

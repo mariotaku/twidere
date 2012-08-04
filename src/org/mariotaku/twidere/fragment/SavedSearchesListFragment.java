@@ -26,15 +26,19 @@ import android.widget.TextView;
 public class SavedSearchesListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<ResponseList<SavedSearch>>, OnItemClickListener, Panes.Left {
 
-	@Override
-	public void onRefresh() {
-		getLoaderManager().restartLoader(0, null, this);
-	}
-
 	private SavedSearchesAdapter mAdapter;
+
 	private long mAccountId;
 	private ListView mListView;
-	
+	private static final Comparator<SavedSearch> POSITION_COMPARATOR = new Comparator<SavedSearch>() {
+
+		@Override
+		public int compare(SavedSearch object1, SavedSearch object2) {
+			return object1.getPosition() - object2.getPosition();
+		}
+
+	};
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -54,6 +58,18 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		final SavedSearch item = mAdapter.findItem(id);
+		if (item == null) return;
+		openTweetSearch(getActivity(), mAccountId, item.getQuery());
+	}
+
+	@Override
+	public void onLoaderReset(Loader<ResponseList<SavedSearch>> loader) {
+		mAdapter.setData(null);
+	}
+
+	@Override
 	public void onLoadFinished(Loader<ResponseList<SavedSearch>> loader, ResponseList<SavedSearch> data) {
 		if (data != null) {
 			Collections.sort(data, POSITION_COMPARATOR);
@@ -64,10 +80,10 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public void onLoaderReset(Loader<ResponseList<SavedSearch>> loader) {
-		mAdapter.setData(null);
+	public void onRefresh() {
+		getLoaderManager().restartLoader(0, null, this);
 	}
-	
+
 	private static class SavedSearchesAdapter extends BaseAdapter {
 
 		private ResponseList<SavedSearch> mData;
@@ -77,11 +93,14 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 			mInflater = LayoutInflater.from(context);
 		}
 
-		public void setData(ResponseList<SavedSearch> data) {
-			mData = data;
-			notifyDataSetChanged();
+		public SavedSearch findItem(long id) {
+			final int count = getCount();
+			for (int i = 0; i < count; i++) {
+				if (id != -1 && id == getItemId(i)) return getItem(i);
+			}
+			return null;
 		}
-		
+
 		@Override
 		public int getCount() {
 			return mData != null ? mData.size() : 0;
@@ -89,24 +108,14 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 
 		@Override
 		public SavedSearch getItem(int position) {
-			return mData != null? mData.get(position) : null;
+			return mData != null ? mData.get(position) : null;
 		}
 
 		@Override
 		public long getItemId(int position) {
-			return mData != null? mData.get(position).getId() : -1;
+			return mData != null ? mData.get(position).getId() : -1;
 		}
 
-		public SavedSearch findItem(long id) {
-			final int count = getCount();
-			for (int i = 0; i < count; i++) {
-				if (id != -1 && id == getItemId(i)) {
-					return getItem(i);
-				}
-			}
-			return null;
-		}
-		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final View view = convertView != null ? convertView : mInflater.inflate(
@@ -116,22 +125,11 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 			return view;
 		}
 
-	}
-
-	private static final Comparator<SavedSearch> POSITION_COMPARATOR = new Comparator<SavedSearch>() {
-
-		@Override
-		public int compare(SavedSearch object1, SavedSearch object2) {
-			return object1.getPosition() - object2.getPosition();
+		public void setData(ResponseList<SavedSearch> data) {
+			mData = data;
+			notifyDataSetChanged();
 		}
-		
-	};
-	
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		final SavedSearch item = mAdapter.findItem(id);
-		if (item == null) return;
-		openTweetSearch(getActivity(), mAccountId, item.getQuery());
+
 	}
 
 }

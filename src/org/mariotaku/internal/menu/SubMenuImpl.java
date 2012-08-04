@@ -19,8 +19,6 @@ public final class SubMenuImpl extends MenuImpl implements SubMenu {
 	private final MenuItem menuItem;
 	private final Context mContext;
 
-	private Drawable mHeaderIcon;
-
 	public SubMenuImpl(Context context, MenuItem menuItem) {
 		super(context);
 		mContext = context;
@@ -63,7 +61,7 @@ public final class SubMenuImpl extends MenuImpl implements SubMenu {
 	@Override
 	public int addIntentOptions(int groupId, int itemId, int order, ComponentName caller, Intent[] specifics,
 			Intent intent, int flags, MenuItem[] outSpecificItems) {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
@@ -112,13 +110,11 @@ public final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public void clearHeader() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -196,67 +192,61 @@ public final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public void setGroupCheckable(int group, boolean checkable, boolean exclusive) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void setGroupEnabled(int group, boolean enabled) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void setGroupVisible(int group, boolean visible) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public SubMenu setHeaderIcon(Drawable icon) {
-		mHeaderIcon = icon;
 		return this;
 	}
 
 	@Override
 	public SubMenu setHeaderIcon(int iconRes) {
-		mHeaderIcon = mContext.getResources().getDrawable(iconRes);
 		return this;
 	}
 
 	@Override
 	public SubMenu setHeaderTitle(CharSequence title) {
-		// TODO Auto-generated method stub
+
 		return this;
 	}
 
 	@Override
 	public SubMenu setHeaderTitle(int titleRes) {
-		// TODO Auto-generated method stub
+
 		return this;
 	}
 
 	@Override
 	public SubMenu setHeaderView(View view) {
-		// TODO Auto-generated method stub
+
 		return this;
 	}
 
 	@Override
 	public SubMenu setIcon(Drawable icon) {
-		// TODO Auto-generated method stub
+
 		return this;
 	}
 
 	@Override
 	public SubMenu setIcon(int iconRes) {
-		// TODO Auto-generated method stub
+
 		return this;
 	}
 
 	@Override
 	public void setQwertyMode(boolean isQwerty) {
-		// TODO Auto-generated method stub
 
 	}
 

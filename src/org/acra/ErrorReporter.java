@@ -873,6 +873,8 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
 				Log.e(ACRA.LOG_TAG, "Failed to send crash report for " + curFileName, e);
 				break; // Something stopped the report being sent. Don't try to
 						// send any more reports now.
+			} catch (final StackOverflowError e) {
+				e.printStackTrace();
 			}
 			reportsSentCount++;
 		}
@@ -1275,8 +1277,6 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
 				}
 				addUserDataToReport(mContext, mCommentedReportFileName, mUserComment, mUserEmail);
 				checkAndSendReports(mContext, mSendOnlySilentReports);
-			} catch (final Exception e) {
-				// Ignore.
 			} finally {
 				if (wakeLock != null) {
 					wakeLock.release();

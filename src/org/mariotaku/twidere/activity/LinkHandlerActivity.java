@@ -56,9 +56,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.FrameLayout;
 
-public class LinkHandlerActivity extends BaseActivity {
+public class LinkHandlerActivity extends DualPaneActivity {
 
 	private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 	private static final int CODE_STATUS = 1;
@@ -111,7 +110,7 @@ public class LinkHandlerActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		setContentView(new FrameLayout(this));
+		setContentView(R.layout.base_dual_pane);
 		setSupportProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		final Intent intent = getIntent();
@@ -119,9 +118,13 @@ public class LinkHandlerActivity extends BaseActivity {
 		if (data != null) {
 			if (setFragment(data)) {
 				if (mFragment != null) {
-					final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-					ft.replace(android.R.id.content, mFragment);
-					ft.commit();
+					if (isDualPaneMode()) {
+						showFragment(mFragment, false);
+					} else {
+						final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+						ft.replace(R.id.content, mFragment);
+						ft.commit();
+					}
 					return;
 				} else {
 					finish();

@@ -72,10 +72,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 				if (getServiceInterface().isMentionsRefreshing()) {
 					setRefreshing(false);
 				}
-			} else if ((MentionsFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
-				if (getListView() != null) {
-					getListView().setSelection(0);
-				}
+			}
 		}
 	};
 
@@ -110,7 +107,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			}
 		}
 		super.onLoadFinished(loader, data);
-		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
+		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		if (mShouldRestorePosition && remember_position) {
 			final long status_id = mPreferences.getLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, -1);
 			final int position = adapter.findItemPositionByStatusId(status_id);
@@ -137,7 +134,6 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
-		filter.addAction(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		registerReceiver(mStatusReceiver, filter);
 		if (getServiceInterface().isMentionsRefreshing()) {
 			setRefreshing(false);

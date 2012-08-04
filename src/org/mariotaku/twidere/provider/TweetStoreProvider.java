@@ -298,6 +298,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				}
 				break;
 			}
+			case URI_TABS: {
+				if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
+					context.sendBroadcast(new Intent(BROADCAST_TABS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
+				}
+				break;
+			}
 			default:
 				return;
 		}

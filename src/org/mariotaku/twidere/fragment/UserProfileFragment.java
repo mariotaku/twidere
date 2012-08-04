@@ -153,10 +153,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private PopupMenu mPopupMenu;
 
-	private boolean mFollowInfoDisplayed = false;
-
 	private SharedPreferences mPreferences;
-
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -327,11 +324,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		if (intent == null) return;
 		switch (requestCode) {
 			case REQUEST_TAKE_PHOTO: {
 				if (resultCode == Activity.RESULT_OK) {
-					final File file = new File(mImageUri.getPath());
-					if (file.exists()) {
+					final String path = mImageUri.getPath();
+					final File file = path != null ? new File(path) : null;
+					if (file != null && file.exists()) {
 						mService.updateProfileImage(mUser.getId(), mImageUri, true);
 					}
 				}
@@ -340,7 +339,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case REQUEST_PICK_IMAGE: {
 				if (resultCode == Activity.RESULT_OK) {
 					final Uri uri = intent.getData();
-					final File file = uri == null ? null : new File(getImagePathFromUri(getActivity(), uri));
+					final String image_path = getImagePathFromUri(getActivity(), uri);
+					final File file = image_path != null ? new File(image_path) : null;
 					if (file != null && file.exists()) {
 						mService.updateProfileImage(mUser.getId(), Uri.fromFile(file), false);
 					}
@@ -685,6 +685,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mListView.startAnimation(AnimationUtils.loadAnimation(getActivity(), shown ? fade_in : fade_out));
 	}
 
+	private void getFriendship() {
+		if (mGetFriendshipTask != null) {
+			mGetFriendshipTask.cancel(true);
+		}
+		mGetFriendshipTask = new GetFriendshipTask();
+		mGetFriendshipTask.execute();
+	}
+
 	private void pickImage() {
 		final Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(i, REQUEST_PICK_IMAGE);
@@ -692,14 +700,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private void reloadUserInfo() {
 		getUserInfo(mAccountId, mUserId, mScreenName);
-	}
-
-	private void getFriendship() {
-		if (mGetFriendshipTask != null) {
-			mGetFriendshipTask.cancel(true);
-		}
-		mGetFriendshipTask = new GetFriendshipTask();
-		mGetFriendshipTask.execute();
 	}
 
 	private void takePhoto() {
@@ -875,7 +875,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 						mFollowedYouIndicator.setVisibility(result.value.isSourceFollowedByTarget() ? View.VISIBLE
 								: View.GONE);
 					}
-					mFollowInfoDisplayed = true;
 				}
 			}
 			mFollowProgress.setVisibility(View.GONE);
@@ -919,21 +918,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
-	private class UserBlocksAction extends ListAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.blocked_users);
-		}
-
-		@Override
-		public void onClick() {
-			if (mUser == null) return;
-			openUserBlocks(getActivity(), mAccountId);
-		}
-
-	}
-	
 	private class SavedSearchesAction extends ListAction {
 
 		@Override
@@ -945,6 +929,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public void onClick() {
 			if (mUser == null) return;
 			openSavedSearches(getActivity(), mAccountId);
+		}
+
+	}
+
+	private class UserBlocksAction extends ListAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.blocked_users);
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null) return;
+			openUserBlocks(getActivity(), mAccountId);
 		}
 
 	}

@@ -259,11 +259,12 @@
 	<string name="trends_location_summary">Set location for local trends.</string>
 	<string name="trends">Trends</string>
 	<string name="accounts">Accounts</string>
+	<string name="account">Account</string>
 	<string name="hires_profile_image">Hi-res profile image</string>
 	<string name="mention_this_user">Mention this user</string>
 	<string name="signing_in_please_wait">Signing in, please wait or press BACK again to quit.</string>
 	<string name="force_ssl_connection">Force SSL connection</string>
-	<string name="force_ssl_connection_summary">Force using SSL in API and some other requests.</string>
+	<string name="force_ssl_connection_summary">Force using SSL for all requests. (API is already SSL enabled by default, so this is not necessary)</string>
 	<string name="connectivity">Connectivity</string>
 	<string name="add_member">Add member</string>
 	<string name="add_success">Add success</string>
@@ -282,5 +283,14 @@
 	<string name="custom_tabs">Custom tabs</string>
 	<string name="retweeted_to_me">Retweeted timeline</string>
 	<string name="add_tab">Add tab</string>
-
+	<string name="tab_type">Tab type</string>
+	<string name="unused">Unused</string>
+	<string name="list_name">List name</string>
+	<string name="edit_tab">Edit tab</string>
+	<string name="move_up">Move up</string>
+	<string name="move_down">Move down</string>
+	<string name="unsaved_change_back_pressed">You have unsaved changes, press BACK again to discard.</string>
+	<string name="invalid_settings">Found invalid settings.</string><string name="icon">Icon</string>
+	<string name="pick_file">Pick file</string>
+	<string name="user_timeline">User timeline</string>
 </resources>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/account_select_container"
+	android:layout_width="300dp"
+	android:layout_height="match_parent"
+	android:layout_gravity="center"
+	android:gravity="center"
+	android:orientation="horizontal"
+	android:padding="8dp"
+	android:visibility="gone">
+
+	<Spinner
+		android:id="@+id/account_selector"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_weight="0"/>
+
+	<Button
+		android:id="@+id/account_confirm"
+		style="android:attr/buttonStyleLarge"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_weight="0"
+		android:minHeight="42dp"
+		android:minWidth="72dp"
+		android:text="@android:string/ok"
+		android:textSize="16sp"/>
+
+</LinearLayout>

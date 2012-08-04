@@ -19,10 +19,12 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
@@ -33,6 +35,7 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
@@ -42,7 +45,9 @@ import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -146,7 +151,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 							: View.GONE);
 			if (mDisplayImagePreview && preview.has_image && preview.matched_url != null) {
 				mPreviewImageLoader.displayImage(parseURL(preview.matched_url), holder.image_preview);
-
+				holder.image_preview.setTag(position);
 			}
 		}
 
@@ -201,6 +206,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			final StatusViewHolder holder = new StatusViewHolder(view, context);
 			view.setTag(holder);
 			holder.profile_image.setOnClickListener(this);
+			holder.image_preview.setOnClickListener(this);
 		}
 		return view;
 	}
@@ -208,10 +214,24 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	@Override
 	public void onClick(View view) {
 		final Object tag = view.getTag();
-		if (tag instanceof Integer && mContext instanceof Activity) {
-			final ParcelableStatus status = getStatus((Integer) tag);
-			if (status == null) return;
-			openUserProfile((Activity) mContext, status.account_id, status.user_id, status.screen_name);
+		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
+		if (status == null) return;
+		switch (view.getId()) {
+			case R.id.image_preview: {
+				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string, mForceSSLConnection);
+				if (spec != null) {
+					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
+					intent.setPackage(mContext.getPackageName());
+					mContext.startActivity(intent);
+				}
+				break;
+			}
+			case R.id.profile_image: {
+				if (mContext instanceof Activity) {
+					openUserProfile((Activity) mContext, status.account_id, status.user_id, status.screen_name);
+				}
+				break;
+			}
 		}
 	}
 

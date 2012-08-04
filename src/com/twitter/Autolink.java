@@ -33,12 +33,12 @@ public class Autolink {
 	 * Default href for hashtag links (the hashtag without the # will be
 	 * appended)
 	 */
-	public static final String DEFAULT_HASHTAG_URL_BASE = "https://twitter.com/#!/search?q=%23";
+	public static final String DEFAULT_HASHTAG_URL_BASE = "https://twitter.com/#!/base_dual_pane?q=%23";
 	/**
 	 * Default href for cashtag links (the cashtag without the $ will be
 	 * appended)
 	 */
-	public static final String DEFAULT_CASHTAG_URL_BASE = "https://twitter.com/#!/search?q=%24";
+	public static final String DEFAULT_CASHTAG_URL_BASE = "https://twitter.com/#!/base_dual_pane?q=%24";
 	/** Default attribute for invisible span tag */
 	public static final String DEFAULT_INVISIBLE_TAG_ATTRS = "style='position:absolute;left:-9999px;'";
 

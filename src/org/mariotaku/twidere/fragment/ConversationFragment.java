@@ -93,6 +93,12 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 
 	}
 
+	@Override
+	public void onDestroyView() {
+		setProgressBarIndeterminateVisibility(false);
+		super.onDestroyView();
+	}
+
 	private class ShowConversationTask extends AsyncTask<Void, Void, TwitterException> {
 
 		private final long mAccountId, mStatusId;

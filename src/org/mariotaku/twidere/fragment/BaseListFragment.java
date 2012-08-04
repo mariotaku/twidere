@@ -26,11 +26,25 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.v4.app.ListFragment;
 
 public class BaseListFragment extends ListFragment implements Constants {
+
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if ((BaseListFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
+				if (getListView() != null) {
+					getListView().setSelection(0);
+				}
+		}
+	};
 
 	public ActionBarFragmentActivity getActionBarActivity() {
 		final Activity activity = getActivity();
@@ -60,6 +74,19 @@ public class BaseListFragment extends ListFragment implements Constants {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSystemService(name);
 		return null;
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
+		registerReceiver(mStateReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
 	}
 
 	public void registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {

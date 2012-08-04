@@ -55,6 +55,19 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	};
 
+	public final void deleteStatus(long status_id) {
+		if (status_id <= 0) return;
+		final List<ParcelableStatus> data = getData();
+		final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
+		for (final ParcelableStatus status : data) {
+			if (status.status_id == status_id || status.retweet_id == status_id) {
+				data_to_remove.add(status);
+			}
+		}
+		data.removeAll(data_to_remove);
+		mAdapter.setData(data, true);
+	}
+
 	@Override
 	public final long[] getLastStatusIds() {
 		final int last_idx = mAdapter.getCount() - 1;
@@ -109,7 +122,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public abstract void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter);
 
 	@Override
-	public final void onDestroyView() {
+	public void onDestroyView() {
 		if (getData() != null) {
 			getData().clear();
 		}
@@ -165,18 +178,5 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public void onStop() {
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
-	}
-
-	private void deleteStatus(long status_id) {
-		if (status_id <= 0) return;
-		final List<ParcelableStatus> data = getData();
-		final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
-		for (final ParcelableStatus status : data) {
-			if (status.status_id == status_id || status.retweet_id == status_id) {
-				data_to_remove.add(status);
-			}
-		}
-		data.removeAll(data_to_remove);
-		mAdapter.setData(data, true);
 	}
 }

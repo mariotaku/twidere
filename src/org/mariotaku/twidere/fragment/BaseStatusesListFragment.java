@@ -353,7 +353,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 		};
 		mTicker.run();
-
 		onPostStart();
 	}
 

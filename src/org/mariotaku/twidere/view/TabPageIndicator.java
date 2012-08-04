@@ -19,6 +19,7 @@ package org.mariotaku.twidere.view;
 import org.mariotaku.twidere.R;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.PagerAdapter;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -80,12 +81,14 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 	}
 
 	public void notifyDataSetChanged() {
+		if (mTabLayout == null || mViewPager == null) return;
 		mTabLayout.removeAllViews();
 		mAdapter = (TitleProvider) mViewPager.getAdapter();
+		if (mAdapter == null) return;
 		final int count = ((PagerAdapter) mAdapter).getCount();
 		for (int i = 0; i < count; i++) {
 			final String title = mAdapter.getTitle(i);
-			final Integer icon = mAdapter.getIcon(i);
+			final Drawable icon = mAdapter.getIcon(i);
 			if (title != null && icon != null) {
 				addTab(title, icon, i);
 			} else if (title == null && icon != null) {
@@ -212,27 +215,11 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		setCurrentItem(initialPosition);
 	}
 
-	private void addTab(int icon, int index) {
-		// Workaround for not being able to pass a defStyle on pre-3.0
-		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
-		tabView.init(this, icon, index);
-		tabView.setFocusable(true);
-		tabView.setOnClickListener(mTabClickListener);
-
-		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
+	private void addTab(Drawable icon, int index) {
+		addTab(null, icon, index);
 	}
 
-	private void addTab(String text, int index) {
-		// Workaround for not being able to pass a defStyle on pre-3.0
-		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
-		tabView.init(this, text, index);
-		tabView.setFocusable(true);
-		tabView.setOnClickListener(mTabClickListener);
-
-		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
-	}
-
-	private void addTab(String text, int icon, int index) {
+	private void addTab(String text, Drawable icon, int index) {
 		// Workaround for not being able to pass a defStyle on pre-3.0
 		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
 		tabView.init(this, text, icon, index);
@@ -240,6 +227,10 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		tabView.setOnClickListener(mTabClickListener);
 
 		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
+	}
+
+	private void addTab(String text, int index) {
+		addTab(text, null, index);
 	}
 
 	private void animateToTab(final int position) {
@@ -272,41 +263,25 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			return mIndex;
 		}
 
-		public void init(TabPageIndicator parent, int icon, int index) {
+		public void init(TabPageIndicator parent, Drawable icon, int index) {
+			init(parent, null, icon, index);
+		}
+
+		public void init(TabPageIndicator parent, String text, Drawable icon, int index) {
 			mParent = parent;
 			mIndex = index;
 
 			final ImageView imageView = (ImageView) findViewById(android.R.id.icon);
-			imageView.setVisibility(View.VISIBLE);
-			imageView.setImageResource(icon);
+			imageView.setVisibility(icon != null ? View.VISIBLE : View.GONE);
+			imageView.setImageDrawable(icon);
 
 			final TextView textView = (TextView) findViewById(android.R.id.text1);
-			textView.setVisibility(View.GONE);
+			textView.setVisibility(text != null ? View.VISIBLE : View.GONE);
+			textView.setText(text);
 		}
 
 		public void init(TabPageIndicator parent, String text, int index) {
-			mParent = parent;
-			mIndex = index;
-
-			final ImageView imageView = (ImageView) findViewById(android.R.id.icon);
-			imageView.setVisibility(View.GONE);
-
-			final TextView textView = (TextView) findViewById(android.R.id.text1);
-			textView.setVisibility(View.VISIBLE);
-			textView.setText(text);
-		}
-
-		public void init(TabPageIndicator parent, String text, int icon, int index) {
-			mParent = parent;
-			mIndex = index;
-
-			final ImageView imageView = (ImageView) findViewById(android.R.id.icon);
-			imageView.setVisibility(View.VISIBLE);
-			imageView.setImageResource(icon);
-
-			final TextView textView = (TextView) findViewById(android.R.id.text1);
-			textView.setVisibility(View.VISIBLE);
-			textView.setText(text);
+			init(parent, text, null, index);
 		}
 
 		@Override
@@ -332,7 +307,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		 * @param position
 		 * @return
 		 */
-		public Integer getIcon(int position);
+		public Drawable getIcon(int position);
 
 		/**
 		 * Returns the title of the view at position

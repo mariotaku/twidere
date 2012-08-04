@@ -19,9 +19,11 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
@@ -33,6 +35,7 @@ import static org.mariotaku.twidere.util.Utils.parseURL;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -40,6 +43,8 @@ import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -98,6 +103,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		} else {
 			holder = new StatusViewHolder(view, mContext);
 			view.setTag(holder);
+			holder.image_preview.setOnClickListener(this);
 			holder.profile_image.setOnClickListener(this);
 		}
 
@@ -158,6 +164,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 					&& status.image_preview_url != null ? View.VISIBLE : View.GONE);
 			if (mDisplayImagePreview && status.has_media && status.image_preview_url != null) {
 				mPreviewImageLoader.displayImage(status.image_preview_url, holder.image_preview);
+				holder.image_preview.setTag(position);
 			}
 		}
 
@@ -167,10 +174,24 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	@Override
 	public void onClick(View view) {
 		final Object tag = view.getTag();
-		if (tag instanceof Integer && mContext instanceof Activity) {
-			final ParcelableStatus status = getStatus((Integer) tag);
-			if (status == null) return;
-			openUserProfile((Activity) mContext, status.account_id, status.user_id, status.screen_name);
+		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
+		if (status == null) return;
+		switch (view.getId()) {
+			case R.id.image_preview: {
+				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string, mForceSSLConnection);
+				if (spec != null) {
+					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
+					intent.setPackage(mContext.getPackageName());
+					mContext.startActivity(intent);
+				}
+				break;
+			}
+			case R.id.profile_image: {
+				if (mContext instanceof Activity) {
+					openUserProfile((Activity) mContext, status.account_id, status.user_id, status.screen_name);
+				}
+				break;
+			}
 		}
 	}
 

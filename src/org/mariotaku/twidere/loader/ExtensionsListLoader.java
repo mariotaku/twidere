@@ -82,8 +82,8 @@ public class ExtensionsListLoader extends AsyncTaskLoader<List<ResolveInfo>> {
 	}
 
 	/**
-	 * Helper for determining if the configuration has changed in an
-	 * interesting way so we need to rebuild the app list.
+	 * Helper for determining if the configuration has changed in an interesting
+	 * way so we need to rebuild the app list.
 	 */
 	public static class InterestingConfigChanges {
 

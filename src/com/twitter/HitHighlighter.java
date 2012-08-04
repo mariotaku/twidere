@@ -31,8 +31,8 @@ public class HitHighlighter {
 
 	/**
 	 * Surround the <code>hits</code> in the provided <code>text</code> with an
-	 * HTML tag. This is used with offsets from the search API to support the
-	 * highlighting of query terms.
+	 * HTML tag. This is used with offsets from the base_dual_pane API to
+	 * support the highlighting of query terms.
 	 * 
 	 * @param text of the Tweet to highlight
 	 * @param hits A List of highlighting offsets (themselves lists of two

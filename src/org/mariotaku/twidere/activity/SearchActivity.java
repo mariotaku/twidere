@@ -43,10 +43,9 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.Spinner;
 
-public class SearchActivity extends BaseActivity implements OnItemSelectedListener {
+public class SearchActivity extends DualPaneActivity implements OnItemSelectedListener {
 
 	private ActionBar mActionBar;
 	private ArrayAdapter<SpinnerSpec> mAdapter;
@@ -93,7 +92,7 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 				}
 			}
 		}
-		setContentView(new FrameLayout(this));
+		setContentView(R.layout.base_dual_pane);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -113,11 +112,10 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 		final Fragment fragment = Fragment.instantiate(this, mAdapter.getItem(position).cls.getName());
-		fragment.setArguments(mArguments);
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(android.R.id.content, fragment);
+		fragment.setArguments(mArguments);
+		ft.replace(R.id.content, fragment);
 		ft.commit();
-
 	}
 
 	@Override
@@ -135,7 +133,7 @@ public class SearchActivity extends BaseActivity implements OnItemSelectedListen
 		return super.onOptionsItemSelected(item);
 	}
 
-	private static class SpinnerSpec {
+	static class SpinnerSpec {
 		public final Class<? extends Fragment> cls;
 		public final String name;
 

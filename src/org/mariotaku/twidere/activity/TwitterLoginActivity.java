@@ -190,7 +190,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			if (!mBackPressed) {
 				Toast.makeText(this, R.string.signing_in_please_wait, Toast.LENGTH_SHORT).show();
 				mBackPressed = true;
-				mBackPressedHandler.sendEmptyMessageDelayed(MESSAGE_ID_BACK_TIMEOUT, 3000L);
+				mBackPressedHandler.sendEmptyMessageDelayed(MESSAGE_ID_BACK_TIMEOUT, 2000L);
 				return;
 			}
 			mBackPressed = false;

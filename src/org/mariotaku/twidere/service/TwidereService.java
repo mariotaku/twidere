@@ -1084,6 +1084,7 @@ public class TwidereService extends Service implements Constants {
 					resolver.update(uri, values, where.toString(), null);
 				}
 				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
+				intent.putExtra(INTENT_KEY_USER_ID, account_id);
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_FAVORITED, false);
 				sendBroadcast(intent);

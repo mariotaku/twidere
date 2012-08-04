@@ -24,6 +24,10 @@ import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getTabs;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
@@ -31,6 +35,7 @@ import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.TrendsFragment;
+import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -88,11 +93,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private boolean mIsNavigateToDefaultAccount = false;
 
 	private boolean mDisplayAppIcon;
-	
+
 	public static final int TAB_POSITION_HOME = 0;
 	public static final int TAB_POSITION_MENTIONS = 1;
 	public static final int TAB_POSITION_TRENDS = 2;
 	public static final int TAB_POSITION_ACCOUNTS = 3;
+
+	private final ArrayList<TabSpec> mCustomTabs = new ArrayList<TabSpec>();
 
 	public boolean checkDefaultAccountSet() {
 		boolean result = true;
@@ -161,19 +168,19 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	@Override
 	public void onBackStackChanged() {
+		super.onBackStackChanged();
 		if (!isDualPaneMode()) return;
 		final FragmentManager fm = getSupportFragmentManager();
 		final Fragment left_pane_fragment = fm.findFragmentById(PANE_LEFT);
-		final View main_view = findViewById(R.id.main);
 		final boolean left_pane_used = left_pane_fragment != null && left_pane_fragment.isAdded();
-		if (main_view != null) {
-			main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
-		}
 		setPagingEnabled(!left_pane_used);
+		final int count = fm.getBackStackEntryCount();
 		if (mActionBar != null && mDisplayAppIcon) {
-			mActionBar.setDisplayHomeAsUpEnabled(fm.getBackStackEntryCount() > 0);
+			mActionBar.setDisplayHomeAsUpEnabled(count > 0);
 		}
-		super.onBackStackChanged();
+		if (count == 0) {
+			bringLeftPaneToFront();
+		}
 	}
 
 	@Override
@@ -187,7 +194,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	}
 
-	
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
@@ -241,15 +247,17 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final View view = mActionBar.getCustomView();
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager());
-		addTabs();
+		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
+		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
+		mAdapter.setDisplayLabel(tab_display_label);
+		initTabs(getTabs(this));
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOffscreenPageLimit(3);
 		mIndicator.setViewPager(mViewPager);
 		mIndicator.setOnPageChangeListener(this);
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 
-		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, false);
+		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		final long[] activated_ids = getActivatedAccountIds(this);
 		if (activated_ids.length <= 0) {
 			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
@@ -274,20 +282,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	public void onDefaultAccountSet() {
 		mIsNavigateToDefaultAccount = false;
-	}
-	
-	private void addTabs() {
-		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
-		mAdapter.clear();
-		mAdapter.addTab(HomeTimelineFragment.class, null, tab_display_label ? getString(R.string.home) : null,
-				R.drawable.ic_tab_home, TAB_POSITION_HOME);
-		mAdapter.addTab(MentionsFragment.class, null, tab_display_label ? getString(R.string.mentions) : null,
-				R.drawable.ic_tab_mention, TAB_POSITION_MENTIONS);
-		mAdapter.addTab(TrendsFragment.class, null, tab_display_label ? getString(R.string.trends) : null,
-				R.drawable.ic_tab_trends, TAB_POSITION_TRENDS);
-		mAdapter.addTab(AccountsFragment.class, null, tab_display_label ? getString(R.string.accounts) : null,
-				R.drawable.ic_tab_accounts, TAB_POSITION_ACCOUNTS);
-		mAdapter.addTabs(getTabs(this));
 	}
 
 	@Override
@@ -395,6 +389,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
+
+		final List<TabSpec> tabs = getTabs(this);
+		if (tabsChanged(tabs)) {
+			initTabs(tabs);
+		}
 	}
 
 	@Override
@@ -438,6 +437,31 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+	}
+
+	private void initTabs(Collection<? extends TabSpec> tabs) {
+		mAdapter.clear();
+		mAdapter.addTab(HomeTimelineFragment.class, null, getString(R.string.home), R.drawable.ic_tab_home,
+				TAB_POSITION_HOME);
+		mAdapter.addTab(MentionsFragment.class, null, getString(R.string.mentions), R.drawable.ic_tab_mention,
+				TAB_POSITION_MENTIONS);
+		mAdapter.addTab(TrendsFragment.class, null, getString(R.string.trends), R.drawable.ic_tab_trends,
+				TAB_POSITION_TRENDS);
+		mAdapter.addTab(AccountsFragment.class, null, getString(R.string.accounts), R.drawable.ic_tab_accounts,
+				TAB_POSITION_ACCOUNTS);
+		mCustomTabs.clear();
+		mCustomTabs.addAll(tabs);
+		mAdapter.addTabs(tabs);
+	}
+
+	private boolean tabsChanged(List<TabSpec> tabs) {
+		if (mCustomTabs.size() == 0 && tabs == null) return false;
+		if (mCustomTabs.size() != tabs.size()) return true;
+		final int size = mCustomTabs.size();
+		for (int i = 0; i < size; i++) {
+			if (!mCustomTabs.get(i).equals(tabs.get(i))) return true;
+		}
+		return false;
 	}
 
 }

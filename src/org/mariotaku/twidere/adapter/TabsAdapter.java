@@ -19,15 +19,19 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.getTabIconDrawable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.model.TabSpec;
+import org.mariotaku.twidere.view.TabPageIndicator;
 import org.mariotaku.twidere.view.TabPageIndicator.TitleProvider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -35,65 +39,77 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider {
 
-	private final ArrayList<TabSpec> mTabsInfo = new ArrayList<TabSpec>();
+	private final ArrayList<TabSpec> mTabs = new ArrayList<TabSpec>();
 
 	private final Context mContext;
+	private final TabPageIndicator mIndicator;
 
-	public TabsAdapter(Context context, FragmentManager fm) {
+	private boolean mDisplayLabel;
+
+	public TabsAdapter(Context context, FragmentManager fm, TabPageIndicator indicator) {
 		super(fm);
 		mContext = context;
+		mIndicator = indicator;
 		clear();
 	}
-	
-	public void clear() {
-		mTabsInfo.clear();
-		notifyDataSetChanged();
+
+	@Deprecated
+	public void addTab(Class<? extends Fragment> cls, Bundle args, String name, Integer icon) {
+		addTab(new TabSpec(name, icon, cls, args));
 	}
 
 	public void addTab(Class<? extends Fragment> cls, Bundle args, String name, Integer icon, int position) {
 		addTab(new TabSpec(name, icon, cls, args, position));
 	}
-	
-	@Deprecated
-	public void addTab(Class<? extends Fragment> cls, Bundle args, String name, Integer icon) {
-		addTab(new TabSpec(name, icon, cls, args));
-	}
-	
+
 	public void addTab(TabSpec spec) {
-		mTabsInfo.add(spec);
+		mTabs.add(spec);
 		notifyDataSetChanged();
 	}
-	
+
 	public void addTabs(Collection<? extends TabSpec> specs) {
-		mTabsInfo.addAll(specs);
+		mTabs.addAll(specs);
+		notifyDataSetChanged();
+	}
+
+	public void clear() {
+		mTabs.clear();
 		notifyDataSetChanged();
 	}
 
 	@Override
 	public int getCount() {
-		return mTabsInfo.size();
+		return mTabs.size();
 	}
 
 	@Override
-	public Integer getIcon(int position) {
-		return mTabsInfo.get(position).icon;
+	public Drawable getIcon(int position) {
+		return getTabIconDrawable(mContext, mTabs.get(position).icon);
 	}
 
 	@Override
 	public Fragment getItem(int position) {
-		final Fragment fragment = Fragment.instantiate(mContext, mTabsInfo.get(position).cls.getName());
-		fragment.setArguments(mTabsInfo.get(position).args);
+		final Fragment fragment = Fragment.instantiate(mContext, mTabs.get(position).cls.getName());
+		fragment.setArguments(mTabs.get(position).args);
 		return fragment;
 	}
 
 	@Override
 	public String getTitle(int position) {
-		return mTabsInfo.get(position).name;
+		return mDisplayLabel ? mTabs.get(position).name : null;
+	}
+
+	@Override
+	public void notifyDataSetChanged() {
+		super.notifyDataSetChanged();
+		if (mIndicator != null) {
+			mIndicator.notifyDataSetChanged();
+		}
 	}
 
 	@Override
 	public void onPageReselected(int position) {
-		final String action = mTabsInfo.get(position).cls.getName() + HomeActivity.SHUFFIX_SCROLL_TO_TOP;
+		final String action = mTabs.get(position).cls.getName() + HomeActivity.SHUFFIX_SCROLL_TO_TOP;
 		final Intent intent = new Intent(action);
 		intent.setPackage(mContext.getPackageName());
 		mContext.sendBroadcast(intent);
@@ -101,6 +117,11 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	@Override
 	public void onPageSelected(int position) {
+
+	}
+
+	public void setDisplayLabel(boolean display_label) {
+		mDisplayLabel = display_label;
 
 	}
 

@@ -90,4 +90,12 @@ public final class ArrayUtils {
 		}
 		return -1;
 	}
+
+	public static <T> int indexOf(T[] array, T value) {
+		final int length = array.length;
+		for (int i = 0; i < length; i++) {
+			if (array[i].equals(value)) return i;
+		}
+		return -1;
+	}
 }

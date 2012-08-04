@@ -11,7 +11,7 @@ import android.support.v4.content.AsyncTaskLoader;
 public class SavedSearchesLoader extends AsyncTaskLoader<ResponseList<SavedSearch>> {
 
 	private final Twitter twitter;
-	
+
 	public SavedSearchesLoader(Context context, long account_id) {
 		super(context);
 		twitter = getTwitterInstance(context, account_id, false);
@@ -22,7 +22,7 @@ public class SavedSearchesLoader extends AsyncTaskLoader<ResponseList<SavedSearc
 		if (twitter == null) return null;
 		try {
 			return twitter.getSavedSearches();
-		} catch (TwitterException e) {
+		} catch (final TwitterException e) {
 			e.printStackTrace();
 		}
 		return null;

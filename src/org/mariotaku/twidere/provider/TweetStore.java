@@ -334,29 +334,6 @@ public final class TweetStore implements Constants {
 		}
 
 	}
-	
-	public static interface Tabs extends BaseColumns {
-		public static final String CONTENT_PATH = "tabs";
-		
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
-		
-		public static final String NAME = "name";
-		
-		public static final String ICON = "icon";
-		
-		public static final String TYPE = "type";
-		
-		public static final String ARGUMENTS = "arguments";
-		
-		public static final String POSITION = "position";
-		
-		public static final String[] COLUMNS = new String[] { _ID, NAME, ICON, TYPE, ARGUMENTS, POSITION };
-
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT };
-		
-		public static final String DEFAULT_SORT_ORDER = POSITION + " ASC";
-	}
 
 	public static interface Drafts extends BaseColumns {
 
@@ -546,5 +523,29 @@ public final class TweetStore implements Constants {
 				TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN,
 				TYPE_BOOLEAN, TYPE_BOOLEAN };
 
+	}
+
+	public static interface Tabs extends BaseColumns {
+		public static final String CONTENT_PATH = "tabs";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
+
+		public static final String NAME = "name";
+
+		public static final String ICON = "icon";
+
+		public static final String TYPE = "type";
+
+		public static final String ARGUMENTS = "arguments";
+
+		public static final String POSITION = "position";
+
+		public static final String[] COLUMNS = new String[] { _ID, NAME, ICON, TYPE, ARGUMENTS, POSITION };
+
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_TEXT, TYPE_TEXT,
+				TYPE_TEXT, TYPE_INT };
+
+		public static final String DEFAULT_SORT_ORDER = POSITION + " ASC";
 	}
 }

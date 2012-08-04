@@ -21,6 +21,7 @@ package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.util.List;
@@ -95,7 +96,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			holder.setTextSize(mTextSize);
 			holder.name.setText(mDisplayName ? user.name : user.screen_name);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(
-					user.is_protected ? R.drawable.ic_indicator_is_protected : 0, 0, 0, 0);
+					getUserTypeIconRes(user.is_verified, user.is_protected), 0, 0, 0);
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				if (mDisplayHiResProfileImage) {

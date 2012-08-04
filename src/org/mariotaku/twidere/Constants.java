@@ -67,7 +67,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_STATUS = "status";
 	public static final String AUTHORITY_CONVERSATION = "conversation";
 	public static final String AUTHORITY_DIRECT_MESSAGES_CONVERSATION = "direct_messages_conversation";
-	public static final String AUTHORITY_SEARCH = "search";
+	public static final String AUTHORITY_SEARCH = "base_dual_pane";
 	public static final String AUTHORITY_MAP = "map";
 	public static final String AUTHORITY_LIST_DETAILS = "list_details";
 	public static final String AUTHORITY_LIST_TYPES = "list_types";
@@ -82,6 +82,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_RETWEETED_TO_ME = "retweeted_to_me";
 	public static final String AUTHORITY_SEARCH_USERS = "search_users";
 	public static final String AUTHORITY_SEARCH_TWEETS = "search_tweets";
+	public static final String AUTHORITY_DIRECT_MESSAGES = "direct_messages";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -180,9 +181,12 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_DRAFTS = INTENT_PACKAGE_PREFIX + "DRAFTS";
 	public static final String INTENT_ACTION_DIRECT_MESSAGES = INTENT_PACKAGE_PREFIX + "DIRECT_MESSAGES";
 	public static final String INTENT_ACTION_SAVE_FILE = INTENT_PACKAGE_PREFIX + "SAVE_FILE";
+	public static final String INTENT_ACTION_PICK_FILE = INTENT_PACKAGE_PREFIX + "PICK_FILE";
 	public static final String INTENT_ACTION_VIEW_WEBPAGE = INTENT_PACKAGE_PREFIX + "VIEW_WEBPAGE";
 	public static final String INTENT_ACTION_EXTENSIONS = INTENT_PACKAGE_PREFIX + "EXTENSIONS";
 	public static final String INTENT_ACTION_CUSTOM_TABS = INTENT_PACKAGE_PREFIX + "CUSTOM_TABS";
+	public static final String INTENT_ACTION_NEW_CUSTOM_TAB = INTENT_PACKAGE_PREFIX + "NEW_CUSTOM_TAB";
+	public static final String INTENT_ACTION_EDIT_CUSTOM_TAB = INTENT_PACKAGE_PREFIX + "EDIT_CUSTOM_TAB";
 
 	public static final String INTENT_ACTION_EXTENSION_EDIT_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_EDIT_IMAGE";
 	public static final String INTENT_ACTION_EXTENSION_UPLOAD = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD";
@@ -227,6 +231,7 @@ public interface Constants extends TwitterConstants {
 			+ "USER_LIST_SUBSCRIPTION_CHANGED";
 	public static final String BROADCAST_USER_LIST_CREATED = INTENT_PACKAGE_PREFIX + "USER_LIST_CREATED";
 	public static final String BROADCAST_USER_LIST_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_DELETED";
+	public static final String BROADCAST_TABS_UPDATED = INTENT_PACKAGE_PREFIX + "TABS_UPDATED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -261,6 +266,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_RETWEETED = "retweeted";
 	public static final String INTENT_KEY_FILENAME = "filename";
 	public static final String INTENT_KEY_FILE_SOURCE = "file_source";
+	public static final String INTENT_KEY_FILE_EXTENSIONS = "file_extensions";
 	public static final String INTENT_KEY_ITEMS_INSERTED = "items_inserted";
 	public static final String INTENT_KEY_INITIAL_TAB = "initial_tab";
 	public static final String INTENT_KEY_NOTIFICATION_ID = "notification_id";
@@ -269,6 +275,13 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_USER = "user";
 	public static final String INTENT_KEY_USER_LIST = "user_list";
 	public static final String INTENT_KEY_APPEND_TEXT = "append_text";
+	public static final String INTENT_KEY_NAME = "name";
+	public static final String INTENT_KEY_TEXT1 = "text1";
+	public static final String INTENT_KEY_TEXT2 = "text2";
+	public static final String INTENT_KEY_POSITION = "position";
+	public static final String INTENT_KEY_ARGUMENTS = "arguments";
+	public static final String INTENT_KEY_ICON = "icon";
+	public static final String INTENT_KEY_ID = "id";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -315,6 +328,8 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_SEND_DIRECT_MESSAGE = R.id.send_direct_message;
 	public static final int MENU_EXTENSIONS = R.id.extensions;
 	public static final int MENU_VIEW_USER_LIST = R.id.view_user_list;
+	public static final int MENU_UP = R.id.up;
+	public static final int MENU_DOWN = R.id.down;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
@@ -326,6 +341,9 @@ public interface Constants extends TwitterConstants {
 	public static final int REQUEST_SAVE_FILE = 8;
 	public static final int REQUEST_EXTENSION_EDIT_IMAGE = 9;
 	public static final int REQUEST_EXTENSION_COMPOSE = 10;
+	public static final int REQUEST_ADD_TAB = 11;
+	public static final int REQUEST_EDIT_TAB = 12;
+	public static final int REQUEST_PICK_FILE = 13;
 
 	public static final int RESULT_UNKNOWN_ERROR = -1;
 	public static final int RESULT_SUCCESS = 0;
@@ -382,7 +400,5 @@ public interface Constants extends TwitterConstants {
 	public static final int NOTIFICATION_ID_MENTIONS = 2;
 	public static final int NOTIFICATION_ID_DIRECT_MESSAGES = 3;
 
-	public static final int[] TABS_ICONS_RES = new int[] {R.drawable.ic_tab_accounts, R.drawable.ic_tab_heart, R.drawable.ic_tab_home, R.drawable.ic_tab_list, R.drawable.ic_tab_mention, R.drawable.ic_tab_message
-		,R.drawable.ic_tab_person, R.drawable.ic_tab_pin, R.drawable.ic_tab_star, R.drawable.ic_tab_trends, R.drawable.ic_tab_twitter};
-	
+	public static final String ICON_SPECIAL_TYPE_CUSTOMIZE = "_customize";
 }

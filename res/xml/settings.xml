@@ -102,7 +102,7 @@
 		</PreferenceScreen>
 
 		<CheckBoxPreference
-			android:defaultValue="false"
+			android:defaultValue="true"
 			android:key="remember_position"
 			android:summary="@string/remember_position_summary"
 			android:title="@string/remember_position"/>
