@@ -296,6 +296,7 @@ public class CustomTabsActivity extends BaseActivity implements LoaderCallbacks<
 				text2.setText(getTabTypeName(context, cursor.getString(mTypeNameIdx)));
 			}
 			if (mIconIdx != -1) {
+				icon.setBackgroundResource(R.drawable.gallery_selected_default);
 				icon.setImageDrawable(getTabIconDrawable(mContext, getTabIconObject(cursor.getString(mIconIdx))));
 			}
 		}

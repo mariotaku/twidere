@@ -155,7 +155,7 @@
 	<string name="retry">Retry</string>
 	<string name="more">More</string>
 	<string name="quote_format">Quote format</string>
-	<string name="quote_format_message">\"[TEXT]\" will be replaced with tweet to quote.</string>
+	<string name="quote_format_message">\"[TEXT]\" = Tweet text\n\"[NAME]\" = Twitter username</string>
 	<string name="direct_messages">Direct messages</string>
 	<string name="capital_on">ON</string>
 	<string name="capital_off">OFF</string>
@@ -290,7 +290,9 @@
 	<string name="move_up">Move up</string>
 	<string name="move_down">Move down</string>
 	<string name="unsaved_change_back_pressed">You have unsaved changes, press BACK again to discard.</string>
-	<string name="invalid_settings">Found invalid settings.</string><string name="icon">Icon</string>
+	<string name="invalid_settings">Found invalid settings.</string>
+	<string name="icon">Icon</string>
 	<string name="pick_file">Pick file</string>
 	<string name="user_timeline">User timeline</string>
+
 </resources>

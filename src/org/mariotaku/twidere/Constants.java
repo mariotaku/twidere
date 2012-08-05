@@ -67,7 +67,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_STATUS = "status";
 	public static final String AUTHORITY_CONVERSATION = "conversation";
 	public static final String AUTHORITY_DIRECT_MESSAGES_CONVERSATION = "direct_messages_conversation";
-	public static final String AUTHORITY_SEARCH = "base_dual_pane";
+	public static final String AUTHORITY_SEARCH = "search";
 	public static final String AUTHORITY_MAP = "map";
 	public static final String AUTHORITY_LIST_DETAILS = "list_details";
 	public static final String AUTHORITY_LIST_TYPES = "list_types";
@@ -107,6 +107,9 @@ public interface Constants extends TwitterConstants {
 	public static final String SHUFFIX_SCROLL_TO_TOP = ".SCROLL_TO_TOP";
 
 	public static final String OAUTH_VERIFIER = "oauth_verifier";
+
+	public static final String QUOTE_FORMAT_TEXT_PATTERN = "[TEXT]";
+	public static final String QUOTE_FORMAT_NAME_PATTERN = "[NAME]";
 
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
 
@@ -158,12 +161,11 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_HIRES_PROFILE_IMAGE = "hires_profile_image";
 	public static final String PREFERENCE_KEY_FORCE_SSL_CONNECTION = "force_ssl_connection";
 
-	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT [TEXT]";
+	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + QUOTE_FORMAT_NAME_PATTERN + ": "
+			+ QUOTE_FORMAT_TEXT_PATTERN;
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final float PREFERENCE_DEFAULT_TEXT_SIZE = 14.0f;
-
-	public static final String QUOTE_FORMAT_TEXT_PATTERN = "[TEXT]";
 
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 

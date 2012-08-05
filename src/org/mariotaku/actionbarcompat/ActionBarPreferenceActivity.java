@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
@@ -12,6 +13,11 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 
 	ActionBarCompat mActionBarCompat = ActionBarCompat.getInstance(this);
 	private boolean mActionBarInitialized = false;
+
+	@Override
+	public MenuInflater getMenuInflater() {
+		return mActionBarCompat.getMenuInflater(super.getMenuInflater());
+	}
 
 	public ActionBar getSupportActionBar() {
 		return mActionBarCompat.getActionBar();

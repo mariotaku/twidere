@@ -71,7 +71,7 @@
 		android:key="cat_content"
 		android:title="@string/content">
 		<EditTextPreference
-			android:defaultValue="RT [TEXT]"
+			android:defaultValue="RT @[NAME]: [TEXT]"
 			android:dialogTitle="@string/quote_format"
 			android:key="quote_format"
 			android:singleLine="true"

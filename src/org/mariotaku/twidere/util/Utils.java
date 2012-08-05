@@ -1236,7 +1236,7 @@ public final class Utils implements Constants {
 		if (isNullOrEmpty(quote_format)) {
 			quote_format = PREFERENCE_DEFAULT_QUOTE_FORMAT;
 		}
-		return quote_format.replace(QUOTE_FORMAT_TEXT_PATTERN, '@' + screen_name + ':' + text);
+		return quote_format.replace(QUOTE_FORMAT_NAME_PATTERN, screen_name).replace(QUOTE_FORMAT_TEXT_PATTERN, text);
 	}
 
 	/**

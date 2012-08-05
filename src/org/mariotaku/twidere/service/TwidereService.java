@@ -230,7 +230,9 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public int getHomeTimeline(long[] account_ids, long[] max_ids) {
-		return getHomeTimeline(account_ids, max_ids, false);
+		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)
+				&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false);
+		return getHomeTimeline(account_ids, max_ids, notification);
 	}
 
 	public int getLocalTrends(long account_id, int woeid) {
@@ -240,11 +242,15 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public int getMentions(long[] account_ids, long[] max_ids) {
-		return getMentions(account_ids, max_ids, false);
+		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)
+				&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false);
+		return getMentions(account_ids, max_ids, notification);
 	}
 
 	public int getReceivedDirectMessages(long[] account_ids, long[] max_ids) {
-		return getReceivedDirectMessages(account_ids, max_ids, false);
+		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)
+				&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false);
+		return getReceivedDirectMessages(account_ids, max_ids, notification);
 	}
 
 	public int getSentDirectMessages(long[] account_ids, long[] max_ids) {

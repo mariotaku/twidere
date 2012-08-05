@@ -201,7 +201,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	@SuppressWarnings("deprecation")
 	private void setAnchor(View anchor) {
 
-		final int horizontal_gravity = 0;
+		final int horizontal_gravity = Gravity.LEFT;
 		int vertical_gravity = 0;
 
 		preShow();
