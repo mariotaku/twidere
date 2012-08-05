@@ -75,7 +75,7 @@
 			android:dialogTitle="@string/quote_format"
 			android:key="quote_format"
 			android:singleLine="true"
-			android:summary="@string/quote_format_message"
+			android:summary="@string/quote_format_summary"
 			android:title="@string/quote_format"/>
 
 		<CheckBoxPreference
@@ -224,12 +224,10 @@
 			android:title="@string/content_to_refresh"/>
 
 		<org.mariotaku.twidere.preference.NotificationContentPreference
-			android:dependency="auto_refresh"
 			android:key="notification_content"
 			android:title="@string/content_to_nofity"/>
 
 		<org.mariotaku.twidere.preference.NotificationTypePreference
-			android:dependency="auto_refresh"
 			android:key="notifications_type"
 			android:summary="@string/notifications_type_summary"
 			android:title="@string/notifications_type"/>

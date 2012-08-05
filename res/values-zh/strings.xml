@@ -155,7 +155,7 @@
 	<string name="retry">重試</string>
 	<string name="more">更多</string>
 	<string name="quote_format">引用格式</string>
-	<string name="quote_format_message">\"[TEXT]\" 將被替換成要引用的推文</string>
+	<string name="quote_format_summary">\&quot;[TEXT]\&quot;：推文原文\n\&quot;[NAME]\&quot;：用戶名</string>
 	<string name="direct_messages">私信</string>
 	<string name="capital_on">開啟</string>
 	<string name="capital_off">關閉</string>

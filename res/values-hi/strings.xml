@@ -154,7 +154,7 @@
   <string name="retry">पुन: प्रयास</string>
   <string name="more">अधिक</string>
   <string name="quote_format">उद्धरण का फॉर्मेट</string>
-  <string name="quote_format_message">\"[TEXT]\" के जगह उद्धरण के लिए चुना होया ट्वीट रख दिया जायेगा|</string>
+
   <string name="direct_messages">सीधा संदेश</string>
   <string name="capital_on">चालू</string>
   <string name="capital_off">बंद</string>

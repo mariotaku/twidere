@@ -155,7 +155,7 @@
 	<string name="retry">Retry</string>
 	<string name="more">More</string>
 	<string name="quote_format">Quote format</string>
-	<string name="quote_format_message">\"[TEXT]\" = Tweet text\n\"[NAME]\" = Twitter username</string>
+	<string name="quote_format_summary">\"[TEXT]\" = Tweet text\n\"[NAME]\" = Twitter username</string>
 	<string name="direct_messages">Direct messages</string>
 	<string name="capital_on">ON</string>
 	<string name="capital_off">OFF</string>

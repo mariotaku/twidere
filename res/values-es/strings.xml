@@ -154,7 +154,7 @@
   <string name="retry">Reintentar</string>
   <string name="more">Más</string>
   <string name="quote_format">Formato de cita</string>
-  <string name="quote_format_message">\"[TEXT]\" se sustituirá con tweet a citar.</string>
+
   <string name="direct_messages">Mensajes directos</string>
   <string name="capital_on">Encender</string>
   <string name="capital_off">APAGADO</string>

@@ -88,7 +88,7 @@
   <string name="retry">Повторить</string>
   <string name="more">Еще</string>
   <string name="quote_format">Формат цитат</string>
-  <string name="quote_format_message">«[ТEXT]» будет заменен на цитируемый твит.</string>
+
   <string name="direct_messages">Приватные сообщения</string>
   <string name="capital_on">ВКЛ</string>
   <string name="capital_off">ВЫКЛ</string>

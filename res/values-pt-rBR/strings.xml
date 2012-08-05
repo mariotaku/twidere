@@ -148,7 +148,7 @@
   <string name="retry">Tentar novamente</string>
   <string name="more">Mais</string>
   <string name="quote_format">Formato das Citações de Tweet</string>
-  <string name="quote_format_message">\"[TEXT]\" será substituído pelo tweet a ser citado.</string>
+
   <string name="direct_messages">Mensagens Diretas</string>
   <string name="capital_on">ON</string>
   <string name="capital_off">OFF</string>

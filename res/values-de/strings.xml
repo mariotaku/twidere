@@ -154,7 +154,7 @@
   <string name="retry">Wiederholen</string>
   <string name="more">Mehr</string>
   <string name="quote_format">Zitat-Format</string>
-  <string name="quote_format_message">\"[TEXT]\" wird mit deinem Zitat ersetzt.</string>
+
   <string name="direct_messages">Direktnachrichten</string>
   <string name="capital_on">AN</string>
   <string name="capital_off">AUS</string>

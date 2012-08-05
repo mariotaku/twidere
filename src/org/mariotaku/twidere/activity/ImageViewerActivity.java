@@ -133,12 +133,17 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	}
 
 	@Override
-	protected void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
-		setContentView(R.layout.image_viewer);
+	public void onContentChanged() {
+		super.onContentChanged();
 		mImageView = (ImageViewer) findViewById(R.id.image_viewer);
 		mRefreshStopSaveButton = (ImageButton) findViewById(R.id.refresh_stop_save);
 		mProgress = findViewById(R.id.progress);
+	}
+
+	@Override
+	protected void onCreate(Bundle icicle) {
+		super.onCreate(icicle);
+		setContentView(R.layout.image_viewer);
 		loadImage();
 	}
 
@@ -149,6 +154,13 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		if (mImageLoader != null && !mImageLoader.isCancelled()) {
 			mImageLoader.cancel();
 		}
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		loadImage();
 	}
 
 	private void loadImage() {

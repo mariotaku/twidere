@@ -154,7 +154,7 @@
   <string name="retry">Újrapróbál</string>
   <string name="more">Tovább</string>
   <string name="quote_format">Idézet formátuma</string>
-  <string name="quote_format_message">\"[TEXT]\" szöveg le lesz cserélve az idézendő tweet-tel.</string>
+
   <string name="direct_messages">Üzenetek</string>
   <string name="capital_on">BE</string>
   <string name="capital_off">KI</string>

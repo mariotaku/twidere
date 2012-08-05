@@ -154,7 +154,7 @@
   <string name="retry">Opnieuw proberen</string>
   <string name="more">Meer</string>
   <string name="quote_format">Citaat formaat</string>
-  <string name="quote_format_message">\"[TEXT]\" zal worden vervangen door een tweet om te citeren.</string>
+
   <string name="direct_messages">Directe berichten</string>
   <string name="capital_on">AAN</string>
   <string name="capital_off">UIT</string>
