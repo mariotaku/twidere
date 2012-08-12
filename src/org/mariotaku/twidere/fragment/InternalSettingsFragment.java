@@ -19,12 +19,13 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.activity.NativeMapActivity;
+import org.mariotaku.twidere.activity.InternalSettingsActivity;
+import org.mariotaku.twidere.model.Panes;
 
-public class NativeMapFragment extends ActivityHostFragment<NativeMapActivity> {
+public class InternalSettingsFragment extends ActivityHostFragment<InternalSettingsActivity> implements Panes.Left {
 
 	@Override
-	protected Class<NativeMapActivity> getActivityClass() {
-		return NativeMapActivity.class;
+	protected Class<InternalSettingsActivity> getActivityClass() {
+		return InternalSettingsActivity.class;
 	}
 }

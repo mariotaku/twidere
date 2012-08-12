@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.app;
 
 import static android.os.Environment.getExternalStorageDirectory;
+import static org.mariotaku.twidere.Constants.CRASH_REPORT_FORM_KEY;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -41,7 +42,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask.Status;
 import android.os.Build;
 
-@ReportsCrashes(formKey = "dEcwVVBoTDE0RXZaczFiMUxuek43WGc6MQ")
+@ReportsCrashes(formKey = CRASH_REPORT_FORM_KEY)
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
@@ -59,7 +60,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager == null) {
-			mAsyncTaskManager = new AsyncTaskManager();
+			mAsyncTaskManager = AsyncTaskManager.getInstance();
 		}
 		return mAsyncTaskManager;
 	}

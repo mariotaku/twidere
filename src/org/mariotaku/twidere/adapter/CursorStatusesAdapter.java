@@ -22,7 +22,6 @@ package org.mariotaku.twidere.adapter;
 import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
-import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
@@ -49,6 +48,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -74,49 +74,51 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final int position = cursor.getPosition();
 		final StatusViewHolder holder = (StatusViewHolder) view.getTag();
 
-		final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
-				.getString(mIndices.retweeted_by_screen_name);
-		final String text = cursor.getString(mIndices.text);
-		final String screen_name = cursor.getString(mIndices.screen_name);
-		final String name = mDisplayName ? cursor.getString(mIndices.name) : screen_name;
-		final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
-
-		final PreviewImage preview = getPreviewImage(text, mDisplayImagePreview, mForceSSLConnection);
-
-		final long account_id = cursor.getLong(mIndices.account_id);
-		final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
-		final long retweet_count = cursor.getLong(mIndices.retweet_count);
-
 		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
-		final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
-		final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
-		final boolean is_verified = cursor.getShort(mIndices.is_verified) == 1;
-
-		final boolean has_media = preview.has_image;
-		final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
-		final boolean is_retweet = !isNullOrEmpty(retweeted_by) && cursor.getShort(mIndices.is_retweet) == 1;
-		final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name)
-				&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
 
 		final boolean is_last = position == getCount() - 1;
 		final boolean show_gap = (is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1)
 				&& !mGapDisallowed;
 
 		holder.setShowAsGap(show_gap);
-		holder.setAccountColorEnabled(mShowAccountColor);
-
-		if (mShowAccountColor) {
-			holder.setAccountColor(getAccountColor(mContext, account_id));
-		}
 
 		if (!show_gap) {
+
+			final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
+					.getString(mIndices.retweeted_by_screen_name);
+			final String text = cursor.getString(mIndices.text);
+			final String screen_name = cursor.getString(mIndices.screen_name);
+			final String name = mDisplayName ? cursor.getString(mIndices.name) : screen_name;
+			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
+
+			final long account_id = cursor.getLong(mIndices.account_id);
+			final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
+			final long retweet_count = cursor.getLong(mIndices.retweet_count);
+
+			final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
+			final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
+			final boolean is_verified = cursor.getShort(mIndices.is_verified) == 1;
+
+			final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
+			final boolean is_retweet = !isNullOrEmpty(retweeted_by) && cursor.getShort(mIndices.is_retweet) == 1;
+			final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name)
+					&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
+
+			holder.setAccountColorEnabled(mShowAccountColor);
+
+			if (mShowAccountColor) {
+				holder.setAccountColor(getAccountColor(mContext, account_id));
+			}
+
+			final PreviewImage preview = getPreviewImage(text, mDisplayImagePreview, mForceSSLConnection);
+			final boolean has_media = preview != null ? preview.has_image : false;
 
 			holder.setTextSize(mTextSize);
 
 			holder.text.setText(unescapeHTML(text));
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(is_verified, is_protected), 0, 0, 0);
 			holder.name.setText(name);
-			holder.time.setText(formatToShortTimeString(mContext, status_timestamp));
+			holder.time.setText(DateUtils.getRelativeTimeSpanString(status_timestamp));
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getStatusTypeIconRes(is_favorite, has_location, has_media), 0);
 
@@ -146,10 +148,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				}
 				holder.profile_image.setTag(position);
 			}
-			holder.image_preview
-					.setVisibility(mDisplayImagePreview && preview.has_image && preview.matched_url != null ? View.VISIBLE
-							: View.GONE);
-			if (mDisplayImagePreview && preview.has_image && preview.matched_url != null) {
+			final boolean has_preview = mDisplayImagePreview && has_media && preview.matched_url != null;
+			holder.image_preview.setVisibility(has_preview ? View.VISIBLE : View.GONE);
+			if (has_preview) {
 				mPreviewImageLoader.displayImage(parseURL(preview.matched_url), holder.image_preview);
 				holder.image_preview.setTag(position);
 			}

@@ -67,17 +67,20 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	public void onResume() {
 		super.onResume();
 		if (isThemeChanged()) {
-			boolean show_anim = false;
-			try {
-				final float transition_animation = Settings.System.getFloat(getContentResolver(),
-						Settings.System.TRANSITION_ANIMATION_SCALE);
-				show_anim = transition_animation > 0.0;
-			} catch (final SettingNotFoundException e) {
-				e.printStackTrace();
-			}
-			restartActivity(this, show_anim);
-			return;
+			restart();
 		}
+	}
+
+	public void restart() {
+		boolean show_anim = false;
+		try {
+			final float transition_animation = Settings.System.getFloat(getContentResolver(),
+					Settings.System.TRANSITION_ANIMATION_SCALE);
+			show_anim = transition_animation > 0.0;
+		} catch (final SettingNotFoundException e) {
+			e.printStackTrace();
+		}
+		restartActivity(this, show_anim);
 	}
 
 	@Override

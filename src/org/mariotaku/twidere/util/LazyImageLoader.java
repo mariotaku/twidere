@@ -267,7 +267,7 @@ public class LazyImageLoader implements Constants {
 
 		private String getURLFilename(URL url) {
 			if (url == null) return null;
-			return url.toString().replaceAll("[^a-zA-Z0-9]", "_");
+			return url.toString().replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
 		}
 
 	}

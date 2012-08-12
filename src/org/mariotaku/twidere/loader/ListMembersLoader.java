@@ -88,6 +88,7 @@ public class ListMembersLoader extends ParcelableUsersLoader {
 			users = twitter.getUserListMembers(mListId, mCursor);
 		} else {
 			final UserList list = findUserList(twitter, mUserId, mScreenName, mListName);
+			if (list == null) return null;
 			if (mOwnerId <= 0) {
 				final User owner = list.getUser();
 				mOwnerId = owner != null ? owner.getId() : -1;

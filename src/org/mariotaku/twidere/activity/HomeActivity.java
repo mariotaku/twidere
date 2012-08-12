@@ -32,9 +32,9 @@ import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.fragment.AccountsFragment;
+import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
-import org.mariotaku.twidere.fragment.TrendsFragment;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
@@ -96,8 +96,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	public static final int TAB_POSITION_HOME = 0;
 	public static final int TAB_POSITION_MENTIONS = 1;
-	public static final int TAB_POSITION_TRENDS = 2;
-	public static final int TAB_POSITION_ACCOUNTS = 3;
+	public static final int TAB_POSITION_MESSAGES = 2;
 
 	private final ArrayList<TabSpec> mCustomTabs = new ArrayList<TabSpec>();
 
@@ -111,7 +110,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				mIndicator.setPagingEnabled(true);
 				mIsNavigateToDefaultAccount = false;
 			} else if (activated_ids.length > 1) {
-				mViewPager.setCurrentItem(TAB_POSITION_ACCOUNTS, false);
+				final int count = mAdapter.getCount();
+				if (count > 0) {
+					mViewPager.setCurrentItem(count - 1, false);
+				}
 				mIndicator.setPagingEnabled(false);
 				if (!mIsNavigateToDefaultAccount) {
 					Toast.makeText(this, R.string.set_default_account_hint, Toast.LENGTH_LONG).show();
@@ -392,7 +394,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 		final List<TabSpec> tabs = getTabs(this);
 		if (tabsChanged(tabs)) {
-			initTabs(tabs);
+			restart();
 		}
 	}
 
@@ -440,18 +442,19 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private void initTabs(Collection<? extends TabSpec> tabs) {
+		mCustomTabs.clear();
+		mCustomTabs.addAll(tabs);
 		mAdapter.clear();
 		mAdapter.addTab(HomeTimelineFragment.class, null, getString(R.string.home), R.drawable.ic_tab_home,
 				TAB_POSITION_HOME);
 		mAdapter.addTab(MentionsFragment.class, null, getString(R.string.mentions), R.drawable.ic_tab_mention,
 				TAB_POSITION_MENTIONS);
-		mAdapter.addTab(TrendsFragment.class, null, getString(R.string.trends), R.drawable.ic_tab_trends,
-				TAB_POSITION_TRENDS);
-		mAdapter.addTab(AccountsFragment.class, null, getString(R.string.accounts), R.drawable.ic_tab_accounts,
-				TAB_POSITION_ACCOUNTS);
-		mCustomTabs.clear();
-		mCustomTabs.addAll(tabs);
+		mAdapter.addTab(DirectMessagesFragment.class, null, getString(R.string.direct_messages),
+				R.drawable.ic_tab_message, TAB_POSITION_MESSAGES);
 		mAdapter.addTabs(tabs);
+		mAdapter.addTab(AccountsFragment.class, null, getString(R.string.accounts), R.drawable.ic_tab_accounts,
+				mAdapter.getCount());
+
 	}
 
 	private boolean tabsChanged(List<TabSpec> tabs) {

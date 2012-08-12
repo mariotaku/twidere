@@ -21,7 +21,6 @@ package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
-import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
@@ -45,6 +44,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -94,9 +94,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		final View view = super.getView(position, convertView, parent);
-
 		final Object tag = view.getTag();
-		StatusViewHolder holder = null;
+		final StatusViewHolder holder;
 
 		if (tag instanceof StatusViewHolder) {
 			holder = (StatusViewHolder) tag;
@@ -109,7 +108,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 		final ParcelableStatus status = getItem(position);
 
-		final CharSequence retweeted_by = mDisplayName ? status.retweeted_by_name : status.retweeted_by_screen_name;
 		final boolean is_last = position == getCount() - 1;
 		final boolean show_gap = (status.is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1)
 				&& !mGapDisallowed;
@@ -123,11 +121,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 		if (!show_gap) {
 
+			final CharSequence retweeted_by = mDisplayName ? status.retweeted_by_name : status.retweeted_by_screen_name;
+
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(
 					getUserTypeIconRes(status.is_verified, status.is_protected), 0, 0, 0);
 			holder.name.setText(mDisplayName ? status.name : status.screen_name);
-			holder.time.setText(formatToShortTimeString(mContext, status.status_timestamp));
+			holder.time.setText(DateUtils.getRelativeTimeSpanString(status.status_timestamp));
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media), 0);
 			holder.reply_retweet_status
@@ -160,9 +160,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.profile_image.setOnClickListener(this);
 				holder.profile_image.setTag(position);
 			}
-			holder.image_preview.setVisibility(mDisplayImagePreview && status.has_media
-					&& status.image_preview_url != null ? View.VISIBLE : View.GONE);
-			if (mDisplayImagePreview && status.has_media && status.image_preview_url != null) {
+			final boolean has_preview = mDisplayImagePreview && status.has_media && status.image_preview_url != null;
+			holder.image_preview.setVisibility(has_preview ? View.VISIBLE : View.GONE);
+			if (has_preview) {
 				mPreviewImageLoader.displayImage(status.image_preview_url, holder.image_preview);
 				holder.image_preview.setTag(position);
 			}

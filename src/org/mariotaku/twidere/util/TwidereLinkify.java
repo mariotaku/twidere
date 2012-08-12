@@ -73,23 +73,76 @@ public class TwidereLinkify {
 
 	public static final String SINA_WEIBO_IMAGES_AVALIABLE_SIZES = "(woriginal|large|thumbnail|bmiddle|mw600)";
 
-	public static final String STRING_PATTERN_IMAGES = "(https?:\\/\\/.+?(?i)(png|jpeg|jpg|gif|bmp))";
-	public static final String STRING_PATTERN_TWITTER_IMAGES = "(https?:\\/\\/p\\.twimg\\.com\\/([\\d\\w\\-_]+)\\.(png|jpeg|jpg|gif|bmp))";
-	public static final String STRING_PATTERN_SINA_WEIBO_IMAGES = "(https?:\\/\\/([\\w\\d]+\\.sinaimg\\.cn|[\\w\\d]+\\.sina\\.cn)\\/"
-			+ SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/(([\\d\\w]+)\\.(png|jpeg|jpg|gif|bmp)))";
-	public static final String STRING_PATTERN_LOCKERZ_AND_PLIXI = "https?:\\/\\/(plixi\\.com\\/p|lockerz\\.com\\/s)\\/(\\w+)\\/?";
-	public static final String STRING_PATTERN_INSTAGRAM = "(https?:\\/\\/(instagr\\.am|instagram\\.com)\\/p\\/([_\\-\\d\\w]+)\\/?)";
-	public static final String STRING_PATTERN_TWITPIC = "(https?:\\/\\/twitpic\\.com\\/([\\d\\w]+)\\/?)";
-	public static final String STRING_PATTERN_IMGLY = "(https?:\\/\\/img\\.ly\\/([\\w\\d]+)\\/?)";
-	public static final String STRING_PATTERN_YFROG = "(https?:\\/\\/yfrog\\.com\\/([\\w\\d]+)\\/?)";
-	public static final String STRING_PATTERN_TWITGOO = "(https?:\\/\\/twitgoo\\.com\\/([\\d\\w]+)\\/?)";
-	public static final String STRING_PATTERN_MOBYPICTURE = "((https?:\\/\\/moby\\.to\\/([\\d\\w]+))\\/?)";
+	public static final String AVALIABLE_URL_SCHEME_PREFIX = "(https?:\\/\\/)?";
 
-	public static final Pattern PATTERN_ALL_AVALIABLE_IMAGES = Pattern.compile("(" + STRING_PATTERN_IMAGES + "|"
-			+ STRING_PATTERN_TWITTER_IMAGES + "|" + STRING_PATTERN_SINA_WEIBO_IMAGES + "|"
-			+ STRING_PATTERN_LOCKERZ_AND_PLIXI + "|" + STRING_PATTERN_INSTAGRAM + "|" + STRING_PATTERN_TWITPIC + "|"
-			+ STRING_PATTERN_IMGLY + "|" + STRING_PATTERN_YFROG + "|" + STRING_PATTERN_TWITGOO + "|"
-			+ STRING_PATTERN_MOBYPICTURE + ")", Pattern.CASE_INSENSITIVE);
+	public static final String STRING_PATTERN_TWITTER_IMAGES_DOMAIN = "p\\.twimg\\.com";
+	public static final String STRING_PATTERN_SINA_WEIBO_IMAGES_DOMAIN = "[\\w\\d]+\\.sinaimg\\.cn|[\\w\\d]+\\.sina\\.cn";
+	public static final String STRING_PATTERN_LOCKERZ_AND_PLIXI_DOMAIN = "plixi\\.com\\/p|lockerz\\.com\\/s";
+	public static final String STRING_PATTERN_INSTAGRAM_DOMAIN = "instagr\\.am|instagram\\.com";
+	public static final String STRING_PATTERN_TWITPIC_DOMAIN = "twitpic\\.com";
+	public static final String STRING_PATTERN_IMGLY_DOMAIN = "img\\.ly";
+	public static final String STRING_PATTERN_YFROG_DOMAIN = "yfrog\\.com";
+	public static final String STRING_PATTERN_TWITGOO_DOMAIN = "twitgoo\\.com";
+	public static final String STRING_PATTERN_MOBYPICTURE_DOMAIN = "moby\\.to";
+
+	public static final String STRING_PATTERN_IMAGES_NO_SCHEME = "[^:\\/\\/]+?\\.(png|jpeg|jpg|gif|bmp)";
+	public static final String STRING_PATTERN_TWITTER_IMAGES_NO_SCHEME = STRING_PATTERN_TWITTER_IMAGES_DOMAIN
+			+ "\\/([\\d\\w\\-_]+)\\.(png|jpeg|jpg|gif|bmp)";
+	public static final String STRING_PATTERN_SINA_WEIBO_IMAGES_NO_SCHEME = "("
+			+ STRING_PATTERN_SINA_WEIBO_IMAGES_DOMAIN + ")" + "\\/" + SINA_WEIBO_IMAGES_AVALIABLE_SIZES
+			+ "\\/(([\\d\\w]+)\\.(png|jpeg|jpg|gif|bmp))";
+	public static final String STRING_PATTERN_LOCKERZ_AND_PLIXI_NO_SCHEME = "("
+			+ STRING_PATTERN_LOCKERZ_AND_PLIXI_DOMAIN + ")" + "\\/(\\w+)\\/?";
+	public static final String STRING_PATTERN_INSTAGRAM_NO_SCHEME = "(" + STRING_PATTERN_INSTAGRAM_DOMAIN + ")"
+			+ "\\/p\\/([_\\-\\d\\w]+)\\/?";
+	public static final String STRING_PATTERN_TWITPIC_NO_SCHEME = STRING_PATTERN_TWITPIC_DOMAIN + "\\/([\\d\\w]+)\\/?";
+	public static final String STRING_PATTERN_IMGLY_NO_SCHEME = STRING_PATTERN_IMGLY_DOMAIN + "\\/([\\w\\d]+)\\/?";
+	public static final String STRING_PATTERN_YFROG_NO_SCHEME = STRING_PATTERN_YFROG_DOMAIN + "\\/([\\w\\d]+)\\/?";
+	public static final String STRING_PATTERN_TWITGOO_NO_SCHEME = STRING_PATTERN_TWITGOO_DOMAIN + "\\/([\\d\\w]+)\\/?";
+	public static final String STRING_PATTERN_MOBYPICTURE_NO_SCHEME = STRING_PATTERN_MOBYPICTURE_DOMAIN
+			+ "\\/([\\d\\w]+)\\/?";
+
+	public static final String STRING_PATTERN_IMAGES = AVALIABLE_URL_SCHEME_PREFIX + STRING_PATTERN_IMAGES_NO_SCHEME;
+	public static final String STRING_PATTERN_TWITTER_IMAGES = AVALIABLE_URL_SCHEME_PREFIX
+			+ STRING_PATTERN_TWITTER_IMAGES_NO_SCHEME;
+	public static final String STRING_PATTERN_SINA_WEIBO_IMAGES = AVALIABLE_URL_SCHEME_PREFIX
+			+ STRING_PATTERN_SINA_WEIBO_IMAGES_NO_SCHEME;
+	public static final String STRING_PATTERN_LOCKERZ_AND_PLIXI = AVALIABLE_URL_SCHEME_PREFIX
+			+ STRING_PATTERN_LOCKERZ_AND_PLIXI_NO_SCHEME;
+	public static final String STRING_PATTERN_INSTAGRAM = AVALIABLE_URL_SCHEME_PREFIX
+			+ STRING_PATTERN_INSTAGRAM_NO_SCHEME;
+	public static final String STRING_PATTERN_TWITPIC = AVALIABLE_URL_SCHEME_PREFIX + STRING_PATTERN_TWITPIC_NO_SCHEME;
+	public static final String STRING_PATTERN_IMGLY = AVALIABLE_URL_SCHEME_PREFIX + STRING_PATTERN_IMGLY_NO_SCHEME;
+	public static final String STRING_PATTERN_YFROG = AVALIABLE_URL_SCHEME_PREFIX + STRING_PATTERN_YFROG_NO_SCHEME;
+	public static final String STRING_PATTERN_TWITGOO = AVALIABLE_URL_SCHEME_PREFIX + STRING_PATTERN_TWITGOO_NO_SCHEME;
+	public static final String STRING_PATTERN_MOBYPICTURE = AVALIABLE_URL_SCHEME_PREFIX
+			+ STRING_PATTERN_MOBYPICTURE_NO_SCHEME;
+
+	public static final Pattern PATTERN_ALL_AVALIABLE_IMAGES = Pattern.compile(AVALIABLE_URL_SCHEME_PREFIX + "("
+			+ STRING_PATTERN_IMAGES_NO_SCHEME + "|" + STRING_PATTERN_TWITTER_IMAGES_NO_SCHEME + "|"
+			+ STRING_PATTERN_SINA_WEIBO_IMAGES_NO_SCHEME + "|" + STRING_PATTERN_LOCKERZ_AND_PLIXI_NO_SCHEME + "|"
+			+ STRING_PATTERN_INSTAGRAM_NO_SCHEME + "|" + STRING_PATTERN_TWITPIC_NO_SCHEME + "|"
+			+ STRING_PATTERN_IMGLY_NO_SCHEME + "|" + STRING_PATTERN_YFROG_NO_SCHEME + "|"
+			+ STRING_PATTERN_TWITGOO_NO_SCHEME + "|" + STRING_PATTERN_MOBYPICTURE_NO_SCHEME + ")",
+			Pattern.CASE_INSENSITIVE);
+
+	public static final Pattern PATTERN_INLINE_PREVIEW_AVALIABLE_IMAGES_MATCH_ONLY = Pattern.compile("<a href=\"("
+			+ AVALIABLE_URL_SCHEME_PREFIX + "(" + STRING_PATTERN_IMAGES_NO_SCHEME + "|"
+			+ STRING_PATTERN_TWITTER_IMAGES_DOMAIN + "|" + STRING_PATTERN_SINA_WEIBO_IMAGES_DOMAIN + "|"
+			+ STRING_PATTERN_LOCKERZ_AND_PLIXI_DOMAIN + "|" + STRING_PATTERN_INSTAGRAM_DOMAIN + "|"
+			+ STRING_PATTERN_TWITPIC_DOMAIN + "|" + STRING_PATTERN_IMGLY_DOMAIN + "|" + STRING_PATTERN_YFROG_DOMAIN
+			+ "|" + STRING_PATTERN_TWITGOO_DOMAIN + "|" + STRING_PATTERN_MOBYPICTURE_DOMAIN + "))\">",
+			Pattern.CASE_INSENSITIVE);
+
+	public static final Pattern PATTERN_PREVIEW_AVALIABLE_IMAGES_IN_HTML = Pattern.compile("<a href=\"("
+			+ AVALIABLE_URL_SCHEME_PREFIX + "(" + STRING_PATTERN_IMAGES_NO_SCHEME + "|"
+			+ STRING_PATTERN_TWITTER_IMAGES_NO_SCHEME + "|" + STRING_PATTERN_SINA_WEIBO_IMAGES_NO_SCHEME + "|"
+			+ STRING_PATTERN_LOCKERZ_AND_PLIXI_NO_SCHEME + "|" + STRING_PATTERN_INSTAGRAM_NO_SCHEME + "|"
+			+ STRING_PATTERN_TWITPIC_NO_SCHEME + "|" + STRING_PATTERN_IMGLY_NO_SCHEME + "|"
+			+ STRING_PATTERN_YFROG_NO_SCHEME + "|" + STRING_PATTERN_TWITGOO_NO_SCHEME + "|"
+			+ STRING_PATTERN_MOBYPICTURE_NO_SCHEME + "))\">", Pattern.CASE_INSENSITIVE);
+
+	public static final int PREVIEW_AVALIABLE_IMAGES_IN_HTML_GROUP_LINK = 1;
 
 	public static final Pattern PATTERN_IMAGES = Pattern.compile(STRING_PATTERN_IMAGES, Pattern.CASE_INSENSITIVE);
 	public static final Pattern PATTERN_TWITTER_IMAGES = Pattern.compile(STRING_PATTERN_TWITTER_IMAGES,
@@ -100,33 +153,29 @@ public class TwidereLinkify {
 			Pattern.CASE_INSENSITIVE);
 
 	public static final Pattern PATTERN_INSTAGRAM = Pattern.compile(STRING_PATTERN_INSTAGRAM, Pattern.CASE_INSENSITIVE);
-	public static final int INSTAGRAM_GROUP_ALL = 1;
 	public static final int INSTAGRAM_GROUP_ID = 3;
 
 	public static final Pattern PATTERN_TWITPIC = Pattern.compile(STRING_PATTERN_TWITPIC, Pattern.CASE_INSENSITIVE);
-	public static final int TWITPIC_GROUP_ALL = 1;
 	public static final int TWITPIC_GROUP_ID = 2;
 
 	public static final Pattern PATTERN_IMGLY = Pattern.compile(STRING_PATTERN_IMGLY, Pattern.CASE_INSENSITIVE);
-	public static final int IMGLY_GROUP_ALL = 1;
 	public static final int IMGLY_GROUP_ID = 2;
 
 	public static final Pattern PATTERN_YFROG = Pattern.compile(STRING_PATTERN_YFROG, Pattern.CASE_INSENSITIVE);
-	public static final int YFROG_GROUP_ALL = 1;
 	public static final int YFROG_GROUP_ID = 2;
 
 	public static final Pattern PATTERN_TWITGOO = Pattern.compile(STRING_PATTERN_TWITGOO, Pattern.CASE_INSENSITIVE);
-	public static final int TWITGOO_GROUP_ALL = 1;
 	public static final int TWITGOO_GROUP_ID = 2;
 
 	public static final Pattern PATTERN_MOBYPICTURE = Pattern.compile(STRING_PATTERN_MOBYPICTURE,
 			Pattern.CASE_INSENSITIVE);
-	public static final int MOBYPICTURE_GROUP_VALID = 2;
-	public static final int MOBYPICTURE_GROUP_ID = 3;
+	public static final int MOBYPICTURE_GROUP_ID = 2;
 
 	public static final String TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES = "(bigger|normal|mini)";
-	public static final String STRING_PATTERN_TWITTER_PROFILE_IMAGES = "(https?:\\/\\/([\\w\\d]+)\\.twimg\\.com\\/profile_images\\/([\\d\\w\\-_]+)\\/([\\d\\w\\-_]+)_"
-			+ TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES + "(\\.?(png|jpg|jpeg|gif|bmp))?)";
+	public static final String STRING_PATTERN_TWITTER_PROFILE_IMAGES_NO_SCHEME = "([\\w\\d]+)\\.twimg\\.com\\/profile_images\\/([\\d\\w\\-_]+)\\/([\\d\\w\\-_]+)_"
+			+ TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES + "(\\.?(png|jpg|jpeg|gif|bmp))?";
+	public static final String STRING_PATTERN_TWITTER_PROFILE_IMAGES = AVALIABLE_URL_SCHEME_PREFIX
+			+ STRING_PATTERN_TWITTER_PROFILE_IMAGES_NO_SCHEME;
 
 	public static final Pattern PATTERN_TWITTER_PROFILE_IMAGES = Pattern.compile(STRING_PATTERN_TWITTER_PROFILE_IMAGES,
 			Pattern.CASE_INSENSITIVE);

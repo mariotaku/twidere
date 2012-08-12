@@ -22,52 +22,152 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.provider.RecentSearchProvider;
-import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
-import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.fragment.ActivityHostFragment;
+import org.mariotaku.twidere.fragment.CustomTabsFragment;
+import org.mariotaku.twidere.fragment.ExtensionsListFragment;
+import org.mariotaku.twidere.fragment.InternalSettingsFragment;
+import org.mariotaku.twidere.fragment.SettingsDetailsFragment;
 
-import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.provider.SearchRecentSuggestions;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
-@SuppressWarnings("deprecation")
-public class SettingsActivity extends BasePreferenceActivity implements OnPreferenceChangeListener,
+public class SettingsActivity extends DualPaneActivity implements OnSharedPreferenceChangeListener,
 		OnPreferenceClickListener {
+
+	private SharedPreferences mPreferences;
+	private ActivityHostFragment<InternalSettingsActivity> mFragment;
+
+	private final String KEY_ABOUT = "about";
+	private final String KEY_CUSTOM_TABS = "custom_tabs";
+	private final String KEY_EXTENSIONS = "extensions";
+	private final String KEY_SETTINGS_APPEARANCE = "settings_appearance";
+	private final String KEY_SETTINGS_CONTENT = "settings_content";
+	private final String KEY_SETTINGS_STORAGE = "settings_storage";
+	private final String KEY_SETTINGS_API = "settings_api";
+	private final String KEY_SETTINGS_CONNECTIVITY = "settings_connectivity";
+	private final String KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS = "settings_refresh_and_notifications";
+	private final String KEY_SETTINGS_OTHER = "settings_other";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.base_dual_pane);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
-		addPreferencesFromResource(R.xml.settings);
-		findPreference(PREFERENCE_KEY_DARK_THEME).setOnPreferenceChangeListener(this);
-		findPreference(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND).setOnPreferenceChangeListener(this);
-		findPreference(PREFERENCE_KEY_CLEAR_DATABASES).setOnPreferenceClickListener(this);
-		findPreference(PREFERENCE_KEY_CLEAR_CACHE).setOnPreferenceClickListener(this);
+		mPreferences.registerOnSharedPreferenceChangeListener(this);
+		mFragment = new InternalSettingsFragment();
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.replace(R.id.content, mFragment);
+		ft.commit();
+
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
-				finish();
+				onBackPressed();
 				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
-	public boolean onPreferenceChange(Preference preference, Object newValue) {
+	public void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		final InternalSettingsActivity activity = mFragment.getAttachedActivity();
+		if (activity != null) {
+			activity.findPreference(KEY_ABOUT).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_EXTENSIONS).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_CUSTOM_TABS).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_SETTINGS_APPEARANCE).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_SETTINGS_CONTENT).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_SETTINGS_STORAGE).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_SETTINGS_API).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_SETTINGS_CONNECTIVITY).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_SETTINGS_OTHER).setOnPreferenceClickListener(this);
+		}
+	}
+
+	@Override
+	public boolean onPreferenceClick(Preference preference) {
 		final String key = preference.getKey();
+		final Bundle args = new Bundle();
+		final int res_id;
+		if (KEY_CUSTOM_TABS.equals(key)) {
+			if (isDualPaneMode()) {
+				final Fragment fragment = new CustomTabsFragment();
+				showFragment(fragment, true);
+			} else {
+				final Intent intent = new Intent(INTENT_ACTION_CUSTOM_TABS);
+				intent.setPackage(getPackageName());
+				startActivity(intent);
+			}
+			return true;
+		} else if (KEY_ABOUT.equals(key)) {
+			if (isDualPaneMode()) {
+				res_id = R.xml.about;
+			} else {
+				final Intent intent = new Intent(INTENT_ACTION_ABOUT);
+				intent.setPackage(getPackageName());
+				startActivity(intent);
+				return true;
+			}
+		} else if (KEY_EXTENSIONS.equals(key)) {
+			if (isDualPaneMode()) {
+				final Fragment fragment = new ExtensionsListFragment();
+				showFragment(fragment, true);
+			} else {
+				final Intent intent = new Intent(INTENT_ACTION_EXTENSIONS);
+				intent.setPackage(getPackageName());
+				startActivity(intent);
+			}
+			return true;
+		} else if (KEY_SETTINGS_APPEARANCE.equals(key)) {
+			res_id = R.xml.settings_appearance;
+		} else if (KEY_SETTINGS_CONTENT.equals(key)) {
+			res_id = R.xml.settings_content;
+		} else if (KEY_SETTINGS_STORAGE.equals(key)) {
+			res_id = R.xml.settings_storage;
+		} else if (KEY_SETTINGS_API.equals(key)) {
+			res_id = R.xml.settings_api;
+		} else if (KEY_SETTINGS_CONNECTIVITY.equals(key)) {
+			res_id = R.xml.settings_connectivity;
+		} else if (KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS.equals(key)) {
+			res_id = R.xml.settings_refresh_and_notifications;
+		} else if (KEY_SETTINGS_OTHER.equals(key)) {
+			res_id = R.xml.settings_other;
+		} else {
+			res_id = -1;
+		}
+		if (res_id > 0) {
+			args.putInt(INTENT_KEY_RESID, res_id);
+			if (isDualPaneMode()) {
+				final Fragment fragment = new SettingsDetailsFragment();
+				fragment.setArguments(args);
+				showFragment(fragment, true);
+			} else {
+				final Intent intent = new Intent(this, SettingsDetailsActivity.class);
+				intent.putExtras(args);
+				startActivity(intent);
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
 		if (PREFERENCE_KEY_DARK_THEME.equals(key) || PREFERENCE_KEY_SOLID_COLOR_BACKGROUND.equals(key)) {
 			boolean show_anim = false;
 			try {
@@ -79,27 +179,5 @@ public class SettingsActivity extends BasePreferenceActivity implements OnPrefer
 			}
 			restartActivity(this, show_anim);
 		}
-		return true;
-	}
-
-	@Override
-	public boolean onPreferenceClick(Preference preference) {
-		if (PREFERENCE_KEY_CLEAR_DATABASES.equals(preference.getKey())) {
-			final ContentResolver resolver = getContentResolver();
-			final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
-					RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
-			resolver.delete(Statuses.CONTENT_URI, null, null);
-			resolver.delete(Mentions.CONTENT_URI, null, null);
-			resolver.delete(CachedUsers.CONTENT_URI, null, null);
-			resolver.delete(DirectMessages.Inbox.CONTENT_URI, null, null);
-			resolver.delete(DirectMessages.Outbox.CONTENT_URI, null, null);
-			resolver.delete(CachedTrends.Daily.CONTENT_URI, null, null);
-			resolver.delete(CachedTrends.Weekly.CONTENT_URI, null, null);
-			resolver.delete(CachedTrends.Local.CONTENT_URI, null, null);
-			suggestions.clearHistory();
-		} else if (PREFERENCE_KEY_CLEAR_CACHE.equals(preference.getKey())) {
-			getTwidereApplication().clearCache();
-		}
-		return true;
 	}
 }

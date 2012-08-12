@@ -117,7 +117,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			mShouldRestorePosition = false;
 			return;
 		}
-		if (mMinIdToRefresh > 0) {
+		if (mMinIdToRefresh > 0 && remember_position) {
 			final int position = adapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id
 					: mMinIdToRefresh);
 			if (position >= 0 && position < mListView.getCount()) {

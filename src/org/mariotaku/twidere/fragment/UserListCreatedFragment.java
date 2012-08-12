@@ -27,7 +27,7 @@ public class UserListCreatedFragment extends BaseUserListsListFragment implement
 
 	private View mHeaderView;
 
-	private final DialogFragment mDialogFragment = new CreateUserListDialogFragment();
+	private DialogFragment mDialogFragment;
 
 	@Override
 	public void addHeaders(ListView list) {
@@ -47,6 +47,10 @@ public class UserListCreatedFragment extends BaseUserListsListFragment implement
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.add: {
+				if (mDialogFragment != null && mDialogFragment.isAdded()) {
+					mDialogFragment.dismiss();
+				}
+				mDialogFragment = new CreateUserListDialogFragment();
 				final Bundle args = new Bundle();
 				args.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId());
 				mDialogFragment.setArguments(args);

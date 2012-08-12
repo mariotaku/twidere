@@ -1,276 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-	android:key="global_settings"
+	android:key="settings"
 	android:title="@string/settings">
 
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="dark_theme"
+		android:summary="@string/dark_theme_summary"
+		android:title="@string/dark_theme"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="solid_color_background"
+		android:summary="@string/solid_color_background_summary"
+		android:title="@string/solid_color_background"/>
+
 	<PreferenceCategory
-		android:key="cat_appearance"
-		android:title="@string/look_and_feel">
-		<PreferenceScreen
+		android:key="cat_settings"
+		android:title="@string/settings">
+		<Preference
 			android:key="custom_tabs"
-			android:title="@string/custom_tabs">
-			<intent
-				android:action="org.mariotaku.twidere.CUSTOM_TABS"
-				android:targetPackage="org.mariotaku.twidere"/>
-		</PreferenceScreen>
-
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="dark_theme"
-			android:summary="@string/dark_theme_summary"
-			android:title="@string/dark_theme"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="solid_color_background"
-			android:summary="@string/solid_color_background_summary"
-			android:title="@string/solid_color_background"/>
-
-		<org.mariotaku.preference.TextSizePreference
-			maxValue="24.0"
-			minValue="12.0"
-			android:defaultValue="14.0"
-			android:key="text_size"
-			android:summary="@string/text_size_summary"
-			android:title="@string/text_size"/>
-
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="display_profile_image"
-			android:summary="@string/image_load_summary"
-			android:title="@string/display_profile_image"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:dependency="display_profile_image"
-			android:key="hires_profile_image"
-			android:summary="@string/image_load_summary"
-			android:title="@string/hires_profile_image"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="inline_image_preview"
-			android:summary="@string/image_load_summary"
-			android:title="@string/inline_image_preview"/>
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="display_name"
-			android:summaryOff="@string/display_name_summaryoff"
-			android:summaryOn="@string/display_name_summaryon"
-			android:title="@string/display_name"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="bottom_compose_button"
-			android:summary="@string/bottom_compose_button_summary"
-			android:title="@string/bottom_compose_button"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:dependency="bottom_compose_button"
-			android:key="leftside_compose_button"
-			android:summary="@string/leftside_compose_button_summary"
-			android:title="@string/leftside_compose_button"/>
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:key="cat_content"
-		android:title="@string/content">
-		<EditTextPreference
-			android:defaultValue="RT @[NAME]: [TEXT]"
-			android:dialogTitle="@string/quote_format"
-			android:key="quote_format"
-			android:singleLine="true"
-			android:summary="@string/quote_format_summary"
-			android:title="@string/quote_format"/>
-
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="load_more_automatically"
-			android:summary="@string/load_more_automatically_summary"
-			android:title="@string/load_more_automatically"/>
-
-		<org.mariotaku.preference.SeekBarPreference
-			maxValue="200"
-			minValue="10"
-			android:defaultValue="20"
-			android:key="load_item_limit"
-			android:summary="@string/load_item_limit_summary"
-			android:title="@string/load_item_limit"/>
-
-		<PreferenceScreen
-			android:key="filter_list"
-			android:summary="@string/filter_summary"
+			android:title="@string/custom_tabs"/>
+		<Preference
+			android:key="extensions"
+			android:title="@string/extensions"/>
+		<Preference
+			android:key="filters"
 			android:title="@string/filter">
 			<intent
 				android:action="org.mariotaku.twidere.FILTERS"
 				android:targetPackage="org.mariotaku.twidere"/>
-		</PreferenceScreen>
-
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="remember_position"
-			android:summary="@string/remember_position_summary"
-			android:title="@string/remember_position"/>
-
-		<org.mariotaku.twidere.preference.TrendsLocationPreference
-			android:key="trends_location"
-			android:summary="@string/trends_location_summary"
-			android:title="@string/trends_location"/>
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:key="cat_storage"
-		android:title="@string/storage">
-		<org.mariotaku.preference.SeekBarPreference
-			maxValue="300"
-			minValue="50"
-			android:defaultValue="100"
-			android:key="database_item_limit"
-			android:summary="@string/database_item_limit_summary"
-			android:title="@string/database_item_limit"/>
-
+		</Preference>
 		<Preference
-			android:key="clear_cache"
-			android:summary="@string/clear_cache_summary"
-			android:title="@string/clear_cache"/>
+			android:key="settings_appearance"
+			android:title="@string/look_and_feel"/>
 		<Preference
-			android:key="clear_databases"
-			android:summary="@string/clear_databases_summary"
-			android:title="@string/clear_databases"/>
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:key="cat_api"
-		android:title="@string/api">
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="gzip_compressing"
-			android:summary="@string/gzip_compressing_summary"
-			android:title="@string/gzip_compressing"/>
-
-		<EditTextPreference
-			android:dialogMessage="@string/warn_expert_only"
-			android:dialogTitle="@string/consumer_key"
-			android:key="consumer_key"
-			android:singleLine="true"
-			android:summary="@string/consumer_key_summary"
-			android:title="@string/consumer_key"/>
-		<EditTextPreference
-			android:dialogMessage="@string/warn_expert_only"
-			android:dialogTitle="@string/consumer_secret"
-			android:key="consumer_secret"
-			android:singleLine="true"
-			android:summary="@string/consumer_secret_summary"
-			android:title="@string/consumer_secret"/>
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:key="cat_connectivity"
-		android:title="@string/connectivity">
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="force_ssl_connection"
-			android:summary="@string/force_ssl_connection_summary"
-			android:title="@string/force_ssl_connection"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="ignore_ssl_error"
-			android:summary="@string/ignore_ssl_error_summary"
-			android:title="@string/ignore_ssl_error"/>
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:key="cat_proxy"
-		android:title="@string/proxy">
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:disableDependentsState="false"
-			android:key="enable_proxy"
-			android:summary="@string/http_proxy_summary"
-			android:title="@string/http_proxy"/>
-
-		<EditTextPreference
-			android:dependency="enable_proxy"
-			android:key="proxy_host"
-			android:singleLine="true"
-			android:title="@string/proxy_host"/>
-		<EditTextPreference
-			android:dependency="enable_proxy"
-			android:inputType="number"
-			android:key="proxy_port"
-			android:singleLine="true"
-			android:title="@string/proxy_port"/>
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:key="cat_refresh_and_notifications"
-		android:title="@string/refresh_and_notifications">
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="refresh_on_start"
-			android:summary="@string/refresh_on_start_summary"
-			android:title="@string/refresh_on_start"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="refresh_after_tweet"
-			android:summary="@string/refresh_after_tweet_summary"
-			android:title="@string/refresh_after_tweet"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="auto_refresh"
-			android:title="@string/auto_refresh"/>
-
-		<ListPreference
-			android:dependency="auto_refresh"
-			android:entries="@array/entries_refresh_interval"
-			android:entryValues="@array/values_refresh_interval"
-			android:key="refresh_interval"
-			android:summary="@string/refresh_interval_summary"
-			android:title="@string/refresh_interval"/>
-
-		<org.mariotaku.twidere.preference.RefreshContentPreference
-			android:dependency="auto_refresh"
-			android:key="refresh_content"
-			android:title="@string/content_to_refresh"/>
-
-		<org.mariotaku.twidere.preference.NotificationContentPreference
-			android:key="notification_content"
-			android:title="@string/content_to_nofity"/>
-
-		<org.mariotaku.twidere.preference.NotificationTypePreference
-			android:key="notifications_type"
-			android:summary="@string/notifications_type_summary"
-			android:title="@string/notifications_type"/>
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:key="cat_other_settings"
-		android:title="@string/other_settings">
-		<PreferenceScreen
-			android:key="extensions"
-			android:title="@string/extensions">
-			<intent
-				android:action="org.mariotaku.twidere.EXTENSIONS"
-				android:targetPackage="org.mariotaku.twidere"/>
-		</PreferenceScreen>
-
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="stop_service_after_closed"
-			android:summary="@string/stop_service_after_closed_summary"
-			android:title="@string/stop_service_after_closed"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="sort_timeline_by_time"
-			android:summary="@string/sort_timeline_by_time_summary"
-			android:title="@string/sort_timeline_by_time"/>
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="report_errors_automatically"
-			android:summary="@string/report_errors_automatically_summary"
-			android:title="@string/report_errors_automatically"/>
+			android:key="settings_content"
+			android:title="@string/content"/>
+		<Preference
+			android:key="settings_storage"
+			android:title="@string/storage"/>
+		<Preference
+			android:key="settings_api"
+			android:title="@string/api"/>
+		<Preference
+			android:key="settings_connectivity"
+			android:title="@string/connectivity"/>
+		<Preference
+			android:key="settings_refresh_and_notifications"
+			android:title="@string/refresh_and_notifications"/>
+		<Preference
+			android:key="settings_other"
+			android:title="@string/other_settings"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="cat_about"
 		android:title="@string/about">
-		<PreferenceScreen
+		<Preference
 			android:key="about"
 			android:summary="@string/about_summary"
-			android:title="@string/about">
-			<intent
-				android:action="org.mariotaku.twidere.ABOUT"
-				android:targetPackage="org.mariotaku.twidere"/>
-		</PreferenceScreen>
-		<PreferenceScreen
+			android:title="@string/about"/>
+		<Preference
 			android:key="license"
 			android:summary="@string/license_summary"
 			android:title="@string/license">
@@ -278,7 +67,7 @@
 				android:action="org.mariotaku.twidere.VIEW_WEBPAGE"
 				android:data="file:///android_asset/gpl-3.0-standalone.html"
 				android:targetPackage="org.mariotaku.twidere"/>
-		</PreferenceScreen>
+		</Preference>
 	</PreferenceCategory>
 
 </PreferenceScreen>

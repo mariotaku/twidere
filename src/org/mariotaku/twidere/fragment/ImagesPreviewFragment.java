@@ -139,7 +139,8 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final ImageView view = (ImageView) (convertView instanceof ImageView ? convertView : mInflater.inflate(
 					R.layout.images_preview_item, null));
-			mImageLoader.displayImage(parseURL(getItem(position).thumbnail_link), view);
+			final ImageSpec spec = getItem(position);
+			mImageLoader.displayImage(spec != null ? parseURL(spec.thumbnail_link) : null, view);
 			return view;
 		}
 

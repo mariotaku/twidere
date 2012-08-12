@@ -122,6 +122,7 @@
 		<activity
 			android:name=".activity.SettingsActivity"
 			android:label="@string/settings"
+			android:launchMode="singleTask"
 			android:theme="@style/Theme.Twidere.Light">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
@@ -353,6 +354,15 @@
 		<activity
 			android:name=".activity.NativeMapActivity"
 			android:label="@string/view_map"/>
+		<activity
+			android:name=".activity.SettingsDetailsActivity"
+			android:label="@string/settings"/>
+		<activity
+			android:name=".activity.InternalSettingsActivity"
+			android:label="@string/settings"/>
+		<activity
+			android:name=".activity.InternalSettingsDetailsActivity"
+			android:label="@string/settings"/>
 		<activity
 			android:name=".activity.FileSaveAsActivity"
 			android:label="@string/save_as">

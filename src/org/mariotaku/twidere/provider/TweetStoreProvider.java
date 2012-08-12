@@ -61,7 +61,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		@Override
 		public void handleMessage(Message msg) {
 			if (msg.obj instanceof Exception) {
-				showErrorToast(getContext(), (Exception) msg.obj, false);
+				showErrorToast(getContext(), msg.obj, false);
 			}
 			super.handleMessage(msg);
 		}

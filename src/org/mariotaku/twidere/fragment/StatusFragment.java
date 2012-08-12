@@ -184,8 +184,8 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 						force_ssl_connection)), mProfileImageView);
 		final List<ImageSpec> images = getImagesInStatus(status.text_html, force_ssl_connection);
 		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
+		mImagesPreviewFragment.clear();
 		if (images.size() > 0) {
-			mImagesPreviewFragment.clear();
 			for (final ImageSpec spec : images) {
 				mImagesPreviewFragment.add(spec);
 			}

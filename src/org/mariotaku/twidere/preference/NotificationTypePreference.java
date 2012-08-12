@@ -39,9 +39,9 @@ public class NotificationTypePreference extends Preference implements Constants,
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE:
 				final SharedPreferences.Editor editor = prefs.edit();
-				editor.putBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_SOUND, checked_items[0]);
-				editor.putBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_VIBRATION, checked_items[1]);
-				editor.putBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_LIGHTS, checked_items[2]);
+				editor.putBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, checked_items[0]);
+				editor.putBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, checked_items[1]);
+				editor.putBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, checked_items[2]);
 				editor.commit();
 				break;
 		}
@@ -57,9 +57,9 @@ public class NotificationTypePreference extends Preference implements Constants,
 	public boolean onPreferenceClick(Preference preference) {
 		prefs = getSharedPreferences();
 		if (prefs == null) return false;
-		checked_items = new boolean[] { prefs.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_SOUND, false),
-				prefs.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_VIBRATION, false),
-				prefs.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_LIGHTS, false) };
+		checked_items = new boolean[] { prefs.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false),
+				prefs.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, false),
+				prefs.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false) };
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 

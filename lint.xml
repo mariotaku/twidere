@@ -9,6 +9,9 @@
     <issue id="MissingTranslation" severity="informational" />
     <issue id="NamespaceTypo" severity="error" />
     <issue id="NestedScrolling" severity="error" />
+    <issue id="NewApi">
+        <ignore path="src/org/mariotaku/twidere/activity/SettingsDetailsActivity.java" />
+    </issue>
     <issue id="PxUsage" severity="error" />
     <issue id="ScrollViewCount" severity="error" />
     <issue id="SdCardPath" severity="error" />

@@ -5,7 +5,6 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_PROFILE_IMAGE_URL;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_SCREEN_NAME;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_TEXT;
-import static org.mariotaku.twidere.util.Utils.formatToShortTimeString;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
@@ -19,6 +18,7 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -46,7 +46,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		holder.setTextSize(mTextSize);
 		holder.name.setText(name);
 		holder.text.setText(cursor.getString(IDX_TEXT));
-		holder.time.setText(formatToShortTimeString(mContext, message_timestamp));
+		holder.time.setText(DateUtils.getRelativeTimeSpanString(message_timestamp));
 		holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, is_outgoing ? R.drawable.ic_indicator_outgoing
 				: R.drawable.ic_indicator_incoming, 0);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);

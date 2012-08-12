@@ -46,6 +46,8 @@ public interface Constants extends TwitterConstants {
 	public static final String MAPS_API_KEY_RELEASE = "0kjPwJOe_zwYjzGc9uYak7vhm_Sf3eob-2L3Xzw";
 	public static final String MAPS_API_KEY_DEBUG = "0kjPwJOe_zwY9p6kT-kygu4mxwysyOOpfkaXqTA";
 
+	public static final String CRASH_REPORT_FORM_KEY = "dEcwVVBoTDE0RXZaczFiMUxuek43WGc6MQ";
+
 	public static final String MAPS_API_KEY = DEBUG ? MAPS_API_KEY_DEBUG : MAPS_API_KEY_RELEASE;
 
 	public static final String SCHEME_HTTP = "http";
@@ -83,6 +85,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_SEARCH_USERS = "search_users";
 	public static final String AUTHORITY_SEARCH_TWEETS = "search_tweets";
 	public static final String AUTHORITY_DIRECT_MESSAGES = "direct_messages";
+	public static final String AUTHORITY_TRENDS = "trends";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -153,13 +156,15 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE = "notification_enable_home_timeline";
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS = "notification_enable_mentions";
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES = "notification_enable_direct_messages";
-	public static final String PREFERENCE_KEY_NOTIFICATIONS_HAVE_SOUND = "notifications_have_sound";
-	public static final String PREFERENCE_KEY_NOTIFICATIONS_HAVE_VIBRATION = "notifications_have_vibration";
-	public static final String PREFERENCE_KEY_NOTIFICATIONS_HAVE_LIGHTS = "notifications_have_lights";
+	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND = "notification_have_sound";
+	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION = "notification_have_vibration";
+	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS = "notification_have_lights";
 	public static final String PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY = "report_errors_automatically";
 	public static final String PREFERENCE_KEY_LOCAL_TRENDS_WOEID = "local_trends_woeid";
 	public static final String PREFERENCE_KEY_HIRES_PROFILE_IMAGE = "hires_profile_image";
 	public static final String PREFERENCE_KEY_FORCE_SSL_CONNECTION = "force_ssl_connection";
+	public static final String PREFERENCE_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
+	public static final String PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR = "notification_light_color";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + QUOTE_FORMAT_NAME_PATTERN + ": "
 			+ QUOTE_FORMAT_TEXT_PATTERN;
@@ -284,6 +289,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_ARGUMENTS = "arguments";
 	public static final String INTENT_KEY_ICON = "icon";
 	public static final String INTENT_KEY_ID = "id";
+	public static final String INTENT_KEY_RESID = "resid";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;

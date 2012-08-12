@@ -21,6 +21,7 @@ package org.mariotaku.twidere.loader;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -55,7 +56,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 	}
 
 	@Override
-	public List<ParcelableStatus> loadInBackground() {
+	public synchronized List<ParcelableStatus> loadInBackground() {
 		final List<ParcelableStatus> data = getData();
 		final long account_id = getAccountId();
 		final Twitter twitter = getTwitter();
@@ -76,7 +77,12 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 			e.printStackTrace();
 		}
 		if (tweets != null) {
-			Collections.sort(tweets, TWITTER4J_TWEET_ID_COMPARATOR);
+			try {
+				Collections.sort(tweets, TWITTER4J_TWEET_ID_COMPARATOR);
+			} catch (final ConcurrentModificationException e) {
+				// This shouldn't happen.
+				e.printStackTrace();
+			}
 			int deleted_count = 0;
 			final int size = tweets.size();
 			for (int i = 0; i < size; i++) {
@@ -88,7 +94,12 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 						isForceSSLConnection()));
 			}
 		}
-		Collections.sort(data, ParcelableStatus.STATUS_ID_COMPARATOR);
+		try {
+			Collections.sort(data, ParcelableStatus.STATUS_ID_COMPARATOR);
+		} catch (final ConcurrentModificationException e) {
+			// This shouldn't happen.
+			e.printStackTrace();
+		}
 		return data;
 	}
 

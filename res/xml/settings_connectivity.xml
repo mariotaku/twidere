@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:key="settings_connectivity"
+	android:title="@string/connectivity">
+
+	<PreferenceCategory
+		android:key="cat_connectivity"
+		android:title="@string/connectivity">
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="force_ssl_connection"
+			android:summary="@string/force_ssl_connection_summary"
+			android:title="@string/force_ssl_connection"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="ignore_ssl_error"
+			android:summary="@string/ignore_ssl_error_summary"
+			android:title="@string/ignore_ssl_error"/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="cat_proxy"
+		android:title="@string/proxy">
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:disableDependentsState="false"
+			android:key="enable_proxy"
+			android:summary="@string/http_proxy_summary"
+			android:title="@string/http_proxy"/>
+
+		<EditTextPreference
+			android:dependency="enable_proxy"
+			android:key="proxy_host"
+			android:singleLine="true"
+			android:title="@string/proxy_host"/>
+		<EditTextPreference
+			android:dependency="enable_proxy"
+			android:inputType="number"
+			android:key="proxy_port"
+			android:singleLine="true"
+			android:title="@string/proxy_port"/>
+	</PreferenceCategory>
+
+</PreferenceScreen>

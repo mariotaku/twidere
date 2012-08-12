@@ -125,10 +125,10 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public final void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		final ParcelableUser user = mAdapter.findItem(id);
 		if (user == null) return;
-		if (mAdapter.isGap(position) && !mLoadMoreAutomatically) {
+		if (mAdapter.isGap(id) && !mLoadMoreAutomatically) {
 			final Bundle args = getArguments();
 			if (args != null) {
 				args.putLong(INTENT_KEY_MAX_ID, user.user_id);
@@ -146,7 +146,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		mSelectedUser = null;
 		final UsersAdapter adapter = getListAdapter();
 		if (adapter.isGap(position)) return false;
-		mSelectedUser = adapter.getItem(position);
+		mSelectedUser = adapter.findItem(id);
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user);
 		mPopupMenu.setOnMenuItemClickListener(this);

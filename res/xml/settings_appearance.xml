@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:key="cat_appearance"
+	android:title="@string/look_and_feel">
+
+	<org.mariotaku.preference.TextSizePreference
+		maxValue="24.0"
+		minValue="12.0"
+		android:defaultValue="14.0"
+		android:key="text_size"
+		android:summary="@string/text_size_summary"
+		android:title="@string/text_size"/>
+
+	<CheckBoxPreference
+		android:defaultValue="true"
+		android:key="display_profile_image"
+		android:summary="@string/image_load_summary"
+		android:title="@string/display_profile_image"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:dependency="display_profile_image"
+		android:key="hires_profile_image"
+		android:summary="@string/image_load_summary"
+		android:title="@string/hires_profile_image"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="inline_image_preview"
+		android:summary="@string/image_load_summary"
+		android:title="@string/inline_image_preview"/>
+	<CheckBoxPreference
+		android:defaultValue="true"
+		android:key="display_name"
+		android:summaryOff="@string/display_name_summaryoff"
+		android:summaryOn="@string/display_name_summaryon"
+		android:title="@string/display_name"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="bottom_compose_button"
+		android:summary="@string/bottom_compose_button_summary"
+		android:title="@string/bottom_compose_button"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:dependency="bottom_compose_button"
+		android:key="leftside_compose_button"
+		android:summary="@string/leftside_compose_button_summary"
+		android:title="@string/leftside_compose_button"/>
+
+</PreferenceScreen>

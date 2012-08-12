@@ -67,16 +67,12 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	private boolean mImageLoading, mImageLoaded;
 	private File mImageFile;
 
-	private Handler mErrorHandler = new Handler() {
+	private final Handler mErrorHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
-			if (msg.obj instanceof Exception) {
-				showErrorToast(ImageViewerActivity.this, (Exception) msg.obj, true);
-			}
-			super.handleMessage(msg);
+			showErrorToast(ImageViewerActivity.this, msg.obj, true);
 		}
-
 	};
 
 	@Override
@@ -254,6 +250,8 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				final Bitmap cached_bitmap = decodeFile(cache_file);
 				if (cached_bitmap != null) return cached_bitmap;
 
+				String response_msg = null;
+				int response_code = -1;
 				// from web
 				try {
 					Bitmap bitmap = null;
@@ -265,12 +263,23 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					conn.setConnectTimeout(30000);
 					conn.setReadTimeout(30000);
 					conn.setInstanceFollowRedirects(true);
+					response_msg = conn.getResponseMessage();
+					response_code = conn.getResponseCode();
 					final InputStream is = conn.getInputStream();
 					final OutputStream os = new FileOutputStream(cache_file);
 					copyStream(is, os);
 					os.close();
 					bitmap = decodeFile(cache_file);
 					if (bitmap == null) {
+						if (response_code > 0) {
+							final Message msg = new Message();
+							if (response_code == 200) {
+								msg.obj = getString(R.string.invalid_image);
+							} else {
+								msg.obj = response_msg != null ? response_code + ": " + response_msg : response_code;
+							}
+							mErrorHandler.sendMessage(msg);
+						}
 						// The file is corrupted, so we remove it from cache.
 						if (cache_file.isFile()) {
 							cache_file.delete();
@@ -282,6 +291,15 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				} catch (final IOException e) {
 					final Message msg = new Message();
 					msg.obj = e;
+					mErrorHandler.sendMessage(msg);
+				}
+				if (response_code > 0) {
+					final Message msg = new Message();
+					if (response_code == 200) {
+						msg.obj = getString(R.string.invalid_image);
+					} else {
+						msg.obj = response_msg != null ? response_code + ": " + response_msg : response_code;
+					}
 					mErrorHandler.sendMessage(msg);
 				}
 			} else if ("file".equals(scheme)) return decodeFile(new File(uri.getPath()));
@@ -355,7 +373,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private String getURLFilename(URL url) {
 			if (url == null) return null;
-			return url.toString().replaceAll("[^a-zA-Z0-9]", "_");
+			return url.toString().replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
 		}
 
 		private void init() {

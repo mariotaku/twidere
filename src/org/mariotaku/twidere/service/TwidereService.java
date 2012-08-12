@@ -77,12 +77,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -420,14 +422,16 @@ public class TwidereService extends Service implements Constants {
 		builder.setDeleteIntent(PendingIntent.getBroadcast(this, 0, delete_intent, PendingIntent.FLAG_UPDATE_CURRENT));
 		builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent, PendingIntent.FLAG_UPDATE_CURRENT));
 		int defaults = 0;
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_SOUND, false)) {
-			defaults |= Notification.DEFAULT_SOUND;
+		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
+			builder.setSound(Uri.parse(mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE,
+					Settings.System.DEFAULT_RINGTONE_URI.getPath())), Notification.STREAM_DEFAULT);
 		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_VIBRATION, false)) {
+		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, false)) {
 			defaults |= Notification.DEFAULT_VIBRATE;
 		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATIONS_HAVE_LIGHTS, false)) {
-			defaults |= Notification.DEFAULT_LIGHTS;
+		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false)) {
+			final int color = mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR, Color.BLUE);
+			builder.setLights(color, 1000, 2000);
 		}
 		builder.setDefaults(defaults);
 		return builder.getNotification();

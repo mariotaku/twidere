@@ -86,6 +86,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+				if (getActivity() == null) return;
 				getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 				if (getActivity() instanceof HomeActivity) {
 					((HomeActivity) getActivity()).checkDefaultAccountSet();

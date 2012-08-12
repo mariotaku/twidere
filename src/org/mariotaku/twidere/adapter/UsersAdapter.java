@@ -113,8 +113,12 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		return view;
 	}
 
-	public boolean isGap(int position) {
-		return mShowLastItemAsGap && position == getCount() - 1;
+	public boolean isGap(long id) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
+			if (getItemId(i) == id) return mShowLastItemAsGap && i == getCount() - 1;
+		}
+		return false;
 	}
 
 	public void setData(List<ParcelableUser> data) {

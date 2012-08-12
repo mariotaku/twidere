@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,17 +33,35 @@ import android.view.Window;
  * This is a fragment that will be used during transition from activities to
  * fragments.
  */
-public abstract class ActivityHostFragment extends LocalActivityManagerFragment {
+public abstract class ActivityHostFragment<A extends Activity> extends LocalActivityManagerFragment {
 
 	private final static String ACTIVITY_TAG = "hosted";
+	private A mAttachedActivity;
 
-	@SuppressWarnings("deprecation")
+	public A getAttachedActivity() {
+		return mAttachedActivity;
+	}
+
+	@SuppressWarnings({ "deprecation", "unchecked" })
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final Intent intent = new Intent(getActivity(), getActivityClass());
-		intent.putExtras(getArguments());
+		final Bundle args = getArguments();
+		if (args != null) {
+			intent.putExtras(args);
+		}
 
 		final Window w = getLocalActivityManager().startActivity(ACTIVITY_TAG, intent);
+		mAttachedActivity = null;
+		final Context context = w.getContext();
+		if (context instanceof Activity) {
+			try {
+				mAttachedActivity = (A) context;
+			} catch (final ClassCastException e) {
+				// This should't happen.
+				e.printStackTrace();
+			}
+		}
 		final View wd = w != null ? w.getDecorView() : null;
 
 		if (wd != null) {
@@ -61,5 +80,5 @@ public abstract class ActivityHostFragment extends LocalActivityManagerFragment 
 		return wd;
 	}
 
-	protected abstract Class<? extends Activity> getActivityClass();
+	protected abstract Class<A> getActivityClass();
 }

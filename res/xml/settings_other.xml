@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:key="settings_other"
+	android:title="@string/other_settings">
+
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="sort_timeline_by_time"
+		android:summary="@string/sort_timeline_by_time_summary"
+		android:title="@string/sort_timeline_by_time"/>
+	<CheckBoxPreference
+		android:defaultValue="true"
+		android:key="report_errors_automatically"
+		android:summary="@string/report_errors_automatically_summary"
+		android:title="@string/report_errors_automatically"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:disableDependentsState="true"
+		android:key="stop_service_after_closed"
+		android:summary="@string/stop_service_after_closed_summary"
+		android:title="@string/stop_service_after_closed"/>
+
+</PreferenceScreen>

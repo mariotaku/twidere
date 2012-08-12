@@ -113,7 +113,6 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 			mScreenName = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		mAdapter = new UserListsAdapter(getActivity());
-		setListAdapter(null);
 		mListView = getListView();
 		addHeaders(mListView);
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
@@ -145,7 +144,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public final void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		final ParcelableUserList user_list = mAdapter.findItem(id);
 		if (user_list == null) return;
 		if (mAdapter.isGap(id) && !mLoadMoreAutomatically) {

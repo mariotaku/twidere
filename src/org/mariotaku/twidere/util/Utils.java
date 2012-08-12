@@ -23,16 +23,15 @@ import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.MOBYPICTURE_GROUP_ID;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_ALL_AVALIABLE_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGLY;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INLINE_PREVIEW_AVALIABLE_IMAGES_MATCH_ONLY;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INSTAGRAM;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_MOBYPICTURE;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_SINA_WEIBO_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_PREVIEW_AVALIABLE_IMAGES_IN_HTML;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITGOO;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITPIC;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_YFROG;
+import static org.mariotaku.twidere.util.TwidereLinkify.PREVIEW_AVALIABLE_IMAGES_IN_HTML_GROUP_LINK;
 import static org.mariotaku.twidere.util.TwidereLinkify.SINA_WEIBO_IMAGES_AVALIABLE_SIZES;
 import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_IMGLY;
 import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_INSTAGRAM;
@@ -91,6 +90,7 @@ import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
+import org.mariotaku.twidere.fragment.TrendsFragment;
 import org.mariotaku.twidere.fragment.UserBlocksListFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
@@ -258,6 +258,7 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FOLLOWERS, UserFollowersFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FRIENDS, UserFriendsFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_DIRECT_MESSAGES, DirectMessagesFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_TRENDS, TrendsFragment.class);
 
 		CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
 
@@ -276,6 +277,7 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FOLLOWERS, R.string.followers);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FRIENDS, R.string.following);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_DIRECT_MESSAGES, R.string.direct_messages);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_TRENDS, R.string.trends);
 
 		CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
 
@@ -291,6 +293,7 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_ICON_NAME_MAP.put("person", R.drawable.ic_tab_person);
 		CUSTOM_TABS_ICON_NAME_MAP.put("pin", R.drawable.ic_tab_pin);
 		CUSTOM_TABS_ICON_NAME_MAP.put("ribbon", R.drawable.ic_tab_ribbon);
+		CUSTOM_TABS_ICON_NAME_MAP.put("search", R.drawable.ic_tab_search);
 		CUSTOM_TABS_ICON_NAME_MAP.put("star", R.drawable.ic_tab_star);
 		CUSTOM_TABS_ICON_NAME_MAP.put("trends", R.drawable.ic_tab_trends);
 		CUSTOM_TABS_ICON_NAME_MAP.put("twitter", R.drawable.ic_tab_twitter);
@@ -612,54 +615,6 @@ public final class Utils implements Constants {
 		format_flags |= DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME;
 
 		return DateUtils.formatDateTime(context, timestamp, format_flags);
-	}
-
-	public static String formatToShortTimeString(Context context, long timestamp) {
-		if (context == null) return null;
-		final Resources res = context.getResources();
-		final Time then = new Time(), now = new Time();
-		then.set(timestamp);
-		now.setToNow();
-		if (then.before(now)) {
-
-			final int year_diff = now.year - then.year;
-
-			final int month_diff = (year_diff > 0 ? 12 : 0) + now.month - then.month;
-			if (year_diff < 1) {
-				final int day_diff = (month_diff > 0 ? then.getActualMaximum(Time.MONTH_DAY) : 0) + now.monthDay
-						- then.monthDay;
-				if (month_diff < 1) {
-					if (day_diff >= then.getActualMaximum(Time.MONTH_DAY))
-						return res.getQuantityString(R.plurals.Nmonths, month_diff, month_diff);
-					final int hour_diff = (day_diff > 0 ? 24 : 0) + now.hour - then.hour;
-					if (day_diff < 1) {
-						if (hour_diff >= 24) return res.getQuantityString(R.plurals.Ndays, day_diff, day_diff);
-						final int minute_diff = (hour_diff > 0 ? 60 : 0) + now.minute - then.minute;
-						if (hour_diff < 1) {
-							if (minute_diff >= 60)
-								return res.getQuantityString(R.plurals.Nhours, hour_diff, hour_diff);
-							if (minute_diff <= 1) return context.getString(R.string.just_now);
-							return res.getQuantityString(R.plurals.Nminutes, minute_diff, minute_diff);
-						} else if (hour_diff == 1) {
-							if (minute_diff < 60)
-								return res.getQuantityString(R.plurals.Nminutes, minute_diff, minute_diff);
-						}
-						return res.getQuantityString(R.plurals.Nhours, hour_diff, hour_diff);
-					} else if (day_diff == 1) {
-						if (hour_diff < 24) return res.getQuantityString(R.plurals.Nhours, hour_diff, hour_diff);
-					}
-					return res.getQuantityString(R.plurals.Ndays, day_diff, day_diff);
-				} else if (month_diff == 1) {
-					if (day_diff < then.getActualMaximum(Time.MONTH_DAY))
-						return res.getQuantityString(R.plurals.Ndays, day_diff, day_diff);
-				}
-				return res.getQuantityString(R.plurals.Nmonths, month_diff, month_diff);
-			} else if (year_diff == 1) {
-				if (month_diff < 12) return res.getQuantityString(R.plurals.Nmonths, month_diff, month_diff);
-			}
-			return res.getQuantityString(R.plurals.Nyears, year_diff, year_diff);
-		}
-		return then.format3339(true);
 	}
 
 	public static String formatTweetText(Tweet tweet) {
@@ -986,60 +941,10 @@ public final class Utils implements Constants {
 	public static List<ImageSpec> getImagesInStatus(String status_string, boolean force_ssl) {
 		if (status_string == null) return Collections.emptyList();
 		final List<ImageSpec> images = new ArrayList<ImageSpec>();
-		// get instagram images
-		{
-			final Matcher matcher = PATTERN_INSTAGRAM.matcher(status_string);
-			while (matcher.find()) {
-				images.add(getInstagramImage(matcherGroup(matcher, INSTAGRAM_GROUP_ID), force_ssl));
-			}
-		}
-		{
-			final Matcher matcher = PATTERN_TWITPIC.matcher(status_string);
-			while (matcher.find()) {
-				images.add(getTwitpicImage(matcherGroup(matcher, TWITPIC_GROUP_ID), force_ssl));
-			}
-		}
-		{
-			final Matcher matcher = PATTERN_TWITTER_IMAGES.matcher(status_string);
-			while (matcher.find()) {
-				images.add(getTwitterImage(matcher.group(), force_ssl));
-			}
-		}
-		{
-			final Matcher matcher = PATTERN_LOCKERZ_AND_PLIXI.matcher(status_string);
-			while (matcher.find()) {
-				images.add(getLockerzAndPlixiImage(matcher.group(), force_ssl));
-			}
-		}
-		{
-			final Matcher matcher = PATTERN_SINA_WEIBO_IMAGES.matcher(status_string);
-			while (matcher.find()) {
-				images.add(getSinaWeiboImage(matcher.group()));
-			}
-		}
-		{
-			final Matcher matcher = PATTERN_IMGLY.matcher(status_string);
-			while (matcher.find()) {
-				images.add(getImglyImage(matcherGroup(matcher, IMGLY_GROUP_ID), force_ssl));
-			}
-		}
-		{
-			final Matcher matcher = PATTERN_YFROG.matcher(status_string);
-			while (matcher.find()) {
-				images.add(getYfrogImage(matcherGroup(matcher, YFROG_GROUP_ID), force_ssl));
-			}
-		}
-		{
-			final Matcher matcher = PATTERN_TWITGOO.matcher(status_string);
-			while (matcher.find()) {
-				images.add(getTwitgooImage(matcherGroup(matcher, TWITGOO_GROUP_ID), force_ssl));
-			}
-		}
-		{
-			final Matcher matcher = PATTERN_MOBYPICTURE.matcher(status_string);
-			while (matcher.find()) {
-				images.add(getMobyPictureImage(matcherGroup(matcher, MOBYPICTURE_GROUP_ID), force_ssl));
-			}
+		final Matcher matcher = PATTERN_PREVIEW_AVALIABLE_IMAGES_IN_HTML.matcher(status_string);
+		while (matcher.find()) {
+			images.add(getAllAvailableImage(matcherGroup(matcher, PREVIEW_AVALIABLE_IMAGES_IN_HTML_GROUP_LINK),
+					force_ssl));
 		}
 		return images;
 	}
@@ -1147,10 +1052,14 @@ public final class Utils implements Constants {
 
 	public static PreviewImage getPreviewImage(String html, boolean include_preview, boolean force_ssl) {
 		if (html == null) return new PreviewImage(false, null, null);
-		final Matcher m = PATTERN_ALL_AVALIABLE_IMAGES.matcher(html);
-		if (m.find()) {
-			if (!include_preview) return new PreviewImage(true, null, null);
-			final String image_url = m.group();
+		final long start = System.currentTimeMillis();
+		if (!include_preview) {
+			final Matcher m = PATTERN_INLINE_PREVIEW_AVALIABLE_IMAGES_MATCH_ONLY.matcher(html);
+			return new PreviewImage(m.find(), null, null);
+		}
+		final Matcher m = PATTERN_PREVIEW_AVALIABLE_IMAGES_IN_HTML.matcher(html);
+		while (m.find()) {
+			final String image_url = m.group(PREVIEW_AVALIABLE_IMAGES_IN_HTML_GROUP_LINK);
 			String temp_thumbnail_url = null;
 			if (image_url.matches(STRING_PATTERN_IMGLY)) {
 				final Matcher url_m = PATTERN_IMGLY.matcher(image_url);
@@ -1210,8 +1119,10 @@ public final class Utils implements Constants {
 					temp_thumbnail_url = spec.thumbnail_link;
 				}
 			}
+			Log.d(LOGTAG, "image match used " + (System.currentTimeMillis() - start) + " ms.");
 			return new PreviewImage(true, temp_thumbnail_url, image_url);
 		}
+		Log.d(LOGTAG, "image match used " + (System.currentTimeMillis() - start) + " ms.");
 		return new PreviewImage(false, null, null);
 	}
 
@@ -1437,7 +1348,7 @@ public final class Utils implements Constants {
 					.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS), idx_position = cur
 					.getColumnIndex(Tabs.POSITION);
 			while (!cur.isAfterLast()) {
-				final int position = cur.getInt(idx_position) + HomeActivity.TAB_POSITION_ACCOUNTS + 1;
+				final int position = cur.getInt(idx_position) + HomeActivity.TAB_POSITION_MESSAGES + 1;
 				final String icon_type = cur.getString(idx_icon);
 				final String type = cur.getString(idx_type);
 				final String name = cur.getString(idx_name);
@@ -2588,10 +2499,17 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void showErrorToast(Context context, Exception e, boolean long_message) {
+	public static void showErrorToast(Context context, Object e, boolean long_message) {
 		if (context == null) return;
-		final String message = e != null ? context.getString(R.string.error_message,
-				trimLineBreak(unescapeHTML(e.getMessage()))) : context.getString(R.string.error_unknown_error);
+		final String message;
+		if (e != null) {
+			message = context
+					.getString(R.string.error_message,
+							e instanceof Throwable ? trimLineBreak(unescapeHTML(((Throwable) e).getMessage()))
+									: parseString(e));
+		} else {
+			message = context.getString(R.string.error_unknown_error);
+		}
 		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
 		final Toast toast = Toast.makeText(context, message, length);
 		toast.show();
