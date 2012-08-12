@@ -27,15 +27,6 @@
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:layerType="software"/>
-
-				<ImageButton
-					android:id="@+id/button_compose"
-					android:layout_width="56dp"
-					android:layout_height="56dp"
-					android:layout_gravity="bottom|right"
-					android:contentDescription="@string/compose"
-					android:onClick="onClick"
-					android:src="@drawable/ic_menu_tweet"/>
 			</FrameLayout>
 
 			<FrameLayout
@@ -76,5 +67,14 @@
 				android:layout_height="match_parent"/>
 		</org.mariotaku.twidere.view.ExtendedFrameLayout>
 	</LinearLayout>
+
+	<ImageButton
+		android:id="@+id/button_compose"
+		android:layout_width="56dp"
+		android:layout_height="56dp"
+		android:layout_gravity="bottom|right"
+		android:contentDescription="@string/compose"
+		android:onClick="onClick"
+		android:src="@drawable/ic_menu_tweet"/>
 
 </FrameLayout>

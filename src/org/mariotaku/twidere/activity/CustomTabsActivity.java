@@ -5,6 +5,7 @@ import org.mariotaku.twidere.fragment.CustomTabsFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 public class CustomTabsActivity extends BaseActivity {
@@ -18,5 +19,15 @@ public class CustomTabsActivity extends BaseActivity {
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(android.R.id.content, fragment);
 		ft.commit();
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				onBackPressed();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

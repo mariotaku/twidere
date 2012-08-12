@@ -29,4 +29,8 @@ public class PreviewImage {
 		this.orig_url = orig_url;
 	}
 
+	public PreviewImage(ImageSpec spec, String orig_url) {
+		this(spec != null && spec.thumbnail_link != null, spec.thumbnail_link, orig_url);
+	}
+
 }

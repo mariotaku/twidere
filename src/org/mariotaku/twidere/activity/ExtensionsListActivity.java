@@ -5,6 +5,7 @@ import org.mariotaku.twidere.fragment.ExtensionsListFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 public class ExtensionsListActivity extends BaseActivity {
@@ -20,4 +21,13 @@ public class ExtensionsListActivity extends BaseActivity {
 		ft.commit();
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				onBackPressed();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

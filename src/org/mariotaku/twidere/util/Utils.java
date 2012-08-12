@@ -26,23 +26,17 @@ import static org.mariotaku.twidere.util.TwidereLinkify.MOBYPICTURE_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGLY;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INLINE_PREVIEW_AVALIABLE_IMAGES_MATCH_ONLY;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INSTAGRAM;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_MOBYPICTURE;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_PREVIEW_AVALIABLE_IMAGES_IN_HTML;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_SINA_WEIBO_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITGOO;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITPIC;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_PROFILE_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_YFROG;
 import static org.mariotaku.twidere.util.TwidereLinkify.PREVIEW_AVALIABLE_IMAGES_IN_HTML_GROUP_LINK;
 import static org.mariotaku.twidere.util.TwidereLinkify.SINA_WEIBO_IMAGES_AVALIABLE_SIZES;
-import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_IMGLY;
-import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_INSTAGRAM;
-import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_LOCKERZ_AND_PLIXI;
-import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_MOBYPICTURE;
-import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_SINA_WEIBO_IMAGES;
-import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_TWITGOO;
-import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_TWITPIC;
-import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_TWITTER_IMAGES;
-import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_TWITTER_PROFILE_IMAGES;
-import static org.mariotaku.twidere.util.TwidereLinkify.STRING_PATTERN_YFROG;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITGOO_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITPIC_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES;
@@ -816,31 +810,25 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getAllAvailableImage(String link, boolean force_ssl) {
 		if (link == null) return null;
-		if (link.matches(STRING_PATTERN_IMGLY)) {
-			final Matcher m = PATTERN_IMGLY.matcher(link);
-			if (m.find()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), force_ssl);
-		} else if (link.matches(STRING_PATTERN_INSTAGRAM)) {
-			final Matcher m = PATTERN_INSTAGRAM.matcher(link);
-			if (m.find()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), force_ssl);
-		} else if (link.matches(STRING_PATTERN_LOCKERZ_AND_PLIXI))
-			return getLockerzAndPlixiImage(link, force_ssl);
-		else if (link.matches(STRING_PATTERN_SINA_WEIBO_IMAGES))
-			return getSinaWeiboImage(link);
-		else if (link.matches(STRING_PATTERN_TWITPIC)) {
-			final Matcher m = PATTERN_TWITPIC.matcher(link);
-			if (m.find()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), force_ssl);
-		} else if (link.matches(STRING_PATTERN_TWITTER_IMAGES))
-			return getTwitterImage(link, force_ssl);
-		else if (link.matches(STRING_PATTERN_YFROG)) {
-			final Matcher m = PATTERN_YFROG.matcher(link);
-			if (m.find()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), force_ssl);
-		} else if (link.matches(STRING_PATTERN_TWITGOO)) {
-			final Matcher m = PATTERN_TWITGOO.matcher(link);
-			if (m.find()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), force_ssl);
-		} else if (link.matches(STRING_PATTERN_MOBYPICTURE)) {
-			final Matcher m = PATTERN_MOBYPICTURE.matcher(link);
-			if (m.find()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), force_ssl);
-		}
+		Matcher m;
+		m = PATTERN_TWITTER_IMAGES.matcher(link);
+		if (m.matches()) return getTwitterImage(link, force_ssl);
+		m = PATTERN_TWITPIC.matcher(link);
+		if (m.matches() && m.find()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), force_ssl);
+		m = PATTERN_INSTAGRAM.matcher(link);
+		if (m.matches() && m.find()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), force_ssl);
+		m = PATTERN_IMGLY.matcher(link);
+		if (m.matches() && m.find()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), force_ssl);
+		m = PATTERN_YFROG.matcher(link);
+		if (m.matches() && m.find()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), force_ssl);
+		m = PATTERN_LOCKERZ_AND_PLIXI.matcher(link);
+		if (m.matches()) return getLockerzAndPlixiImage(link, force_ssl);
+		m = PATTERN_SINA_WEIBO_IMAGES.matcher(link);
+		if (m.matches()) return getSinaWeiboImage(link);
+		m = PATTERN_TWITGOO.matcher(link);
+		if (m.matches() && m.find()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), force_ssl);
+		m = PATTERN_MOBYPICTURE.matcher(link);
+		if (m.matches() && m.find()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), force_ssl);
 		return null;
 	}
 
@@ -849,7 +837,7 @@ public final class Utils implements Constants {
 		if (force_ssl) {
 			url = url.replaceFirst("http:\\/\\/", "https:\\/\\/");
 		}
-		if (url.matches(STRING_PATTERN_TWITTER_PROFILE_IMAGES))
+		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
 			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES, "_bigger");
 		return url;
 	}
@@ -1035,7 +1023,7 @@ public final class Utils implements Constants {
 		if (force_ssl) {
 			url = url.replaceFirst("http:\\/\\/", "https:\\/\\/");
 		}
-		if (url.matches(STRING_PATTERN_TWITTER_PROFILE_IMAGES))
+		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
 			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES, "_normal");
 		return url;
 	}
@@ -1045,14 +1033,13 @@ public final class Utils implements Constants {
 		if (force_ssl) {
 			url = url.replaceFirst("http:\\/\\/", "https:\\/\\/");
 		}
-		if (url.matches(STRING_PATTERN_TWITTER_PROFILE_IMAGES))
+		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
 			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES, "");
 		return url;
 	}
 
 	public static PreviewImage getPreviewImage(String html, boolean include_preview, boolean force_ssl) {
 		if (html == null) return new PreviewImage(false, null, null);
-		final long start = System.currentTimeMillis();
 		if (!include_preview) {
 			final Matcher m = PATTERN_INLINE_PREVIEW_AVALIABLE_IMAGES_MATCH_ONLY.matcher(html);
 			return new PreviewImage(m.find(), null, null);
@@ -1060,69 +1047,34 @@ public final class Utils implements Constants {
 		final Matcher m = PATTERN_PREVIEW_AVALIABLE_IMAGES_IN_HTML.matcher(html);
 		while (m.find()) {
 			final String image_url = m.group(PREVIEW_AVALIABLE_IMAGES_IN_HTML_GROUP_LINK);
-			String temp_thumbnail_url = null;
-			if (image_url.matches(STRING_PATTERN_IMGLY)) {
-				final Matcher url_m = PATTERN_IMGLY.matcher(image_url);
-				final ImageSpec spec = url_m.find() ? getImglyImage(matcherGroup(url_m, IMGLY_GROUP_ID), force_ssl)
-						: null;
-				if (spec != null) {
-					temp_thumbnail_url = spec.thumbnail_link;
-				}
-			} else if (image_url.matches(STRING_PATTERN_INSTAGRAM)) {
-				final Matcher url_m = PATTERN_INSTAGRAM.matcher(image_url);
-				final ImageSpec spec = url_m.find() ? getInstagramImage(matcherGroup(url_m, INSTAGRAM_GROUP_ID),
-						force_ssl) : null;
-				if (spec != null) {
-					temp_thumbnail_url = spec.thumbnail_link;
-				}
-			} else if (image_url.matches(STRING_PATTERN_LOCKERZ_AND_PLIXI)) {
-				final ImageSpec spec = getLockerzAndPlixiImage(image_url, force_ssl);
-				if (spec != null) {
-					temp_thumbnail_url = spec.thumbnail_link;
-				}
-			} else if (image_url.matches(STRING_PATTERN_SINA_WEIBO_IMAGES)) {
-				final ImageSpec spec = getSinaWeiboImage(image_url);
-				if (spec != null) {
-					temp_thumbnail_url = spec.thumbnail_link;
-				}
-			} else if (image_url.matches(STRING_PATTERN_TWITPIC)) {
-				final Matcher url_m = PATTERN_TWITPIC.matcher(image_url);
-				final ImageSpec spec = url_m.find() ? getTwitpicImage(matcherGroup(url_m, TWITPIC_GROUP_ID), force_ssl)
-						: null;
-				if (spec != null) {
-					temp_thumbnail_url = spec.thumbnail_link;
-				}
-			} else if (image_url.matches(STRING_PATTERN_TWITTER_IMAGES)) {
-				final ImageSpec spec = getTwitterImage(image_url, force_ssl);
-				if (spec != null) {
-					temp_thumbnail_url = spec.thumbnail_link;
-				}
-			} else if (image_url.matches(STRING_PATTERN_YFROG)) {
-				final Matcher url_m = PATTERN_YFROG.matcher(image_url);
-				final ImageSpec spec = url_m.find() ? getYfrogImage(matcherGroup(url_m, YFROG_GROUP_ID), force_ssl)
-						: null;
-				if (spec != null) {
-					temp_thumbnail_url = spec.thumbnail_link;
-				}
-			} else if (image_url.matches(STRING_PATTERN_TWITGOO)) {
-				final Matcher url_m = PATTERN_TWITGOO.matcher(image_url);
-				final ImageSpec spec = url_m.find() ? getTwitgooImage(matcherGroup(url_m, TWITGOO_GROUP_ID), force_ssl)
-						: null;
-				if (spec != null) {
-					temp_thumbnail_url = spec.thumbnail_link;
-				}
-			} else if (image_url.matches(STRING_PATTERN_MOBYPICTURE)) {
-				final Matcher url_m = PATTERN_MOBYPICTURE.matcher(image_url);
-				final ImageSpec spec = url_m.find() ? getMobyPictureImage(matcherGroup(url_m, MOBYPICTURE_GROUP_ID),
-						force_ssl) : null;
-				if (spec != null) {
-					temp_thumbnail_url = spec.thumbnail_link;
-				}
-			}
-			Log.d(LOGTAG, "image match used " + (System.currentTimeMillis() - start) + " ms.");
-			return new PreviewImage(true, temp_thumbnail_url, image_url);
+			Matcher url_m;
+			url_m = PATTERN_TWITTER_IMAGES.matcher(image_url);
+			if (url_m.matches()) return new PreviewImage(getTwitterImage(image_url, force_ssl), image_url);
+			url_m = PATTERN_TWITPIC.matcher(image_url);
+			if (url_m.matches() && url_m.find())
+				return new PreviewImage(getTwitpicImage(matcherGroup(url_m, TWITPIC_GROUP_ID), force_ssl), image_url);
+			url_m = PATTERN_INSTAGRAM.matcher(image_url);
+			if (PATTERN_INSTAGRAM.matcher(image_url).matches() && url_m.find())
+				return new PreviewImage(getInstagramImage(matcherGroup(url_m, INSTAGRAM_GROUP_ID), force_ssl),
+						image_url);
+			url_m = PATTERN_IMGLY.matcher(image_url);
+			if (url_m.matches() && url_m.find())
+				return new PreviewImage(getImglyImage(matcherGroup(url_m, IMGLY_GROUP_ID), force_ssl), image_url);
+			url_m = PATTERN_YFROG.matcher(image_url);
+			if (url_m.matches() && url_m.find())
+				return new PreviewImage(getYfrogImage(matcherGroup(url_m, YFROG_GROUP_ID), force_ssl), image_url);
+			url_m = PATTERN_LOCKERZ_AND_PLIXI.matcher(image_url);
+			if (url_m.matches()) return new PreviewImage(getLockerzAndPlixiImage(image_url, force_ssl), image_url);
+			url_m = PATTERN_SINA_WEIBO_IMAGES.matcher(image_url);
+			if (url_m.matches()) return new PreviewImage(getSinaWeiboImage(image_url), image_url);
+			url_m = PATTERN_TWITGOO.matcher(image_url);
+			if (url_m.matches() && url_m.find())
+				return new PreviewImage(getTwitgooImage(matcherGroup(url_m, TWITGOO_GROUP_ID), force_ssl), image_url);
+			url_m = PATTERN_MOBYPICTURE.matcher(image_url);
+			if (url_m.matches() && url_m.find())
+				return new PreviewImage(getMobyPictureImage(matcherGroup(url_m, MOBYPICTURE_GROUP_ID), force_ssl),
+						image_url);
 		}
-		Log.d(LOGTAG, "image match used " + (System.currentTimeMillis() - start) + " ms.");
 		return new PreviewImage(false, null, null);
 	}
 

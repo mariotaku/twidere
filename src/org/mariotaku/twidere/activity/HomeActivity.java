@@ -72,10 +72,27 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private SharedPreferences mPreferences;
 	private ActionBar mActionBar;
 	private ProgressBar mProgress;
-	private TabsAdapter mAdapter;
+	private HomeTabsAdapter mAdapter;
 	private ImageButton mComposeButton;
 	private ServiceInterface mService;
 	private TabPageIndicator mIndicator;
+	
+	private Fragment mCurrentFragment;
+	
+	private final class HomeTabsAdapter extends TabsAdapter {
+
+		public HomeTabsAdapter(Context context, FragmentManager fm, TabPageIndicator indicator) {
+			super(context, fm, indicator);
+		}
+
+		@Override
+		public void onPageSelected(int position) {
+			super.onPageSelected(position);
+			mCurrentFragment = getItem(position);
+			invalidateSupportOptionsMenu();
+		}
+		
+	}
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -190,7 +207,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		switch (v.getId()) {
 			case R.id.compose:
 			case R.id.button_compose:
-				startActivity(new Intent(INTENT_ACTION_COMPOSE));
+				if (mCurrentFragment instanceof DirectMessagesFragment) {
+					((DirectMessagesFragment) mCurrentFragment).openDMConversation();
+				} else {
+					startActivity(new Intent(INTENT_ACTION_COMPOSE));
+				}
 				break;
 		}
 
@@ -250,7 +271,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
+		mAdapter = new HomeTabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mAdapter.setDisplayLabel(tab_display_label);
 		initTabs(getTabs(this));
 		mViewPager.setAdapter(mAdapter);
@@ -308,6 +329,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				break;
 			}
 			case MENU_COMPOSE: {
+				if (mCurrentFragment instanceof DirectMessagesFragment) {
+					((DirectMessagesFragment) mCurrentFragment).openDMConversation();
+					return true;
+				}
 				startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				break;
 			}
@@ -362,9 +387,19 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
 		final MenuItem composeItem = menu.findItem(MENU_COMPOSE);
 		if (composeItem != null) {
+			if (mCurrentFragment instanceof DirectMessagesFragment) {
+				composeItem.setIcon(R.drawable.ic_menu_compose);
+			} else {
+				composeItem.setIcon(R.drawable.ic_menu_tweet);
+			}
 			composeItem.setVisible(!bottom_actions);
 		}
 		if (mComposeButton != null) {
+			if (mCurrentFragment instanceof DirectMessagesFragment) {
+				mComposeButton.setImageResource(R.drawable.ic_menu_compose);
+			} else {
+				mComposeButton.setImageResource(R.drawable.ic_menu_tweet);
+			}
 			mComposeButton.setVisibility(bottom_actions ? View.VISIBLE : View.GONE);
 			if (bottom_actions) {
 				final FrameLayout.LayoutParams compose_lp = (FrameLayout.LayoutParams) mComposeButton.getLayoutParams();

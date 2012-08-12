@@ -27,10 +27,12 @@ import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.DirectMessagesEntryAdapter;
 import org.mariotaku.twidere.model.Account;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -44,6 +46,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -215,7 +218,24 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		mService.getReceivedDirectMessages(new long[] { mAccountId }, null);
 		mService.getSentDirectMessages(new long[] { mAccountId }, null);
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_COMPOSE: {
+				openDMConversation();
+				break;
+			}
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
+	public void openDMConversation() {
+		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mAccountId);
+		if (!is_my_activated_account) return;
+		openDirectMessagesConversation(getActivity(), mAccountId, -1);
+	}
+	
 	@Override
 	public void onResume() {
 		super.onResume();
