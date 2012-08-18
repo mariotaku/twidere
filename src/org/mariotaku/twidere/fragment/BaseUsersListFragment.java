@@ -193,8 +193,13 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public void onRefresh() {
+	public void onPullDownToRefresh() {
 		getLoaderManager().restartLoader(0, getArguments(), this);
+	}
+	
+	@Override
+	public void onPullUpToRefresh() {
+		//TODO
 	}
 
 	@Override

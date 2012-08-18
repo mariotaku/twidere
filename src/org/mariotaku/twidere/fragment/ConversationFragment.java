@@ -187,4 +187,6 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 			super.handleMessage(msg);
 		}
 	}
+
+
 }

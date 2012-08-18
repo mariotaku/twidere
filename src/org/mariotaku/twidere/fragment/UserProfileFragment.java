@@ -99,13 +99,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -121,10 +121,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private GetFriendshipTask mGetFriendshipTask;
 	private View mFollowContainer, mMoreOptionsContainer;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
-			mTweetCount, mFollowersCount, mFriendsCount, mFollowedYouIndicator;
+			mTweetCount, mFollowersCount, mFriendsCount, mFollowedYouIndicator, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
 			mTweetsContainer, mFollowersContainer, mFriendsContainer;
-	private ProgressBar mFollowProgress, mMoreOptionsProgress, mListProgress;
+	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
 	private UserProfileActionAdapter mAdapter;
 
@@ -190,7 +190,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), user.getId());
 		mUserInfoTask = null;
-		mRetryButton.setVisibility(View.GONE);
+		mErrorRetryContainer.setVisibility(View.GONE);
 		mAccountId = account_id;
 		mUserId = user.getId();
 		mScreenName = user.getScreenName();
@@ -258,9 +258,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 		mUserInfoTask = null;
 		if (!isMyActivatedAccount(getActivity(), mAccountId)) {
-			mListProgress.setVisibility(View.GONE);
-			mListView.setVisibility(View.GONE);
-			mRetryButton.setVisibility(View.GONE);
+			mListContainer.setVisibility(View.GONE);
+			mErrorRetryContainer.setVisibility(View.GONE);
 			return;
 		}
 
@@ -269,9 +268,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		} else if (screen_name != null) {
 			mUserInfoTask = new UserInfoTask(getActivity(), account_id, screen_name);
 		} else {
-			mListProgress.setVisibility(View.GONE);
-			mListView.setVisibility(View.GONE);
-			mRetryButton.setVisibility(View.GONE);
+			mListContainer.setVisibility(View.GONE);
+			mErrorRetryContainer.setVisibility(View.GONE);
 			return;
 		}
 
@@ -299,7 +297,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAdapter.add(new UserListTypesAction());
 		if (isMyActivatedAccount(getActivity(), user_id) || isMyActivatedUserName(getActivity(), screen_name)) {
 			mAdapter.add(new SavedSearchesAction());
-			mAdapter.add(new DirectMessagesAction());
 			mAdapter.add(new UserBlocksAction());
 		}
 		mProfileImageContainer.setOnClickListener(this);
@@ -460,11 +457,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
 		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
 		mFollowedYouIndicator = (TextView) mHeaderView.findViewById(R.id.followed_you_indicator);
-		final View view = inflater.inflate(R.layout.user_profile, null, false);
-		mRetryButton = (Button) view.findViewById(R.id.retry);
-		mListProgress = (ProgressBar) view.findViewById(R.id.list_progress);
-		return view;
+		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
+		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);
+		((FrameLayout)container_view.findViewById(R.id.list_container)).addView(mListContainer);
+		mErrorRetryContainer = container_view.findViewById(R.id.error_retry_container);
+		mRetryButton = (Button) container_view.findViewById(R.id.retry);
+		mErrorMessageView = (TextView) container_view.findViewById(R.id.error_message);
+		return container_view;
 	}
+	
+
+	private View mListContainer, mErrorRetryContainer;
 
 	@Override
 	public void onDestroyView() {
@@ -675,16 +678,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		super.onStop();
 	}
 
-	@Override
-	public void setListShown(boolean shown) {
-		final int fade_in = android.R.anim.fade_in;
-		final int fade_out = android.R.anim.fade_out;
-		mListProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
-		mListProgress.startAnimation(AnimationUtils.loadAnimation(getActivity(), shown ? fade_out : fade_in));
-		mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
-		mListView.startAnimation(AnimationUtils.loadAnimation(getActivity(), shown ? fade_in : fade_out));
-	}
-
 	private void getFriendship() {
 		if (mGetFriendshipTask != null) {
 			mGetFriendshipTask.cancel(true);
@@ -801,25 +794,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			outState.putInt(INTENT_KEY_TYPE, mType);
 			outState.putString(INTENT_KEY_TITLE, mTitle);
 			super.onSaveInstanceState(outState);
-		}
-
-	}
-
-	private class DirectMessagesAction extends ListAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.direct_messages);
-		}
-
-		@Override
-		public void onClick() {
-			if (mUser == null || !isMyActivatedAccount(getActivity(), mUser.getId())) return;
-			final Bundle bundle = new Bundle();
-			bundle.putLong(INTENT_KEY_ACCOUNT_ID, mUser.getId());
-			final Intent intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
-			intent.putExtras(bundle);
-			startActivity(intent);
 		}
 
 	}
@@ -1000,7 +974,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				}
 				setListShown(true);
 				changeUser(mAccountId, user);
-				mRetryButton.setVisibility(View.GONE);
+				mErrorRetryContainer.setVisibility(View.GONE);
 				if (isMyAccount(getActivity(), user.getId())) {
 					final ContentValues values = new ContentValues();
 					final URL profile_image_url = user.getProfileImageURL();
@@ -1012,9 +986,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					getContentResolver().update(Accounts.CONTENT_URI, values, where, null);
 				}
 			} else {
-				mListProgress.setVisibility(View.GONE);
-				mListView.setVisibility(View.GONE);
-				mRetryButton.setVisibility(View.VISIBLE);
+				mListContainer.setVisibility(View.GONE);
+				mErrorRetryContainer.setVisibility(View.VISIBLE);
 			}
 			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);
@@ -1022,8 +995,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		protected void onPreExecute() {
+			mListContainer.setVisibility(View.VISIBLE);
+			mErrorRetryContainer.setVisibility(View.GONE);
 			setListShown(false);
-			mRetryButton.setVisibility(View.GONE);
 			setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}

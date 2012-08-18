@@ -24,6 +24,7 @@ import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
+import static org.mariotaku.twidere.util.Utils.getShareStatus;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -44,6 +45,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.location.Criteria;
 import android.location.Location;
@@ -213,6 +215,15 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mEditText = (EditText) findViewById(R.id.edit_text);
+		mTextCount = (TextView) findViewById(R.id.text_count);
+		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
+		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);
+	}
+	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -221,11 +232,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		setContentView(R.layout.compose);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
-
-		mEditText = (EditText) findViewById(R.id.edit_text);
-		mTextCount = (TextView) findViewById(R.id.text_count);
-		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
-		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);
 
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		mAccountIds = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
@@ -280,8 +286,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				final Bundle extras = getIntent().getExtras();
 				if (extras != null) {
 					if (mText == null) {
+						final CharSequence extra_subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
 						final CharSequence extra_text = extras.getCharSequence(Intent.EXTRA_TEXT);
-						mText = extra_text != null ? parseString(extra_text) : "";
+						mText = getShareStatus(this, parseString(extra_subject), parseString(extra_text));
 					} else {
 						mText = bundle.getString(INTENT_KEY_TEXT);
 					}
@@ -476,7 +483,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (mTextCount != null) {
-			mTextCount.setText(parseString(mValidator.getTweetLength(text)));
+			final int count = mValidator.getTweetLength(text);
+			final float hue = count < 140 ? (count >= 130 ? 5 * (140 - count) : 50) : 0;
+			final float[] hsv = new float[]{hue, 1.0f, 1.0f};
+			mTextCount.setTextColor(count >= 130 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
+			mTextCount.setText(parseString(count));
 		}
 		final MenuItem sendItem = menu.findItem(MENU_SEND);
 		sendItem.setEnabled(mValidator.isValidTweet(text));

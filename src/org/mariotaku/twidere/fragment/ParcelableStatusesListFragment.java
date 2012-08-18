@@ -153,10 +153,19 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			getLoaderManager().restartLoader(0, getArguments(), this);
 		}
 	}
+	
+	@Override
+	public void onPullDownToRefresh() {
+		getStatuses(null, null);
+	}
 
 	@Override
-	public final void onRefresh() {
-		getStatuses(null, null);
+	public void onPullUpToRefresh() {
+		final int count = mAdapter.getCount();
+		final ParcelableStatus status = count > 0 ? mAdapter.getItem(count - 1) : null;
+		if (status != null) {
+			getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
+		}
 	}
 
 	@Override

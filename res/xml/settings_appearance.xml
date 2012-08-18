@@ -24,6 +24,14 @@
 		android:title="@string/hires_profile_image"/>
 	<CheckBoxPreference
 		android:defaultValue="false"
+		android:disableDependentsState="true"
+		android:key="skip_image_preview_processing"
+		android:summary="@string/skip_image_preview_processing_summary"
+		android:title="@string/skip_image_preview_processing"/>
+
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:dependency="skip_image_preview_processing"
 		android:key="inline_image_preview"
 		android:summary="@string/image_load_summary"
 		android:title="@string/inline_image_preview"/>

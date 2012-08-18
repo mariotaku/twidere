@@ -46,16 +46,15 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	private SharedPreferences mPreferences;
 	private ActivityHostFragment<InternalSettingsActivity> mFragment;
 
-	private final String KEY_ABOUT = "about";
-	private final String KEY_CUSTOM_TABS = "custom_tabs";
-	private final String KEY_EXTENSIONS = "extensions";
-	private final String KEY_SETTINGS_APPEARANCE = "settings_appearance";
-	private final String KEY_SETTINGS_CONTENT = "settings_content";
-	private final String KEY_SETTINGS_STORAGE = "settings_storage";
-	private final String KEY_SETTINGS_API = "settings_api";
-	private final String KEY_SETTINGS_CONNECTIVITY = "settings_connectivity";
-	private final String KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS = "settings_refresh_and_notifications";
-	private final String KEY_SETTINGS_OTHER = "settings_other";
+	private static final String KEY_ABOUT = "about";
+	private static final String KEY_CUSTOM_TABS = "custom_tabs";
+	private static final String KEY_EXTENSIONS = "extensions";
+	private static final String KEY_SETTINGS_APPEARANCE = "settings_appearance";
+	private static final String KEY_SETTINGS_CONTENT = "settings_content";
+	private static final String KEY_SETTINGS_STORAGE = "settings_storage";
+	private static final String KEY_SETTINGS_NETWORK = "settings_network";
+	private static final String KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS = "settings_refresh_and_notifications";
+	private static final String KEY_SETTINGS_OTHER = "settings_other";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -93,8 +92,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			activity.findPreference(KEY_SETTINGS_APPEARANCE).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_CONTENT).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_STORAGE).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_SETTINGS_API).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_SETTINGS_CONNECTIVITY).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_SETTINGS_NETWORK).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_OTHER).setOnPreferenceClickListener(this);
 		}
@@ -140,10 +138,8 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			res_id = R.xml.settings_content;
 		} else if (KEY_SETTINGS_STORAGE.equals(key)) {
 			res_id = R.xml.settings_storage;
-		} else if (KEY_SETTINGS_API.equals(key)) {
-			res_id = R.xml.settings_api;
-		} else if (KEY_SETTINGS_CONNECTIVITY.equals(key)) {
-			res_id = R.xml.settings_connectivity;
+		} else if (KEY_SETTINGS_NETWORK.equals(key)) {
+			res_id = R.xml.settings_network;
 		} else if (KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS.equals(key)) {
 			res_id = R.xml.settings_refresh_and_notifications;
 		} else if (KEY_SETTINGS_OTHER.equals(key)) {

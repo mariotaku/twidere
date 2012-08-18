@@ -316,7 +316,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			// What the f**k are you think about? Stop service causes twidere
 			// slow and unstable!
 			// Well, all right... If you still want to enable this option, I
-			// have no responsibility for any problems occurred.
+			// take no responsibility for any problems occurred.
 			mService.shutdownService();
 		}
 	}
@@ -338,10 +338,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			}
 			case MENU_SEARCH: {
 				onSearchRequested();
-				break;
-			}
-			case MENU_DIRECT_MESSAGES: {
-				startActivity(new Intent(INTENT_ACTION_DIRECT_MESSAGES));
 				break;
 			}
 			case MENU_SELECT_ACCOUNT: {
@@ -375,6 +371,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			}
 			case TAB_POSITION_MENTIONS: {
 				mService.clearNotification(NOTIFICATION_ID_MENTIONS);
+				break;
+			}
+			case TAB_POSITION_MESSAGES: {
+				mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 				break;
 			}
 		}

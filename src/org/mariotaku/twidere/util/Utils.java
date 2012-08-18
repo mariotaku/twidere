@@ -814,21 +814,21 @@ public final class Utils implements Constants {
 		m = PATTERN_TWITTER_IMAGES.matcher(link);
 		if (m.matches()) return getTwitterImage(link, force_ssl);
 		m = PATTERN_TWITPIC.matcher(link);
-		if (m.matches() && m.find()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), force_ssl);
+		if (m.matches()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), force_ssl);
 		m = PATTERN_INSTAGRAM.matcher(link);
-		if (m.matches() && m.find()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), force_ssl);
+		if (m.matches()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), force_ssl);
 		m = PATTERN_IMGLY.matcher(link);
-		if (m.matches() && m.find()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), force_ssl);
+		if (m.matches()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), force_ssl);
 		m = PATTERN_YFROG.matcher(link);
-		if (m.matches() && m.find()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), force_ssl);
+		if (m.matches()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), force_ssl);
 		m = PATTERN_LOCKERZ_AND_PLIXI.matcher(link);
 		if (m.matches()) return getLockerzAndPlixiImage(link, force_ssl);
 		m = PATTERN_SINA_WEIBO_IMAGES.matcher(link);
 		if (m.matches()) return getSinaWeiboImage(link);
 		m = PATTERN_TWITGOO.matcher(link);
-		if (m.matches() && m.find()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), force_ssl);
+		if (m.matches()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), force_ssl);
 		m = PATTERN_MOBYPICTURE.matcher(link);
-		if (m.matches() && m.find()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), force_ssl);
+		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), force_ssl);
 		return null;
 	}
 
@@ -1099,7 +1099,18 @@ public final class Utils implements Constants {
 		if (isNullOrEmpty(quote_format)) {
 			quote_format = PREFERENCE_DEFAULT_QUOTE_FORMAT;
 		}
-		return quote_format.replace(QUOTE_FORMAT_NAME_PATTERN, screen_name).replace(QUOTE_FORMAT_TEXT_PATTERN, text);
+		return quote_format.replace(QUOTE_FORMAT_NAME_PATTERN, screen_name).replace(QUOTE_SHARE_FORMAT_TEXT_PATTERN, text);
+	}
+	
+	public static String getShareStatus(Context context, String title, String text) {
+		if (context == null) return null;
+		String quote_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
+				PREFERENCE_KEY_SHARE_FORMAT, PREFERENCE_DEFAULT_SHARE_FORMAT);
+		if (isNullOrEmpty(quote_format)) {
+			quote_format = PREFERENCE_DEFAULT_SHARE_FORMAT;
+		}
+		if (title == null) return text;
+		return quote_format.replace(QUOTE_SHARE_FORMAT_TITLE_PATTERN, title).replace(QUOTE_SHARE_FORMAT_TEXT_PATTERN, text);
 	}
 
 	/**

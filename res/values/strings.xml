@@ -52,7 +52,6 @@
 	<string name="description_permission_write_databases">Write tweets, drafts, accounts, direct messages etc to databases.</string>
 	<string name="description_permission_access_service">Refresh/Send tweets, direct messages</string>
 	<string name="open_in_browser">Open in browser</string>
-	<string name="just_now">Just now</string>
 	<string name="tap_to_load_more">Tap to load more</string>
 	<string name="delete">Delete</string>
 	<string name="retweet">Retweet</string>
@@ -287,5 +286,10 @@
 	<string name="notification_ringtone">Ringtone</string>
 	<string name="notification_light_color">Light Color</string>
 	<string name="invalid_image">Invalid image.</string>
+	<string name="skip_image_preview_processing">Skip image preview processing</string>
+	<string name="skip_image_preview_processing_summary">Make list scrolling more smoothly, but disable image preview - even image icon will not displayed.</string>
+	<string name="share_format">Share format</string>
+	<string name="share_format_summary">\"[TITLE]\" = Content title\n\"[TEXT]\" = Content text</string>
+	<string name="network">Network</string>
 
 </resources>

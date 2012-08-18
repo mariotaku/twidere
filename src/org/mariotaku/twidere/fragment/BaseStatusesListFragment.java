@@ -19,7 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openConversation;
@@ -55,6 +54,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
 
 abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
@@ -73,7 +73,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	private PopupMenu mPopupMenu;
 
 	private ParcelableStatus mSelectedStatus;
-	private int mRunningTaskId;
 
 	private boolean mLoadMoreAutomatically;
 
@@ -126,6 +125,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
+		setMode(Mode.BOTH);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
 	}
@@ -155,7 +155,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			final ParcelableStatus status = getListAdapter().findStatus(id);
 			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder.show_as_gap || position == adapter.getCount() - 1 && !mLoadMoreAutomatically) {
+			if (holder.show_as_gap) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
 				openStatus(getActivity(), status);
@@ -278,7 +278,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	public abstract void onPostStart();
 
 	@Override
-	public abstract void onRefresh();
+	public abstract void onPullDownToRefresh();
 
 	@Override
 	public void onResume() {
@@ -291,13 +291,14 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
+		final boolean skip_image_preview_processing = mPreferences.getBoolean(PREFERENCE_KEY_SKIP_IMAGE_PREVIEW_PROCESSING, false);
 		adapter.setForceSSLConnection(force_ssl_connection);
 		adapter.setDisplayProfileImage(display_profile_image);
 		adapter.setDisplayHiResProfileImage(hires_profile_image);
 		adapter.setDisplayImagePreview(display_image_preview);
+		adapter.setSkipImagePreviewProcessing(skip_image_preview_processing);
 		adapter.setDisplayName(display_name);
 		adapter.setTextSize(text_size);
-		adapter.setShowLastItemAsGap(!(mLoadMoreAutomatically || isListLoadFinished()));
 	}
 
 	@Override
@@ -312,8 +313,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				return;
 			}
 			if (mLoadMoreAutomatically && mReachedBottom && getListAdapter().getCount() > visibleItemCount) {
-				if (!mAsyncTaskManager.isExcuting(mRunningTaskId)) {
-					mRunningTaskId = getStatuses(getActivatedAccountIds(getActivity()), getLastStatusIds());
+				if (!isRefreshing()) {
+					onPullUpToRefresh();
 				}
 			}
 		}

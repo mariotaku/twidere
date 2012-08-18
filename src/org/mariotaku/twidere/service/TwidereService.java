@@ -35,8 +35,6 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
@@ -65,6 +63,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.UserList;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -77,13 +76,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
@@ -95,8 +91,6 @@ public class TwidereService extends Service implements Constants {
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
 	private NotificationManager mNotificationManager;
-	private AutoRefreshTask mAutoRefreshTask;
-	private AutoRefreshHandler mAutoRefreshHandler;
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 	private int mStoreStatusesTaskId, mStoreMentionsTaskId;
@@ -106,8 +100,6 @@ public class TwidereService extends Service implements Constants {
 	private int mStoreLocalTrendsTaskId, mStoreWeeklyTrendsTaskId, mStoreDailyTrendsTaskId;
 
 	private boolean mShouldShutdown = false;
-
-	private static final int ACTION_AUTO_REFRESH = 1;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -123,14 +115,33 @@ public class TwidereService extends Service implements Constants {
 				if (extras != null && extras.containsKey(INTENT_KEY_NOTIFICATION_ID)) {
 					clearNotification(extras.getInt(INTENT_KEY_NOTIFICATION_ID));
 				}
+			} else if (BROADCAST_AUTO_REFRESH.equals(action)) {
+				final long[] activated_ids = getActivatedAccountIds(context);
+				if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
+					if (!isHomeTimelineRefreshing()) {
+						getHomeTimeline(activated_ids, null, true);
+					}
+				}
+				if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
+					if (!isMentionsRefreshing()) {
+						getMentions(activated_ids, null, true);
+					}
+				}
+				if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
+					if (!isReceivedDirectMessagesRefreshing()) {
+						getReceivedDirectMessages(activated_ids, null, true);
+					}
+				}
 			}
 		}
 
 	};
 
-	private Timer mAutoRefreshTimer = new Timer();;
+	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
 
-	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;;
+	private AlarmManager mAlarmManager;
+
+	private PendingIntent mPendingRefreshIntent;;
 
 	public int addUserListMember(long account_id, int list_id, long user_id, String screen_name) {
 		final AddUserListMemberTask task = new AddUserListMemberTask(account_id, list_id, user_id, screen_name);
@@ -311,11 +322,14 @@ public class TwidereService extends Service implements Constants {
 	public void onCreate() {
 		super.onCreate();
 		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		mAutoRefreshHandler = new AutoRefreshHandler(this);
+		final Intent refresh_intent = new Intent(BROADCAST_AUTO_REFRESH);
+		mPendingRefreshIntent = PendingIntent.getBroadcast(this, 0, refresh_intent, 0);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		filter.addAction(BROADCAST_NOTIFICATION_CLEARED);
+		filter.addAction(BROADCAST_AUTO_REFRESH);
 		registerReceiver(mStateReceiver, filter);
 
 		startAutoRefresh();
@@ -359,25 +373,18 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public boolean startAutoRefresh() {
-		if (mAutoRefreshTimer != null) {
-			mAutoRefreshTimer.cancel();
-		}
-		mAutoRefreshTimer = new Timer();
+		mAlarmManager.cancel(mPendingRefreshIntent);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
 			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
 			if (update_interval <= 0) return false;
-			mAutoRefreshTask = new AutoRefreshTask(mAutoRefreshHandler);
-			mAutoRefreshTimer.scheduleAtFixedRate(mAutoRefreshTask, update_interval, update_interval);
+			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval, update_interval, mPendingRefreshIntent);
 			return true;
 		}
 		return false;
 	}
 
 	public void stopAutoRefresh() {
-		if (mAutoRefreshTimer != null) {
-			mAutoRefreshTimer.cancel();
-			mAutoRefreshTimer = null;
-		}
+		mAlarmManager.cancel(mPendingRefreshIntent);
 	}
 
 	public boolean test() {
@@ -430,7 +437,8 @@ public class TwidereService extends Service implements Constants {
 			defaults |= Notification.DEFAULT_VIBRATE;
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false)) {
-			final int color = mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR, Color.BLUE);
+			final int color_def = getResources().getColor(R.color.holo_blue_light);
+			final int color = mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR, color_def);
 			builder.setLights(color, 1000, 2000);
 		}
 		builder.setDefaults(defaults);
@@ -511,57 +519,6 @@ public class TwidereService extends Service implements Constants {
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
-		}
-
-	}
-
-	private final static class AutoRefreshHandler extends Handler {
-
-		private final TwidereService mContext;
-		private final SharedPreferences mPreferences;
-
-		public AutoRefreshHandler(TwidereService context) {
-			mContext = context;
-			mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		}
-
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-				case ACTION_AUTO_REFRESH: {
-					final long[] activated_ids = getActivatedAccountIds(mContext);
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
-						if (!mContext.isHomeTimelineRefreshing()) {
-							mContext.getHomeTimeline(activated_ids, null, true);
-						}
-					}
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
-						if (!mContext.isMentionsRefreshing()) {
-							mContext.getMentions(activated_ids, null, true);
-						}
-					}
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
-						if (!mContext.isReceivedDirectMessagesRefreshing()) {
-							mContext.getReceivedDirectMessages(activated_ids, null, true);
-						}
-					}
-					break;
-				}
-			}
-		}
-	}
-
-	private final static class AutoRefreshTask extends TimerTask {
-
-		private final AutoRefreshHandler mHandler;
-
-		public AutoRefreshTask(AutoRefreshHandler handler) {
-			mHandler = handler;
-		}
-
-		@Override
-		public void run() {
-			mHandler.sendEmptyMessage(ACTION_AUTO_REFRESH);
 		}
 
 	}
@@ -2243,9 +2200,11 @@ public class TwidereService extends Service implements Constants {
 					final Bundle delete_extras = new Bundle();
 					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
 					delete_intent.putExtras(delete_extras);
-					final Intent content_intent = new Intent(INTENT_ACTION_DIRECT_MESSAGES);
-					final Bundle content_extras = new Bundle(response.data);
-					content_extras.putBoolean(INTENT_KEY_FROM_NOTIFICATION, true);
+					final Intent content_intent = new Intent(TwidereService.this, HomeActivity.class);
+					content_intent.setAction(Intent.ACTION_MAIN);
+					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
+					final Bundle content_extras = new Bundle();
+					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MESSAGES);
 					content_intent.putExtras(content_extras);
 					mNotificationManager
 							.notify(NOTIFICATION_ID_DIRECT_MESSAGES,

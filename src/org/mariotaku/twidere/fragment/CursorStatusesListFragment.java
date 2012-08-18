@@ -112,10 +112,13 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public void onRefresh() {
-		final long[] account_ids = getActivatedAccountIds(getActivity());
-		getStatuses(account_ids, null);
-
+	public void onPullDownToRefresh() {
+		getStatuses(getActivatedAccountIds(getActivity()), null);
+	}
+	
+	@Override
+	public void onPullUpToRefresh() {
+		getStatuses(getActivatedAccountIds(getActivity()), getLastStatusIds());
 	}
 
 }

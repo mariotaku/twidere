@@ -51,7 +51,6 @@
   <string name="description_permission_write_databases">向数据库写入推文、草稿箱、帐号信息、私信等。</string>
   <string name="description_permission_access_service">为你刷新/发送推文和私信等。</string>
   <string name="open_in_browser">在浏览器中打开</string>
-  <string name="just_now">刚刚</string>
   <string name="tap_to_load_more">轻按以加载更多</string>
   <string name="delete">删除</string>
   <string name="retweet">转推</string>
@@ -286,4 +285,9 @@
   <string name="notification_ringtone">铃声</string>
   <string name="notification_light_color">灯光颜色</string>
   <string name="invalid_image">无效的图像。</string>
+  <string name="skip_image_preview_processing">跳过预览图片的处理</string>
+  <string name="skip_image_preview_processing_summary">使推文列表更加流畅，但是禁用图像预览——甚至推文中的图片指示也不会显示。</string>
+  <string name="share_format">分享格式</string>
+  <string name="share_format_summary">\"[TITLE]\" = 分享内容的标题\n\"[TEXT]\" = 分享内容的正文</string>
+  <string name="network">网络</string>
 </resources>

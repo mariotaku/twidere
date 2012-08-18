@@ -35,10 +35,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public abstract class PullToRefreshListFragment extends BaseListFragment implements OnRefreshListener {
+public abstract class PullToRefreshListFragment extends BaseListFragment implements OnRefreshListener2 {
 
 	private PullToRefreshListView mPullToRefreshListView;
 
@@ -114,9 +114,6 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 		return root;
 	}
 
-	@Override
-	public abstract void onRefresh();
-
 	/**
 	 * Mark the current Refresh as complete. Will Reset the UI and hide the
 	 * Refreshing View
@@ -147,6 +144,17 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	public final void setPullToRefreshEnabled(boolean enable) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setPullToRefreshEnabled(enable);
+		
+	}
+	
+	/**
+	 * Set the mode of Pull-to-Refresh that this view will use.
+	 * 
+	 * @param mode - Mode to set the View to
+	 */
+	public final void setMode(Mode mode) {
+		if (mPullToRefreshListView == null) return;
+		mPullToRefreshListView.setMode(mode);
 	}
 
 	/**
@@ -159,8 +167,19 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	public final void setRefreshing(boolean doScroll) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setRefreshing(doScroll);
+		
 	}
 
+	/**
+	 * Returns whether the Widget is currently in the Refreshing mState
+	 * 
+	 * @return true if the Widget is currently refreshing
+	 */
+	public boolean isRefreshing() {
+		if (mPullToRefreshListView == null) return false;
+		return mPullToRefreshListView.isRefreshing();
+	}
+	
 	/**
 	 * Set Text to show when the Widget is refreshing
 	 * <code>setRefreshingLabel(releaseLabel, Mode.BOTH)</code>

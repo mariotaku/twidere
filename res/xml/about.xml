@@ -14,12 +14,11 @@
 				android:data="twidere://user?user_id=57610574"/>
 		</PreferenceScreen>
 		<PreferenceScreen
-			android:summary="Donate to twidere to support my development"
-			android:title="Donate">
+			android:summary="Donate to Twidere to support my development"
+			android:title="Donate via PayPal">
 			<intent
-				android:action="org.mariotaku.twidere.VIEW_WEBPAGE"
-				android:data="file:///android_asset/donate.html"
-				android:targetPackage="org.mariotaku.twidere"/>
+				android:action="android.intent.action.VIEW"
+				android:data="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=mariotaku.lee%40gmail%2ecom&amp;item_name=Donate%20to%20Twidere&amp;currency_code=USD"/>
 		</PreferenceScreen>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="TRANSLATORS">

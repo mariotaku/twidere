@@ -80,7 +80,7 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public void onRefresh() {
+	public void onPullDownToRefresh() {
 		getLoaderManager().restartLoader(0, null, this);
 	}
 
@@ -130,6 +130,12 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 			notifyDataSetChanged();
 		}
 
+	}
+
+	@Override
+	public void onPullUpToRefresh() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

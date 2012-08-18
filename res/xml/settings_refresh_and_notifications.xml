@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	android:key="settings_refresh_and_notifications"
-	android:title="@string/settings">
+	android:title="@string/refresh_and_notifications">
 
 	<PreferenceCategory
 		android:key="cat_refresh"
@@ -54,7 +54,7 @@
 			android:title="@string/notification_ringtone"/>
 
 		<org.mariotaku.preference.ColorPickerPreference
-			android:defaultValue="#0000FF"
+			android:defaultValue="@color/holo_blue_light"
 			android:key="notification_light_color"
 			android:title="@string/notification_light_color"/>
 	</PreferenceCategory>

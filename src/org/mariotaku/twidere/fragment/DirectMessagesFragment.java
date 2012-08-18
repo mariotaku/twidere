@@ -31,6 +31,8 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -47,8 +49,10 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -62,7 +66,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 public class DirectMessagesFragment extends PullToRefreshListFragment implements LoaderCallbacks<Cursor>,
-		OnScrollListener, OnItemClickListener, OnClickListener, OnItemSelectedListener {
+		OnScrollListener, OnItemClickListener, OnClickListener, OnItemSelectedListener, OnTouchListener  {
 	private ServiceInterface mService;
 
 	private SharedPreferences mPreferences;
@@ -116,8 +120,10 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 
 		mAccountConfirmButton.setOnClickListener(this);
 		setListAdapter(mAdapter);
+		mListView.setOnTouchListener(this);
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
+		setMode(Mode.BOTH);
 
 		final long[] activated_ids = getActivatedAccountIds(getActivity());
 
@@ -212,7 +218,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	}
 
 	@Override
-	public void onRefresh() {
+	public void onPullDownToRefresh() {
 		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mAccountId);
 		if (mService == null || !is_my_activated_account) return;
 		mService.getReceivedDirectMessages(new long[] { mAccountId }, null);
@@ -331,5 +337,39 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 			setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		}
 
+	}
+
+	@Override
+	public void onPullUpToRefresh() {
+		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mAccountId);
+		if (mService == null || !is_my_activated_account) return;
+		final ContentResolver resolver = getContentResolver();
+		final String where = DirectMessages.ACCOUNT_ID + " = " + mAccountId;
+		final String[] cols = new String[] { "MIN(" + DirectMessages.MESSAGE_ID + ")" };
+		final Cursor inbox_cur = resolver.query(DirectMessages.Inbox.CONTENT_URI, cols, where, null, null);
+		final Cursor outbox_cur = resolver.query(DirectMessages.Outbox.CONTENT_URI, cols, where, null, null);
+		inbox_cur.moveToFirst();
+		final long inbox_min_id = inbox_cur.getLong(0);
+		if (inbox_min_id > 0) {
+			mService.getReceivedDirectMessages(new long[] { mAccountId }, new long[] { inbox_min_id });
+		}
+		outbox_cur.moveToFirst();
+		final long outbox_min_id = outbox_cur.getLong(0);
+		if (outbox_min_id > 0) {
+			mService.getSentDirectMessages(new long[] { mAccountId }, new long[] { outbox_min_id });
+		}
+		inbox_cur.close();
+		outbox_cur.close();
+	}
+	
+	@Override
+	public boolean onTouch(View view, MotionEvent ev) {
+		switch (ev.getAction()) {
+			case MotionEvent.ACTION_DOWN: {
+				mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+				break;
+			}
+		}
+		return false;
 	}
 }

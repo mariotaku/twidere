@@ -53,8 +53,8 @@ import android.widget.ArrayAdapter;
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface,
 		OnClickListener {
 
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mDisplayName,
-			mShowAccountColor, mShowLastItemAsGap, mForceSSLConnection, mGapDisallowed;
+	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mSkipImagePreviewProcessing, mDisplayName,
+			mShowAccountColor, mForceSSLConnection, mGapDisallowed;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -108,9 +108,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 		final ParcelableStatus status = getItem(position);
 
-		final boolean is_last = position == getCount() - 1;
-		final boolean show_gap = (status.is_gap && !is_last || mShowLastItemAsGap && is_last && getCount() > 1)
-				&& !mGapDisallowed;
+		final boolean show_gap = status.is_gap && !mGapDisallowed;
 
 		holder.setShowAsGap(show_gap);
 		holder.setAccountColorEnabled(mShowAccountColor);
@@ -160,7 +158,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.profile_image.setOnClickListener(this);
 				holder.profile_image.setTag(position);
 			}
-			final boolean has_preview = mDisplayImagePreview && status.has_media && status.image_preview_url != null;
+			final boolean has_preview = !mSkipImagePreviewProcessing && mDisplayImagePreview && status.has_media && status.image_preview_url != null;
 			holder.image_preview.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
 				mPreviewImageLoader.displayImage(status.image_preview_url, holder.image_preview);
@@ -266,17 +264,17 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	@Override
-	public void setShowLastItemAsGap(boolean gap) {
-		if (gap != mShowLastItemAsGap) {
-			mShowLastItemAsGap = gap;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
 	public void setTextSize(float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
+			notifyDataSetChanged();
+		}
+	}
+	
+	@Override
+	public void setSkipImagePreviewProcessing(boolean skip) {
+		if (skip != mSkipImagePreviewProcessing) {
+			mSkipImagePreviewProcessing = skip;
 			notifyDataSetChanged();
 		}
 	}

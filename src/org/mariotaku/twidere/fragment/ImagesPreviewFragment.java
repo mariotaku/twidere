@@ -35,7 +35,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	private SharedPreferences mPreferences;
 
 	public boolean add(ImageSpec spec) {
-		return mData.add(spec);
+		return spec != null ? mData.add(spec) : false;
 	}
 
 	public boolean add(String thumbnail_url, String image_url) {
@@ -132,7 +132,8 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 
 		@Override
 		public long getItemId(int position) {
-			return getItem(position).hashCode();
+			final ImageSpec spec = getItem(position);
+			return spec != null ? spec.hashCode() : 0;
 		}
 
 		@Override

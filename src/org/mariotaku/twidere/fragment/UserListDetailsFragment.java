@@ -74,7 +74,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -83,9 +82,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class UserListDetailsFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
@@ -93,9 +92,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	private LazyImageLoader mProfileImageLoader;
 	private ImageView mProfileImageView;
-	private TextView mListNameView, mUserNameView, mDescriptionView;
+	private TextView mListNameView, mUserNameView, mDescriptionView, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer;
-	private ProgressBar mListProgress;
 	private Button mFollowMoreButton, mRetryButton;
 
 	private UserProfileActionAdapter mAdapter;
@@ -147,7 +145,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		if (user == null) return;
 		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), user_list.getId());
 		mUserInfoTask = null;
-		mRetryButton.setVisibility(View.GONE);
+		mErrorRetryContainer.setVisibility(View.GONE);
 		mAccountId = account_id;
 		mUserListId = user_list.getId();
 		mUserName = user.getName();
@@ -203,18 +201,16 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 		mUserInfoTask = null;
 		if (!isMyActivatedAccount(getActivity(), mAccountId)) {
-			mListProgress.setVisibility(View.GONE);
-			mListView.setVisibility(View.GONE);
-			mRetryButton.setVisibility(View.GONE);
+			mListContainer.setVisibility(View.GONE);
+			mErrorRetryContainer.setVisibility(View.GONE);
 			return;
 		}
 
 		if (list_id > 0 || list_name != null && (user_id > 0 || screen_name != null)) {
 			mUserInfoTask = new ListInfoTask(getActivity(), account_id, list_id, list_name, user_id, screen_name);
 		} else {
-			mListProgress.setVisibility(View.GONE);
-			mListView.setVisibility(View.GONE);
-			mRetryButton.setVisibility(View.GONE);
+			mListContainer.setVisibility(View.GONE);
+			mErrorRetryContainer.setVisibility(View.GONE);
 			return;
 		}
 
@@ -295,7 +291,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mHeaderView = inflater.inflate(R.layout.user_list_detail_header, null, false);
+		mHeaderView = inflater.inflate(R.layout.user_list_detail_header, null);
 		mNameContainer = mHeaderView.findViewById(R.id.name_container);
 		mListNameView = (TextView) mHeaderView.findViewById(R.id.list_name);
 		mUserNameView = (TextView) mHeaderView.findViewById(R.id.user_name);
@@ -304,11 +300,16 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mProfileImageContainer = mHeaderView.findViewById(R.id.profile_image_container);
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
 		mFollowMoreButton = (Button) mHeaderView.findViewById(R.id.follow_more);
-		final View view = inflater.inflate(R.layout.user_profile, null, false);
-		mRetryButton = (Button) view.findViewById(R.id.retry);
-		mListProgress = (ProgressBar) view.findViewById(R.id.list_progress);
-		return view;
+		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
+		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);
+		((FrameLayout)container_view.findViewById(R.id.list_container)).addView(mListContainer);
+		mErrorRetryContainer = container_view.findViewById(R.id.error_retry_container);
+		mRetryButton = (Button) container_view.findViewById(R.id.retry);
+		mErrorMessageView = (TextView) container_view.findViewById(R.id.error_message);
+		return container_view;
 	}
+	
+	private View mListContainer, mErrorRetryContainer;
 
 	@Override
 	public void onDestroyView() {
@@ -431,16 +432,6 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
-	}
-
-	@Override
-	public void setListShown(boolean shown) {
-		final int fade_in = android.R.anim.fade_in;
-		final int fade_out = android.R.anim.fade_out;
-		mListProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
-		mListProgress.startAnimation(AnimationUtils.loadAnimation(getActivity(), shown ? fade_out : fade_in));
-		mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
-		mListView.startAnimation(AnimationUtils.loadAnimation(getActivity(), shown ? fade_in : fade_out));
 	}
 
 	private void reloadUserListInfo() {
@@ -614,12 +605,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				final UserList user = result.value;
 				setListShown(true);
 				changeUserList(mAccountId, user);
-				mRetryButton.setVisibility(View.GONE);
+				mErrorRetryContainer.setVisibility(View.GONE);
 			} else {
 				showErrorToast(getActivity(), result.exception, false);
-				mListProgress.setVisibility(View.GONE);
-				mListView.setVisibility(View.GONE);
-				mRetryButton.setVisibility(View.VISIBLE);
+				mListContainer.setVisibility(View.GONE);
+				mErrorRetryContainer.setVisibility(View.VISIBLE);
 			}
 			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);
@@ -627,8 +617,9 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 		@Override
 		protected void onPreExecute() {
+			mListContainer.setVisibility(View.VISIBLE);
+			mErrorRetryContainer.setVisibility(View.GONE);
 			setListShown(false);
-			mRetryButton.setVisibility(View.GONE);
 			setProgressBarIndeterminateVisibility(true);
 			super.onPreExecute();
 		}

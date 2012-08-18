@@ -43,18 +43,18 @@ public class InternalSettingsActivity extends PreferenceActivity implements Cons
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_BACK: {
 				final Activity activity = getParent();
 				if (activity instanceof SettingsActivity && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
 					OnBackPressedAccessor.onBackPressed(activity);
-					return false;
+					return true;
 				}
 				break;
 			}
 		}
-		return super.onKeyDown(keyCode, event);
+		return super.onKeyUp(keyCode, event);
 	}
 
 	public void setTheme() {

@@ -111,14 +111,14 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_BACK: {
-				if (!backPressed()) return false;
+				if (!backPressed()) return true;
 				break;
 			}
 		}
-		return super.onKeyDown(keyCode, event);
+		return super.onKeyUp(keyCode, event);
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public interface Constants extends TwitterConstants {
 	public static final String MAPS_API_KEY_RELEASE = "0kjPwJOe_zwYjzGc9uYak7vhm_Sf3eob-2L3Xzw";
 	public static final String MAPS_API_KEY_DEBUG = "0kjPwJOe_zwY9p6kT-kygu4mxwysyOOpfkaXqTA";
 
-	public static final String CRASH_REPORT_FORM_KEY = "dEcwVVBoTDE0RXZaczFiMUxuek43WGc6MQ";
+	public static final String CRASH_REPORT_FORM_KEY = "dEo0SGZpWE5EMWpFakVTUVZlbzZhQ2c6MQ";
 
 	public static final String MAPS_API_KEY = DEBUG ? MAPS_API_KEY_DEBUG : MAPS_API_KEY_RELEASE;
 
@@ -111,7 +111,8 @@ public interface Constants extends TwitterConstants {
 
 	public static final String OAUTH_VERIFIER = "oauth_verifier";
 
-	public static final String QUOTE_FORMAT_TEXT_PATTERN = "[TEXT]";
+	public static final String QUOTE_SHARE_FORMAT_TEXT_PATTERN = "[TEXT]";
+	public static final String QUOTE_SHARE_FORMAT_TITLE_PATTERN = "[TITLE]";
 	public static final String QUOTE_FORMAT_NAME_PATTERN = "[NAME]";
 
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
@@ -165,9 +166,15 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_FORCE_SSL_CONNECTION = "force_ssl_connection";
 	public static final String PREFERENCE_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
 	public static final String PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR = "notification_light_color";
+	public static final String PREFERENCE_KEY_SKIP_IMAGE_PREVIEW_PROCESSING = "skip_image_preview_processing";
+	public static final String PREFERENCE_KEY_SHARE_FORMAT = "share_format";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + QUOTE_FORMAT_NAME_PATTERN + ": "
-			+ QUOTE_FORMAT_TEXT_PATTERN;
+			+ QUOTE_SHARE_FORMAT_TEXT_PATTERN;
+	
+	public static final String PREFERENCE_DEFAULT_SHARE_FORMAT = QUOTE_SHARE_FORMAT_TITLE_PATTERN + " - "
+			+ QUOTE_SHARE_FORMAT_TEXT_PATTERN;
+	
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final float PREFERENCE_DEFAULT_TEXT_SIZE = 14.0f;
@@ -186,7 +193,6 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_SET_COLOR = INTENT_PACKAGE_PREFIX + "SET_COLOR";
 	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_PACKAGE_PREFIX + "TWITTER_LOGIN";
 	public static final String INTENT_ACTION_DRAFTS = INTENT_PACKAGE_PREFIX + "DRAFTS";
-	public static final String INTENT_ACTION_DIRECT_MESSAGES = INTENT_PACKAGE_PREFIX + "DIRECT_MESSAGES";
 	public static final String INTENT_ACTION_SAVE_FILE = INTENT_PACKAGE_PREFIX + "SAVE_FILE";
 	public static final String INTENT_ACTION_PICK_FILE = INTENT_PACKAGE_PREFIX + "PICK_FILE";
 	public static final String INTENT_ACTION_VIEW_WEBPAGE = INTENT_PACKAGE_PREFIX + "VIEW_WEBPAGE";
@@ -239,6 +245,7 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_USER_LIST_CREATED = INTENT_PACKAGE_PREFIX + "USER_LIST_CREATED";
 	public static final String BROADCAST_USER_LIST_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_DELETED";
 	public static final String BROADCAST_TABS_UPDATED = INTENT_PACKAGE_PREFIX + "TABS_UPDATED";
+	public static final String BROADCAST_AUTO_REFRESH = INTENT_PACKAGE_PREFIX + "AUTO_REFRESH";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -330,7 +337,6 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_MUTE = R.id.mute;
 	public static final int MENU_REFRESH = R.id.refresh;
 	public static final int MENU_LOAD_MORE = R.id.load_more;
-	public static final int MENU_DIRECT_MESSAGES = R.id.direct_messages;
 	public static final int MENU_CONVERSATION = R.id.conversation;
 	public static final int MENU_MENTION = R.id.mention;
 	public static final int MENU_SEND_DIRECT_MESSAGE = R.id.send_direct_message;
