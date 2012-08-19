@@ -34,6 +34,12 @@ public class UserListCreatedFragment extends BaseUserListsListFragment {
 	}
 
 	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(getAccountId() == getUserId() || isMyActivatedUserName(getActivity(), getScreenName()));
+	}
+
+	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_user_list_created, menu);
 		super.onCreateOptionsMenu(menu, inflater);
@@ -43,7 +49,8 @@ public class UserListCreatedFragment extends BaseUserListsListFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.new_user_list: {
-				if (getAccountId() != getUserId() && !isMyActivatedUserName(getActivity(), getScreenName())) return false;
+				if (getAccountId() != getUserId() && !isMyActivatedUserName(getActivity(), getScreenName()))
+					return false;
 				if (mDialogFragment != null && mDialogFragment.isAdded()) {
 					mDialogFragment.dismiss();
 				}
@@ -56,12 +63,6 @@ public class UserListCreatedFragment extends BaseUserListsListFragment {
 			}
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(getAccountId() == getUserId() || isMyActivatedUserName(getActivity(), getScreenName()));
 	}
 
 	public static class CreateUserListDialogFragment extends BaseDialogFragment implements

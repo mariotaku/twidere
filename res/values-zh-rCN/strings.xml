@@ -225,11 +225,11 @@
   <string name="report_errors_automatically">自动报告错误</string>
   <string name="report_errors_automatically_summary">出现问题自动报告，这并不会收集你的个人信息。</string>
   <string name="Ntweets_quantity_one">你有一条新推文。</string>
-  <string name="Ntweets_quantity_other">你有 <xliff:g id="items">%d</xliff:g>+ 条新推文。</string>
+  <string name="Ntweets_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 条新推文。</string>
   <string name="Nmentions_quantity_one">有人提及了你。</string>
-  <string name="Nmentions_quantity_other">有 <xliff:g id="items">%d</xliff:g>+ 条推文提到了你。</string>
+  <string name="Nmentions_quantity_other">有 <xliff:g id="items">%d</xliff:g> 条推文提到了你。</string>
   <string name="Ndirect_messages_quantity_one">你有一条新私信。</string>
-  <string name="Ndirect_messages_quantity_other">你有 <xliff:g id="items">%d</xliff:g>+ 条新私信。</string>
+  <string name="Ndirect_messages_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 条新私信。</string>
   <string name="item_1_minute">1分钟</string>
   <string name="item_5_minutes">5分钟</string>
   <string name="item_10_minutes">10分钟</string>
@@ -290,4 +290,8 @@
   <string name="share_format">分享格式</string>
   <string name="share_format_summary">\"[TITLE]\" = 分享内容的标题\n\"[TEXT]\" = 分享内容的正文</string>
   <string name="network">网络</string>
+  <string name="content_and_storage">内容与存储</string>
+  <string name="default_provider">默认（Twitter）</string>
+  <string name="image_uploader">图片上传服务</string>
+  <string name="home_refresh">在主页时间线刷新</string>
 </resources>

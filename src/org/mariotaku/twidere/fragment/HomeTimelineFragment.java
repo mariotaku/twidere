@@ -83,7 +83,13 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 
 	@Override
 	public int getStatuses(long[] account_ids, long[] max_ids) {
-		mService.getMentions(account_ids, null);
+		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
+			mService.getMentions(account_ids, null);
+		}
+		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
+			mService.getReceivedDirectMessages(account_ids, null);
+			mService.getSentDirectMessages(account_ids, null);
+		}
 		return mService.getHomeTimeline(account_ids, max_ids);
 	}
 

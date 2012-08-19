@@ -16,9 +16,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -26,13 +30,17 @@ import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
 
-public class ImagesPreviewFragment extends BaseFragment implements OnItemClickListener, OnClickListener {
+public class ImagesPreviewFragment extends BaseFragment implements OnItemClickListener, OnClickListener, OnTouchListener {
 
+	private static final long TICKER_DURATION = 5000L;
+	
 	private Gallery mGallery;
 	private ImagesAdapter mAdapter;
 	private List<ImageSpec> mData = new ArrayList<ImageSpec>();
 	private View mLoadImagesIndicator;
 	private SharedPreferences mPreferences;
+	private Handler mHandler;
+	private Runnable mTicker;
 
 	public boolean add(ImageSpec spec) {
 		return spec != null ? mData.add(spec) : false;
@@ -73,6 +81,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.images_preview, null, false);
 		mGallery = (Gallery) view.findViewById(R.id.preview_gallery);
+		mGallery.setOnTouchListener(this);
 		mLoadImagesIndicator = view.findViewById(R.id.load_images);
 		return view;
 	}
@@ -152,5 +161,49 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		}
 
 	}
+
+	@Override
+	public boolean onTouch(View view, MotionEvent event) {
+		switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				mBusy = true;
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				mBusy = false;
+				break;
+		}
+		return false;
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		mTickerStopped = false;
+		mHandler = new Handler();
+
+		mTicker = new Runnable() {
+
+			@Override
+			public void run() {
+				if (mTickerStopped) return;
+				if (mGallery != null && !mBusy) {
+					mAdapter.notifyDataSetChanged();
+				}
+				final long now = SystemClock.uptimeMillis();
+				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
+				mHandler.postAtTime(mTicker, next);
+			}
+		};
+		mTicker.run();
+	}
+
+	@Override
+	public void onStop() {
+		mTickerStopped = true;
+		super.onStop();
+	}
+	
+	private volatile boolean mBusy, mTickerStopped;
 
 }

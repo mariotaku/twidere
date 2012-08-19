@@ -169,6 +169,8 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_SKIP_IMAGE_PREVIEW_PROCESSING = "skip_image_preview_processing";
 	public static final String PREFERENCE_KEY_SHARE_FORMAT = "share_format";
 	public static final String PREFERENCE_KEY_IMAGE_UPLOADER = "image_uploader";
+	public static final String PREFERENCE_KEY_HOME_REFRESH_MENTIONS = "home_refresh_mentions";
+	public static final String PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES = "home_refresh_direct_messages";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + QUOTE_FORMAT_NAME_PATTERN + ": "
 			+ QUOTE_SHARE_FORMAT_TEXT_PATTERN;

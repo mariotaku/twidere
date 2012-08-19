@@ -34,11 +34,11 @@
 			android:key="settings_appearance"
 			android:title="@string/look_and_feel"/>
 		<Preference
-			android:key="settings_content_and_storage"
-			android:title="@string/content_and_storage"/>
-		<Preference
 			android:key="settings_network"
 			android:title="@string/network"/>
+		<Preference
+			android:key="settings_content_and_storage"
+			android:title="@string/content_and_storage"/>
 		<Preference
 			android:key="settings_refresh_and_notifications"
 			android:title="@string/refresh_and_notifications"/>

@@ -2541,11 +2541,12 @@ public class TwidereService extends Service implements Constants {
 				final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
-						final ImageUploaderInterface uploader = ImageUploaderInterface.getInstance(getApplication());
+						final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
+						final ImageUploaderInterface uploader = ImageUploaderInterface.getInstance(getApplication(),
+								component);
 						final String image_path = getImagePathFromUri(TwidereService.this, image_uri);
-						// final Uri result_uri = image_path != null ?
-						// uploader.upload(Uri.parse(image_path)) : null;
-						final Uri result_uri = null;
+						final Uri result_uri = image_path != null && uploader != null ? uploader.upload(
+								Uri.parse(image_path), content) : null;
 						final StatusUpdate status = new StatusUpdate(result_uri != null ? content + " " + result_uri
 								: content);
 						status.setInReplyToStatusId(in_reply_to);

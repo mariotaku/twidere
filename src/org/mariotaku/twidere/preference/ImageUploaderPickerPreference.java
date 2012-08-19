@@ -61,19 +61,19 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 	public boolean onPreferenceClick(Preference preference) {
 		mPreferences = getSharedPreferences();
 		if (mPreferences == null) return false;
-		final String cls = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
+		final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
 		final ArrayList<ImageUploaderSpec> specs = new ArrayList<ImageUploaderSpec>();
 		specs.add(new ImageUploaderSpec(getContext().getString(R.string.default_provider), null));
 		final Intent query_intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
 		final List<ResolveInfo> result = mPackageManager.queryIntentServices(query_intent, 0);
 		for (final ResolveInfo info : result) {
-			specs.add(new ImageUploaderSpec(info.loadLabel(mPackageManager).toString(),
-					info.serviceInfo.name));
+			specs.add(new ImageUploaderSpec(info.loadLabel(mPackageManager).toString(), info.serviceInfo.packageName
+					+ "/" + info.serviceInfo.name));
 		}
 		mAvailableImageUploaders = specs.toArray(new ImageUploaderSpec[specs.size()]);
 		final AlertDialog.Builder selector_builder = new AlertDialog.Builder(getContext());
 		selector_builder.setTitle(getTitle());
-		selector_builder.setSingleChoiceItems(mAvailableImageUploaders, getIndex(cls),
+		selector_builder.setSingleChoiceItems(mAvailableImageUploaders, getIndex(component),
 				ImageUploaderPickerPreference.this);
 		selector_builder.setNegativeButton(android.R.string.cancel, null);
 		mDialog = selector_builder.show();

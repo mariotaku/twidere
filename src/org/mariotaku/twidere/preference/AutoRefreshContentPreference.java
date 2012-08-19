@@ -13,21 +13,21 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.AttributeSet;
 
-public class RefreshContentPreference extends Preference implements Constants, OnPreferenceClickListener,
+public class AutoRefreshContentPreference extends Preference implements Constants, OnPreferenceClickListener,
 		OnMultiChoiceClickListener, OnClickListener {
 
 	private boolean[] checked_items;
 	private SharedPreferences prefs;
 
-	public RefreshContentPreference(Context context) {
+	public AutoRefreshContentPreference(Context context) {
 		this(context, null);
 	}
 
-	public RefreshContentPreference(Context context, AttributeSet attrs) {
+	public AutoRefreshContentPreference(Context context, AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public RefreshContentPreference(Context context, AttributeSet attrs, int defStyle) {
+	public AutoRefreshContentPreference(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		checked_items = new boolean[3];
 		setOnPreferenceClickListener(this);

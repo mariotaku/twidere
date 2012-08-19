@@ -21,25 +21,27 @@ package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.MOBYPICTURE_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGLY;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INLINE_PREVIEW_AVALIABLE_IMAGES_MATCH_ONLY;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGUR;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INLINE_PREVIEW_AVAILABLE_IMAGES_MATCH_ONLY;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INSTAGRAM;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_MOBYPICTURE;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_PREVIEW_AVALIABLE_IMAGES_IN_HTML;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_SINA_WEIBO_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITGOO;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITPIC;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_PROFILE_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_YFROG;
-import static org.mariotaku.twidere.util.TwidereLinkify.PREVIEW_AVALIABLE_IMAGES_IN_HTML_GROUP_LINK;
-import static org.mariotaku.twidere.util.TwidereLinkify.SINA_WEIBO_IMAGES_AVALIABLE_SIZES;
+import static org.mariotaku.twidere.util.TwidereLinkify.PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK;
+import static org.mariotaku.twidere.util.TwidereLinkify.SINA_WEIBO_IMAGES_AVAILABLE_SIZES;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITGOO_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITPIC_GROUP_ID;
-import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES;
+import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES;
 import static org.mariotaku.twidere.util.TwidereLinkify.YFROG_GROUP_ID;
 
 import java.io.File;
@@ -817,6 +819,8 @@ public final class Utils implements Constants {
 		if (m.matches()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), force_ssl);
 		m = PATTERN_INSTAGRAM.matcher(link);
 		if (m.matches()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), force_ssl);
+		m = PATTERN_IMGUR.matcher(link);
+		if (m.matches()) return getImgurImage(matcherGroup(m, IMGUR_GROUP_ID));
 		m = PATTERN_IMGLY.matcher(link);
 		if (m.matches()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), force_ssl);
 		m = PATTERN_YFROG.matcher(link);
@@ -838,7 +842,7 @@ public final class Utils implements Constants {
 			url = url.replaceFirst("http:\\/\\/", "https:\\/\\/");
 		}
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
-			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES, "_bigger");
+			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_bigger");
 		return url;
 	}
 
@@ -929,9 +933,9 @@ public final class Utils implements Constants {
 	public static List<ImageSpec> getImagesInStatus(String status_string, boolean force_ssl) {
 		if (status_string == null) return Collections.emptyList();
 		final List<ImageSpec> images = new ArrayList<ImageSpec>();
-		final Matcher matcher = PATTERN_PREVIEW_AVALIABLE_IMAGES_IN_HTML.matcher(status_string);
+		final Matcher matcher = PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML.matcher(status_string);
 		while (matcher.find()) {
-			images.add(getAllAvailableImage(matcherGroup(matcher, PREVIEW_AVALIABLE_IMAGES_IN_HTML_GROUP_LINK),
+			images.add(getAllAvailableImage(matcherGroup(matcher, PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK),
 					force_ssl));
 		}
 		return images;
@@ -943,6 +947,13 @@ public final class Utils implements Constants {
 		final String full_size = (force_ssl ? "https" : "http") + "://img.ly/show/full/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 
+	}
+
+	public static ImageSpec getImgurImage(String id) {
+		if (isNullOrEmpty(id)) return null;
+		final String thumbnail_size = "http://i.imgur.com/" + id + "s.jpg";
+		final String full_size = "http://i.imgur.com/" + id + ".jpg";
+		return new ImageSpec(thumbnail_size, full_size);
 	}
 
 	public static ImageSpec getInstagramImage(String id, boolean force_ssl) {
@@ -1024,7 +1035,7 @@ public final class Utils implements Constants {
 			url = url.replaceFirst("http:\\/\\/", "https:\\/\\/");
 		}
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
-			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES, "_normal");
+			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_normal");
 		return url;
 	}
 
@@ -1034,19 +1045,19 @@ public final class Utils implements Constants {
 			url = url.replaceFirst("http:\\/\\/", "https:\\/\\/");
 		}
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
-			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVALIABLE_SIZES, "");
+			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "");
 		return url;
 	}
 
 	public static PreviewImage getPreviewImage(String html, boolean include_preview, boolean force_ssl) {
 		if (html == null) return new PreviewImage(false, null, null);
 		if (!include_preview) {
-			final Matcher m = PATTERN_INLINE_PREVIEW_AVALIABLE_IMAGES_MATCH_ONLY.matcher(html);
+			final Matcher m = PATTERN_INLINE_PREVIEW_AVAILABLE_IMAGES_MATCH_ONLY.matcher(html);
 			return new PreviewImage(m.find(), null, null);
 		}
-		final Matcher m = PATTERN_PREVIEW_AVALIABLE_IMAGES_IN_HTML.matcher(html);
+		final Matcher m = PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML.matcher(html);
 		while (m.find()) {
-			final String image_url = m.group(PREVIEW_AVALIABLE_IMAGES_IN_HTML_GROUP_LINK);
+			final String image_url = m.group(PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK);
 			Matcher url_m;
 			url_m = PATTERN_TWITTER_IMAGES.matcher(image_url);
 			if (url_m.matches()) return new PreviewImage(getTwitterImage(image_url, force_ssl), image_url);
@@ -1054,9 +1065,12 @@ public final class Utils implements Constants {
 			if (url_m.matches())
 				return new PreviewImage(getTwitpicImage(matcherGroup(url_m, TWITPIC_GROUP_ID), force_ssl), image_url);
 			url_m = PATTERN_INSTAGRAM.matcher(image_url);
-			if (PATTERN_INSTAGRAM.matcher(image_url).matches() && url_m.find())
+			if (url_m.matches())
 				return new PreviewImage(getInstagramImage(matcherGroup(url_m, INSTAGRAM_GROUP_ID), force_ssl),
 						image_url);
+			url_m = PATTERN_IMGUR.matcher(image_url);
+			if (url_m.matches())
+				return new PreviewImage(getImgurImage(matcherGroup(url_m, IMGUR_GROUP_ID)), image_url);
 			url_m = PATTERN_IMGLY.matcher(image_url);
 			if (url_m.matches())
 				return new PreviewImage(getImglyImage(matcherGroup(url_m, IMGLY_GROUP_ID), force_ssl), image_url);
@@ -1184,8 +1198,8 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getSinaWeiboImage(String url) {
 		if (isNullOrEmpty(url)) return null;
-		final String thumbnail_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/", "/thumbnail/");
-		final String full_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVALIABLE_SIZES + "\\/", "/large/");
+		final String thumbnail_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/thumbnail/");
+		final String full_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/large/");
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 

@@ -315,8 +315,8 @@ public class LazyImageLoader implements Constants {
 
 		@Override
 		public void run() {
-			final Bitmap bmp = getBitmap(imagetoload.source);
 			if (imageViewReused(imagetoload) || imagetoload.source == null) return;
+			final Bitmap bmp = getBitmap(imagetoload.source);
 			mMemoryCache.put(imagetoload.source, bmp);
 			if (imageViewReused(imagetoload)) return;
 			final BitmapDisplayer bd = new BitmapDisplayer(bmp, imagetoload);

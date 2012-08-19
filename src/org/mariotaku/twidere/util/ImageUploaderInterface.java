@@ -51,8 +51,10 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 		}
 	};
 
-	private ImageUploaderInterface(Context context) {
+	private ImageUploaderInterface(Context context, String uploader_name) {
 		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
+		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
+		intent.setComponent(component);
 		bindToService(context, intent, mConntecion);
 	}
 
@@ -63,18 +65,28 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 	}
 
 	@Override
-	public Uri upload(Uri file_uri) {
+	public Uri upload(Uri file_uri, String message) {
 		if (mService == null) return null;
 		try {
-			return mService.upload(file_uri);
+			return mService.upload(file_uri, message);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static ImageUploaderInterface getInstance(Application application) {
-		return new ImageUploaderInterface(application);
+	public static ImageUploaderInterface getInstance(Application application, String uploader_name) {
+		if (uploader_name == null) return null;
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
+		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
+		intent.setComponent(component);
+		try {
+			application.startService(intent);
+		} catch (final SecurityException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return new ImageUploaderInterface(application, uploader_name);
 	}
 
 	public static class ServiceToken {

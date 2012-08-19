@@ -20,5 +20,5 @@
 package org.mariotaku.twidere;
 
 interface IImageUploader {
-	Uri upload(in Uri file_uri);
+	Uri upload(in Uri file_uri, String message);
 }

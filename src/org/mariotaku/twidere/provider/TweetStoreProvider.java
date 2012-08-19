@@ -46,7 +46,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDiskIOException;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Handler;
@@ -75,7 +75,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		if (table != null) {
 			try {
 				result = database.delete(table, selection, selectionArgs);
-			} catch (final SQLiteDiskIOException e) {
+			} catch (final SQLiteException e) {
 				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
 			}
 		}
@@ -106,7 +106,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		onDatabaseUpdated(uri, true);
 		try {
 			return Uri.withAppendedPath(uri, String.valueOf(row_id));
-		} catch (final SQLiteDiskIOException e) {
+		} catch (final SQLiteException e) {
 			mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
 		}
 		return null;
@@ -147,7 +147,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 					+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
 			try {
 				return database.rawQuery(sql_builder.toString(), selectionArgs);
-			} catch (final SQLiteDiskIOException e) {
+			} catch (final SQLiteException e) {
 				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
 			}
 		} else if (TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME.equals(table)) {
@@ -174,7 +174,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 					+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
 			try {
 				return database.rawQuery(sql_builder.toString(), selectionArgs);
-			} catch (final SQLiteDiskIOException e) {
+			} catch (final SQLiteException e) {
 				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
 			}
 		} else if (TABLE_DIRECT_MESSAGES.equals(table)) {
@@ -194,20 +194,20 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			sql_builder.append(" ORDER BY " + (sortOrder != null ? sortOrder : DirectMessages.DEFAULT_SORT_ORDER));
 			try {
 				return database.rawQuery(sql_builder.toString(), selectionArgs);
-			} catch (final SQLiteDiskIOException e) {
+			} catch (final SQLiteException e) {
 				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
 			}
 		} else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) {
 			try {
 				return database.rawQuery(
 						DirectMessages.ConversationsEntry.buildSQL(parseInt(uri.getLastPathSegment())), null);
-			} catch (final SQLiteDiskIOException e) {
+			} catch (final SQLiteException e) {
 				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
 			}
 		} else {
 			try {
 				return database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
-			} catch (final SQLiteDiskIOException e) {
+			} catch (final SQLiteException e) {
 				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
 			}
 		}
@@ -229,7 +229,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				return 0;
 			try {
 				result = database.update(table, values, selection, selectionArgs);
-			} catch (final SQLiteDiskIOException e) {
+			} catch (final SQLiteException e) {
 				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
 			}
 		}

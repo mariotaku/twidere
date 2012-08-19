@@ -31,8 +31,6 @@ import org.mariotaku.twidere.loader.BaseUserListsLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +48,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 abstract class BaseUserListsListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUserList>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
