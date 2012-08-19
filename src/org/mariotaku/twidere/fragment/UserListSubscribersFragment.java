@@ -66,9 +66,6 @@ public class UserListSubscribersFragment extends BaseUsersListFragment {
 	public void onLoadFinished(Loader<List<ParcelableUser>> loader, List<ParcelableUser> data) {
 		if (loader instanceof ListSubscribersLoader) {
 			final long cursor = ((ListSubscribersLoader) loader).getNextCursor();
-			final boolean all_items_loaded = cursor != -2 && cursor == mCursor;
-			getListAdapter().setShowLastItemAsGap(!all_items_loaded);
-			setAllItemsLoaded(all_items_loaded);
 			if (cursor != -2) {
 				mCursor = cursor;
 			}

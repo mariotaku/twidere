@@ -41,7 +41,7 @@ import android.widget.ArrayAdapter;
 public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
 
 	private final LazyImageLoader mProfileImageLoader;
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mShowLastItemAsGap, mDisplayName;
+	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName;
 	private float mTextSize;
 	private boolean mForceSSLConnection;
 
@@ -89,36 +89,25 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			holder = new UserViewHolder(view);
 			view.setTag(holder);
 		}
-		final boolean show_gap = mShowLastItemAsGap && position == getCount() - 1;
-		holder.setShowAsGap(show_gap);
-		if (!show_gap) {
-			final ParcelableUser user = getItem(position);
-			holder.setTextSize(mTextSize);
-			holder.name.setText(mDisplayName ? user.name : user.screen_name);
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(
-					getUserTypeIconRes(user.is_verified, user.is_protected), 0, 0, 0);
-			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-			if (mDisplayProfileImage) {
-				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(
-							parseURL(getBiggerTwitterProfileImage(user.profile_image_url_string, mForceSSLConnection)),
-							holder.profile_image);
-				} else {
-					mProfileImageLoader.displayImage(
-							parseURL(getNormalTwitterProfileImage(user.profile_image_url_string, mForceSSLConnection)),
-							holder.profile_image);
-				}
+		final ParcelableUser user = getItem(position);
+		holder.setTextSize(mTextSize);
+		holder.name.setText(mDisplayName ? user.name : user.screen_name);
+		holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(user.is_verified, user.is_protected), 0,
+				0, 0);
+		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+		if (mDisplayProfileImage) {
+			if (mDisplayHiResProfileImage) {
+				mProfileImageLoader.displayImage(
+						parseURL(getBiggerTwitterProfileImage(user.profile_image_url_string, mForceSSLConnection)),
+						holder.profile_image);
+			} else {
+				mProfileImageLoader.displayImage(
+						parseURL(getNormalTwitterProfileImage(user.profile_image_url_string, mForceSSLConnection)),
+						holder.profile_image);
 			}
 		}
-		return view;
-	}
 
-	public boolean isGap(long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) return mShowLastItemAsGap && i == getCount() - 1;
-		}
-		return false;
+		return view;
 	}
 
 	public void setData(List<ParcelableUser> data) {
@@ -164,13 +153,6 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	@Override
 	public void setForceSSLConnection(boolean force_ssl) {
 		mForceSSLConnection = force_ssl;
-	}
-
-	public void setShowLastItemAsGap(boolean gap) {
-		if (gap != mShowLastItemAsGap) {
-			mShowLastItemAsGap = gap;
-			notifyDataSetChanged();
-		}
 	}
 
 	@Override

@@ -4,7 +4,7 @@
 	android:title="@string/network">
 
 	<PreferenceCategory
-		android:key="cat_api"
+		android:key="category_api"
 		android:title="@string/api">
 		<CheckBoxPreference
 			android:defaultValue="true"
@@ -28,7 +28,7 @@
 			android:title="@string/consumer_secret"/>
 	</PreferenceCategory>
 	<PreferenceCategory
-		android:key="cat_connectivity"
+		android:key="category_connectivity"
 		android:title="@string/connectivity">
 		<CheckBoxPreference
 			android:defaultValue="false"
@@ -42,7 +42,7 @@
 			android:title="@string/ignore_ssl_error"/>
 	</PreferenceCategory>
 	<PreferenceCategory
-		android:key="cat_proxy"
+		android:key="category_proxy"
 		android:title="@string/proxy">
 		<CheckBoxPreference
 			android:defaultValue="false"

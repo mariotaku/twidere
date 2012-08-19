@@ -49,6 +49,7 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.ImageUploaderInterface;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
 import org.mariotaku.twidere.util.Utils;
@@ -377,7 +378,8 @@ public class TwidereService extends Service implements Constants {
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
 			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
 			if (update_interval <= 0) return false;
-			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval, update_interval, mPendingRefreshIntent);
+			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+					update_interval, mPendingRefreshIntent);
 			return true;
 		}
 		return false;
@@ -2539,13 +2541,18 @@ public class TwidereService extends Service implements Constants {
 				final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
-						final StatusUpdate status = new StatusUpdate(content);
+						final ImageUploaderInterface uploader = ImageUploaderInterface.getInstance(getApplication());
+						final String image_path = getImagePathFromUri(TwidereService.this, image_uri);
+						// final Uri result_uri = image_path != null ?
+						// uploader.upload(Uri.parse(image_path)) : null;
+						final Uri result_uri = null;
+						final StatusUpdate status = new StatusUpdate(result_uri != null ? content + " " + result_uri
+								: content);
 						status.setInReplyToStatusId(in_reply_to);
 						if (location != null) {
 							status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
 						}
-						final String image_path = getImagePathFromUri(TwidereService.this, image_uri);
-						if (image_path != null) {
+						if (image_path != null && result_uri == null) {
 							final File image_file = new File(image_path);
 							if (image_file.exists()) {
 								status.setMedia(image_file);

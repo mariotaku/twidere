@@ -76,23 +76,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private ImageButton mComposeButton;
 	private ServiceInterface mService;
 	private TabPageIndicator mIndicator;
-	
+
 	private Fragment mCurrentFragment;
-	
-	private final class HomeTabsAdapter extends TabsAdapter {
-
-		public HomeTabsAdapter(Context context, FragmentManager fm, TabPageIndicator indicator) {
-			super(context, fm, indicator);
-		}
-
-		@Override
-		public void onPageSelected(int position) {
-			super.onPageSelected(position);
-			mCurrentFragment = getItem(position);
-			invalidateSupportOptionsMenu();
-		}
-		
-	}
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -107,14 +92,14 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	};
 
 	private boolean mProgressBarIndeterminateVisible = false;
-	private boolean mIsNavigateToDefaultAccount = false;
 
+	private boolean mIsNavigateToDefaultAccount = false;
 	private boolean mDisplayAppIcon;
 
 	public static final int TAB_POSITION_HOME = 0;
+
 	public static final int TAB_POSITION_MENTIONS = 1;
 	public static final int TAB_POSITION_MESSAGES = 2;
-
 	private final ArrayList<TabSpec> mCustomTabs = new ArrayList<TabSpec>();
 
 	public boolean checkDefaultAccountSet() {
@@ -500,6 +485,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (!mCustomTabs.get(i).equals(tabs.get(i))) return true;
 		}
 		return false;
+	}
+
+	private final class HomeTabsAdapter extends TabsAdapter {
+
+		public HomeTabsAdapter(Context context, FragmentManager fm, TabPageIndicator indicator) {
+			super(context, fm, indicator);
+		}
+
+		@Override
+		public void onPageSelected(int position) {
+			super.onPageSelected(position);
+			mCurrentFragment = getItem(position);
+			invalidateSupportOptionsMenu();
+		}
+
 	}
 
 }

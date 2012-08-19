@@ -222,7 +222,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
 		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -484,8 +484,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (mTextCount != null) {
 			final int count = mValidator.getTweetLength(text);
-			final float hue = count < 140 ? (count >= 130 ? 5 * (140 - count) : 50) : 0;
-			final float[] hsv = new float[]{hue, 1.0f, 1.0f};
+			final float hue = count < 140 ? count >= 130 ? 5 * (140 - count) : 50 : 0;
+			final float[] hsv = new float[] { hue, 1.0f, 1.0f };
 			mTextCount.setTextColor(count >= 130 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
 			mTextCount.setText(parseString(count));
 		}

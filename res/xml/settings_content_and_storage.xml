@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:key="settings_content_and_storage"
+	android:title="@string/content_and_storage">
+
+	<PreferenceCategory
+		android:key="category_content"
+		android:title="@string/content">
+		<org.mariotaku.twidere.preference.ImageUploaderPickerPreference
+			android:key="image_uploader"
+			android:title="@string/image_uploader"/>
+
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="display_profile_image"
+			android:summary="@string/image_load_summary"
+			android:title="@string/display_profile_image"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:dependency="display_profile_image"
+			android:key="hires_profile_image"
+			android:summary="@string/image_load_summary"
+			android:title="@string/hires_profile_image"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:disableDependentsState="true"
+			android:key="skip_image_preview_processing"
+			android:summary="@string/skip_image_preview_processing_summary"
+			android:title="@string/skip_image_preview_processing"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:dependency="skip_image_preview_processing"
+			android:key="inline_image_preview"
+			android:summary="@string/image_load_summary"
+			android:title="@string/inline_image_preview"/>
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="display_name"
+			android:summaryOff="@string/display_name_summaryoff"
+			android:summaryOn="@string/display_name_summaryon"
+			android:title="@string/display_name"/>
+
+		<EditTextPreference
+			android:defaultValue="RT @[NAME]: [TEXT]"
+			android:dialogTitle="@string/quote_format"
+			android:key="quote_format"
+			android:singleLine="true"
+			android:summary="@string/quote_format_summary"
+			android:title="@string/quote_format"/>
+		<EditTextPreference
+			android:defaultValue="[TITLE] - [TEXT]"
+			android:dialogTitle="@string/share_format"
+			android:key="share_format"
+			android:singleLine="true"
+			android:summary="@string/share_format_summary"
+			android:title="@string/share_format"/>
+
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="load_more_automatically"
+			android:summary="@string/load_more_automatically_summary"
+			android:title="@string/load_more_automatically"/>
+
+		<org.mariotaku.preference.SeekBarPreference
+			maxValue="200"
+			minValue="10"
+			android:defaultValue="20"
+			android:key="load_item_limit"
+			android:summary="@string/load_item_limit_summary"
+			android:title="@string/load_item_limit"/>
+
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="remember_position"
+			android:summary="@string/remember_position_summary"
+			android:title="@string/remember_position"/>
+
+		<org.mariotaku.twidere.preference.TrendsLocationPreference
+			android:key="trends_location"
+			android:summary="@string/trends_location_summary"
+			android:title="@string/trends_location"/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="category_storage"
+		android:title="@string/storage">
+		<org.mariotaku.preference.SeekBarPreference
+			maxValue="300"
+			minValue="50"
+			android:defaultValue="100"
+			android:key="database_item_limit"
+			android:summary="@string/database_item_limit_summary"
+			android:title="@string/database_item_limit"/>
+
+		<Preference
+			android:key="clear_cache"
+			android:summary="@string/clear_cache_summary"
+			android:title="@string/clear_cache"/>
+		<Preference
+			android:key="clear_databases"
+			android:summary="@string/clear_databases_summary"
+			android:title="@string/clear_databases"/>
+	</PreferenceCategory>
+
+</PreferenceScreen>

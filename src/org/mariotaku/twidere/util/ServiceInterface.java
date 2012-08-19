@@ -19,9 +19,7 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.ServiceInterface.ServiceUtils.bindToService;
-
-import java.util.HashMap;
+import static org.mariotaku.twidere.util.ServiceUtils.bindToService;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
@@ -36,7 +34,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 
 public final class ServiceInterface implements Constants, ITwidereService {
 
@@ -57,8 +54,12 @@ public final class ServiceInterface implements Constants, ITwidereService {
 
 	private static ServiceInterface sInstance;
 
+	private static final String TWIDERE_PACKAGE_NAME = "org.mariotaku.twidere";
+
 	private ServiceInterface(Context context) {
-		bindToService(context, mConntecion);
+		final Intent intent = new Intent(INTENT_ACTION_SERVICE);
+		intent.setPackage(TWIDERE_PACKAGE_NAME);
+		bindToService(context, intent, mConntecion);
 
 	}
 
@@ -548,54 +549,4 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		}
 	}
 
-	public static final class ServiceUtils {
-
-		private static HashMap<Context, ServiceBinder> sConnectionMap = new HashMap<Context, ServiceBinder>();
-
-		public static ServiceToken bindToService(Context context) {
-
-			return bindToService(context, null);
-		}
-
-		public static ServiceToken bindToService(Context context, ServiceConnection callback) {
-
-			final Intent intent = new Intent(INTENT_ACTION_SERVICE);
-			final ContextWrapper cw = new ContextWrapper(context);
-			cw.startService(intent);
-			final ServiceBinder sb = new ServiceBinder(callback);
-			if (cw.bindService(intent, sb, 0)) {
-				sConnectionMap.put(cw, sb);
-				return new ServiceToken(cw);
-			}
-			Log.e(LOGTAG, "Failed to bind to service");
-			return null;
-		}
-
-		private static class ServiceBinder implements ServiceConnection {
-
-			private ServiceConnection mCallback;
-
-			public ServiceBinder(ServiceConnection callback) {
-
-				mCallback = callback;
-			}
-
-			@Override
-			public void onServiceConnected(ComponentName className, android.os.IBinder service) {
-
-				if (mCallback != null) {
-					mCallback.onServiceConnected(className, service);
-				}
-			}
-
-			@Override
-			public void onServiceDisconnected(ComponentName className) {
-
-				if (mCallback != null) {
-					mCallback.onServiceDisconnected(className);
-				}
-			}
-		}
-
-	}
 }

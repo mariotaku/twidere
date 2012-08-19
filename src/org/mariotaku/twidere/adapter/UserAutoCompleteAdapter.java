@@ -64,8 +64,10 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 		final Context app_context = context.getApplicationContext();
 		mProfileImageLoader = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context)
 				.getProfileImageLoader() : null;
-		mDisplayProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		mDisplayHiResProfileImage = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
+		mDisplayProfileImage = mPreferences != null ? mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE,
+				true) : true;
+		mDisplayHiResProfileImage = mPreferences != null ? mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE,
+				false) : false;
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-	android:key="cat_appearance"
+	android:key="category_appearance"
 	android:title="@string/look_and_feel">
 
 	<org.mariotaku.preference.TextSizePreference
@@ -11,36 +11,6 @@
 		android:summary="@string/text_size_summary"
 		android:title="@string/text_size"/>
 
-	<CheckBoxPreference
-		android:defaultValue="true"
-		android:key="display_profile_image"
-		android:summary="@string/image_load_summary"
-		android:title="@string/display_profile_image"/>
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:dependency="display_profile_image"
-		android:key="hires_profile_image"
-		android:summary="@string/image_load_summary"
-		android:title="@string/hires_profile_image"/>
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:disableDependentsState="true"
-		android:key="skip_image_preview_processing"
-		android:summary="@string/skip_image_preview_processing_summary"
-		android:title="@string/skip_image_preview_processing"/>
-
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:dependency="skip_image_preview_processing"
-		android:key="inline_image_preview"
-		android:summary="@string/image_load_summary"
-		android:title="@string/inline_image_preview"/>
-	<CheckBoxPreference
-		android:defaultValue="true"
-		android:key="display_name"
-		android:summaryOff="@string/display_name_summaryoff"
-		android:summaryOn="@string/display_name_summaryon"
-		android:title="@string/display_name"/>
 	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="bottom_compose_button"

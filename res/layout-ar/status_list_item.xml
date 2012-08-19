@@ -59,7 +59,7 @@
 		android:layout_marginRight="16dp"
 		android:layout_marginTop="3dp"
 		android:layout_toLeftOf="@+id/profile_image"
-		android:background="@drawable/gallery_selected_default"
+		android:background="@drawable/image_preview_background"
 		android:drawablePadding="3dp"
 		android:maxHeight="@dimen/image_preview_height"
 		android:maxWidth="@dimen/image_preview_width"

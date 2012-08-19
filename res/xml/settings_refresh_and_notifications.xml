@@ -4,7 +4,7 @@
 	android:title="@string/refresh_and_notifications">
 
 	<PreferenceCategory
-		android:key="cat_refresh"
+		android:key="category_refresh"
 		android:title="@string/refresh">
 		<CheckBoxPreference
 			android:defaultValue="false"
@@ -36,7 +36,7 @@
 			android:title="@string/refresh_after_tweet"/>
 	</PreferenceCategory>
 	<PreferenceCategory
-		android:key="cat_notifications"
+		android:key="category_notifications"
 		android:title="@string/notifications">
 		<org.mariotaku.twidere.preference.NotificationContentPreference
 			android:key="notification_content"

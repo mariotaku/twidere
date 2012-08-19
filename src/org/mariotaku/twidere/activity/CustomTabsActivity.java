@@ -20,7 +20,7 @@ public class CustomTabsActivity extends BaseActivity {
 		ft.replace(android.R.id.content, fragment);
 		ft.commit();
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

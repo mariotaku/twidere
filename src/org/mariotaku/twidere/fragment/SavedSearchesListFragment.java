@@ -84,6 +84,12 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 		getLoaderManager().restartLoader(0, null, this);
 	}
 
+	@Override
+	public void onPullUpToRefresh() {
+		// TODO Auto-generated method stub
+
+	}
+
 	private static class SavedSearchesAdapter extends BaseAdapter {
 
 		private ResponseList<SavedSearch> mData;
@@ -130,12 +136,6 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 			notifyDataSetChanged();
 		}
 
-	}
-
-	@Override
-	public void onPullUpToRefresh() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

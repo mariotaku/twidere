@@ -31,6 +31,8 @@ import org.mariotaku.twidere.loader.BaseUserListsLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -68,12 +70,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	private PopupMenu mPopupMenu;
 	private ParcelableUserList mSelectedUserList;
 
-	private boolean mAllItemsLoaded = false;
 	private long mCursor = -1;
-
-	public void addHeaders(ListView list) {
-
-	}
 
 	public long getAccountId() {
 		return mAccountId;
@@ -114,7 +111,6 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 		}
 		mAdapter = new UserListsAdapter(getActivity());
 		mListView = getListView();
-		addHeaders(mListView);
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		if (mAccountId != account_id) {
 			mAdapter.clear();
@@ -124,6 +120,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		mListView.setOnScrollListener(this);
+		setMode(Mode.BOTH);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
@@ -147,22 +144,14 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	public final void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		final ParcelableUserList user_list = mAdapter.findItem(id);
 		if (user_list == null) return;
-		if (mAdapter.isGap(id) && !mLoadMoreAutomatically) {
-			final Bundle args = getArguments();
-			if (!getLoaderManager().hasRunningLoaders()) {
-				getLoaderManager().restartLoader(0, args, this);
-			}
-		} else {
-			openUserListDetails(getActivity(), mAccountId, user_list.list_id, user_list.user_id,
-					user_list.user_screen_name, user_list.name);
-		}
+		openUserListDetails(getActivity(), mAccountId, user_list.list_id, user_list.user_id,
+				user_list.user_screen_name, user_list.name);
 	}
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		mSelectedUserList = null;
 		final UserListsAdapter adapter = getListAdapter();
-		if (adapter.isGap(position)) return false;
 		mSelectedUserList = adapter.findItem(id);
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user_list);
@@ -182,8 +171,6 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 		mAdapter.setData(data);
 		if (loader instanceof BaseUserListsLoader) {
 			final long cursor = ((BaseUserListsLoader) loader).getNextCursor();
-			mAllItemsLoaded = cursor != -2 && cursor == mCursor;
-			mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
 			if (cursor != -2) {
 				mCursor = cursor;
 			}
@@ -217,10 +204,19 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	public void onPullDownToRefresh() {
 		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
-	
+
 	@Override
 	public void onPullUpToRefresh() {
-		//TODO
+		final int count = mAdapter.getCount();
+		if (count - 1 > 0) {
+			final Bundle args = getArguments();
+			if (args != null) {
+				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).user_id);
+			}
+			if (!getLoaderManager().hasRunningLoaders()) {
+				getLoaderManager().restartLoader(0, args, this);
+			}
+		}
 	}
 
 	@Override
@@ -237,7 +233,6 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setDisplayName(display_name);
-		mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
 	}
 
 	@Override
@@ -252,14 +247,8 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 				return;
 			}
 			final int count = mAdapter.getCount();
-			if (mLoadMoreAutomatically && mReachedBottom && count > visibleItemCount && count - 1 > 0) {
-				final Bundle args = getArguments();
-				if (args != null) {
-					args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).user_id);
-				}
-				if (!getLoaderManager().hasRunningLoaders()) {
-					getLoaderManager().restartLoader(0, args, this);
-				}
+			if (mLoadMoreAutomatically && mReachedBottom && count > visibleItemCount) {
+				onPullUpToRefresh();
 			}
 		}
 
@@ -275,10 +264,6 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
-	}
-
-	public void setAllItemsLoaded(boolean loaded) {
-		mAllItemsLoaded = loaded;
 	}
 
 	private void openUserListDetails(Activity activity, long account_id, int list_id, long user_id, String screen_name,

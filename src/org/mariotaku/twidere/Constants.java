@@ -168,13 +168,14 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR = "notification_light_color";
 	public static final String PREFERENCE_KEY_SKIP_IMAGE_PREVIEW_PROCESSING = "skip_image_preview_processing";
 	public static final String PREFERENCE_KEY_SHARE_FORMAT = "share_format";
+	public static final String PREFERENCE_KEY_IMAGE_UPLOADER = "image_uploader";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + QUOTE_FORMAT_NAME_PATTERN + ": "
 			+ QUOTE_SHARE_FORMAT_TEXT_PATTERN;
-	
+
 	public static final String PREFERENCE_DEFAULT_SHARE_FORMAT = QUOTE_SHARE_FORMAT_TITLE_PATTERN + " - "
 			+ QUOTE_SHARE_FORMAT_TEXT_PATTERN;
-	
+
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final float PREFERENCE_DEFAULT_TEXT_SIZE = 14.0f;
@@ -208,6 +209,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_EXTENSION_OPEN_USER_LIST = INTENT_PACKAGE_PREFIX
 			+ "EXTENSION_OPEN_USER_LIST";
 	public static final String INTENT_ACTION_EXTENSION_COMPOSE = INTENT_PACKAGE_PREFIX + "EXTENSION_COMPOSE";
+	public static final String INTENT_ACTION_EXTENSION_UPLOAD_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD_IMAGE";
 	public static final String INTENT_ACTION_EXTENSION_SETTINGS = INTENT_PACKAGE_PREFIX + "EXTENSION_SETTINGS";
 
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX

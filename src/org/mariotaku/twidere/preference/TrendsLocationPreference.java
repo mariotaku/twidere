@@ -187,6 +187,7 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 			selector_builder.setTitle(getTitle());
 			selector_builder.setSingleChoiceItems(mAdapter, mAdapter.findItemPosition(mCheckedWoeId),
 					TrendsLocationPreference.this);
+			selector_builder.setNegativeButton(android.R.string.cancel, null);
 			mDialog = selector_builder.show();
 		}
 

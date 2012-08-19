@@ -15,7 +15,7 @@
 		android:title="@string/solid_color_background"/>
 
 	<PreferenceCategory
-		android:key="cat_settings"
+		android:key="category_settings"
 		android:title="@string/settings">
 		<Preference
 			android:key="custom_tabs"
@@ -34,11 +34,8 @@
 			android:key="settings_appearance"
 			android:title="@string/look_and_feel"/>
 		<Preference
-			android:key="settings_content"
-			android:title="@string/content"/>
-		<Preference
-			android:key="settings_storage"
-			android:title="@string/storage"/>
+			android:key="settings_content_and_storage"
+			android:title="@string/content_and_storage"/>
 		<Preference
 			android:key="settings_network"
 			android:title="@string/network"/>
@@ -50,7 +47,7 @@
 			android:title="@string/other_settings"/>
 	</PreferenceCategory>
 	<PreferenceCategory
-		android:key="cat_about"
+		android:key="category_about"
 		android:title="@string/about">
 		<Preference
 			android:key="about"

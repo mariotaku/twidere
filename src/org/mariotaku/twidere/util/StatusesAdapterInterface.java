@@ -28,11 +28,11 @@ public interface StatusesAdapterInterface extends BaseAdapterInterface {
 	public ParcelableStatus getStatus(int position);
 
 	public void setDisplayImagePreview(boolean preview);
-	
-	public void setSkipImagePreviewProcessing(boolean skip);
 
 	public void setGapDisallowed(boolean disallowed);
 
 	public void setShowAccountColor(boolean show);
+
+	public void setSkipImagePreviewProcessing(boolean skip);
 
 }

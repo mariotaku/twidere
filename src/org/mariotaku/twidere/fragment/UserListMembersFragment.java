@@ -104,7 +104,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		mSelectedUser = null;
 		final UsersAdapter adapter = getListAdapter();
-		if (adapter.isGap(position) || !isMyActivatedAccount(getActivity(), mOwnerId)) return false;
+		if (!isMyActivatedAccount(getActivity(), mOwnerId)) return false;
 		mSelectedUser = adapter.getItem(position);
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user_list_member);
@@ -123,9 +123,6 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 			if (mUserListId <= 0) {
 				mUserListId = ((ListMembersLoader) loader).getUserListId();
 			}
-			final boolean all_items_loaded = cursor != -2 && cursor == mCursor;
-			getListAdapter().setShowLastItemAsGap(!all_items_loaded);
-			setAllItemsLoaded(all_items_loaded);
 			if (cursor != -2) {
 				mCursor = cursor;
 			}

@@ -181,6 +181,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	};
 
+	private View mListContainer, mErrorRetryContainer;
+
 	public void changeUser(long account_id, User user) {
 		mFriendship = null;
 		if (user == null || user.getId() <= 0 || getActivity() == null
@@ -459,15 +461,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowedYouIndicator = (TextView) mHeaderView.findViewById(R.id.followed_you_indicator);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);
-		((FrameLayout)container_view.findViewById(R.id.list_container)).addView(mListContainer);
+		((FrameLayout) container_view.findViewById(R.id.list_container)).addView(mListContainer);
 		mErrorRetryContainer = container_view.findViewById(R.id.error_retry_container);
 		mRetryButton = (Button) container_view.findViewById(R.id.retry);
 		mErrorMessageView = (TextView) container_view.findViewById(R.id.error_message);
 		return container_view;
 	}
-	
-
-	private View mListContainer, mErrorRetryContainer;
 
 	@Override
 	public void onDestroyView() {

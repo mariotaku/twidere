@@ -16,7 +16,11 @@
 			android:layout_height="match_parent"
 			android:completionThreshold="1"
 			android:gravity="top"
-			android:hint="@string/tweet_hint"/>
+			android:hint="@string/tweet_hint"
+			android:imeOptions="actionDone">
+
+			<requestFocus/>
+		</org.mariotaku.twidere.view.StatusComposeEditText>
 
 		<FrameLayout
 			android:layout_width="match_parent"

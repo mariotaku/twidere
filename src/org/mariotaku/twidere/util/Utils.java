@@ -1051,27 +1051,27 @@ public final class Utils implements Constants {
 			url_m = PATTERN_TWITTER_IMAGES.matcher(image_url);
 			if (url_m.matches()) return new PreviewImage(getTwitterImage(image_url, force_ssl), image_url);
 			url_m = PATTERN_TWITPIC.matcher(image_url);
-			if (url_m.matches() && url_m.find())
+			if (url_m.matches())
 				return new PreviewImage(getTwitpicImage(matcherGroup(url_m, TWITPIC_GROUP_ID), force_ssl), image_url);
 			url_m = PATTERN_INSTAGRAM.matcher(image_url);
 			if (PATTERN_INSTAGRAM.matcher(image_url).matches() && url_m.find())
 				return new PreviewImage(getInstagramImage(matcherGroup(url_m, INSTAGRAM_GROUP_ID), force_ssl),
 						image_url);
 			url_m = PATTERN_IMGLY.matcher(image_url);
-			if (url_m.matches() && url_m.find())
+			if (url_m.matches())
 				return new PreviewImage(getImglyImage(matcherGroup(url_m, IMGLY_GROUP_ID), force_ssl), image_url);
 			url_m = PATTERN_YFROG.matcher(image_url);
-			if (url_m.matches() && url_m.find())
+			if (url_m.matches())
 				return new PreviewImage(getYfrogImage(matcherGroup(url_m, YFROG_GROUP_ID), force_ssl), image_url);
 			url_m = PATTERN_LOCKERZ_AND_PLIXI.matcher(image_url);
 			if (url_m.matches()) return new PreviewImage(getLockerzAndPlixiImage(image_url, force_ssl), image_url);
 			url_m = PATTERN_SINA_WEIBO_IMAGES.matcher(image_url);
 			if (url_m.matches()) return new PreviewImage(getSinaWeiboImage(image_url), image_url);
 			url_m = PATTERN_TWITGOO.matcher(image_url);
-			if (url_m.matches() && url_m.find())
+			if (url_m.matches())
 				return new PreviewImage(getTwitgooImage(matcherGroup(url_m, TWITGOO_GROUP_ID), force_ssl), image_url);
 			url_m = PATTERN_MOBYPICTURE.matcher(image_url);
-			if (url_m.matches() && url_m.find())
+			if (url_m.matches())
 				return new PreviewImage(getMobyPictureImage(matcherGroup(url_m, MOBYPICTURE_GROUP_ID), force_ssl),
 						image_url);
 		}
@@ -1099,18 +1099,8 @@ public final class Utils implements Constants {
 		if (isNullOrEmpty(quote_format)) {
 			quote_format = PREFERENCE_DEFAULT_QUOTE_FORMAT;
 		}
-		return quote_format.replace(QUOTE_FORMAT_NAME_PATTERN, screen_name).replace(QUOTE_SHARE_FORMAT_TEXT_PATTERN, text);
-	}
-	
-	public static String getShareStatus(Context context, String title, String text) {
-		if (context == null) return null;
-		String quote_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
-				PREFERENCE_KEY_SHARE_FORMAT, PREFERENCE_DEFAULT_SHARE_FORMAT);
-		if (isNullOrEmpty(quote_format)) {
-			quote_format = PREFERENCE_DEFAULT_SHARE_FORMAT;
-		}
-		if (title == null) return text;
-		return quote_format.replace(QUOTE_SHARE_FORMAT_TITLE_PATTERN, title).replace(QUOTE_SHARE_FORMAT_TEXT_PATTERN, text);
+		return quote_format.replace(QUOTE_FORMAT_NAME_PATTERN, screen_name).replace(QUOTE_SHARE_FORMAT_TEXT_PATTERN,
+				text);
 	}
 
 	/**
@@ -1178,6 +1168,18 @@ public final class Utils implements Constants {
 			cur.close();
 		}
 		return null;
+	}
+
+	public static String getShareStatus(Context context, String title, String text) {
+		if (context == null) return null;
+		String quote_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
+				PREFERENCE_KEY_SHARE_FORMAT, PREFERENCE_DEFAULT_SHARE_FORMAT);
+		if (isNullOrEmpty(quote_format)) {
+			quote_format = PREFERENCE_DEFAULT_SHARE_FORMAT;
+		}
+		if (title == null) return text;
+		return quote_format.replace(QUOTE_SHARE_FORMAT_TITLE_PATTERN, title).replace(QUOTE_SHARE_FORMAT_TEXT_PATTERN,
+				text);
 	}
 
 	public static ImageSpec getSinaWeiboImage(String url) {

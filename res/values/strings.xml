@@ -291,5 +291,8 @@
 	<string name="share_format">Share format</string>
 	<string name="share_format_summary">\"[TITLE]\" = Content title\n\"[TEXT]\" = Content text</string>
 	<string name="network">Network</string>
+	<string name="content_and_storage">Content &amp; Storage</string>
+	<string name="default_provider">Default</string>
+	<string name="image_uploader">Image uploader</string>
 
 </resources>

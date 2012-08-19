@@ -79,8 +79,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			for (int i = 0; i < size; i++) {
 				final Status status = statuses.get(i);
 				deleteStatus(status.getId());
-				data.add(new ParcelableStatus(status, account_id, false,
-						isForceSSLConnection()));
+				data.add(new ParcelableStatus(status, account_id, false, isForceSSLConnection()));
 			}
 		}
 		Collections.sort(data, ParcelableStatus.STATUS_ID_COMPARATOR);

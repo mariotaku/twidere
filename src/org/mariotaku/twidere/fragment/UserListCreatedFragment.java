@@ -17,26 +17,16 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
 
-public class UserListCreatedFragment extends BaseUserListsListFragment implements OnClickListener {
-
-	private View mHeaderView;
+public class UserListCreatedFragment extends BaseUserListsListFragment {
 
 	private DialogFragment mDialogFragment;
-
-	@Override
-	public void addHeaders(ListView list) {
-		if (getAccountId() == getUserId() || isMyActivatedUserName(getActivity(), getScreenName())) {
-			mHeaderView = LayoutInflater.from(getActivity()).inflate(R.layout.user_list_created_header, null);
-			mHeaderView.setOnClickListener(this);
-			list.addHeaderView(mHeaderView, null, false);
-		}
-	}
 
 	@Override
 	public Loader<List<ParcelableUserList>> newLoaderInstance(long account_id, long user_id, String screen_name) {
@@ -44,9 +34,16 @@ public class UserListCreatedFragment extends BaseUserListsListFragment implement
 	}
 
 	@Override
-	public void onClick(View view) {
-		switch (view.getId()) {
-			case R.id.add: {
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_user_list_created, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.new_user_list: {
+				if (getAccountId() != getUserId() && !isMyActivatedUserName(getActivity(), getScreenName())) return false;
 				if (mDialogFragment != null && mDialogFragment.isAdded()) {
 					mDialogFragment.dismiss();
 				}
@@ -58,7 +55,13 @@ public class UserListCreatedFragment extends BaseUserListsListFragment implement
 				break;
 			}
 		}
+		return super.onOptionsItemSelected(item);
+	}
 
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(getAccountId() == getUserId() || isMyActivatedUserName(getActivity(), getScreenName()));
 	}
 
 	public static class CreateUserListDialogFragment extends BaseDialogFragment implements

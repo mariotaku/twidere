@@ -27,9 +27,10 @@ import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.UsersAdapter;
-import org.mariotaku.twidere.loader.IDsUsersLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
+
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 import android.content.Context;
 import android.content.Intent;
@@ -68,8 +69,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 
 	private PopupMenu mPopupMenu;
 
-	private boolean mAllItemsLoaded = false;
-
 	public long getAccountId() {
 		return mAccountId;
 	}
@@ -105,6 +104,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		mListView.setOnScrollListener(this);
+		setMode(Mode.BOTH);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
@@ -128,24 +128,13 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	public final void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		final ParcelableUser user = mAdapter.findItem(id);
 		if (user == null) return;
-		if (mAdapter.isGap(id) && !mLoadMoreAutomatically) {
-			final Bundle args = getArguments();
-			if (args != null) {
-				args.putLong(INTENT_KEY_MAX_ID, user.user_id);
-			}
-			if (!getLoaderManager().hasRunningLoaders()) {
-				getLoaderManager().restartLoader(0, args, this);
-			}
-		} else {
-			openUserProfile(user.user_id, user.screen_name);
-		}
+		openUserProfile(user.user_id, user.screen_name);
 	}
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		mSelectedUser = null;
 		final UsersAdapter adapter = getListAdapter();
-		if (adapter.isGap(position)) return false;
 		mSelectedUser = adapter.findItem(id);
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user);
@@ -163,11 +152,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	public void onLoadFinished(Loader<List<ParcelableUser>> loader, List<ParcelableUser> data) {
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
-		if (loader instanceof IDsUsersLoader) {
-			final long[] ids = ((IDsUsersLoader) loader).getIDsArray();
-			mAllItemsLoaded = ids != null && ids.length == mAdapter.getCount();
-		}
-		mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
 		onRefreshComplete();
 		setListShown(true);
 	}
@@ -196,10 +180,19 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	public void onPullDownToRefresh() {
 		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
-	
+
 	@Override
 	public void onPullUpToRefresh() {
-		//TODO
+		final int count = mAdapter.getCount();
+		if (count - 1 > 0) {
+			final Bundle args = getArguments();
+			if (args != null) {
+				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).user_id);
+			}
+			if (!getLoaderManager().hasRunningLoaders()) {
+				getLoaderManager().restartLoader(0, args, this);
+			}
+		}
 	}
 
 	@Override
@@ -216,7 +209,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setDisplayName(display_name);
-		mAdapter.setShowLastItemAsGap(!(mAllItemsLoaded || mLoadMoreAutomatically));
 	}
 
 	@Override
@@ -231,14 +223,8 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 				return;
 			}
 			final int count = mAdapter.getCount();
-			if (mLoadMoreAutomatically && mReachedBottom && count > visibleItemCount && count - 1 > 0) {
-				final Bundle args = getArguments();
-				if (args != null) {
-					args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).user_id);
-				}
-				if (!getLoaderManager().hasRunningLoaders()) {
-					getLoaderManager().restartLoader(0, args, this);
-				}
+			if (mLoadMoreAutomatically && mReachedBottom && count > visibleItemCount) {
+				onPullUpToRefresh();
 			}
 		}
 
@@ -254,10 +240,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
-	}
-
-	public void setAllItemsLoaded(boolean loaded) {
-		mAllItemsLoaded = loaded;
 	}
 
 	protected void openUserProfile(long user_id, String screen_name) {

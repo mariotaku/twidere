@@ -153,7 +153,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			getLoaderManager().restartLoader(0, getArguments(), this);
 		}
 	}
-	
+
 	@Override
 	public void onPullDownToRefresh() {
 		getStatuses(null, null);

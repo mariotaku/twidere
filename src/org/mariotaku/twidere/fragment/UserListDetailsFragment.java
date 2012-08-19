@@ -136,6 +136,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 	};
 
+	private View mListContainer, mErrorRetryContainer;
+
 	public void changeUserList(long account_id, UserList user_list) {
 		if (user_list == null || getActivity() == null || !isMyActivatedAccount(getActivity(), account_id)) return;
 		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
@@ -302,14 +304,12 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mFollowMoreButton = (Button) mHeaderView.findViewById(R.id.follow_more);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);
-		((FrameLayout)container_view.findViewById(R.id.list_container)).addView(mListContainer);
+		((FrameLayout) container_view.findViewById(R.id.list_container)).addView(mListContainer);
 		mErrorRetryContainer = container_view.findViewById(R.id.error_retry_container);
 		mRetryButton = (Button) container_view.findViewById(R.id.retry);
 		mErrorMessageView = (TextView) container_view.findViewById(R.id.error_message);
 		return container_view;
 	}
-	
-	private View mListContainer, mErrorRetryContainer;
 
 	@Override
 	public void onDestroyView() {

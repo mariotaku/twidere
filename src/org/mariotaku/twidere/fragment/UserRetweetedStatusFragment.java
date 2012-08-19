@@ -29,8 +29,6 @@ import android.support.v4.content.Loader;
 
 public class UserRetweetedStatusFragment extends BaseUsersListFragment {
 
-	private int mPage = 1;
-
 	@Override
 	public Loader<List<ParcelableUser>> newLoaderInstance() {
 		final Bundle args = getArguments();
@@ -48,8 +46,6 @@ public class UserRetweetedStatusFragment extends BaseUsersListFragment {
 			final int pos = getListAdapter().findItemPositionByUserId(max_id);
 			if (pos > 0) {
 				page = pos / load_item_limit + 1;
-				setAllItemsLoaded(mPage == page);
-				mPage = page;
 			}
 		}
 		return new UserRetweetedStatusLoader(getActivity(), account_id, status_id, page, getData());

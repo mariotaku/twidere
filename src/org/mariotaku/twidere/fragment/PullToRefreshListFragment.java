@@ -47,6 +47,16 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	}
 
 	/**
+	 * Returns whether the Widget is currently in the Refreshing mState
+	 * 
+	 * @return true if the Widget is currently refreshing
+	 */
+	public boolean isRefreshing() {
+		if (mPullToRefreshListView == null) return false;
+		return mPullToRefreshListView.isRefreshing();
+	}
+
+	/**
 	 * Provide default implementation to return a simple list view. Subclasses
 	 * can override to replace with their own layout. If doing so, the returned
 	 * view hierarchy <em>must</em> have a ListView whose id is
@@ -124,6 +134,16 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	}
 
 	/**
+	 * Set the mode of Pull-to-Refresh that this view will use.
+	 * 
+	 * @param mode - Mode to set the View to
+	 */
+	public final void setMode(Mode mode) {
+		if (mPullToRefreshListView == null) return;
+		mPullToRefreshListView.setMode(mode);
+	}
+
+	/**
 	 * Set Text to show when the Widget is being Pulled
 	 * 
 	 * @param pullLabel - String to display
@@ -144,17 +164,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	public final void setPullToRefreshEnabled(boolean enable) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setPullToRefreshEnabled(enable);
-		
-	}
-	
-	/**
-	 * Set the mode of Pull-to-Refresh that this view will use.
-	 * 
-	 * @param mode - Mode to set the View to
-	 */
-	public final void setMode(Mode mode) {
-		if (mPullToRefreshListView == null) return;
-		mPullToRefreshListView.setMode(mode);
+
 	}
 
 	/**
@@ -167,19 +177,9 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	public final void setRefreshing(boolean doScroll) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setRefreshing(doScroll);
-		
+
 	}
 
-	/**
-	 * Returns whether the Widget is currently in the Refreshing mState
-	 * 
-	 * @return true if the Widget is currently refreshing
-	 */
-	public boolean isRefreshing() {
-		if (mPullToRefreshListView == null) return false;
-		return mPullToRefreshListView.isRefreshing();
-	}
-	
 	/**
 	 * Set Text to show when the Widget is refreshing
 	 * <code>setRefreshingLabel(releaseLabel, Mode.BOTH)</code>

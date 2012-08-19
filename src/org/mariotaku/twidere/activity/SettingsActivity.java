@@ -50,8 +50,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	private static final String KEY_CUSTOM_TABS = "custom_tabs";
 	private static final String KEY_EXTENSIONS = "extensions";
 	private static final String KEY_SETTINGS_APPEARANCE = "settings_appearance";
-	private static final String KEY_SETTINGS_CONTENT = "settings_content";
-	private static final String KEY_SETTINGS_STORAGE = "settings_storage";
+	private static final String KEY_SETTINGS_CONTENT_AND_STORAGE = "settings_content_and_storage";
 	private static final String KEY_SETTINGS_NETWORK = "settings_network";
 	private static final String KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS = "settings_refresh_and_notifications";
 	private static final String KEY_SETTINGS_OTHER = "settings_other";
@@ -90,8 +89,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			activity.findPreference(KEY_EXTENSIONS).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_CUSTOM_TABS).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_APPEARANCE).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_SETTINGS_CONTENT).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_SETTINGS_STORAGE).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_SETTINGS_CONTENT_AND_STORAGE).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_NETWORK).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_OTHER).setOnPreferenceClickListener(this);
@@ -134,10 +132,8 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			return true;
 		} else if (KEY_SETTINGS_APPEARANCE.equals(key)) {
 			res_id = R.xml.settings_appearance;
-		} else if (KEY_SETTINGS_CONTENT.equals(key)) {
-			res_id = R.xml.settings_content;
-		} else if (KEY_SETTINGS_STORAGE.equals(key)) {
-			res_id = R.xml.settings_storage;
+		} else if (KEY_SETTINGS_CONTENT_AND_STORAGE.equals(key)) {
+			res_id = R.xml.settings_content_and_storage;
 		} else if (KEY_SETTINGS_NETWORK.equals(key)) {
 			res_id = R.xml.settings_network;
 		} else if (KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS.equals(key)) {
