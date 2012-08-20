@@ -2512,6 +2512,8 @@ public class TwidereService extends Service implements Constants {
 
 	private class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<SingleResponse<twitter4j.Status>>> {
 
+		private final ImageUploaderInterface uploader;
+		
 		private long[] account_ids;
 		private String content;
 		private Location location;
@@ -2522,6 +2524,8 @@ public class TwidereService extends Service implements Constants {
 		public UpdateStatusTask(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to,
 				boolean delete_image) {
 			super(TwidereService.this, mAsyncTaskManager);
+			final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
+			uploader = ImageUploaderInterface.getInstance(getApplication(), component);
 			this.account_ids = account_ids;
 			this.content = content;
 			this.location = location;
@@ -2541,10 +2545,10 @@ public class TwidereService extends Service implements Constants {
 				final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 				if (twitter != null) {
 					try {
-						final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-						final ImageUploaderInterface uploader = ImageUploaderInterface.getInstance(getApplication(),
-								component);
 						final String image_path = getImagePathFromUri(TwidereService.this, image_uri);
+						if (uploader != null) {
+							uploader.waitForService();
+						}
 						final Uri result_uri = image_path != null && uploader != null ? uploader.upload(
 								Uri.parse(image_path), content) : null;
 						final StatusUpdate status = new StatusUpdate(result_uri != null ? content + " " + result_uri

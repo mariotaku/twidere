@@ -40,7 +40,7 @@ public final class ArrayUtils {
 		return builder.toString();
 	}
 
-	public static <T> String buildString(T[] array, char token, boolean include_space) {
+	public static String buildString(Object[] array, char token, boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
 		final int length = array.length;
 		for (int i = 0; i < length; i++) {
@@ -62,8 +62,8 @@ public final class ArrayUtils {
 		return false;
 	}
 
-	public static <T> boolean contains(T[] array, T value) {
-		for (final T item : array) {
+	public static boolean contains(Object[] array, Object value) {
+		for (final Object item : array) {
 			if (item == null || value == null) {
 				if (item == value) return true;
 				continue;
@@ -73,7 +73,7 @@ public final class ArrayUtils {
 		return false;
 	}
 
-	public static <T> boolean contentMatch(T[] array1, T[] array2) {
+	public static boolean contentMatch(Object[] array1, Object[] array2) {
 		if (array1 == null || array2 == null) return array1 == array2;
 		if (array1.length != array2.length) return false;
 		final int length = array1.length;
@@ -91,7 +91,7 @@ public final class ArrayUtils {
 		return -1;
 	}
 
-	public static <T> int indexOf(T[] array, T value) {
+	public static int indexOf(Object[] array, Object value) {
 		final int length = array.length;
 		for (int i = 0; i < length; i++) {
 			if (array[i].equals(value)) return i;

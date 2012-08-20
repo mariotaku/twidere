@@ -69,6 +69,22 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	};
 
 	@Override
+	public int bulkInsert(Uri uri, ContentValues[] values) {
+		final String table = getTableNameForContentUri(uri);
+		int result = 0;
+		if (table != null) {
+			database.beginTransaction();
+			for (ContentValues contentValues : values) {
+				database.insert(table, null, contentValues);
+				result++;
+			}
+			database.setTransactionSuccessful();
+			database.endTransaction();
+		}
+		return result;
+	};
+
+	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		final String table = getTableNameForContentUri(uri);
 		int result = 0;
