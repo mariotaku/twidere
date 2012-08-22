@@ -193,7 +193,7 @@
 	<string name="outbox">Outbox</string>
 	<string name="load_images">Load images</string>
 	<string name="stop_service_after_closed">Stop service after twidere closed.</string>
-	<string name="stop_service_after_closed_summary">I don\'t know why you\'d like to enable this, but if you got any problem after enable this, remember, it\'s all your fault.</string>
+	<string name="stop_service_after_closed_summary">I don\'t know why you\'d like to enable this, but if you got any problem after enabling this, remember, it\'s all your fault.</string>
 	<string name="other_settings">Other settings</string>
 	<string name="refresh_and_notifications">Refresh &amp; Notifications</string>
 	<string name="auto_refresh">Auto refresh</string>
@@ -211,7 +211,7 @@
 	<string name="load_earlier_messages">Load earlier direct messages</string>
 	<string name="screen_name">Screen name</string>
 	<string name="sort_timeline_by_time">Sort timeline by time</string>
-	<string name="sort_timeline_by_time_summary">This may cause retweeted status shown in wrong place, but may helpful if you use other services like Identi.ca.</string>
+	<string name="sort_timeline_by_time_summary">This may cause retweets to be shown in wrong place, but may be helpful if you use other services like Identi.ca.</string>
 	<string name="refresh_on_start">Refresh on start</string>
 	<string name="refresh_on_start_summary">Refresh timeline, mentions on start.</string>
 	<string name="refresh_after_tweet">Refresh after tweet</string>
