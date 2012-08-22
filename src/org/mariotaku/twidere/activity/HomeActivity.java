@@ -72,12 +72,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private SharedPreferences mPreferences;
 	private ActionBar mActionBar;
 	private ProgressBar mProgress;
-	private HomeTabsAdapter mAdapter;
+	private TabsAdapter mAdapter;
 	private ImageButton mComposeButton;
 	private ServiceInterface mService;
 	private TabPageIndicator mIndicator;
-
-	private Fragment mCurrentFragment;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -192,11 +190,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		switch (v.getId()) {
 			case R.id.compose:
 			case R.id.button_compose:
-				if (mCurrentFragment instanceof DirectMessagesFragment) {
-					((DirectMessagesFragment) mCurrentFragment).openDMConversation();
-				} else {
-					startActivity(new Intent(INTENT_ACTION_COMPOSE));
-				}
+				startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				break;
 		}
 
@@ -256,7 +250,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
-		mAdapter = new HomeTabsAdapter(this, getSupportFragmentManager(), mIndicator);
+		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mAdapter.setDisplayLabel(tab_display_label);
 		initTabs(getTabs(this));
 		mViewPager.setAdapter(mAdapter);
@@ -314,11 +308,19 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				break;
 			}
 			case MENU_COMPOSE: {
-				if (mCurrentFragment instanceof DirectMessagesFragment) {
-					((DirectMessagesFragment) mCurrentFragment).openDMConversation();
-					return true;
+				if (mViewPager != null) {
+					final int position = mViewPager.getCurrentItem();
+					if (position == mAdapter.getCount() - 1) {
+						startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
+					} else {
+						switch (position) {
+							case TAB_POSITION_MESSAGES:
+								break;
+							default:
+								startActivity(new Intent(INTENT_ACTION_COMPOSE));
+						}
+					}
 				}
-				startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				break;
 			}
 			case MENU_SEARCH: {
@@ -363,28 +365,36 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				break;
 			}
 		}
-
+		invalidateSupportOptionsMenu();
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		final boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
 		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
+		int icon = R.drawable.ic_menu_tweet;
+		if (mViewPager != null) {
+			final int position = mViewPager.getCurrentItem();
+			
+			if (position == mAdapter.getCount() - 1) {
+				icon = R.drawable.ic_menu_add;
+			} else {
+				switch (position) {
+					case TAB_POSITION_MESSAGES:
+						icon = R.drawable.ic_menu_compose;
+						break;
+					default:
+						icon = R.drawable.ic_menu_tweet;
+				}
+			}
+		}
 		final MenuItem composeItem = menu.findItem(MENU_COMPOSE);
 		if (composeItem != null) {
-			if (mCurrentFragment instanceof DirectMessagesFragment) {
-				composeItem.setIcon(R.drawable.ic_menu_compose);
-			} else {
-				composeItem.setIcon(R.drawable.ic_menu_tweet);
-			}
+			composeItem.setIcon(icon);
 			composeItem.setVisible(!bottom_actions);
 		}
 		if (mComposeButton != null) {
-			if (mCurrentFragment instanceof DirectMessagesFragment) {
-				mComposeButton.setImageResource(R.drawable.ic_menu_compose);
-			} else {
-				mComposeButton.setImageResource(R.drawable.ic_menu_tweet);
-			}
+			mComposeButton.setImageResource(icon);
 			mComposeButton.setVisibility(bottom_actions ? View.VISIBLE : View.GONE);
 			if (bottom_actions) {
 				final FrameLayout.LayoutParams compose_lp = (FrameLayout.LayoutParams) mComposeButton.getLayoutParams();
@@ -452,11 +462,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
-	protected void onPostResume() {
-		super.onPostResume();
-	}
-
-	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 	}
@@ -485,21 +490,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (!mCustomTabs.get(i).equals(tabs.get(i))) return true;
 		}
 		return false;
-	}
-
-	private final class HomeTabsAdapter extends TabsAdapter {
-
-		public HomeTabsAdapter(Context context, FragmentManager fm, TabPageIndicator indicator) {
-			super(context, fm, indicator);
-		}
-
-		@Override
-		public void onPageSelected(int position) {
-			super.onPageSelected(position);
-			mCurrentFragment = getItem(position);
-			invalidateSupportOptionsMenu();
-		}
-
 	}
 
 }

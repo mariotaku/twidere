@@ -60,7 +60,16 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		final Intent intent = new Intent(INTENT_ACTION_SERVICE);
 		intent.setPackage(TWIDERE_PACKAGE_NAME);
 		bindToService(context, intent, mConntecion);
-
+	}
+	
+	public void waitForService() {
+		while (mService == null) {
+			try {
+				Thread.sleep(100L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -537,16 +546,6 @@ public final class ServiceInterface implements Constants, ITwidereService {
 			sInstance = new ServiceInterface(application);
 		}
 		return sInstance;
-	}
-
-	public static class ServiceToken {
-
-		ContextWrapper wrapped_context;
-
-		ServiceToken(ContextWrapper context) {
-
-			wrapped_context = context;
-		}
 	}
 
 }

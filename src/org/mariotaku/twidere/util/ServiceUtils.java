@@ -2,8 +2,6 @@ package org.mariotaku.twidere.util;
 
 import java.util.HashMap;
 
-import org.mariotaku.twidere.util.ImageUploaderInterface.ServiceToken;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -61,4 +59,13 @@ public final class ServiceUtils {
 		}
 	}
 
+	public static class ServiceToken {
+
+		ContextWrapper wrapped_context;
+
+		ServiceToken(ContextWrapper context) {
+
+			wrapped_context = context;
+		}
+	}
 }
