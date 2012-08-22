@@ -308,7 +308,19 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				break;
 			}
 			case MENU_COMPOSE: {
-				startActivity(new Intent(INTENT_ACTION_COMPOSE));
+				if (mViewPager != null) {
+					final int position = mViewPager.getCurrentItem();
+					if (position == mAdapter.getCount() - 1) {
+						startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
+					} else {
+						switch (position) {
+							case TAB_POSITION_MESSAGES:
+								break;
+							default:
+								startActivity(new Intent(INTENT_ACTION_COMPOSE));
+						}
+					}
+				}
 				break;
 			}
 			case MENU_SEARCH: {
@@ -368,10 +380,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				icon = R.drawable.ic_menu_add;
 			} else {
 				switch (position) {
-					case TAB_POSITION_HOME:
-					case TAB_POSITION_MENTIONS:
-						icon = R.drawable.ic_menu_tweet;
-						break;
 					case TAB_POSITION_MESSAGES:
 						icon = R.drawable.ic_menu_compose;
 						break;
