@@ -144,6 +144,8 @@ public class TwidereService extends Service implements Constants {
 	};
 
 	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
+	private ArrayList<String> mNewMentionsNames = new ArrayList<String>();
+	private ArrayList<String> mNewMentionsScreenNames = new ArrayList<String>();
 
 	private AlarmManager mAlarmManager;
 
@@ -167,6 +169,8 @@ public class TwidereService extends Service implements Constants {
 			}
 			case NOTIFICATION_ID_MENTIONS: {
 				mNewMentionsCount = 0;
+				mNewMentionsNames.clear();
+				mNewMentionsScreenNames.clear();
 				break;
 			}
 			case NOTIFICATION_ID_DIRECT_MESSAGES: {

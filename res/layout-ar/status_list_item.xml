@@ -52,8 +52,8 @@
 
 	<ImageView
 		android:id="@+id/image_preview"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="@dimen/preview_image_size"
+		android:layout_height="@dimen/preview_image_size"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/text"
 		android:layout_marginRight="16dp"
@@ -61,9 +61,7 @@
 		android:layout_toLeftOf="@+id/profile_image"
 		android:background="@drawable/image_preview_background"
 		android:drawablePadding="3dp"
-		android:maxHeight="@dimen/image_preview_height"
-		android:maxWidth="@dimen/image_preview_width"
-		android:textColor="?android:attr/textColorSecondary"
+		android:scaleType="fitCenter"
 		android:visibility="gone"/>
 
 	<TextView
