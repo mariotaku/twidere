@@ -2498,7 +2498,7 @@ public final class Utils implements Constants {
 					&& (!isMyActivatedAccount(context, status.user_id) || getActivatedAccountIds(context).length > 1));
 			final Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
 			if (isMyActivatedAccount(context, status.retweeted_by_id)) {
-				iconRetweetSubMenu.setColorFilter(activated_color, Mode.MULTIPLY);
+				iconRetweetSubMenu.mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 				itemRetweet.setTitle(R.string.cancel_retweet);
 			} else {
 				iconRetweetSubMenu.clearColorFilter();
@@ -2509,7 +2509,7 @@ public final class Utils implements Constants {
 		if (itemFav != null) {
 			final Drawable iconFav = itemFav.getIcon();
 			if (status.is_favorite) {
-				iconFav.setColorFilter(activated_color, Mode.MULTIPLY);
+				iconFav.mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 				itemFav.setTitle(R.string.unfav);
 			} else {
 				iconFav.clearColorFilter();

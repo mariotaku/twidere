@@ -291,7 +291,6 @@
   <string name="share_format_summary">\"[TITLE]\" = 分享内容的标题\n\"[TEXT]\" = 分享内容的正文</string>
   <string name="network">网络</string>
   <string name="content_and_storage">内容与存储</string>
-  <string name="default_provider">默认（Twitter）</string>
   <string name="image_uploader">图片上传服务</string>
   <string name="home_refresh">在主页时间线刷新</string>
 </resources>

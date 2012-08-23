@@ -292,8 +292,8 @@
 	<string name="share_format_summary">\"[TITLE]\" = Content title\n\"[TEXT]\" = Content text</string>
 	<string name="network">Network</string>
 	<string name="content_and_storage">Content &amp; Storage</string>
-	<string name="default_provider">Default</string>
 	<string name="image_uploader">Image uploader</string>
+	<string name="image_uploader_default">Default (Twitter)</string>
 	<string name="home_refresh">Refresh in home timeline</string>
 	<string name="people_with_others"><xliff:g id="people">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others</string>
 	<string name="people_mentioned_you"><xliff:g id="users">%s</xliff:g> mentioned you.</string>
@@ -301,5 +301,10 @@
 	<string name="error_message_image_uploader_not_found">Image uploader not found, maybe it was uninstalled.</string>
 	<string name="image_upload_format">Tweet format when upload image</string>
 	<string name="image_upload_format_summary">\"[LINK]\" = Image link\n\"[TEXT]\" = Tweet content</string>
+	<string name="tweet_shortener">Tweet shortener</string>
+	<string name="tweet_shortener_default">None (Abort sending)</string>
+	<string name="error_message_status_too_long">Tweet too long.</string>
+	<string name="error_message_tweet_shorten_failed">Tweet shorten failed.</string>
+	<string name="error_message_tweet_shortener_not_found">Tweet shortener not found, maybe it was uninstalled.</string>
 
 </resources>

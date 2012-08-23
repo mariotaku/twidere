@@ -411,7 +411,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 						final Drawable blockIcon = blockItem.getIcon();
 						if (mFriendship.isSourceBlockingTarget()) {
 							blockItem.setTitle(R.string.unblock);
-							blockIcon.setColorFilter(getResources().getColor(R.color.holo_blue_bright),
+							blockIcon.mutate().setColorFilter(getResources().getColor(R.color.holo_blue_bright),
 									PorterDuff.Mode.MULTIPLY);
 						} else {
 							blockItem.setTitle(R.string.block);

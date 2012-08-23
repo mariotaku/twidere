@@ -75,10 +75,10 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 	}
 
 	@Override
-	public String shorten(String text, long in_reply_to_status_id, String in_reply_to_screen_name) {
+	public String shorten(String text, String screen_name, long in_reply_to_status_id) {
 		if (mService == null) return null;
 		try {
-			return mService.shorten(text, in_reply_to_status_id, in_reply_to_screen_name);
+			return mService.shorten(text,  screen_name, in_reply_to_status_id);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}

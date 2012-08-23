@@ -495,7 +495,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			mTextCount.setText(parseString(count));
 		}
 		final MenuItem sendItem = menu.findItem(MENU_SEND);
-		sendItem.setEnabled(mValidator.isValidTweet(text) && (mUploadUseExtension || text_orig.length() > 0));
+		sendItem.setEnabled(text_orig.length() > 0);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -587,7 +587,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		final int activated_color = getResources().getColor(R.color.holo_blue_bright);
 		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		if (mIsImageAttached && !mIsPhotoAttached) {
-			itemAddImage.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemAddImage.getIcon().mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAddImage.setTitle(R.string.remove_image);
 		} else {
 			itemAddImage.getIcon().clearColorFilter();
@@ -595,7 +595,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		}
 		final MenuItem itemTakePhoto = menu.findItem(MENU_TAKE_PHOTO);
 		if (!mIsImageAttached && mIsPhotoAttached) {
-			itemTakePhoto.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemTakePhoto.getIcon().mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 			itemTakePhoto.setTitle(R.string.remove_photo);
 		} else {
 			itemTakePhoto.getIcon().clearColorFilter();
@@ -604,7 +604,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		final MenuItem itemAttachLocation = menu.findItem(MENU_ADD_LOCATION);
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		if (attach_location && getLocation()) {
-			itemAttachLocation.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemAttachLocation.getIcon().mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAttachLocation.setTitle(R.string.remove_location);
 		} else {
 			mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false).commit();

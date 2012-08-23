@@ -9,7 +9,10 @@
 		<org.mariotaku.twidere.preference.ImageUploaderPickerPreference
 			android:key="image_uploader"
 			android:title="@string/image_uploader"/>
-
+		<org.mariotaku.twidere.preference.TweetShortenerPickerPreference
+			android:key="tweet_shortener"
+			android:title="@string/tweet_shortener"/>
+			
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="display_profile_image"

@@ -20,5 +20,5 @@
 package org.mariotaku.twidere;
 
 interface ITweetShortener {
-	String shorten(String text, long in_reply_to_status_id, String in_reply_to_screen_name);
+	String shorten(String text, String screen_name, long in_reply_to_status_id);
 }

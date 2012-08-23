@@ -173,6 +173,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_HOME_REFRESH_MENTIONS = "home_refresh_mentions";
 	public static final String PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES = "home_refresh_direct_messages";
 	public static final String PREFERENCE_KEY_IMAGE_UPLOAD_FORMAT = "image_upload_format";
+	public static final String PREFERENCE_KEY_TWEET_SHORTENER = "tweet_shortener";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

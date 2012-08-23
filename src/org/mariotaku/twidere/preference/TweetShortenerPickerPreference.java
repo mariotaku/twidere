@@ -18,7 +18,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.AttributeSet;
 
-public class ImageUploaderPickerPreference extends Preference implements Constants, OnPreferenceClickListener,
+public class TweetShortenerPickerPreference extends Preference implements Constants, OnPreferenceClickListener,
 		OnClickListener {
 
 	private SharedPreferences mPreferences;
@@ -27,17 +27,17 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 
 	private AlertDialog mDialog;
 
-	private ImageUploaderSpec[] mAvailableImageUploaders;
+	private TweetShortenerSpec[] mAvailableTweetShorteners;
 
-	public ImageUploaderPickerPreference(Context context) {
+	public TweetShortenerPickerPreference(Context context) {
 		this(context, null);
 	}
 
-	public ImageUploaderPickerPreference(Context context, AttributeSet attrs) {
+	public TweetShortenerPickerPreference(Context context, AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public ImageUploaderPickerPreference(Context context, AttributeSet attrs, int defStyle) {
+	public TweetShortenerPickerPreference(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		mPackageManager = context.getPackageManager();
 		setOnPreferenceClickListener(this);
@@ -47,9 +47,9 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 	public void onClick(DialogInterface dialog, int which) {
 		final SharedPreferences.Editor editor = getEditor();
 		if (editor == null) return;
-		final ImageUploaderSpec spec = mAvailableImageUploaders[which];
+		final TweetShortenerSpec spec = mAvailableTweetShorteners[which];
 		if (spec != null) {
-			editor.putString(PREFERENCE_KEY_IMAGE_UPLOADER, spec.cls);
+			editor.putString(PREFERENCE_KEY_TWEET_SHORTENER, spec.cls);
 			editor.commit();
 		}
 		if (mDialog != null && mDialog.isShowing()) {
@@ -61,40 +61,40 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 	public boolean onPreferenceClick(Preference preference) {
 		mPreferences = getSharedPreferences();
 		if (mPreferences == null) return false;
-		final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-		final ArrayList<ImageUploaderSpec> specs = new ArrayList<ImageUploaderSpec>();
-		specs.add(new ImageUploaderSpec(getContext().getString(R.string.image_uploader_default), null));
-		final Intent query_intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
+		final String component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
+		final ArrayList<TweetShortenerSpec> specs = new ArrayList<TweetShortenerSpec>();
+		specs.add(new TweetShortenerSpec(getContext().getString(R.string.tweet_shortener_default), null));
+		final Intent query_intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
 		final List<ResolveInfo> result = mPackageManager.queryIntentServices(query_intent, 0);
 		for (final ResolveInfo info : result) {
-			specs.add(new ImageUploaderSpec(info.loadLabel(mPackageManager).toString(), info.serviceInfo.packageName
+			specs.add(new TweetShortenerSpec(info.loadLabel(mPackageManager).toString(), info.serviceInfo.packageName
 					+ "/" + info.serviceInfo.name));
 		}
-		mAvailableImageUploaders = specs.toArray(new ImageUploaderSpec[specs.size()]);
+		mAvailableTweetShorteners = specs.toArray(new TweetShortenerSpec[specs.size()]);
 		final AlertDialog.Builder selector_builder = new AlertDialog.Builder(getContext());
 		selector_builder.setTitle(getTitle());
-		selector_builder.setSingleChoiceItems(mAvailableImageUploaders, getIndex(component),
-				ImageUploaderPickerPreference.this);
+		selector_builder.setSingleChoiceItems(mAvailableTweetShorteners, getIndex(component),
+				TweetShortenerPickerPreference.this);
 		selector_builder.setNegativeButton(android.R.string.cancel, null);
 		mDialog = selector_builder.show();
 		return true;
 	}
 
 	private int getIndex(String cls) {
-		if (mAvailableImageUploaders == null) return -1;
+		if (mAvailableTweetShorteners == null) return -1;
 		if (cls == null) return 0;
-		final int count = mAvailableImageUploaders.length;
+		final int count = mAvailableTweetShorteners.length;
 		for (int i = 0; i < count; i++) {
-			final ImageUploaderSpec spec = mAvailableImageUploaders[i];
+			final TweetShortenerSpec spec = mAvailableTweetShorteners[i];
 			if (cls.equals(spec.cls)) return i;
 		}
 		return -1;
 	}
 
-	static class ImageUploaderSpec implements CharSequence {
+	static class TweetShortenerSpec implements CharSequence {
 		private final String name, cls;
 
-		ImageUploaderSpec(String name, String cls) {
+		TweetShortenerSpec(String name, String cls) {
 			this.name = name;
 			this.cls = cls;
 		}

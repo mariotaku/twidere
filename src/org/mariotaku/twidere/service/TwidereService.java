@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.service;
 
 import static org.mariotaku.twidere.util.Utils.buildQueryUri;
+import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
@@ -86,6 +87,8 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
+import org.mariotaku.twidere.util.TweetShortenerInterface;
+import com.twitter.Validator;
 
 public class TwidereService extends Service implements Constants {
 
@@ -2515,20 +2518,25 @@ public class TwidereService extends Service implements Constants {
 	class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<SingleResponse<twitter4j.Status>>> {
 
 		private final ImageUploaderInterface uploader;
+		private final TweetShortenerInterface shortener;
+		private final Validator validator = new Validator();
 		
 		private long[] account_ids;
 		private String content;
 		private Location location;
 		private Uri image_uri;
 		private long in_reply_to;
-		private boolean upload_use_extension, delete_image;
+		private boolean use_uploader, use_shortener, delete_image;
 
 		public UpdateStatusTask(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to,
 				boolean delete_image) {
 			super(TwidereService.this, mAsyncTaskManager);
-			final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-			upload_use_extension = !isNullOrEmpty(component);
-			uploader = upload_use_extension ? ImageUploaderInterface.getInstance(getApplication(), component) : null;
+			final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
+			final String shortener_component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
+			use_uploader = !isNullOrEmpty(uploader_component);
+			uploader = use_uploader ? ImageUploaderInterface.getInstance(getApplication(), uploader_component) : null;
+			use_shortener = !isNullOrEmpty(shortener_component);
+			shortener = use_shortener ? TweetShortenerInterface.getInstance(getApplication(), shortener_component) : null;
 			this.account_ids = account_ids != null ? account_ids : new long[0];
 			this.content = content;
 			this.location = location;
@@ -2545,8 +2553,11 @@ public class TwidereService extends Service implements Constants {
 			if (account_ids.length == 0) return result;
 			
 			try {
-				if (upload_use_extension && uploader == null) {
+				if (use_uploader && uploader == null) {
 					throw new ImageUploaderNotFoundException();
+				}
+				if (use_shortener && shortener == null) {
+					throw new TweetShortenerNotFoundException();
 				}
 			
 				final String image_path = getImagePathFromUri(TwidereService.this, image_uri);
@@ -2558,21 +2569,39 @@ public class TwidereService extends Service implements Constants {
 					uploader.upload(Uri.fromFile(image_file), content) : null;
 				if (image_file != null && image_file.exists() && upload_result_uri == null) {
 					throw new ImageUploadException();
-				}			
+				}
+				
+				final String unshortened_content = use_uploader && upload_result_uri != null ? getImageUploadStatus(TwidereService.this, 
+					upload_result_uri.toString(), content) : content;
+				
+				final boolean should_shorten = unshortened_content != null && unshortened_content.length() > 0 && !validator.isValidTweet(unshortened_content);
+				final String screen_name = getAccountUsername(TwidereService.this, account_ids[0]);
+				if (shortener != null) {
+					shortener.waitForService();
+				}
+				final String shortened_content = should_shorten && use_shortener ? shortener.shorten(unshortened_content, screen_name, in_reply_to) : null;
+				
+				if (should_shorten) {
+					if (!use_shortener) {
+						throw new StatusTooLongException();
+					} else if (unshortened_content == null) {
+						throw new TweetShortenException();
+					}
+				}
+				
+				final StatusUpdate status = new StatusUpdate(should_shorten && use_shortener ? shortened_content : unshortened_content);
+				status.setInReplyToStatusId(in_reply_to);
+				if (location != null) {
+					status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
+				}
+				if (!use_uploader && image_file != null && image_file.exists()) {
+					status.setMedia(image_file);
+				}
 			
 				for (final long account_id : account_ids) {
 					final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 					if (twitter != null) {
-						try {
-							final StatusUpdate status = new StatusUpdate(upload_use_extension && upload_result_uri != null ? 
-								getImageUploadStatus(TwidereService.this, upload_result_uri.toString(), content) : content);
-							status.setInReplyToStatusId(in_reply_to);
-							if (location != null) {
-								status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
-							}
-							if (!upload_use_extension && image_file != null && image_file.exists()) {
-								status.setMedia(image_file);
-							}
+						try {				
 							result.add(new SingleResponse<twitter4j.Status>(account_id, twitter.updateStatus(status), null));
 						} catch (final TwitterException e) {
 							e.printStackTrace();
@@ -2580,11 +2609,7 @@ public class TwidereService extends Service implements Constants {
 						}
 					}
 				}
-			} catch (ImageUploadException e) {
-				for (long account_id : account_ids) {
-					result.add(new SingleResponse<twitter4j.Status>(account_id, null, e));
-				}
-			} catch (ImageUploaderNotFoundException e) {
+			} catch (UpdateStatusException e) {
 				for (long account_id : account_ids) {
 					result.add(new SingleResponse<twitter4j.Status>(account_id, null, e));
 				}
@@ -2647,18 +2672,41 @@ public class TwidereService extends Service implements Constants {
 			}
 		}
 		
-		class ImageUploadException extends Exception {
-			public ImageUploadException() {
-				super(getString(R.string.error_message_image_upload_failed));
+		class UpdateStatusException extends Exception {
+			public UpdateStatusException(int message) {
+				super(getString(message));
 			}
 		}
 		
-		class ImageUploaderNotFoundException extends Exception {
+		class ImageUploadException extends UpdateStatusException {
+			public ImageUploadException() {
+				super(R.string.error_message_image_upload_failed);
+			}
+		}
+		
+		class ImageUploaderNotFoundException extends UpdateStatusException {
 			public ImageUploaderNotFoundException() {
-				super(getString(R.string.error_message_image_uploader_not_found));
+				super(R.string.error_message_image_uploader_not_found);
+			}
+		}
+		
+		class TweetShortenException extends UpdateStatusException {
+			public TweetShortenException() {
+				super(R.string.error_message_tweet_shorten_failed);
 			}
 		}
 
+		class TweetShortenerNotFoundException extends UpdateStatusException {
+			public TweetShortenerNotFoundException() {
+				super(R.string.error_message_tweet_shortener_not_found);
+			}
+		}
+		
+		class StatusTooLongException extends UpdateStatusException {
+			public StatusTooLongException() {
+				super(R.string.error_message_status_too_long);
+			}
+		}
 	}
 
 	class UpdateUserListProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
