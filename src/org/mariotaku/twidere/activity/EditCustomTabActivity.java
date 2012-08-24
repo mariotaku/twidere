@@ -301,8 +301,6 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			setOnPreferenceClickListener(this);
 		}
 
-		abstract String getTextToSet();
-		
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
 			switch (which) {
@@ -340,6 +338,8 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		public abstract void onTextSet(String text);
 
 		public abstract boolean shouldCompleteUserName();
+
+		abstract String getTextToSet();
 	}
 
 	static class BackPressedHandler extends Handler {
@@ -365,6 +365,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			setSummary(mName);
 		}
 
+		@Override
 		public String getTextToSet() {
 			return mName;
 		}
@@ -518,6 +519,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			setSummary(mText1);
 		}
 
+		@Override
 		public String getTextToSet() {
 			return mText1;
 		}
@@ -546,6 +548,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			setSummary(mText2);
 		}
 
+		@Override
 		public String getTextToSet() {
 			return mText2;
 		}

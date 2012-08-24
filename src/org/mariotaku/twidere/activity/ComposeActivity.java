@@ -37,6 +37,7 @@ import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ServiceInterface;
 
@@ -45,10 +46,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -106,7 +109,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private static final String INTENT_KEY_PHOTO_ATTACHED = "photo_attached";
 
 	private static final String INTENT_KEY_IMAGE_ATTACHED = "image_attached";
-	
+
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
 
 	@Override
@@ -484,9 +487,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		final String text_orig = mEditText != null ? parseString(mEditText.getText()) : null;
-		final String text = mIsPhotoAttached || mIsImageAttached ? 
-			(mUploadUseExtension ? getImageUploadStatus(this, FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK)
-				: text_orig;
+		final String text = mIsPhotoAttached || mIsImageAttached ? mUploadUseExtension ? getImageUploadStatus(this,
+				FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
 		if (mTextCount != null) {
 			final int count = mValidator.getTweetLength(text);
 			final float hue = count < 140 ? count >= 130 ? 5 * (140 - count) : 50 : 0;
@@ -524,6 +526,13 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	@Override
+	public void onStart() {
+		super.onStart();
+		final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
+		mUploadUseExtension = !isNullOrEmpty(component);
+	}
+
+	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 
 	}
@@ -533,13 +542,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		invalidateSupportOptionsMenu();
 	}
 
-	@Override
-	public void onStart() {
-		super.onStart();
-		final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-		mUploadUseExtension = !isNullOrEmpty(component);
-	}
-	
 	@Override
 	protected void onStop() {
 		if (mPopupMenu != null) {
@@ -586,30 +588,48 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private void setMenu(Menu menu) {
 		final int activated_color = getResources().getColor(R.color.holo_blue_bright);
 		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
+		final Drawable iconAddImage = itemAddImage.getIcon().mutate();
 		if (mIsImageAttached && !mIsPhotoAttached) {
-			itemAddImage.getIcon().mutate().setColorFilter(activated_color, Mode.MULTIPLY);
+			iconAddImage.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAddImage.setTitle(R.string.remove_image);
 		} else {
-			itemAddImage.getIcon().clearColorFilter();
+			iconAddImage.clearColorFilter();
 			itemAddImage.setTitle(R.string.add_image);
 		}
 		final MenuItem itemTakePhoto = menu.findItem(MENU_TAKE_PHOTO);
+		final Drawable iconTakePhoto = itemTakePhoto.getIcon().mutate(); 
 		if (!mIsImageAttached && mIsPhotoAttached) {
-			itemTakePhoto.getIcon().mutate().setColorFilter(activated_color, Mode.MULTIPLY);
+			iconTakePhoto.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemTakePhoto.setTitle(R.string.remove_photo);
 		} else {
-			itemTakePhoto.getIcon().clearColorFilter();
+			iconTakePhoto.clearColorFilter();
 			itemTakePhoto.setTitle(R.string.take_photo);
 		}
 		final MenuItem itemAttachLocation = menu.findItem(MENU_ADD_LOCATION);
+		final Drawable iconAttachLocation = itemAttachLocation.getIcon().mutate();
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		if (attach_location && getLocation()) {
-			itemAttachLocation.getIcon().mutate().setColorFilter(activated_color, Mode.MULTIPLY);
+			iconAttachLocation.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAttachLocation.setTitle(R.string.remove_location);
 		} else {
 			mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false).commit();
-			itemAttachLocation.getIcon().clearColorFilter();
+			iconAttachLocation.clearColorFilter();
 			itemAttachLocation.setTitle(R.string.add_location);
+		}
+		final MenuItem itemMore = menu.findItem(R.id.more_submenu);
+		final MenuItem itemDrafts = menu.findItem(MENU_DRAFTS);
+		if (itemMore != null) {
+			final Cursor drafts_cur = getContentResolver().query(Drafts.CONTENT_URI, new String[0], null, null, null);
+			final Drawable iconMore = itemMore.getIcon().mutate();
+			final Drawable iconDrafts = itemDrafts.getIcon().mutate();
+			if (drafts_cur.getCount() > 0) {
+				iconMore.setColorFilter(activated_color, Mode.MULTIPLY);
+				iconDrafts.setColorFilter(activated_color, Mode.MULTIPLY);
+			} else {
+				iconMore.clearColorFilter();
+				iconDrafts.clearColorFilter();
+			}
+			drafts_cur.close();
 		}
 		invalidateSupportOptionsMenu();
 	}

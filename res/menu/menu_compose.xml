@@ -14,7 +14,7 @@
 		android:icon="@drawable/ic_menu_gallery"
 		android:title="@string/add_image"/>
 	<item
-		android:id="@+id/more"
+		android:id="@+id/more_submenu"
 		android:icon="@drawable/ic_menu_more"
 		android:title="@string/more">
 		<menu>

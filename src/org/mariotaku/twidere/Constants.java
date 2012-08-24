@@ -33,9 +33,13 @@ import twitter4j.TwitterConstants;
 
 public interface Constants extends TwitterConstants {
 
+	public static final String APP_NAME = "Twidere";
+	
+	public static final String APP_PROJECT_URL = "https://github.com/mariotaku/twidere";
+	
 	public static final boolean DEBUG = BuildConfig.DEBUG;
 
-	public static final String LOGTAG = "Twidere";
+	public static final String LOGTAG = APP_NAME;
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 22;
@@ -177,10 +181,8 @@ public interface Constants extends TwitterConstants {
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
-	public static final String PREFERENCE_DEFAULT_SHARE_FORMAT = FORMAT_PATTERN_TITLE + " - "
-			+ FORMAT_PATTERN_TEXT;
-	public static final String PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT = FORMAT_PATTERN_TEXT + " "
-			+ FORMAT_PATTERN_LINK;
+	public static final String PREFERENCE_DEFAULT_SHARE_FORMAT = FORMAT_PATTERN_TITLE + " - " + FORMAT_PATTERN_TEXT;
+	public static final String PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT = FORMAT_PATTERN_TEXT + " " + FORMAT_PATTERN_LINK;
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
@@ -216,7 +218,8 @@ public interface Constants extends TwitterConstants {
 			+ "EXTENSION_OPEN_USER_LIST";
 	public static final String INTENT_ACTION_EXTENSION_COMPOSE = INTENT_PACKAGE_PREFIX + "EXTENSION_COMPOSE";
 	public static final String INTENT_ACTION_EXTENSION_UPLOAD_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD_IMAGE";
-	public static final String INTENT_ACTION_EXTENSION_SHORTEN_TWEET = INTENT_PACKAGE_PREFIX + "EXTENSION_SHORTEN_TWEET";
+	public static final String INTENT_ACTION_EXTENSION_SHORTEN_TWEET = INTENT_PACKAGE_PREFIX
+			+ "EXTENSION_SHORTEN_TWEET";
 	public static final String INTENT_ACTION_EXTENSION_SETTINGS = INTENT_PACKAGE_PREFIX + "EXTENSION_SETTINGS";
 
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX

@@ -30,10 +30,11 @@ import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
 
-public class ImagesPreviewFragment extends BaseFragment implements OnItemClickListener, OnClickListener, OnTouchListener {
+public class ImagesPreviewFragment extends BaseFragment implements OnItemClickListener, OnClickListener,
+		OnTouchListener {
 
 	private static final long TICKER_DURATION = 5000L;
-	
+
 	private Gallery mGallery;
 	private ImagesAdapter mAdapter;
 	private List<ImageSpec> mData = new ArrayList<ImageSpec>();
@@ -41,6 +42,8 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	private SharedPreferences mPreferences;
 	private Handler mHandler;
 	private Runnable mTicker;
+
+	private volatile boolean mBusy, mTickerStopped;
 
 	public boolean add(ImageSpec spec) {
 		return spec != null ? mData.add(spec) : false;
@@ -95,6 +98,48 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		startActivity(intent);
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		mTickerStopped = false;
+		mHandler = new Handler();
+
+		mTicker = new Runnable() {
+
+			@Override
+			public void run() {
+				if (mTickerStopped) return;
+				if (mGallery != null && !mBusy) {
+					mAdapter.notifyDataSetChanged();
+				}
+				final long now = SystemClock.uptimeMillis();
+				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
+				mHandler.postAtTime(mTicker, next);
+			}
+		};
+		mTicker.run();
+	}
+
+	@Override
+	public void onStop() {
+		mTickerStopped = true;
+		super.onStop();
+	}
+
+	@Override
+	public boolean onTouch(View view, MotionEvent event) {
+		switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				mBusy = true;
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				mBusy = false;
+				break;
+		}
+		return false;
+	}
+
 	public boolean remove(String url_string) {
 		if (mAdapter == null) return false;
 		return mAdapter.remove(url_string);
@@ -147,8 +192,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			final View view = convertView != null ? convertView : mInflater.inflate(
-					R.layout.images_preview_item, null);
+			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.images_preview_item, null);
 			final ImageView image = (ImageView) view.findViewById(R.id.image);
 			final ImageSpec spec = getItem(position);
 			mImageLoader.displayImage(spec != null ? parseURL(spec.thumbnail_link) : null, image);
@@ -162,49 +206,5 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		}
 
 	}
-
-	@Override
-	public boolean onTouch(View view, MotionEvent event) {
-		switch (event.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				mBusy = true;
-				break;
-			case MotionEvent.ACTION_UP:
-			case MotionEvent.ACTION_CANCEL:
-				mBusy = false;
-				break;
-		}
-		return false;
-	}
-	
-	@Override
-	public void onStart() {
-		super.onStart();
-		mTickerStopped = false;
-		mHandler = new Handler();
-
-		mTicker = new Runnable() {
-
-			@Override
-			public void run() {
-				if (mTickerStopped) return;
-				if (mGallery != null && !mBusy) {
-					mAdapter.notifyDataSetChanged();
-				}
-				final long now = SystemClock.uptimeMillis();
-				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
-				mHandler.postAtTime(mTicker, next);
-			}
-		};
-		mTicker.run();
-	}
-
-	@Override
-	public void onStop() {
-		mTickerStopped = true;
-		super.onStop();
-	}
-	
-	private volatile boolean mBusy, mTickerStopped;
 
 }

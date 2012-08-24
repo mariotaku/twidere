@@ -79,7 +79,7 @@ public class NativeMapActivity extends MapActivity implements Constants {
 
 		public Itemization(Drawable defaultMarker) {
 			super(defaultMarker);
-			//super(boundCenterBottom(defaultMarker));
+			// super(boundCenterBottom(defaultMarker));
 		}
 
 		public void addOverlay(OverlayItem overlay) {

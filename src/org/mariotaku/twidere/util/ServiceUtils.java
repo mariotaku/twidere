@@ -33,6 +33,16 @@ public final class ServiceUtils {
 		return null;
 	}
 
+	public static class ServiceToken {
+
+		ContextWrapper wrapped_context;
+
+		ServiceToken(ContextWrapper context) {
+
+			wrapped_context = context;
+		}
+	}
+
 	private static class ServiceBinder implements ServiceConnection {
 
 		private ServiceConnection mCallback;
@@ -56,16 +66,6 @@ public final class ServiceUtils {
 			if (mCallback != null) {
 				mCallback.onServiceDisconnected(className);
 			}
-		}
-	}
-
-	public static class ServiceToken {
-
-		ContextWrapper wrapped_context;
-
-		ServiceToken(ContextWrapper context) {
-
-			wrapped_context = context;
 		}
 	}
 }

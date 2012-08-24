@@ -27,7 +27,6 @@ import org.mariotaku.twidere.ITwidereService;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
@@ -60,16 +59,6 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		final Intent intent = new Intent(INTENT_ACTION_SERVICE);
 		intent.setPackage(TWIDERE_PACKAGE_NAME);
 		bindToService(context, intent, mConntecion);
-	}
-	
-	public void waitForService() {
-		while (mService == null) {
-			try {
-				Thread.sleep(100L);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@Override
@@ -539,6 +528,16 @@ public final class ServiceInterface implements Constants, ITwidereService {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+
+	public void waitForService() {
+		while (mService == null) {
+			try {
+				Thread.sleep(100L);
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static ServiceInterface getInstance(Application application) {

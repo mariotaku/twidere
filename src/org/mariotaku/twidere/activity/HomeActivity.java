@@ -375,7 +375,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		int icon = R.drawable.ic_menu_tweet;
 		if (mViewPager != null && mAdapter != null) {
 			final int position = mViewPager.getCurrentItem();
-			
+
 			if (position == mAdapter.getCount() - 1) {
 				icon = R.drawable.ic_menu_add;
 			} else {
