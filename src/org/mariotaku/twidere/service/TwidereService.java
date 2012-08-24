@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getRetweetId;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
@@ -144,8 +145,9 @@ public class TwidereService extends Service implements Constants {
 	};
 
 	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
-	private ArrayList<String> mNewMentionsNames = new ArrayList<String>();
-	private ArrayList<String> mNewMentionsScreenNames = new ArrayList<String>();
+	private final ArrayList<String> mNewMentionsNames = new ArrayList<String>();
+	private final ArrayList<String> mNewMentionsScreenNames = new ArrayList<String>();
+	private String mNewMentionsMessage;
 
 	private AlarmManager mAlarmManager;
 
@@ -171,6 +173,7 @@ public class TwidereService extends Service implements Constants {
 				mNewMentionsCount = 0;
 				mNewMentionsNames.clear();
 				mNewMentionsScreenNames.clear();
+				mNewMentionsMessage = null;
 				break;
 			}
 			case NOTIFICATION_ID_DIRECT_MESSAGES: {
@@ -2141,11 +2144,34 @@ public class TwidereService extends Service implements Constants {
 	class StoreMentionsTask extends StoreStatusesTask {
 
 		private final boolean is_auto_refresh;
+		private final List<ListResponse<twitter4j.Status>> result;
 
 		public StoreMentionsTask(List<ListResponse<twitter4j.Status>> result, boolean is_auto_refresh,
 				boolean should_set_min_id) {
 			super(result, Mentions.CONTENT_URI, should_set_min_id);
+			this.result = result;
 			this.is_auto_refresh = is_auto_refresh;
+		}
+		
+		@Override
+		protected SingleResponse<Bundle> doInBackground(Void... args) {
+			for (ListResponse<twitter4j.Status> statuses : result) {
+				for (twitter4j.Status status : (List<twitter4j.Status>) statuses) {
+					if (status.getId() <= 0 || status.getUser() == null) continue;
+					final String screen_name = status.getUser().getScreenName();
+					final String name = status.getUser().getName();
+					final String source = status.getSource();
+					final String text = status.getText();
+					mNewMentionsScreenNames.remove(screen_name);
+					mNewMentionsNames.remove(name);
+					if (!isFiltered(TwidereService.this, screen_name, source, text)) {
+						mNewMentionsScreenNames.add(screen_name);
+						mNewMentionsNames.add(name);
+						mNewMentionsMessage = text;
+					}
+				}
+			}
+			return super.doInBackground(args);
 		}
 
 		@Override
