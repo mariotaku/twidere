@@ -22,7 +22,7 @@ package org.mariotaku.twidere.util;
 import static org.mariotaku.twidere.util.ServiceUtils.bindToService;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.IImageUploader;
+import org.mariotaku.twidere.ITweetShortener;
 
 import android.app.Application;
 import android.content.ComponentName;
@@ -34,15 +34,15 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-public final class ImageUploaderInterface implements Constants, IImageUploader {
+public final class TweetShortenerInterface implements Constants, ITweetShortener {
 
-	private IImageUploader mService;
+	private ITweetShortener mService;
 
 	private final ServiceConnection mConntecion = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(ComponentName service, IBinder obj) {
-			mService = IImageUploader.Stub.asInterface(obj);
+			mService = ITweetShortener.Stub.asInterface(obj);
 		}
 
 		@Override
@@ -51,9 +51,9 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 		}
 	};
 
-	private ImageUploaderInterface(Context context, String uploader_name) {
-		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
-		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
+	private TweetShortenerInterface(Context context, String shortener_name) {
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
+		final ComponentName component = ComponentName.unflattenFromString(shortener_name);
 		intent.setComponent(component);
 		bindToService(context, intent, mConntecion);
 	}
@@ -75,23 +75,23 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 	}
 
 	@Override
-	public Uri upload(Uri file_uri, String message) {
+	public String shorten(String text, String screen_name, long in_reply_to_status_id) {
 		if (mService == null) return null;
 		try {
-			return mService.upload(file_uri, message);
+			return mService.shorten(text,  screen_name, in_reply_to_status_id);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static ImageUploaderInterface getInstance(Application application, String uploader_name) {
-		if (uploader_name == null) return null;
-		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
-		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
+	public static TweetShortenerInterface getInstance(Application application, String shortener_name) {
+		if (shortener_name == null) return null;
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
+		final ComponentName component = ComponentName.unflattenFromString(shortener_name);
 		intent.setComponent(component);
 		if (application.getPackageManager().queryIntentServices(intent, 0).size() != 1) return null;
-		return new ImageUploaderInterface(application, uploader_name);
+		return new TweetShortenerInterface(application, shortener_name);
 	}
 
 	public static class ServiceToken {

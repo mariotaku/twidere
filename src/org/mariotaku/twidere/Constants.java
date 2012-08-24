@@ -111,9 +111,10 @@ public interface Constants extends TwitterConstants {
 
 	public static final String OAUTH_VERIFIER = "oauth_verifier";
 
-	public static final String QUOTE_SHARE_FORMAT_TEXT_PATTERN = "[TEXT]";
-	public static final String QUOTE_SHARE_FORMAT_TITLE_PATTERN = "[TITLE]";
-	public static final String QUOTE_FORMAT_NAME_PATTERN = "[NAME]";
+	public static final String FORMAT_PATTERN_TITLE = "[TITLE]";
+	public static final String FORMAT_PATTERN_TEXT = "[TEXT]";
+	public static final String FORMAT_PATTERN_NAME = "[NAME]";
+	public static final String FORMAT_PATTERN_LINK = "[LINK]";
 
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
 
@@ -171,12 +172,15 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_IMAGE_UPLOADER = "image_uploader";
 	public static final String PREFERENCE_KEY_HOME_REFRESH_MENTIONS = "home_refresh_mentions";
 	public static final String PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES = "home_refresh_direct_messages";
+	public static final String PREFERENCE_KEY_IMAGE_UPLOAD_FORMAT = "image_upload_format";
+	public static final String PREFERENCE_KEY_TWEET_SHORTENER = "tweet_shortener";
 
-	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + QUOTE_FORMAT_NAME_PATTERN + ": "
-			+ QUOTE_SHARE_FORMAT_TEXT_PATTERN;
-
-	public static final String PREFERENCE_DEFAULT_SHARE_FORMAT = QUOTE_SHARE_FORMAT_TITLE_PATTERN + " - "
-			+ QUOTE_SHARE_FORMAT_TEXT_PATTERN;
+	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
+			+ FORMAT_PATTERN_TEXT;
+	public static final String PREFERENCE_DEFAULT_SHARE_FORMAT = FORMAT_PATTERN_TITLE + " - "
+			+ FORMAT_PATTERN_TEXT;
+	public static final String PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT = FORMAT_PATTERN_TEXT + " "
+			+ FORMAT_PATTERN_LINK;
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
@@ -212,6 +216,7 @@ public interface Constants extends TwitterConstants {
 			+ "EXTENSION_OPEN_USER_LIST";
 	public static final String INTENT_ACTION_EXTENSION_COMPOSE = INTENT_PACKAGE_PREFIX + "EXTENSION_COMPOSE";
 	public static final String INTENT_ACTION_EXTENSION_UPLOAD_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD_IMAGE";
+	public static final String INTENT_ACTION_EXTENSION_SHORTEN_TWEET = INTENT_PACKAGE_PREFIX + "EXTENSION_SHORTEN_TWEET";
 	public static final String INTENT_ACTION_EXTENSION_SETTINGS = INTENT_PACKAGE_PREFIX + "EXTENSION_SETTINGS";
 
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX

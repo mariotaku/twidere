@@ -24,7 +24,9 @@ import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
+import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
+import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -93,7 +95,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private SharedPreferences mPreferences;
 	private long mInReplyToStatusId = -1, mAccountId = -1;
 	private String mInReplyToScreenName, mInReplyToName;
-	private boolean mIsQuote;
+	private boolean mIsQuote, mUploadUseExtension;
 	private final Validator mValidator = new Validator();
 	private PopupMenu mPopupMenu;
 
@@ -104,6 +106,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private static final String INTENT_KEY_PHOTO_ATTACHED = "photo_attached";
 
 	private static final String INTENT_KEY_IMAGE_ATTACHED = "image_attached";
+	
+	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -466,13 +470,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			}
 			case MENU_SEND: {
 				final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-				if (mValidator.isValidTweet(text)) {
-					final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
-					mService.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
-							mInReplyToStatusId, mIsPhotoAttached && !mIsImageAttached);
-					setResult(Activity.RESULT_OK);
-					finish();
-				}
+				final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+				mService.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
+						mInReplyToStatusId, mIsPhotoAttached && !mIsImageAttached);
+				setResult(Activity.RESULT_OK);
+				finish();
 				break;
 			}
 		}
@@ -481,7 +483,10 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
+		final String text_orig = mEditText != null ? parseString(mEditText.getText()) : null;
+		final String text = mIsPhotoAttached || mIsImageAttached ? 
+			(mUploadUseExtension ? getImageUploadStatus(this, FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK)
+				: text_orig;
 		if (mTextCount != null) {
 			final int count = mValidator.getTweetLength(text);
 			final float hue = count < 140 ? count >= 130 ? 5 * (140 - count) : 50 : 0;
@@ -490,7 +495,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			mTextCount.setText(parseString(count));
 		}
 		final MenuItem sendItem = menu.findItem(MENU_SEND);
-		sendItem.setEnabled(mValidator.isValidTweet(text));
+		sendItem.setEnabled(text_orig.length() > 0);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -528,6 +533,13 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		invalidateSupportOptionsMenu();
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
+		mUploadUseExtension = !isNullOrEmpty(component);
+	}
+	
 	@Override
 	protected void onStop() {
 		if (mPopupMenu != null) {
@@ -575,7 +587,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		final int activated_color = getResources().getColor(R.color.holo_blue_bright);
 		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		if (mIsImageAttached && !mIsPhotoAttached) {
-			itemAddImage.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemAddImage.getIcon().mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAddImage.setTitle(R.string.remove_image);
 		} else {
 			itemAddImage.getIcon().clearColorFilter();
@@ -583,7 +595,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		}
 		final MenuItem itemTakePhoto = menu.findItem(MENU_TAKE_PHOTO);
 		if (!mIsImageAttached && mIsPhotoAttached) {
-			itemTakePhoto.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemTakePhoto.getIcon().mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 			itemTakePhoto.setTitle(R.string.remove_photo);
 		} else {
 			itemTakePhoto.getIcon().clearColorFilter();
@@ -592,13 +604,14 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		final MenuItem itemAttachLocation = menu.findItem(MENU_ADD_LOCATION);
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		if (attach_location && getLocation()) {
-			itemAttachLocation.getIcon().setColorFilter(activated_color, Mode.MULTIPLY);
+			itemAttachLocation.getIcon().mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAttachLocation.setTitle(R.string.remove_location);
 		} else {
 			mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false).commit();
 			itemAttachLocation.getIcon().clearColorFilter();
 			itemAttachLocation.setTitle(R.string.add_location);
 		}
+		invalidateSupportOptionsMenu();
 	}
 
 	private void takePhoto() {

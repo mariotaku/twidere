@@ -78,7 +78,8 @@ public class NativeMapActivity extends MapActivity implements Constants {
 		private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 
 		public Itemization(Drawable defaultMarker) {
-			super(boundCenterBottom(defaultMarker));
+			super(defaultMarker);
+			//super(boundCenterBottom(defaultMarker));
 		}
 
 		public void addOverlay(OverlayItem overlay) {

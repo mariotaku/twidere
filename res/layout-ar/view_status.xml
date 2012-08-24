@@ -107,8 +107,7 @@
 					android:layout_margin="8dp"
 					android:gravity="right"
 					android:singleLine="false"
-					android:textAppearance="?android:attr/textAppearanceMedium"
-					android:textIsSelectable="true"/>
+					android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 				<FrameLayout
 					android:id="@+id/images_preview"
@@ -126,8 +125,7 @@
 					android:padding="8dp"
 					android:singleLine="true"
 					android:text="@string/users_retweeted_this"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:visibility="gone"/>
+					android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 				<TextView
 					android:id="@+id/location_view"

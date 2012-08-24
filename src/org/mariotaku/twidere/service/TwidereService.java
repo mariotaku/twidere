@@ -20,10 +20,13 @@
 package org.mariotaku.twidere.service;
 
 import static org.mariotaku.twidere.util.Utils.buildQueryUri;
+import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
+import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getRetweetId;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
@@ -84,6 +87,8 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
+import org.mariotaku.twidere.util.TweetShortenerInterface;
+import com.twitter.Validator;
 
 public class TwidereService extends Service implements Constants {
 
@@ -139,6 +144,8 @@ public class TwidereService extends Service implements Constants {
 	};
 
 	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
+	private ArrayList<String> mNewMentionsNames = new ArrayList<String>();
+	private ArrayList<String> mNewMentionsScreenNames = new ArrayList<String>();
 
 	private AlarmManager mAlarmManager;
 
@@ -162,6 +169,8 @@ public class TwidereService extends Service implements Constants {
 			}
 			case NOTIFICATION_ID_MENTIONS: {
 				mNewMentionsCount = 0;
+				mNewMentionsNames.clear();
+				mNewMentionsScreenNames.clear();
 				break;
 			}
 			case NOTIFICATION_ID_DIRECT_MESSAGES: {
@@ -420,10 +429,10 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	private Notification buildNotification(String message, int icon, Intent content_intent, Intent delete_intent) {
+	private Notification buildNotification(String title, String message, int icon, Intent content_intent, Intent delete_intent) {
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder.setTicker(message);
-		builder.setContentTitle(getString(R.string.new_notifications));
+		builder.setTicker(title);
+		builder.setContentTitle(title);
 		builder.setContentText(message);
 		builder.setAutoCancel(true);
 		builder.setWhen(System.currentTimeMillis());
@@ -470,7 +479,7 @@ public class TwidereService extends Service implements Constants {
 		Utils.showErrorToast(this, e, long_message);
 	}
 
-	private class AddUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class AddUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
 
 		private final long account_id, user_id;
 		private final int list_id;
@@ -525,7 +534,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CacheUsersTask extends ManagedAsyncTask<Void, Void, Void> {
+	class CacheUsersTask extends ManagedAsyncTask<Void, Void, Void> {
 
 		private final List<ListResponse<twitter4j.Status>> responses;
 
@@ -571,7 +580,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CancelRetweetTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class CancelRetweetTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
 		private long status_id, retweeted_id;
@@ -637,7 +646,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CreateBlockTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+	class CreateBlockTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
 		private long user_id;
@@ -679,7 +688,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CreateFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class CreateFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
 
@@ -740,7 +749,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CreateFriendshipTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+	class CreateFriendshipTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
 		private long user_id;
@@ -782,7 +791,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CreateUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class CreateUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
 
 		private final long account_id;
 		private final int list_id;
@@ -825,7 +834,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class CreateUserListTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class CreateUserListTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
 
 		private final long account_id;
 		private final String list_name, description;
@@ -872,7 +881,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DeleteUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class DeleteUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
 
 		private final long account_id, user_id;
 		private final int list_id;
@@ -917,7 +926,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyBlockTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+	class DestroyBlockTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
 		private long user_id;
@@ -959,7 +968,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyDirectMessageTask extends ManagedAsyncTask<Void, Void, SingleResponse<DirectMessage>> {
+	class DestroyDirectMessageTask extends ManagedAsyncTask<Void, Void, SingleResponse<DirectMessage>> {
 
 		private final Twitter twitter;
 		private final long message_id;
@@ -999,7 +1008,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class DestroyFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
 
@@ -1064,7 +1073,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyFriendshipTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+	class DestroyFriendshipTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
 		private long user_id;
@@ -1106,7 +1115,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyStatusTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class DestroyStatusTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
 
@@ -1157,7 +1166,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class DestroyUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
 
 		private final long account_id;
 		private final int list_id;
@@ -1200,7 +1209,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class DestroyUserListTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class DestroyUserListTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
 
 		private final long account_id;
 		private final int list_id;
@@ -1245,7 +1254,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class GetDailyTrendsTask extends GetTrendsTask {
+	class GetDailyTrendsTask extends GetTrendsTask {
 
 		public GetDailyTrendsTask(long account_id) {
 			super(account_id);
@@ -1266,12 +1275,12 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private abstract class GetDirectMessagesTask extends
+	abstract class GetDirectMessagesTask extends
 			ManagedAsyncTask<Void, Void, List<ListResponse<DirectMessage>>> {
 
 		private final long[] account_ids, max_ids;
 
-		public GetDirectMessagesTask(Uri uri, long[] account_ids, long[] max_ids) {
+		public GetDirectMessagesTask(long[] account_ids, long[] max_ids) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
@@ -1320,7 +1329,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class GetHomeTimelineTask extends GetStatusesTask {
+	class GetHomeTimelineTask extends GetStatusesTask {
 
 		private final boolean is_auto_refresh;
 
@@ -1354,7 +1363,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class GetLocalTrendsTask extends GetTrendsTask {
+	class GetLocalTrendsTask extends GetTrendsTask {
 
 		private final int woeid;
 
@@ -1381,7 +1390,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class GetMentionsTask extends GetStatusesTask {
+	class GetMentionsTask extends GetStatusesTask {
 
 		private final boolean is_auto_refresh;
 
@@ -1415,12 +1424,12 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class GetReceivedDirectMessagesTask extends GetDirectMessagesTask {
+	class GetReceivedDirectMessagesTask extends GetDirectMessagesTask {
 
 		private final boolean is_auto_refresh;
 
 		public GetReceivedDirectMessagesTask(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
-			super(DirectMessages.Inbox.CONTENT_URI, account_ids, max_ids);
+			super(account_ids, max_ids);
 			this.is_auto_refresh = is_auto_refresh;
 		}
 
@@ -1439,10 +1448,10 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class GetSentDirectMessagesTask extends GetDirectMessagesTask {
+	class GetSentDirectMessagesTask extends GetDirectMessagesTask {
 
 		public GetSentDirectMessagesTask(long[] account_ids, long[] max_ids) {
-			super(DirectMessages.Outbox.CONTENT_URI, account_ids, max_ids);
+			super(account_ids, max_ids);
 		}
 
 		@Override
@@ -1459,7 +1468,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<ListResponse<twitter4j.Status>>> {
+	abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<ListResponse<twitter4j.Status>>> {
 
 		private final long[] account_ids, max_ids;
 
@@ -1520,7 +1529,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private abstract class GetTrendsTask extends ManagedAsyncTask<Void, Void, ListResponse<Trends>> {
+	abstract class GetTrendsTask extends ManagedAsyncTask<Void, Void, ListResponse<Trends>> {
 
 		private final long account_id;
 
@@ -1546,7 +1555,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class GetWeeklyTrendsTask extends GetTrendsTask {
+	class GetWeeklyTrendsTask extends GetTrendsTask {
 
 		public GetWeeklyTrendsTask(long account_id) {
 			super(account_id);
@@ -1567,7 +1576,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private static final class ListResponse<Data> {
+	static final class ListResponse<Data> {
 
 		public final long account_id, max_id;
 		public final List<Data> list;
@@ -1579,7 +1588,7 @@ public class TwidereService extends Service implements Constants {
 		}
 	}
 
-	private class ReportSpamTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+	class ReportSpamTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
 		private long user_id;
@@ -1621,7 +1630,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class RetweetStatusTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class RetweetStatusTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private long account_id;
 
@@ -1684,7 +1693,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class SendDirectMessageTask extends ManagedAsyncTask<Void, Void, SingleResponse<DirectMessage>> {
+	class SendDirectMessageTask extends ManagedAsyncTask<Void, Void, SingleResponse<DirectMessage>> {
 
 		private final Twitter twitter;
 		private final long user_id;
@@ -1739,7 +1748,7 @@ public class TwidereService extends Service implements Constants {
 	 * ensure that the Service can be GCd even when the system process still has
 	 * a remote reference to the stub.
 	 */
-	private static final class ServiceStub extends ITwidereService.Stub {
+	static final class ServiceStub extends ITwidereService.Stub {
 
 		final WeakReference<TwidereService> mService;
 
@@ -1962,7 +1971,7 @@ public class TwidereService extends Service implements Constants {
 		}
 	}
 
-	private static final class SingleResponse<Data> {
+	static final class SingleResponse<Data> {
 		public final Exception exception;
 		public final Data data;
 		public final long account_id;
@@ -1974,7 +1983,7 @@ public class TwidereService extends Service implements Constants {
 		}
 	}
 
-	private class StoreDailyTrendsTask extends StoreTrendsTask {
+	class StoreDailyTrendsTask extends StoreTrendsTask {
 
 		public StoreDailyTrendsTask(ListResponse<Trends> result) {
 			super(result, CachedTrends.Daily.CONTENT_URI);
@@ -1982,7 +1991,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
+	class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
 		private final List<ListResponse<DirectMessage>> responses;
 		private final Uri uri;
@@ -2074,7 +2083,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class StoreHomeTimelineTask extends StoreStatusesTask {
+	class StoreHomeTimelineTask extends StoreStatusesTask {
 
 		private final boolean is_auto_refresh;
 
@@ -2113,7 +2122,7 @@ public class TwidereService extends Service implements Constants {
 					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_HOME);
 					content_intent.putExtras(content_extras);
 					mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE,
-							buildNotification(message, R.drawable.ic_stat_tweet, content_intent, delete_intent));
+							buildNotification(getString(R.string.new_notifications), message, R.drawable.ic_stat_tweet, content_intent, delete_intent));
 				}
 			}
 			super.onPostExecute(response);
@@ -2121,7 +2130,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class StoreLocalTrendsTask extends StoreTrendsTask {
+	class StoreLocalTrendsTask extends StoreTrendsTask {
 
 		public StoreLocalTrendsTask(ListResponse<Trends> result) {
 			super(result, CachedTrends.Local.CONTENT_URI);
@@ -2129,7 +2138,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class StoreMentionsTask extends StoreStatusesTask {
+	class StoreMentionsTask extends StoreStatusesTask {
 
 		private final boolean is_auto_refresh;
 
@@ -2168,7 +2177,7 @@ public class TwidereService extends Service implements Constants {
 					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
 					content_intent.putExtras(content_extras);
 					mNotificationManager.notify(NOTIFICATION_ID_MENTIONS,
-							buildNotification(message, R.drawable.ic_stat_mention, content_intent, delete_intent));
+							buildNotification(getString(R.string.new_notifications), message, R.drawable.ic_stat_mention, content_intent, delete_intent));
 				}
 			}
 			super.onPostExecute(response);
@@ -2176,7 +2185,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class StoreReceivedDirectMessagesTask extends StoreDirectMessagesTask {
+	class StoreReceivedDirectMessagesTask extends StoreDirectMessagesTask {
 
 		private final boolean is_auto_refresh;
 
@@ -2210,7 +2219,7 @@ public class TwidereService extends Service implements Constants {
 					content_intent.putExtras(content_extras);
 					mNotificationManager
 							.notify(NOTIFICATION_ID_DIRECT_MESSAGES,
-									buildNotification(message, R.drawable.ic_stat_direct_message, content_intent,
+									buildNotification(getString(R.string.new_notifications), message, R.drawable.ic_stat_direct_message, content_intent,
 											delete_intent));
 				}
 			}
@@ -2219,7 +2228,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class StoreSentDirectMessagesTask extends StoreDirectMessagesTask {
+	class StoreSentDirectMessagesTask extends StoreDirectMessagesTask {
 
 		public StoreSentDirectMessagesTask(List<ListResponse<DirectMessage>> result) {
 			super(result, DirectMessages.Outbox.CONTENT_URI);
@@ -2236,7 +2245,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private abstract class StoreStatusesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
+	abstract class StoreStatusesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
 		private final List<ListResponse<twitter4j.Status>> responses;
 		private final Uri uri;
@@ -2367,7 +2376,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class StoreTrendsTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
+	class StoreTrendsTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
 		private final ListResponse<Trends> response;
 		private final Uri uri;
@@ -2410,7 +2419,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class StoreWeeklyTrendsTask extends StoreTrendsTask {
+	class StoreWeeklyTrendsTask extends StoreTrendsTask {
 
 		public StoreWeeklyTrendsTask(ListResponse<Trends> result) {
 			super(result, CachedTrends.Weekly.CONTENT_URI);
@@ -2418,7 +2427,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class UpdateProfileImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+	class UpdateProfileImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private final long account_id;
 		private final Uri image_uri;
@@ -2465,7 +2474,7 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class UpdateProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+	class UpdateProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private final long account_id;
 		private final String name, url, location, description;
@@ -2510,19 +2519,29 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	private class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<SingleResponse<twitter4j.Status>>> {
+	class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<SingleResponse<twitter4j.Status>>> {
 
+		private final ImageUploaderInterface uploader;
+		private final TweetShortenerInterface shortener;
+		private final Validator validator = new Validator();
+		
 		private long[] account_ids;
 		private String content;
 		private Location location;
 		private Uri image_uri;
 		private long in_reply_to;
-		private boolean delete_image;
+		private boolean use_uploader, use_shortener, delete_image;
 
 		public UpdateStatusTask(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to,
 				boolean delete_image) {
 			super(TwidereService.this, mAsyncTaskManager);
-			this.account_ids = account_ids;
+			final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
+			final String shortener_component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
+			use_uploader = !isNullOrEmpty(uploader_component);
+			uploader = use_uploader ? ImageUploaderInterface.getInstance(getApplication(), uploader_component) : null;
+			use_shortener = !isNullOrEmpty(shortener_component);
+			shortener = use_shortener ? TweetShortenerInterface.getInstance(getApplication(), shortener_component) : null;
+			this.account_ids = account_ids != null ? account_ids : new long[0];
 			this.content = content;
 			this.location = location;
 			this.image_uri = image_uri;
@@ -2533,37 +2552,70 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected List<SingleResponse<twitter4j.Status>> doInBackground(Void... params) {
 
-			if (account_ids == null) return null;
-
 			final List<SingleResponse<twitter4j.Status>> result = new ArrayList<SingleResponse<twitter4j.Status>>();
 
-			for (final long account_id : account_ids) {
-				final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
-				if (twitter != null) {
-					try {
-						final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-						final ImageUploaderInterface uploader = ImageUploaderInterface.getInstance(getApplication(),
-								component);
-						final String image_path = getImagePathFromUri(TwidereService.this, image_uri);
-						final Uri result_uri = image_path != null && uploader != null ? uploader.upload(
-								Uri.parse(image_path), content) : null;
-						final StatusUpdate status = new StatusUpdate(result_uri != null ? content + " " + result_uri
-								: content);
-						status.setInReplyToStatusId(in_reply_to);
-						if (location != null) {
-							status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
-						}
-						if (image_path != null && result_uri == null) {
-							final File image_file = new File(image_path);
-							if (image_file.exists()) {
-								status.setMedia(image_file);
-							}
-						}
-						result.add(new SingleResponse<twitter4j.Status>(account_id, twitter.updateStatus(status), null));
-					} catch (final TwitterException e) {
-						e.printStackTrace();
-						result.add(new SingleResponse<twitter4j.Status>(account_id, null, e));
+			if (account_ids.length == 0) return result;
+			
+			try {
+				if (use_uploader && uploader == null) {
+					throw new ImageUploaderNotFoundException();
+				}
+				if (use_shortener && shortener == null) {
+					throw new TweetShortenerNotFoundException();
+				}
+			
+				final String image_path = getImagePathFromUri(TwidereService.this, image_uri);
+				final File image_file = image_path != null ? new File(image_path) : null;
+				if (uploader != null) {
+					uploader.waitForService();
+				}
+				final Uri upload_result_uri = image_file != null && image_file.exists() && uploader != null ? 
+					uploader.upload(Uri.fromFile(image_file), content) : null;
+				if (image_file != null && image_file.exists() && upload_result_uri == null) {
+					throw new ImageUploadException();
+				}
+				
+				final String unshortened_content = use_uploader && upload_result_uri != null ? getImageUploadStatus(TwidereService.this, 
+					upload_result_uri.toString(), content) : content;
+				
+				final boolean should_shorten = unshortened_content != null && unshortened_content.length() > 0 && !validator.isValidTweet(unshortened_content);
+				final String screen_name = getAccountUsername(TwidereService.this, account_ids[0]);
+				if (shortener != null) {
+					shortener.waitForService();
+				}
+				final String shortened_content = should_shorten && use_shortener ? shortener.shorten(unshortened_content, screen_name, in_reply_to) : null;
+				
+				if (should_shorten) {
+					if (!use_shortener) {
+						throw new StatusTooLongException();
+					} else if (unshortened_content == null) {
+						throw new TweetShortenException();
 					}
+				}
+				
+				final StatusUpdate status = new StatusUpdate(should_shorten && use_shortener ? shortened_content : unshortened_content);
+				status.setInReplyToStatusId(in_reply_to);
+				if (location != null) {
+					status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
+				}
+				if (!use_uploader && image_file != null && image_file.exists()) {
+					status.setMedia(image_file);
+				}
+			
+				for (final long account_id : account_ids) {
+					final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+					if (twitter != null) {
+						try {				
+							result.add(new SingleResponse<twitter4j.Status>(account_id, twitter.updateStatus(status), null));
+						} catch (final TwitterException e) {
+							e.printStackTrace();
+							result.add(new SingleResponse<twitter4j.Status>(account_id, null, e));
+						}
+					}
+				}
+			} catch (UpdateStatusException e) {
+				for (long account_id : account_ids) {
+					result.add(new SingleResponse<twitter4j.Status>(account_id, null, e));
 				}
 			}
 			return result;
@@ -2572,17 +2624,17 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(List<SingleResponse<twitter4j.Status>> result) {
 
-			boolean succeed = false;
+			boolean succeed = true;
 			Exception exception = null;
 			final List<Long> failed_account_ids = new ArrayList<Long>();
 
 			for (final SingleResponse<twitter4j.Status> response : result) {
-				if (response.data != null) {
-					succeed = true;
-					break;
-				} else {
+				if (response.data == null) {
+					succeed = false;
 					failed_account_ids.add(response.account_id);
-					exception = response.exception;
+					if (exception == null) {
+						exception = response.exception;
+					}
 				}
 			}
 			if (succeed) {
@@ -2623,10 +2675,45 @@ public class TwidereService extends Service implements Constants {
 				getMentions(activated_ids, null);
 			}
 		}
+		
+		class UpdateStatusException extends Exception {
+			public UpdateStatusException(int message) {
+				super(getString(message));
+			}
+		}
+		
+		class ImageUploadException extends UpdateStatusException {
+			public ImageUploadException() {
+				super(R.string.error_message_image_upload_failed);
+			}
+		}
+		
+		class ImageUploaderNotFoundException extends UpdateStatusException {
+			public ImageUploaderNotFoundException() {
+				super(R.string.error_message_image_uploader_not_found);
+			}
+		}
+		
+		class TweetShortenException extends UpdateStatusException {
+			public TweetShortenException() {
+				super(R.string.error_message_tweet_shorten_failed);
+			}
+		}
 
+		class TweetShortenerNotFoundException extends UpdateStatusException {
+			public TweetShortenerNotFoundException() {
+				super(R.string.error_message_tweet_shortener_not_found);
+			}
+		}
+		
+		class StatusTooLongException extends UpdateStatusException {
+			public StatusTooLongException() {
+				super(R.string.error_message_status_too_long);
+			}
+		}
 	}
 
-	private class UpdateUserListProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class UpdateUserListProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
 
 		private final long account_id;
 		private final int list_id;

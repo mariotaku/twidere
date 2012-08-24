@@ -167,6 +167,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageInfo;
 
 public final class Utils implements Constants {
 
@@ -253,7 +255,6 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_TIMELINE, UserTimelineFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FOLLOWERS, UserFollowersFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FRIENDS, UserFriendsFragment.class);
-		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_DIRECT_MESSAGES, DirectMessagesFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_TRENDS, TrendsFragment.class);
 
 		CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
@@ -272,7 +273,6 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_TIMELINE, R.string.user_timeline);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FOLLOWERS, R.string.followers);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FRIENDS, R.string.following);
-		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_DIRECT_MESSAGES, R.string.direct_messages);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_TRENDS, R.string.trends);
 
 		CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
@@ -540,21 +540,7 @@ public final class Utils implements Constants {
 		if (status == null) return null;
 		final String text = status.getText();
 		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG);
-		final URLEntity[] urls = status.getURLEntities();
-		if (urls != null) {
-			for (final URLEntity url_entity : urls) {
-				final int start = url_entity.getStart();
-				final int end = url_entity.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				final URL expanded_url = url_entity.getExpandedURL();
-				if (expanded_url != null) {
-					builder.addLink(expanded_url.toString(), url_entity.getDisplayURL(), start, end);
-				}
-			}
-		}
+		final HtmlBuilder builder = new HtmlBuilder(text, false);
 		// Format media.
 		final MediaEntity[] medias = status.getMediaEntities();
 		if (medias != null) {
@@ -570,6 +556,20 @@ public final class Utils implements Constants {
 				}
 			}
 		}
+		final URLEntity[] urls = status.getURLEntities();
+		if (urls != null) {
+			for (final URLEntity url_entity : urls) {
+				final int start = url_entity.getStart();
+				final int end = url_entity.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				final URL expanded_url = url_entity.getExpandedURL();
+				if (expanded_url != null) {
+					builder.addLink(expanded_url.toString(), url_entity.getDisplayURL(), start, end);
+				}
+			}
+		}	
 		return builder.build();
 	}
 
@@ -940,6 +940,17 @@ public final class Utils implements Constants {
 		}
 		return images;
 	}
+	
+	public static String getImageUploadStatus(Context context, String link, String text) {
+		if (context == null) return null;
+		String image_upload_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
+				PREFERENCE_KEY_IMAGE_UPLOAD_FORMAT, PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT);
+		if (isNullOrEmpty(image_upload_format)) {
+			image_upload_format = PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT;
+		}
+		if (link == null) return text;
+		return image_upload_format.replace(FORMAT_PATTERN_LINK, link).replace(FORMAT_PATTERN_TEXT, text);
+	}
 
 	public static ImageSpec getImglyImage(String id, boolean force_ssl) {
 		if (isNullOrEmpty(id)) return null;
@@ -1113,7 +1124,7 @@ public final class Utils implements Constants {
 		if (isNullOrEmpty(quote_format)) {
 			quote_format = PREFERENCE_DEFAULT_QUOTE_FORMAT;
 		}
-		return quote_format.replace(QUOTE_FORMAT_NAME_PATTERN, screen_name).replace(QUOTE_SHARE_FORMAT_TEXT_PATTERN,
+		return quote_format.replace(FORMAT_PATTERN_NAME, screen_name).replace(FORMAT_PATTERN_TEXT,
 				text);
 	}
 
@@ -1186,13 +1197,13 @@ public final class Utils implements Constants {
 
 	public static String getShareStatus(Context context, String title, String text) {
 		if (context == null) return null;
-		String quote_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
+		String share_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
 				PREFERENCE_KEY_SHARE_FORMAT, PREFERENCE_DEFAULT_SHARE_FORMAT);
-		if (isNullOrEmpty(quote_format)) {
-			quote_format = PREFERENCE_DEFAULT_SHARE_FORMAT;
+		if (isNullOrEmpty(share_format)) {
+			share_format = PREFERENCE_DEFAULT_SHARE_FORMAT;
 		}
 		if (title == null) return text;
-		return quote_format.replace(QUOTE_SHARE_FORMAT_TITLE_PATTERN, title).replace(QUOTE_SHARE_FORMAT_TEXT_PATTERN,
+		return share_format.replace(FORMAT_PATTERN_TITLE, title).replace(FORMAT_PATTERN_TEXT,
 				text);
 	}
 
@@ -1407,6 +1418,13 @@ public final class Utils implements Constants {
 			if (cur.getCount() == 1) {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
+				final PackageManager pm = context.getPackageManager();
+				try {
+					final PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+					cb.setClientVersion(pi.versionName);
+				} catch (PackageManager.NameNotFoundException e) {
+					
+				}
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
 				if (force_ssl_connection) {
@@ -1516,6 +1534,41 @@ public final class Utils implements Constants {
 		final String full_size = (force_ssl ? "https" : "http") + "://yfrog.com/" + id + ":medium";
 		return new ImageSpec(thumbnail_size, full_size);
 
+	}
+	
+	public static boolean isFiltered(Context context, String screen_name, String source, String text) {
+		if (context == null) return false;
+		final ContentResolver resolver = context.getContentResolver();
+		final String[] cols = new String[]{ Filters.TEXT };
+		Cursor cur;
+		if (screen_name != null) {
+			cur = resolver.query(Filters.Users.CONTENT_URI, cols, null, null, null);
+			cur.moveToFirst();
+			while (!cur.isAfterLast()) {
+				if (screen_name.equals(cur.getString(0))) return true;
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		if (source != null) {
+			cur = resolver.query(Filters.Sources.CONTENT_URI, cols, null, null, null);
+			cur.moveToFirst();
+			while (!cur.isAfterLast()) {
+				if (HtmlUnescapeHelper.unescapeHTML(source).equals(cur.getString(0))) return true;
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		if (text != null) {
+			cur = resolver.query(Filters.Users.CONTENT_URI, cols, null, null, null);
+			cur.moveToFirst();
+			while (!cur.isAfterLast()) {
+				if (text.contains(cur.getString(0))) return true;
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		return false;
 	}
 
 	public static boolean isMyAccount(Context context, long account_id) {
@@ -2454,7 +2507,7 @@ public final class Utils implements Constants {
 					&& (!isMyActivatedAccount(context, status.user_id) || getActivatedAccountIds(context).length > 1));
 			final Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
 			if (isMyActivatedAccount(context, status.retweeted_by_id)) {
-				iconRetweetSubMenu.setColorFilter(activated_color, Mode.MULTIPLY);
+				iconRetweetSubMenu.mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 				itemRetweet.setTitle(R.string.cancel_retweet);
 			} else {
 				iconRetweetSubMenu.clearColorFilter();
@@ -2465,7 +2518,7 @@ public final class Utils implements Constants {
 		if (itemFav != null) {
 			final Drawable iconFav = itemFav.getIcon();
 			if (status.is_favorite) {
-				iconFav.setColorFilter(activated_color, Mode.MULTIPLY);
+				iconFav.mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 				itemFav.setTitle(R.string.unfav);
 			} else {
 				iconFav.clearColorFilter();

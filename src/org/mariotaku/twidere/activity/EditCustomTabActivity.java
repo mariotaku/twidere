@@ -298,12 +298,11 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			super(context);
 			setEnabled(false);
 			setTitle(title);
-			setSummary(getTextToSet());
 			setOnPreferenceClickListener(this);
 		}
 
-		public abstract String getTextToSet();
-
+		abstract String getTextToSet();
+		
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
 			switch (which) {
@@ -363,9 +362,9 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		public NamePreference(Context context) {
 			super(context, R.string.name);
 			setEnabled(true);
+			setSummary(mName);
 		}
 
-		@Override
 		public String getTextToSet() {
 			return mName;
 		}
@@ -516,9 +515,9 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 
 		public Text1Preference(Context context, int title) {
 			super(context, title);
+			setSummary(mText1);
 		}
 
-		@Override
 		public String getTextToSet() {
 			return mText1;
 		}
@@ -544,9 +543,9 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 
 		public Text2Preference(Context context, int title) {
 			super(context, title);
+			setSummary(mText2);
 		}
 
-		@Override
 		public String getTextToSet() {
 			return mText2;
 		}
