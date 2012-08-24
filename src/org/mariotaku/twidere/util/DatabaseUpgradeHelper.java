@@ -121,9 +121,12 @@ public final class DatabaseUpgradeHelper {
 		db.execSQL(createTable(table, new_cols, new_types, false));
 
 		// Now, insert all data backuped into new table.
+		db.beginTransaction();
 		for (final ContentValues values : values_list) {
 			db.insert(table, null, values);
 		}
+		db.setTransactionSuccessful();
+		db.endTransaction();
 	}
 
 	private static String createTable(String tableName, String[] columns, String[] types, boolean create_if_not_exists) {

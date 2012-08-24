@@ -57,16 +57,6 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 		intent.setComponent(component);
 		bindToService(context, intent, mConntecion);
 	}
-	
-	public void waitForService() {
-		while (mService == null) {
-			try {
-				Thread.sleep(100L);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 	@Override
 	public IBinder asBinder() {
@@ -83,6 +73,16 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public void waitForService() {
+		while (mService == null) {
+			try {
+				Thread.sleep(100L);
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static ImageUploaderInterface getInstance(Application application, String uploader_name) {

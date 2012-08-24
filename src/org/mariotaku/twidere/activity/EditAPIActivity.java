@@ -97,11 +97,11 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 					mEditUploadBaseURL = (EditText) findViewById(R.id.upload_base_url);
 					mEditUploadBaseURL.setText(mUploadBaseURL != null ? mUploadBaseURL : DEFAULT_UPLOAD_BASE_URL);
 					mEditSigningRESTBaseURL = (EditText) findViewById(R.id.signing_rest_base_url);
-					mEditSigningRESTBaseURL.setText(mSigningRESTBaseURL);
+					mEditSigningRESTBaseURL.setText(mSigningRESTBaseURL != null ? mSigningRESTBaseURL : DEFAULT_SIGNING_REST_BASE_URL);
 					mEditOAuthBaseURL = (EditText) findViewById(R.id.oauth_base_url);
 					mEditOAuthBaseURL.setText(mOAuthBaseURL != null ? mOAuthBaseURL : DEFAULT_OAUTH_BASE_URL);
 					mEditSigningOAuthBaseURL = (EditText) findViewById(R.id.signing_oauth_base_url);
-					mEditSigningOAuthBaseURL.setText(mSigningOAuthBaseURL);
+					mEditSigningOAuthBaseURL.setText(mSigningOAuthBaseURL != null ? mSigningOAuthBaseURL : DEFAULT_SIGNING_OAUTH_BASE_URL);
 				} else if (inflated_view != null) {
 					final boolean is_visible = inflated_view.getVisibility() == View.VISIBLE;
 					final int compound_res = is_visible ? R.drawable.expander_close_holo

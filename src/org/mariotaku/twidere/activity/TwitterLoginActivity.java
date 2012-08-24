@@ -42,6 +42,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
+import twitter4j.Version;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.RequestToken;
@@ -52,6 +53,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -384,14 +387,19 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		final boolean enable_proxy = preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
 		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY);
 		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET);
+		final PackageManager pm = getPackageManager();
+		try {
+			final PackageInfo pi = pm.getPackageInfo(getPackageName(), 0);
+			final String version_name = pi.versionName;
+			cb.setClientVersion(pi.versionName);
+			cb.setClientName(APP_NAME);
+			cb.setClientURL(APP_PROJECT_URL);
+			cb.setUserAgent("twitter4j http://twitter4j.org/ /" + Version.getVersion() + "(" + APP_NAME + " " + APP_PROJECT_URL + " / " + version_name + ")");
+		} catch (final PackageManager.NameNotFoundException e) {
+
+		}
 		if (!isNullOrEmpty(mRestBaseURL)) {
 			cb.setRestBaseURL(mRestBaseURL);
-		}
-		if (!isNullOrEmpty(mSearchBaseURL)) {
-			cb.setSearchBaseURL(mSearchBaseURL);
-		}
-		if (!isNullOrEmpty(mUploadBaseURL)) {
-			cb.setUploadBaseURL(mUploadBaseURL);
 		}
 		if (!isNullOrEmpty(mSigningRESTBaseURL)) {
 			cb.setSigningRestBaseURL(mSigningRESTBaseURL);
@@ -401,6 +409,12 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 		if (!isNullOrEmpty(mSigningOAuthBaseURL)) {
 			cb.setSigningOAuthBaseURL(mSigningOAuthBaseURL);
+		}
+		if (!isNullOrEmpty(mSearchBaseURL)) {
+			cb.setSearchBaseURL(mSearchBaseURL);
+		}
+		if (!isNullOrEmpty(mUploadBaseURL)) {
+			cb.setUploadBaseURL(mUploadBaseURL);
 		}
 		if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
 			cb.setOAuthConsumerKey(CONSUMER_KEY);

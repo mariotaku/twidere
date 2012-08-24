@@ -74,7 +74,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		int result = 0;
 		if (table != null) {
 			database.beginTransaction();
-			for (ContentValues contentValues : values) {
+			for (final ContentValues contentValues : values) {
 				database.insert(table, null, contentValues);
 				result++;
 			}

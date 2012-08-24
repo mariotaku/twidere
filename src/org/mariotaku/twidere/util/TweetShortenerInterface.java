@@ -30,7 +30,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 
@@ -57,16 +56,6 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 		intent.setComponent(component);
 		bindToService(context, intent, mConntecion);
 	}
-	
-	public void waitForService() {
-		while (mService == null) {
-			try {
-				Thread.sleep(100L);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 	@Override
 	public IBinder asBinder() {
@@ -78,11 +67,21 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 	public String shorten(String text, String screen_name, long in_reply_to_status_id) {
 		if (mService == null) return null;
 		try {
-			return mService.shorten(text,  screen_name, in_reply_to_status_id);
+			return mService.shorten(text, screen_name, in_reply_to_status_id);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public void waitForService() {
+		while (mService == null) {
+			try {
+				Thread.sleep(100L);
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static TweetShortenerInterface getInstance(Application application, String shortener_name) {

@@ -80,7 +80,6 @@ import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
-import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
@@ -133,6 +132,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.URLEntity;
 import twitter4j.User;
 import twitter4j.UserList;
+import twitter4j.Version;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.TwipOModeAuthorization;
@@ -144,6 +144,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -167,8 +169,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageInfo;
 
 public final class Utils implements Constants {
 
@@ -569,7 +569,7 @@ public final class Utils implements Constants {
 					builder.addLink(expanded_url.toString(), url_entity.getDisplayURL(), start, end);
 				}
 			}
-		}	
+		}
 		return builder.build();
 	}
 
@@ -940,11 +940,11 @@ public final class Utils implements Constants {
 		}
 		return images;
 	}
-	
+
 	public static String getImageUploadStatus(Context context, String link, String text) {
 		if (context == null) return null;
-		String image_upload_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
-				PREFERENCE_KEY_IMAGE_UPLOAD_FORMAT, PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT);
+		String image_upload_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+				.getString(PREFERENCE_KEY_IMAGE_UPLOAD_FORMAT, PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT);
 		if (isNullOrEmpty(image_upload_format)) {
 			image_upload_format = PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT;
 		}
@@ -1124,8 +1124,7 @@ public final class Utils implements Constants {
 		if (isNullOrEmpty(quote_format)) {
 			quote_format = PREFERENCE_DEFAULT_QUOTE_FORMAT;
 		}
-		return quote_format.replace(FORMAT_PATTERN_NAME, screen_name).replace(FORMAT_PATTERN_TEXT,
-				text);
+		return quote_format.replace(FORMAT_PATTERN_NAME, screen_name).replace(FORMAT_PATTERN_TEXT, text);
 	}
 
 	/**
@@ -1203,8 +1202,7 @@ public final class Utils implements Constants {
 			share_format = PREFERENCE_DEFAULT_SHARE_FORMAT;
 		}
 		if (title == null) return text;
-		return share_format.replace(FORMAT_PATTERN_TITLE, title).replace(FORMAT_PATTERN_TEXT,
-				text);
+		return share_format.replace(FORMAT_PATTERN_TITLE, title).replace(FORMAT_PATTERN_TEXT, text);
 	}
 
 	public static ImageSpec getSinaWeiboImage(String url) {
@@ -1421,9 +1419,13 @@ public final class Utils implements Constants {
 				final PackageManager pm = context.getPackageManager();
 				try {
 					final PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+					final String version_name = pi.versionName;
 					cb.setClientVersion(pi.versionName);
-				} catch (PackageManager.NameNotFoundException e) {
-					
+					cb.setClientName(APP_NAME);
+					cb.setClientURL(APP_PROJECT_URL);
+					cb.setUserAgent("twitter4j http://twitter4j.org/ /" + Version.getVersion() + "(" + APP_NAME + " " + APP_PROJECT_URL + " / " + version_name + ")");
+				} catch (final PackageManager.NameNotFoundException e) {
+
 				}
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
@@ -1535,11 +1537,11 @@ public final class Utils implements Constants {
 		return new ImageSpec(thumbnail_size, full_size);
 
 	}
-	
+
 	public static boolean isFiltered(Context context, String screen_name, String source, String text) {
 		if (context == null) return false;
 		final ContentResolver resolver = context.getContentResolver();
-		final String[] cols = new String[]{ Filters.TEXT };
+		final String[] cols = new String[] { Filters.TEXT };
 		Cursor cur;
 		if (screen_name != null) {
 			cur = resolver.query(Filters.Users.CONTENT_URI, cols, null, null, null);
