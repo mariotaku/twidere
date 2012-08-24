@@ -167,6 +167,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageInfo;
 
 public final class Utils implements Constants {
 
@@ -538,21 +540,7 @@ public final class Utils implements Constants {
 		if (status == null) return null;
 		final String text = status.getText();
 		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG);
-		final URLEntity[] urls = status.getURLEntities();
-		if (urls != null) {
-			for (final URLEntity url_entity : urls) {
-				final int start = url_entity.getStart();
-				final int end = url_entity.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				final URL expanded_url = url_entity.getExpandedURL();
-				if (expanded_url != null) {
-					builder.addLink(expanded_url.toString(), url_entity.getDisplayURL(), start, end);
-				}
-			}
-		}
+		final HtmlBuilder builder = new HtmlBuilder(text, false);
 		// Format media.
 		final MediaEntity[] medias = status.getMediaEntities();
 		if (medias != null) {
@@ -568,6 +556,20 @@ public final class Utils implements Constants {
 				}
 			}
 		}
+		final URLEntity[] urls = status.getURLEntities();
+		if (urls != null) {
+			for (final URLEntity url_entity : urls) {
+				final int start = url_entity.getStart();
+				final int end = url_entity.getEnd();
+				if (start < 0 || end > text.length()) {
+					continue;
+				}
+				final URL expanded_url = url_entity.getExpandedURL();
+				if (expanded_url != null) {
+					builder.addLink(expanded_url.toString(), url_entity.getDisplayURL(), start, end);
+				}
+			}
+		}	
 		return builder.build();
 	}
 
@@ -1416,6 +1418,13 @@ public final class Utils implements Constants {
 			if (cur.getCount() == 1) {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
+				final PackageManager pm = context.getPackageManager();
+				try {
+					final PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+					cb.setClientVersion(pi.versionName);
+				} catch (PackageManager.NameNotFoundException e) {
+					
+				}
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
 				if (force_ssl_connection) {

@@ -373,7 +373,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
 		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
 		int icon = R.drawable.ic_menu_tweet;
-		if (mViewPager != null) {
+		if (mViewPager != null && mAdapter != null) {
 			final int position = mViewPager.getCurrentItem();
 			
 			if (position == mAdapter.getCount() - 1) {
