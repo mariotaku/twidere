@@ -26,7 +26,6 @@ import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getRetweetId;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
@@ -99,6 +98,8 @@ public class TwidereService extends Service implements Constants {
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
 	private NotificationManager mNotificationManager;
+	private AlarmManager mAlarmManager;
+	private ContentResolver mResolver;
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 	private int mStoreStatusesTaskId, mStoreMentionsTaskId;
@@ -108,6 +109,10 @@ public class TwidereService extends Service implements Constants {
 	private int mStoreLocalTrendsTaskId, mStoreWeeklyTrendsTaskId, mStoreDailyTrendsTaskId;
 
 	private boolean mShouldShutdown = false;
+
+	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
+
+	private PendingIntent mPendingRefreshIntent;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -145,15 +150,6 @@ public class TwidereService extends Service implements Constants {
 
 	};
 
-	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
-	private final ArrayList<String> mNewMentionsNames = new ArrayList<String>();
-	private final ArrayList<String> mNewMentionsScreenNames = new ArrayList<String>();
-	private String mNewMentionsMessage;
-
-	private AlarmManager mAlarmManager;
-
-	private PendingIntent mPendingRefreshIntent;;
-
 	public int addUserListMember(long account_id, int list_id, long user_id, String screen_name) {
 		final AddUserListMemberTask task = new AddUserListMemberTask(account_id, list_id, user_id, screen_name);
 		return mAsyncTaskManager.add(task, true);
@@ -172,9 +168,6 @@ public class TwidereService extends Service implements Constants {
 			}
 			case NOTIFICATION_ID_MENTIONS: {
 				mNewMentionsCount = 0;
-				mNewMentionsNames.clear();
-				mNewMentionsScreenNames.clear();
-				mNewMentionsMessage = null;
 				break;
 			}
 			case NOTIFICATION_ID_DIRECT_MESSAGES: {
@@ -339,6 +332,7 @@ public class TwidereService extends Service implements Constants {
 		mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		mResolver = getContentResolver();
 		final Intent refresh_intent = new Intent(BROADCAST_AUTO_REFRESH);
 		mPendingRefreshIntent = PendingIntent.getBroadcast(this, 0, refresh_intent, 0);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
@@ -436,7 +430,7 @@ public class TwidereService extends Service implements Constants {
 	private Notification buildNotification(String title, String message, int icon, Intent content_intent,
 			Intent delete_intent) {
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder.setTicker(title);
+		builder.setTicker(message);
 		builder.setContentTitle(title);
 		builder.setContentText(message);
 		builder.setAutoCancel(true);
@@ -550,7 +544,6 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected Void doInBackground(Void... args) {
-			final ContentResolver resolver = getContentResolver();
 
 			for (final ListResponse<twitter4j.Status> response : responses) {
 				final List<twitter4j.Status> statuses = response.list;
@@ -574,9 +567,9 @@ public class TwidereService extends Service implements Constants {
 
 				}
 
-				resolver.delete(CachedUsers.CONTENT_URI,
+				mResolver.delete(CachedUsers.CONTENT_URI,
 						CachedUsers.USER_ID + " IN (" + ListUtils.buildString(user_ids, ',', true) + " )", null);
-				resolver.bulkInsert(CachedUsers.CONTENT_URI,
+				mResolver.bulkInsert(CachedUsers.CONTENT_URI,
 						cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
 
 			}
@@ -614,7 +607,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
 			if (result != null && result.data != null) {
-				final ContentResolver resolver = getContentResolver();
+
 				final User user = result.data.getUser();
 				final twitter4j.Status retweeted_status = result.data.getRetweetedStatus();
 				if (user != null && retweeted_status != null) {
@@ -628,8 +621,8 @@ public class TwidereService extends Service implements Constants {
 					final String status_where = Statuses.STATUS_ID + " = " + result.data.getId();
 					final String retweet_where = Statuses.STATUS_ID + " = " + retweeted_status.getId();
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
-						resolver.delete(uri, status_where, null);
-						resolver.update(uri, values, retweet_where, null);
+						mResolver.delete(uri, status_where, null);
+						mResolver.update(uri, values, retweet_where, null);
 					}
 				}
 				Toast.makeText(TwidereService.this, R.string.cancel_retweet_success, Toast.LENGTH_SHORT).show();
@@ -679,7 +672,10 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(SingleResponse<User> result) {
-			if (result != null && result.data != null) {
+			if (result != null && result.data != null && result.data.getId() > 0) {
+				for (final Uri uri : Utils.STATUSES_URIS) {
+					mResolver.delete(uri, Statuses.ACCOUNT_ID + " = " + account_id, null);
+				}
 				Toast.makeText(TwidereService.this, R.string.user_blocked, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
@@ -724,7 +720,6 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
-			final ContentResolver resolver = getContentResolver();
 
 			if (result.data != null) {
 				final long status_id = result.data.getId();
@@ -739,7 +734,7 @@ public class TwidereService extends Service implements Constants {
 				where.append(Statuses.RETWEET_ID + "=" + status_id);
 				where.append(")");
 				for (final Uri uri : TweetStore.STATUSES_URIS) {
-					resolver.update(uri, values, where.toString(), null);
+					mResolver.update(uri, values, where.toString(), null);
 				}
 				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
@@ -1003,9 +998,9 @@ public class TwidereService extends Service implements Constants {
 			if (result.data != null && result.data.getId() > 0) {
 				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
 				final String where = DirectMessages.MESSAGE_ID + " = " + result.data.getId();
-				final ContentResolver resolver = getContentResolver();
-				resolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
-				resolver.delete(DirectMessages.Outbox.CONTENT_URI, where, null);
+
+				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
+				mResolver.delete(DirectMessages.Outbox.CONTENT_URI, where, null);
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -1046,7 +1041,6 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
-			final ContentResolver resolver = getContentResolver();
 
 			if (result.data != null) {
 				final long status_id = result.data.getId();
@@ -1061,7 +1055,7 @@ public class TwidereService extends Service implements Constants {
 				where.append(Statuses.RETWEET_ID + "=" + status_id);
 				where.append(")");
 				for (final Uri uri : TweetStore.STATUSES_URIS) {
-					resolver.update(uri, values, where.toString(), null);
+					mResolver.update(uri, values, where.toString(), null);
 				}
 				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
 				intent.putExtra(INTENT_KEY_USER_ID, account_id);
@@ -1152,12 +1146,12 @@ public class TwidereService extends Service implements Constants {
 			final Intent intent = new Intent(BROADCAST_STATUS_DESTROYED);
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				final long status_id = result.data.getId();
-				final ContentResolver resolver = getContentResolver();
+
 				final StringBuilder where = new StringBuilder();
 				where.append(Statuses.STATUS_ID + " = " + status_id);
 				where.append(" OR " + Statuses.RETWEET_ID + " = " + status_id);
 				for (final Uri uri : TweetStore.STATUSES_URIS) {
-					resolver.delete(uri, where.toString(), null);
+					mResolver.delete(uri, where.toString(), null);
 				}
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
@@ -1620,7 +1614,10 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(SingleResponse<User> result) {
-			if (result != null && result.data != null) {
+			if (result != null && result.data != null && result.data.getId() > 0) {
+				for (final Uri uri : Utils.STATUSES_URIS) {
+					mResolver.delete(uri, Statuses.ACCOUNT_ID + " = " + account_id, null);
+				}
 				Toast.makeText(TwidereService.this, R.string.reported_user_for_spam, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
@@ -1665,7 +1662,7 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
-			final ContentResolver resolver = getContentResolver();
+
 			if (result.data != null && result.data.getId() > 0) {
 				final User user = result.data.getUser();
 				if (user != null) {
@@ -1680,7 +1677,7 @@ public class TwidereService extends Service implements Constants {
 					where.append(Statuses.STATUS_ID + " = " + status_id);
 					where.append(" OR " + Statuses.RETWEET_ID + " = " + status_id);
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
-						resolver.update(uri, values, where.toString(), null);
+						mResolver.update(uri, values, where.toString(), null);
 					}
 				}
 				Toast.makeText(TwidereService.this, R.string.retweet_success, Toast.LENGTH_SHORT).show();
@@ -2008,14 +2005,14 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected SingleResponse<Bundle> doInBackground(Void... args) {
-			final ContentResolver resolver = getContentResolver();
+
 			boolean succeed = false;
 			final Uri query_uri = buildQueryUri(uri, false);
 			int total_items_inserted = 0;
 			for (final ListResponse<DirectMessage> response : responses) {
 				final long account_id = response.account_id;
 				final List<DirectMessage> messages = response.list;
-				final Cursor cur = resolver.query(uri, new String[0], DirectMessages.ACCOUNT_ID + " = " + account_id,
+				final Cursor cur = mResolver.query(uri, new String[0], DirectMessages.ACCOUNT_ID + " = " + account_id,
 						null, null);
 				boolean no_items_before = false;
 				if (cur != null) {
@@ -2047,11 +2044,11 @@ public class TwidereService extends Service implements Constants {
 						where.append(" AND ");
 						where.append(DirectMessages.MESSAGE_ID + " IN ( "
 								+ ListUtils.buildString(message_ids, ',', true) + " ) ");
-						rows_deleted = resolver.delete(query_uri, where.toString(), null);
+						rows_deleted = mResolver.delete(query_uri, where.toString(), null);
 					}
 
 					// Insert previously fetched items.
-					resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
+					mResolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 					// No row deleted, so I will insert a gap.
 					final boolean insert_gap = rows_deleted == 1 && message_ids.contains(response.max_id)
@@ -2062,7 +2059,7 @@ public class TwidereService extends Service implements Constants {
 						final StringBuilder where = new StringBuilder();
 						where.append(DirectMessages.ACCOUNT_ID + "=" + account_id);
 						where.append(" AND " + DirectMessages.MESSAGE_ID + "=" + min_id);
-						resolver.update(query_uri, values, where.toString(), null);
+						mResolver.update(query_uri, values, where.toString(), null);
 					}
 					final int actual_items_inserted = values_list.size() - rows_deleted;
 					if (actual_items_inserted > 0) {
@@ -2147,34 +2144,11 @@ public class TwidereService extends Service implements Constants {
 	class StoreMentionsTask extends StoreStatusesTask {
 
 		private final boolean is_auto_refresh;
-		private final List<ListResponse<twitter4j.Status>> result;
 
 		public StoreMentionsTask(List<ListResponse<twitter4j.Status>> result, boolean is_auto_refresh,
 				boolean should_set_min_id) {
 			super(result, Mentions.CONTENT_URI, should_set_min_id);
-			this.result = result;
 			this.is_auto_refresh = is_auto_refresh;
-		}
-		
-		@Override
-		protected SingleResponse<Bundle> doInBackground(Void... args) {
-			for (ListResponse<twitter4j.Status> statuses : result) {
-				for (twitter4j.Status status : (List<twitter4j.Status>) statuses) {
-					if (status.getId() <= 0 || status.getUser() == null) continue;
-					final String screen_name = status.getUser().getScreenName();
-					final String name = status.getUser().getName();
-					final String source = status.getSource();
-					final String text = status.getText();
-					mNewMentionsScreenNames.remove(screen_name);
-					mNewMentionsNames.remove(name);
-					if (!isFiltered(TwidereService.this, screen_name, source, text)) {
-						mNewMentionsScreenNames.add(screen_name);
-						mNewMentionsNames.add(name);
-						mNewMentionsMessage = text;
-					}
-				}
-			}
-			return super.doInBackground(args);
 		}
 
 		@Override
@@ -2193,8 +2167,6 @@ public class TwidereService extends Service implements Constants {
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) {
 				mNewMentionsCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
 				if (mNewMentionsCount > 0) {
-					final String message = getResources().getQuantityString(R.plurals.Nmentions, mNewMentionsCount,
-							mNewMentionsCount);
 					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 					final Bundle delete_extras = new Bundle();
 					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
@@ -2205,10 +2177,12 @@ public class TwidereService extends Service implements Constants {
 					final Bundle content_extras = new Bundle();
 					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
 					content_intent.putExtras(content_extras);
-					mNotificationManager.notify(
-							NOTIFICATION_ID_MENTIONS,
-							buildNotification(getString(R.string.new_notifications), message,
-									R.drawable.ic_stat_mention, content_intent, delete_intent));
+					final String title = getString(R.string.mentions);
+					final String message = getResources().getQuantityString(R.plurals.Nmentions, mNewMentionsCount,
+							mNewMentionsCount);
+					final Notification notification = buildNotification(title, message, R.drawable.ic_stat_mention,
+							content_intent, delete_intent);
+					mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, notification);
 				}
 			}
 			super.onPostExecute(response);
@@ -2301,7 +2275,7 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected SingleResponse<Bundle> doInBackground(Void... args) {
-			final ContentResolver resolver = getContentResolver();
+
 			boolean succeed = false;
 			final Uri query_uri = buildQueryUri(uri, false);
 
@@ -2360,11 +2334,11 @@ public class TwidereService extends Service implements Constants {
 					where.append(" OR ");
 					where.append(Statuses.RETWEET_ID + " IN ( " + ids_string + " ) ");
 					where.append(")");
-					rows_deleted = resolver.delete(query_uri, where.toString(), null);
+					rows_deleted = mResolver.delete(query_uri, where.toString(), null);
 				}
 
 				// Insert previously fetched items.
-				resolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
+				mResolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 				final int actual_items_inserted = values_list.size() - rows_deleted;
 
@@ -2381,7 +2355,7 @@ public class TwidereService extends Service implements Constants {
 					final StringBuilder where = new StringBuilder();
 					where.append(Statuses.ACCOUNT_ID + "=" + account_id);
 					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
-					resolver.update(query_uri, values, where.toString(), null);
+					mResolver.update(query_uri, values, where.toString(), null);
 					// Ignore gaps
 					newly_inserted_ids.remove(min_id);
 				}
@@ -2422,14 +2396,13 @@ public class TwidereService extends Service implements Constants {
 		protected SingleResponse<Bundle> doInBackground(Void... args) {
 			final Bundle bundle = new Bundle();
 			if (response != null) {
-				final ContentResolver resolver = getContentResolver();
 
 				final Uri query_uri = buildQueryUri(uri, false);
 				final List<Trends> messages = response.list;
 				if (messages != null && messages.size() > 0) {
 					final ContentValues[] values_array = makeTrendsContentValues(messages);
-					resolver.delete(query_uri, null, null);
-					resolver.bulkInsert(query_uri, values_array);
+					mResolver.delete(query_uri, null, null);
+					mResolver.bulkInsert(query_uri, values_array);
 
 					bundle.putBoolean(INTENT_KEY_SUCCEED, true);
 				}
@@ -2694,8 +2667,8 @@ public class TwidereService extends Service implements Constants {
 				if (image_uri != null) {
 					values.put(Drafts.MEDIA_URI, image_uri.toString());
 				}
-				final ContentResolver resolver = getContentResolver();
-				resolver.insert(Drafts.CONTENT_URI, values);
+
+				mResolver.insert(Drafts.CONTENT_URI, values);
 			}
 			super.onPostExecute(result);
 			if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {

@@ -34,9 +34,9 @@ import twitter4j.TwitterConstants;
 public interface Constants extends TwitterConstants {
 
 	public static final String APP_NAME = "Twidere";
-	
+
 	public static final String APP_PROJECT_URL = "https://github.com/mariotaku/twidere";
-	
+
 	public static final boolean DEBUG = BuildConfig.DEBUG;
 
 	public static final String LOGTAG = APP_NAME;

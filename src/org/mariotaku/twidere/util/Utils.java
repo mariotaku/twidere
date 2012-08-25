@@ -299,9 +299,9 @@ public final class Utils implements Constants {
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
 
-	private static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 
-	private static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
+	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
 			DirectMessages.Outbox.CONTENT_URI };
 
 	private Utils() {
@@ -1423,7 +1423,8 @@ public final class Utils implements Constants {
 					cb.setClientVersion(pi.versionName);
 					cb.setClientName(APP_NAME);
 					cb.setClientURL(APP_PROJECT_URL);
-					cb.setUserAgent("twitter4j http://twitter4j.org/ /" + Version.getVersion() + "(" + APP_NAME + " " + APP_PROJECT_URL + " / " + version_name + ")");
+					cb.setUserAgent("twitter4j http://twitter4j.org/ /" + Version.getVersion() + "(" + APP_NAME + " "
+							+ APP_PROJECT_URL + " / " + version_name + ")");
 				} catch (final PackageManager.NameNotFoundException e) {
 
 				}

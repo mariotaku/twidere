@@ -295,8 +295,6 @@
 	<string name="image_uploader">Image uploader</string>
 	<string name="image_uploader_default">Default (Twitter)</string>
 	<string name="home_refresh">Refresh in home timeline</string>
-	<string name="people_with_others"><xliff:g id="people">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others</string>
-	<string name="people_mentioned_you"><xliff:g id="users">%s</xliff:g> mentioned you.</string>
 	<string name="error_message_image_upload_failed">Image upload failed.</string>
 	<string name="error_message_image_uploader_not_found">Image uploader not found, maybe it was uninstalled.</string>
 	<string name="image_upload_format">Tweet format when upload image</string>

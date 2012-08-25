@@ -597,7 +597,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			itemAddImage.setTitle(R.string.add_image);
 		}
 		final MenuItem itemTakePhoto = menu.findItem(MENU_TAKE_PHOTO);
-		final Drawable iconTakePhoto = itemTakePhoto.getIcon().mutate(); 
+		final Drawable iconTakePhoto = itemTakePhoto.getIcon().mutate();
 		if (!mIsImageAttached && mIsPhotoAttached) {
 			iconTakePhoto.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemTakePhoto.setTitle(R.string.remove_photo);
