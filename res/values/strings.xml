@@ -295,5 +295,7 @@
 	<string name="default_provider">Default</string>
 	<string name="image_uploader">Image uploader</string>
 	<string name="home_refresh">Refresh in home timeline</string>
+	<string name="show_absolute_time">Show absolute time</string>
+	<string name="show_absolute_time_summary">Show absolute time in tweets</string>
 
 </resources>
