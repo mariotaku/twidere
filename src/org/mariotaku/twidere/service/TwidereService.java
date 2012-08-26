@@ -261,12 +261,14 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public int getMentions(long[] account_ids, long[] max_ids) {
-		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false);
+		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)
+				&& max_ids == null;
 		return getMentions(account_ids, max_ids, notification);
 	}
 
 	public int getReceivedDirectMessages(long[] account_ids, long[] max_ids) {
-		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false);
+		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)
+				&& max_ids == null;
 		return getReceivedDirectMessages(account_ids, max_ids, notification);
 	}
 

@@ -42,7 +42,6 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	private final LazyImageLoader mProfileImageLoader;
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName;
 	private float mTextSize;
-	private boolean mForceSSLConnection;
 
 	public UserListsAdapter(Context context) {
 		super(context, R.layout.user_list_list_item, R.id.description);
@@ -87,12 +86,12 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {
 				mProfileImageLoader.displayImage(
-						parseURL(getBiggerTwitterProfileImage(user_list.user_profile_image_url_string,
-								mForceSSLConnection)), holder.profile_image);
+						parseURL(getBiggerTwitterProfileImage(user_list.user_profile_image_url_string)),
+						holder.profile_image);
 			} else {
 				mProfileImageLoader.displayImage(
-						parseURL(getNormalTwitterProfileImage(user_list.user_profile_image_url_string,
-								mForceSSLConnection)), holder.profile_image);
+						parseURL(getNormalTwitterProfileImage(user_list.user_profile_image_url_string)),
+						holder.profile_image);
 			}
 		}
 		return view;
@@ -136,11 +135,6 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
-	}
-
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
 	}
 
 	@Override

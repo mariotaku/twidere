@@ -29,6 +29,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
@@ -220,6 +221,10 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				// deleted.
 				mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + " = " + mSelectedUserId, null);
 				mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + " = " + mSelectedUserId, null);
+				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, DirectMessages.ACCOUNT_ID + " = " + mSelectedUserId,
+						null);
+				mResolver.delete(DirectMessages.Outbox.CONTENT_URI,
+						DirectMessages.ACCOUNT_ID + " = " + mSelectedUserId, null);
 				if (getActivatedAccountIds(getActivity()).length > 0) {
 					getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 				} else {

@@ -198,7 +198,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenName = user.getScreenName();
 
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
-		final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 
 		mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_color : 0);
 		if (is_multiple_account_enabled) {
@@ -217,7 +216,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				: View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
-		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView, force_ssl_connection);
+		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView);
 		linkify.setOnLinkClickListener(this);
 		linkify.addAllLinks();
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -242,9 +241,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		final String profile_image_url_string = parseString(user.getProfileImageURL());
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		mProfileImageLoader.displayImage(
-				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string,
-						force_ssl_connection) : getNormalTwitterProfileImage(profile_image_url_string,
-						force_ssl_connection)), mProfileImageView);
+				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+						: getNormalTwitterProfileImage(profile_image_url_string)), mProfileImageView);
 		// }
 		mUser = user;
 		mAdapter.notifyDataSetChanged();
@@ -375,10 +373,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case R.id.profile_image_container: {
 				final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 				if (twitter != null) {
-					final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION,
-							false);
-					final Uri uri = Uri.parse(getOriginalTwitterProfileImage(parseString(mUser.getProfileImageURL()),
-							force_ssl_connection));
+					final Uri uri = Uri.parse(getOriginalTwitterProfileImage(parseString(mUser.getProfileImageURL())));
 					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, uri);
 					intent.setPackage(getActivity().getPackageName());
 					startActivity(intent);

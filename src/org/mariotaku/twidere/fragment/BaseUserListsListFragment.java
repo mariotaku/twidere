@@ -227,8 +227,6 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
-		mAdapter.setForceSSLConnection(force_ssl_connection);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
 		mAdapter.setTextSize(text_size);

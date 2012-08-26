@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.DatabaseUpgradeHelper.safeUpgrade;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
-import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.util.List;
@@ -215,8 +214,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			}
 		} else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) {
 			try {
-				return database.rawQuery(
-						DirectMessages.ConversationsEntry.buildSQL(parseInt(uri.getLastPathSegment())), null);
+				return database.rawQuery(DirectMessages.ConversationsEntry.buildSQL(selection), null);
 			} catch (final SQLiteException e) {
 				mErrorToastHandler.sendMessage(mErrorToastHandler.obtainMessage(0, e));
 			}

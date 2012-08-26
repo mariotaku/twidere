@@ -56,7 +56,7 @@ import android.view.ViewGroup;
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mSkipImagePreviewProcessing,
-			mDisplayName, mShowAccountColor, mForceSSLConnection, mGapDisallowed;
+			mDisplayName, mShowAccountColor, mGapDisallowed;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -109,7 +109,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			}
 
 			final PreviewImage preview = mSkipImagePreviewProcessing ? null : getPreviewImage(text,
-					mDisplayImagePreview, mForceSSLConnection);
+					mDisplayImagePreview);
 			final boolean has_media = preview != null ? preview.has_image : false;
 
 			holder.setTextSize(mTextSize);
@@ -137,12 +137,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			if (mDisplayProfileImage) {
 				final String profile_image_url_string = cursor.getString(mIndices.profile_image_url);
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(
-							parseURL(getBiggerTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
+					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
 							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(
-							parseURL(getNormalTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
+					mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(profile_image_url_string)),
 							holder.profile_image);
 				}
 				holder.profile_image.setTag(position);
@@ -219,7 +217,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		if (status == null) return;
 		switch (view.getId()) {
 			case R.id.image_preview: {
-				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string, mForceSSLConnection);
+				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string);
 				if (spec != null) {
 					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
 					intent.setPackage(mContext.getPackageName());
@@ -266,11 +264,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
-	}
-
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
 	}
 
 	@Override

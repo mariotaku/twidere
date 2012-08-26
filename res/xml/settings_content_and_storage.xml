@@ -4,15 +4,12 @@
 	android:title="@string/content_and_storage">
 
 	<PreferenceCategory
-		android:key="category_content"
-		android:title="@string/content">
+		android:key="category_multimedia_contents"
+		android:title="@string/multimedia_contents">
 		<org.mariotaku.twidere.preference.ImageUploaderPickerPreference
 			android:key="image_uploader"
 			android:title="@string/image_uploader"/>
-		<org.mariotaku.twidere.preference.TweetShortenerPickerPreference
-			android:key="tweet_shortener"
-			android:title="@string/tweet_shortener"/>
-			
+
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="display_profile_image"
@@ -36,6 +33,14 @@
 			android:key="inline_image_preview"
 			android:summary="@string/image_load_summary"
 			android:title="@string/inline_image_preview"/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="category_content"
+		android:title="@string/content">
+		<org.mariotaku.twidere.preference.TweetShortenerPickerPreference
+			android:key="tweet_shortener"
+			android:title="@string/tweet_shortener"/>
+
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="display_name"
@@ -64,7 +69,7 @@
 			android:singleLine="true"
 			android:summary="@string/image_upload_format_summary"
 			android:title="@string/image_upload_format"/>
-		
+
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="load_more_automatically"
@@ -101,11 +106,12 @@
 			android:summary="@string/database_item_limit_summary"
 			android:title="@string/database_item_limit"/>
 
-		<Preference
+		<org.mariotaku.twidere.preference.ClearCachePreference
 			android:key="clear_cache"
 			android:summary="@string/clear_cache_summary"
 			android:title="@string/clear_cache"/>
-		<Preference
+
+		<org.mariotaku.twidere.preference.ClearDatabasesPreference
 			android:key="clear_databases"
 			android:summary="@string/clear_databases_summary"
 			android:title="@string/clear_databases"/>

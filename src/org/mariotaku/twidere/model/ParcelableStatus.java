@@ -89,7 +89,7 @@ public class ParcelableStatus implements Parcelable {
 		}
 	};
 
-	public ParcelableStatus(Cursor cursor, StatusCursorIndices indices, boolean force_ssl) {
+	public ParcelableStatus(Cursor cursor, StatusCursorIndices indices) {
 		retweet_id = indices.retweet_id != -1 ? cursor.getLong(indices.retweet_id) : -1;
 		retweeted_by_id = indices.retweeted_by_id != -1 ? cursor.getLong(indices.retweeted_by_id) : -1;
 		status_id = indices.status_id != -1 ? cursor.getLong(indices.status_id) : -1;
@@ -108,7 +108,7 @@ public class ParcelableStatus implements Parcelable {
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
 		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
-		final PreviewImage preview = getPreviewImage(text_html, true, force_ssl);
+		final PreviewImage preview = getPreviewImage(text_html, true);
 		has_media = preview.has_image;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		name = indices.name != -1 ? cursor.getString(indices.name) : null;
@@ -161,7 +161,7 @@ public class ParcelableStatus implements Parcelable {
 
 	}
 
-	public ParcelableStatus(Status status, long account_id, boolean is_gap, boolean force_ssl) {
+	public ParcelableStatus(Status status, long account_id, boolean is_gap) {
 
 		this.is_gap = is_gap;
 		status_id = status.getId();
@@ -188,7 +188,7 @@ public class ParcelableStatus implements Parcelable {
 
 		status_timestamp = getTime(status.getCreatedAt());
 		text_html = formatStatusText(status);
-		final PreviewImage preview = getPreviewImage(text_html, true, force_ssl);
+		final PreviewImage preview = getPreviewImage(text_html, true);
 		text_plain = status.getText();
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();
@@ -204,7 +204,7 @@ public class ParcelableStatus implements Parcelable {
 		image_preview_url = parseURL(image_preview_url_string);
 	}
 
-	public ParcelableStatus(Tweet tweet, long account_id, boolean is_gap, boolean force_ssl) {
+	public ParcelableStatus(Tweet tweet, long account_id, boolean is_gap) {
 
 		this.is_gap = is_gap;
 		status_id = tweet.getId();
@@ -226,7 +226,7 @@ public class ParcelableStatus implements Parcelable {
 
 		status_timestamp = getTime(tweet.getCreatedAt());
 		text_html = formatTweetText(tweet);
-		final PreviewImage preview = getPreviewImage(text_html, true, force_ssl);
+		final PreviewImage preview = getPreviewImage(text_html, true);
 		text_plain = tweet.getText();
 		retweet_count = -1;
 		in_reply_to_screen_name = tweet.getToUser();

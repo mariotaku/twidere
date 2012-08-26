@@ -67,8 +67,7 @@ public class StatusViewHolder {
 
 	public void setShowAsGap(boolean show_gap) {
 		show_as_gap = show_gap;
-		content.setBackgroundResource(show_gap ? R.drawable.ic_list_gap
-				: account_color_enabled ? R.drawable.ic_label_color : 0);
+		content.setBackgroundResource(account_color_enabled ? R.drawable.ic_label_color : 0);
 		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		image_preview.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);

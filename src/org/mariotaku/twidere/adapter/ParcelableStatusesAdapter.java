@@ -54,7 +54,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mSkipImagePreviewProcessing,
-			mDisplayName, mShowAccountColor, mForceSSLConnection, mGapDisallowed;
+			mDisplayName, mShowAccountColor, mGapDisallowed;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -145,15 +145,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader
-							.displayImage(
-									parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string,
-											mForceSSLConnection)), holder.profile_image);
+					mProfileImageLoader.displayImage(
+							parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string)),
+							holder.profile_image);
 				} else {
-					mProfileImageLoader
-							.displayImage(
-									parseURL(getNormalTwitterProfileImage(status.profile_image_url_string,
-											mForceSSLConnection)), holder.profile_image);
+					mProfileImageLoader.displayImage(
+							parseURL(getNormalTwitterProfileImage(status.profile_image_url_string)),
+							holder.profile_image);
 				}
 				holder.profile_image.setOnClickListener(this);
 				holder.profile_image.setTag(position);
@@ -177,7 +175,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		if (status == null) return;
 		switch (view.getId()) {
 			case R.id.image_preview: {
-				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string, mForceSSLConnection);
+				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string);
 				if (spec != null) {
 					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
 					intent.setPackage(mContext.getPackageName());
@@ -240,11 +238,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
-	}
-
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
 	}
 
 	@Override

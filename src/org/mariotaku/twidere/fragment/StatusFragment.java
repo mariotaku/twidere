@@ -103,7 +103,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	private FollowInfoTask mFollowInfoTask;
 	private GetStatusTask mGetStatusTask;
 	private ParcelableStatus mStatus;
-	private boolean mLoadMoreAutomatically, mForceSSLConnection;
+	private boolean mLoadMoreAutomatically;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -142,7 +142,6 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		mMenuBar.show();
 
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
-		final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 
 		mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_color : 0);
 		if (is_multiple_account_enabled) {
@@ -157,7 +156,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(
 				getUserTypeIconRes(status.is_verified, status.is_protected), 0, 0, 0);
 		mTextView.setText(status.text);
-		final TwidereLinkify linkify = new TwidereLinkify(mTextView, force_ssl_connection);
+		final TwidereLinkify linkify = new TwidereLinkify(mTextView);
 		linkify.setOnLinkClickListener(new OnLinkClickHandler(getActivity(), mAccountId));
 		linkify.addAllLinks();
 		final boolean is_reply = status.in_reply_to_status_id > 0;
@@ -179,10 +178,9 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 
 		mProfileImageLoader.displayImage(
-				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string,
-						force_ssl_connection) : getNormalTwitterProfileImage(status.profile_image_url_string,
-						force_ssl_connection)), mProfileImageView);
-		final List<ImageSpec> images = getImagesInStatus(status.text_html, force_ssl_connection);
+				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string)
+						: getNormalTwitterProfileImage(status.profile_image_url_string)), mProfileImageView);
+		final List<ImageSpec> images = getImagesInStatus(status.text_html);
 		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		mImagesPreviewFragment.clear();
 		if (images.size() > 0) {
@@ -196,6 +194,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				ft.commit();
 			}
 		}
+		mRetweetedStatusView.setVisibility(status.is_protected ? View.GONE : View.VISIBLE);
 		if (status.retweet_id > 0) {
 			final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 			final String retweeted_by = display_name ? status.retweeted_by_name : status.retweeted_by_screen_name;
@@ -220,7 +219,6 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		super.onActivityCreated(savedInstanceState);
 		setRetainInstance(true);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
-		mForceSSLConnection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
@@ -506,7 +504,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
 			try {
 				return new Response<ParcelableStatus>(new ParcelableStatus(twitter.showStatus(mStatusId), mAccountId,
-						false, mForceSSLConnection), null);
+						false), null);
 			} catch (final TwitterException e) {
 				return new Response<ParcelableStatus>(null, e);
 			}

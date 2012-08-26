@@ -232,7 +232,7 @@ public final class Utils implements Constants {
 				URI_DIRECT_MESSAGES_CONVERSATION);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME
 				+ "/#/*", URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY + "/#",
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY,
 				URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_DAILY, URI_TRENDS_DAILY);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_WEEKLY, URI_TRENDS_WEEKLY);
@@ -350,13 +350,6 @@ public final class Utils implements Constants {
 			}
 		}
 		return json.toString();
-	}
-
-	public static Uri buildDirectMessageConversationsEntryUri(long account_id) {
-		if (account_id <= 0) return TweetStore.NULL_CONTENT_URI;
-		final Uri.Builder builder = DirectMessages.ConversationsEntry.CONTENT_URI.buildUpon();
-		builder.appendPath(String.valueOf(account_id));
-		return builder.build();
 	}
 
 	public static Uri buildDirectMessageConversationUri(long account_id, long conversation_id, String screen_name) {
@@ -489,10 +482,6 @@ public final class Utils implements Constants {
 	public static ParcelableStatus findStatusInDatabases(Context context, long account_id, long status_id) {
 		if (context == null) return null;
 		final ContentResolver resolver = context.getContentResolver();
-		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
-				Context.MODE_PRIVATE);
-		final boolean force_ssl_connection = preferences != null ? preferences.getBoolean(
-				PREFERENCE_KEY_FORCE_SSL_CONNECTION, false) : false;
 		ParcelableStatus status = null;
 		final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = "
 				+ status_id;
@@ -503,7 +492,7 @@ public final class Utils implements Constants {
 			}
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				status = new ParcelableStatus(cur, new StatusCursorIndices(cur), force_ssl_connection);
+				status = new ParcelableStatus(cur, new StatusCursorIndices(cur));
 			}
 			cur.close();
 		}
@@ -773,7 +762,7 @@ public final class Utils implements Constants {
 		if (context == null) return accounts;
 		final String[] cols = new String[] { Accounts.USER_ID };
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1",
-				null, null);
+				null, Accounts.USER_ID);
 		if (cur != null) {
 			final int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
 			cur.moveToFirst();
@@ -810,37 +799,34 @@ public final class Utils implements Constants {
 		return accounts;
 	}
 
-	public static ImageSpec getAllAvailableImage(String link, boolean force_ssl) {
+	public static ImageSpec getAllAvailableImage(String link) {
 		if (link == null) return null;
 		Matcher m;
 		m = PATTERN_TWITTER_IMAGES.matcher(link);
-		if (m.matches()) return getTwitterImage(link, force_ssl);
+		if (m.matches()) return getTwitterImage(link);
 		m = PATTERN_TWITPIC.matcher(link);
-		if (m.matches()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), force_ssl);
+		if (m.matches()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID));
 		m = PATTERN_INSTAGRAM.matcher(link);
-		if (m.matches()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), force_ssl);
+		if (m.matches()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID));
 		m = PATTERN_IMGUR.matcher(link);
 		if (m.matches()) return getImgurImage(matcherGroup(m, IMGUR_GROUP_ID));
 		m = PATTERN_IMGLY.matcher(link);
-		if (m.matches()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), force_ssl);
+		if (m.matches()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID));
 		m = PATTERN_YFROG.matcher(link);
-		if (m.matches()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), force_ssl);
+		if (m.matches()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID));
 		m = PATTERN_LOCKERZ_AND_PLIXI.matcher(link);
-		if (m.matches()) return getLockerzAndPlixiImage(link, force_ssl);
+		if (m.matches()) return getLockerzAndPlixiImage(link);
 		m = PATTERN_SINA_WEIBO_IMAGES.matcher(link);
 		if (m.matches()) return getSinaWeiboImage(link);
 		m = PATTERN_TWITGOO.matcher(link);
-		if (m.matches()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), force_ssl);
+		if (m.matches()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID));
 		m = PATTERN_MOBYPICTURE.matcher(link);
-		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), force_ssl);
+		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID));
 		return null;
 	}
 
-	public static String getBiggerTwitterProfileImage(String url, boolean force_ssl) {
+	public static String getBiggerTwitterProfileImage(String url) {
 		if (url == null) return null;
-		if (force_ssl) {
-			url = url.replaceFirst("http:\\/\\/", "https:\\/\\/");
-		}
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
 			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_bigger");
 		return url;
@@ -930,13 +916,12 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static List<ImageSpec> getImagesInStatus(String status_string, boolean force_ssl) {
+	public static List<ImageSpec> getImagesInStatus(String status_string) {
 		if (status_string == null) return Collections.emptyList();
 		final List<ImageSpec> images = new ArrayList<ImageSpec>();
 		final Matcher matcher = PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML.matcher(status_string);
 		while (matcher.find()) {
-			images.add(getAllAvailableImage(matcherGroup(matcher, PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK),
-					force_ssl));
+			images.add(getAllAvailableImage(matcherGroup(matcher, PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK)));
 		}
 		return images;
 	}
@@ -952,10 +937,10 @@ public final class Utils implements Constants {
 		return image_upload_format.replace(FORMAT_PATTERN_LINK, link).replace(FORMAT_PATTERN_TEXT, text);
 	}
 
-	public static ImageSpec getImglyImage(String id, boolean force_ssl) {
+	public static ImageSpec getImglyImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = (force_ssl ? "https" : "http") + "://img.ly/show/thumb/" + id;
-		final String full_size = (force_ssl ? "https" : "http") + "://img.ly/show/full/" + id;
+		final String thumbnail_size = "http://img.ly/show/thumb/" + id;
+		final String full_size = "http://img.ly/show/full/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 
 	}
@@ -967,11 +952,35 @@ public final class Utils implements Constants {
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static ImageSpec getInstagramImage(String id, boolean force_ssl) {
+	public static ImageSpec getInstagramImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = (force_ssl ? "https" : "http") + "://instagr.am/p/" + id + "/media/?size=t";
-		final String full_size = (force_ssl ? "https" : "http") + "://instagr.am/p/" + id + "/media/?size=l";
+		final String thumbnail_size = "http://instagr.am/p/" + id + "/media/?size=t";
+		final String full_size = "http://instagr.am/p/" + id + "/media/?size=l";
 		return new ImageSpec(thumbnail_size, full_size);
+	}
+
+	public static long[] getLastMessageIdsFromDatabase(Context context, Uri uri) {
+		if (context == null || uri == null) return null;
+		final long[] account_ids = getActivatedAccountIds(context);
+		final String[] cols = new String[] { DirectMessages.MESSAGE_ID };
+		final ContentResolver resolver = context.getContentResolver();
+		final long[] status_ids = new long[account_ids.length];
+		int idx = 0;
+		for (final long account_id : account_ids) {
+			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
+			final Cursor cur = resolver.query(uri, cols, where, null, DirectMessages.ACCOUNT_ID);
+			if (cur == null) {
+				continue;
+			}
+
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(DirectMessages.MESSAGE_ID));
+			}
+			cur.close();
+			idx++;
+		}
+		return status_ids;
 	}
 
 	public static long[] getLastStatusIdsFromDatabase(Context context, Uri uri) {
@@ -983,7 +992,7 @@ public final class Utils implements Constants {
 		int idx = 0;
 		for (final long account_id : account_ids) {
 			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			final Cursor cur = resolver.query(uri, cols, where, null, Statuses.STATUS_ID);
+			final Cursor cur = resolver.query(uri, cols, where, null, Statuses.ACCOUNT_ID);
 			if (cur == null) {
 				continue;
 			}
@@ -998,20 +1007,18 @@ public final class Utils implements Constants {
 		return status_ids;
 	}
 
-	public static ImageSpec getLockerzAndPlixiImage(String url, boolean force_ssl) {
+	public static ImageSpec getLockerzAndPlixiImage(String url) {
 		if (isNullOrEmpty(url)) return null;
-		final String thumbnail_size = (force_ssl ? "https" : "http")
-				+ "://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
-		final String full_size = (force_ssl ? "https" : "http") + "://api.plixi.com/api/tpapi.svc/imagefromurl?url="
-				+ url + "&size=big";
+		final String thumbnail_size = "http://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
+		final String full_size = "http://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
 		return new ImageSpec(thumbnail_size, full_size);
 
 	}
 
-	public static ImageSpec getMobyPictureImage(String id, boolean force_ssl) {
+	public static ImageSpec getMobyPictureImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = (force_ssl ? "https" : "http") + "://moby.to/" + id + ":thumb";
-		final String full_size = (force_ssl ? "https" : "http") + "://moby.to/" + id + ":full";
+		final String thumbnail_size = "http://moby.to/" + id + ":thumb";
+		final String full_size = "http://moby.to/" + id + ":full";
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
@@ -1040,27 +1047,21 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static String getNormalTwitterProfileImage(String url, boolean force_ssl) {
+	public static String getNormalTwitterProfileImage(String url) {
 		if (url == null) return null;
-		if (force_ssl) {
-			url = url.replaceFirst("http:\\/\\/", "https:\\/\\/");
-		}
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
 			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_normal");
 		return url;
 	}
 
-	public static String getOriginalTwitterProfileImage(String url, boolean force_ssl) {
+	public static String getOriginalTwitterProfileImage(String url) {
 		if (url == null) return null;
-		if (force_ssl) {
-			url = url.replaceFirst("http:\\/\\/", "https:\\/\\/");
-		}
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
 			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "");
 		return url;
 	}
 
-	public static PreviewImage getPreviewImage(String html, boolean include_preview, boolean force_ssl) {
+	public static PreviewImage getPreviewImage(String html, boolean include_preview) {
 		if (html == null) return new PreviewImage(false, null, null);
 		if (!include_preview) {
 			final Matcher m = PATTERN_INLINE_PREVIEW_AVAILABLE_IMAGES_MATCH_ONLY.matcher(html);
@@ -1071,34 +1072,32 @@ public final class Utils implements Constants {
 			final String image_url = m.group(PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK);
 			Matcher url_m;
 			url_m = PATTERN_TWITTER_IMAGES.matcher(image_url);
-			if (url_m.matches()) return new PreviewImage(getTwitterImage(image_url, force_ssl), image_url);
+			if (url_m.matches()) return new PreviewImage(getTwitterImage(image_url), image_url);
 			url_m = PATTERN_TWITPIC.matcher(image_url);
 			if (url_m.matches())
-				return new PreviewImage(getTwitpicImage(matcherGroup(url_m, TWITPIC_GROUP_ID), force_ssl), image_url);
+				return new PreviewImage(getTwitpicImage(matcherGroup(url_m, TWITPIC_GROUP_ID)), image_url);
 			url_m = PATTERN_INSTAGRAM.matcher(image_url);
 			if (url_m.matches())
-				return new PreviewImage(getInstagramImage(matcherGroup(url_m, INSTAGRAM_GROUP_ID), force_ssl),
-						image_url);
+				return new PreviewImage(getInstagramImage(matcherGroup(url_m, INSTAGRAM_GROUP_ID)), image_url);
 			url_m = PATTERN_IMGUR.matcher(image_url);
 			if (url_m.matches())
 				return new PreviewImage(getImgurImage(matcherGroup(url_m, IMGUR_GROUP_ID)), image_url);
 			url_m = PATTERN_IMGLY.matcher(image_url);
 			if (url_m.matches())
-				return new PreviewImage(getImglyImage(matcherGroup(url_m, IMGLY_GROUP_ID), force_ssl), image_url);
+				return new PreviewImage(getImglyImage(matcherGroup(url_m, IMGLY_GROUP_ID)), image_url);
 			url_m = PATTERN_YFROG.matcher(image_url);
 			if (url_m.matches())
-				return new PreviewImage(getYfrogImage(matcherGroup(url_m, YFROG_GROUP_ID), force_ssl), image_url);
+				return new PreviewImage(getYfrogImage(matcherGroup(url_m, YFROG_GROUP_ID)), image_url);
 			url_m = PATTERN_LOCKERZ_AND_PLIXI.matcher(image_url);
-			if (url_m.matches()) return new PreviewImage(getLockerzAndPlixiImage(image_url, force_ssl), image_url);
+			if (url_m.matches()) return new PreviewImage(getLockerzAndPlixiImage(image_url), image_url);
 			url_m = PATTERN_SINA_WEIBO_IMAGES.matcher(image_url);
 			if (url_m.matches()) return new PreviewImage(getSinaWeiboImage(image_url), image_url);
 			url_m = PATTERN_TWITGOO.matcher(image_url);
 			if (url_m.matches())
-				return new PreviewImage(getTwitgooImage(matcherGroup(url_m, TWITGOO_GROUP_ID), force_ssl), image_url);
+				return new PreviewImage(getTwitgooImage(matcherGroup(url_m, TWITGOO_GROUP_ID)), image_url);
 			url_m = PATTERN_MOBYPICTURE.matcher(image_url);
 			if (url_m.matches())
-				return new PreviewImage(getMobyPictureImage(matcherGroup(url_m, MOBYPICTURE_GROUP_ID), force_ssl),
-						image_url);
+				return new PreviewImage(getMobyPictureImage(matcherGroup(url_m, MOBYPICTURE_GROUP_ID)), image_url);
 		}
 		return new PreviewImage(false, null, null);
 	}
@@ -1363,25 +1362,22 @@ public final class Utils implements Constants {
 		return date.getTime();
 	}
 
-	public static ImageSpec getTwitgooImage(String id, boolean force_ssl) {
+	public static ImageSpec getTwitgooImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = (force_ssl ? "https" : "http") + "://twitgoo.com/show/thumb/" + id;
-		final String full_size = (force_ssl ? "https" : "http") + "://twitgoo.com/show/img/" + id;
+		final String thumbnail_size = "http://twitgoo.com/show/thumb/" + id;
+		final String full_size = "http://twitgoo.com/show/img/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static ImageSpec getTwitpicImage(String id, boolean force_ssl) {
+	public static ImageSpec getTwitpicImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = (force_ssl ? "https" : "http") + "://twitpic.com/show/thumb/" + id;
-		final String full_size = (force_ssl ? "https" : "http") + "://twitpic.com/show/large/" + id;
+		final String thumbnail_size = "http://twitpic.com/show/thumb/" + id;
+		final String full_size = "http://twitpic.com/show/large/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static ImageSpec getTwitterImage(String url, boolean force_ssl) {
+	public static ImageSpec getTwitterImage(String url) {
 		if (isNullOrEmpty(url)) return null;
-		if (force_ssl) {
-			url = url.replaceFirst("http:\\/\\/", "https:\\/\\/");
-		}
 		return new ImageSpec(url + ":thumb", url);
 	}
 
@@ -1398,8 +1394,6 @@ public final class Utils implements Constants {
 				PREFERENCE_KEY_GZIP_COMPRESSING, true) : true;
 		final boolean ignore_ssl_error = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR,
 				false) : false;
-		final boolean force_ssl_connection = preferences != null ? preferences.getBoolean(
-				PREFERENCE_KEY_FORCE_SSL_CONNECTION, false) : false;
 		final boolean enable_proxy = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false)
 				: false;
 		final String consumer_key = preferences != null ? preferences.getString(PREFERENCE_KEY_CONSUMER_KEY,
@@ -1430,9 +1424,6 @@ public final class Utils implements Constants {
 				}
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
-				if (force_ssl_connection) {
-					cb.setUseSSL(true);
-				}
 				if (enable_proxy) {
 					final String proxy_host = preferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
 					final int proxy_port = parseInt(preferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
@@ -1531,10 +1522,10 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
-	public static ImageSpec getYfrogImage(String id, boolean force_ssl) {
+	public static ImageSpec getYfrogImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = (force_ssl ? "https" : "http") + "://yfrog.com/" + id + ":small";
-		final String full_size = (force_ssl ? "https" : "http") + "://yfrog.com/" + id + ":medium";
+		final String thumbnail_size = "http://yfrog.com/" + id + ":small";
+		final String full_size = "http://yfrog.com/" + id + ":medium";
 		return new ImageSpec(thumbnail_size, full_size);
 
 	}

@@ -290,10 +290,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		final boolean force_ssl_connection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 		final boolean skip_image_preview_processing = mPreferences.getBoolean(
 				PREFERENCE_KEY_SKIP_IMAGE_PREVIEW_PROCESSING, false);
-		adapter.setForceSSLConnection(force_ssl_connection);
 		adapter.setDisplayProfileImage(display_profile_image);
 		adapter.setDisplayHiResProfileImage(hires_profile_image);
 		adapter.setDisplayImagePreview(display_image_preview);

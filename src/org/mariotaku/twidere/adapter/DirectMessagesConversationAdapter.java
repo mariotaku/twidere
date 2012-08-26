@@ -48,7 +48,6 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	private float mTextSize;
 	private final Context mContext;
 	private DirectMessageCursorIndices mIndices;
-	private boolean mForceSSLConnection;
 
 	public DirectMessagesConversationAdapter(Context context, LazyImageLoader loader) {
 		super(context, R.layout.direct_message_list_item, null, new String[0], new int[0], 0);
@@ -80,9 +79,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String sender_profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
-			final URL sender_profile_image_url = parseURL(mDisplayHiResProfileImage ? getBiggerTwitterProfileImage(
-					sender_profile_image_url_string, mForceSSLConnection) : getNormalTwitterProfileImage(
-					sender_profile_image_url_string, mForceSSLConnection));
+			final URL sender_profile_image_url = parseURL(mDisplayHiResProfileImage ? getBiggerTwitterProfileImage(sender_profile_image_url_string)
+					: getNormalTwitterProfileImage(sender_profile_image_url_string));
 
 			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_left);
 			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_right);
@@ -155,11 +153,6 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
-	}
-
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
 	}
 
 	@Override

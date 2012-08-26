@@ -168,7 +168,6 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY = "report_errors_automatically";
 	public static final String PREFERENCE_KEY_LOCAL_TRENDS_WOEID = "local_trends_woeid";
 	public static final String PREFERENCE_KEY_HIRES_PROFILE_IMAGE = "hires_profile_image";
-	public static final String PREFERENCE_KEY_FORCE_SSL_CONNECTION = "force_ssl_connection";
 	public static final String PREFERENCE_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
 	public static final String PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR = "notification_light_color";
 	public static final String PREFERENCE_KEY_SKIP_IMAGE_PREVIEW_PROCESSING = "skip_image_preview_processing";

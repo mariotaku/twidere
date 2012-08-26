@@ -1,10 +1,12 @@
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_ACCOUNT_ID;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_CONVERSATION_ID;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_NAME;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_PROFILE_IMAGE_URL;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_SCREEN_NAME;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_TEXT;
+import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
@@ -24,10 +26,9 @@ import android.view.ViewGroup;
 
 public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements BaseAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName;
+	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName, mShowAccountColor;
 	private final LazyImageLoader mProfileImageLoader;
 	private float mTextSize;
-	private boolean mForceSSLConnection;
 
 	public DirectMessagesEntryAdapter(Context context, LazyImageLoader loader) {
 		super(context, R.layout.direct_messages_entry_item, null, new String[0], new int[0], 0);
@@ -38,10 +39,17 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	public void bindView(View view, Context context, Cursor cursor) {
 		final DMConversationsEntryViewHolder holder = (DMConversationsEntryViewHolder) view.getTag();
 
+		final long account_id = cursor.getLong(ConversationsEntry.IDX_ACCOUNT_ID);
 		final long message_timestamp = cursor.getLong(ConversationsEntry.IDX_MESSAGE_TIMESTAMP);
 		final boolean is_outgoing = cursor.getInt(ConversationsEntry.IDX_IS_OUTGOING) == 1;
 
 		final String name = mDisplayName ? cursor.getString(IDX_NAME) : cursor.getString(IDX_SCREEN_NAME);
+
+		holder.setAccountColorEnabled(mShowAccountColor);
+
+		if (mShowAccountColor) {
+			holder.setAccountColor(getAccountColor(mContext, account_id));
+		}
 
 		holder.setTextSize(mTextSize);
 		holder.name.setText(name);
@@ -53,17 +61,23 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(
-						parseURL(getBiggerTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
+				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(
-						parseURL(getNormalTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
+				mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(profile_image_url_string)),
 						holder.profile_image);
 			}
 		}
 
 		super.bindView(view, context, cursor);
+	}
+
+	public long findAccountId(long id) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
+			if (getItemId(i) == id) return ((Cursor) getItem(i)).getLong(IDX_ACCOUNT_ID);
+		}
+		return -1;
 	}
 
 	public long findConversationId(long id) {
@@ -108,9 +122,11 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		}
 	}
 
-	@Override
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
+	public void setShowAccountColor(boolean show) {
+		if (show != mShowAccountColor) {
+			mShowAccountColor = show;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override

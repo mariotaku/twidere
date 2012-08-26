@@ -252,8 +252,6 @@
 	<string name="hires_profile_image">Hi-res profile image</string>
 	<string name="mention_this_user">Mention this user</string>
 	<string name="signing_in_please_wait">Signing in, please wait or press BACK again to quit.</string>
-	<string name="force_ssl_connection">Force SSL connection</string>
-	<string name="force_ssl_connection_summary">Force using SSL for all requests. (API is already SSL enabled by default, so this is not necessary unless you are living in China)</string>
 	<string name="connectivity">Connectivity</string>
 	<string name="add_member">Add member</string>
 	<string name="add_success">Add success</string>
@@ -304,5 +302,6 @@
 	<string name="error_message_status_too_long">Tweet too long.</string>
 	<string name="error_message_tweet_shorten_failed">Tweet shorten failed.</string>
 	<string name="error_message_tweet_shortener_not_found">Tweet shortener not found, maybe it was uninstalled.</string>
+	<string name="multimedia_contents">Multimedia contents</string>
 
 </resources>

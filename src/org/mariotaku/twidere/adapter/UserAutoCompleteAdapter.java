@@ -55,8 +55,6 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 
 	private final boolean mDisplayProfileImage, mDisplayHiResProfileImage;
 
-	private boolean mForceSSLConnection;
-
 	public UserAutoCompleteAdapter(Context context) {
 		super(context, R.layout.user_autocomplete_list_item, null, FROM, TO, 0);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -80,12 +78,10 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 			final String profile_image_url_string = cursor.getString(mProfileImageUrlIdx);
 			mProfileImageLoader.displayImage(parseURL(cursor.getString(mProfileImageUrlIdx)), image_view);
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(
-						parseURL(getBiggerTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
+				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
 						image_view);
 			} else {
-				mProfileImageLoader.displayImage(
-						parseURL(getNormalTwitterProfileImage(profile_image_url_string, mForceSSLConnection)),
+				mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(profile_image_url_string)),
 						image_view);
 			}
 		}
@@ -133,10 +129,6 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 		where.append(CachedUsers.NAME + " LIKE '" + constraint + "%' ESCAPE '^'");
 		return mResolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, constraint != null ? where.toString()
 				: null, null, null);
-	}
-
-	public void setForceSSLConnection(boolean force_ssl) {
-		mForceSSLConnection = force_ssl;
 	}
 
 }

@@ -22,6 +22,8 @@ package org.mariotaku.twidere.model;
 import org.mariotaku.twidere.R;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,14 +32,30 @@ public class DMConversationsEntryViewHolder {
 
 	public final ImageView profile_image;
 	public final TextView name, text, time;
+	private final View content;
 	private float text_size;
+	private boolean account_color_enabled;
 
 	public DMConversationsEntryViewHolder(View view, Context context) {
+		content = view;
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
+	}
 
+	public void setAccountColor(int color) {
+		if (account_color_enabled) {
+			final Drawable background = content.getBackground();
+			if (background != null) {
+				background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			}
+		}
+	}
+
+	public void setAccountColorEnabled(boolean enabled) {
+		account_color_enabled = enabled;
+		content.setBackgroundResource(enabled ? R.drawable.ic_label_color : 0);
 	}
 
 	public void setTextSize(float text_size) {

@@ -30,7 +30,6 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 
 import twitter4j.Twitter;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v4.content.AsyncTaskLoader;
 
 public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>> implements Constants {
@@ -38,13 +37,9 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 	private final Twitter mTwitter;
 	private final long mAccountId;
 	private final List<ParcelableStatus> mData;
-	private final SharedPreferences mPreferences;
-	private boolean mForceSSLConnection;
 
 	public ParcelableStatusesLoader(Context context, long account_id, List<ParcelableStatus> data) {
 		super(context);
-		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mForceSSLConnection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
 		mData = data != null ? data : new ArrayList<ParcelableStatus>();
@@ -84,17 +79,9 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 		return mTwitter;
 	}
 
-	public boolean isForceSSLConnection() {
-		return mForceSSLConnection;
-	}
-
 	@Override
 	public void onStartLoading() {
 		forceLoad();
-	}
-
-	public void reloadConnectivitySettings() {
-		mForceSSLConnection = mPreferences.getBoolean(PREFERENCE_KEY_FORCE_SSL_CONNECTION, false);
 	}
 
 }

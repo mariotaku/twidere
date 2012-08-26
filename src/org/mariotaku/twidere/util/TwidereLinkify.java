@@ -191,7 +191,6 @@ public class TwidereLinkify {
 			Pattern.CASE_INSENSITIVE);
 
 	private final TextView view;
-	private final boolean force_ssl;
 
 	private OnLinkClickListener mOnLinkClickListener;
 
@@ -210,9 +209,8 @@ public class TwidereLinkify {
 		}
 	};
 
-	public TwidereLinkify(TextView view, boolean force_ssl) {
+	public TwidereLinkify(TextView view) {
 		this.view = view;
-		this.force_ssl = force_ssl;
 		view.setMovementMethod(LinkMovementMethod.getInstance());
 	}
 
@@ -275,7 +273,7 @@ public class TwidereLinkify {
 				for (final URLSpan span : spans) {
 					final Matcher matcher = PATTERN_ALL_AVAILABLE_IMAGES.matcher(span.getURL());
 					if (matcher.matches()) {
-						final ImageSpec spec = getAllAvailableImage(matcher.group(), force_ssl);
+						final ImageSpec spec = getAllAvailableImage(matcher.group());
 						if (spec == null) {
 							break;
 						}

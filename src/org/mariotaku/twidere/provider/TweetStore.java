@@ -284,7 +284,7 @@ public final class TweetStore implements Constants {
 			public static final int IDX_CONVERSATION_ID = 9;
 			public static final int IDX_MESSAGE_TIMESTAMP = 10;
 
-			public static String buildSQL(long account_id) {
+			public static String buildSQL(String where) {
 				final StringBuilder builder = new StringBuilder();
 				builder.append("SELECT " + _ID + ", MAX(" + MAX_TIMESTAMP_TEMP + ") AS" + MAX_TIMESTAMP + ", "
 						+ MAX_STATUS_ID + ", " + ACCOUNT_ID + ", " + IS_OUTGOING + ", " + NAME + ", " + SCREEN_NAME
@@ -308,8 +308,10 @@ public final class TweetStore implements Constants {
 				builder.append(" GROUP BY " + CONVERSATION_ID);
 				builder.append(" HAVING " + MAX_TIMESTAMP_TEMP + " NOT NULL" + " AND " + MAX_STATUS_ID + " NOT NULL");
 				builder.append(")");
+				if (where != null) {
+					builder.append(" WHERE " + where);
+				}
 				builder.append(" GROUP BY " + CONVERSATION_ID);
-				builder.append(" HAVING " + ACCOUNT_ID + " = " + account_id);
 				builder.append(" ORDER BY " + MAX_TIMESTAMP_TEMP + " DESC, " + MAX_STATUS_ID + " DESC");
 				return builder.toString();
 			}
