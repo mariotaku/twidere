@@ -22,5 +22,6 @@
 		android:key="leftside_compose_button"
 		android:summary="@string/leftside_compose_button_summary"
 		android:title="@string/leftside_compose_button"/>
+	<CheckBoxPreference android:key="show_absolute_time" android:summary="@string/show_absolute_time_summary" android:title="@string/show_absolute_time" android:defaultValue="false"/>
 
 </PreferenceScreen>

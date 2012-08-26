@@ -33,6 +33,8 @@ import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
+import java.text.DateFormat;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -41,6 +43,7 @@ import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
+import org.mariotaku.twidere.util.Utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -117,10 +120,19 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			holder.text.setText(unescapeHTML(text));
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(is_verified, is_protected), 0, 0, 0);
 			holder.name.setText(name);
-			holder.time.setText(DateUtils.getRelativeTimeSpanString(status_timestamp));
+			
+			CharSequence time = null;
+			if(Utils.getShowAbsoluteTime(context)){
+				time = DateUtils.formatSameDayTime(status_timestamp, System.currentTimeMillis(), DateFormat.MEDIUM, DateFormat.SHORT);
+			} else {
+				time = DateUtils.getRelativeTimeSpanString(status_timestamp);
+			}
+
+			holder.time.setText(time);
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getStatusTypeIconRes(is_favorite, has_location, has_media), 0);
 
+			
 			holder.reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
 			if (is_retweet) {
 				holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(

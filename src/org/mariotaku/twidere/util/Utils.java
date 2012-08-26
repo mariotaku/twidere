@@ -1116,6 +1116,11 @@ public final class Utils implements Constants {
 		return quote_format.replace(QUOTE_FORMAT_NAME_PATTERN, screen_name).replace(QUOTE_SHARE_FORMAT_TEXT_PATTERN,
 				text);
 	}
+	
+	public static boolean getShowAbsoluteTime(Context context) {
+		if (context == null) return false;
+		return context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
+	}
 
 	/**
 	 * @deprecated
