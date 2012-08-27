@@ -199,7 +199,7 @@ public class LazyImageLoader implements Constants {
 	}
 
 	// Used to display bitmap in the UI thread
-	private class BitmapDisplayer implements Runnable {
+	class BitmapDisplayer implements Runnable {
 
 		Bitmap bitmap;
 		ImageToLoad imagetoload;
@@ -220,7 +220,7 @@ public class LazyImageLoader implements Constants {
 		}
 	}
 
-	private static class FileCache {
+	static class FileCache {
 
 		private final String mCacheDirName;
 
@@ -272,7 +272,7 @@ public class LazyImageLoader implements Constants {
 
 	}
 
-	private class ImageLoader implements Runnable {
+	class ImageLoader implements Runnable {
 		private ImageToLoad imagetoload;
 
 		public ImageLoader(ImageToLoad imagetoload) {
@@ -325,7 +325,7 @@ public class LazyImageLoader implements Constants {
 		}
 	}
 
-	private static class ImageToLoad {
+	static class ImageToLoad {
 		public final URL source;
 		public final ImageView imageview;
 
@@ -335,7 +335,7 @@ public class LazyImageLoader implements Constants {
 		}
 	}
 
-	private static class MemoryCache {
+	static class MemoryCache {
 
 		private final int mMaxCapacity;
 		private final Map<URL, SoftReference<Bitmap>> mSoftCache;

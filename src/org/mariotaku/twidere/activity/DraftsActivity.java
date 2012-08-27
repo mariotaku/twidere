@@ -247,7 +247,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 		mInterface.updateStatus(draft.account_ids, draft.text, null, uri, draft.in_reply_to_status_id, false);
 	}
 
-	private class DraftItem {
+	class DraftItem {
 
 		public final long[] account_ids;
 		public final long in_reply_to_status_id;
@@ -280,7 +280,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 		}
 	}
 
-	private static class DraftsAdapter extends SimpleCursorAdapter {
+	static class DraftsAdapter extends SimpleCursorAdapter {
 
 		private static final String[] mFrom = new String[] { Drafts.TEXT };
 		private static final int[] mTo = new int[] { R.id.text };

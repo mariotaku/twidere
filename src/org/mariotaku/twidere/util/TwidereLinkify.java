@@ -478,7 +478,7 @@ public class TwidereLinkify {
 		String transformUrl(final Matcher match, String url);
 	}
 
-	private static class LinkSpan extends URLSpan {
+	static class LinkSpan extends URLSpan {
 
 		private final int type;
 		private final OnLinkClickListener listener;

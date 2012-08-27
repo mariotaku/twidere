@@ -44,7 +44,7 @@ public class ClearCachePreference extends Preference implements Constants, OnPre
 		return true;
 	}
 
-	private static class ClearCacheTask extends AsyncTask<Void, Void, Void> {
+	static class ClearCacheTask extends AsyncTask<Void, Void, Void> {
 
 		private final Context context;
 		private final ProgressDialog mProgress;

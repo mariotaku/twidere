@@ -146,7 +146,7 @@ public class HtmlBuilder {
 		return sb.toString();
 	}
 
-	private static class LinkSpec {
+	static class LinkSpec {
 
 		private static final Comparator<LinkSpec> COMPARATOR = new Comparator<LinkSpec>() {
 

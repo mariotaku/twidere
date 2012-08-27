@@ -220,20 +220,6 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
-		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
-		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
-		mAdapter.setTextSize(text_size);
-		mAdapter.setDisplayName(display_name);
-	}
-
-	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
 				&& totalItemCount >= visibleItemCount;
@@ -254,6 +240,20 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
+		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
+		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		mAdapter.setDisplayProfileImage(display_profile_image);
+		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
+		mAdapter.setTextSize(text_size);
+		mAdapter.setDisplayName(display_name);
 	}
 
 	@Override

@@ -45,7 +45,7 @@ public class ClearDatabasesPreference extends Preference implements Constants, O
 		return true;
 	}
 
-	private static class ClearCacheTask extends AsyncTask<Void, Void, Void> {
+	static class ClearCacheTask extends AsyncTask<Void, Void, Void> {
 
 		private final Context context;
 		private final ProgressDialog mProgress;

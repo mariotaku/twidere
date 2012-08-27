@@ -73,8 +73,7 @@ public class WebMapFragment extends WebViewFragment {
 	 * Sets up the interface for getting access to Latitude and Longitude data
 	 * from device
 	 **/
-	@SuppressWarnings("unused")
-	private class JavaScriptInterface {
+	class JavaScriptInterface {
 
 		public double getLatitude() {
 			return latitude;
@@ -86,7 +85,7 @@ public class WebMapFragment extends WebViewFragment {
 
 	}
 
-	private class MapWebViewClient extends DefaultWebViewClient {
+	class MapWebViewClient extends DefaultWebViewClient {
 
 		public MapWebViewClient(FragmentActivity activity) {
 			super(activity);

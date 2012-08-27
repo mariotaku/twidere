@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getTabs;
+import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -190,7 +191,20 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		switch (v.getId()) {
 			case R.id.compose:
 			case R.id.button_compose:
-				startActivity(new Intent(INTENT_ACTION_COMPOSE));
+				if (mViewPager != null) {
+					final int position = mViewPager.getCurrentItem();
+					if (position == mAdapter.getCount() - 1) {
+						startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
+					} else {
+						switch (position) {
+							case TAB_POSITION_MESSAGES:
+								openDirectMessagesConversation(this, -1, -1);
+								break;
+							default:
+								startActivity(new Intent(INTENT_ACTION_COMPOSE));
+						}
+					}
+				}
 				break;
 		}
 
@@ -308,18 +322,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				break;
 			}
 			case MENU_COMPOSE: {
-				if (mViewPager != null) {
-					final int position = mViewPager.getCurrentItem();
-					if (position == mAdapter.getCount() - 1) {
-						startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
-					} else {
-						switch (position) {
-							case TAB_POSITION_MESSAGES:
-								break;
-							default:
-								startActivity(new Intent(INTENT_ACTION_COMPOSE));
-						}
-					}
+				if (mComposeButton != null) {
+					onClick(mComposeButton);
 				}
 				break;
 			}

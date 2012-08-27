@@ -152,7 +152,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		mLoadImagesIndicator.setVisibility(View.GONE);
 	}
 
-	private class ImagesAdapter extends BaseAdapter {
+	class ImagesAdapter extends BaseAdapter {
 
 		private final List<ImageSpec> mUrls = new ArrayList<ImageSpec>();
 		private final LazyImageLoader mImageLoader;

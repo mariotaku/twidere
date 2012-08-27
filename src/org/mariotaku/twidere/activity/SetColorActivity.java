@@ -121,7 +121,7 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 		mFragment.show(ft, "dialog");
 	}
 
-	private class ColorsAdapter extends ArrayAdapter<Integer> {
+	class ColorsAdapter extends ArrayAdapter<Integer> {
 
 		private Context mContext;
 

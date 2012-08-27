@@ -215,7 +215,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 		return null;
 	}
 
-	private class TrendsAdapter extends SimpleCursorAdapter {
+	class TrendsAdapter extends SimpleCursorAdapter {
 
 		public TrendsAdapter(Context context) {
 			super(context, android.R.layout.simple_list_item_1, null, new String[] { CachedTrends.NAME },
@@ -224,7 +224,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 
 	}
 
-	private static class TrendsCategory {
+	static class TrendsCategory {
 		public final int type;
 		public final String name;
 

@@ -561,7 +561,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	private class ListInfoTask extends AsyncTask<Void, Void, Response<UserList>> {
+	class ListInfoTask extends AsyncTask<Void, Void, Response<UserList>> {
 
 		private final Twitter twitter;
 		private final long user_id;
@@ -624,7 +624,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	private class ListMembersAction extends ListAction {
+	class ListMembersAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -644,7 +644,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	private class ListSubscribersAction extends ListAction {
+	class ListSubscribersAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -664,7 +664,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	private class ListTimelineAction extends ListAction {
+	class ListTimelineAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -679,7 +679,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	private class Response<T> {
+	class Response<T> {
 		public final T value;
 		public final TwitterException exception;
 
@@ -689,7 +689,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 	}
 
-	private class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
+	class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
 
 		public UserProfileActionAdapter(Context context) {
 			super(context, R.layout.user_action_list_item, android.R.id.text1);

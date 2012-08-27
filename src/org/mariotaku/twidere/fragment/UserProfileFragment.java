@@ -792,7 +792,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class FavoritesAction extends ListAction {
+	class FavoritesAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -813,7 +813,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class GetFriendshipTask extends AsyncTask<Void, Void, Response<Relationship>> {
+	class GetFriendshipTask extends AsyncTask<Void, Void, Response<Relationship>> {
 
 		private final boolean is_my_activated_account;
 
@@ -876,7 +876,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
-	private class Response<T> {
+	class Response<T> {
 		public final T value;
 		public final TwitterException exception;
 
@@ -886,7 +886,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
-	private class SavedSearchesAction extends ListAction {
+	class SavedSearchesAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -901,7 +901,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class UserBlocksAction extends ListAction {
+	class UserBlocksAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -916,7 +916,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class UserInfoTask extends AsyncTask<Void, Void, Response<User>> {
+	class UserInfoTask extends AsyncTask<Void, Void, Response<User>> {
 
 		private final Twitter twitter;
 		private final long user_id;
@@ -998,7 +998,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class UserListTypesAction extends ListAction {
+	class UserListTypesAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -1013,7 +1013,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	private class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
+	class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
 
 		public UserProfileActionAdapter(Context context) {
 			super(context, R.layout.user_action_list_item, android.R.id.text1);

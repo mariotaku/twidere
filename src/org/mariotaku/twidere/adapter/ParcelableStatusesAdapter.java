@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static android.text.format.DateUtils.formatSameDayTime;
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -31,6 +33,7 @@ import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
+import java.text.DateFormat;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
@@ -44,7 +47,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -54,7 +56,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mSkipImagePreviewProcessing,
-			mDisplayName, mShowAccountColor, mGapDisallowed;
+			mDisplayName, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -125,7 +127,12 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(
 					getUserTypeIconRes(status.is_verified, status.is_protected), 0, 0, 0);
 			holder.name.setText(mDisplayName ? status.name : status.screen_name);
-			holder.time.setText(DateUtils.getRelativeTimeSpanString(status.status_timestamp));
+			if (mShowAbsoluteTime) {
+				holder.time.setText(formatSameDayTime(status.status_timestamp, System.currentTimeMillis(),
+						DateFormat.MEDIUM, DateFormat.SHORT));
+			} else {
+				holder.time.setText(getRelativeTimeSpanString(status.status_timestamp));
+			}
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media), 0);
 			holder.reply_retweet_status
@@ -247,6 +254,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			notifyDataSetChanged();
 		}
 
+	}
+
+	@Override
+	public void setShowAbsoluteTime(boolean show) {
+		if (show != mShowAbsoluteTime) {
+			mShowAbsoluteTime = show;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override

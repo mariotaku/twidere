@@ -70,7 +70,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 		setAdapter(mAdapter);
 	}
 
-	private static class ScreenNameTokenizer implements Tokenizer {
+	static class ScreenNameTokenizer implements Tokenizer {
 
 		@Override
 		public int findTokenEnd(CharSequence text, int cursor) {

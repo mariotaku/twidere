@@ -284,7 +284,7 @@ public class ImageViewer extends View {
 		}
 	}
 
-	private static class GetPointerCountAccessor {
+	static class GetPointerCountAccessor {
 		@TargetApi(5)
 		public static int getPointerCount(MotionEvent event) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) return event.getPointerCount();
@@ -293,7 +293,7 @@ public class ImageViewer extends View {
 	}
 
 	@TargetApi(5)
-	private static class OnMultiTouchEventCompat {
+	static class OnMultiTouchEventCompat {
 
 		private static boolean onMultiTouchEvent(ImageViewer viewer, MotionEvent event) {
 			viewer.isWaitingForDoubleTap = false;

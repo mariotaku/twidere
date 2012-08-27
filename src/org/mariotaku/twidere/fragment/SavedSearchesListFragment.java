@@ -90,7 +90,7 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 
 	}
 
-	private static class SavedSearchesAdapter extends BaseAdapter {
+	static class SavedSearchesAdapter extends BaseAdapter {
 
 		private ResponseList<SavedSearch> mData;
 		private final LayoutInflater mInflater;

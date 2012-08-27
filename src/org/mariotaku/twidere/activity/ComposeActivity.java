@@ -651,7 +651,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		}
 	}
 
-	private class AttachedImageThumbnailTask extends AsyncTask<Void, Void, Bitmap> {
+	class AttachedImageThumbnailTask extends AsyncTask<Void, Void, Bitmap> {
 
 		private final File file;
 

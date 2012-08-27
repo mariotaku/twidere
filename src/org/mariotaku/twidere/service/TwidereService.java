@@ -2574,7 +2574,7 @@ public class TwidereService extends Service implements Constants {
 				}
 				final Uri upload_result_uri = image_file != null && image_file.exists() && uploader != null ? uploader
 						.upload(Uri.fromFile(image_file), content) : null;
-				if (image_file != null && image_file.exists() && upload_result_uri == null)
+				if (use_uploader && image_file != null && image_file.exists() && upload_result_uri == null)
 					throw new ImageUploadException();
 
 				final String unshortened_content = use_uploader && upload_result_uri != null ? getImageUploadStatus(

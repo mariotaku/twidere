@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.adapter;
 
+import static android.text.format.DateUtils.formatSameDayTime;
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_ACCOUNT_ID;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_CONVERSATION_ID;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_NAME;
@@ -11,6 +13,8 @@ import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
+import java.text.DateFormat;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.DMConversationsEntryViewHolder;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
@@ -20,13 +24,13 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
 public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements BaseAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName, mShowAccountColor;
+	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName, mShowAccountColor,
+			mShowAbsoluteTime;
 	private final LazyImageLoader mProfileImageLoader;
 	private float mTextSize;
 
@@ -54,7 +58,12 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		holder.setTextSize(mTextSize);
 		holder.name.setText(name);
 		holder.text.setText(cursor.getString(IDX_TEXT));
-		holder.time.setText(DateUtils.getRelativeTimeSpanString(message_timestamp));
+		if (mShowAbsoluteTime) {
+			holder.time.setText(formatSameDayTime(message_timestamp, System.currentTimeMillis(), DateFormat.MEDIUM,
+					DateFormat.SHORT));
+		} else {
+			holder.time.setText(getRelativeTimeSpanString(message_timestamp));
+		}
 		holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, is_outgoing ? R.drawable.ic_indicator_outgoing
 				: R.drawable.ic_indicator_incoming, 0);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
@@ -118,6 +127,13 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	public void setDisplayProfileImage(boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
+			notifyDataSetChanged();
+		}
+	}
+
+	public void setShowAbsoluteTime(boolean show) {
+		if (show != mShowAbsoluteTime) {
+			mShowAbsoluteTime = show;
 			notifyDataSetChanged();
 		}
 	}

@@ -28,6 +28,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.DMConversationViewHolder;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
@@ -57,19 +58,23 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import com.twitter.Validator;
 
 public class DMConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>, OnItemClickListener,
-		OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener, Panes.Right {
+		OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener, Panes.Right,
+		OnItemSelectedListener {
 
+	private final Validator mValidator = new Validator();
 	private ServiceInterface mService;
-
 	private SharedPreferences mPreferences;
 
 	private ListView mListView;
@@ -78,6 +83,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	private ImageButton mSendButton;
 	private Button mScreenNameConfirmButton;
 	private View mConversationContainer, mScreenNameContainer;
+	private Spinner mAccountSelector;
 
 	private PopupMenu mPopupMenu;
 
@@ -85,6 +91,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 
 	private DirectMessagesConversationAdapter mAdapter;
 	private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
+	private AccountsAdapter mAccountsAdapter;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -101,8 +108,8 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 		}
 	};
 
-	final Validator mValidator = new Validator();
 	final Bundle mArguments = new Bundle();
+	private Account mSelectedAccount;
 
 	private TextWatcher mScreenNameTextWatcher = new TextWatcher() {
 
@@ -158,6 +165,10 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 		if (text != null) {
 			mEditText.setText(text);
 		}
+
+		mAccountsAdapter = new AccountsAdapter(getActivity());
+		mAccountSelector.setAdapter(mAccountsAdapter);
+		mAccountSelector.setOnItemSelectedListener(this);
 
 		mUserAutoCompleteAdapter = new UserAutoCompleteAdapter(getActivity());
 
@@ -231,6 +242,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 		mConversationContainer = view.findViewById(R.id.conversation_container);
 		mScreenNameContainer = view.findViewById(R.id.screen_name_container);
 		mEditScreenName = (AutoCompleteTextView) view.findViewById(R.id.screen_name);
+		mAccountSelector = (Spinner) view.findViewById(R.id.account_selector);
 		mScreenNameConfirmButton = (Button) view.findViewById(R.id.screen_name_confirm);
 		return view;
 	}
@@ -264,6 +276,13 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+		mSelectedAccount = null;
+		if (mAccountsAdapter == null) return;
+		mSelectedAccount = mAccountsAdapter.getItem(pos);
 	}
 
 	@Override
@@ -304,16 +323,9 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
-		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
-		mAdapter.setDisplayName(display_name);
-		mAdapter.setTextSize(text_size);
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -330,6 +342,15 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
+
+		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
+		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		mAdapter.setDisplayProfileImage(display_profile_image);
+		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
+		mAdapter.setDisplayName(display_name);
+		mAdapter.setTextSize(text_size);
 	}
 
 	@Override
@@ -352,6 +373,15 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 		args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 		args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
 		getLoaderManager().restartLoader(0, args, this);
+	}
+
+	private static class AccountsAdapter extends ArrayAdapter<Account> {
+
+		public AccountsAdapter(Context context) {
+			super(context, R.layout.spinner_item, Account.getAccounts(context, true));
+			setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		}
+
 	}
 
 }

@@ -968,7 +968,7 @@ public final class Utils implements Constants {
 		int idx = 0;
 		for (final long account_id : account_ids) {
 			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			final Cursor cur = resolver.query(uri, cols, where, null, DirectMessages.ACCOUNT_ID);
+			final Cursor cur = resolver.query(uri, cols, where, null, DirectMessages.MESSAGE_ID);
 			if (cur == null) {
 				continue;
 			}
@@ -992,7 +992,7 @@ public final class Utils implements Constants {
 		int idx = 0;
 		for (final long account_id : account_ids) {
 			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			final Cursor cur = resolver.query(uri, cols, where, null, Statuses.ACCOUNT_ID);
+			final Cursor cur = resolver.query(uri, cols, where, null, Statuses.STATUS_ID);
 			if (cur == null) {
 				continue;
 			}
@@ -1842,8 +1842,12 @@ public final class Utils implements Constants {
 			} else {
 				final Fragment fragment = new DMConversationFragment();
 				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-				args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+				if (account_id > 0 && conversation_id > 0) {
+					args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					if (conversation_id > 0) {
+						args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+					}
+				}
 				fragment.setArguments(args);
 				dual_pane_activity.showAtPane(PANE_RIGHT, fragment, true);
 			}
@@ -1851,8 +1855,12 @@ public final class Utils implements Constants {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
+			if (account_id > 0 && conversation_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+				if (conversation_id > 0) {
+					builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
+				}
+			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}

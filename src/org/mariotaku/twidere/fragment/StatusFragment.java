@@ -437,7 +437,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		mLocationInfoTask.execute();
 	}
 
-	private class FollowInfoTask extends AsyncTask<Void, Void, Response<Boolean>> {
+	class FollowInfoTask extends AsyncTask<Void, Void, Response<Boolean>> {
 
 		@Override
 		protected Response<Boolean> doInBackground(Void... params) {
@@ -483,7 +483,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		}
 	}
 
-	private class GetStatusTask extends AsyncTask<Void, Void, Response<ParcelableStatus>> {
+	class GetStatusTask extends AsyncTask<Void, Void, Response<ParcelableStatus>> {
 
 		private final boolean omit_intent_extra;
 
@@ -537,7 +537,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 	}
 
-	private class LocationInfoTask extends AsyncTask<Void, Void, String> {
+	class LocationInfoTask extends AsyncTask<Void, Void, String> {
 
 		@Override
 		protected String doInBackground(Void... params) {
@@ -580,7 +580,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 	}
 
-	private class Response<T> {
+	class Response<T> {
 		public final T value;
 		public final TwitterException exception;
 

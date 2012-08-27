@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static android.text.format.DateUtils.formatSameDayTime;
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
@@ -32,6 +34,8 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
+
+import java.text.DateFormat;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ImageSpec;
@@ -48,7 +52,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -56,7 +59,7 @@ import android.view.ViewGroup;
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mSkipImagePreviewProcessing,
-			mDisplayName, mShowAccountColor, mGapDisallowed;
+			mDisplayName, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -117,7 +120,12 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			holder.text.setText(unescapeHTML(text));
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(is_verified, is_protected), 0, 0, 0);
 			holder.name.setText(name);
-			holder.time.setText(DateUtils.getRelativeTimeSpanString(status_timestamp));
+			if (mShowAbsoluteTime) {
+				holder.time.setText(formatSameDayTime(status_timestamp, System.currentTimeMillis(), DateFormat.MEDIUM,
+						DateFormat.SHORT));
+			} else {
+				holder.time.setText(getRelativeTimeSpanString(status_timestamp));
+			}
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getStatusTypeIconRes(is_favorite, has_location, has_media), 0);
 
@@ -273,6 +281,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			notifyDataSetChanged();
 		}
 
+	}
+
+	@Override
+	public void setShowAbsoluteTime(boolean show) {
+		if (show != mShowAbsoluteTime) {
+			mShowAbsoluteTime = show;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override

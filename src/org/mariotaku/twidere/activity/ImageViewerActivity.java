@@ -205,7 +205,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		}
 	}
 
-	private class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
+	class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
 
 		private static final String CACHE_DIR_NAME = "cached_images";
 

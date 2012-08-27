@@ -291,7 +291,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 
 	}
 
-	private static class DirectoriesAdapter extends BaseAdapter {
+	static class DirectoriesAdapter extends BaseAdapter {
 
 		private final LayoutInflater mInflater;
 		private final Context mContext;
@@ -344,7 +344,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 
 	}
 
-	private static class DirectoriesLoader extends AsyncTaskLoader<List<File>> {
+	static class DirectoriesLoader extends AsyncTaskLoader<List<File>> {
 
 		private final File path;
 
@@ -388,7 +388,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 		}
 	}
 
-	private class SaveFileTask extends AsyncTask<Void, Void, Boolean> {
+	class SaveFileTask extends AsyncTask<Void, Void, Boolean> {
 
 		private final File src, dst;
 

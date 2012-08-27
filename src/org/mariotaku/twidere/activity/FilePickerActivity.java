@@ -155,7 +155,7 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 		super.onSaveInstanceState(outState);
 	}
 
-	private static class FilesAdapter extends BaseAdapter {
+	static class FilesAdapter extends BaseAdapter {
 
 		private final LayoutInflater mInflater;
 		private final Context mContext;
@@ -209,7 +209,7 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 
 	}
 
-	private static class FilesLoader extends AsyncTaskLoader<List<File>> {
+	static class FilesLoader extends AsyncTaskLoader<List<File>> {
 
 		private final File path;
 		private final Pattern extensions_regex;

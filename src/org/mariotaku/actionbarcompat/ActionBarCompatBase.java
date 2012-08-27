@@ -182,6 +182,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		actionButton.setImageDrawable(item.getIcon());
 		actionButton.setScaleType(ScaleType.CENTER);
 		actionButton.setContentDescription(item.getTitle());
+		actionButton.setVisibility(item.isVisible() ? View.VISIBLE : View.GONE);
 
 		actionButton.setOnClickListener(new View.OnClickListener() {
 
@@ -238,7 +239,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		return actionButton;
 	}
 
-	private void clearMenuButtons() {
+	private void clearMenuItems() {
 		if (mActionMenuView == null) return;
 		mActionMenuView.removeAllViews();
 	}
@@ -279,11 +280,12 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	}
 
 	void invalidateOptionsMenu() {
-		clearMenuButtons();
+		final SupportMenu menu = new SupportMenu(mActivity);
+		mActivity.onPrepareOptionsMenu(menu);
+		clearMenuItems();
 		for (final MenuItem item : ((MenuImpl) mActionBarMenu).getMenuItems()) {
 			addActionItemCompatFromMenuItem(item);
 		}
-		mActivity.onPrepareOptionsMenu(new SupportMenu(mActivity));
 	}
 
 	boolean requestCustomTitleView() {
@@ -330,7 +332,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 	}
 
-	private class SupportMenu extends MenuImpl {
+	class SupportMenu extends MenuImpl {
 
 		private final Context context;
 
@@ -352,7 +354,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	/**
 	 * A {@link android.view.MenuInflater} that reads action bar metadata.
 	 */
-	private class SupportMenuInflater extends MenuInflater {
+	class SupportMenuInflater extends MenuInflater {
 
 		final MenuInflater mInflater;
 
@@ -443,7 +445,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		}
 	}
 
-	private class SupportMenuItem extends MenuItemImpl {
+	class SupportMenuItem extends MenuItemImpl {
 
 		private final int itemId;
 

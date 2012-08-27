@@ -291,7 +291,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 	}
 
-	private static class AccountsAdapter extends SimpleCursorAdapter {
+	static class AccountsAdapter extends SimpleCursorAdapter {
 
 		private final LazyImageLoader mImageLoader;
 		private final SharedPreferences mPreferences;

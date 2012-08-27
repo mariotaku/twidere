@@ -43,7 +43,7 @@ public final class ServiceUtils {
 		}
 	}
 
-	private static class ServiceBinder implements ServiceConnection {
+	static class ServiceBinder implements ServiceConnection {
 
 		private ServiceConnection mCallback;
 

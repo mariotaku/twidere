@@ -79,30 +79,23 @@ import android.widget.Toast;
 public class TwitterLoginActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
+	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
 
-	private String mRestBaseURL, mSearchBaseURL, mUploadBaseURL, mSigningRESTBaseURL, mOAuthBaseURL,
+	private String mRESTBaseURL, mSearchBaseURL, mUploadBaseURL, mSigningRESTBaseURL, mOAuthBaseURL,
 			mSigningOAuthBaseURL;
 	private String mUsername, mPassword;
-
 	private int mAuthType, mUserColor;
-
 	private boolean mUserColorSet;
+	private long mLoggedId;
+	private boolean mBackPressed = false;
+	private RequestToken mRequestToken;
 
 	private EditText mEditUsername, mEditPassword;
-
 	private Button mSignInButton, mSignUpButton;
-
 	private LinearLayout mSigninSignup, mUsernamePassword;
-
 	private ImageButton mSetColorButton;
 
 	private AbstractTask<?> mTask;
-
-	private RequestToken mRequestToken;
-
-	private long mLoggedId;
-
-	private boolean mBackPressed = false;
 
 	private Handler mBackPressedHandler = new Handler() {
 
@@ -112,8 +105,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 
 	};
-
-	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -135,7 +126,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						bundle = data.getExtras();
 					}
 					if (bundle != null) {
-						mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
+						mRESTBaseURL = bundle.getString(Accounts.REST_BASE_URL);
 						mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
 						mUploadBaseURL = bundle.getString(Accounts.UPLOAD_BASE_URL);
 						mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
@@ -249,14 +240,30 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		if (bundle == null) {
 			bundle = new Bundle();
 		}
-		mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
+		mRESTBaseURL = bundle.getString(Accounts.REST_BASE_URL);
+		mOAuthBaseURL = bundle.getString(Accounts.OAUTH_BASE_URL);
 		mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
+		mUploadBaseURL = bundle.getString(Accounts.UPLOAD_BASE_URL);
+		mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
+		mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
 
-		if (mRestBaseURL == null) {
-			mRestBaseURL = DEFAULT_REST_BASE_URL;
+		if (isNullOrEmpty(mRESTBaseURL)) {
+			mRESTBaseURL = DEFAULT_REST_BASE_URL;
 		}
-		if (mSearchBaseURL == null) {
+		if (isNullOrEmpty(mOAuthBaseURL)) {
+			mOAuthBaseURL = DEFAULT_OAUTH_BASE_URL;
+		}
+		if (isNullOrEmpty(mSearchBaseURL)) {
 			mSearchBaseURL = DEFAULT_SEARCH_BASE_URL;
+		}
+		if (isNullOrEmpty(mUploadBaseURL)) {
+			mUploadBaseURL = DEFAULT_UPLOAD_BASE_URL;
+		}
+		if (isNullOrEmpty(mSigningRESTBaseURL)) {
+			mSigningRESTBaseURL = DEFAULT_SIGNING_REST_BASE_URL;
+		}
+		if (isNullOrEmpty(mSigningOAuthBaseURL)) {
+			mSigningOAuthBaseURL = DEFAULT_SIGNING_OAUTH_BASE_URL;
 		}
 
 		mUsername = bundle.getString(Accounts.USERNAME);
@@ -311,7 +318,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED) return false;
 				intent = new Intent(INTENT_ACTION_EDIT_API);
 				final Bundle bundle = new Bundle();
-				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
+				bundle.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
 				bundle.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 				bundle.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
 				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
@@ -329,11 +336,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		saveEditedText();
-		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
+		outState.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
+		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
 		outState.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
 		outState.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
 		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
-		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
 		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
 		outState.putString(Accounts.USERNAME, mUsername);
 		outState.putString(Accounts.PASSWORD, mPassword);
@@ -399,23 +406,23 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		} catch (final PackageManager.NameNotFoundException e) {
 
 		}
-		if (!isNullOrEmpty(mRestBaseURL)) {
-			cb.setRestBaseURL(mRestBaseURL);
-		}
-		if (!isNullOrEmpty(mSigningRESTBaseURL)) {
-			cb.setSigningRestBaseURL(mSigningRESTBaseURL);
+		if (!isNullOrEmpty(mRESTBaseURL)) {
+			cb.setRestBaseURL(mRESTBaseURL);
 		}
 		if (!isNullOrEmpty(mOAuthBaseURL)) {
 			cb.setOAuthBaseURL(mOAuthBaseURL);
-		}
-		if (!isNullOrEmpty(mSigningOAuthBaseURL)) {
-			cb.setSigningOAuthBaseURL(mSigningOAuthBaseURL);
 		}
 		if (!isNullOrEmpty(mSearchBaseURL)) {
 			cb.setSearchBaseURL(mSearchBaseURL);
 		}
 		if (!isNullOrEmpty(mUploadBaseURL)) {
 			cb.setUploadBaseURL(mUploadBaseURL);
+		}
+		if (!isNullOrEmpty(mSigningRESTBaseURL)) {
+			cb.setSigningRestBaseURL(mSigningRESTBaseURL);
+		}
+		if (!isNullOrEmpty(mSigningOAuthBaseURL)) {
+			cb.setSigningOAuthBaseURL(mSigningOAuthBaseURL);
 		}
 		if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
 			cb.setOAuthConsumerKey(CONSUMER_KEY);
@@ -479,7 +486,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	}
 
-	private class CallbackAuthTask extends AbstractTask<CallbackAuthTask.Response> {
+	class CallbackAuthTask extends AbstractTask<CallbackAuthTask.Response> {
 
 		private RequestToken requestToken;
 		private String oauthVerifier;
@@ -508,7 +515,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			}
 			mLoggedId = user.getId();
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId)) return new Response(false, true, null);
-			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
+			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRESTBaseURL,
 					mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL, null,
 					Accounts.AUTH_TYPE_OAUTH);
 			if (values != null) {
@@ -535,7 +542,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			super.onPostExecute(result);
 		}
 
-		private class Response {
+		class Response {
 			public boolean succeed, is_logged_in;
 			public TwitterException exception;
 
@@ -548,7 +555,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	}
 
-	private class LoginTask extends AbstractTask<LoginTask.Response> {
+	class LoginTask extends AbstractTask<LoginTask.Response> {
 
 		@Override
 		protected Response doInBackground(Void... params) {
@@ -602,7 +609,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				mLoggedId = user.getId();
 				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
-				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL,
+				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRESTBaseURL,
 						mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL,
 						mPassword, Accounts.AUTH_TYPE_BASIC);
 				if (values != null) {
@@ -651,7 +658,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				mLoggedId = user.getId();
 				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
-				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRestBaseURL,
+				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRESTBaseURL,
 						mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL, null,
 						Accounts.AUTH_TYPE_TWIP_O_MODE);
 				if (values != null) {
@@ -683,7 +690,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			mLoggedId = user.getId();
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
 				return new Response(false, true, false, Accounts.AUTH_TYPE_XAUTH, null, null);
-			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRestBaseURL,
+			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRESTBaseURL,
 					mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL, null,
 					Accounts.AUTH_TYPE_XAUTH);
 			if (values != null) {
@@ -715,7 +722,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			return obj.toString();
 		}
 
-		private class Response {
+		class Response {
 
 			public boolean open_browser, already_logged_in, succeed;
 			public RequestToken request_token;

@@ -112,7 +112,7 @@ public class FiltersActivity extends BaseActivity implements OnCheckedChangeList
 		return super.onOptionsItemSelected(item);
 	}
 
-	private static class TabSpec {
+	static class TabSpec {
 		public final Class<? extends Fragment> cls;
 		public final String name;
 

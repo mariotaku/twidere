@@ -303,5 +303,7 @@
 	<string name="error_message_tweet_shorten_failed">Tweet shorten failed.</string>
 	<string name="error_message_tweet_shortener_not_found">Tweet shortener not found, maybe it was uninstalled.</string>
 	<string name="multimedia_contents">Multimedia contents</string>
+	<string name="show_absolute_time">Show absolute time</string>
+	<string name="show_absolute_time_summary">Show absolute time in tweets</string>
 
 </resources>

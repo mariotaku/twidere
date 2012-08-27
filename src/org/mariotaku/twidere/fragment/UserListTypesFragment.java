@@ -51,7 +51,7 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 		}
 	}
 
-	private class ListsFollowingUserAction extends ListAction {
+	class ListsFollowingUserAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -64,7 +64,7 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 		}
 	}
 
-	private class UserCreatedListAction extends ListAction {
+	class UserCreatedListAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -77,7 +77,7 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 		}
 	}
 
-	private class UserFollowedListAction extends ListAction {
+	class UserFollowedListAction extends ListAction {
 
 		@Override
 		public String getName() {
@@ -90,7 +90,7 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 		}
 	}
 
-	private class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
+	class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
 
 		public UserProfileActionAdapter(Context context) {
 			super(context, R.layout.user_action_list_item, android.R.id.text1);

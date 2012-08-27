@@ -97,7 +97,7 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 		super.onDestroyView();
 	}
 
-	private class ShowConversationTask extends AsyncTask<Void, Void, TwitterException> {
+	class ShowConversationTask extends AsyncTask<Void, Void, TwitterException> {
 
 		private final long mAccountId, mStatusId;
 		private final StatusHandler mHandler;
@@ -160,7 +160,7 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 
 	}
 
-	private static class StatusHandler extends Handler {
+	static class StatusHandler extends Handler {
 
 		private final ParcelableStatusesAdapter mAdapter;
 
