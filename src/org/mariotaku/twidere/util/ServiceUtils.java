@@ -2,6 +2,8 @@ package org.mariotaku.twidere.util;
 
 import java.util.HashMap;
 
+import org.mariotaku.twidere.Constants;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -9,7 +11,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.util.Log;
 
-public final class ServiceUtils {
+public final class ServiceUtils implements Constants {
 
 	private static HashMap<Context, ServiceUtils.ServiceBinder> sConnectionMap = new HashMap<Context, ServiceUtils.ServiceBinder>();
 
@@ -29,7 +31,7 @@ public final class ServiceUtils {
 				return new ServiceToken(cw);
 			}
 		}
-		Log.e(ImageUploaderInterface.LOGTAG, "Failed to bind to service");
+		Log.e(LOGTAG, "Failed to bind to service");
 		return null;
 	}
 
