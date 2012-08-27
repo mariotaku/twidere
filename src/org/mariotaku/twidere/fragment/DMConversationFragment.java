@@ -199,9 +199,10 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 			}
 			case R.id.screen_name_confirm: {
 				final CharSequence text = mEditScreenName.getText();
-				if (text == null) return;
+				if (text == null || mSelectedAccount == null) return;
 				final String screen_name = text.toString();
 				mArguments.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				mArguments.putLong(INTENT_KEY_ACCOUNT_ID, mSelectedAccount.account_id);
 				getLoaderManager().restartLoader(0, mArguments, this);
 				break;
 			}
@@ -323,8 +324,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
+	public void onNothingSelected(AdapterView<?> view) {
 
 	}
 

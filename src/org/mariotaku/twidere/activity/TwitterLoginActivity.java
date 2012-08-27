@@ -42,7 +42,6 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
-import twitter4j.Version;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.RequestToken;
@@ -401,8 +400,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			cb.setClientVersion(pi.versionName);
 			cb.setClientName(APP_NAME);
 			cb.setClientURL(APP_PROJECT_URL);
-			cb.setUserAgent("twitter4j http://twitter4j.org/ /" + Version.getVersion() + "(" + APP_NAME + " "
-					+ APP_PROJECT_URL + " / " + version_name + ")");
+			cb.setUserAgent(APP_NAME + " " + APP_PROJECT_URL + " / " + version_name);
 		} catch (final PackageManager.NameNotFoundException e) {
 
 		}
