@@ -118,8 +118,8 @@
   <string name="bottom_compose_button_summary">将撰写按钮放置在底部，当你的手机屏幕难以单手操作，它会有不少帮助。</string>
   <string name="leftside_compose_button">左侧撰写按钮</string>
   <string name="leftside_compose_button_summary">将撰写按钮放置在左边。</string>
-  <string name="load_item_limit">载入推文上限</string>
-  <string name="load_item_limit_summary">设定一次载入推文的数量上限。</string>
+  <string name="load_item_limit">载入条目上限</string>
+  <string name="load_item_limit_summary">设定一次载入条目的数量上限。</string>
   <string name="load_more_automatically">自动载入更多内容</string>
   <string name="load_more_automatically_summary">自动载入更多内容，如照片、地图、推文等。</string>
   <string name="quote">引用</string>
@@ -186,7 +186,7 @@
   <string name="block">阻止</string>
   <string name="unblock">取消阻止</string>
   <string name="report_for_spam">报告垃圾信息</string>
-  <string name="mute">过滤</string>
+  <string name="mute_user">过滤用户</string>
   <string name="user_muted">你过滤了这个用户，你将不会在主页/提及中看到这个用户的推文。</string>
   <string name="inbox">收件箱</string>
   <string name="outbox">发件箱</string>
@@ -304,4 +304,7 @@
   <string name="multimedia_contents">多媒体内容</string>
   <string name="show_absolute_time">显示绝对时间</string>
   <string name="show_absolute_time_summary">在推文等列表里显示绝对时间。</string>
+  <string name="mute_source">过滤来源</string>
+  <string name="source_muted">将 \"<xliff:g id="source">%s</xliff:g>\" 添加到了过滤列表。你将不会在主页时间线/提及中看到这个来源的推文。</string>
+  <string name="user_mentions">提及用户的推文</string>
 </resources>

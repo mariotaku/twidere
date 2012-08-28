@@ -49,6 +49,8 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.HtmlUnescapeHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -58,6 +60,8 @@ import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -83,6 +87,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.twitter.Extractor;
 
@@ -386,6 +391,21 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				extras.putParcelable(INTENT_KEY_STATUS, mStatus);
 				intent.putExtras(extras);
 				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+				break;
+			}
+			case MENU_MUTE_SOURCE: {
+				final String source = HtmlUnescapeHelper.unescapeHTML(mStatus.source);
+				if (source == null) return false;
+				final Uri uri = Filters.Sources.CONTENT_URI;
+				final ContentValues values = new ContentValues();
+				final SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME,
+						Context.MODE_PRIVATE).edit();
+				final ContentResolver resolver = getContentResolver();
+				values.put(Filters.TEXT, source);
+				resolver.delete(uri, Filters.TEXT + " = '" + source + "'", null);
+				resolver.insert(uri, values);
+				editor.putBoolean(PREFERENCE_KEY_ENABLE_FILTER, true).commit();
+				Toast.makeText(getActivity(), getString(R.string.source_muted, source), Toast.LENGTH_SHORT).show();
 				break;
 			}
 			default:

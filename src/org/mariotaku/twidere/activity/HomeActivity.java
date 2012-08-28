@@ -130,46 +130,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		final ContentResolver resolver = getContentResolver();
-		ContentValues values;
-		switch (requestCode) {
-			case REQUEST_SELECT_ACCOUNT: {
-				if (resultCode == RESULT_OK) {
-					if (intent == null || intent.getExtras() == null) {
-						break;
-					}
-					final Bundle bundle = intent.getExtras();
-					if (bundle == null) {
-						break;
-					}
-					final long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
-					if (account_ids != null) {
-						values = new ContentValues();
-						values.put(Accounts.IS_ACTIVATED, 0);
-						resolver.update(Accounts.CONTENT_URI, values, null, null);
-						values = new ContentValues();
-						values.put(Accounts.IS_ACTIVATED, 1);
-						for (final long account_id : account_ids) {
-							final String where = Accounts.USER_ID + " = " + account_id;
-							resolver.update(Accounts.CONTENT_URI, values, where, null);
-						}
-					}
-					checkDefaultAccountSet();
-				} else if (resultCode == RESULT_CANCELED) {
-					if (getActivatedAccountIds(this).length <= 0) {
-						finish();
-					} else {
-						checkDefaultAccountSet();
-					}
-				}
-				break;
-			}
-		}
-		super.onActivityResult(requestCode, resultCode, intent);
-	}
-
-	@Override
 	public void onBackStackChanged() {
 		super.onBackStackChanged();
 		if (!isDualPaneMode()) return;
@@ -250,6 +210,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					mService.clearNotification(NOTIFICATION_ID_MENTIONS);
 					break;
 				}
+				case TAB_POSITION_MESSAGES: {
+					mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+					break;
+				}
 			}
 		}
 		mActionBar = getSupportActionBar();
@@ -277,9 +241,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final long[] activated_ids = getActivatedAccountIds(this);
 		if (activated_ids.length <= 0) {
 			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
-		} else if (checkDefaultAccountSet() && (remember_position || initial_tab > 0)) {
-			final int position = initial_tab > 0 ? initial_tab : mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION,
-					TAB_POSITION_HOME);
+		} else if (checkDefaultAccountSet() && (remember_position || initial_tab >= 0)) {
+			final int position = initial_tab >= 0 ? initial_tab : mPreferences.getInt(
+					PREFERENCE_KEY_SAVED_TAB_POSITION, TAB_POSITION_HOME);
 			if (position >= 0 || position < mViewPager.getChildCount()) {
 				mViewPager.setCurrentItem(position);
 			}
@@ -294,24 +258,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_home, menu);
 		return super.onCreateOptionsMenu(menu);
-	}
-
-	public void onDefaultAccountSet() {
-		mIsNavigateToDefaultAccount = false;
-	}
-
-	@Override
-	public void onDestroy() {
-		// Delete unused items in databases.
-		cleanDatabasesByItemLimit(this);
-		super.onDestroy();
-		if (mPreferences.getBoolean(PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED, false)) {
-			// What the f**k are you think about? Stop service causes twidere
-			// slow and unstable!
-			// Well, all right... If you still want to enable this option, I
-			// take no responsibility for any problems occurred.
-			mService.shutdownService();
-		}
 	}
 
 	@Override
@@ -416,7 +362,109 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
-	public void onStart() {
+	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
+		mProgressBarIndeterminateVisible = visible;
+		mProgress.setVisibility(visible || mService.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		final ContentResolver resolver = getContentResolver();
+		ContentValues values;
+		switch (requestCode) {
+			case REQUEST_SELECT_ACCOUNT: {
+				if (resultCode == RESULT_OK) {
+					if (intent == null || intent.getExtras() == null) {
+						break;
+					}
+					final Bundle bundle = intent.getExtras();
+					if (bundle == null) {
+						break;
+					}
+					final long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
+					if (account_ids != null) {
+						values = new ContentValues();
+						values.put(Accounts.IS_ACTIVATED, 0);
+						resolver.update(Accounts.CONTENT_URI, values, null, null);
+						values = new ContentValues();
+						values.put(Accounts.IS_ACTIVATED, 1);
+						for (final long account_id : account_ids) {
+							final String where = Accounts.USER_ID + " = " + account_id;
+							resolver.update(Accounts.CONTENT_URI, values, where, null);
+						}
+					}
+					checkDefaultAccountSet();
+				} else if (resultCode == RESULT_CANCELED) {
+					if (getActivatedAccountIds(this).length <= 0) {
+						finish();
+					} else {
+						checkDefaultAccountSet();
+					}
+				}
+				break;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, intent);
+	}
+
+	protected void onDefaultAccountSet() {
+		mIsNavigateToDefaultAccount = false;
+	}
+
+	@Override
+	protected void onDestroy() {
+		// Delete unused items in databases.
+		cleanDatabasesByItemLimit(this);
+		super.onDestroy();
+		if (mPreferences.getBoolean(PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED, false)) {
+			// What the f**k are you think about? Stop service causes twidere
+			// slow and unstable!
+			// Well, all right... If you still want to enable this option, I
+			// take no responsibility for any problems occurred.
+			mService.shutdownService();
+		}
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		final Bundle bundle = intent.getExtras();
+		if (bundle != null) {
+			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
+			if (refreshed_ids != null) {
+				mService.getHomeTimeline(refreshed_ids, null);
+				mService.getMentions(refreshed_ids, null);
+			}
+			final int initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
+			if (initial_tab != -1 && mViewPager != null) {
+				switch (initial_tab) {
+					case TAB_POSITION_HOME: {
+						mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
+						break;
+					}
+					case TAB_POSITION_MENTIONS: {
+						mService.clearNotification(NOTIFICATION_ID_MENTIONS);
+						break;
+					}
+					case TAB_POSITION_MESSAGES: {
+						mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+						break;
+					}
+				}
+				if (initial_tab >= 0 || initial_tab < mViewPager.getChildCount()) {
+					mViewPager.setCurrentItem(initial_tab);
+				}
+			}
+		}
+		super.onNewIntent(intent);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onStart() {
 		final FragmentManager fm = getSupportFragmentManager();
 		if (!isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
 			// fm.popBackStackImmediate();
@@ -433,41 +481,17 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
-	public void onStop() {
+	protected void onStop() {
 		unregisterReceiver(mStateReceiver);
 		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
 		super.onStop();
 	}
 
-	public void setPagingEnabled(boolean enabled) {
+	protected void setPagingEnabled(boolean enabled) {
 		if (mIndicator != null) {
 			mIndicator.setPagingEnabled(enabled);
 			mIndicator.setEnabled(enabled);
 		}
-	}
-
-	@Override
-	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
-		mProgressBarIndeterminateVisible = visible;
-		mProgress.setVisibility(visible || mService.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
-	}
-
-	@Override
-	protected void onNewIntent(Intent intent) {
-		final Bundle bundle = intent.getExtras();
-		if (bundle != null) {
-			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
-			if (refreshed_ids != null) {
-				mService.getHomeTimeline(refreshed_ids, null);
-				mService.getMentions(refreshed_ids, null);
-			}
-		}
-		super.onNewIntent(intent);
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
 	}
 
 	private void initTabs(Collection<? extends TabSpec> tabs) {

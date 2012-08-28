@@ -90,6 +90,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_SEARCH_TWEETS = "search_tweets";
 	public static final String AUTHORITY_DIRECT_MESSAGES = "direct_messages";
 	public static final String AUTHORITY_TRENDS = "trends";
+	public static final String AUTHORITY_USER_MENTIONS = "user_mentions";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -346,7 +347,8 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_CANCEL = R.id.cancel;
 	public static final int MENU_BLOCK = R.id.block;
 	public static final int MENU_REPORT_SPAM = R.id.report_spam;
-	public static final int MENU_MUTE = R.id.mute;
+	public static final int MENU_MUTE_SOURCE = R.id.mute_source;
+	public static final int MENU_MUTE_USER = R.id.mute_user;
 	public static final int MENU_REFRESH = R.id.refresh;
 	public static final int MENU_LOAD_MORE = R.id.load_more;
 	public static final int MENU_CONVERSATION = R.id.conversation;

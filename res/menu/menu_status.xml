@@ -52,6 +52,10 @@
 						android:title="@string/delete"/>
 				</menu>
 			</item>
+			<item
+				android:id="@id/mute_source"
+				android:icon="@drawable/ic_menu_mute"
+				android:title="@string/mute_source"/>
 		</menu>
 	</item>
 

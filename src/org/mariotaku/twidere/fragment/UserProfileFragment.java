@@ -43,6 +43,7 @@ import static org.mariotaku.twidere.util.Utils.openUserFavorites;
 import static org.mariotaku.twidere.util.Utils.openUserFollowers;
 import static org.mariotaku.twidere.util.Utils.openUserFriends;
 import static org.mariotaku.twidere.util.Utils.openUserListTypes;
+import static org.mariotaku.twidere.util.Utils.openUserMentions;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 import static org.mariotaku.twidere.util.Utils.parseString;
@@ -294,6 +295,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mProfileImageLoader = getApplication().getProfileImageLoader();
 		mAdapter = new UserProfileActionAdapter(getActivity());
 		mAdapter.add(new FavoritesAction());
+		mAdapter.add(new UserMentionsAction());
 		mAdapter.add(new UserListTypesAction());
 		if (isMyActivatedAccount(getActivity(), user_id) || isMyActivatedUserName(getActivity(), screen_name)) {
 			mAdapter.add(new SavedSearchesAction());
@@ -609,7 +611,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				mService.reportSpam(mAccountId, mUser.getId());
 				break;
 			}
-			case MENU_MUTE: {
+			case MENU_MUTE_USER: {
 				final String screen_name = mUser.getScreenName();
 				final Uri uri = Filters.Users.CONTENT_URI;
 				final ContentValues values = new ContentValues();
@@ -912,6 +914,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public void onClick() {
 			if (mUser == null) return;
 			openUserBlocks(getActivity(), mAccountId);
+		}
+
+	}
+	
+	class UserMentionsAction extends ListAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.user_mentions);
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null) return;
+			openUserMentions(getActivity(), mAccountId, mUser.getScreenName());
 		}
 
 	}

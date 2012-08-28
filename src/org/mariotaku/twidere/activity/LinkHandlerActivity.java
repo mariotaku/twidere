@@ -44,6 +44,7 @@ import org.mariotaku.twidere.fragment.UserListSubscribersFragment;
 import org.mariotaku.twidere.fragment.UserListSubscriptionsFragment;
 import org.mariotaku.twidere.fragment.UserListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserListTypesFragment;
+import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserRetweetedStatusFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
@@ -80,6 +81,7 @@ public class LinkHandlerActivity extends DualPaneActivity {
 	private static final int CODE_USERS_RETWEETED_STATUS = 18;
 	private static final int CODE_SAVED_SEARCHES = 19;
 	private static final int CODE_RETWEETED_TO_ME = 20;
+	private static final int CODE_USER_MENTIONS = 21;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_STATUS, null, CODE_STATUS);
@@ -102,6 +104,7 @@ public class LinkHandlerActivity extends DualPaneActivity {
 		URI_MATCHER.addURI(AUTHORITY_USERS_RETWEETED_STATUS, null, CODE_USERS_RETWEETED_STATUS);
 		URI_MATCHER.addURI(AUTHORITY_SAVED_SEARCHES, null, CODE_SAVED_SEARCHES);
 		URI_MATCHER.addURI(AUTHORITY_RETWEETED_TO_ME, null, CODE_RETWEETED_TO_ME);
+		URI_MATCHER.addURI(AUTHORITY_USER_MENTIONS, null, CODE_USER_MENTIONS);
 	}
 
 	private Fragment mFragment;
@@ -394,6 +397,18 @@ public class LinkHandlerActivity extends DualPaneActivity {
 				case CODE_RETWEETED_TO_ME: {
 					setTitle(R.string.retweeted_to_me);
 					fragment = new RetweetedToMeFragment();
+					break;
+				}
+				case CODE_USER_MENTIONS: {
+					setTitle(R.string.user_mentions);
+					fragment = new UserMentionsFragment();
+					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					if (!isNullOrEmpty(param_screen_name)) {
+						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					} else {
+						finish();
+						return false;
+					}
 					break;
 				}
 				default: {

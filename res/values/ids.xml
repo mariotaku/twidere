@@ -38,7 +38,8 @@
 	<item name="cancel" type="id"/>
 	<item name="block" type="id"/>
 	<item name="report_spam" type="id"/>
-	<item name="mute" type="id"/>
+	<item name="mute_source" type="id"/>
+	<item name="mute_user" type="id"/>
 	<item name="view_profile" type="id"/>
 	<item name="load_more" type="id"/>
 	<item name="conversation" type="id"/>

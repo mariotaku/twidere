@@ -11,9 +11,9 @@
 		android:title="@string/send_direct_message"
 		android:visible="false"/>
 	<item
-		android:id="@id/mute"
+		android:id="@id/mute_user"
 		android:icon="@drawable/ic_menu_mute"
-		android:title="@string/mute"/>
+		android:title="@string/mute_user"/>
 	<item
 		android:id="@+id/block_submenu"
 		android:icon="@drawable/ic_menu_block"

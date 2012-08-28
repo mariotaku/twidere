@@ -278,6 +278,9 @@
 				<data
 					android:host="retweeted_to_me"
 					android:scheme="twidere"/>
+				<data
+					android:host="user_mentions"
+					android:scheme="twidere"/>
 			</intent-filter>
 		</activity>
 		<activity

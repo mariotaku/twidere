@@ -186,8 +186,8 @@
 	<string name="proxy_port">Proxy Port</string>
 	<string name="block">Block</string>
 	<string name="unblock">Unblock</string>
-	<string name="report_for_spam">Report for spam</string>
-	<string name="mute">Mute</string>
+	<string name="report_for_spam">Report spam</string>
+	<string name="mute_user">Mute user</string>
 	<string name="user_muted">Added this user to filter list. You will not see tweets from this user in your home timeline/mentions list.</string>
 	<string name="inbox">Inbox</string>
 	<string name="outbox">Outbox</string>
@@ -305,5 +305,8 @@
 	<string name="multimedia_contents">Multimedia contents</string>
 	<string name="show_absolute_time">Show absolute time</string>
 	<string name="show_absolute_time_summary">Show absolute time in tweets</string>
+	<string name="mute_source">Mute source</string>
+	<string name="source_muted">Added \"<xliff:g id="source">%s</xliff:g>\" to filter list. You will not see tweets from this source in your home timeline/mentions list.</string>
+	<string name="user_mentions">User mentions</string>
 
 </resources>
