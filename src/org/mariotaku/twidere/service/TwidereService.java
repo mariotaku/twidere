@@ -676,7 +676,8 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(SingleResponse<User> result) {
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				for (final Uri uri : Utils.STATUSES_URIS) {
-					mResolver.delete(uri, Statuses.ACCOUNT_ID + " = " + account_id, null);
+					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = " + user_id;
+					mResolver.delete(uri, where, null);
 				}
 				Toast.makeText(TwidereService.this, R.string.user_blocked, Toast.LENGTH_SHORT).show();
 			} else {
@@ -1618,7 +1619,8 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(SingleResponse<User> result) {
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				for (final Uri uri : Utils.STATUSES_URIS) {
-					mResolver.delete(uri, Statuses.ACCOUNT_ID + " = " + account_id, null);
+					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = " + user_id;
+					mResolver.delete(uri, where, null);
 				}
 				Toast.makeText(TwidereService.this, R.string.reported_user_for_spam, Toast.LENGTH_SHORT).show();
 			} else {
