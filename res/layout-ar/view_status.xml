@@ -125,7 +125,8 @@
 					android:padding="8dp"
 					android:singleLine="true"
 					android:text="@string/users_retweeted_this"
-					android:textAppearance="?android:attr/textAppearanceSmall"/>
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:visibility="gone"/>
 
 				<TextView
 					android:id="@+id/location_view"

@@ -64,6 +64,9 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			finish();
 			return;
 		}
+		if (INTENT_ACTION_EDIT_CUSTOM_TAB.equals(action)) {
+			setTitle(R.string.edit_tab);
+		}
 		if (savedInstanceState != null) {
 			mName = savedInstanceState.getString(INTENT_KEY_NAME);
 			mType = savedInstanceState.getString(INTENT_KEY_TYPE);
@@ -232,7 +235,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			mText1Preference.setTitle(R.string.keywords);
 			mText1Preference.setShouldCompleteUserName(false);
 		} else if (AUTHORITY_SAVED_SEARCHES.equals(type) || AUTHORITY_RETWEETED_TO_ME.equals(type)
-				|| AUTHORITY_DIRECT_MESSAGES.equals(type)) {
+				|| AUTHORITY_DIRECT_MESSAGES.equals(type) || AUTHORITY_TRENDS.equals(type)) {
 			mText1Preference.setEnabled(false);
 			mText1Preference.setTitle(R.string.unused);
 			mText1Preference.setShouldCompleteUserName(false);

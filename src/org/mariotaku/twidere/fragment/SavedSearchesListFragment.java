@@ -86,7 +86,6 @@ public class SavedSearchesListFragment extends PullToRefreshListFragment impleme
 
 	@Override
 	public void onPullUpToRefresh() {
-		// TODO Auto-generated method stub
 
 	}
 

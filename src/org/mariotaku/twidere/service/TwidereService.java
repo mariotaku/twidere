@@ -33,6 +33,7 @@ import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
 import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
+import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -570,7 +571,7 @@ public class TwidereService extends Service implements Constants {
 				}
 
 				mResolver.delete(CachedUsers.CONTENT_URI,
-						CachedUsers.USER_ID + " IN (" + ListUtils.buildString(user_ids, ',', true) + " )", null);
+						CachedUsers.USER_ID + " IN (" + ListUtils.toString(user_ids, ',', true) + " )", null);
 				mResolver.bulkInsert(CachedUsers.CONTENT_URI,
 						cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
 
@@ -676,7 +677,8 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(SingleResponse<User> result) {
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				for (final Uri uri : Utils.STATUSES_URIS) {
-					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = " + user_id;
+					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = "
+							+ user_id;
 					mResolver.delete(uri, where, null);
 				}
 				Toast.makeText(TwidereService.this, R.string.user_blocked, Toast.LENGTH_SHORT).show();
@@ -1619,7 +1621,8 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(SingleResponse<User> result) {
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				for (final Uri uri : Utils.STATUSES_URIS) {
-					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = " + user_id;
+					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = "
+							+ user_id;
 					mResolver.delete(uri, where, null);
 				}
 				Toast.makeText(TwidereService.this, R.string.reported_user_for_spam, Toast.LENGTH_SHORT).show();
@@ -2046,8 +2049,8 @@ public class TwidereService extends Service implements Constants {
 						final StringBuilder where = new StringBuilder();
 						where.append(DirectMessages.ACCOUNT_ID + " = " + account_id);
 						where.append(" AND ");
-						where.append(DirectMessages.MESSAGE_ID + " IN ( "
-								+ ListUtils.buildString(message_ids, ',', true) + " ) ");
+						where.append(DirectMessages.MESSAGE_ID + " IN ( " + ListUtils.toString(message_ids, ',', true)
+								+ " ) ");
 						rows_deleted = mResolver.delete(query_uri, where.toString(), null);
 					}
 
@@ -2330,7 +2333,7 @@ public class TwidereService extends Service implements Constants {
 					account_newly_inserted.removeAll(ids_in_db);
 					newly_inserted_ids.addAll(account_newly_inserted);
 					final StringBuilder where = new StringBuilder();
-					final String ids_string = ListUtils.buildString(status_ids, ',', true);
+					final String ids_string = ListUtils.toString(status_ids, ',', true);
 					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 					where.append(" AND ");
 					where.append("(");
@@ -2653,25 +2656,15 @@ public class TwidereService extends Service implements Constants {
 				}
 			} else {
 				showErrorToast(exception, true);
-				final StringBuilder ids_builder = new StringBuilder();
-				final int size = failed_account_ids.size();
-				for (int i = 0; i < size; i++) {
-					final String id_string = String.valueOf(failed_account_ids.get(i));
-					if (id_string != null) {
-						if (i > 0) {
-							ids_builder.append(';');
-						}
-						ids_builder.append(id_string);
-					}
-				}
 				final ContentValues values = new ContentValues();
-				values.put(Drafts.ACCOUNT_IDS, ids_builder.toString());
+				values.put(Drafts.ACCOUNT_IDS, ListUtils.toString(failed_account_ids, ';', false));
 				values.put(Drafts.IN_REPLY_TO_STATUS_ID, in_reply_to);
 				values.put(Drafts.TEXT, content);
 				if (image_uri != null) {
-					values.put(Drafts.MEDIA_URI, image_uri.toString());
+					values.put(Drafts.IS_IMAGE_ATTACHED, !delete_image);
+					values.put(Drafts.IS_PHOTO_ATTACHED, delete_image);
+					values.put(Drafts.IMAGE_URI, parseString(image_uri));
 				}
-
 				mResolver.insert(Drafts.CONTENT_URI, values);
 			}
 			super.onPostExecute(result);

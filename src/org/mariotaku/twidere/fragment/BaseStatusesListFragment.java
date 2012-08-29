@@ -343,12 +343,9 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
-		final boolean skip_image_preview_processing = mPreferences.getBoolean(
-				PREFERENCE_KEY_SKIP_IMAGE_PREVIEW_PROCESSING, false);
 		adapter.setDisplayProfileImage(display_profile_image);
 		adapter.setDisplayHiResProfileImage(hires_profile_image);
 		adapter.setDisplayImagePreview(display_image_preview);
-		adapter.setSkipImagePreviewProcessing(skip_image_preview_processing);
 		adapter.setDisplayName(display_name);
 		adapter.setTextSize(text_size);
 		adapter.setShowAbsoluteTime(show_absolute_time);

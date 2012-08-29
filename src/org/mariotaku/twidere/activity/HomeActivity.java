@@ -51,11 +51,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.Menu;
@@ -183,8 +183,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mService = getTwidereApplication().getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
-		mDisplayAppIcon = getResources().getBoolean(R.bool.home_display_icon);
-		setContentView(R.layout.main);
+		final Resources res = getResources();
+		mDisplayAppIcon = res.getBoolean(R.bool.home_display_icon);
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length <= 0) {
 			startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
@@ -322,13 +322,14 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		final boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
 		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
-		int icon = R.drawable.ic_menu_tweet;
+		int icon = R.drawable.ic_menu_tweet, title = R.string.compose;
 		if (mViewPager != null && mAdapter != null) {
 			final int position = mViewPager.getCurrentItem();
-
 			if (position == mAdapter.getCount() - 1) {
 				icon = R.drawable.ic_menu_add;
+				title = R.string.add_account;
 			} else {
+				title = R.string.compose;
 				switch (position) {
 					case TAB_POSITION_MESSAGES:
 						icon = R.drawable.ic_menu_compose;
@@ -341,6 +342,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final MenuItem composeItem = menu.findItem(MENU_COMPOSE);
 		if (composeItem != null) {
 			composeItem.setIcon(icon);
+			composeItem.setTitle(title);
 			composeItem.setVisible(!bottom_actions);
 		}
 		if (mComposeButton != null) {
@@ -465,10 +467,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	@Override
 	protected void onStart() {
-		final FragmentManager fm = getSupportFragmentManager();
-		if (!isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
-			// fm.popBackStackImmediate();
-		}
 		super.onStart();
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
@@ -518,6 +516,16 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (!mCustomTabs.get(i).equals(tabs.get(i))) return true;
 		}
 		return false;
+	}
+
+	@Override
+	int getDualPaneLayoutRes() {
+		return R.layout.home_dual_pane;
+	}
+
+	@Override
+	int getNormalLayoutRes() {
+		return R.layout.home;
 	}
 
 }

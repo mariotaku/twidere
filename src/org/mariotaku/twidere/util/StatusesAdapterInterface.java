@@ -35,6 +35,4 @@ public interface StatusesAdapterInterface extends BaseAdapterInterface {
 
 	public void setShowAccountColor(boolean show);
 
-	public void setSkipImagePreviewProcessing(boolean skip);
-
 }

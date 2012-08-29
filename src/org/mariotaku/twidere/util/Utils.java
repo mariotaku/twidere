@@ -26,7 +26,6 @@ import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.MOBYPICTURE_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGLY;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGUR;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INLINE_PREVIEW_AVAILABLE_IMAGES_MATCH_ONLY;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INSTAGRAM;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_MOBYPICTURE;
@@ -252,9 +251,10 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SEARCH_TWEETS, SearchTweetsFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SEARCH_USERS, SearchUsersFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FAVORITES, UserFavoritesFragment.class);
-		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_TIMELINE, UserTimelineFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FOLLOWERS, UserFollowersFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FRIENDS, UserFriendsFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_MENTIONS, UserMentionsFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_TIMELINE, UserTimelineFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_TRENDS, TrendsFragment.class);
 
 		CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
@@ -270,9 +270,10 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SEARCH_TWEETS, R.string.search_tweets);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SEARCH_USERS, R.string.search_users);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FAVORITES, R.string.favorites);
-		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_TIMELINE, R.string.user_timeline);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FOLLOWERS, R.string.followers);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FRIENDS, R.string.following);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_MENTIONS, R.string.user_mentions);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_TIMELINE, R.string.user_timeline);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_TRENDS, R.string.trends);
 
 		CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
@@ -318,7 +319,7 @@ public final class Utils implements Constants {
 		}
 
 		builder.append(Statuses.ACCOUNT_ID + " IN ( ");
-		builder.append(ArrayUtils.buildString(account_ids, ',', true));
+		builder.append(ArrayUtils.toString(account_ids, ',', true));
 		builder.append(" )");
 
 		return builder.toString();
@@ -1063,10 +1064,14 @@ public final class Utils implements Constants {
 
 	public static PreviewImage getPreviewImage(String html, boolean include_preview) {
 		if (html == null) return new PreviewImage(false, null, null);
-		if (!include_preview) {
-			final Matcher m = PATTERN_INLINE_PREVIEW_AVAILABLE_IMAGES_MATCH_ONLY.matcher(html);
-			return new PreviewImage(m.find(), null, null);
-		}
+		if (!include_preview)
+			return new PreviewImage(html.contains("://p.twimg.com/") || html.contains("://instagr.am/")
+					|| html.contains("://instagram.com/") || html.contains("://imgur.com/")
+					|| html.contains("://i.imgur.com/") || html.contains("://twitpic.com/")
+					|| html.contains("://img.ly/") || html.contains("://yfrog.com/")
+					|| html.contains("://twitgoo.com/") || html.contains("://moby.to/")
+					|| html.contains("://plixi.com/p/") || html.contains("://lockerz.com/s/")
+					|| html.contains(".sinaimg.cn/"), null, null);
 		final Matcher m = PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML.matcher(html);
 		while (m.find()) {
 			final String image_url = m.group(PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK);
@@ -1939,30 +1944,6 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserMentions(Activity activity, long account_id, String screen_name) {
-		if (activity == null) return;
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new UserMentionsFragment();
-			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			if (screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			}
-			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_USER_MENTIONS);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (screen_name != null) {
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
-			}
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-
 	public static void openUserBlocks(Activity activity, long account_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
@@ -2318,6 +2299,30 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void openUserMentions(Activity activity, long account_id, String screen_name) {
+		if (activity == null) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new UserMentionsFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			}
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER_MENTIONS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
 	public static void openUserProfile(Activity activity, long account_id, long user_id, String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
@@ -2419,7 +2424,7 @@ public final class Utils implements Constants {
 					if (value instanceof Boolean) {
 						bundle.putBoolean(key, json.getBoolean(key));
 					} else if (value instanceof Integer) {
-						// FIXME Simple workaround for account_id
+						// Simple workaround for account_id
 						if (INTENT_KEY_ACCOUNT_ID.equals(key)) {
 							bundle.putLong(key, json.getLong(key));
 						} else {
@@ -2530,12 +2535,9 @@ public final class Utils implements Constants {
 		if (itemRetweet != null) {
 			itemRetweet.setVisible(!status.is_protected
 					&& (!isMyActivatedAccount(context, status.user_id) || getActivatedAccountIds(context).length > 1));
-			final Drawable iconRetweetSubMenu = menu.findItem(R.id.retweet_submenu).getIcon();
 			if (isMyActivatedAccount(context, status.retweeted_by_id)) {
-				iconRetweetSubMenu.mutate().setColorFilter(activated_color, Mode.MULTIPLY);
 				itemRetweet.setTitle(R.string.cancel_retweet);
 			} else {
-				iconRetweetSubMenu.clearColorFilter();
 				itemRetweet.setTitle(R.string.retweet);
 			}
 		}

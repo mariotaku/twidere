@@ -25,32 +25,27 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public boolean collapseActionView() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean expandActionView() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@TargetApi(14)
 	@Override
 	public ActionProvider getActionProvider() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public View getActionView() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public char getAlphabeticShortcut() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -66,7 +61,6 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public Intent getIntent() {
-		// TODO Auto-generated method stub
 		return new Intent();
 	}
 
@@ -77,13 +71,11 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public ContextMenuInfo getMenuInfo() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public char getNumericShortcut() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -114,7 +106,6 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public boolean isActionViewExpanded() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -142,25 +133,21 @@ public class MenuItemImpl implements MenuItem {
 	@TargetApi(14)
 	@Override
 	public MenuItem setActionProvider(ActionProvider actionProvider) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
 	@Override
 	public MenuItem setActionView(int resId) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
 	@Override
 	public MenuItem setActionView(View view) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
 	@Override
 	public MenuItem setAlphabeticShortcut(char alphaChar) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
@@ -196,44 +183,37 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public MenuItem setIntent(Intent intent) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
 	@Override
 	public MenuItem setNumericShortcut(char numericChar) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
 	@TargetApi(14)
 	@Override
 	public MenuItem setOnActionExpandListener(OnActionExpandListener listener) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
 	@Override
 	public MenuItem setOnMenuItemClickListener(OnMenuItemClickListener menuItemClickListener) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
 	@Override
 	public MenuItem setShortcut(char numericChar, char alphaChar) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
 	@Override
 	public void setShowAsAction(int actionEnum) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public MenuItem setShowAsActionFlags(int actionEnum) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
@@ -251,7 +231,6 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public MenuItem setTitleCondensed(CharSequence title) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 

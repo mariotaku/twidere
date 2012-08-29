@@ -514,9 +514,6 @@ public class Switch extends CompoundButton {
 	}
 
 	private void animateThumbToCheckedState(boolean newCheckedState) {
-		// TODO animate!
-		// float targetPos = newCheckedState ? 0 : getThumbScrollRange();
-		// mThumbPosition = targetPos;
 		setChecked(newCheckedState);
 	}
 

@@ -19,40 +19,13 @@
 
 package org.mariotaku.twidere.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class ArrayUtils {
 
 	private ArrayUtils() {
 		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
-	}
-
-	public static String buildString(long[] array, char token, boolean include_space) {
-		final StringBuilder builder = new StringBuilder();
-		final int length = array.length;
-		for (int i = 0; i < length; i++) {
-			final String id_string = String.valueOf(array[i]);
-			if (id_string != null) {
-				if (i > 0) {
-					builder.append(include_space ? token + " " : token);
-				}
-				builder.append(id_string);
-			}
-		}
-		return builder.toString();
-	}
-
-	public static String buildString(Object[] array, char token, boolean include_space) {
-		final StringBuilder builder = new StringBuilder();
-		final int length = array.length;
-		for (int i = 0; i < length; i++) {
-			final String id_string = String.valueOf(array[i]);
-			if (id_string != null) {
-				if (i > 0) {
-					builder.append(include_space ? token + " " : token);
-				}
-				builder.append(id_string);
-			}
-		}
-		return builder.toString();
 	}
 
 	public static boolean contains(long[] array, long value) {
@@ -83,6 +56,25 @@ public final class ArrayUtils {
 		return true;
 	}
 
+	public static long[] fromString(String string, char token) {
+		if (string == null) return new long[0];
+		final String[] items_string_array = string.split(String.valueOf(token));
+		final ArrayList<Long> items_list = new ArrayList<Long>();
+		for (final String id_string : items_string_array) {
+			try {
+				items_list.add(Long.parseLong(id_string));
+			} catch (final NumberFormatException e) {
+				// Ignore.
+			}
+		}
+		final int list_size = items_list.size();
+		final long[] array = new long[list_size];
+		for (int i = 0; i < list_size; i++) {
+			array[i] = items_list.get(i);
+		}
+		return array;
+	}
+
 	public static int indexOf(long[] array, long value) {
 		final int length = array.length;
 		for (int i = 0; i < length; i++) {
@@ -97,5 +89,59 @@ public final class ArrayUtils {
 			if (array[i].equals(value)) return i;
 		}
 		return -1;
+	}
+
+	public static String toString(long[] array, char token, boolean include_space) {
+		final StringBuilder builder = new StringBuilder();
+		final int length = array.length;
+		for (int i = 0; i < length; i++) {
+			final String id_string = String.valueOf(array[i]);
+			if (id_string != null) {
+				if (i > 0) {
+					builder.append(include_space ? token + " " : token);
+				}
+				builder.append(id_string);
+			}
+		}
+		return builder.toString();
+	}
+
+	public static String toString(Object[] array, char token, boolean include_space) {
+		final StringBuilder builder = new StringBuilder();
+		final int length = array.length;
+		for (int i = 0; i < length; i++) {
+			final String id_string = String.valueOf(array[i]);
+			if (id_string != null) {
+				if (i > 0) {
+					builder.append(include_space ? token + " " : token);
+				}
+				builder.append(id_string);
+			}
+		}
+		return builder.toString();
+	}
+	
+	public static long[] fromList(List<Long> list) {
+		if (list == null) return null;
+		final int count = list.size();
+		final long[] array = new long[count];
+		for (int i = 0; i < count; i++) {
+			array[i] = list.get(i);
+		}
+		return array;
+	}
+	
+	public static long[] intersection(long[] array1, long[] array2) {
+		if (array1 == null || array2 == null) return new long[0];
+		final List<Long> list1 = new ArrayList<Long>();
+		for (long item : array1) {
+			list1.add(item);
+		}
+		final List<Long> list2 = new ArrayList<Long>();
+		for (long item : array2) {
+			list2.add(item);
+		}
+		list1.retainAll(list2); 
+		return fromList(list1);
 	}
 }

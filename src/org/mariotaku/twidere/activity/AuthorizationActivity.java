@@ -25,16 +25,13 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.WebViewProxySettings;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.net.http.SslError;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Window;
-import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -114,16 +111,6 @@ public class AuthorizationActivity extends BaseActivity {
 			super.onReceivedError(view, errorCode, description, failingUrl);
 			Toast.makeText(AuthorizationActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
 			finish();
-		}
-
-		@TargetApi(8)
-		@Override
-		public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-			if (mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false)) {
-				handler.proceed();
-			} else {
-				handler.cancel();
-			}
 		}
 
 		@Override

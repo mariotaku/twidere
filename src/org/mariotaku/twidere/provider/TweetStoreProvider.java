@@ -137,7 +137,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		final String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
-		final String projection_string = projection != null ? ArrayUtils.buildString(projection, ',', false) : "*";
+		final String projection_string = projection != null ? ArrayUtils.toString(projection, ',', false) : "*";
 		if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table)) {
 			// read-only here.
 			final List<String> segments = uri.getPathSegments();

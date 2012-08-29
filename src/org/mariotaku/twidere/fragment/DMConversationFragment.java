@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
+import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import org.mariotaku.popupmenu.PopupMenu;
@@ -49,6 +50,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,12 +68,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.twitter.Validator;
 
 public class DMConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>, OnItemClickListener,
 		OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener, Panes.Right,
-		OnItemSelectedListener {
+		OnItemSelectedListener, OnEditorActionListener {
 
 	private final Validator mValidator = new Validator();
 	private ServiceInterface mService;
@@ -160,6 +164,9 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 		}
 		getLoaderManager().initLoader(0, mArguments, this);
 
+		if (mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false)) {
+			mEditText.setOnEditorActionListener(this);
+		}
 		mEditText.addTextChangedListener(this);
 		final String text = savedInstanceState != null ? savedInstanceState.getString(INTENT_KEY_TEXT) : null;
 		if (text != null) {
@@ -185,16 +192,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.send: {
-				final Editable text = mEditText.getText();
-				if (text == null) return;
-				final String message = text.toString();
-				if (mValidator.isValidTweet(message)) {
-					final long account_id = mArguments.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-					final long conversation_id = mArguments.getLong(INTENT_KEY_CONVERSATION_ID, -1);
-					final String screen_name = mArguments.getString(INTENT_KEY_SCREEN_NAME);
-					mService.sendDirectMessage(account_id, screen_name, conversation_id, message);
-					text.clear();
-				}
+				send();
 				break;
 			}
 			case R.id.screen_name_confirm: {
@@ -251,6 +249,17 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+	}
+
+	@Override
+	public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+		switch (event.getKeyCode()) {
+			case KeyEvent.KEYCODE_ENTER: {
+				send();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -373,6 +382,19 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 		args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 		args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
 		getLoaderManager().restartLoader(0, args, this);
+	}
+
+	private void send() {
+		final Editable text = mEditText.getText();
+		if (isNullOrEmpty(text)) return;
+		final String message = text.toString();
+		if (mValidator.isValidTweet(message)) {
+			final long account_id = mArguments.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			final long conversation_id = mArguments.getLong(INTENT_KEY_CONVERSATION_ID, -1);
+			final String screen_name = mArguments.getString(INTENT_KEY_SCREEN_NAME);
+			mService.sendDirectMessage(account_id, screen_name, conversation_id, message);
+			text.clear();
+		}
 	}
 
 	private static class AccountsAdapter extends ArrayAdapter<Account> {

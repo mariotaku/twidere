@@ -27,7 +27,6 @@
 	<item name="add_account" type="id"/>
 	<item name="quote" type="id"/>
 	<item name="drafts" type="id"/>
-	<item name="send_all" type="id"/>
 	<item name="delete_all" type="id"/>
 	<item name="refresh" type="id"/>
 	<item name="set_as_default" type="id"/>

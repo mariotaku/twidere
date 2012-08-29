@@ -38,12 +38,18 @@ import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
+import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -62,8 +68,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,12 +82,13 @@ import android.view.View.OnLongClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.twitter.Validator;
 
 public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
-		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener {
+		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener, OnEditorActionListener {
 
 	private ActionBar mActionBar;
 
@@ -104,13 +115,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	private AttachedImageThumbnailTask mAttachedImageThumbnailTask;
 
-	private static final String INTENT_KEY_IMAGE_URI = "image_uri";
-
-	private static final String INTENT_KEY_PHOTO_ATTACHED = "photo_attached";
-
-	private static final String INTENT_KEY_IMAGE_ATTACHED = "image_attached";
-
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
+
+	private ContentResolver mResolver;
+
+	private DialogFragment mUnsavedTweetDialogFragment;
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -167,6 +176,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					final long[] user_ids = bundle.getLongArray(INTENT_KEY_IDS);
 					if (user_ids != null) {
 						mAccountIds = user_ids;
+						final SharedPreferences.Editor editor = mPreferences.edit();
+						editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, ArrayUtils.toString(mAccountIds, ',', false));
+						editor.commit();
 					}
 				}
 				break;
@@ -208,6 +220,18 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	@Override
+	public void onBackPressed() {
+		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
+		if (!isNullOrEmpty(text) || mImageUri != null) {
+			mUnsavedTweetDialogFragment = (DialogFragment) Fragment.instantiate(this,
+					UnsavedTweetDialogFragment.class.getName());
+			mUnsavedTweetDialogFragment.show(getSupportFragmentManager(), "unsaved_tweet");
+			return;
+		}
+		super.onBackPressed();
+	}
+
+	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.image_thumbnail_preview: {
@@ -235,6 +259,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getTwidereApplication().getServiceInterface();
+		mResolver = getContentResolver();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.compose);
 		mActionBar = getSupportActionBar();
@@ -246,8 +271,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mInReplyToStatusId = bundle != null ? bundle.getLong(INTENT_KEY_IN_REPLY_TO_ID) : -1;
 		mInReplyToScreenName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME) : null;
 		mInReplyToName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_NAME) : null;
-		mIsImageAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_IMAGE_ATTACHED) : false;
-		mIsPhotoAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_PHOTO_ATTACHED) : false;
+		mIsImageAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_IMAGE_ATTACHED) : false;
+		mIsPhotoAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_PHOTO_ATTACHED) : false;
 		mImageUri = bundle != null ? (Uri) bundle.getParcelable(INTENT_KEY_IMAGE_URI) : null;
 		int text_selection_start = -1;
 		if (mInReplyToStatusId > 0) {
@@ -285,7 +310,10 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			}
 		} else {
 			if (mAccountIds == null || mAccountIds.length == 0) {
-				mAccountIds = getActivatedAccountIds(this);
+				final long[] ids_in_prefs = ArrayUtils.fromString(mPreferences.getString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, null), ',');
+				final long[] activated_ids = getActivatedAccountIds(this);
+				final long[] intersection = ArrayUtils.intersection(ids_in_prefs, activated_ids);
+				mAccountIds = intersection.length > 0 ? intersection : activated_ids;
 			}
 			final String action = getIntent().getAction();
 			if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
@@ -338,6 +366,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mMenuBar.inflate(R.menu.menu_compose);
 		setMenu(mMenuBar.getMenu());
 		mMenuBar.show();
+		if (mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false)) {
+			mEditText.setOnEditorActionListener(this);
+		}
 		mEditText.addTextChangedListener(this);
 		if (mText != null) {
 			mEditText.setText(mText);
@@ -357,6 +388,18 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_compose_actionbar, menu);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+		switch (event.getKeyCode()) {
+			case KeyEvent.KEYCODE_ENTER: {
+				send();
+				return true;
+			}
+
+		}
+		return false;
 	}
 
 	/** Sets the mRecentLocation object to the current location of the device **/
@@ -409,6 +452,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			case MENU_SELECT_ACCOUNT: {
 				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
 				final Bundle bundle = new Bundle();
+				bundle.putBoolean(INTENT_KEY_ACTIVATED_ONLY, true);
 				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
@@ -468,16 +512,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				finish();
+				onBackPressed();
 				break;
 			}
 			case MENU_SEND: {
-				final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-				final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
-				mService.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
-						mInReplyToStatusId, mIsPhotoAttached && !mIsImageAttached);
-				setResult(Activity.RESULT_OK);
-				finish();
+				send();
 				break;
 			}
 		}
@@ -519,8 +558,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		outState.putString(INTENT_KEY_IN_REPLY_TO_NAME, mInReplyToName);
 		outState.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mInReplyToScreenName);
 		outState.putBoolean(INTENT_KEY_IS_QUOTE, mIsQuote);
-		outState.putBoolean(INTENT_KEY_IMAGE_ATTACHED, mIsImageAttached);
-		outState.putBoolean(INTENT_KEY_PHOTO_ATTACHED, mIsPhotoAttached);
+		outState.putBoolean(INTENT_KEY_IS_IMAGE_ATTACHED, mIsImageAttached);
+		outState.putBoolean(INTENT_KEY_IS_PHOTO_ATTACHED, mIsPhotoAttached);
 		outState.putParcelable(INTENT_KEY_IMAGE_URI, mImageUri);
 		super.onSaveInstanceState(outState);
 	}
@@ -530,6 +569,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		super.onStart();
 		final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
 		mUploadUseExtension = !isNullOrEmpty(component);
+		if (mMenuBar != null) {
+			setMenu(mMenuBar.getMenu());
+		}
 	}
 
 	@Override
@@ -540,6 +582,23 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		invalidateSupportOptionsMenu();
+	}
+
+	public void saveToDrafts() {
+		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
+		final ContentValues values = new ContentValues();
+		values.put(Drafts.TEXT, text);
+		values.put(Drafts.ACCOUNT_IDS, ArrayUtils.toString(mAccountIds, ',', false));
+		values.put(Drafts.IN_REPLY_TO_STATUS_ID, mInReplyToStatusId);
+		values.put(Drafts.IN_REPLY_TO_NAME, mInReplyToName);
+		values.put(Drafts.IN_REPLY_TO_SCREEN_NAME, mInReplyToScreenName);
+		values.put(Drafts.IS_QUOTE, mIsQuote ? 1 : 0);
+		if (mImageUri != null) {
+			values.put(Drafts.IS_IMAGE_ATTACHED, mIsImageAttached);
+			values.put(Drafts.IS_PHOTO_ATTACHED, mIsPhotoAttached);
+			values.put(Drafts.IMAGE_URI, parseString(mImageUri));
+		}
+		mResolver.insert(Drafts.CONTENT_URI, values);
 	}
 
 	@Override
@@ -583,6 +642,16 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		}
 		mAttachedImageThumbnailTask = new AttachedImageThumbnailTask(file);
 		mAttachedImageThumbnailTask.execute();
+	}
+
+	private void send() {
+		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
+		if (isNullOrEmpty(text) || isFinishing()) return;
+		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+		mService.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
+				mInReplyToStatusId, mIsPhotoAttached && !mIsImageAttached);
+		setResult(Activity.RESULT_OK);
+		finish();
 	}
 
 	private void setMenu(Menu menu) {
@@ -649,6 +718,39 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				showErrorToast(this, e, false);
 			}
 		}
+	}
+
+	public static class UnsavedTweetDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			final FragmentActivity activity = getActivity();
+			switch (which) {
+				case DialogInterface.BUTTON_POSITIVE: {
+					if (activity instanceof ComposeActivity) {
+						((ComposeActivity) activity).saveToDrafts();
+						activity.finish();
+					}
+					break;
+				}
+				case DialogInterface.BUTTON_NEGATIVE: {
+					activity.finish();
+					break;
+				}
+			}
+
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setMessage(R.string.unsaved_tweet);
+			builder.setPositiveButton(R.string.save, this);
+			builder.setNeutralButton(android.R.string.cancel, null);
+			builder.setNegativeButton(R.string.discard, this);
+			return builder.create();
+		}
+
 	}
 
 	class AttachedImageThumbnailTask extends AsyncTask<Void, Void, Bitmap> {

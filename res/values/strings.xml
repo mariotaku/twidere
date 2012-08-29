@@ -308,5 +308,12 @@
 	<string name="mute_source">Mute source</string>
 	<string name="source_muted">Added \"<xliff:g id="source">%s</xliff:g>\" to filter list. You will not see tweets from this source in your home timeline/mentions list.</string>
 	<string name="user_mentions">User mentions</string>
+	<string name="dual_pane_layout">Dual Pane Layout</string>
+	<string name="landscape">Landscape</string>
+	<string name="portrait">Portrait</string>
+	<string name="quick_send">Hit \"Enter\" to Send</string>
+	<string name="quick_send_summary">Send tweet when hit \"Enter\".</string>
+	<string name="unsaved_tweet">Tweet not sent or saved.</string>
+	<string name="discard">Discard</string>
 
 </resources>

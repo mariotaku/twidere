@@ -11,9 +11,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,37 +35,37 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 
 	private Gallery mGallery;
 	private ImagesAdapter mAdapter;
-	private List<ImageSpec> mData = new ArrayList<ImageSpec>();
 	private View mLoadImagesIndicator;
-	private SharedPreferences mPreferences;
 	private Handler mHandler;
 	private Runnable mTicker;
 
 	private volatile boolean mBusy, mTickerStopped;
 
-	public boolean add(ImageSpec spec) {
-		return spec != null ? mData.add(spec) : false;
-	}
+	private final List<ImageSpec> mData = new ArrayList<ImageSpec>();
 
-	public boolean add(String thumbnail_url, String image_url) {
-		return mData.add(new ImageSpec(thumbnail_url, image_url));
+	public boolean addAll(Collection<? extends ImageSpec> images) {
+		mData.clear();
+		return images != null && mData.addAll(images);
 	}
 
 	public void clear() {
 		mData.clear();
+		update();
+		if (mLoadImagesIndicator != null) {
+			mLoadImagesIndicator.setVisibility(View.VISIBLE);
+		}
+		if (mGallery != null) {
+			mGallery.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
 		mAdapter = new ImagesAdapter(getApplication());
 		mGallery.setAdapter(mAdapter);
 		mGallery.setOnItemClickListener(this);
 		mLoadImagesIndicator.setOnClickListener(this);
-		if (mData.size() > 0 && mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false)) {
-			show();
-		}
 	}
 
 	@Override
@@ -147,9 +145,15 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 
 	public void show() {
 		if (mAdapter == null || !isAdded()) return;
+		update();
+		mLoadImagesIndicator.setVisibility(View.GONE);
+		mGallery.setVisibility(View.VISIBLE);
+	}
+
+	public void update() {
+		if (mAdapter == null) return;
 		mAdapter.clear();
 		mAdapter.addAll(mData);
-		mLoadImagesIndicator.setVisibility(View.GONE);
 	}
 
 	class ImagesAdapter extends BaseAdapter {
@@ -163,8 +167,8 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 			mInflater = LayoutInflater.from(context);
 		}
 
-		public boolean addAll(Collection<? extends ImageSpec> url_strings) {
-			final boolean ret = mUrls.addAll(url_strings);
+		public boolean addAll(Collection<? extends ImageSpec> images) {
+			final boolean ret = images != null && mUrls.addAll(images);
 			notifyDataSetChanged();
 			return ret;
 		}

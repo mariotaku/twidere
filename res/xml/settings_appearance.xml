@@ -23,4 +23,17 @@
 		android:summary="@string/leftside_compose_button_summary"
 		android:title="@string/leftside_compose_button"/>
 
+	<PreferenceCategory
+		android:key="cat_dual_pane_layout"
+		android:title="@string/dual_pane_layout">
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="dual_pane_in_portrait"
+			android:title="@string/portrait"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="dual_pane_in_landscape"
+			android:title="@string/landscape"/>
+	</PreferenceCategory>
+
 </PreferenceScreen>

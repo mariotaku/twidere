@@ -224,8 +224,7 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 		public FilesLoader(Context context, File path, String[] extensions) {
 			super(context);
 			this.path = path;
-			extensions_regex = Pattern
-					.compile(ArrayUtils.buildString(extensions, '|', false), Pattern.CASE_INSENSITIVE);
+			extensions_regex = Pattern.compile(ArrayUtils.toString(extensions, '|', false), Pattern.CASE_INSENSITIVE);
 		}
 
 		@Override

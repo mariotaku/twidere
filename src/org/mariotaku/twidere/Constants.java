@@ -42,7 +42,7 @@ public interface Constants extends TwitterConstants {
 	public static final String LOGTAG = APP_NAME;
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 22;
+	public static final int DATABASES_VERSION = 23;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -171,7 +171,6 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_HIRES_PROFILE_IMAGE = "hires_profile_image";
 	public static final String PREFERENCE_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
 	public static final String PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR = "notification_light_color";
-	public static final String PREFERENCE_KEY_SKIP_IMAGE_PREVIEW_PROCESSING = "skip_image_preview_processing";
 	public static final String PREFERENCE_KEY_SHARE_FORMAT = "share_format";
 	public static final String PREFERENCE_KEY_IMAGE_UPLOADER = "image_uploader";
 	public static final String PREFERENCE_KEY_HOME_REFRESH_MENTIONS = "home_refresh_mentions";
@@ -179,6 +178,10 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_IMAGE_UPLOAD_FORMAT = "image_upload_format";
 	public static final String PREFERENCE_KEY_TWEET_SHORTENER = "tweet_shortener";
 	public static final String PREFERENCE_KEY_SHOW_ABSOLUTE_TIME = "show_absolute_time";
+	public static final String PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE = "dual_pane_in_landscape";
+	public static final String PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT = "dual_pane_in_portrait";
+	public static final String PREFERENCE_KEY_QUICK_SEND = "quick_send";
+	public static final String PREFERENCE_KEY_COMPOSE_ACCOUNTS = "compose_accounts";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -310,6 +313,10 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_ICON = "icon";
 	public static final String INTENT_KEY_ID = "id";
 	public static final String INTENT_KEY_RESID = "resid";
+	public static final String INTENT_KEY_IMAGE_URI = "image_uri";
+	public static final String INTENT_KEY_IS_PHOTO_ATTACHED = "is_photo_attached";
+	public static final String INTENT_KEY_IS_IMAGE_ATTACHED = "is_image_attached";
+	public static final String INTENT_KEY_ACTIVATED_ONLY = "activated_only";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -341,7 +348,6 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_SHARE = R.id.share;
 	public static final int MENU_DRAFTS = R.id.drafts;
 	public static final int MENU_DELETE_ALL = R.id.delete_all;
-	public static final int MENU_SEND_ALL = R.id.send_all;
 	public static final int MENU_SET_AS_DEFAULT = R.id.set_as_default;
 	public static final int MENU_SAVE = R.id.save;
 	public static final int MENU_CANCEL = R.id.cancel;

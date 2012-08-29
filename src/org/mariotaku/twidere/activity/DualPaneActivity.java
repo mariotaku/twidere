@@ -5,12 +5,17 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout.TouchInterceptor;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.BackStackEntryTrojan;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
+import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,10 +24,14 @@ import android.widget.FrameLayout;
 
 public class DualPaneActivity extends BaseActivity implements OnBackStackChangedListener {
 
+	private SharedPreferences mPreferences;
+
 	private ExtendedFrameLayout mLeftPaneContainer, mRightPaneContainer;
 	private ViewGroup mLeftPaneLayer, mRightPaneLayer;
 
 	private Fragment mDetailsFragment;
+
+	private boolean mDualPaneInPortrait, mDualPaneInLandscape;
 
 	private final TouchInterceptor mLeftPaneTouchInterceptor = new TouchInterceptor() {
 
@@ -119,7 +128,25 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
+		final Resources res = getResources();
+		final int orientation = res.getConfiguration().orientation;
+		final int layout;
+		mDualPaneInPortrait = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT, false);
+		mDualPaneInLandscape = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE, false);
+		switch (orientation) {
+			case Configuration.ORIENTATION_LANDSCAPE:
+				layout = mDualPaneInLandscape ? getDualPaneLayoutRes() : getNormalLayoutRes();
+				break;
+			case Configuration.ORIENTATION_PORTRAIT:
+				layout = mDualPaneInPortrait ? getDualPaneLayoutRes() : getNormalLayoutRes();
+				break;
+			default:
+				layout = getNormalLayoutRes();
+				break;
+		}
+		setContentView(layout);
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 	}
 
@@ -153,9 +180,45 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 		}
 	}
 
+	@Override
+	protected void onStart() {
+		final FragmentManager fm = getSupportFragmentManager();
+		if (!isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
+			final int count = fm.getBackStackEntryCount();
+			for (int i = 0; i < count; i++) {
+				fm.popBackStackImmediate();
+			}
+		}
+		super.onStart();
+		final boolean dual_pane_in_portrait = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT, false);
+		final boolean dual_pane_in_landscape = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE, false);
+		final Resources res = getResources();
+		final int orientation = res.getConfiguration().orientation;
+		switch (orientation) {
+			case Configuration.ORIENTATION_LANDSCAPE:
+				if (mDualPaneInLandscape != dual_pane_in_landscape) {
+					restart();
+				}
+				break;
+			case Configuration.ORIENTATION_PORTRAIT:
+				if (mDualPaneInPortrait != dual_pane_in_portrait) {
+					restart();
+				}
+				break;
+		}
+	}
+
 	private int getPaneBackground() {
 		final boolean dark = isDarkTheme(), solid = isSolidColorBackground();
 		return dark ? solid ? android.R.color.black : R.drawable.background_holo_dark : solid ? android.R.color.white
 				: R.drawable.background_holo_light;
+	}
+
+	int getDualPaneLayoutRes() {
+		return R.layout.base_dual_pane;
+	}
+
+	int getNormalLayoutRes() {
+		return R.layout.base;
 	}
 }

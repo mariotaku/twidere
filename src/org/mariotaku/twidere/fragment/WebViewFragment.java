@@ -24,15 +24,20 @@ import static org.mariotaku.twidere.util.Utils.showErrorToast;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.BaseActivity;
 
+import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -74,9 +79,11 @@ public class WebViewFragment extends BaseFragment {
 	public static class DefaultWebViewClient extends WebViewClient {
 
 		private FragmentActivity mActivity;
+		private SharedPreferences mPreferences;
 
 		public DefaultWebViewClient(FragmentActivity activity) {
 			mActivity = activity;
+			mPreferences = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		}
 
 		@Override
@@ -93,6 +100,16 @@ public class WebViewFragment extends BaseFragment {
 			super.onPageStarted(view, url, favicon);
 			if (mActivity instanceof BaseActivity) {
 				((BaseActivity) mActivity).setSupportProgressBarIndeterminateVisibility(true);
+			}
+		}
+
+		@TargetApi(8)
+		@Override
+		public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+			if (mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false)) {
+				handler.proceed();
+			} else {
+				handler.cancel();
 			}
 		}
 

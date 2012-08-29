@@ -19,15 +19,13 @@
 
 package org.mariotaku.twidere.activity;
 
-import java.util.ArrayList;
-
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.model.DraftItem;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ServiceInterface;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -53,12 +51,16 @@ import android.widget.TextView;
 public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Cursor>, OnItemClickListener,
 		OnItemLongClickListener, OnMenuItemClickListener {
 
-	private DraftsAdapter mAdapter;
-	private Cursor mCursor;
-	private ListView mListView;
 	private ContentResolver mResolver;
-	private ServiceInterface mInterface;
+	private ServiceInterface mService;
 	private SharedPreferences mPreferences;
+
+	private DraftsAdapter mAdapter;
+	private ListView mListView;
+
+	private PopupMenu mPopupMenu;
+
+	private Cursor mCursor;
 	private float mTextSize;
 	private DraftItem mDraftItem;
 	private long mSelectedId;
@@ -74,26 +76,11 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 		}
 	};
 
-	private PopupMenu mPopupMenu;
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-			case REQUEST_COMPOSE: {
-				if (resultCode == Activity.RESULT_OK) {
-					mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + mSelectedId, null);
-				}
-				break;
-			}
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mResolver = getContentResolver();
-		mInterface = getTwidereApplication().getServiceInterface();
+		mService = getTwidereApplication().getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		setContentView(R.layout.base_list);
@@ -182,21 +169,6 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 				onBackPressed();
 				break;
 			}
-			case MENU_SEND_ALL: {
-				final ArrayList<DraftItem> drafts = new ArrayList<DraftItem>();
-				if (mCursor != null) {
-					mCursor.moveToFirst();
-					if (!mCursor.isAfterLast()) {
-						drafts.add(new DraftItem(mCursor, mCursor.getPosition()));
-						mCursor.moveToNext();
-					}
-				}
-				mResolver.delete(Drafts.CONTENT_URI, null, null);
-				for (final DraftItem draft : drafts) {
-					sendDraft(draft);
-				}
-				break;
-			}
 			case MENU_DELETE_ALL: {
 				mResolver.delete(Drafts.CONTENT_URI, null, null);
 				break;
@@ -235,49 +207,28 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	private void composeDraft(DraftItem draft) {
 		final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 		final Bundle bundle = new Bundle();
+		final Uri image_uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
 		bundle.putString(INTENT_KEY_TEXT, draft.text);
 		bundle.putLongArray(INTENT_KEY_IDS, draft.account_ids);
 		bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, draft.in_reply_to_status_id);
+		bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, draft.in_reply_to_name);
+		bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, draft.in_reply_to_screen_name);
+		bundle.putParcelable(INTENT_KEY_IMAGE_URI, image_uri);
+		bundle.putBoolean(INTENT_KEY_IS_IMAGE_ATTACHED, draft.is_image_attached);
+		bundle.putBoolean(INTENT_KEY_IS_PHOTO_ATTACHED, draft.is_photo_attached);
+		bundle.putBoolean(INTENT_KEY_IS_QUOTE, draft.is_quote);
 		intent.putExtras(bundle);
+		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
 		startActivityForResult(intent, REQUEST_COMPOSE);
+
 	}
 
 	private void sendDraft(DraftItem draft) {
+		if (draft == null) return;
 		final Uri uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
-		mInterface.updateStatus(draft.account_ids, draft.text, null, uri, draft.in_reply_to_status_id, false);
-	}
-
-	class DraftItem {
-
-		public final long[] account_ids;
-		public final long in_reply_to_status_id;
-		public final String text, media_uri;
-
-		public DraftItem(Cursor cursor, int position) {
-			mCursor.moveToPosition(position);
-			text = mCursor.getString(mCursor.getColumnIndex(Drafts.TEXT));
-			media_uri = mCursor.getString(mCursor.getColumnIndex(Drafts.MEDIA_URI));
-			final String account_ids_string = mCursor.getString(mCursor.getColumnIndex(Drafts.ACCOUNT_IDS));
-			in_reply_to_status_id = mCursor.getLong(mCursor.getColumnIndex(Drafts.IN_REPLY_TO_STATUS_ID));
-			if (account_ids_string != null) {
-				final String[] ids_string_array = account_ids_string.split(";");
-				final ArrayList<Long> ids_list = new ArrayList<Long>();
-				for (final String id_string : ids_string_array) {
-					try {
-						ids_list.add(Long.parseLong(id_string));
-					} catch (final NumberFormatException e) {
-						// Ignore.
-					}
-				}
-				final int list_size = ids_list.size();
-				account_ids = new long[list_size];
-				for (int i = 0; i < list_size; i++) {
-					account_ids[i] = ids_list.get(i);
-				}
-			} else {
-				account_ids = null;
-			}
-		}
+		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
+		mService.updateStatus(draft.account_ids, draft.text, null, uri, draft.in_reply_to_status_id,
+				draft.is_photo_attached && !draft.is_image_attached);
 	}
 
 	static class DraftsAdapter extends SimpleCursorAdapter {

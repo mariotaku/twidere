@@ -6,7 +6,7 @@
 		android:icon="@drawable/ic_menu_reply"
 		android:title="@string/reply"/>
 	<item
-		android:id="@id/retweet_submenu"
+		android:id="@+id/retweet_submenu"
 		android:icon="@drawable/ic_menu_retweet"
 		android:title="@string/retweet">
 		<menu>

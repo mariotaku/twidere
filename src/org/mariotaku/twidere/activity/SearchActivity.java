@@ -92,7 +92,6 @@ public class SearchActivity extends DualPaneActivity implements OnItemSelectedLi
 				}
 			}
 		}
-		setContentView(R.layout.base_dual_pane);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayHomeAsUpEnabled(true);

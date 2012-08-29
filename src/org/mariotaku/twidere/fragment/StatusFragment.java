@@ -45,6 +45,7 @@ import java.util.List;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableLocation;
@@ -73,8 +74,8 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -94,10 +95,13 @@ import com.twitter.Extractor;
 public class StatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener, Panes.Right {
 
 	private long mAccountId, mStatusId;
-	private ImagesPreviewFragment mImagesPreviewFragment = new ImagesPreviewFragment();
+	private boolean mLoadMoreAutomatically;
+	private boolean mFollowInfoDisplayed, mLocationInfoDisplayed;
+
 	private ServiceInterface mService;
 	private SharedPreferences mPreferences;
 	private LazyImageLoader mProfileImageLoader;
+
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView,
 			mRetweetedStatusView;
 	private ImageView mProfileImageView;
@@ -105,10 +109,14 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	private View mStatusContent, mProfileView, mFollowIndicator, mImagesPreviewContainer, mContentScroller;
 	private MenuBar mMenuBar;
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
+
+	private ImagesPreviewFragment mImagesPreviewFragment;
+
 	private FollowInfoTask mFollowInfoTask;
 	private GetStatusTask mGetStatusTask;
+	private LocationInfoTask mLocationInfoTask;
+
 	private ParcelableStatus mStatus;
-	private boolean mLoadMoreAutomatically;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -134,11 +142,9 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		}
 	};
 
-	private boolean mFollowInfoDisplayed, mLocationInfoDisplayed;
-
-	private LocationInfoTask mLocationInfoTask;
-
 	public void displayStatus(ParcelableStatus status) {
+		mStatus = null;
+		mImagesPreviewFragment.clear();
 		if (status == null || getActivity() == null) return;
 		mStatus = status;
 
@@ -187,17 +193,10 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 						: getNormalTwitterProfileImage(status.profile_image_url_string)), mProfileImageView);
 		final List<ImageSpec> images = getImagesInStatus(status.text_html);
 		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
-		mImagesPreviewFragment.clear();
-		if (images.size() > 0) {
-			for (final ImageSpec spec : images) {
-				mImagesPreviewFragment.add(spec);
-			}
-			final FragmentManager fm = getFragmentManager();
-			if (!FragmentManagerTrojan.isStateSaved(fm)) {
-				final FragmentTransaction ft = fm.beginTransaction();
-				ft.replace(R.id.images_preview, mImagesPreviewFragment);
-				ft.commit();
-			}
+		mImagesPreviewFragment.addAll(images);
+		mImagesPreviewFragment.update();
+		if (mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false)) {
+			mImagesPreviewFragment.show();
 		}
 		mRetweetedStatusView.setVisibility(status.is_protected ? View.GONE : View.VISIBLE);
 		if (status.retweet_id > 0) {
@@ -205,6 +204,8 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			final String retweeted_by = display_name ? status.retweeted_by_name : status.retweeted_by_screen_name;
 			mRetweetedStatusView.setText(status.retweet_count > 1 ? getString(R.string.retweeted_by_with_count,
 					retweeted_by, status.retweet_count - 1) : getString(R.string.retweeted_by, retweeted_by));
+		} else {
+			mRetweetedStatusView.setText(R.string.users_retweeted_this);
 		}
 		mLocationView.setVisibility(ParcelableLocation.isValidLocation(status.location) ? View.VISIBLE : View.GONE);
 
@@ -219,8 +220,11 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mService = getApplication().getServiceInterface();
-		mProfileImageLoader = getApplication().getProfileImageLoader();
+		final TwidereApplication application = getApplication();
+		mService = application.getServiceInterface();
+		mProfileImageLoader = application.getProfileImageLoader();
+		mImagesPreviewFragment = (ImagesPreviewFragment) Fragment.instantiate(getActivity(),
+				ImagesPreviewFragment.class.getName());
 		super.onActivityCreated(savedInstanceState);
 		setRetainInstance(true);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
@@ -236,6 +240,10 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		mLocationView.setOnClickListener(this);
 		mRetweetedStatusView.setOnClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(this);
+		final FragmentManager fm = getFragmentManager();
+		final FragmentTransaction ft = fm.beginTransaction();
+		ft.replace(R.id.images_preview, mImagesPreviewFragment);
+		ft.commit();
 		if (mStatus != null) {
 			displayStatus(mStatus);
 		} else {

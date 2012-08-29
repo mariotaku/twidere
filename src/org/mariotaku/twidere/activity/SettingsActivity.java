@@ -59,7 +59,6 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	public void onCreate(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.base_dual_pane);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		mFragment = new InternalSettingsFragment();

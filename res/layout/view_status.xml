@@ -104,7 +104,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_margin="8dp"
-					android:singleLine="false"	
+					android:singleLine="false"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 				<FrameLayout
@@ -123,7 +123,8 @@
 					android:padding="8dp"
 					android:singleLine="true"
 					android:text="@string/users_retweeted_this"
-					android:textAppearance="?android:attr/textAppearanceSmall"/>
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:visibility="gone"/>
 
 				<TextView
 					android:id="@+id/location_view"

@@ -43,7 +43,6 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	private final LazyImageLoader mProfileImageLoader;
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName;
 	private float mTextSize;
-	private boolean mForceSSLConnection;
 
 	public UsersAdapter(Context context) {
 		super(context, R.layout.user_list_item, R.id.description);

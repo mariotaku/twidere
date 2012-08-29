@@ -33,23 +33,23 @@ import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.SparseBooleanArray;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener, OnClickListener {
+public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener{
 
 	private ListView mListView;
 	private SimpleCursorAdapter mAdapter;
 	private Cursor mCursor;
 	private List<Long> mActivatedUsersId = new ArrayList<Long>();
 
-	public Cursor getAccountsCursor() {
+	public Cursor getAccountsCursor(boolean activated_only) {
 		final Uri uri = Accounts.CONTENT_URI;
 		final String[] cols = new String[] { Accounts._ID, Accounts.USER_ID, Accounts.USERNAME, Accounts.IS_ACTIVATED };
-		return getContentResolver().query(uri, cols, null, null, null);
+		final String where = activated_only ? Accounts.IS_ACTIVATED + " = " + 1 : null;
+		return getContentResolver().query(uri, cols, where, null, null);
 	}
 
 	@Override
@@ -71,23 +71,14 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	}
 
 	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.add:
-				startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
-				finish();
-				break;
-		}
-	}
-
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		setContentView(R.layout.select_account);
 		mListView = (ListView) findViewById(android.R.id.list);
 		final String[] from = new String[] { Accounts.USERNAME };
 		final int[] to = new int[] { android.R.id.text1 };
-		mCursor = getAccountsCursor();
+		mCursor = getAccountsCursor(bundle != null ? bundle.getBoolean(INTENT_KEY_ACTIVATED_ONLY, false) : false);
 		if (mCursor == null) {
 			finish();
 			return;
@@ -98,7 +89,6 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		mListView.setOnItemClickListener(this);
 		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		final long[] activated_ids = bundle != null ? bundle.getLongArray(Constants.INTENT_KEY_IDS) : null;
 		mActivatedUsersId.clear();
 		if (activated_ids == null) {

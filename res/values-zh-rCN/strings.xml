@@ -307,4 +307,9 @@
   <string name="mute_source">过滤来源</string>
   <string name="source_muted">将 \"<xliff:g id="source">%s</xliff:g>\" 添加到了过滤列表。你将不会在主页时间线/提及中看到这个来源的推文。</string>
   <string name="user_mentions">提及用户的推文</string>
+  <string name="dual_pane_layout">双栏布局</string>
+  <string name="landscape">横向模式</string>
+  <string name="portrait">纵向模式</string>
+  <string name="quick_send">按“回车”发送</string>
+  <string name="quick_send_summary">按“回车”发送推文。</string>
 </resources>

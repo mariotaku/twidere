@@ -917,21 +917,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 	}
-	
-	class UserMentionsAction extends ListAction {
-
-		@Override
-		public String getName() {
-			return getString(R.string.user_mentions);
-		}
-
-		@Override
-		public void onClick() {
-			if (mUser == null) return;
-			openUserMentions(getActivity(), mAccountId, mUser.getScreenName());
-		}
-
-	}
 
 	class UserInfoTask extends AsyncTask<Void, Void, Response<User>> {
 
@@ -1026,6 +1011,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public void onClick() {
 			if (mUser == null) return;
 			openUserListTypes(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
+		}
+
+	}
+
+	class UserMentionsAction extends ListAction {
+
+		@Override
+		public String getName() {
+			return getString(R.string.user_mentions);
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null) return;
+			openUserMentions(getActivity(), mAccountId, mUser.getScreenName());
 		}
 
 	}

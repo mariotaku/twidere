@@ -23,7 +23,20 @@ import java.util.List;
 
 public class ListUtils {
 
-	public static <T> String buildString(List<T> list, char token, boolean include_space) {
+	public static long min(List<Long> list) {
+		long min = -1;
+		for (final long item : list) {
+			if (min == -1) {
+				min = item;
+			}
+			if (min > item) {
+				min = item;
+			}
+		}
+		return min;
+	}
+	
+	public static <T> String toString(List<T> list, char token, boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
 		final int size = list.size();
 		for (int i = 0; i < size; i++) {
@@ -36,18 +49,5 @@ public class ListUtils {
 			}
 		}
 		return builder.toString();
-	}
-
-	public static long min(List<Long> list) {
-		long min = -1;
-		for (final long item : list) {
-			if (min == -1) {
-				min = item;
-			}
-			if (min > item) {
-				min = item;
-			}
-		}
-		return min;
 	}
 }

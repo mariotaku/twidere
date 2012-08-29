@@ -3,7 +3,7 @@
 
 	<item
 		android:id="@+id/delete_all_submenu"
-		android:icon="@drawable/ic_menu_delete"
+		android:icon="@drawable/ic_menu_clear_list"
 		android:showAsAction="always"
 		android:title="@string/delete_all">
 		<menu>
@@ -12,23 +12,8 @@
 				android:title="@android:string/cancel"/>
 			<item
 				android:id="@id/delete_all"
-				android:icon="@drawable/ic_menu_delete"
+				android:icon="@drawable/ic_menu_clear_list"
 				android:title="@string/delete_all"/>
-		</menu>
-	</item>
-	<item
-		android:id="@+id/send_all_submenu"
-		android:icon="@drawable/ic_menu_send"
-		android:showAsAction="always"
-		android:title="@string/send_all">
-		<menu>
-			<item
-				android:icon="@drawable/ic_menu_close_clear_cancel"
-				android:title="@android:string/cancel"/>
-			<item
-				android:id="@id/send_all"
-				android:icon="@drawable/ic_menu_send"
-				android:title="@string/send_all"/>
 		</menu>
 	</item>
 

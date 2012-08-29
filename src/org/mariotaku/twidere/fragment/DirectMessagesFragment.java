@@ -110,7 +110,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		final Uri uri = DirectMessages.ConversationsEntry.CONTENT_URI;
 		final String where = DirectMessages.ACCOUNT_ID + " IN ("
-				+ ArrayUtils.buildString(getActivatedAccountIds(getActivity()), ',', false) + ")";
+				+ ArrayUtils.toString(getActivatedAccountIds(getActivity()), ',', false) + ")";
 		return new CursorLoader(getActivity(), uri, null, where, null, null);
 	}
 

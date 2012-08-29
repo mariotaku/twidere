@@ -344,7 +344,11 @@ public final class TweetStore implements Constants {
 		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 				CONTENT_PATH);
 
-		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
+		/**
+		 * Status content.<br>
+		 * Type: TEXT
+		 */
+		public static final String TEXT = "text";
 
 		/**
 		 * Account IDs of unsent status.<br>
@@ -352,17 +356,25 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String ACCOUNT_IDS = "account_ids";
 
-		/**
-		 * Status content.<br>
-		 * Type: TEXT
-		 */
-		public static final String TEXT = "text";
+		public static final String IMAGE_URI = "image_uri";
 
-		public static final String MEDIA_URI = "media_uri";
+		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
 
-		public static final String[] COLUMNS = new String[] { _ID, IN_REPLY_TO_STATUS_ID, ACCOUNT_IDS, TEXT, MEDIA_URI };
+		public static final String IN_REPLY_TO_NAME = "in_reply_to_name";
 
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
+		public static final String IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
+
+		public static final String IS_QUOTE = "is_quote";
+
+		public static final String IS_IMAGE_ATTACHED = "is_image_attached";
+
+		public static final String IS_PHOTO_ATTACHED = "is_photo_attached";
+
+		public static final String[] COLUMNS = new String[] { _ID, TEXT, ACCOUNT_IDS, IMAGE_URI, IN_REPLY_TO_STATUS_ID,
+				IN_REPLY_TO_NAME, IN_REPLY_TO_SCREEN_NAME, IS_QUOTE, IS_IMAGE_ATTACHED, IS_PHOTO_ATTACHED };
+
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
+				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
 	}
 
 	public static interface Filters extends BaseColumns {
