@@ -53,11 +53,6 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 		clear();
 	}
 
-	@Deprecated
-	public void addTab(Class<? extends Fragment> cls, Bundle args, String name, Integer icon) {
-		addTab(new TabSpec(name, icon, cls, args));
-	}
-
 	public void addTab(Class<? extends Fragment> cls, Bundle args, String name, Integer icon, int position) {
 		addTab(new TabSpec(name, icon, cls, args, position));
 	}

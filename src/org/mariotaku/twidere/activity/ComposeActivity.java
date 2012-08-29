@@ -310,7 +310,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			}
 		} else {
 			if (mAccountIds == null || mAccountIds.length == 0) {
-				final long[] ids_in_prefs = ArrayUtils.fromString(mPreferences.getString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, null), ',');
+				final long[] ids_in_prefs = ArrayUtils.fromString(
+						mPreferences.getString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, null), ',');
 				final long[] activated_ids = getActivatedAccountIds(this);
 				final long[] intersection = ArrayUtils.intersection(ids_in_prefs, activated_ids);
 				mAccountIds = intersection.length > 0 ? intersection : activated_ids;

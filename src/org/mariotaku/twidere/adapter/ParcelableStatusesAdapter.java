@@ -87,7 +87,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		return null;
 	}
 
-	@Override
 	public ParcelableStatus getStatus(int position) {
 		return getItem(position);
 	}

@@ -24,7 +24,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
-import static org.mariotaku.twidere.util.Utils.getRetweetId;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
@@ -583,8 +582,7 @@ public class TwidereService extends Service implements Constants {
 
 	class CancelRetweetTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
-		private long account_id;
-		private long status_id, retweeted_id;
+		private final long account_id, status_id;
 
 		public CancelRetweetTask(long account_id, long status_id) {
 			super(TwidereService.this, mAsyncTaskManager);
@@ -598,7 +596,7 @@ public class TwidereService extends Service implements Constants {
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
-					final twitter4j.Status status = twitter.destroyStatus(retweeted_id);
+					final twitter4j.Status status = twitter.destroyStatus(status_id);
 					return new SingleResponse<twitter4j.Status>(account_id, status, null);
 				} catch (final TwitterException e) {
 					return new SingleResponse<twitter4j.Status>(account_id, null, e);
@@ -607,20 +605,13 @@ public class TwidereService extends Service implements Constants {
 			return new SingleResponse<twitter4j.Status>(account_id, null, null);
 		}
 
+		// TODO
 		@Override
 		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
 			if (result != null && result.data != null) {
-
-				final User user = result.data.getUser();
 				final twitter4j.Status retweeted_status = result.data.getRetweetedStatus();
-				if (user != null && retweeted_status != null) {
-					final ContentValues values = new ContentValues();
-					values.put(Statuses.RETWEET_COUNT, result.data.getRetweetCount());
-					values.put(Statuses.RETWEET_ID, -1);
-					values.put(Statuses.RETWEETED_BY_ID, -1);
-					values.put(Statuses.RETWEETED_BY_NAME, "");
-					values.put(Statuses.RETWEETED_BY_SCREEN_NAME, "");
-					values.put(Statuses.IS_RETWEET, 0);
+				if (retweeted_status != null) {
+					final ContentValues values = makeStatusContentValues(result.data, account_id);
 					final String status_where = Statuses.STATUS_ID + " = " + result.data.getId();
 					final String retweet_where = Statuses.STATUS_ID + " = " + retweeted_status.getId();
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
@@ -637,12 +628,6 @@ public class TwidereService extends Service implements Constants {
 				showErrorToast(result.exception, true);
 			}
 			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			retweeted_id = getRetweetId(TwidereService.this, status_id);
 		}
 
 	}
@@ -1671,21 +1656,12 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
 
 			if (result.data != null && result.data.getId() > 0) {
-				final User user = result.data.getUser();
-				if (user != null) {
-					final ContentValues values = new ContentValues();
-					values.put(Statuses.RETWEET_ID, result.data.getId());
-					values.put(Statuses.RETWEETED_BY_ID, user.getId());
-					values.put(Statuses.RETWEETED_BY_NAME, user.getName());
-					values.put(Statuses.RETWEETED_BY_SCREEN_NAME, user.getScreenName());
-					values.put(Statuses.RETWEET_COUNT, result.data.getRetweetCount());
-					values.put(Statuses.IS_RETWEET, 1);
-					final StringBuilder where = new StringBuilder();
-					where.append(Statuses.STATUS_ID + " = " + status_id);
-					where.append(" OR " + Statuses.RETWEET_ID + " = " + status_id);
-					for (final Uri uri : TweetStore.STATUSES_URIS) {
-						mResolver.update(uri, values, where.toString(), null);
-					}
+				final ContentValues values = makeStatusContentValues(result.data, account_id);
+				final StringBuilder where = new StringBuilder();
+				where.append(Statuses.STATUS_ID + " = " + status_id);
+				where.append(" OR " + Statuses.RETWEET_ID + " = " + status_id);
+				for (final Uri uri : TweetStore.STATUSES_URIS) {
+					mResolver.update(uri, values, where.toString(), null);
 				}
 				Toast.makeText(TwidereService.this, R.string.retweet_success, Toast.LENGTH_SHORT).show();
 				final Intent intent = new Intent(BROADCAST_RETWEET_CHANGED);

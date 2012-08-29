@@ -195,7 +195,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		return (Cursor) super.getItem(position);
 	}
 
-	@Override
 	public ParcelableStatus getStatus(int position) {
 		final Cursor cur = getItem(position);
 		final long account_id = cur.getLong(mIndices.account_id);

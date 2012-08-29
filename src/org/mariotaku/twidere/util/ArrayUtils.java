@@ -56,6 +56,16 @@ public final class ArrayUtils {
 		return true;
 	}
 
+	public static long[] fromList(List<Long> list) {
+		if (list == null) return null;
+		final int count = list.size();
+		final long[] array = new long[count];
+		for (int i = 0; i < count; i++) {
+			array[i] = list.get(i);
+		}
+		return array;
+	}
+
 	public static long[] fromString(String string, char token) {
 		if (string == null) return new long[0];
 		final String[] items_string_array = string.split(String.valueOf(token));
@@ -91,6 +101,20 @@ public final class ArrayUtils {
 		return -1;
 	}
 
+	public static long[] intersection(long[] array1, long[] array2) {
+		if (array1 == null || array2 == null) return new long[0];
+		final List<Long> list1 = new ArrayList<Long>();
+		for (final long item : array1) {
+			list1.add(item);
+		}
+		final List<Long> list2 = new ArrayList<Long>();
+		for (final long item : array2) {
+			list2.add(item);
+		}
+		list1.retainAll(list2);
+		return fromList(list1);
+	}
+
 	public static String toString(long[] array, char token, boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
 		final int length = array.length;
@@ -119,29 +143,5 @@ public final class ArrayUtils {
 			}
 		}
 		return builder.toString();
-	}
-	
-	public static long[] fromList(List<Long> list) {
-		if (list == null) return null;
-		final int count = list.size();
-		final long[] array = new long[count];
-		for (int i = 0; i < count; i++) {
-			array[i] = list.get(i);
-		}
-		return array;
-	}
-	
-	public static long[] intersection(long[] array1, long[] array2) {
-		if (array1 == null || array2 == null) return new long[0];
-		final List<Long> list1 = new ArrayList<Long>();
-		for (long item : array1) {
-			list1.add(item);
-		}
-		final List<Long> list2 = new ArrayList<Long>();
-		for (long item : array2) {
-			list2.add(item);
-		}
-		list1.retainAll(list2); 
-		return fromList(list1);
 	}
 }

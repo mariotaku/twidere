@@ -49,6 +49,12 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 				if (status_id > 0 && succeed) {
 					deleteStatus(status_id);
 				}
+			} else if (BROADCAST_RETWEET_CHANGED.equals(action)) {
+				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
+				final boolean retweeted = intent.getBooleanExtra(INTENT_KEY_RETWEETED, false);
+				if (status_id > 0 && !retweeted) {
+					deleteStatus(status_id);
+				}
 			}
 
 		}
@@ -180,6 +186,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_STATUS_DESTROYED);
+		filter.addAction(BROADCAST_RETWEET_CHANGED);
 		registerReceiver(mStateReceiver, filter);
 	}
 

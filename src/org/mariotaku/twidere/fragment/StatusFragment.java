@@ -344,8 +344,8 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				break;
 			}
 			case MENU_RETWEET: {
-				if (isMyRetweet(getActivity(), mAccountId, mStatusId)) {
-					mService.cancelRetweet(mAccountId, mStatusId);
+				if (isMyRetweet(mStatus)) {
+					mService.cancelRetweet(mAccountId, mStatus.retweet_id);
 				} else {
 					final long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
 							: mStatus.status_id;

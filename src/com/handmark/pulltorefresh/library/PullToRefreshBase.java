@@ -167,15 +167,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	/**
-	 * @deprecated Use the value from <code>getCurrentMode()</code> instead
-	 * @return true if the current mode is Mode.PULL_DOWN_TO_REFRESH
-	 */
-	@Deprecated
-	public final boolean hasPullFromTop() {
-		return mCurrentMode == Mode.PULL_DOWN_TO_REFRESH;
-	}
-
-	/**
 	 * Returns whether the widget has disabled scrolling on the Refreshable View
 	 * while refreshing.
 	 * 

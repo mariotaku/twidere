@@ -13,11 +13,6 @@ public class TabSpec {
 	public final Bundle args;
 	public final int position;
 
-	@Deprecated
-	public TabSpec(String name, Object icon, Class<? extends Fragment> cls, Bundle args) {
-		this(name, icon, cls, args, 0);
-	}
-
 	public TabSpec(String name, Object icon, Class<? extends Fragment> cls, Bundle args, int position) {
 		if (cls == null) throw new IllegalArgumentException("Fragment cannot be null!");
 		if (name == null && icon == null)

@@ -35,7 +35,7 @@ public class ListUtils {
 		}
 		return min;
 	}
-	
+
 	public static <T> String toString(List<T> list, char token, boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
 		final int size = list.size();

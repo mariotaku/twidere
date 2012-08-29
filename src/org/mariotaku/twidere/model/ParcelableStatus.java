@@ -164,8 +164,8 @@ public class ParcelableStatus implements Parcelable {
 	public ParcelableStatus(Status status, long account_id, boolean is_gap) {
 
 		this.is_gap = is_gap;
-		status_id = status.getId();
 		this.account_id = account_id;
+		status_id = status.getId();
 		is_retweet = status.isRetweet();
 		final Status retweeted_status = is_retweet ? status.getRetweetedStatus() : null;
 		final User retweet_user = retweeted_status != null ? status.getUser() : null;

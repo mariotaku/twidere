@@ -38,7 +38,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener{
+public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener {
 
 	private ListView mListView;
 	private SimpleCursorAdapter mAdapter;

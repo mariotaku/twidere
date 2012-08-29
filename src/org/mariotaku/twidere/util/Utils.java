@@ -675,33 +675,6 @@ public final class Utils implements Constants {
 		return user_id;
 	}
 
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
-	public static long getAccountIdForStatusId(Context context, long status_id) {
-
-		if (context == null) return -1;
-
-		final String[] cols = new String[] { Statuses.ACCOUNT_ID };
-		final String where = Statuses.STATUS_ID + " = " + status_id;
-
-		for (final Uri uri : STATUSES_URIS) {
-			final Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
-			if (cur == null) {
-				continue;
-			}
-			if (cur.getCount() > 0) {
-				cur.moveToFirst();
-				final long id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.ACCOUNT_ID));
-				cur.close();
-				return id;
-			}
-			cur.close();
-		}
-		return -1;
-	}
-
 	public static long[] getAccountIds(Context context) {
 		long[] accounts = new long[0];
 		if (context == null) return accounts;
@@ -1023,31 +996,6 @@ public final class Utils implements Constants {
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
-	public static String getNameForStatusId(Context context, long status_id) {
-		if (context == null) return null;
-		final String[] cols = new String[] { Statuses.NAME };
-		final String where = Statuses.STATUS_ID + " = " + status_id;
-
-		for (final Uri uri : STATUSES_URIS) {
-			final Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
-			if (cur == null) {
-				continue;
-			}
-			if (cur.getCount() > 0) {
-				cur.moveToFirst();
-				final String name = cur.getString(cur.getColumnIndexOrThrow(Statuses.NAME));
-				cur.close();
-				return name;
-			}
-			cur.close();
-		}
-		return null;
-	}
-
 	public static String getNormalTwitterProfileImage(String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
@@ -1129,73 +1077,6 @@ public final class Utils implements Constants {
 			quote_format = PREFERENCE_DEFAULT_QUOTE_FORMAT;
 		}
 		return quote_format.replace(FORMAT_PATTERN_NAME, screen_name).replace(FORMAT_PATTERN_TEXT, text);
-	}
-
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
-	public static long getRetweetedByUserId(Context context, long status_id) {
-		if (context == null) return -1;
-		final String[] cols = new String[] { Statuses.RETWEETED_BY_ID };
-		final String where = Statuses.STATUS_ID + "=" + status_id;
-
-		for (final Uri uri : STATUSES_URIS) {
-			final Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
-			if (cur == null) {
-				continue;
-			}
-			if (cur.getCount() > 0) {
-				cur.moveToFirst();
-				final long retweeted_by_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.RETWEETED_BY_ID));
-				cur.close();
-				return retweeted_by_id;
-			}
-			cur.close();
-		}
-		return -1;
-	}
-
-	public static long getRetweetId(Context context, long status_id) {
-		if (context == null) return -1;
-		final String[] cols = new String[] { Statuses.RETWEET_ID };
-		final String where = Statuses.STATUS_ID + "=" + status_id;
-		for (final Uri uri : STATUSES_URIS) {
-			final Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
-			if (cur == null) {
-				continue;
-			}
-			if (cur.getCount() > 0) {
-				cur.moveToFirst();
-				final long retweet_id = cur.getLong(cur.getColumnIndexOrThrow(Statuses.RETWEET_ID));
-				cur.close();
-				return retweet_id;
-			}
-			cur.close();
-		}
-		return -1;
-	}
-
-	@Deprecated
-	public static String getScreenNameForStatusId(Context context, long status_id) {
-		if (context == null) return null;
-		final String[] cols = new String[] { Statuses.SCREEN_NAME };
-		final String where = Statuses.STATUS_ID + " = " + status_id;
-
-		for (final Uri uri : STATUSES_URIS) {
-			final Cursor cur = context.getContentResolver().query(uri, cols, where, null, null);
-			if (cur == null) {
-				continue;
-			}
-			if (cur.getCount() > 0) {
-				cur.moveToFirst();
-				final String name = cur.getString(cur.getColumnIndexOrThrow(Statuses.SCREEN_NAME));
-				cur.close();
-				return name;
-			}
-			cur.close();
-		}
-		return null;
 	}
 
 	public static String getShareStatus(Context context, String title, String text) {
@@ -1593,9 +1474,9 @@ public final class Utils implements Constants {
 		return false;
 	}
 
-	public static boolean isMyRetweet(Context context, long account_id, long status_id) {
-		if (context == null) return false;
-		return account_id == getRetweetedByUserId(context, status_id);
+	public static boolean isMyRetweet(ParcelableStatus status) {
+		if (status == null) return false;
+		return status.retweeted_by_id == status.account_id;
 	}
 
 	public static boolean isMyUserName(Context context, String screen_name) {
@@ -1697,12 +1578,13 @@ public final class Utils implements Constants {
 	public static ContentValues makeStatusContentValues(Status status, long account_id) {
 		if (status == null || status.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
+		values.put(Statuses.ACCOUNT_ID, account_id);
 		values.put(Statuses.STATUS_ID, status.getId());
-		final int is_retweet = status.isRetweet() ? 1 : 0;
-		final Status retweeted_status = status.getRetweetedStatus();
-		if (is_retweet == 1 && retweeted_status != null) {
+		final boolean is_retweet = status.isRetweet();
+		final Status retweeted_status = is_retweet ? status.getRetweetedStatus() : null;
+		if (retweeted_status != null) {
 			final User retweet_user = status.getUser();
-			values.put(Statuses.RETWEET_ID, status.getId());
+			values.put(Statuses.RETWEET_ID, retweeted_status.getId());
 			values.put(Statuses.RETWEETED_BY_ID, retweet_user.getId());
 			values.put(Statuses.RETWEETED_BY_NAME, retweet_user.getName());
 			values.put(Statuses.RETWEETED_BY_SCREEN_NAME, retweet_user.getScreenName());
@@ -1720,7 +1602,6 @@ public final class Utils implements Constants {
 			values.put(Statuses.IS_VERIFIED, user.isVerified() ? 1 : 0);
 			values.put(Statuses.PROFILE_IMAGE_URL, profile_image_url);
 		}
-		values.put(Statuses.ACCOUNT_ID, account_id);
 		if (status.getCreatedAt() != null) {
 			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
 		}
@@ -1731,7 +1612,7 @@ public final class Utils implements Constants {
 		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
 		values.put(Statuses.SOURCE, status.getSource());
 		values.put(Statuses.LOCATION, new ParcelableLocation(status.getGeoLocation()).toString());
-		values.put(Statuses.IS_RETWEET, is_retweet);
+		values.put(Statuses.IS_RETWEET, is_retweet ? 1 : 0);
 		values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
 		return values;
 	}
@@ -2529,13 +2410,12 @@ public final class Utils implements Constants {
 		final int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
 		final MenuItem itemDelete = menu.findItem(R.id.delete_submenu);
 		if (itemDelete != null) {
-			itemDelete.setVisible(isMyActivatedAccount(context, status.user_id));
+			itemDelete.setVisible(status.account_id == status.user_id && status.account_id != status.retweeted_by_id);
 		}
 		final MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
 		if (itemRetweet != null) {
-			itemRetweet.setVisible(!status.is_protected
-					&& (!isMyActivatedAccount(context, status.user_id) || getActivatedAccountIds(context).length > 1));
-			if (isMyActivatedAccount(context, status.retweeted_by_id)) {
+			itemRetweet.setVisible(!status.is_protected && status.account_id != status.user_id);
+			if (isMyRetweet(status)) {
 				itemRetweet.setTitle(R.string.cancel_retweet);
 			} else {
 				itemRetweet.setTitle(R.string.retweet);

@@ -196,38 +196,33 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	public boolean onMenuItemClick(MenuItem item) {
 		final ParcelableStatus status = mSelectedStatus;
 		if (status == null) return false;
-		final long status_id = status.status_id;
-		final String text_plain = status.text_plain;
-		final String screen_name = status.screen_name;
-		final String name = status.name;
-		final long account_id = status.account_id;
 		switch (item.getItemId()) {
 			case MENU_SHARE: {
 				final Intent intent = new Intent(Intent.ACTION_SEND);
 				intent.setType("text/plain");
-				intent.putExtra(Intent.EXTRA_TEXT, "@" + screen_name + ": " + text_plain);
+				intent.putExtra(Intent.EXTRA_TEXT, "@" + status.screen_name + ": " + status.text_plain);
 				startActivity(Intent.createChooser(intent, getString(R.string.share)));
 				break;
 			}
 			case MENU_RETWEET: {
-				if (isMyRetweet(getActivity(), account_id, status_id)) {
-					mServiceInterface.cancelRetweet(account_id, status_id);
+				if (isMyRetweet(status)) {
+					mServiceInterface.cancelRetweet(status.account_id, status.status_id);
 				} else {
 					final long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
 							: mSelectedStatus.status_id;
-					mServiceInterface.retweetStatus(account_id, id_to_retweet);
+					mServiceInterface.retweetStatus(status.account_id, id_to_retweet);
 				}
 				break;
 			}
 			case MENU_QUOTE: {
 				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 				final Bundle bundle = new Bundle();
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
-				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
-				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, status.account_id);
+				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status.status_id);
+				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, status.screen_name);
+				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, status.name);
 				bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
-				bundle.putString(INTENT_KEY_TEXT, getQuoteStatus(getActivity(), screen_name, text_plain));
+				bundle.putString(INTENT_KEY_TEXT, getQuoteStatus(getActivity(), status.screen_name, status.text_plain));
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;
@@ -235,32 +230,32 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			case MENU_REPLY: {
 				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 				final Bundle bundle = new Bundle();
-				final List<String> mentions = new Extractor().extractMentionedScreennames(text_plain);
-				mentions.remove(screen_name);
-				mentions.add(0, screen_name);
+				final List<String> mentions = new Extractor().extractMentionedScreennames(status.text_plain);
+				mentions.remove(status.screen_name);
+				mentions.add(0, status.screen_name);
 				bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status_id);
-				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
-				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, status.account_id);
+				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status.status_id);
+				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, status.screen_name);
+				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, status.name);
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;
 			}
 			case MENU_FAV: {
 				if (mSelectedStatus.is_favorite) {
-					mServiceInterface.destroyFavorite(account_id, status_id);
+					mServiceInterface.destroyFavorite(status.account_id, status.status_id);
 				} else {
-					mServiceInterface.createFavorite(account_id, status_id);
+					mServiceInterface.createFavorite(status.account_id, status.status_id);
 				}
 				break;
 			}
 			case MENU_CONVERSATION: {
-				openConversation(getActivity(), account_id, status_id);
+				openConversation(getActivity(), status.account_id, status.status_id);
 				break;
 			}
 			case MENU_DELETE: {
-				mServiceInterface.destroyStatus(account_id, status_id);
+				mServiceInterface.destroyStatus(status.account_id, status.status_id);
 				break;
 			}
 			case MENU_EXTENSIONS: {
