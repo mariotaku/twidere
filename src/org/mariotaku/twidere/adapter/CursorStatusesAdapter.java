@@ -25,10 +25,12 @@ import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
+import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
@@ -36,8 +38,10 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
@@ -59,15 +63,17 @@ import android.view.ViewGroup;
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mDisplayName,
-			mShowAccountColor, mShowAbsoluteTime, mGapDisallowed;
+			mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
 	private StatusCursorIndices mIndices;
+	private final ArrayList<Long> mSelectedStatusIds;
 
 	public CursorStatusesAdapter(Context context, LazyImageLoader profile_image_loader, LazyImageLoader preview_loader) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
+		mSelectedStatusIds = ((TwidereApplication) context.getApplicationContext()).getSelectedStatusIds();
 		mProfileImageLoader = profile_image_loader;
 		mPreviewImageLoader = preview_loader;
 	}
@@ -93,6 +99,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 
 			final long account_id = cursor.getLong(mIndices.account_id);
+			final long status_id = cursor.getLong(mIndices.status_id);
 			final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
 			final long retweet_count = cursor.getLong(mIndices.retweet_count);
 
@@ -105,7 +112,16 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name)
 					&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
 
+			holder.user_mention_label.setImageDrawable(getStatusBackground(mContext,
+					text.contains('@' + getAccountUsername(mContext, account_id)), is_favorite, is_retweet));
+
 			holder.setAccountColorEnabled(mShowAccountColor);
+
+			if (mMultiSelectEnabled) {
+				holder.setSelected(mSelectedStatusIds.contains(status_id));
+			} else {
+				holder.setSelected(false);
+			}
 
 			if (mShowAccountColor) {
 				holder.setAccountColor(getAccountColor(mContext, account_id));
@@ -278,6 +294,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			notifyDataSetChanged();
 		}
 
+	}
+
+	@Override
+	public void setMultiSelectEnabled(boolean multi) {
+		if (mMultiSelectEnabled != multi) {
+			mMultiSelectEnabled = multi;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override

@@ -154,7 +154,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
 
-		mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_color : 0);
+		mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account : 0);
 		if (is_multiple_account_enabled) {
 			final Drawable d = mContentScroller.getBackground();
 			if (d != null) {

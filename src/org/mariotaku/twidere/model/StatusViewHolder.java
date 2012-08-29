@@ -30,28 +30,29 @@ import android.widget.TextView;
 
 public class StatusViewHolder {
 
-	public final ImageView profile_image, image_preview;
+	public final ImageView profile_image, image_preview, user_mention_label;
 	public final TextView name, text, time, reply_retweet_status;
-	private final View content, gap_indicator;
+	private final View content, status_content, gap_indicator;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
 
 	public StatusViewHolder(View view, Context context) {
 		content = view;
+		status_content = view.findViewById(R.id.status_content);
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		image_preview = (ImageView) view.findViewById(R.id.image_preview);
+		user_mention_label = (ImageView) view.findViewById(R.id.user_mention_label);
 		name = (TextView) view.findViewById(R.id.name);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
-
 	}
 
 	public void setAccountColor(int color) {
 		if (!show_as_gap && account_color_enabled) {
-			final Drawable background = content.getBackground();
+			final Drawable background = status_content.getBackground();
 			if (background != null) {
 				background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 			}
@@ -61,18 +62,23 @@ public class StatusViewHolder {
 	public void setAccountColorEnabled(boolean enabled) {
 		account_color_enabled = enabled;
 		if (!show_as_gap) {
-			content.setBackgroundResource(enabled ? R.drawable.ic_label_color : 0);
+			status_content.setBackgroundResource(enabled ? R.drawable.ic_label_account : 0);
 		}
+	}
+
+	public void setSelected(boolean selected) {
+		content.setBackgroundResource(selected ? R.drawable.list_focused_holo : 0);
 	}
 
 	public void setShowAsGap(boolean show_gap) {
 		show_as_gap = show_gap;
-		content.setBackgroundResource(account_color_enabled ? R.drawable.ic_label_color : 0);
+		status_content.setBackgroundResource(account_color_enabled ? R.drawable.ic_label_account : 0);
 		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		image_preview.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		text.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		time.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		user_mention_label.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		reply_retweet_status.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
@@ -84,6 +90,15 @@ public class StatusViewHolder {
 			name.setTextSize(text_size * 1.05f);
 			time.setTextSize(text_size * 0.65f);
 			reply_retweet_status.setTextSize(text_size * 0.65f);
+		}
+	}
+
+	public void setUserColor(int color) {
+		if (!show_as_gap) {
+			final Drawable background = user_mention_label.getBackground();
+			if (background != null) {
+				background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			}
 		}
 	}
 }

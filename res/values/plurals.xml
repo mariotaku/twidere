@@ -14,5 +14,9 @@
 		<item quantity="one">@string/Ndirect_messages_quantity_one</item>
 		<item quantity="other">@string/Ndirect_messages_quantity_other</item>
 	</plurals>
+	<plurals name="Nstatuses_selected">
+		<item quantity="one">@string/Nstatuses_selected_quantity_one</item>
+		<item quantity="other">@string/Nstatuses_selected_quantity_other</item>
+	</plurals>
 
 </resources>

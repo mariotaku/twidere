@@ -69,7 +69,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 				}
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
-				if (getServiceInterface().isHomeTimelineRefreshing()) {
+				if (mService.isHomeTimelineRefreshing()) {
 					setRefreshing(false);
 				}
 			}
@@ -99,10 +99,10 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mShouldRestorePosition = true;
+		mService = getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
 		mListView = getListView();
 		mListView.setOnTouchListener(this);
-		mService = getServiceInterface();
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 		filter.addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		if (getServiceInterface().isHomeTimelineRefreshing()) {
+		if (mService.isHomeTimelineRefreshing()) {
 			setRefreshing(false);
 		} else {
 			onRefreshComplete();

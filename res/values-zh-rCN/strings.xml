@@ -312,4 +312,9 @@
   <string name="portrait">纵向模式</string>
   <string name="quick_send">按“回车”发送</string>
   <string name="quick_send_summary">按“回车”发送推文。</string>
+  <string name="unsaved_tweet">推文还没有发送或保存。</string>
+  <string name="discard">舍弃</string>
+  <string name="multi_select">多选</string>
+  <string name="Nstatuses_selected_quantity_one">选择了 1 条推文</string>
+  <string name="Nstatuses_selected_quantity_other">选择了 <xliff:g id="items">%d</xliff:g> 条推文</string>
 </resources>

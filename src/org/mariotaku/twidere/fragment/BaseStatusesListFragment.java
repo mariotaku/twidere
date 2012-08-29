@@ -25,11 +25,13 @@ import static org.mariotaku.twidere.util.Utils.openConversation;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
@@ -37,8 +39,10 @@ import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,7 +64,8 @@ import com.twitter.Extractor;
 abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
 		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left {
 
-	private ServiceInterface mServiceInterface;
+	private ServiceInterface mService;
+	private TwidereApplication mApplication;
 
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
@@ -81,6 +86,22 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	private static final long TICKER_DURATION = 5000L;
 
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
+				mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
+			} else if (BROADCAST_MULTI_SELECT_ITEM_CHANGED.equals(action)) {
+				mAdapter.notifyDataSetChanged();
+			}
+		}
+
+	};
+
+	private StatusesAdapterInterface mAdapter;
+
 	public AsyncTaskManager getAsyncTaskManager() {
 		return mAsyncTaskManager;
 	}
@@ -98,10 +119,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		return mSelectedStatus;
 	}
 
-	public ServiceInterface getServiceInterface() {
-		return mServiceInterface;
-	}
-
 	public SharedPreferences getSharedPreferences() {
 		return mPreferences;
 	}
@@ -117,10 +134,12 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mAsyncTaskManager = AsyncTaskManager.getInstance();
+		mApplication = getApplication();
+		mAsyncTaskManager = getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mServiceInterface = getApplication().getServiceInterface();
-		setListAdapter(getListAdapter());
+		mService = getServiceInterface();
+		mAdapter = getListAdapter();
+		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemClickListener(this);
@@ -158,6 +177,15 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			if (holder.show_as_gap) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
+				if (mApplication.isMultiSelectActive()) {
+					final ArrayList<ParcelableStatus> list = mApplication.getSelectedStatuses();
+					if (!list.contains(status)) {
+						list.add(status);
+					} else {
+						list.remove(status);
+					}
+					return;
+				}
 				openStatus(getActivity(), status);
 			}
 		}
@@ -169,7 +197,17 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		if (tag instanceof StatusViewHolder) {
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			mSelectedStatus = getListAdapter().findStatus(id);
+			final ParcelableStatus status = getListAdapter().findStatus(id);
+			mSelectedStatus = status;
+			if (mApplication.isMultiSelectActive()) {
+				final ArrayList<ParcelableStatus> list = mApplication.getSelectedStatuses();
+				if (!list.contains(status)) {
+					list.add(status);
+				} else {
+					list.remove(status);
+				}
+				return true;
+			}
 			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_status);
 			setMenuForStatus(getActivity(), mPopupMenu.getMenu(), mSelectedStatus);
@@ -206,11 +244,11 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 			case MENU_RETWEET: {
 				if (isMyRetweet(status)) {
-					mServiceInterface.cancelRetweet(status.account_id, status.status_id);
+					mService.cancelRetweet(status.account_id, status.status_id);
 				} else {
 					final long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
 							: mSelectedStatus.status_id;
-					mServiceInterface.retweetStatus(status.account_id, id_to_retweet);
+					mService.retweetStatus(status.account_id, id_to_retweet);
 				}
 				break;
 			}
@@ -244,9 +282,9 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 			case MENU_FAV: {
 				if (mSelectedStatus.is_favorite) {
-					mServiceInterface.destroyFavorite(status.account_id, status.status_id);
+					mService.destroyFavorite(status.account_id, status.status_id);
 				} else {
-					mServiceInterface.createFavorite(status.account_id, status.status_id);
+					mService.createFavorite(status.account_id, status.status_id);
 				}
 				break;
 			}
@@ -255,7 +293,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				break;
 			}
 			case MENU_DELETE: {
-				mServiceInterface.destroyStatus(status.account_id, status.status_id);
+				mService.destroyStatus(status.account_id, status.status_id);
 				break;
 			}
 			case MENU_EXTENSIONS: {
@@ -264,6 +302,16 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				extras.putParcelable(INTENT_KEY_STATUS, status);
 				intent.putExtras(extras);
 				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+				break;
+			}
+			case MENU_MULTI_SELECT: {
+				if (!mApplication.isMultiSelectActive()) {
+					mApplication.startMultiSelect();
+				}
+				final ArrayList<ParcelableStatus> list = mApplication.getSelectedStatuses();
+				if (!list.contains(status)) {
+					list.add(status);
+				}
 				break;
 			}
 		}
@@ -328,9 +376,14 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 		};
 		mTicker.run();
+
+		final IntentFilter filter = new IntentFilter();
+		filter.addAction(BROADCAST_MULTI_SELECT_STATE_CHANGED);
+		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
+		registerReceiver(mStateReceiver, filter);
+
 		onPostStart();
 
-		final StatusesAdapterInterface adapter = getListAdapter();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
@@ -338,12 +391,13 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
-		adapter.setDisplayProfileImage(display_profile_image);
-		adapter.setDisplayHiResProfileImage(hires_profile_image);
-		adapter.setDisplayImagePreview(display_image_preview);
-		adapter.setDisplayName(display_name);
-		adapter.setTextSize(text_size);
-		adapter.setShowAbsoluteTime(show_absolute_time);
+		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
+		mAdapter.setDisplayProfileImage(display_profile_image);
+		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
+		mAdapter.setDisplayImagePreview(display_image_preview);
+		mAdapter.setDisplayName(display_name);
+		mAdapter.setTextSize(text_size);
+		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
 
 	@Override
@@ -353,6 +407,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
+		unregisterReceiver(mStateReceiver);
 		super.onStop();
 	}
 }

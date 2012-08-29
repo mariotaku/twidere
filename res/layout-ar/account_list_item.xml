@@ -19,7 +19,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:layout_gravity="center_vertical"
-	android:background="@drawable/ic_label_color"
+	android:background="@drawable/ic_label_account"
 	android:minHeight="?android:attr/listPreferredItemHeight"
 	android:padding="6dp">
 

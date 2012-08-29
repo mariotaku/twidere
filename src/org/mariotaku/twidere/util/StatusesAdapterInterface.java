@@ -29,6 +29,8 @@ public interface StatusesAdapterInterface extends BaseAdapterInterface {
 
 	public void setGapDisallowed(boolean disallowed);
 
+	public void setMultiSelectEnabled(boolean multi);
+
 	public void setShowAbsoluteTime(boolean show);
 
 	public void setShowAccountColor(boolean show);

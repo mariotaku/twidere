@@ -250,6 +250,13 @@ public class ParcelableStatus implements Parcelable {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof ParcelableStatus)) return false;
+		final ParcelableStatus that = (ParcelableStatus) o;
+		return status_id == that.status_id;
+	}
+
+	@Override
 	public String toString() {
 		return unescapeHTML(text_html);
 	}

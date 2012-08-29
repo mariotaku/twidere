@@ -48,5 +48,6 @@
 	<item name="view_user_list" type="id"/>
 	<item name="up" type="id"/>
 	<item name="down" type="id"/>
+	<item name="multi_select" type="id"/>
 
 </resources>

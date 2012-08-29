@@ -274,23 +274,19 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mIsImageAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_IMAGE_ATTACHED) : false;
 		mIsPhotoAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_PHOTO_ATTACHED) : false;
 		mImageUri = bundle != null ? (Uri) bundle.getParcelable(INTENT_KEY_IMAGE_URI) : null;
+		final String[] mentions = bundle != null ? bundle.getStringArray(INTENT_KEY_MENTIONS) : null;
+		final String account_username = getAccountUsername(this, mAccountId);
 		int text_selection_start = -1;
 		if (mInReplyToStatusId > 0) {
-			final String account_username = getAccountUsername(this, mAccountId);
-
-			final String[] mentions = getIntent().getExtras() != null ? getIntent().getExtras().getStringArray(
-					INTENT_KEY_MENTIONS) : null;
-
 			if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null
 					&& (mentions == null || mentions.length < 1)) {
 				mText = bundle.getString(INTENT_KEY_TEXT);
 			} else if (mentions != null) {
 				final StringBuilder builder = new StringBuilder();
 				for (final String mention : mentions) {
-					if (mentions.length == 1 && mentions[0].equals(account_username)) {
+					if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_username)) {
 						builder.append('@' + account_username + ' ');
-					}
-					if (!mention.equals(account_username)) {
+					} else if (!mention.equalsIgnoreCase(account_username)) {
 						builder.append('@' + mention + ' ');
 					}
 				}
@@ -309,6 +305,17 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				mAccountIds = new long[] { mAccountId };
 			}
 		} else {
+			if (mentions != null) {
+				final StringBuilder builder = new StringBuilder();
+				for (final String mention : mentions) {
+					if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_username)) {
+						builder.append('@' + account_username + ' ');
+					} else if (!mention.equalsIgnoreCase(account_username)) {
+						builder.append('@' + mention + ' ');
+					}
+				}
+				mText = builder.toString();
+			}
 			if (mAccountIds == null || mAccountIds.length == 0) {
 				final long[] ids_in_prefs = ArrayUtils.fromString(
 						mPreferences.getString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, null), ',');

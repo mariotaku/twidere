@@ -313,7 +313,10 @@
 	<string name="portrait">Portrait</string>
 	<string name="quick_send">Hit \"Enter\" to Send</string>
 	<string name="quick_send_summary">Send tweet when hit \"Enter\".</string>
-	<string name="unsaved_tweet">Tweet not sent or saved.</string>
+	<string name="unsaved_tweet">Tweet not sent or saved yet.</string>
 	<string name="discard">Discard</string>
+	<string name="multi_select">Multi select</string>
+	<string name="Nstatuses_selected_quantity_one">1 tweet selected</string>
+	<string name="Nstatuses_selected_quantity_other"><xliff:g id="items">%d</xliff:g> tweets selected</string>
 
 </resources>

@@ -55,7 +55,7 @@ public class DMConversationsEntryViewHolder {
 
 	public void setAccountColorEnabled(boolean enabled) {
 		account_color_enabled = enabled;
-		content.setBackgroundResource(enabled ? R.drawable.ic_label_color : 0);
+		content.setBackgroundResource(enabled ? R.drawable.ic_label_account : 0);
 	}
 
 	public void setTextSize(float text_size) {

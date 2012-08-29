@@ -24,9 +24,11 @@ import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
@@ -34,9 +36,11 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
@@ -56,15 +60,17 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mDisplayName,
-			mShowAccountColor, mShowAbsoluteTime, mGapDisallowed;
+			mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
+	private final ArrayList<Long> mSelectedStatusIds;
 
 	public ParcelableStatusesAdapter(Context context, LazyImageLoader profile_image_loader,
 			LazyImageLoader preview_loader) {
 		super(context, R.layout.status_list_item, R.id.text);
 		mContext = context;
+		mSelectedStatusIds = ((TwidereApplication) context.getApplicationContext()).getSelectedStatusIds();
 		mProfileImageLoader = profile_image_loader;
 		mPreviewImageLoader = preview_loader;
 	}
@@ -121,6 +127,15 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		if (!show_gap) {
 
 			final CharSequence retweeted_by = mDisplayName ? status.retweeted_by_name : status.retweeted_by_screen_name;
+
+			if (mMultiSelectEnabled) {
+				holder.setSelected(mSelectedStatusIds.contains(status.status_id));
+			} else {
+				holder.setSelected(false);
+			}
+			
+			holder.user_mention_label.setImageDrawable(getStatusBackground(mContext,
+					status.text_plain.contains('@' + getAccountUsername(mContext, status.account_id)), status.is_favorite, status.is_retweet));
 
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(
@@ -252,6 +267,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			notifyDataSetChanged();
 		}
 
+	}
+
+	@Override
+	public void setMultiSelectEnabled(boolean multi) {
+		if (mMultiSelectEnabled != multi) {
+			mMultiSelectEnabled = multi;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override

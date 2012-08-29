@@ -299,6 +299,8 @@ public final class Utils implements Constants {
 	}
 
 	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
+	private static HashMap<Long, String> sAccountNames = new HashMap<Long, String>();
+	private static HashMap<Integer, Drawable> sStatusBackgrounds = new HashMap<Integer, Drawable>();
 
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 
@@ -458,6 +460,10 @@ public final class Utils implements Constants {
 
 	public static void clearAccountColor() {
 		sAccountColors.clear();
+	}
+
+	public static void clearAccountName() {
+		sAccountNames.clear();
 	}
 
 	public static ParcelableDirectMessage findDirectMessageInDatabases(Context context, long account_id, long message_id) {
@@ -717,17 +723,19 @@ public final class Utils implements Constants {
 
 	public static String getAccountUsername(Context context, long account_id) {
 		if (context == null) return null;
-		String username = null;
+		String username = sAccountNames.get(account_id);
+		if (username == null) {
+			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+					new String[] { Accounts.USERNAME }, Accounts.USER_ID + " = " + account_id, null, null);
+			if (cur == null) return username;
 
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USERNAME },
-				Accounts.USER_ID + " = " + account_id, null, null);
-		if (cur == null) return username;
-
-		if (cur.getCount() > 0) {
-			cur.moveToFirst();
-			username = cur.getString(cur.getColumnIndex(Accounts.USERNAME));
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				username = cur.getString(cur.getColumnIndex(Accounts.USERNAME));
+				sAccountNames.put(account_id, username);
+			}
+			cur.close();
 		}
-		cur.close();
 		return username;
 	}
 
@@ -1095,6 +1103,19 @@ public final class Utils implements Constants {
 		final String thumbnail_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/thumbnail/");
 		final String full_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/large/");
 		return new ImageSpec(thumbnail_size, full_size);
+	}
+
+	
+	
+	public static Drawable getStatusBackground(Context context, boolean is_mention, boolean is_favorite,
+			boolean is_retweet) {
+		final Resources res = context.getResources();
+		if (is_mention)
+			return res.getDrawable(R.color.color_mentioned);
+		else if (is_favorite)
+			return res.getDrawable(R.color.color_favorited);
+		else if (is_retweet) return res.getDrawable(R.color.color_retweeted);
+		return null;
 	}
 
 	public static ArrayList<Long> getStatusIdsInDatabase(Context context, Uri uri, long account_id) {

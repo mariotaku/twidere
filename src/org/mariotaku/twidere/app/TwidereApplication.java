@@ -21,15 +21,19 @@ package org.mariotaku.twidere.app;
 
 import static org.mariotaku.twidere.Constants.CRASH_REPORT_FORM_KEY;
 
+import java.util.ArrayList;
+
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
@@ -40,6 +44,12 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
 	private ServiceInterface mServiceInterface;
+
+	private boolean mMultiSelectActive = false;
+
+	private final StatusesList mSelectedStatuses = new StatusesList();
+
+	private final ArrayList<Long> mSelectedStatusIds = new ArrayList<Long>();
 
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager == null) {
@@ -66,6 +76,14 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mProfileImageLoader;
 	}
 
+	public StatusesList getSelectedStatuses() {
+		return mSelectedStatuses;
+	}
+
+	public ArrayList<Long> getSelectedStatusIds() {
+		return mSelectedStatusIds;
+	}
+
 	public ServiceInterface getServiceInterface() {
 		if (mServiceInterface != null) return mServiceInterface;
 		return mServiceInterface = ServiceInterface.getInstance(this);
@@ -73,6 +91,10 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public boolean isDebugBuild() {
 		return DEBUG;
+	}
+
+	public boolean isMultiSelectActive() {
+		return mMultiSelectActive;
 	}
 
 	@Override
@@ -118,5 +140,57 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		if (mProfileImageLoader != null) {
 			mProfileImageLoader.reloadConnectivitySettings();
 		}
+	}
+
+	public void startMultiSelect() {
+		mMultiSelectActive = true;
+		final Intent intent = new Intent(BROADCAST_MULTI_SELECT_STATE_CHANGED);
+		intent.setPackage(getPackageName());
+		sendBroadcast(intent);
+	}
+
+	public void stopMultiSelect() {
+		mSelectedStatuses.clear();
+		mMultiSelectActive = false;
+		final Intent intent = new Intent(BROADCAST_MULTI_SELECT_STATE_CHANGED);
+		intent.setPackage(getPackageName());
+		sendBroadcast(intent);
+	}
+
+	@SuppressWarnings("serial")
+	public class StatusesList extends ArrayList<ParcelableStatus> {
+
+		@Override
+		public boolean add(ParcelableStatus object) {
+			final boolean ret = super.add(object);
+			mSelectedStatusIds.add(object.status_id);
+			final Intent intent = new Intent(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
+			intent.setPackage(getPackageName());
+			sendBroadcast(intent);
+
+			return ret;
+		}
+
+		@Override
+		public void clear() {
+			super.clear();
+			mSelectedStatusIds.clear();
+			final Intent intent = new Intent(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
+			intent.setPackage(getPackageName());
+			sendBroadcast(intent);
+		}
+
+		@Override
+		public boolean remove(Object object) {
+			final boolean ret = super.remove(object);
+			if (object instanceof ParcelableStatus) {
+				mSelectedStatusIds.remove(((ParcelableStatus) object).status_id);
+			}
+			final Intent intent = new Intent(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
+			intent.setPackage(getPackageName());
+			sendBroadcast(intent);
+			return ret;
+		}
+
 	}
 }

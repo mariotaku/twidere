@@ -31,6 +31,10 @@
 		android:icon="@drawable/ic_menu_extension"
 		android:title="@string/extensions"/>
 	<item
+		android:id="@id/multi_select"
+		android:icon="@drawable/ic_menu_mark"
+		android:title="@string/multi_select"/>
+	<item
 		android:id="@+id/delete_submenu"
 		android:icon="@drawable/ic_menu_delete"
 		android:title="@string/delete"

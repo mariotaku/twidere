@@ -35,6 +35,8 @@
 					android:id="@+id/left_pane"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"/>
+
+				<include layout="@layout/multi_select_bar"/>
 			</org.mariotaku.twidere.view.ExtendedFrameLayout>
 
 			<View

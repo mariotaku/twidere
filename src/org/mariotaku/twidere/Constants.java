@@ -262,6 +262,10 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_USER_LIST_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_DELETED";
 	public static final String BROADCAST_TABS_UPDATED = INTENT_PACKAGE_PREFIX + "TABS_UPDATED";
 	public static final String BROADCAST_AUTO_REFRESH = INTENT_PACKAGE_PREFIX + "AUTO_REFRESH";
+	public static final String BROADCAST_MULTI_SELECT_ITEM_CHANGED = INTENT_PACKAGE_PREFIX
+			+ "MULTI_SELECT_ITEM_CHANGED";
+	public static final String BROADCAST_MULTI_SELECT_STATE_CHANGED = INTENT_PACKAGE_PREFIX
+			+ "MULTI_SELECT_STATE_CHANGED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -364,6 +368,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_VIEW_USER_LIST = R.id.view_user_list;
 	public static final int MENU_UP = R.id.up;
 	public static final int MENU_DOWN = R.id.down;
+	public static final int MENU_MULTI_SELECT = R.id.multi_select;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

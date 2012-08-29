@@ -32,13 +32,16 @@ import java.util.List;
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
+import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.NoDuplicatesList;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.SetHomeButtonEnabledAccessor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
@@ -65,30 +68,26 @@ import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.twitter.Extractor;
 
 public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener {
 
-	private ExtendedViewPager mViewPager;
 	private SharedPreferences mPreferences;
-	private ActionBar mActionBar;
-	private ProgressBar mProgress;
-	private TabsAdapter mAdapter;
-	private ImageButton mComposeButton;
 	private ServiceInterface mService;
+	private TwidereApplication mApplication;
+
+	private ActionBar mActionBar;
+	private TabsAdapter mAdapter;
+
+	private ExtendedViewPager mViewPager;
+	private ImageButton mComposeButton;
 	private TabPageIndicator mIndicator;
-
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			final String action = intent.getAction();
-			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
-				setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
-			}
-		}
-
-	};
+	private ProgressBar mProgress;
+	private View mMultiSelectContainer;
+	private TextView mMultiSelectCount;
 
 	private boolean mProgressBarIndeterminateVisible = false;
 
@@ -100,6 +99,22 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public static final int TAB_POSITION_MENTIONS = 1;
 	public static final int TAB_POSITION_MESSAGES = 2;
 	private final ArrayList<TabSpec> mCustomTabs = new ArrayList<TabSpec>();
+
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+				setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
+			} else if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
+				updateMultiSelectState();
+			} else if (BROADCAST_MULTI_SELECT_ITEM_CHANGED.equals(action)) {
+				updateMultiSelectCount();
+			}
+		}
+
+	};
 
 	public boolean checkDefaultAccountSet() {
 		boolean result = true;
@@ -127,6 +142,15 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			mIsNavigateToDefaultAccount = false;
 		}
 		return result;
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (mApplication.isMultiSelectActive()) {
+			mApplication.stopMultiSelect();
+			return;
+		}
+		super.onBackPressed();
 	}
 
 	@Override
@@ -166,6 +190,24 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					}
 				}
 				break;
+			case R.id.cancel_multi_select: {
+				getTwidereApplication().stopMultiSelect();
+				break;
+			}
+			case R.id.reply_all_selected: {
+				final Extractor extractor = new Extractor();
+				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Bundle bundle = new Bundle();
+				final NoDuplicatesList<String> all_mentions = new NoDuplicatesList<String>();
+				for (final ParcelableStatus status : mApplication.getSelectedStatuses()) {
+					all_mentions.add(status.screen_name);
+					all_mentions.addAll(extractor.extractMentionedScreennames(status.text_plain));
+				}
+				bundle.putStringArray(INTENT_KEY_MENTIONS, all_mentions.toArray(new String[all_mentions.size()]));
+				intent.putExtras(bundle);
+				startActivity(intent);
+				break;
+			}
 		}
 
 	}
@@ -175,12 +217,15 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
 		mComposeButton = (ImageButton) findViewById(R.id.button_compose);
+		mMultiSelectContainer = findViewById(R.id.multi_select_container);
+		mMultiSelectCount = (TextView) findViewById(R.id.multi_select_count);
 	}
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		mService = getTwidereApplication().getServiceInterface();
+		mApplication = getTwidereApplication();
+		mService = mApplication.getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		final Resources res = getResources();
@@ -470,12 +515,16 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onStart();
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		filter.addAction(BROADCAST_MULTI_SELECT_STATE_CHANGED);
+		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
 		registerReceiver(mStateReceiver, filter);
 
 		final List<TabSpec> tabs = getTabs(this);
 		if (tabsChanged(tabs)) {
 			restart();
 		}
+		updateMultiSelectState();
+		updateMultiSelectCount();
 	}
 
 	@Override
@@ -516,6 +565,15 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (!mCustomTabs.get(i).equals(tabs.get(i))) return true;
 		}
 		return false;
+	}
+
+	private void updateMultiSelectCount() {
+		final int count = mApplication.getSelectedStatuses().size();
+		mMultiSelectCount.setText(getResources().getQuantityString(R.plurals.Nstatuses_selected, count, count));
+	}
+
+	private void updateMultiSelectState() {
+		mMultiSelectContainer.setVisibility(mApplication.isMultiSelectActive() ? View.VISIBLE : View.GONE);
 	}
 
 	@Override

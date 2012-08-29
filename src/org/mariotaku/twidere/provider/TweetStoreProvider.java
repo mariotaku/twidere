@@ -21,6 +21,7 @@ package org.mariotaku.twidere.provider;
 
 import static org.mariotaku.twidere.util.DatabaseUpgradeHelper.safeUpgrade;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
+import static org.mariotaku.twidere.util.Utils.clearAccountName;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
@@ -259,6 +260,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		switch (getTableId(uri)) {
 			case URI_ACCOUNTS: {
 				clearAccountColor();
+				clearAccountName();
 				context.sendBroadcast(new Intent(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED));
 				break;
 			}

@@ -27,6 +27,7 @@ import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
@@ -49,14 +50,19 @@ import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserRetweetedStatusFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 
 public class LinkHandlerActivity extends DualPaneActivity {
 
@@ -107,10 +113,37 @@ public class LinkHandlerActivity extends DualPaneActivity {
 		URI_MATCHER.addURI(AUTHORITY_USER_MENTIONS, null, CODE_USER_MENTIONS);
 	}
 
+	private TwidereApplication mApplication;
+
 	private Fragment mFragment;
+
+	private View mMultiSelectContainer;
+	private TextView mMultiSelectCount;
+
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
+				updateMultiSelectState();
+			} else if (BROADCAST_MULTI_SELECT_ITEM_CHANGED.equals(action)) {
+				updateMultiSelectCount();
+			}
+		}
+
+	};
+
+	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mMultiSelectContainer = findViewById(R.id.multi_select_container);
+		mMultiSelectCount = (TextView) findViewById(R.id.multi_select_count);
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		mApplication = getTwidereApplication();
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminateVisibility(false);
@@ -145,6 +178,23 @@ public class LinkHandlerActivity extends DualPaneActivity {
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter();
+		filter.addAction(BROADCAST_MULTI_SELECT_STATE_CHANGED);
+		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
+		registerReceiver(mStateReceiver, filter);
+		updateMultiSelectState();
+		updateMultiSelectCount();
+	}
+
+	@Override
+	protected void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
 	}
 
 	private boolean setFragment(Uri uri) {
@@ -437,5 +487,24 @@ public class LinkHandlerActivity extends DualPaneActivity {
 		}
 		mFragment = fragment;
 		return true;
+	}
+
+	private void updateMultiSelectCount() {
+		final int count = mApplication.getSelectedStatuses().size();
+		mMultiSelectCount.setText(getResources().getQuantityString(R.plurals.Nstatuses_selected, count, count));
+	}
+
+	private void updateMultiSelectState() {
+		mMultiSelectContainer.setVisibility(mApplication.isMultiSelectActive() ? View.VISIBLE : View.GONE);
+	}
+
+	@Override
+	int getDualPaneLayoutRes() {
+		return R.layout.base_multi_select_dual_pane;
+	}
+
+	@Override
+	int getNormalLayoutRes() {
+		return R.layout.base_multi_select;
 	}
 }
