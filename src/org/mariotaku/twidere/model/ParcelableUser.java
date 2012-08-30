@@ -103,6 +103,13 @@ public class ParcelableUser implements Parcelable {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof ParcelableUser)) return false;
+		final ParcelableUser that = (ParcelableUser) o;
+		return user_id == that.user_id;
+	}
+
+	@Override
 	public String toString() {
 		return description;
 	}

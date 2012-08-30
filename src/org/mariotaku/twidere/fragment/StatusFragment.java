@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -28,6 +29,7 @@ import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
@@ -37,6 +39,7 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserRetweetedStatus;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
+import static org.mariotaku.twidere.util.Utils.setUserColor;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.IOException;
@@ -50,6 +53,7 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.HtmlUnescapeHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -60,6 +64,7 @@ import org.mariotaku.twidere.util.TwidereLinkify;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -67,7 +72,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -106,7 +113,8 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			mRetweetedStatusView;
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
-	private View mStatusContent, mProfileView, mFollowIndicator, mImagesPreviewContainer, mContentScroller;
+	private View mStatusContent, mProfileView, mFollowIndicator, mImagesPreviewContainer, mContentScroller,
+			mUserColorLabel;
 	private MenuBar mMenuBar;
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
 
@@ -154,7 +162,9 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
 
-		mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account : 0);
+		updateUserColor();
+
+		mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account_nopadding : 0);
 		if (is_multiple_account_enabled) {
 			final Drawable d = mContentScroller.getBackground();
 			if (d != null) {
@@ -253,6 +263,22 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	}
 
 	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		if (intent == null || mStatus == null) return;
+		switch (requestCode) {
+			case REQUEST_SET_COLOR: {
+				if (resultCode == Activity.RESULT_OK) if (intent != null && intent.getExtras() != null) {
+					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
+					setUserColor(getActivity(), mStatus.user_id, color);
+					updateUserColor();
+				}
+				break;
+			}
+		}
+
+	}
+
+	@Override
 	public void onClick(View view) {
 		if (mStatus == null) return;
 		switch (view.getId()) {
@@ -294,6 +320,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		final View view = inflater.inflate(R.layout.view_status, container, false);
 		mStatusContent = view.findViewById(R.id.content);
 		mStatusLoadProgress = (ProgressBar) view.findViewById(R.id.status_load_progress);
+		mUserColorLabel = view.findViewById(R.id.user_color_label);
 		mContentScroller = view.findViewById(R.id.content_scroller);
 		mImagesPreviewContainer = view.findViewById(R.id.images_preview);
 		mLocationView = (TextView) view.findViewById(R.id.location_view);
@@ -416,6 +443,16 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				Toast.makeText(getActivity(), getString(R.string.source_muted, source), Toast.LENGTH_SHORT).show();
 				break;
 			}
+			case MENU_SET_COLOR: {
+				final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
+				startActivityForResult(intent, REQUEST_SET_COLOR);
+				break;
+			}
+			case MENU_CLEAR_COLOR: {
+				clearUserColor(getActivity(), mStatus.user_id);
+				updateUserColor();
+				break;
+			}
 			default:
 				return false;
 		}
@@ -430,6 +467,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		filter.addAction(BROADCAST_FAVORITE_CHANGED);
 		filter.addAction(BROADCAST_RETWEET_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
+		updateUserColor();
 	}
 
 	@Override
@@ -463,6 +501,15 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		}
 		mLocationInfoTask = new LocationInfoTask();
 		mLocationInfoTask.execute();
+	}
+
+	private void updateUserColor() {
+		if (mUserColorLabel != null && mStatus != null) {
+			final Drawable d = mUserColorLabel.getBackground();
+			if (d != null) {
+				d.mutate().setColorFilter(getUserColor(getActivity(), mStatus.user_id), Mode.MULTIPLY);
+			}
+		}
 	}
 
 	class FollowInfoTask extends AsyncTask<Void, Void, Response<Boolean>> {

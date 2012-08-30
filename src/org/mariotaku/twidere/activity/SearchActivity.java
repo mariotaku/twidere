@@ -43,14 +43,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 
-public class SearchActivity extends DualPaneActivity implements OnItemSelectedListener {
+public class SearchActivity extends DualPaneActivity implements OnItemSelectedListener, OnClickListener {
 
 	private TwidereApplication mApplication;
 
@@ -60,8 +60,6 @@ public class SearchActivity extends DualPaneActivity implements OnItemSelectedLi
 	private Uri mData;
 	private final Bundle mArguments = new Bundle();
 
-	private View mMultiSelectContainer;
-	private TextView mMultiSelectCount;
 	private Spinner mSpinner;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
@@ -79,10 +77,18 @@ public class SearchActivity extends DualPaneActivity implements OnItemSelectedLi
 	};
 
 	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.cancel: {
+				mApplication.stopMultiSelect();
+				break;
+			}
+		}
+	}
+
+	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		mMultiSelectContainer = findViewById(R.id.multi_select_container);
-		mMultiSelectCount = (TextView) findViewById(R.id.multi_select_count);
 	}
 
 	@Override
@@ -183,12 +189,9 @@ public class SearchActivity extends DualPaneActivity implements OnItemSelectedLi
 	}
 
 	private void updateMultiSelectCount() {
-		final int count = mApplication.getSelectedStatuses().size();
-		mMultiSelectCount.setText(getResources().getQuantityString(R.plurals.Nstatuses_selected, count, count));
 	}
 
 	private void updateMultiSelectState() {
-		mMultiSelectContainer.setVisibility(mApplication.isMultiSelectActive() ? View.VISIBLE : View.GONE);
 	}
 
 	@Override

@@ -32,6 +32,7 @@ import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -70,12 +71,13 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	private StatusCursorIndices mIndices;
 	private final ArrayList<Long> mSelectedStatusIds;
 
-	public CursorStatusesAdapter(Context context, LazyImageLoader profile_image_loader, LazyImageLoader preview_loader) {
+	public CursorStatusesAdapter(Context context) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
-		mSelectedStatusIds = ((TwidereApplication) context.getApplicationContext()).getSelectedStatusIds();
-		mProfileImageLoader = profile_image_loader;
-		mPreviewImageLoader = preview_loader;
+		final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
+		mSelectedStatusIds = application.getSelectedStatusIds();
+		mProfileImageLoader = application.getProfileImageLoader();
+		mPreviewImageLoader = application.getPreviewImageLoader();
 	}
 
 	@Override
@@ -99,6 +101,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 
 			final long account_id = cursor.getLong(mIndices.account_id);
+			final long user_id = cursor.getLong(mIndices.user_id);
 			final long status_id = cursor.getLong(mIndices.status_id);
 			final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
 			final long retweet_count = cursor.getLong(mIndices.retweet_count);
@@ -112,16 +115,18 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name)
 					&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
 
-			holder.user_mention_label.setImageDrawable(getStatusBackground(mContext,
-					text.contains('@' + getAccountUsername(mContext, account_id)), is_favorite, is_retweet));
-
-			holder.setAccountColorEnabled(mShowAccountColor);
-
 			if (mMultiSelectEnabled) {
 				holder.setSelected(mSelectedStatusIds.contains(status_id));
 			} else {
 				holder.setSelected(false);
 			}
+
+			holder.setUserColor(getUserColor(mContext, user_id));
+
+			holder.status_background.setColor(getStatusBackground(
+					text.contains('@' + getAccountUsername(mContext, account_id)), is_favorite, is_retweet));
+
+			holder.setAccountColorEnabled(mShowAccountColor);
 
 			if (mShowAccountColor) {
 				holder.setAccountColor(getAccountColor(mContext, account_id));

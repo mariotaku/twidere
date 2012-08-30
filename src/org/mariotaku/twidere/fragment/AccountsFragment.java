@@ -119,7 +119,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 					final int color = data.getIntExtra(Accounts.USER_COLOR, Color.WHITE);
 					final ContentValues values = new ContentValues();
 					values.put(Accounts.USER_COLOR, color);
-					final String where = Accounts.USER_ID + "=" + mSelectedUserId;
+					final String where = Accounts.USER_ID + " = " + mSelectedUserId;
 					mResolver.update(Accounts.CONTENT_URI, values, where, null);
 					getLoaderManager().restartLoader(0, null, this);
 				}

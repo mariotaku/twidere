@@ -41,6 +41,9 @@ public interface Constants extends TwitterConstants {
 
 	public static final String LOGTAG = APP_NAME;
 
+	public static final String USER_COLOR_PREFERENCES_NAME = "user_colors";
+	public static final String SHARED_PREFERENCES_NAME = "preferences";
+
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 23;
 
@@ -120,8 +123,6 @@ public interface Constants extends TwitterConstants {
 	public static final String FORMAT_PATTERN_TEXT = "[TEXT]";
 	public static final String FORMAT_PATTERN_NAME = "[NAME]";
 	public static final String FORMAT_PATTERN_LINK = "[LINK]";
-
-	public static final String SHARED_PREFERENCES_NAME = "preferences";
 
 	public static final String PREFERENCE_KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
 	public static final String PREFERENCE_KEY_LOAD_ITEM_LIMIT = "load_item_limit";
@@ -369,6 +370,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_UP = R.id.up;
 	public static final int MENU_DOWN = R.id.down;
 	public static final int MENU_MULTI_SELECT = R.id.multi_select;
+	public static final int MENU_CLEAR_COLOR = R.id.clear_color;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
@@ -378,7 +380,7 @@ public interface Constants extends TwitterConstants {
 	public static final int REQUEST_GOTO_AUTHORIZATION = 6;
 	public static final int REQUEST_SET_COLOR = 7;
 	public static final int REQUEST_SAVE_FILE = 8;
-	public static final int REQUEST_EXTENSION_EDIT_IMAGE = 9;
+	public static final int REQUEST_EDIT_IMAGE = 9;
 	public static final int REQUEST_EXTENSION_COMPOSE = 10;
 	public static final int REQUEST_ADD_TAB = 11;
 	public static final int REQUEST_EDIT_TAB = 12;

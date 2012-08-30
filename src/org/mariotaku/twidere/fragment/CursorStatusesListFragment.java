@@ -27,7 +27,6 @@ import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
 import android.database.Cursor;
@@ -66,15 +65,13 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		final TwidereApplication app = getApplication();
-		mAdapter = new CursorStatusesAdapter(getActivity(), app != null ? app.getProfileImageLoader() : null,
-				app != null ? app.getPreviewImageLoader() : null);
+		mAdapter = new CursorStatusesAdapter(getActivity());
 		super.onActivityCreated(savedInstanceState);
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		final String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
+		final String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID, Statuses.USER_ID,
 				Statuses.STATUS_TIMESTAMP, Statuses.TEXT, Statuses.NAME, Statuses.SCREEN_NAME,
 				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME, Statuses.IN_REPLY_TO_STATUS_ID,
 				Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID,

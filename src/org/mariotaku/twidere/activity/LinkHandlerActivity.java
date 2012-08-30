@@ -21,6 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
+import static org.mariotaku.twidere.util.Utils.handleReplyAll;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseInt;
@@ -61,10 +62,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.TextView;
 
-public class LinkHandlerActivity extends DualPaneActivity {
+public class LinkHandlerActivity extends DualPaneActivity implements OnClickListener {
 
 	private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 	private static final int CODE_STATUS = 1;
@@ -117,9 +119,6 @@ public class LinkHandlerActivity extends DualPaneActivity {
 
 	private Fragment mFragment;
 
-	private View mMultiSelectContainer;
-	private TextView mMultiSelectCount;
-
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -135,10 +134,18 @@ public class LinkHandlerActivity extends DualPaneActivity {
 	};
 
 	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.cancel: {
+				mApplication.stopMultiSelect();
+				break;
+			}
+		}
+	}
+
+	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		mMultiSelectContainer = findViewById(R.id.multi_select_container);
-		mMultiSelectCount = (TextView) findViewById(R.id.multi_select_count);
 	}
 
 	@Override
@@ -490,12 +497,9 @@ public class LinkHandlerActivity extends DualPaneActivity {
 	}
 
 	private void updateMultiSelectCount() {
-		final int count = mApplication.getSelectedStatuses().size();
-		mMultiSelectCount.setText(getResources().getQuantityString(R.plurals.Nstatuses_selected, count, count));
 	}
 
 	private void updateMultiSelectState() {
-		mMultiSelectContainer.setVisibility(mApplication.isMultiSelectActive() ? View.VISIBLE : View.GONE);
 	}
 
 	@Override

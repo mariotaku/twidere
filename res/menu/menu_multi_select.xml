@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item
+		android:id="@+id/more_submenu"
+		android:icon="@drawable/ic_menu_more"
+		android:title="@string/more">
+		<menu>
+			<item
+				android:id="@id/reply"
+				android:icon="@drawable/ic_menu_reply"
+				android:title="@string/reply"/>
+		</menu>
+	</item>
+
+</menu>

@@ -183,7 +183,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				}
 				break;
 			}
-			case REQUEST_EXTENSION_EDIT_IMAGE: {
+			case REQUEST_EDIT_IMAGE: {
 				if (resultCode == Activity.RESULT_OK) {
 					final Uri uri = intent.getData();
 					final File file = uri == null ? null : new File(getImagePathFromUri(this, uri));
@@ -235,10 +235,13 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.image_thumbnail_preview: {
-				if (mImageUri != null) {
-					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, mImageUri);
-					startActivity(intent);
+				if (mPopupMenu != null) {
+					mPopupMenu.dismiss();
 				}
+				mPopupMenu = PopupMenu.getInstance(this, view);
+				mPopupMenu.inflate(R.menu.action_attached_image);
+				mPopupMenu.setOnMenuItemClickListener(this);
+				mPopupMenu.show();
 				break;
 			}
 		}
@@ -420,13 +423,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	public boolean onLongClick(View view) {
 		switch (view.getId()) {
 			case R.id.image_thumbnail_preview: {
-				if (mPopupMenu != null) {
-					mPopupMenu.dismiss();
-				}
-				mPopupMenu = PopupMenu.getInstance(this, view);
-				mPopupMenu.inflate(R.menu.action_attached_image);
-				mPopupMenu.setOnMenuItemClickListener(this);
-				mPopupMenu.show();
+				onClick(view);
 				return true;
 			}
 		}
@@ -490,7 +487,14 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_EDIT_IMAGE);
 				intent.setData(mImageUri);
 				startActivityForResult(Intent.createChooser(intent, getString(R.string.open_with_extensions)),
-						REQUEST_EXTENSION_EDIT_IMAGE);
+						REQUEST_EDIT_IMAGE);
+				break;
+			}
+			case MENU_VIEW: {
+				if (mImageUri != null) {
+					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, mImageUri);
+					startActivity(intent);
+				}
 				break;
 			}
 			case MENU_EXTENSIONS: {

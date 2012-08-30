@@ -157,7 +157,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
 
-		mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account : 0);
+		mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account_nopadding : 0);
 		if (is_multiple_account_enabled) {
 			final Drawable d = mListView.getBackground();
 			if (d != null) {

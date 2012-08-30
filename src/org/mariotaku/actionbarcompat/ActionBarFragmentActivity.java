@@ -147,5 +147,26 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 			setProgressBarIndeterminateVisibility(visible);
 		}
 	}
+	
+	private ActionModeCompat mActionModeCompat;
+	
+	@Override
+	public void onBackPressed() {
+		if (mActionBarCompat instanceof ActionBarCompatBase) {
+			if (mActionModeCompat != null) {
+				mActionModeCompat.finish();
+			}
+		}
+		super.onBackPressed();
+	}
+
+	public final ActionMode startActionMode(ActionMode.Callback callback) {
+		if (mActionBarCompat instanceof ActionBarCompatBase) {
+			return mActionModeCompat = new ActionModeCompat((ActionBarCompatBase) mActionBarCompat, callback);
+		} else {
+			return new ActionModeNative(this, callback);
+		}
+	}
+			
 
 }

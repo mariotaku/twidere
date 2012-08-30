@@ -21,9 +21,11 @@ package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
@@ -41,14 +43,18 @@ import android.widget.ArrayAdapter;
 public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
 
 	private final LazyImageLoader mProfileImageLoader;
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName;
+	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName, mMultiSelectEnabled;
 	private float mTextSize;
+	private final ArrayList<Long> mSelectedUserIds;
+	private final Context mContext;
 
 	public UsersAdapter(Context context) {
 		super(context, R.layout.user_list_item, R.id.description);
+		mContext = context;
 		final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
 		mProfileImageLoader = application.getProfileImageLoader();
 		application.getServiceInterface();
+		mSelectedUserIds = application.getSelectedUserIds();
 	}
 
 	public ParcelableUser findItem(long id) {
@@ -89,6 +95,15 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			view.setTag(holder);
 		}
 		final ParcelableUser user = getItem(position);
+
+		if (mMultiSelectEnabled) {
+			holder.setSelected(mSelectedUserIds.contains(user.user_id));
+		} else {
+			holder.setSelected(false);
+		}
+
+		holder.setUserColor(getUserColor(mContext, user.user_id));
+
 		holder.setTextSize(mTextSize);
 		holder.name.setText(mDisplayName ? user.name : user.screen_name);
 		holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(user.is_verified, user.is_protected), 0,
@@ -143,6 +158,13 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	public void setDisplayProfileImage(boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
+			notifyDataSetChanged();
+		}
+	}
+
+	public void setMultiSelectEnabled(boolean multi) {
+		if (mMultiSelectEnabled != multi) {
+			mMultiSelectEnabled = multi;
 			notifyDataSetChanged();
 		}
 	}

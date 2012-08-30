@@ -39,16 +39,17 @@ public class MenuImpl implements Menu {
 	public MenuItem add(int groupId, int itemId, int order, CharSequence title) {
 		final MenuItem item = new MenuItemImpl(mContext).setGroupId(groupId).setItemId(itemId).setOrder(order)
 				.setTitle(title);
-		mMenuItems.add(item);
+		if (order != 0) {
+			mMenuItems.add(order, item);
+		} else {
+			mMenuItems.add(item);
+		}
 		return item;
 	}
 
 	@Override
 	public MenuItem add(int groupId, int itemId, int order, int titleRes) {
-		final MenuItem item = new MenuItemImpl(mContext).setGroupId(groupId).setItemId(itemId).setOrder(order)
-				.setTitle(titleRes);
-		mMenuItems.add(item);
-		return item;
+		return add(groupId, itemId, order, mContext.getString(titleRes));
 	}
 
 	@Override
@@ -83,16 +84,7 @@ public class MenuImpl implements Menu {
 
 	@Override
 	public SubMenu addSubMenu(int groupId, int itemId, int order, int titleRes) {
-		final MenuItem item = new MenuItemImpl(mContext).setGroupId(groupId).setItemId(itemId).setOrder(order)
-				.setTitle(titleRes);
-		final SubMenu subMenu = new SubMenuImpl(mContext, item);
-		((MenuItemImpl) item).setSubMenu(subMenu);
-		if (order != 0) {
-			mMenuItems.add(order, item);
-		} else {
-			mMenuItems.add(item);
-		}
-		return subMenu;
+		return addSubMenu(groupId, itemId, order, mContext.getString(titleRes));
 	}
 
 	@Override

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-	<color name="color_mentioned">#1033b5e5</color>
-	<color name="color_retweeted">#1099cc00</color>
-	<color name="color_favorited">#10ffbb33</color>
-
-</resources>

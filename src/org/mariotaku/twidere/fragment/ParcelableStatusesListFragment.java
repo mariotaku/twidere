@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
 import android.content.BroadcastReceiver;
@@ -110,9 +109,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 				getData().addAll(data);
 			}
 		}
-		final TwidereApplication app = getApplication();
-		mAdapter = new ParcelableStatusesAdapter(getActivity(), app != null ? app.getProfileImageLoader() : null,
-				app != null ? app.getPreviewImageLoader() : null);
+		mAdapter = new ParcelableStatusesAdapter(getActivity());
 		mAdapter.setData(getData());
 		super.onActivityCreated(savedInstanceState);
 	}

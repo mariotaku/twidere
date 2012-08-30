@@ -73,10 +73,20 @@ public class HtmlBuilder {
 		for (int i = 0; i < links_size; i++) {
 			final LinkSpec spec = links.get(i);
 			if (i == 0) {
-				builder.append(escapeHTMLString(string.substring(0, spec.start)));
+				try {
+					builder.append(escapeHTMLString(string.substring(0, spec.start)));
+				} catch (final StringIndexOutOfBoundsException e) {
+					throw new StringIndexOutOfBoundsException("String = " + string + ", end = 0 , start = "
+							+ spec.start);
+				}
 			}
 			if (i > 0) {
-				builder.append(escapeHTMLString(string.substring(links.get(i - 1).end, spec.start)));
+				try {
+					builder.append(escapeHTMLString(string.substring(links.get(i - 1).end, spec.start)));
+				} catch (final StringIndexOutOfBoundsException e) {
+					throw new StringIndexOutOfBoundsException("String = " + string + ", end = " + links.get(i - 1).end
+							+ ", start = " + spec.start);
+				}
 			}
 			builder.append("<a href=\"" + spec.link + "\">");
 			builder.append(spec.display == null ? escapeHTMLString(string.substring(spec.start, spec.end))

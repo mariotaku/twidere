@@ -30,6 +30,7 @@ import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -66,13 +67,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private final Context mContext;
 	private final ArrayList<Long> mSelectedStatusIds;
 
-	public ParcelableStatusesAdapter(Context context, LazyImageLoader profile_image_loader,
-			LazyImageLoader preview_loader) {
+	public ParcelableStatusesAdapter(Context context) {
 		super(context, R.layout.status_list_item, R.id.text);
 		mContext = context;
-		mSelectedStatusIds = ((TwidereApplication) context.getApplicationContext()).getSelectedStatusIds();
-		mProfileImageLoader = profile_image_loader;
-		mPreviewImageLoader = preview_loader;
+		final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
+		mSelectedStatusIds = application.getSelectedStatusIds();
+		mProfileImageLoader = application.getProfileImageLoader();
+		mPreviewImageLoader = application.getPreviewImageLoader();
 	}
 
 	public ParcelableStatus findItemByStatusId(long status_id) {
@@ -133,9 +134,12 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			} else {
 				holder.setSelected(false);
 			}
-			
-			holder.user_mention_label.setImageDrawable(getStatusBackground(mContext,
-					status.text_plain.contains('@' + getAccountUsername(mContext, status.account_id)), status.is_favorite, status.is_retweet));
+
+			holder.setUserColor(getUserColor(mContext, status.user_id));
+
+			holder.status_background.setColor(getStatusBackground(
+					status.text_plain.contains('@' + getAccountUsername(mContext, status.account_id)),
+					status.is_favorite, status.is_retweet));
 
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(

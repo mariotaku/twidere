@@ -23,64 +23,51 @@ public final class SubMenuImpl extends MenuImpl implements SubMenu {
 		super(context);
 		mContext = context;
 		mAdapter = new MenuAdapter(context);
-
 		mMenuItems = new Menus(mAdapter);
 		this.menuItem = menuItem;
 	}
 
 	@Override
 	public MenuItem add(CharSequence title) {
-		final MenuItem item = new MenuItemImpl(mContext).setTitle(title);
-		mMenuItems.add(item);
-		return item;
+		return add(0, 0, 0, title);
 	}
 
 	@Override
 	public MenuItem add(int titleRes) {
-		final MenuItem item = new MenuItemImpl(mContext).setTitle(titleRes);
-		mMenuItems.add(item);
-		return item;
+		return add(0, 0, 0, titleRes);
 	}
 
 	@Override
 	public MenuItem add(int groupId, int itemId, int order, CharSequence title) {
 		final MenuItem item = new MenuItemImpl(mContext).setGroupId(groupId).setItemId(itemId).setOrder(order)
 				.setTitle(title);
-		mMenuItems.add(order, item);
+		if (order != 0) {
+			mMenuItems.add(order, item);
+		} else {
+			mMenuItems.add(item);
+		}
 		return item;
 	}
 
 	@Override
 	public MenuItem add(int groupId, int itemId, int order, int titleRes) {
-		final MenuItem item = new MenuItemImpl(mContext).setGroupId(groupId).setItemId(itemId).setOrder(order)
-				.setTitle(titleRes);
-		mMenuItems.add(order, item);
-		return item;
+		return add(0, 0, 0, mContext.getString(titleRes));
 	}
 
 	@Override
 	public int addIntentOptions(int groupId, int itemId, int order, ComponentName caller, Intent[] specifics,
 			Intent intent, int flags, MenuItem[] outSpecificItems) {
-
 		return 0;
 	}
 
 	@Override
 	public SubMenu addSubMenu(CharSequence title) {
-		final MenuItem item = new MenuItemImpl(mContext).setTitle(title);
-		final SubMenu subMenu = new SubMenuImpl(mContext, item);
-		((MenuItemImpl) item).setSubMenu(subMenu);
-		mMenuItems.add(item);
-		return subMenu;
+		return addSubMenu(0, 0, 0, title);
 	}
 
 	@Override
 	public SubMenu addSubMenu(int titleRes) {
-		final MenuItem item = new MenuItemImpl(mContext).setTitle(titleRes);
-		final SubMenu subMenu = new SubMenuImpl(mContext, item);
-		((MenuItemImpl) item).setSubMenu(subMenu);
-		mMenuItems.add(item);
-		return subMenu;
+		return addSubMenu(0, 0, 0, titleRes);
 	}
 
 	@Override
@@ -89,18 +76,17 @@ public final class SubMenuImpl extends MenuImpl implements SubMenu {
 				.setTitle(title);
 		final SubMenu subMenu = new SubMenuImpl(mContext, item);
 		((MenuItemImpl) item).setSubMenu(subMenu);
-		mMenuItems.add(order, item);
+		if (order != 0) {
+			mMenuItems.add(order, item);
+		} else {
+			mMenuItems.add(item);
+		}
 		return subMenu;
 	}
 
 	@Override
 	public SubMenu addSubMenu(int groupId, int itemId, int order, int titleRes) {
-		final MenuItem item = new MenuItemImpl(mContext).setGroupId(groupId).setItemId(itemId).setOrder(order)
-				.setTitle(titleRes);
-		final SubMenu subMenu = new SubMenuImpl(mContext, item);
-		((MenuItemImpl) item).setSubMenu(subMenu);
-		mMenuItems.add(order, item);
-		return subMenu;
+		return addSubMenu(groupId, itemId, order, mContext.getString(titleRes));
 	}
 
 	@Override
@@ -110,12 +96,10 @@ public final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public void clearHeader() {
-
 	}
 
 	@Override
 	public void close() {
-
 	}
 
 	@Override

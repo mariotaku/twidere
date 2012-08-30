@@ -59,7 +59,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 
@@ -77,6 +79,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
@@ -106,6 +109,7 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.TabSpec;
@@ -168,6 +172,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.twitter.Extractor;
 
 public final class Utils implements Constants {
 
@@ -298,10 +304,10 @@ public final class Utils implements Constants {
 
 	}
 
-	private static HashMap<Long, Integer> sAccountColors = new HashMap<Long, Integer>();
-	private static HashMap<Long, String> sAccountNames = new HashMap<Long, String>();
-	private static HashMap<Integer, Drawable> sStatusBackgrounds = new HashMap<Integer, Drawable>();
+	private static Map<Long, Integer> sAccountColors = new LinkedHashMap<Long, Integer>();
 
+	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
+	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 
 	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
@@ -464,6 +470,15 @@ public final class Utils implements Constants {
 
 	public static void clearAccountName() {
 		sAccountNames.clear();
+	}
+
+	public static void clearUserColor(Context context, long user_id) {
+		if (context == null) return;
+		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final SharedPreferences.Editor editor = prefs.edit();
+		editor.remove(Long.toString(user_id));
+		editor.commit();
+		sUserColors.remove(user_id);
 	}
 
 	public static ParcelableDirectMessage findDirectMessageInDatabases(Context context, long account_id, long message_id) {
@@ -894,7 +909,12 @@ public final class Utils implements Constants {
 			final String path = cursor.getString(column_index);
 			cursor.close();
 			return path;
-		} else if (uri.getScheme().equals("file")) return uri.getPath();
+		} else {
+			final String path = uri.toString();
+			if (path != null) {
+				if (new File(path).exists()) return path;
+			}
+		}
 		return null;
 	}
 
@@ -1105,17 +1125,13 @@ public final class Utils implements Constants {
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	
-	
-	public static Drawable getStatusBackground(Context context, boolean is_mention, boolean is_favorite,
-			boolean is_retweet) {
-		final Resources res = context.getResources();
+	public static int getStatusBackground(boolean is_mention, boolean is_favorite, boolean is_retweet) {
 		if (is_mention)
-			return res.getDrawable(R.color.color_mentioned);
+			return 0x1A33B5E5;
 		else if (is_favorite)
-			return res.getDrawable(R.color.color_favorited);
-		else if (is_retweet) return res.getDrawable(R.color.color_retweeted);
-		return null;
+			return 0x1AFFBB33;
+		else if (is_retweet) return 0x1A66CC00;
+		return Color.TRANSPARENT;
 	}
 
 	public static ArrayList<Long> getStatusIdsInDatabase(Context context, Uri uri, long account_id) {
@@ -1421,6 +1437,18 @@ public final class Utils implements Constants {
 		return null;
 	}
 
+	public static int getUserColor(Context context, long user_id) {
+		if (context == null) return Color.TRANSPARENT;
+		Integer color = sUserColors.get(user_id);
+		if (color == null) {
+			final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME,
+					Context.MODE_PRIVATE);
+			color = prefs.getInt(Long.toString(user_id), Color.TRANSPARENT);
+			sUserColors.put(user_id, color);
+		}
+		return color != null ? color : Color.TRANSPARENT;
+	}
+
 	public static int getUserTypeIconRes(boolean is_verified, boolean is_protected) {
 		if (is_verified)
 			return R.drawable.ic_indicator_verified;
@@ -1434,6 +1462,28 @@ public final class Utils implements Constants {
 		final String full_size = "http://yfrog.com/" + id + ":medium";
 		return new ImageSpec(thumbnail_size, full_size);
 
+	}
+
+	public static void handleReplyAll(Context context) {
+		final TwidereApplication app = (TwidereApplication) context.getApplicationContext();
+		final Extractor extractor = new Extractor();
+		final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+		final Bundle bundle = new Bundle();
+		final NoDuplicatesList<String> all_mentions = new NoDuplicatesList<String>();
+		for (final Object item : app.getSelectedItems()) {
+			if (item instanceof ParcelableStatus) {
+				final ParcelableStatus status = (ParcelableStatus) item;
+				all_mentions.add(status.screen_name);
+				all_mentions.addAll(extractor.extractMentionedScreennames(status.text_plain));
+			} else if (item instanceof ParcelableUser) {
+				final ParcelableUser user = (ParcelableUser) item;
+				all_mentions.add(user.screen_name);
+			}
+		}
+		bundle.putStringArray(INTENT_KEY_MENTIONS, all_mentions.toArray(new String[all_mentions.size()]));
+		intent.putExtras(bundle);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		app.startActivity(intent);
 	}
 
 	public static boolean isFiltered(Context context, String screen_name, String source, String text) {
@@ -2457,6 +2507,15 @@ public final class Utils implements Constants {
 		if (itemConversation != null) {
 			itemConversation.setVisible(status.in_reply_to_status_id > 0 && status.in_reply_to_screen_name != null);
 		}
+	}
+
+	public static void setUserColor(Context context, long user_id, int color) {
+		if (context == null) return;
+		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final SharedPreferences.Editor editor = prefs.edit();
+		editor.putInt(Long.toString(user_id), color);
+		editor.commit();
+		sUserColors.put(user_id, color);
 	}
 
 	public static void showErrorToast(Context context, Object e, boolean long_message) {

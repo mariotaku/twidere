@@ -21,6 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
@@ -30,6 +31,7 @@ import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTimestampFromDate;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
@@ -48,6 +50,7 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
+import static org.mariotaku.twidere.util.Utils.setUserColor;
 
 import java.io.File;
 import java.net.URL;
@@ -82,7 +85,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -124,7 +129,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowedYouIndicator, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
-			mTweetsContainer, mFollowersContainer, mFriendsContainer;
+			mTweetsContainer, mFollowersContainer, mFriendsContainer, mProfileNameContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
 	private UserProfileActionAdapter mAdapter;
@@ -186,6 +191,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	public void changeUser(long account_id, User user) {
 		mFriendship = null;
+		mUserId = -1;
+		mAccountId = -1;
 		if (user == null || user.getId() <= 0 || getActivity() == null
 				|| !isMyActivatedAccount(getActivity(), account_id)) return;
 		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
@@ -197,10 +204,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAccountId = account_id;
 		mUserId = user.getId();
 		mScreenName = user.getScreenName();
-
+		updateUserColor();
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
 
-		mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account : 0);
+		mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account_nopadding : 0);
 		if (is_multiple_account_enabled) {
 			final Drawable d = mListView.getBackground();
 			if (d != null) {
@@ -346,6 +353,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				}
 				break;
 			}
+			case REQUEST_SET_COLOR: {
+				if (resultCode == Activity.RESULT_OK) if (intent != null && intent.getExtras() != null) {
+					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
+					setUserColor(getActivity(), mUserId, color);
+					updateUserColor();
+				}
+				break;
+			}
 		}
 
 	}
@@ -444,6 +459,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowersCount = (TextView) mHeaderView.findViewById(R.id.followers_count);
 		mFriendsContainer = mHeaderView.findViewById(R.id.friends_container);
 		mFriendsCount = (TextView) mHeaderView.findViewById(R.id.friends_count);
+		mProfileNameContainer = mHeaderView.findViewById(R.id.profile_name_container);
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mProfileImageContainer = mHeaderView.findViewById(R.id.profile_image_container);
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
@@ -655,6 +671,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
 				break;
 			}
+			case MENU_SET_COLOR: {
+				final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
+				startActivityForResult(intent, REQUEST_SET_COLOR);
+				break;
+			}
+			case MENU_CLEAR_COLOR: {
+				clearUserColor(getActivity(), mUserId);
+				updateUserColor();
+				break;
+			}
 		}
 		return true;
 	}
@@ -666,6 +692,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		filter.addAction(BROADCAST_BLOCKSTATE_CHANGED);
 		filter.addAction(BROADCAST_PROFILE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
+		updateUserColor();
 	}
 
 	@Override
@@ -701,6 +728,15 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mImageUri = Uri.fromFile(file);
 			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
 			startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+		}
+	}
+
+	private void updateUserColor() {
+		if (mProfileNameContainer != null) {
+			final Drawable d = mProfileNameContainer.getBackground();
+			if (d != null) {
+				d.mutate().setColorFilter(getUserColor(getActivity(), mUserId), Mode.MULTIPLY);
+			}
 		}
 	}
 

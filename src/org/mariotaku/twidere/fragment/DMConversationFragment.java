@@ -133,6 +133,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 			mScreenNameConfirmButton.setEnabled(s.length() > 0 && s.length() < 20);
 		}
 	};
+	private TwidereApplication mApplication;
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -147,11 +148,11 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mService = getApplication().getServiceInterface();
+		mService = getServiceInterface();
 
-		final LazyImageLoader imageloader = ((TwidereApplication) getActivity().getApplication())
-				.getProfileImageLoader();
+		final LazyImageLoader imageloader = mApplication.getProfileImageLoader();
 		mAdapter = new DirectMessagesConversationAdapter(getActivity(), imageloader);
 		mListView.setAdapter(mAdapter);
 		mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);

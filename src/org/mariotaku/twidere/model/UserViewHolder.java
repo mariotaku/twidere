@@ -20,7 +20,10 @@
 package org.mariotaku.twidere.model;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.view.ColorView;
 
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,24 +31,41 @@ import android.widget.TextView;
 public class UserViewHolder {
 
 	public final ImageView profile_image;
+	public final ColorView user_background;
 	public final TextView name, description;
-	private final View gap_indicator;
+	private final View content, user_content, gap_indicator;
 	public boolean show_as_gap;
 	private float text_size;
 
 	public UserViewHolder(View view) {
+		content = view;
+		user_content = view.findViewById(R.id.user_content);
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		description = (TextView) view.findViewById(R.id.description);
+		user_background = (ColorView) view.findViewById(R.id.user_background);
+	}
 
+	public void setSelected(boolean selected) {
+		content.setBackgroundResource(selected ? R.drawable.list_focused_holo : 0);
+	}
+	
+	public void setAccountColor(int color) {
+		final Drawable background = user_content.getBackground();
+		if (background != null) {
+			background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+		}
+	}
+	
+	public void setAccountColorEnabled(boolean enabled) {
+		user_content.setBackgroundResource(enabled ? R.drawable.ic_label_account : 0);
 	}
 
 	public void setShowAsGap(boolean show_gap) {
 		show_as_gap = show_gap;
-		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		description.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		user_content.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		user_background.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
 
@@ -54,6 +74,13 @@ public class UserViewHolder {
 			this.text_size = text_size;
 			description.setTextSize(text_size);
 			name.setTextSize(text_size * 1.05f);
+		}
+	}
+
+	public void setUserColor(int color) {
+		final Drawable background = user_background.getBackground();
+		if (background != null) {
+			background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 		}
 	}
 

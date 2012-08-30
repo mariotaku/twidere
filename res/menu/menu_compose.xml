@@ -19,17 +19,17 @@
 		android:title="@string/more">
 		<menu>
 			<item
-				android:id="@id/select_account"
-				android:icon="@drawable/ic_menu_accounts"
-				android:title="@string/select_account"/>
+				android:id="@id/extensions"
+				android:icon="@drawable/ic_menu_extension"
+				android:title="@string/extensions"/>
 			<item
 				android:id="@id/drafts"
 				android:icon="@drawable/ic_menu_save"
 				android:title="@string/drafts"/>
 			<item
-				android:id="@id/extensions"
-				android:icon="@drawable/ic_menu_extension"
-				android:title="@string/extensions"/>
+				android:id="@id/select_account"
+				android:icon="@drawable/ic_menu_accounts"
+				android:title="@string/select_account"/>
 		</menu>
 	</item>
 

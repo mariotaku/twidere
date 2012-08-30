@@ -1,48 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:padding="6dp">
+	android:layout_height="wrap_content">
 
-	<org.mariotaku.twidere.view.RoundCorneredImageView
-		android:id="@+id/profile_image"
-		android:layout_width="@dimen/profile_image_size"
-		android:layout_height="@dimen/profile_image_size"
-		android:scaleType="fitCenter"/>
+	<org.mariotaku.twidere.view.ColorView
+		android:id="@+id/user_background"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@drawable/ic_label_user"/>
 
-	<TextView
-		android:id="@+id/name"
-		android:layout_width="wrap_content"
+	<RelativeLayout
+		android:id="@+id/user_content"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentTop="true"
-		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginLeft="6dp"
-		android:layout_toRightOf="@+id/profile_image"
-		android:singleLine="true"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="?android:attr/textColorPrimary"
-		android:textStyle="bold"/>
+		android:padding="6dp">
 
-	<TextView
-		android:id="@+id/description"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/name"
-		android:layout_alignParentRight="true"
-		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/name"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="?android:attr/textColorSecondary"/>
+		<org.mariotaku.twidere.view.RoundCorneredImageView
+			android:id="@+id/profile_image"
+			android:layout_width="@dimen/profile_image_size"
+			android:layout_height="@dimen/profile_image_size"
+			android:scaleType="fitCenter"/>
+
+		<TextView
+			android:id="@+id/name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_alignWithParentIfMissing="true"
+			android:layout_marginLeft="6dp"
+			android:layout_toRightOf="@+id/profile_image"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorPrimary"
+			android:textStyle="bold"/>
+
+		<TextView
+			android:id="@+id/description"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignLeft="@+id/name"
+			android:layout_alignParentRight="true"
+			android:layout_alignWithParentIfMissing="true"
+			android:layout_below="@+id/name"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorSecondary"/>
+	</RelativeLayout>
 
 	<TextView
 		android:id="@+id/list_gap_text"
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_centerInParent="true"
+		android:layout_height="48dp"
+		android:layout_gravity="center"
+		android:gravity="center"
 		android:text="@string/tap_to_load_more"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="#606060"
 		android:textStyle="bold"
 		android:visibility="gone"/>
 
-</RelativeLayout>
+</FrameLayout>

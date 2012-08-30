@@ -148,6 +148,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 		switch (item.getItemId()) {
 			case MENU_SEND: {
 				sendDraft(mDraftItem);
+				getSupportLoaderManager().restartLoader(0, null, this);
 				break;
 			}
 			case MENU_EDIT: {
@@ -156,6 +157,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 			}
 			case MENU_DELETE: {
 				mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + mSelectedId, null);
+				getSupportLoaderManager().restartLoader(0, null, this);
 				break;
 			}
 		}
@@ -171,6 +173,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 			}
 			case MENU_DELETE_ALL: {
 				mResolver.delete(Drafts.CONTENT_URI, null, null);
+				getSupportLoaderManager().restartLoader(0, null, this);
 				break;
 			}
 		}

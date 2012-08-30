@@ -3,6 +3,12 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
+	<org.mariotaku.twidere.view.ColorView
+		android:id="@+id/status_background"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@drawable/ic_label_user"/>
+
 	<RelativeLayout
 		android:id="@+id/status_content"
 		android:layout_width="match_parent"

@@ -178,7 +178,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
 				if (mApplication.isMultiSelectActive()) {
-					final ArrayList<ParcelableStatus> list = mApplication.getSelectedStatuses();
+					final ArrayList<Object> list = mApplication.getSelectedItems();
 					if (!list.contains(status)) {
 						list.add(status);
 					} else {
@@ -197,14 +197,13 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		if (tag instanceof StatusViewHolder) {
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			final ParcelableStatus status = getListAdapter().findStatus(id);
-			mSelectedStatus = status;
+			mSelectedStatus = getListAdapter().findStatus(id);
 			if (mApplication.isMultiSelectActive()) {
-				final ArrayList<ParcelableStatus> list = mApplication.getSelectedStatuses();
-				if (!list.contains(status)) {
-					list.add(status);
+				final ArrayList<Object> list = mApplication.getSelectedItems();
+				if (!list.contains(mSelectedStatus)) {
+					list.add(mSelectedStatus);
 				} else {
-					list.remove(status);
+					list.remove(mSelectedStatus);
 				}
 				return true;
 			}
@@ -308,7 +307,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				if (!mApplication.isMultiSelectActive()) {
 					mApplication.startMultiSelect();
 				}
-				final ArrayList<ParcelableStatus> list = mApplication.getSelectedStatuses();
+				final ArrayList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(status)) {
 					list.add(status);
 				}

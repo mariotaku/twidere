@@ -59,6 +59,10 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 	public void setOnMenuItemClickListener(OnMenuItemClickListener listener) {
 		mItemClickListener = listener;
 	}
+	
+	public MenuInflater getMenuInflater() {
+		return new MenuInflater(mContext);
+	}
 
 	public void show() {
 		removeAllViews();

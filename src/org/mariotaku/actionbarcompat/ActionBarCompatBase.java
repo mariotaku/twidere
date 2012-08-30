@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.mariotaku.internal.menu.MenuImpl;
 import org.mariotaku.internal.menu.MenuItemImpl;
+import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
@@ -43,7 +44,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	private View mActionBarView, mCustomView, mHomeAsUpIndicator;
 	private ImageView mIconView;
 	private TextView mTitleView, mSubtitleView;
-	private ViewGroup mHomeView, mTitleContainer, mCustomViewContainer, mActionMenuView;
+	private ViewGroup mHomeView, mTitleContainer, mCustomViewContainer, mActionMenuView, mActionModeContainer;
 	private final Menu mRealMenu, mActionBarMenu;
 
 	private boolean mProgressBarIndeterminateEnabled = false;
@@ -63,6 +64,31 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	public View getCustomView() {
 		return mCustomView;
 	}
+	
+	private boolean mActionModeShowing;
+	
+	boolean isActionModeShowing() {
+		return mActionModeShowing;
+	}
+	
+	View startActionMode() {
+		mActionModeShowing = true;
+		mActionModeContainer.setVisibility(View.VISIBLE);
+		return mActionModeContainer;
+	}
+	
+	void stopActionMode() {
+		mActionModeContainer.setVisibility(View.GONE);
+		final TextView title_view = (TextView) mActionModeContainer.findViewById(R.id.action_mode_title);
+		final TextView subtitle_view = (TextView) mActionModeContainer.findViewById(R.id.action_mode_subtitle);
+		final MenuBar menu_bar = (MenuBar) mActionModeContainer.findViewById(R.id.action_mode_menu);
+		title_view.setText(null);
+		subtitle_view.setText(null);
+		subtitle_view.setVisibility(View.GONE);
+		menu_bar.getMenu().clear();
+		mActionModeShowing = false;
+	}
+	
 
 	@Override
 	public int getHeight() {
@@ -299,7 +325,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	boolean setCustomTitleView() {
 		mActivity.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.actionbar);
 		mActionBarView = mActivity.findViewById(R.id.actionbar);
-
+		mActionModeContainer = (ViewGroup) mActivity.findViewById(R.id.action_mode_container);
 		if (mActionBarView == null) return false;
 		mTitleContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_title_view);
 		mTitleView = (TextView) mTitleContainer.findViewById(R.id.actionbar_title);
@@ -309,7 +335,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		mHomeAsUpIndicator = mHomeView.findViewById(R.id.actionbar_home_as_up_indicator);
 		mActionMenuView = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_menu_buttons);
 		mCustomViewContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_custom_view_container);
-
+		
 		setTitle(mActivity.getTitle());
 
 		// Add Home button

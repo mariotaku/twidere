@@ -2,20 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@id/edit"
-		android:icon="@drawable/ic_menu_extension"
-		android:title="@string/extensions"/>
+		android:id="@id/view"
+		android:icon="@drawable/ic_menu_gallery"
+		android:title="@string/view"/>
 	<item
+		android:id="@id/edit"
+		android:icon="@drawable/ic_menu_edit"
+		android:title="@string/edit"/>
+	<item
+		android:id="@+id/delete_submenu"
 		android:icon="@drawable/ic_menu_delete"
 		android:title="@string/delete">
 		<menu>
 			<item
-				android:icon="@drawable/ic_menu_close_clear_cancel"
-				android:title="@android:string/cancel"/>
-			<item
 				android:id="@id/delete"
 				android:icon="@drawable/ic_menu_delete"
 				android:title="@string/delete"/>
+			<item
+				android:icon="@drawable/ic_menu_close_clear_cancel"
+				android:title="@android:string/cancel"/>
 		</menu>
 	</item>
 

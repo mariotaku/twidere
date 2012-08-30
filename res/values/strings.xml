@@ -112,6 +112,7 @@
 	<string name="content">Content</string>
 	<string name="customize">Customize</string>
 	<string name="set_color">Set color</string>
+	<string name="clear">Clear</string>
 	<string name="pick_color">Pick color</string>
 	<string name="follow">Follow</string>
 	<string name="unfollow">Unfollow</string>
@@ -316,7 +317,8 @@
 	<string name="unsaved_tweet">Tweet not sent or saved yet.</string>
 	<string name="discard">Discard</string>
 	<string name="multi_select">Multi select</string>
-	<string name="Nstatuses_selected_quantity_one">1 tweet selected</string>
-	<string name="Nstatuses_selected_quantity_other"><xliff:g id="items">%d</xliff:g> tweets selected</string>
+	<string name="Nitems_selected_quantity_one">1 item selected</string>
+	<string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> items selected</string>
+	<string name="view">View</string>
 
 </resources>

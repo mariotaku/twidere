@@ -27,11 +27,14 @@ import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.UsersAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,9 +57,12 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		LoaderCallbacks<List<ParcelableUser>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
 		Panes.Left, OnMenuItemClickListener {
 
+	private SharedPreferences mPreferences;
+	private PopupMenu mPopupMenu;
+	private TwidereApplication mApplication;
+	
 	private UsersAdapter mAdapter;
 
-	private SharedPreferences mPreferences;
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
 	private long mAccountId;
@@ -67,8 +73,21 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 
 	private ParcelableUser mSelectedUser;
 
-	private PopupMenu mPopupMenu;
 
+	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
+				mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
+			} else if (BROADCAST_MULTI_SELECT_ITEM_CHANGED.equals(action)) {
+				mAdapter.notifyDataSetChanged();
+			}
+		}
+
+	};
+	
 	public long getAccountId() {
 		return mAccountId;
 	}
@@ -91,6 +110,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mAdapter = new UsersAdapter(getActivity());
 		mListView = getListView();
@@ -128,6 +148,15 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	public final void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		final ParcelableUser user = mAdapter.findItem(id);
 		if (user == null) return;
+		if (mApplication.isMultiSelectActive()) {
+			final ArrayList<Object> list = mApplication.getSelectedItems();
+			if (!list.contains(user)) {
+				list.add(user);
+			} else {
+				list.remove(user);
+			}
+			return;
+		}
 		openUserProfile(user.user_id, user.screen_name);
 	}
 
@@ -136,6 +165,15 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		mSelectedUser = null;
 		final UsersAdapter adapter = getListAdapter();
 		mSelectedUser = adapter.findItem(id);
+		if (mApplication.isMultiSelectActive()) {
+			final ArrayList<Object> list = mApplication.getSelectedItems();
+			if (!list.contains(mSelectedUser)) {
+				list.add(mSelectedUser);
+			} else {
+				list.remove(mSelectedUser);
+			}
+			return true;
+		}
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user);
 		mPopupMenu.setOnMenuItemClickListener(this);
@@ -170,6 +208,16 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 				extras.putParcelable(INTENT_KEY_USER, mSelectedUser);
 				intent.putExtras(extras);
 				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+				break;
+			}
+			case MENU_MULTI_SELECT: {
+				if (!mApplication.isMultiSelectActive()) {
+					mApplication.startMultiSelect();
+				}
+				final ArrayList<Object> list = mApplication.getSelectedItems();
+				if (!list.contains(mSelectedUser)) {
+					list.add(mSelectedUser);
+				}
 				break;
 			}
 		}
@@ -221,11 +269,18 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	@Override
 	public void onStart() {
 		super.onStart();
+		
+		final IntentFilter filter = new IntentFilter();
+		filter.addAction(BROADCAST_MULTI_SELECT_STATE_CHANGED);
+		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
+		registerReceiver(mStateReceiver, filter);
+		
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
 		mAdapter.setTextSize(text_size);
@@ -237,6 +292,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
+		unregisterReceiver(mStateReceiver);
 		super.onStop();
 	}
 

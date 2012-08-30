@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getTabs;
+import static org.mariotaku.twidere.util.Utils.handleReplyAll;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
 import java.util.ArrayList;
@@ -30,6 +31,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.mariotaku.actionbarcompat.ActionBar;
+import org.mariotaku.actionbarcompat.ActionMode;
+import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -37,11 +40,9 @@ import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
-import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.NoDuplicatesList;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.SetHomeButtonEnabledAccessor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
@@ -62,18 +63,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.twitter.Extractor;
-
-public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener {
+public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener, ActionMode.Callback {
 
 	private SharedPreferences mPreferences;
 	private ServiceInterface mService;
@@ -86,8 +85,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private ImageButton mComposeButton;
 	private TabPageIndicator mIndicator;
 	private ProgressBar mProgress;
-	private View mMultiSelectContainer;
-	private TextView mMultiSelectCount;
 
 	private boolean mProgressBarIndeterminateVisible = false;
 
@@ -190,35 +187,37 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					}
 				}
 				break;
-			case R.id.cancel_multi_select: {
-				getTwidereApplication().stopMultiSelect();
-				break;
-			}
-			case R.id.reply_all_selected: {
-				final Extractor extractor = new Extractor();
-				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-				final Bundle bundle = new Bundle();
-				final NoDuplicatesList<String> all_mentions = new NoDuplicatesList<String>();
-				for (final ParcelableStatus status : mApplication.getSelectedStatuses()) {
-					all_mentions.add(status.screen_name);
-					all_mentions.addAll(extractor.extractMentionedScreennames(status.text_plain));
-				}
-				bundle.putStringArray(INTENT_KEY_MENTIONS, all_mentions.toArray(new String[all_mentions.size()]));
-				intent.putExtras(bundle);
-				startActivity(intent);
+			case R.id.cancel: {
+				mApplication.stopMultiSelect();
 				break;
 			}
 		}
-
 	}
 
+	public static class MultiSelectMenuClickHandler implements MenuBar.OnMenuItemClickListener {
+		private final Context context;
+		public MultiSelectMenuClickHandler(Context context) {
+			this.context = context;
+		}
+		@Override
+		public boolean onMenuItemClick(MenuItem item) {
+			switch (item.getItemId()) {
+				case MENU_REPLY: {
+					handleReplyAll(context);
+					break;
+				}
+			}
+			return true;
+		}
+		
+		
+	}
+	
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
 		mComposeButton = (ImageButton) findViewById(R.id.button_compose);
-		mMultiSelectContainer = findViewById(R.id.multi_select_container);
-		mMultiSelectCount = (TextView) findViewById(R.id.multi_select_count);
 	}
 
 	/** Called when the activity is first created. */
@@ -270,6 +269,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			SetHomeButtonEnabledAccessor.setHomeButtonEnabled(this, true);
 		}
 		final View view = mActionBar.getCustomView();
+		
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
@@ -568,12 +568,25 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private void updateMultiSelectCount() {
-		final int count = mApplication.getSelectedStatuses().size();
-		mMultiSelectCount.setText(getResources().getQuantityString(R.plurals.Nstatuses_selected, count, count));
+		if (mActionMode != null) {
+			final int count = mApplication.getSelectedItems().size();
+			mActionMode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
+		}
 	}
+	
+	private ActionMode mActionMode;
 
 	private void updateMultiSelectState() {
-		mMultiSelectContainer.setVisibility(mApplication.isMultiSelectActive() ? View.VISIBLE : View.GONE);
+		if (mApplication.isMultiSelectActive()) {
+			if (mActionMode == null) {
+				mActionMode = startActionMode(this);
+			}
+		} else {
+			if (mActionMode != null) {
+				mActionMode.finish();
+				mActionMode = null;
+			}
+		}
 	}
 
 	@Override
@@ -584,6 +597,34 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	int getNormalLayoutRes() {
 		return R.layout.home;
+	}
+
+	@Override
+	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		new MenuInflater(this).inflate(R.menu.menu_multi_select, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		return true;
+	}
+
+	@Override
+	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_REPLY: {
+				handleReplyAll(this);
+				break;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void onDestroyActionMode(ActionMode mode) {
+		mApplication.stopMultiSelect();
+		mActionMode = null;
 	}
 
 }

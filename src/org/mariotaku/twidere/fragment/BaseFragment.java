@@ -23,6 +23,7 @@ import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -49,6 +50,10 @@ public class BaseFragment extends Fragment implements Constants {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getContentResolver();
 		return null;
+	}
+
+	public ServiceInterface getServiceInterface() {
+		return getApplication().getServiceInterface();
 	}
 
 	public SharedPreferences getSharedPreferences(String name, int mode) {

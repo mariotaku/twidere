@@ -28,6 +28,7 @@ import org.acra.annotation.ReportsCrashes;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -47,9 +48,10 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	private boolean mMultiSelectActive = false;
 
-	private final StatusesList mSelectedStatuses = new StatusesList();
+	private final ItemsList mSelectedItems = new ItemsList();
 
 	private final ArrayList<Long> mSelectedStatusIds = new ArrayList<Long>();
+	private final ArrayList<Long> mSelectedUserIds = new ArrayList<Long>();
 
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager == null) {
@@ -76,12 +78,16 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mProfileImageLoader;
 	}
 
-	public StatusesList getSelectedStatuses() {
-		return mSelectedStatuses;
+	public ItemsList getSelectedItems() {
+		return mSelectedItems;
 	}
 
 	public ArrayList<Long> getSelectedStatusIds() {
 		return mSelectedStatusIds;
+	}
+
+	public ArrayList<Long> getSelectedUserIds() {
+		return mSelectedUserIds;
 	}
 
 	public ServiceInterface getServiceInterface() {
@@ -150,7 +156,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	public void stopMultiSelect() {
-		mSelectedStatuses.clear();
+		mSelectedItems.clear();
 		mMultiSelectActive = false;
 		final Intent intent = new Intent(BROADCAST_MULTI_SELECT_STATE_CHANGED);
 		intent.setPackage(getPackageName());
@@ -158,16 +164,19 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	@SuppressWarnings("serial")
-	public class StatusesList extends ArrayList<ParcelableStatus> {
+	public class ItemsList extends ArrayList<Object> {
 
 		@Override
-		public boolean add(ParcelableStatus object) {
+		public boolean add(Object object) {
 			final boolean ret = super.add(object);
-			mSelectedStatusIds.add(object.status_id);
+			if (object instanceof ParcelableStatus) {
+				mSelectedStatusIds.add(((ParcelableStatus) object).status_id);
+			} else if (object instanceof ParcelableUser) {
+				mSelectedUserIds.add(((ParcelableUser) object).user_id);
+			}
 			final Intent intent = new Intent(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
 			intent.setPackage(getPackageName());
 			sendBroadcast(intent);
-
 			return ret;
 		}
 
@@ -185,6 +194,8 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			final boolean ret = super.remove(object);
 			if (object instanceof ParcelableStatus) {
 				mSelectedStatusIds.remove(((ParcelableStatus) object).status_id);
+			} else if (object instanceof ParcelableUser) {
+				mSelectedUserIds.remove(((ParcelableUser) object).user_id);
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
 			intent.setPackage(getPackageName());

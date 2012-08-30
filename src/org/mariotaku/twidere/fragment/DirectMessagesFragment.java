@@ -89,7 +89,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mService = getApplication().getServiceInterface();
+		mService = getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
 		mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 		final LazyImageLoader imageloader = getApplication().getProfileImageLoader();
