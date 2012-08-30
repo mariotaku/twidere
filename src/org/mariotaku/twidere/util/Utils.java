@@ -910,7 +910,7 @@ public final class Utils implements Constants {
 			cursor.close();
 			return path;
 		} else {
-			final String path = uri.toString();
+			final String path = uri.getPath();
 			if (path != null) {
 				if (new File(path).exists()) return path;
 			}

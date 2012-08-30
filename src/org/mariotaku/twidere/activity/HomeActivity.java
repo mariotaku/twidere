@@ -72,7 +72,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener, ActionMode.Callback {
+public class HomeActivity extends MultiSelectActivity implements OnClickListener, OnPageChangeListener {
 
 	private SharedPreferences mPreferences;
 	private ServiceInterface mService;
@@ -104,10 +104,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final String action = intent.getAction();
 			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
-			} else if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
-				updateMultiSelectState();
-			} else if (BROADCAST_MULTI_SELECT_ITEM_CHANGED.equals(action)) {
-				updateMultiSelectCount();
 			}
 		}
 
@@ -142,15 +138,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
-	public void onBackPressed() {
-		if (mApplication.isMultiSelectActive()) {
-			mApplication.stopMultiSelect();
-			return;
-		}
-		super.onBackPressed();
-	}
-
-	@Override
 	public void onBackStackChanged() {
 		super.onBackStackChanged();
 		if (!isDualPaneMode()) return;
@@ -172,45 +159,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		switch (v.getId()) {
 			case R.id.compose:
 			case R.id.button_compose:
-				if (mViewPager != null) {
-					final int position = mViewPager.getCurrentItem();
-					if (position == mAdapter.getCount() - 1) {
-						startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
-					} else {
-						switch (position) {
-							case TAB_POSITION_MESSAGES:
-								openDirectMessagesConversation(this, -1, -1);
-								break;
-							default:
-								startActivity(new Intent(INTENT_ACTION_COMPOSE));
-						}
+				if (mViewPager == null) return;
+				final int position = mViewPager.getCurrentItem();
+				if (position == mAdapter.getCount() - 1) {
+					startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
+				} else {
+					switch (position) {
+						case TAB_POSITION_MESSAGES:
+							openDirectMessagesConversation(this, -1, -1);
+							break;
+						default:
+							startActivity(new Intent(INTENT_ACTION_COMPOSE));
 					}
 				}
 				break;
-			case R.id.cancel: {
-				mApplication.stopMultiSelect();
-				break;
-			}
 		}
-	}
-
-	public static class MultiSelectMenuClickHandler implements MenuBar.OnMenuItemClickListener {
-		private final Context context;
-		public MultiSelectMenuClickHandler(Context context) {
-			this.context = context;
-		}
-		@Override
-		public boolean onMenuItemClick(MenuItem item) {
-			switch (item.getItemId()) {
-				case MENU_REPLY: {
-					handleReplyAll(context);
-					break;
-				}
-			}
-			return true;
-		}
-		
-		
 	}
 	
 	@Override
@@ -506,25 +469,16 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
 	protected void onStart() {
 		super.onStart();
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
-		filter.addAction(BROADCAST_MULTI_SELECT_STATE_CHANGED);
-		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
 		registerReceiver(mStateReceiver, filter);
 
 		final List<TabSpec> tabs = getTabs(this);
 		if (tabsChanged(tabs)) {
 			restart();
 		}
-		updateMultiSelectState();
-		updateMultiSelectCount();
 	}
 
 	@Override
@@ -567,27 +521,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return false;
 	}
 
-	private void updateMultiSelectCount() {
-		if (mActionMode != null) {
-			final int count = mApplication.getSelectedItems().size();
-			mActionMode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
-		}
-	}
-	
-	private ActionMode mActionMode;
-
-	private void updateMultiSelectState() {
-		if (mApplication.isMultiSelectActive()) {
-			if (mActionMode == null) {
-				mActionMode = startActionMode(this);
-			}
-		} else {
-			if (mActionMode != null) {
-				mActionMode.finish();
-				mActionMode = null;
-			}
-		}
-	}
 
 	@Override
 	int getDualPaneLayoutRes() {
@@ -599,32 +532,5 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return R.layout.home;
 	}
 
-	@Override
-	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		new MenuInflater(this).inflate(R.menu.menu_multi_select, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		return true;
-	}
-
-	@Override
-	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_REPLY: {
-				handleReplyAll(this);
-				break;
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public void onDestroyActionMode(ActionMode mode) {
-		mApplication.stopMultiSelect();
-		mActionMode = null;
-	}
 
 }

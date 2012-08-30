@@ -66,7 +66,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.TextView;
 
-public class LinkHandlerActivity extends DualPaneActivity implements OnClickListener {
+public class LinkHandlerActivity extends MultiSelectActivity {
 
 	private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 	private static final int CODE_STATUS = 1;
@@ -115,42 +115,10 @@ public class LinkHandlerActivity extends DualPaneActivity implements OnClickList
 		URI_MATCHER.addURI(AUTHORITY_USER_MENTIONS, null, CODE_USER_MENTIONS);
 	}
 
-	private TwidereApplication mApplication;
-
 	private Fragment mFragment;
-
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			final String action = intent.getAction();
-			if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
-				updateMultiSelectState();
-			} else if (BROADCAST_MULTI_SELECT_ITEM_CHANGED.equals(action)) {
-				updateMultiSelectCount();
-			}
-		}
-
-	};
-
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.cancel: {
-				mApplication.stopMultiSelect();
-				break;
-			}
-		}
-	}
-
-	@Override
-	public void onContentChanged() {
-		super.onContentChanged();
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		mApplication = getTwidereApplication();
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminateVisibility(false);
@@ -185,23 +153,6 @@ public class LinkHandlerActivity extends DualPaneActivity implements OnClickList
 				break;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		final IntentFilter filter = new IntentFilter();
-		filter.addAction(BROADCAST_MULTI_SELECT_STATE_CHANGED);
-		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
-		registerReceiver(mStateReceiver, filter);
-		updateMultiSelectState();
-		updateMultiSelectCount();
-	}
-
-	@Override
-	protected void onStop() {
-		unregisterReceiver(mStateReceiver);
-		super.onStop();
 	}
 
 	private boolean setFragment(Uri uri) {
@@ -496,19 +447,4 @@ public class LinkHandlerActivity extends DualPaneActivity implements OnClickList
 		return true;
 	}
 
-	private void updateMultiSelectCount() {
-	}
-
-	private void updateMultiSelectState() {
-	}
-
-	@Override
-	int getDualPaneLayoutRes() {
-		return R.layout.base_multi_select_dual_pane;
-	}
-
-	@Override
-	int getNormalLayoutRes() {
-		return R.layout.base_multi_select;
-	}
 }

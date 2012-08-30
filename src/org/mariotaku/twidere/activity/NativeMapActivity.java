@@ -25,6 +25,7 @@ import java.util.List;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -60,7 +61,7 @@ public class NativeMapActivity extends MapActivity implements Constants {
 		};
 		final List<Overlay> overlays = mMapView.getOverlays();
 		final double lat = bundle.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = bundle
-				.getDouble(INTENT_KEY_LONGITUDE, 0.0);
+			.getDouble(INTENT_KEY_LONGITUDE, 0.0);
 		final GeoPoint gp = new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6));
 		final Drawable d = getResources().getDrawable(R.drawable.ic_map_marker);
 		final Itemization markers = new Itemization(d);
@@ -78,7 +79,7 @@ public class NativeMapActivity extends MapActivity implements Constants {
 		private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 
 		public Itemization(Drawable defaultMarker) {
-			super(ItemizedOverlay.boundCenterBottom(defaultMarker));
+			super(boundCenterBottom(defaultMarker));
 		}
 
 		public void addOverlay(OverlayItem overlay) {
@@ -94,6 +95,11 @@ public class NativeMapActivity extends MapActivity implements Constants {
 		@Override
 		protected OverlayItem createItem(int i) {
 			return mOverlays.get(i);
+		}
+		
+		protected static Drawable boundCenterBottom(Drawable d) {
+			d.setBounds(-d.getIntrinsicWidth() / 2, -d.getIntrinsicHeight(), d.getIntrinsicWidth() / 2, 0);
+			return d;
 		}
 
 	}

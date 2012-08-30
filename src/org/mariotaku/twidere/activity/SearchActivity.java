@@ -50,7 +50,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-public class SearchActivity extends DualPaneActivity implements OnItemSelectedListener, OnClickListener {
+public class SearchActivity extends MultiSelectActivity implements OnItemSelectedListener {
 
 	private TwidereApplication mApplication;
 
@@ -61,35 +61,6 @@ public class SearchActivity extends DualPaneActivity implements OnItemSelectedLi
 	private final Bundle mArguments = new Bundle();
 
 	private Spinner mSpinner;
-
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			final String action = intent.getAction();
-			if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
-				updateMultiSelectState();
-			} else if (BROADCAST_MULTI_SELECT_ITEM_CHANGED.equals(action)) {
-				updateMultiSelectCount();
-			}
-		}
-
-	};
-
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.cancel: {
-				mApplication.stopMultiSelect();
-				break;
-			}
-		}
-	}
-
-	@Override
-	public void onContentChanged() {
-		super.onContentChanged();
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -169,39 +140,6 @@ public class SearchActivity extends DualPaneActivity implements OnItemSelectedLi
 				break;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		final IntentFilter filter = new IntentFilter();
-		filter.addAction(BROADCAST_MULTI_SELECT_STATE_CHANGED);
-		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
-		registerReceiver(mStateReceiver, filter);
-		updateMultiSelectState();
-		updateMultiSelectCount();
-	}
-
-	@Override
-	protected void onStop() {
-		unregisterReceiver(mStateReceiver);
-		super.onStop();
-	}
-
-	private void updateMultiSelectCount() {
-	}
-
-	private void updateMultiSelectState() {
-	}
-
-	@Override
-	int getDualPaneLayoutRes() {
-		return R.layout.base_multi_select_dual_pane;
-	}
-
-	@Override
-	int getNormalLayoutRes() {
-		return R.layout.base_multi_select;
 	}
 
 	static class SpinnerSpec {
