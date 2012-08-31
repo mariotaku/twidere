@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.model;
 
-import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.formatTweetText;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
@@ -258,7 +258,7 @@ public class ParcelableStatus implements Parcelable {
 
 	@Override
 	public String toString() {
-		return unescapeHTML(text_html);
+		return unescape(text_html);
 	}
 
 	@Override

@@ -187,7 +187,7 @@
   <string name="block">Blokkeren</string>
   <string name="unblock">Blokkering opheffen</string>
   <string name="report_for_spam">Rapporteren als spam</string>
-  <string name="mute">Dempen</string>
+  
   <string name="user_muted">Gebruiker toegevoegd aan filterlijst. U zult geen tweets van deze gebruiker meer zien in uw tijdlijn / vermeldingen.</string>
   <string name="inbox">Inbox</string>
   <string name="outbox">Outbox</string>

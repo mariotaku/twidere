@@ -60,7 +60,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	private SharedPreferences mPreferences;
 	private PopupMenu mPopupMenu;
 	private TwidereApplication mApplication;
-	
+
 	private UsersAdapter mAdapter;
 
 	private boolean mLoadMoreAutomatically;
@@ -72,7 +72,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	private Fragment mDetailFragment;
 
 	private ParcelableUser mSelectedUser;
-
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -87,7 +86,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		}
 
 	};
-	
+
 	public long getAccountId() {
 		return mAccountId;
 	}
@@ -269,12 +268,12 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	@Override
 	public void onStart() {
 		super.onStart();
-		
+
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_MULTI_SELECT_STATE_CHANGED);
 		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
 		registerReceiver(mStateReceiver, filter);
-		
+
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);

@@ -180,7 +180,7 @@
   <string name="block">Blocca</string>
   <string name="unblock">Sblocca</string>
   <string name="report_for_spam">Segnala per spam</string>
-  <string name="mute">Silenzia</string>
+  
   <string name="user_muted">Utente aggiunto all\'elenco dei filtri. Non si vedranno tweets da questo utente nella timeline della home / lista menzioni.</string>
   <string name="inbox">Inbox</string>
   <string name="outbox">Outbox</string>

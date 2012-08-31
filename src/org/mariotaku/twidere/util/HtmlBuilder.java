@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.escape;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,123 +39,64 @@ public class HtmlBuilder {
 	}
 
 	public HtmlBuilder(String string, boolean strict) {
+		if (string == null) throw new NullPointerException();
 		this.string = string;
 		this.strict = strict;
-		if (string == null) throw new NullPointerException();
 		string_length = string.length();
 	}
 
-	public void addLink(String link, String display, int start, int end) {
-		if (start >= end) {
-			if (strict) throw new IllegalArgumentException("start must lesser than end!");
-			return;
-		}
-		if (start < 0 || start >= string_length || end < 0 || end > string_length) {
+	public boolean addLink(String link, String display, int start, int end) {
+		// if (start >= end) {
+		// if (strict) throw new
+		// IllegalArgumentException("start must lesser than end!");
+		// return;
+		// }
+		if (start < 0 || end < 0 || start > end || end > string_length) {
 			if (strict)
 				throw new StringIndexOutOfBoundsException("String length = " + string_length + ", start = " + start
 						+ ", end = " + end);
-			return;
+			return false;
 		}
-		final int links_size = links.size();
-		for (int i = 0; i < links_size; i++) {
-			final LinkSpec spec = links.get(i);
+		for (final LinkSpec spec : links) {
 			if (start >= spec.start && start <= spec.end || end >= spec.start && end <= spec.end) {
 				if (strict) throw new IllegalArgumentException("link already added in this range!");
-				return;
+				return false;
 			}
 		}
-		links.add(new LinkSpec(link, display, start, end));
+		return links.add(new LinkSpec(link, display, start, end));
 	}
 
 	public String build() {
-		if (links.size() == 0) return escapeHTMLString(string);
+		if (links.size() == 0) return escape(string);
 		Collections.sort(links, LinkSpec.COMPARATOR);
 		final StringBuilder builder = new StringBuilder();
 		final int links_size = links.size();
 		for (int i = 0; i < links_size; i++) {
 			final LinkSpec spec = links.get(i);
-			if (i == 0) {
-				try {
-					builder.append(escapeHTMLString(string.substring(0, spec.start)));
-				} catch (final StringIndexOutOfBoundsException e) {
-					throw new StringIndexOutOfBoundsException("String = " + string + ", end = 0 , start = "
-							+ spec.start);
-				}
+			if (spec == null) {
+				continue;
 			}
-			if (i > 0) {
-				try {
-					builder.append(escapeHTMLString(string.substring(links.get(i - 1).end, spec.start)));
-				} catch (final StringIndexOutOfBoundsException e) {
-					throw new StringIndexOutOfBoundsException("String = " + string + ", end = " + links.get(i - 1).end
-							+ ", start = " + spec.start);
+			final int start = spec.start, end = spec.end;
+			if (i == 0) {
+				if (start >= 0 && start <= string_length) {
+					builder.append(escape(string.substring(0, start)));
+				}
+			} else if (i > 0) {
+				final int last_end = links.get(i - 1).end;
+				if (last_end >= 0 && last_end <= start && start <= string_length) {
+					builder.append(escape(string.substring(last_end, start)));
 				}
 			}
 			builder.append("<a href=\"" + spec.link + "\">");
-			builder.append(spec.display == null ? escapeHTMLString(string.substring(spec.start, spec.end))
-					: spec.display);
+			if (start >= 0 && start <= end && end <= string_length) {
+				builder.append(spec.display != null ? spec.display : escape(string.substring(start, end)));
+			}
 			builder.append("</a>");
-			if (i == links.size() - 1) {
-				builder.append(escapeHTMLString(string.substring(spec.end, string.length())));
+			if (i == links.size() - 1 && end >= 0 && end <= string_length) {
+				builder.append(escape(string.substring(end, string_length)));
 			}
 		}
 		return builder.toString();
-	}
-
-	private static String escapeHTMLString(String string) {
-		final StringBuffer sb = new StringBuffer(string.length());
-		// true if last char was blank
-		boolean lastWasBlankChar = false;
-		final int len = string.length();
-		for (int i = 0; i < len; i++) {
-			final char c = string.charAt(i);
-			if (c == ' ') {
-				// blank gets extra work,
-				// this solves the problem you get if you replace all
-				// blanks with &nbsp;, if you do that you loss
-				// word breaking
-				if (lastWasBlankChar) {
-					lastWasBlankChar = false;
-					sb.append("&nbsp;");
-				} else {
-					lastWasBlankChar = true;
-					sb.append(' ');
-				}
-			} else {
-				lastWasBlankChar = false;
-				// HTML Special Chars
-				switch (c) {
-					case '"':
-						sb.append("&quot;");
-						break;
-					case '&':
-						sb.append("&amp;");
-						break;
-					case '<':
-						sb.append("&lt;");
-						break;
-					case '>':
-						sb.append("&gt;");
-						break;
-					case '\n':
-						sb.append("<br/>");
-						break;
-					default:
-						final int ci = 0xffff & c;
-						if (ci < 160) {
-							// nothing special only 7 Bit
-							sb.append(c);
-						} else {
-							// Not 7 Bit use the unicode system
-							sb.append("&#");
-							sb.append(ci);
-							sb.append(';');
-						}
-						break;
-
-				}
-			}
-		}
-		return sb.toString();
 	}
 
 	static class LinkSpec {

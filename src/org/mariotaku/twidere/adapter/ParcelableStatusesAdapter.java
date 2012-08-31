@@ -51,6 +51,7 @@ import org.mariotaku.twidere.util.StatusesAdapterInterface;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -61,7 +62,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mDisplayName,
-			mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled;
+			mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled, mFastProcessingEnabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -135,11 +136,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.setSelected(false);
 			}
 
-			holder.setUserColor(getUserColor(mContext, status.user_id));
-
-			holder.status_background.setColor(getStatusBackground(
-					status.text_plain.contains('@' + getAccountUsername(mContext, status.account_id)),
-					status.is_favorite, status.is_retweet));
+			if (!mFastProcessingEnabled) {
+				holder.setUserColor(getUserColor(mContext, status.user_id));
+				holder.status_background.setColor(getStatusBackground(
+						status.text_plain.contains('@' + getAccountUsername(mContext, status.account_id)),
+						status.is_favorite, status.is_retweet));
+			} else {
+				holder.setUserColor(Color.TRANSPARENT);
+			}
 
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(
@@ -260,6 +264,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void setDisplayProfileImage(boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setFastProcessingEnabled(boolean enabled) {
+		if (enabled != mFastProcessingEnabled) {
+			mFastProcessingEnabled = enabled;
 			notifyDataSetChanged();
 		}
 	}

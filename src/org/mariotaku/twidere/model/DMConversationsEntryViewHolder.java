@@ -49,6 +49,7 @@ public class DMConversationsEntryViewHolder {
 			final Drawable background = content.getBackground();
 			if (background != null) {
 				background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+				content.invalidate();
 			}
 		}
 	}

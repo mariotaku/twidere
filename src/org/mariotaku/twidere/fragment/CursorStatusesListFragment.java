@@ -29,6 +29,10 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,6 +43,19 @@ import android.support.v4.content.Loader;
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
 
 	private CursorStatusesAdapter mAdapter;
+
+	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action) || BROADCAST_FILTERS_UPDATED.equals(action)) {
+				if (isAdded() && !isDetached()) {
+					getLoaderManager().restartLoader(0, null, CursorStatusesListFragment.this);
+				}
+			}
+		}
+	};
 
 	public abstract Uri getContentUri();
 
@@ -116,6 +133,20 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	public void onPullUpToRefresh() {
 		getStatuses(getActivatedAccountIds(getActivity()), getLastStatusIds());
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_FILTERS_UPDATED);
+		registerReceiver(mStatusReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStatusReceiver);
+		super.onStop();
 	}
 
 }

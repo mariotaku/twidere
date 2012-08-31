@@ -27,6 +27,7 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -64,22 +65,20 @@ import android.widget.ListView;
 public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemLongClickListener,
 		OnMenuItemClickListener, Panes.Left {
 
-	private ListView mListView;
-
-	private int mSelectedColor;
-
-	private long mSelectedUserId;
-
+	private SharedPreferences mPreferences;
+	private TwidereApplication mApplication;
 	private ContentResolver mResolver;
 
+	private AccountsAdapter mAdapter;
+
+	private ListView mListView;
 	private PopupMenu mPopupMenu;
 
-	private boolean mActivityFirstCreated;
-
-	private static final long INVALID_ID = -1;
-
+	private int mSelectedColor;
+	private long mSelectedUserId;
 	private Cursor mCursor;
-	private AccountsAdapter mAdapter;
+
+	private boolean mActivityFirstCreated;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -96,15 +95,13 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 	};
 
-	private SharedPreferences mPreferences;
-
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		final LazyImageLoader imageloader = getApplication().getProfileImageLoader();
+		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = getContentResolver();
-		mAdapter = new AccountsAdapter(getActivity(), imageloader);
+		mAdapter = new AccountsAdapter(getActivity());
 		getLoaderManager().initLoader(0, null, this);
 		mListView = getListView();
 		mListView.setOnItemLongClickListener(this);
@@ -156,6 +153,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+		if (mApplication.isMultiSelectActive()) return true;
 		if (isDefaultAccountValid() && mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
 			mSelectedColor = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.USER_COLOR));
@@ -171,6 +169,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
+		if (mApplication.isMultiSelectActive()) return;
 		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
 			final long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
@@ -197,7 +196,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
-		if (mSelectedUserId == INVALID_ID) return false;
+		if (mSelectedUserId <= 0) return false;
 		switch (item.getItemId()) {
 			case MENU_VIEW_PROFILE: {
 				openUserProfile(getActivity(), mSelectedUserId, mSelectedUserId, null);
@@ -284,6 +283,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 		public void setAccountColor(int color) {
 			content.getBackground().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			content.invalidate();
 		}
 
 		public void setIsDefault(boolean is_default) {
@@ -293,15 +293,16 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	static class AccountsAdapter extends SimpleCursorAdapter {
 
-		private final LazyImageLoader mImageLoader;
+		private final LazyImageLoader mProfileImageLoader;
 		private final SharedPreferences mPreferences;
 		private int mUserColorIdx, mProfileImageIdx, mUserIdIdx;
 		private long mDefaultAccountId;
 
-		public AccountsAdapter(Context context, LazyImageLoader loader) {
+		public AccountsAdapter(Context context) {
 			super(context, R.layout.account_list_item, null, new String[] { Accounts.USERNAME },
 					new int[] { android.R.id.text1 }, 0);
-			mImageLoader = loader;
+			final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
+			mProfileImageLoader = application.getProfileImageLoader();
 			mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		}
 
@@ -311,7 +312,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			final ViewHolder holder = (ViewHolder) view.getTag();
 			holder.setAccountColor(color);
 			holder.setIsDefault(mDefaultAccountId != -1 && mDefaultAccountId == cursor.getLong(mUserIdIdx));
-			mImageLoader.displayImage(parseURL(cursor.getString(mProfileImageIdx)), holder.profile_image);
+			mProfileImageLoader.displayImage(parseURL(cursor.getString(mProfileImageIdx)), holder.profile_image);
 			super.bindView(view, context, cursor);
 		}
 

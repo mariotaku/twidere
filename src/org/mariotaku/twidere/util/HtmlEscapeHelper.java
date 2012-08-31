@@ -29,7 +29,7 @@ import java.util.HashMap;
  *         http://ostermiller.org/contact.pl?regarding=Java+Utilities
  * @since ostermillerutils 1.00.00
  */
-public class HtmlUnescapeHelper {
+public class HtmlEscapeHelper {
 
 	@SuppressWarnings("serial")
 	private static final HashMap<String, Integer> htmlEntities = new HashMap<String, Integer>() {
@@ -289,6 +289,63 @@ public class HtmlUnescapeHelper {
 		}
 	};
 
+	public static String escape(String string) {
+		final StringBuffer sb = new StringBuffer(string.length());
+		// true if last char was blank
+		boolean lastWasBlankChar = false;
+		final int len = string.length();
+		for (int i = 0; i < len; i++) {
+			final char c = string.charAt(i);
+			if (c == ' ') {
+				// blank gets extra work,
+				// this solves the problem you get if you replace all
+				// blanks with &nbsp;, if you do that you loss
+				// word breaking
+				if (lastWasBlankChar) {
+					lastWasBlankChar = false;
+					sb.append("&nbsp;");
+				} else {
+					lastWasBlankChar = true;
+					sb.append(' ');
+				}
+			} else {
+				lastWasBlankChar = false;
+				// HTML Special Chars
+				switch (c) {
+					case '"':
+						sb.append("&quot;");
+						break;
+					case '&':
+						sb.append("&amp;");
+						break;
+					case '<':
+						sb.append("&lt;");
+						break;
+					case '>':
+						sb.append("&gt;");
+						break;
+					case '\n':
+						sb.append("<br/>");
+						break;
+					default:
+						final int ci = 0xffff & c;
+						if (ci < 160) {
+							// nothing special only 7 Bit
+							sb.append(c);
+						} else {
+							// Not 7 Bit use the unicode system
+							sb.append("&#");
+							sb.append(ci);
+							sb.append(';');
+						}
+						break;
+
+				}
+			}
+		}
+		return sb.toString();
+	}
+
 	/**
 	 * Turn any HTML escape entities in the string into characters and return
 	 * the resulting string.
@@ -299,7 +356,7 @@ public class HtmlUnescapeHelper {
 	 * 
 	 * @since ostermillerutils 1.00.00
 	 */
-	public static String unescapeHTML(String s) {
+	public static String unescape(String s) {
 		if (s == null) return null;
 		s = s.replaceAll("<br\\/>", "\n").replaceAll("<!--.*?--> |<[^>]+>", "");
 		final StringBuilder result = new StringBuilder();

@@ -181,7 +181,7 @@
   <string name="block">차단</string>
   <string name="unblock">차단 해제</string>
   <string name="report_for_spam">음소거</string>
-  <string name="mute">차단</string>
+  
   <string name="user_muted">이 사용자를 필터 목록에 추가합니다. 당신의 타임라인과 멘션 목록에서 이 사용자의 트윗을 보지 않습니다.</string>
   <string name="inbox">받음</string>
   <string name="outbox">보냄</string>

@@ -64,27 +64,28 @@ import com.twitter.Extractor;
 abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
 		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left {
 
+	private static final long TICKER_DURATION = 5000L;
+
 	private ServiceInterface mService;
 	private TwidereApplication mApplication;
-
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
 
 	private Handler mHandler;
 	private Runnable mTicker;
-	private ListView mListView;
-	private Data mData;
 
+	private ListView mListView;
+
+	private StatusesAdapterInterface mAdapter;
 	private PopupMenu mPopupMenu;
 
+	private Data mData;
 	private ParcelableStatus mSelectedStatus;
 
 	private boolean mLoadMoreAutomatically;
 
 	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mActivityFirstCreated,
 			mNotReachedBottomBefore = true;
-
-	private static final long TICKER_DURATION = 5000L;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -99,8 +100,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		}
 
 	};
-
-	private StatusesAdapterInterface mAdapter;
 
 	public AsyncTaskManager getAsyncTaskManager() {
 		return mAsyncTaskManager;
@@ -383,6 +382,12 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 		onPostStart();
 
+
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
@@ -390,10 +395,12 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
+		final boolean fast_processing = mPreferences.getBoolean(PREFERENCE_KEY_FAST_LIST_PROCESSING, false);
 		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
 		mAdapter.setDisplayImagePreview(display_image_preview);
+		mAdapter.setFastProcessingEnabled(fast_processing);
 		mAdapter.setDisplayName(display_name);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);

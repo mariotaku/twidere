@@ -22,7 +22,7 @@ package org.mariotaku.twidere.adapter;
 import static android.text.format.DateUtils.formatSameDayTime;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
-import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
@@ -55,6 +55,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
@@ -64,7 +65,7 @@ import android.view.ViewGroup;
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mDisplayName,
-			mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled;
+			mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled, mFastProcessingEnabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -121,10 +122,13 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				holder.setSelected(false);
 			}
 
-			holder.setUserColor(getUserColor(mContext, user_id));
-
-			holder.status_background.setColor(getStatusBackground(
-					text.contains('@' + getAccountUsername(mContext, account_id)), is_favorite, is_retweet));
+			if (!mFastProcessingEnabled) {
+				holder.setUserColor(getUserColor(mContext, user_id));
+				holder.status_background.setColor(getStatusBackground(
+						text.contains('@' + getAccountUsername(mContext, account_id)), is_favorite, is_retweet));
+			} else {
+				holder.setUserColor(Color.TRANSPARENT);
+			}
 
 			holder.setAccountColorEnabled(mShowAccountColor);
 
@@ -137,7 +141,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 			holder.setTextSize(mTextSize);
 
-			holder.text.setText(unescapeHTML(text));
+			holder.text.setText(unescape(text));
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(is_verified, is_protected), 0, 0, 0);
 			holder.name.setText(name);
 			if (mShowAbsoluteTime) {
@@ -288,6 +292,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	public void setDisplayProfileImage(boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setFastProcessingEnabled(boolean enabled) {
+		if (enabled != mFastProcessingEnabled) {
+			mFastProcessingEnabled = enabled;
 			notifyDataSetChanged();
 		}
 	}

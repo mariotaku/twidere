@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.HtmlUnescapeHelper.unescapeHTML;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
@@ -79,7 +79,6 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
@@ -109,7 +108,6 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.TabSpec;
@@ -124,6 +122,7 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
 import twitter4j.DirectMessage;
+import twitter4j.EntitySupport;
 import twitter4j.MediaEntity;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -172,8 +171,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.twitter.Extractor;
 
 public final class Utils implements Constants {
 
@@ -552,35 +549,7 @@ public final class Utils implements Constants {
 		final String text = status.getText();
 		if (text == null) return null;
 		final HtmlBuilder builder = new HtmlBuilder(text, false);
-		// Format media.
-		final MediaEntity[] medias = status.getMediaEntities();
-		if (medias != null) {
-			for (final MediaEntity media_item : medias) {
-				final int start = media_item.getStart();
-				final int end = media_item.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				final URL media_url = media_item.getMediaURL();
-				if (media_url != null) {
-					builder.addLink(media_url.toString(), media_item.getDisplayURL(), start, end);
-				}
-			}
-		}
-		final URLEntity[] urls = status.getURLEntities();
-		if (urls != null) {
-			for (final URLEntity url_entity : urls) {
-				final int start = url_entity.getStart();
-				final int end = url_entity.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				final URL expanded_url = url_entity.getExpandedURL();
-				if (expanded_url != null) {
-					builder.addLink(expanded_url.toString(), url_entity.getDisplayURL(), start, end);
-				}
-			}
-		}
+		parseEntities(builder, status);
 		return builder.build();
 	}
 
@@ -628,36 +597,8 @@ public final class Utils implements Constants {
 		if (tweet == null) return null;
 		final String text = tweet.getText();
 		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG);
-		final URLEntity[] urls = tweet.getURLEntities();
-		if (urls != null) {
-			for (final URLEntity url_entity : urls) {
-				final int start = url_entity.getStart();
-				final int end = url_entity.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				final URL expanded_url = url_entity.getExpandedURL();
-				if (expanded_url != null) {
-					builder.addLink(expanded_url.toString(), url_entity.getDisplayURL(), start, end);
-				}
-			}
-		}
-		// Format media.
-		final MediaEntity[] medias = tweet.getMediaEntities();
-		if (medias != null) {
-			for (final MediaEntity media_item : medias) {
-				final int start = media_item.getStart();
-				final int end = media_item.getEnd();
-				if (start < 0 || end > text.length()) {
-					continue;
-				}
-				final URL media_url = media_item.getMediaURL();
-				if (media_url != null) {
-					builder.addLink(media_url.toString(), media_item.getDisplayURL(), start, end);
-				}
-			}
-		}
+		final HtmlBuilder builder = new HtmlBuilder(text, false);
+		parseEntities(builder, tweet);
 		return builder.build();
 	}
 
@@ -1333,17 +1274,7 @@ public final class Utils implements Constants {
 			if (cur.getCount() == 1) {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
-				final PackageManager pm = context.getPackageManager();
-				try {
-					final PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
-					final String version_name = pi.versionName;
-					cb.setClientVersion(pi.versionName);
-					cb.setClientName(APP_NAME);
-					cb.setClientURL(APP_PROJECT_URL);
-					cb.setUserAgent(APP_NAME + " " + APP_PROJECT_URL + " / " + version_name);
-				} catch (final PackageManager.NameNotFoundException e) {
-
-				}
+				setUserAgent(context, cb);
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
 				if (enable_proxy) {
@@ -1464,28 +1395,6 @@ public final class Utils implements Constants {
 
 	}
 
-	public static void handleReplyAll(Context context) {
-		final TwidereApplication app = (TwidereApplication) context.getApplicationContext();
-		final Extractor extractor = new Extractor();
-		final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
-		final Bundle bundle = new Bundle();
-		final NoDuplicatesList<String> all_mentions = new NoDuplicatesList<String>();
-		for (final Object item : app.getSelectedItems()) {
-			if (item instanceof ParcelableStatus) {
-				final ParcelableStatus status = (ParcelableStatus) item;
-				all_mentions.add(status.screen_name);
-				all_mentions.addAll(extractor.extractMentionedScreennames(status.text_plain));
-			} else if (item instanceof ParcelableUser) {
-				final ParcelableUser user = (ParcelableUser) item;
-				all_mentions.add(user.screen_name);
-			}
-		}
-		bundle.putStringArray(INTENT_KEY_MENTIONS, all_mentions.toArray(new String[all_mentions.size()]));
-		intent.putExtras(bundle);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		app.startActivity(intent);
-	}
-
 	public static boolean isFiltered(Context context, String screen_name, String source, String text) {
 		if (context == null) return false;
 		final ContentResolver resolver = context.getContentResolver();
@@ -1504,7 +1413,7 @@ public final class Utils implements Constants {
 			cur = resolver.query(Filters.Sources.CONTENT_URI, cols, null, null, null);
 			cur.moveToFirst();
 			while (!cur.isAfterLast()) {
-				if (HtmlUnescapeHelper.unescapeHTML(source).equals(cur.getString(0))) return true;
+				if (HtmlEscapeHelper.unescape(source).equals(cur.getString(0))) return true;
 				cur.moveToNext();
 			}
 			cur.close();
@@ -2509,6 +2418,23 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void setUserAgent(Context context, ConfigurationBuilder cb) {
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean gzip_compressing = prefs.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, true);
+		final PackageManager pm = context.getPackageManager();
+		try {
+			final PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+			final String version_name = pi.versionName;
+			cb.setClientVersion(pi.versionName);
+			cb.setClientName(APP_NAME);
+			cb.setClientURL(APP_PROJECT_URL);
+			cb.setUserAgent(APP_NAME + " " + APP_PROJECT_URL + " / " + version_name
+					+ (gzip_compressing ? " (gzip)" : ""));
+		} catch (final PackageManager.NameNotFoundException e) {
+
+		}
+	}
+
 	public static void setUserColor(Context context, long user_id, int color) {
 		if (context == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -2522,10 +2448,8 @@ public final class Utils implements Constants {
 		if (context == null) return;
 		final String message;
 		if (e != null) {
-			message = context
-					.getString(R.string.error_message,
-							e instanceof Throwable ? trimLineBreak(unescapeHTML(((Throwable) e).getMessage()))
-									: parseString(e));
+			message = context.getString(R.string.error_message,
+					e instanceof Throwable ? trimLineBreak(unescape(((Throwable) e).getMessage())) : parseString(e));
 		} else {
 			message = context.getString(R.string.error_unknown_error);
 		}
@@ -2549,6 +2473,28 @@ public final class Utils implements Constants {
 		final BitmapFactory.Options o2 = new BitmapFactory.Options();
 		o2.inSampleSize = (int) (Math.max(o.outWidth, o.outHeight) / (48 * res.getDisplayMetrics().density));
 		return BitmapFactory.decodeFile(path, o2);
+	}
+
+	private static void parseEntities(HtmlBuilder builder, EntitySupport entities) {
+		final URLEntity[] urls = entities.getURLEntities();
+		// Format media.
+		final MediaEntity[] medias = entities.getMediaEntities();
+		if (medias != null) {
+			for (final MediaEntity media : medias) {
+				final URL media_url = media.getMediaURL();
+				if (media_url != null) {
+					builder.addLink(parseString(media_url), media.getDisplayURL(), media.getStart(), media.getEnd());
+				}
+			}
+		}
+		if (urls != null) {
+			for (final URLEntity url : urls) {
+				final URL expanded_url = url.getExpandedURL();
+				if (expanded_url != null) {
+					builder.addLink(parseString(expanded_url), url.getDisplayURL(), url.getStart(), url.getEnd());
+				}
+			}
+		}
 	}
 
 }

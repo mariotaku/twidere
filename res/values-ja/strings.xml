@@ -187,7 +187,7 @@
   <string name="block">ブロック</string>
   <string name="unblock">ブロックを解除</string>
   <string name="report_for_spam">スパムを報告</string>
-  <string name="mute">非表示</string>
+  
   <string name="user_muted">このユーザーをフィルターリストに追加する。ホーム / つながり にこのユーザーのツイートを非表示にする。</string>
   <string name="inbox">受信箱</string>
   <string name="outbox">送信箱</string>

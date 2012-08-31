@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
+import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.IOException;
@@ -52,8 +53,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -393,17 +392,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		final boolean enable_proxy = preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
 		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY);
 		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET);
-		final PackageManager pm = getPackageManager();
-		try {
-			final PackageInfo pi = pm.getPackageInfo(getPackageName(), 0);
-			final String version_name = pi.versionName;
-			cb.setClientVersion(pi.versionName);
-			cb.setClientName(APP_NAME);
-			cb.setClientURL(APP_PROJECT_URL);
-			cb.setUserAgent(APP_NAME + " " + APP_PROJECT_URL + " / " + version_name);
-		} catch (final PackageManager.NameNotFoundException e) {
-
-		}
+		setUserAgent(this, cb);
 		if (!isNullOrEmpty(mRESTBaseURL)) {
 			cb.setRestBaseURL(mRESTBaseURL);
 		}

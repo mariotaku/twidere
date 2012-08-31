@@ -21,14 +21,12 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
-import static org.mariotaku.twidere.util.Utils.handleReplyAll;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
@@ -51,20 +49,14 @@ import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserRetweetedStatusFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.TextView;
 
 public class LinkHandlerActivity extends MultiSelectActivity {
 

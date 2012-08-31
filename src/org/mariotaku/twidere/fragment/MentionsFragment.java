@@ -52,11 +52,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
 			final Bundle extras = intent.getExtras();
-			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-				if (isAdded() && !isDetached()) {
-					getLoaderManager().restartLoader(0, null, MentionsFragment.this);
-				}
-			} else if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
+			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
 				onRefreshComplete();
 				if (extras != null) {
 					mMinIdToRefresh = extras.getBoolean(INTENT_KEY_SUCCEED) ? extras.getLong(INTENT_KEY_MIN_ID, -1)

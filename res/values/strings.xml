@@ -190,6 +190,7 @@
 	<string name="report_for_spam">Report spam</string>
 	<string name="mute_user">Mute user</string>
 	<string name="user_muted">Added this user to filter list. You will not see tweets from this user in your home timeline/mentions list.</string>
+	<string name="users_muted">Added users to filter list. You will not see tweets from these users in your home timeline/mentions list.</string>
 	<string name="inbox">Inbox</string>
 	<string name="outbox">Outbox</string>
 	<string name="load_images">Load images</string>
@@ -285,8 +286,8 @@
 	<string name="notification_ringtone">Ringtone</string>
 	<string name="notification_light_color">Light Color</string>
 	<string name="invalid_image">Invalid image.</string>
-	<string name="skip_image_preview_processing">Skip image preview processing</string>
-	<string name="skip_image_preview_processing_summary">Make list scrolling more smoothly, but disable image preview - even image icon will not displayed.</string>
+	<string name="fast_list_processing">Fast list processing</string>
+	<string name="fast_list_processing_summary">Disable user color and mention hightlight to get better performance.</string>
 	<string name="share_format">Share format</string>
 	<string name="share_format_summary">\"[TITLE]\" = Content title\n\"[TEXT]\" = Content text</string>
 	<string name="network">Network</string>

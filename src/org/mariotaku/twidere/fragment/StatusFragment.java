@@ -55,7 +55,7 @@ import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.util.HtmlUnescapeHelper;
+import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -169,6 +169,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			final Drawable d = mContentScroller.getBackground();
 			if (d != null) {
 				d.mutate().setColorFilter(getAccountColor(getActivity(), status.account_id), PorterDuff.Mode.MULTIPLY);
+				mContentScroller.invalidate();
 			}
 		}
 
@@ -429,7 +430,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				break;
 			}
 			case MENU_MUTE_SOURCE: {
-				final String source = HtmlUnescapeHelper.unescapeHTML(mStatus.source);
+				final String source = HtmlEscapeHelper.unescape(mStatus.source);
 				if (source == null) return false;
 				final Uri uri = Filters.Sources.CONTENT_URI;
 				final ContentValues values = new ContentValues();
@@ -508,6 +509,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			final Drawable d = mUserColorLabel.getBackground();
 			if (d != null) {
 				d.mutate().setColorFilter(getUserColor(getActivity(), mStatus.user_id), Mode.MULTIPLY);
+				mUserColorLabel.invalidate();
 			}
 		}
 	}

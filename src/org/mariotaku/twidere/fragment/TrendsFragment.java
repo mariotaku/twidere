@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
@@ -56,18 +57,21 @@ import android.widget.Spinner;
 public class TrendsFragment extends BaseListFragment implements OnClickListener, OnItemSelectedListener,
 		OnItemClickListener, LoaderCallbacks<Cursor>, Panes.Left {
 
-	private long mAccountId;
-	private ListView mListView;
-	private TrendsAdapter mTrendsAdapter;
-	private Spinner mTrendsSpinner;
-	private ArrayAdapter<TrendsCategory> mTrendsCategoriesAdapter;
-	private ImageButton mTrendsRefreshButton;
-	private ServiceInterface mService;
-	private SharedPreferences mPreferences;
-
 	private static final int TRENDS_TYPE_DAILY = 1;
 	private static final int TRENDS_TYPE_WEEKLY = 2;
 	private static final int TRENDS_TYPE_LOCAL = 3;
+
+	private TwidereApplication mApplication;
+	private ServiceInterface mService;
+	private SharedPreferences mPreferences;
+
+	private ListView mListView;
+	private Spinner mTrendsSpinner;
+	private ImageButton mTrendsRefreshButton;
+	private TrendsAdapter mTrendsAdapter;
+	private ArrayAdapter<TrendsCategory> mTrendsCategoriesAdapter;
+
+	private long mAccountId;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -82,9 +86,10 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		mService = getApplication().getServiceInterface();
+		mService = getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
+		mApplication = getApplication();
 		mAccountId = getDefaultAccountId(getActivity());
 		mTrendsAdapter = new TrendsAdapter(getActivity());
 		setListAdapter(mTrendsAdapter);
@@ -142,6 +147,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		if (mApplication.isMultiSelectActive()) return;
 		final Cursor cur = (Cursor) mTrendsAdapter.getItem(position);
 		if (cur == null) return;
 		openTweetSearch(getActivity(), mAccountId, cur.getString(cur.getColumnIndex(CachedTrends.NAME)));

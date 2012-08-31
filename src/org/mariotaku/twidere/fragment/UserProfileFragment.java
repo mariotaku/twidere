@@ -212,6 +212,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			final Drawable d = mListView.getBackground();
 			if (d != null) {
 				d.mutate().setColorFilter(getAccountColor(getActivity(), account_id), PorterDuff.Mode.MULTIPLY);
+				mListView.invalidate();
 			}
 		}
 
@@ -343,7 +344,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case REQUEST_PICK_IMAGE: {
-				if (resultCode == Activity.RESULT_OK) {
+				if (resultCode == Activity.RESULT_OK && intent != null) {
 					final Uri uri = intent.getData();
 					final String image_path = getImagePathFromUri(getActivity(), uri);
 					final File file = image_path != null ? new File(image_path) : null;
@@ -354,7 +355,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case REQUEST_SET_COLOR: {
-				if (resultCode == Activity.RESULT_OK) if (intent != null && intent.getExtras() != null) {
+				if (resultCode == Activity.RESULT_OK && intent != null) {
 					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mUserId, color);
 					updateUserColor();
@@ -736,6 +737,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			final Drawable d = mProfileNameContainer.getBackground();
 			if (d != null) {
 				d.mutate().setColorFilter(getUserColor(getActivity(), mUserId), Mode.MULTIPLY);
+				mProfileNameContainer.invalidate();
 			}
 		}
 	}

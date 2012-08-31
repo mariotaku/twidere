@@ -180,7 +180,7 @@
   <string name="block">Blok</string>
   <string name="unblock">Hilangkan Blokir</string>
   <string name="report_for_spam">Laporkan sebagai spam</string>
-  <string name="mute">Bisu</string>
+  
   <string name="user_muted">Pengguna ini sudah didaftarkan pada daftar filter. Anda tidak akan melihat tweets dari pengguna ini dalam timeline/mention.</string>
   <string name="inbox">Kotak masuk</string>
   <string name="outbox">Kotak keluar</string>

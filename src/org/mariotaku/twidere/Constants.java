@@ -183,6 +183,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT = "dual_pane_in_portrait";
 	public static final String PREFERENCE_KEY_QUICK_SEND = "quick_send";
 	public static final String PREFERENCE_KEY_COMPOSE_ACCOUNTS = "compose_accounts";
+	public static final String PREFERENCE_KEY_FAST_LIST_PROCESSING = "fast_list_processing";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -262,11 +263,13 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_USER_LIST_CREATED = INTENT_PACKAGE_PREFIX + "USER_LIST_CREATED";
 	public static final String BROADCAST_USER_LIST_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_DELETED";
 	public static final String BROADCAST_TABS_UPDATED = INTENT_PACKAGE_PREFIX + "TABS_UPDATED";
+	public static final String BROADCAST_FILTERS_UPDATED = INTENT_PACKAGE_PREFIX + "FILTERS_UPDATED";
 	public static final String BROADCAST_AUTO_REFRESH = INTENT_PACKAGE_PREFIX + "AUTO_REFRESH";
 	public static final String BROADCAST_MULTI_SELECT_ITEM_CHANGED = INTENT_PACKAGE_PREFIX
 			+ "MULTI_SELECT_ITEM_CHANGED";
 	public static final String BROADCAST_MULTI_SELECT_STATE_CHANGED = INTENT_PACKAGE_PREFIX
 			+ "MULTI_SELECT_STATE_CHANGED";
+	public static final String BROADCAST_MULTI_BLOCKSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "MULTI_BLOCKSTATE_CHANGED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";

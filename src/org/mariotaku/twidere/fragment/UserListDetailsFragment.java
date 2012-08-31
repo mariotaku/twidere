@@ -162,6 +162,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			final Drawable d = mListView.getBackground();
 			if (d != null) {
 				d.mutate().setColorFilter(getAccountColor(getActivity(), account_id), PorterDuff.Mode.MULTIPLY);
+				mListView.invalidate();
 			}
 		}
 

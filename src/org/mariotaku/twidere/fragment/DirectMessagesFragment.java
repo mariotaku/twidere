@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.getLastMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
 import org.mariotaku.twidere.adapter.DirectMessagesEntryAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -86,11 +87,14 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		}
 	};
 
+	private TwidereApplication mApplication;
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
+		mApplication = getApplication();
 		mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 		final LazyImageLoader imageloader = getApplication().getProfileImageLoader();
 		mAdapter = new DirectMessagesEntryAdapter(getActivity(), imageloader);
@@ -116,6 +120,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		if (mApplication.isMultiSelectActive()) return;
 		final long conversation_id = mAdapter.findConversationId(id);
 		final long account_id = mAdapter.findAccountId(id);
 		if (conversation_id > 0 && account_id > 0) {

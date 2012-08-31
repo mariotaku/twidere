@@ -27,6 +27,7 @@ import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.UserListsAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.BaseUserListsLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
@@ -72,6 +73,8 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 
 	private long mCursor = -1;
 
+	private TwidereApplication mApplication;
+
 	public long getAccountId() {
 		return mAccountId;
 	}
@@ -102,6 +105,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		if (args != null) {
@@ -142,6 +146,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 
 	@Override
 	public final void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		if (mApplication.isMultiSelectActive()) return;
 		final ParcelableUserList user_list = mAdapter.findItem(id);
 		if (user_list == null) return;
 		openUserListDetails(getActivity(), mAccountId, user_list.list_id, user_list.user_id,
@@ -150,6 +155,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		if (mApplication.isMultiSelectActive()) return true;
 		mSelectedUserList = null;
 		final UserListsAdapter adapter = getListAdapter();
 		mSelectedUserList = adapter.findItem(id);

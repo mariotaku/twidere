@@ -44,6 +44,8 @@ interface ITwidereService {
 	int createBlock(long account_id, long user_id);
 	int destroyBlock(long account_id, long user_id);
 	int reportSpam(long account_id, long max_id);
+	int createMultiBlock(long account_id, in long[] user_ids);
+	int reportMultiSpam(long account_id, in long[] max_ids);
 	int addUserListMember(long account_id, int list_id, long user_id, String screen_name);
 	int deleteUserListMember(long account_id, int list_id, long user_id);
 	int updateProfile(long account_id, String name, String url, String location, String description);

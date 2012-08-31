@@ -49,6 +49,8 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 	private boolean mProgressBarIndeterminateEnabled = false;
 
+	private boolean mActionModeShowing;
+
 	public ActionBarCompatBase(Activity activity) {
 		mActivity = activity;
 		mActionBarMenu = new MenuImpl(activity);
@@ -64,31 +66,6 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	public View getCustomView() {
 		return mCustomView;
 	}
-	
-	private boolean mActionModeShowing;
-	
-	boolean isActionModeShowing() {
-		return mActionModeShowing;
-	}
-	
-	View startActionMode() {
-		mActionModeShowing = true;
-		mActionModeContainer.setVisibility(View.VISIBLE);
-		return mActionModeContainer;
-	}
-	
-	void stopActionMode() {
-		mActionModeContainer.setVisibility(View.GONE);
-		final TextView title_view = (TextView) mActionModeContainer.findViewById(R.id.action_mode_title);
-		final TextView subtitle_view = (TextView) mActionModeContainer.findViewById(R.id.action_mode_subtitle);
-		final MenuBar menu_bar = (MenuBar) mActionModeContainer.findViewById(R.id.action_mode_menu);
-		title_view.setText(null);
-		subtitle_view.setText(null);
-		subtitle_view.setVisibility(View.GONE);
-		menu_bar.getMenu().clear();
-		mActionModeShowing = false;
-	}
-	
 
 	@Override
 	public int getHeight() {
@@ -314,6 +291,10 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		}
 	}
 
+	boolean isActionModeShowing() {
+		return mActionModeShowing;
+	}
+
 	boolean requestCustomTitleView() {
 		if (mActivity != null) {
 			mActivity.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
@@ -335,7 +316,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		mHomeAsUpIndicator = mHomeView.findViewById(R.id.actionbar_home_as_up_indicator);
 		mActionMenuView = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_menu_buttons);
 		mCustomViewContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_custom_view_container);
-		
+
 		setTitle(mActivity.getTitle());
 
 		// Add Home button
@@ -356,6 +337,24 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 					visible ? View.VISIBLE : View.GONE);
 		}
 
+	}
+
+	View startActionMode() {
+		mActionModeShowing = true;
+		mActionModeContainer.setVisibility(View.VISIBLE);
+		return mActionModeContainer;
+	}
+
+	void stopActionMode() {
+		mActionModeContainer.setVisibility(View.GONE);
+		final TextView title_view = (TextView) mActionModeContainer.findViewById(R.id.action_mode_title);
+		final TextView subtitle_view = (TextView) mActionModeContainer.findViewById(R.id.action_mode_subtitle);
+		final MenuBar menu_bar = (MenuBar) mActionModeContainer.findViewById(R.id.action_mode_menu);
+		title_view.setText(null);
+		subtitle_view.setText(null);
+		subtitle_view.setVisibility(View.GONE);
+		menu_bar.getMenu().clear();
+		mActionModeShowing = false;
 	}
 
 	class SupportMenu extends MenuImpl {

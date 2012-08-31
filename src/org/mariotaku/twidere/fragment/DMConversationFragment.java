@@ -92,6 +92,8 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	private PopupMenu mPopupMenu;
 
 	private ParcelableDirectMessage mSelectedDirectMessage;
+	private final Bundle mArguments = new Bundle();
+	private Account mSelectedAccount;
 
 	private DirectMessagesConversationAdapter mAdapter;
 	private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
@@ -111,9 +113,6 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 			}
 		}
 	};
-
-	final Bundle mArguments = new Bundle();
-	private Account mSelectedAccount;
 
 	private TextWatcher mScreenNameTextWatcher = new TextWatcher() {
 

@@ -81,6 +81,9 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			database.setTransactionSuccessful();
 			database.endTransaction();
 		}
+		if (result > 0) {
+			onDatabaseUpdated(uri, false);
+		}
 		return result;
 	};
 
@@ -296,30 +299,26 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				}
 				break;
 			}
-			case URI_TRENDS_DAILY: {
-				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
-					context.sendBroadcast(new Intent(BROADCAST_TRENDS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
-					break;
-				}
-			}
-			case URI_TRENDS_WEEKLY: {
+			case URI_TRENDS_DAILY:
+			case URI_TRENDS_WEEKLY:
+			case URI_TRENDS_LOCAL:
 				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 					context.sendBroadcast(new Intent(BROADCAST_TRENDS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
 				}
 				break;
-			}
-			case URI_TRENDS_LOCAL: {
-				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
-					context.sendBroadcast(new Intent(BROADCAST_TRENDS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
-				}
-				break;
-			}
 			case URI_TABS: {
 				if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 					context.sendBroadcast(new Intent(BROADCAST_TABS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
 				}
 				break;
 			}
+			case URI_FILTERED_USERS:
+			case URI_FILTERED_KEYWORDS:
+			case URI_FILTERED_SOURCES:
+				if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
+					context.sendBroadcast(new Intent(BROADCAST_FILTERS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
+				}
+				break;
 			default:
 				return;
 		}

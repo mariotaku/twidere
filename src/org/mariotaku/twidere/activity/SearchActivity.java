@@ -26,16 +26,12 @@ import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
 
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
@@ -43,7 +39,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -51,8 +46,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 public class SearchActivity extends MultiSelectActivity implements OnItemSelectedListener {
-
-	private TwidereApplication mApplication;
 
 	private ActionBar mActionBar;
 	private ArrayAdapter<SpinnerSpec> mAdapter;
@@ -64,7 +57,6 @@ public class SearchActivity extends MultiSelectActivity implements OnItemSelecte
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		mApplication = getTwidereApplication();
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		final Intent intent = getIntent();

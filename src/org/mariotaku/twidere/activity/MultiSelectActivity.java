@@ -1,29 +1,38 @@
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.handleReplyAll;
+import java.util.ArrayList;
+
+import org.mariotaku.actionbarcompat.ActionMode;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.ListUtils;
+import org.mariotaku.twidere.util.NoDuplicatesList;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
-
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-import org.mariotaku.actionbarcompat.ActionMode;
-import org.mariotaku.menubar.MenuBar;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
+import com.twitter.Extractor;
 
 public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback {
 
 	private TwidereApplication mApplication;
 
 	private ActionMode mActionMode;
-	
+
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -38,31 +47,99 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 
 	};
 
-	public static class MultiSelectMenuClickHandler implements MenuBar.OnMenuItemClickListener {
-		private final Context context;
-		public MultiSelectMenuClickHandler(Context context) {
-			this.context = context;
-		}
-		@Override
-		public boolean onMenuItemClick(MenuItem item) {
-			switch (item.getItemId()) {
-				case MENU_REPLY: {
-					handleReplyAll(context);
-					break;
+	@Override
+	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+		final ArrayList<Object> selected_items = mApplication.getSelectedItems();
+		switch (item.getItemId()) {
+			case MENU_REPLY: {
+				final Extractor extractor = new Extractor();
+				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Bundle bundle = new Bundle();
+				final NoDuplicatesList<String> all_mentions = new NoDuplicatesList<String>();
+				for (final Object object : selected_items) {
+					if (object instanceof ParcelableStatus) {
+						final ParcelableStatus status = (ParcelableStatus) object;
+						all_mentions.add(status.screen_name);
+						all_mentions.addAll(extractor.extractMentionedScreennames(status.text_plain));
+					} else if (object instanceof ParcelableUser) {
+						final ParcelableUser user = (ParcelableUser) object;
+						all_mentions.add(user.screen_name);
+					}
 				}
+				bundle.putStringArray(INTENT_KEY_MENTIONS, all_mentions.toArray(new String[all_mentions.size()]));
+				intent.putExtras(bundle);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(intent);
+				break;
 			}
-			return true;
+			case MENU_MUTE_USER: {
+				final ContentResolver resolver = getContentResolver();
+				final Uri uri = Filters.Users.CONTENT_URI;
+				final SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME,
+						Context.MODE_PRIVATE).edit();
+				final ArrayList<ContentValues> values_list = new ArrayList<ContentValues>();
+				final NoDuplicatesList<String> names_list = new NoDuplicatesList<String>();
+				for (final Object object : selected_items) {
+					if (object instanceof ParcelableStatus) {
+						final ParcelableStatus status = (ParcelableStatus) object;
+						names_list.add(status.screen_name);
+					} else if (object instanceof ParcelableUser) {
+						final ParcelableUser user = (ParcelableUser) object;
+						names_list.add(user.screen_name);
+					} else {
+						continue;
+					}
+				}
+				resolver.delete(uri, Filters.Users.TEXT + " IN (" + ListUtils.toStringForSQL(names_list) + ")", null);
+				for (final String screen_name : names_list) {
+					final ContentValues values = new ContentValues();
+					values.put(Filters.TEXT, screen_name);
+					values_list.add(values);
+				}
+				resolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
+				editor.putBoolean(PREFERENCE_KEY_ENABLE_FILTER, true).commit();
+				Toast.makeText(this, R.string.users_muted, Toast.LENGTH_SHORT).show();
+				break;
+			}
+			case MENU_BLOCK: {
+				break;
+			}
+			case MENU_REPORT_SPAM: {
+				break;
+			}
 		}
-
+		if (item.getItemId() != R.id.more_submenu) {
+			if (mode != null) {
+				mode.finish();
+			}
+		}
+		return true;
 	}
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		mApplication = getTwidereApplication();
 		super.onCreate(savedInstanceState);
 	}
-	
+
+	@Override
+	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		new MenuInflater(this).inflate(R.menu.action_multi_select, menu);
+		return true;
+	}
+
+	@Override
+	public void onDestroyActionMode(ActionMode mode) {
+		mApplication.stopMultiSelect();
+		mActionMode = null;
+	}
+
+	@Override
+	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		return true;
+	}
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -74,42 +151,13 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 		updateMultiSelectState();
 		updateMultiSelectCount();
 	}
-	
+
 	@Override
 	protected void onStop() {
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
 	}
-	
 
-	@Override
-	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		new MenuInflater(this).inflate(R.menu.menu_multi_select, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		return true;
-	}
-
-	@Override
-	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_REPLY: {
-				handleReplyAll(this);
-				break;
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public void onDestroyActionMode(ActionMode mode) {
-		mApplication.stopMultiSelect();
-		mActionMode = null;
-	}
-	
 	private void updateMultiSelectCount() {
 		if (mActionMode != null) {
 			final int count = mApplication.getSelectedItems().size();

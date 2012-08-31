@@ -187,7 +187,7 @@
   <string name="block">ब्लाक</string>
   <string name="unblock">अनब्लाक</string>
   <string name="report_for_spam">स्पैम के लिए रिपोर्ट करे</string>
-  <string name="mute">म्यूट</string>
+  
   <string name="user_muted">इस उपयोगकर्ता को फिल्टर सूची में जोड़ा गया| आप इस उपयोगकर्ता के ट्वीट्स को नहीं देखेंगे और|</string>
   <string name="inbox">इनबॉक्स</string>
   <string name="outbox">आउटबॉक्स</string>

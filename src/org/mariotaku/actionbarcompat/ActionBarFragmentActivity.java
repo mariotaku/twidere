@@ -17,6 +17,8 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 
 	private Fragment mAttachedFragment;
 
+	private ActionModeCompat mActionModeCompat;
+
 	public MenuInflater getBaseMenuInflater() {
 		return super.getMenuInflater();
 	}
@@ -49,6 +51,16 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			((ActionBarCompatBase) mActionBarCompat).createActionBarMenu();
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (mActionBarCompat instanceof ActionBarCompatBase) {
+			if (mActionModeCompat != null) {
+				mActionModeCompat.finish();
+			}
+		}
+		super.onBackPressed();
 	}
 
 	@Override
@@ -147,26 +159,12 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 			setProgressBarIndeterminateVisibility(visible);
 		}
 	}
-	
-	private ActionModeCompat mActionModeCompat;
-	
-	@Override
-	public void onBackPressed() {
-		if (mActionBarCompat instanceof ActionBarCompatBase) {
-			if (mActionModeCompat != null) {
-				mActionModeCompat.finish();
-			}
-		}
-		super.onBackPressed();
-	}
 
 	public final ActionMode startActionMode(ActionMode.Callback callback) {
-		if (mActionBarCompat instanceof ActionBarCompatBase) {
+		if (mActionBarCompat instanceof ActionBarCompatBase)
 			return mActionModeCompat = new ActionModeCompat((ActionBarCompatBase) mActionBarCompat, callback);
-		} else {
+		else
 			return new ActionModeNative(this, callback);
-		}
 	}
-			
 
 }

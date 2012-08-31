@@ -40,12 +40,27 @@ public class ListUtils {
 		final StringBuilder builder = new StringBuilder();
 		final int size = list.size();
 		for (int i = 0; i < size; i++) {
-			final String id_string = String.valueOf(list.get(i));
-			if (id_string != null) {
+			final String item_string = String.valueOf(list.get(i));
+			if (item_string != null) {
 				if (i > 0) {
 					builder.append(include_space ? token + " " : token);
 				}
-				builder.append(id_string);
+				builder.append(item_string);
+			}
+		}
+		return builder.toString();
+	}
+
+	public static String toStringForSQL(List<String> list) {
+		final StringBuilder builder = new StringBuilder();
+		final int size = list.size();
+		for (int i = 0; i < size; i++) {
+			final String string = list.get(i);
+			if (string != null) {
+				if (i > 0) {
+					builder.append(',');
+				}
+				builder.append('\'' + string + '\'');
 			}
 		}
 		return builder.toString();

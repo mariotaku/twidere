@@ -179,7 +179,7 @@
   <string name="block">Bloquear</string>
   <string name="unblock">Desbloquear</string>
   <string name="report_for_spam">Denunciar por spam</string>
-  <string name="mute">Mudo</string>
+  
   <string name="user_muted">Adicionar este usuário pra a lista de filtros. Você não irá ver tweets desse usuário em sua lista de tweets/lista de menções.</string>
   <string name="inbox">Caixa de Entrada</string>
   <string name="outbox">Caixa de Saída</string>

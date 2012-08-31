@@ -134,6 +134,17 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int createMultiBlock(long account_id, long[] user_ids) {
+		if (mService == null) return -1;
+		try {
+			return mService.createMultiBlock(account_id, user_ids);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public int createUserList(long account_id, String list_name, boolean is_public, String description) {
 		if (mService == null) return -1;
 		try {
@@ -406,6 +417,17 @@ public final class ServiceInterface implements Constants, ITwidereService {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	@Override
+	public int reportMultiSpam(long account_id, long[] user_ids) {
+		if (mService == null) return -1;
+		try {
+			return mService.reportMultiSpam(account_id, user_ids);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 
 	@Override

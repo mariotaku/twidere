@@ -193,6 +193,11 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
+	public int createMultiBlock(long account_id, long[] user_ids) {
+		final CreateMultiBlockTask task = new CreateMultiBlockTask(account_id, user_ids);
+		return mAsyncTaskManager.add(task, true);
+	}
+
 	public int createUserList(long account_id, String list_name, boolean is_public, String description) {
 		final CreateUserListTask task = new CreateUserListTask(account_id, list_name, is_public, description);
 		return mAsyncTaskManager.add(task, true);
@@ -355,6 +360,11 @@ public class TwidereService extends Service implements Constants {
 			startService(new Intent(INTENT_ACTION_SERVICE));
 		}
 		super.onDestroy();
+	}
+
+	public int reportMultiSpam(long account_id, long[] user_ids) {
+		final ReportMultiSpamTask task = new ReportMultiSpamTask(account_id, user_ids);
+		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int reportSpam(long account_id, long user_id) {
@@ -605,17 +615,17 @@ public class TwidereService extends Service implements Constants {
 			return new SingleResponse<twitter4j.Status>(account_id, null, null);
 		}
 
-		// TODO
 		@Override
 		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
 			if (result != null && result.data != null) {
 				final twitter4j.Status retweeted_status = result.data.getRetweetedStatus();
 				if (retweeted_status != null) {
 					final ContentValues values = makeStatusContentValues(result.data, account_id);
-					final String status_where = Statuses.STATUS_ID + " = " + result.data.getId();
+					// final String status_where = Statuses.STATUS_ID + " = " +
+					// result.data.getId();
 					final String retweet_where = Statuses.STATUS_ID + " = " + retweeted_status.getId();
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
-						mResolver.delete(uri, status_where, null);
+						// mResolver.delete(uri, status_where, null);
 						mResolver.update(uri, values, retweet_where, null);
 					}
 				}
@@ -775,6 +785,58 @@ public class TwidereService extends Service implements Constants {
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
+	}
+
+	class CreateMultiBlockTask extends ManagedAsyncTask<Void, Void, ListResponse<Long>> {
+
+		private long account_id;
+		private long[] user_ids;
+
+		public CreateMultiBlockTask(long account_id, long[] user_ids) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.user_ids = user_ids;
+		}
+
+		@Override
+		protected ListResponse<Long> doInBackground(Void... params) {
+
+			final List<Long> blocked_users = new ArrayList<Long>();
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				for (final long user_id : user_ids) {
+					try {
+						final User user = twitter.createBlock(user_id);
+						if (user == null || user.getId() <= 0) {
+							continue;
+						}
+						blocked_users.add(user.getId());
+					} catch (final TwitterException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return new ListResponse<Long>(account_id, -1, blocked_users);
+		}
+
+		@Override
+		protected void onPostExecute(ListResponse<Long> result) {
+			if (result != null) {
+				final String user_id_where = ListUtils.toString(result.list, ',', false);
+				for (final Uri uri : Utils.STATUSES_URIS) {
+					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID
+							+ " IN (" + user_id_where + ")";
+					mResolver.delete(uri, where, null);
+				}
+				Toast.makeText(TwidereService.this, R.string.user_blocked, Toast.LENGTH_SHORT).show();
+			}
+			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
+			intent.putExtra(INTENT_KEY_USER_ID, user_ids);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -1576,6 +1638,58 @@ public class TwidereService extends Service implements Constants {
 		}
 	}
 
+	class ReportMultiSpamTask extends ManagedAsyncTask<Void, Void, ListResponse<Long>> {
+
+		private long account_id;
+		private long[] user_ids;
+
+		public ReportMultiSpamTask(long account_id, long[] user_ids) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.user_ids = user_ids;
+		}
+
+		@Override
+		protected ListResponse<Long> doInBackground(Void... params) {
+
+			final List<Long> reported_users = new ArrayList<Long>();
+			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
+			if (twitter != null) {
+				for (final long user_id : user_ids) {
+					try {
+						final User user = twitter.reportSpam(user_id);
+						if (user == null || user.getId() <= 0) {
+							continue;
+						}
+						reported_users.add(user.getId());
+					} catch (final TwitterException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return new ListResponse<Long>(account_id, -1, reported_users);
+		}
+
+		@Override
+		protected void onPostExecute(ListResponse<Long> result) {
+			if (result != null) {
+				final String user_id_where = ListUtils.toString(result.list, ',', false);
+				for (final Uri uri : Utils.STATUSES_URIS) {
+					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID
+							+ " IN (" + user_id_where + ")";
+					mResolver.delete(uri, where, null);
+				}
+				Toast.makeText(TwidereService.this, R.string.reported_user_for_spam, Toast.LENGTH_SHORT).show();
+			}
+			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
+			intent.putExtra(INTENT_KEY_USER_ID, user_ids);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null);
+			sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
+	}
+
 	class ReportSpamTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private long account_id;
@@ -1772,6 +1886,11 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public int createMultiBlock(long account_id, long[] user_ids) {
+			return mService.get().createMultiBlock(account_id, user_ids);
+		}
+
+		@Override
 		public int createUserList(long account_id, String list_name, boolean is_public, String description) {
 			return mService.get().createUserList(account_id, list_name, is_public, description);
 		}
@@ -1894,6 +2013,11 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public boolean isWeeklyTrendsRefreshing() {
 			return mService.get().isWeeklyTrendsRefreshing();
+		}
+
+		@Override
+		public int reportMultiSpam(long account_id, long[] user_ids) {
+			return mService.get().reportMultiSpam(account_id, user_ids);
 		}
 
 		@Override

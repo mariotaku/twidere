@@ -55,6 +55,7 @@ public class StatusViewHolder {
 		final Drawable background = status_content.getBackground();
 		if (background != null) {
 			background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			status_content.invalidate();
 		}
 	}
 
@@ -63,7 +64,11 @@ public class StatusViewHolder {
 	}
 
 	public void setSelected(boolean selected) {
-		content.setBackgroundResource(selected ? R.drawable.list_focused_holo : 0);
+		if (!show_as_gap) {
+			content.setBackgroundResource(selected ? R.drawable.list_focused_holo : 0);
+		} else {
+			content.setBackgroundResource(0);
+		}
 	}
 
 	public void setShowAsGap(boolean show_gap) {
@@ -87,6 +92,7 @@ public class StatusViewHolder {
 		final Drawable background = status_background.getBackground();
 		if (background != null) {
 			background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			status_background.invalidate();
 		}
 	}
 }

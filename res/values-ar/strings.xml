@@ -189,7 +189,7 @@
   <string name="block">حجب</string>
   <string name="unblock">رفع الحجب</string>
   <string name="report_for_spam">التبليغ عن إساءة</string>
-  <string name="mute">كتم</string>
+  
   <string name="user_muted">تم إضافة الحساب لقائمة الكتم. لن تظهر لديك تغريدات هذا المستخدم في الخط الزمني الرئيسي / الإشارات.</string>
   <string name="inbox">الصندوق الوارد</string>
   <string name="outbox">الصندوق الصادر</string>

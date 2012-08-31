@@ -187,7 +187,7 @@
   <string name="block">Blokkol</string>
   <string name="unblock">Engedélyez</string>
   <string name="report_for_spam">Spamként jelöl</string>
-  <string name="mute">Némít</string>
+  
   <string name="user_muted">Felhasználó hozzáadása a szűrőlistához. Ettől a felhasználótól nem fog megjelenni több tweet az alap tweetlistában és az említések listájában.</string>
   <string name="inbox">Beérkezett üzenetek</string>
   <string name="outbox">Küldendő</string>

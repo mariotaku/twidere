@@ -47,19 +47,24 @@ public class UserViewHolder {
 		user_background = (ColorView) view.findViewById(R.id.user_background);
 	}
 
-	public void setSelected(boolean selected) {
-		content.setBackgroundResource(selected ? R.drawable.list_focused_holo : 0);
-	}
-	
 	public void setAccountColor(int color) {
 		final Drawable background = user_content.getBackground();
 		if (background != null) {
 			background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			user_content.invalidate();
 		}
 	}
-	
+
 	public void setAccountColorEnabled(boolean enabled) {
 		user_content.setBackgroundResource(enabled ? R.drawable.ic_label_account : 0);
+	}
+
+	public void setSelected(boolean selected) {
+		if (!show_as_gap) {
+			content.setBackgroundResource(selected ? R.drawable.list_focused_holo : 0);
+		} else {
+			content.setBackgroundResource(0);
+		}
 	}
 
 	public void setShowAsGap(boolean show_gap) {
@@ -81,6 +86,7 @@ public class UserViewHolder {
 		final Drawable background = user_background.getBackground();
 		if (background != null) {
 			background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			user_background.invalidate();
 		}
 	}
 

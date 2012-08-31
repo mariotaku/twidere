@@ -187,7 +187,7 @@
   <string name="block">Blockieren</string>
   <string name="unblock">Blockierung aufheben</string>
   <string name="report_for_spam">Wegen Spam melden</string>
-  <string name="mute">Stumm schalten</string>
+  
   <string name="user_muted">Benutzer zur Filterliste hinzugefügt. Tweets dieses Benutzers werden nicht mehr in Ihrer Zeitleiste / Erwähnungsliste angezeigt.</string>
   <string name="inbox">Eingang</string>
   <string name="outbox">Ausgang</string>

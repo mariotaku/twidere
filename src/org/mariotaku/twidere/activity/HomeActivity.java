@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getTabs;
-import static org.mariotaku.twidere.util.Utils.handleReplyAll;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
 import java.util.ArrayList;
@@ -31,8 +30,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.mariotaku.actionbarcompat.ActionBar;
-import org.mariotaku.actionbarcompat.ActionMode;
-import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -63,7 +60,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -175,7 +171,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 				break;
 		}
 	}
-	
+
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
@@ -232,7 +228,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			SetHomeButtonEnabledAccessor.setHomeButtonEnabled(this, true);
 		}
 		final View view = mActionBar.getCustomView();
-		
+
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
@@ -521,7 +517,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		return false;
 	}
 
-
 	@Override
 	int getDualPaneLayoutRes() {
 		return R.layout.home_dual_pane;
@@ -531,6 +526,5 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	int getNormalLayoutRes() {
 		return R.layout.home;
 	}
-
 
 }
