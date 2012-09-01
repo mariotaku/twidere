@@ -136,7 +136,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				holder.setAccountColor(getAccountColor(mContext, account_id));
 			}
 
-			final PreviewImage preview = getPreviewImage(text, mDisplayImagePreview);
+			final PreviewImage preview = !mFastProcessingEnabled || mDisplayImagePreview ?
+				getPreviewImage(text, mDisplayImagePreview) : null;
 			final boolean has_media = preview != null ? preview.has_image : false;
 
 			holder.setTextSize(mTextSize);
