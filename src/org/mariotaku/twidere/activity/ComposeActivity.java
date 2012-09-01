@@ -713,6 +713,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			drafts_cur.close();
 		}
 		invalidateSupportOptionsMenu();
+		mMenuBar.invalidate();
 	}
 
 	private void takePhoto() {

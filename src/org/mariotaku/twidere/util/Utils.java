@@ -546,11 +546,11 @@ public final class Utils implements Constants {
 
 	public static String formatStatusText(Status status) {
 		if (status == null) return null;
-		final String text = status.getText();
+		final String text = status.getRawText();
 		if (text == null) return null;
 		final HtmlBuilder builder = new HtmlBuilder(text, false);
 		parseEntities(builder, status);
-		return builder.build();
+		return builder.build(true);
 	}
 
 	public static String formatTimeStampString(Context context, long timestamp) {
@@ -595,11 +595,11 @@ public final class Utils implements Constants {
 
 	public static String formatTweetText(Tweet tweet) {
 		if (tweet == null) return null;
-		final String text = tweet.getText();
+		final String text = tweet.getRawText();
 		if (text == null) return null;
 		final HtmlBuilder builder = new HtmlBuilder(text, false);
 		parseEntities(builder, tweet);
-		return builder.build();
+		return builder.build(true);
 	}
 
 	public static int getAccountColor(Context context, long account_id) {

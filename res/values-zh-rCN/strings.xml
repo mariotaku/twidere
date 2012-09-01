@@ -189,6 +189,7 @@
   <string name="report_for_spam">报告垃圾信息</string>
   <string name="mute_user">过滤用户</string>
   <string name="user_muted">你过滤了这个用户，你将不会在主页/提及中看到这个用户的推文。</string>
+  <string name="users_muted">你过滤了这些用户，你将不会在主页/提及中看到这些用户的推文。</string>
   <string name="inbox">收件箱</string>
   <string name="outbox">发件箱</string>
   <string name="load_images">载入图片</string>
@@ -284,8 +285,8 @@
   <string name="notification_ringtone">铃声</string>
   <string name="notification_light_color">灯光颜色</string>
   <string name="invalid_image">无效的图像。</string>
-  <string name="skip_image_preview_processing">跳过预览图片的处理</string>
-  <string name="skip_image_preview_processing_summary">使推文列表更加流畅，但是禁用图像预览——甚至推文中的图片指示也不会显示。</string>
+  <string name="fast_list_processing">快速列表处理</string>
+  <string name="fast_list_processing_summary">禁用用户颜色标签、提及高亮等以使列表更加顺畅。</string>
   <string name="share_format">分享格式</string>
   <string name="share_format_summary">\"[TITLE]\" = 分享内容的标题\n\"[TEXT]\" = 分享内容的正文</string>
   <string name="network">网络</string>

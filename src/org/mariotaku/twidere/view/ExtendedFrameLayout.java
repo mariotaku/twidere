@@ -7,7 +7,8 @@ import android.widget.FrameLayout;
 
 public class ExtendedFrameLayout extends FrameLayout {
 
-	private TouchInterceptor mListener;
+	private TouchInterceptor mTouchInterceptor;
+	private OnSizeChangedListener mOnSizeChangedListener;
 
 	public ExtendedFrameLayout(Context context) {
 		super(context);
@@ -23,26 +24,42 @@ public class ExtendedFrameLayout extends FrameLayout {
 
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent event) {
-		if (mListener != null) {
-			mListener.onInterceptTouchEvent(event);
+		if (mTouchInterceptor != null) {
+			mTouchInterceptor.onInterceptTouchEvent(event);
 		}
 		return super.onInterceptTouchEvent(event);
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if (mListener != null) {
-			mListener.onInterceptTouchEvent(event);
+		if (mTouchInterceptor != null) {
+			mTouchInterceptor.onInterceptTouchEvent(event);
 		}
 		return super.onTouchEvent(event);
 	}
 
+	public void setOnSizeChangedListener(OnSizeChangedListener listener) {
+		mOnSizeChangedListener = listener;
+	}
+
 	public void setTouchInterceptor(TouchInterceptor listener) {
-		mListener = listener;
+		mTouchInterceptor = listener;
+	}
+
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+		if (mOnSizeChangedListener != null) {
+			mOnSizeChangedListener.onSizeChanged(this, w, h, oldw, oldh);
+		}
+	}
+
+	public interface OnSizeChangedListener {
+		void onSizeChanged(FrameLayout view, int w, int h, int oldw, int oldh);
 	}
 
 	public interface TouchInterceptor {
-		public void onInterceptTouchEvent(MotionEvent event);
+		void onInterceptTouchEvent(MotionEvent event);
 	}
 
 }

@@ -56,7 +56,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed() {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
-			if (mActionModeCompat != null) {
+			if (((ActionBarCompatBase) mActionBarCompat).isActionModeShowing() && mActionModeCompat != null) {
 				mActionModeCompat.finish();
 			}
 		}
@@ -79,6 +79,10 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		if (mActionBarCompat instanceof ActionBarCompatBase) {
+			if (((ActionBarCompatBase) mActionBarCompat).isActionModeShowing() && mActionModeCompat != null)
+				return false;
+		}
 		boolean retValue = super.onCreateOptionsMenu(menu);
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			if (mAttachedFragment != null) {
@@ -99,6 +103,10 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		if (mActionBarCompat instanceof ActionBarCompatBase) {
+			if (((ActionBarCompatBase) mActionBarCompat).isActionModeShowing() && mActionModeCompat != null)
+				return false;
+		}
 		super.onPrepareOptionsMenu(menu);
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			((ActionBarCompatBase) mActionBarCompat).hideInRealMenu(menu);

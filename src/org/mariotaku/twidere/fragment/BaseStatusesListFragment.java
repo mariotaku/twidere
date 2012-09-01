@@ -322,6 +322,27 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	public abstract void onPullDownToRefresh();
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
+		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
+		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
+		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
+		final boolean fast_processing = mPreferences.getBoolean(PREFERENCE_KEY_FAST_LIST_PROCESSING, false);
+		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
+		mAdapter.setDisplayProfileImage(display_profile_image);
+		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
+		mAdapter.setDisplayImagePreview(display_image_preview);
+		mAdapter.setFastProcessingEnabled(fast_processing);
+		mAdapter.setDisplayName(display_name);
+		mAdapter.setTextSize(text_size);
+		mAdapter.setShowAbsoluteTime(show_absolute_time);
+	}
+
+	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
 				&& totalItemCount >= visibleItemCount;
@@ -382,28 +403,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 		onPostStart();
 
-
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
-		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
-		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
-		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
-		final boolean fast_processing = mPreferences.getBoolean(PREFERENCE_KEY_FAST_LIST_PROCESSING, false);
-		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
-		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
-		mAdapter.setDisplayImagePreview(display_image_preview);
-		mAdapter.setFastProcessingEnabled(fast_processing);
-		mAdapter.setDisplayName(display_name);
-		mAdapter.setTextSize(text_size);
-		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
 
 	@Override

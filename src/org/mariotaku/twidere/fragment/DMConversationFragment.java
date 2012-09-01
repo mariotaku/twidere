@@ -22,6 +22,7 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.parseString;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -339,7 +340,9 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putString(INTENT_KEY_TEXT, String.valueOf(mEditText.getText()));
+		if (mEditText != null) {
+			outState.putString(INTENT_KEY_TEXT, parseString(mEditText.getText()));
+		}
 		outState.putBundle(INTENT_KEY_DATA, mArguments);
 		super.onSaveInstanceState(outState);
 	}

@@ -95,4 +95,5 @@ public class StatusViewHolder {
 			status_background.invalidate();
 		}
 	}
+
 }

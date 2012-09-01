@@ -23,7 +23,6 @@
 			android:title="@string/hires_profile_image"/>
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:dependency="fast_list_processing"
 			android:key="inline_image_preview"
 			android:summary="@string/image_load_summary"
 			android:title="@string/inline_image_preview"/>
@@ -90,7 +89,6 @@
 			android:title="@string/show_absolute_time"/>
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:disableDependentsState="true"
 			android:key="fast_list_processing"
 			android:summary="@string/fast_list_processing_summary"
 			android:title="@string/fast_list_processing"/>
