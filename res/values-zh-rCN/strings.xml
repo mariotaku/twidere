@@ -172,8 +172,10 @@
   <string name="remember_position">记住位置</string>
   <string name="remember_position_summary">打开Twidere时，恢复到退出前列表/页面的位置</string>
   <string name="user_blocked">你阻止了这个用户。</string>
+  <string name="users_blocked">你阻止了这些用户。</string>
   <string name="user_unblocked">你解除了对这个用户的阻止。</string>
   <string name="reported_user_for_spam">你已报告这个用户发送垃圾信息。</string>
+  <string name="reported_users_for_spam">你已报告这些用户发送垃圾信息。</string>
   <string name="filename_hint">文件名</string>
   <string name="overwrite_confirm">文件已经存在，覆盖吗？</string>
   <string name="save_as">保存为</string>

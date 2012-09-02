@@ -51,7 +51,6 @@
   <string name="description_permission_write_databases">データベースにツイート、下書き、アカウント情報またはダイレクトメッセージなどを書き込む。</string>
   <string name="description_permission_access_service">ツイート、DMを送信/更新する</string>
   <string name="open_in_browser">ブラウザで開く</string>
-  <string name="just_now">たった今</string>
   <string name="tap_to_load_more">タップしてツイートを読み込む</string>
   <string name="delete">削除</string>
   <string name="retweet">リツイート</string>
@@ -112,6 +111,7 @@
   <string name="content">内容</string>
   <string name="customize">カストマイズ</string>
   <string name="set_color">色を設定</string>
+  <string name="clear">クリア</string>
   <string name="pick_color">色を選択</string>
   <string name="follow">フォロー</string>
   <string name="unfollow">フォローを解除</string>
@@ -154,7 +154,7 @@
   <string name="retry">再試行</string>
   <string name="more">設定</string>
   <string name="quote_format">引用形式</string>
-
+  <string name="quote_format_summary">\"[TEXT]\" = Tweet text\n\"[NAME]\" = Twitter username</string>
   <string name="direct_messages">ダイレクトメッセージ</string>
   <string name="capital_on">オン</string>
   <string name="capital_off">オフ</string>
@@ -172,8 +172,10 @@
   <string name="remember_position">位置を記憶</string>
   <string name="remember_position_summary">ツイデレを閉じる前にリスト/タブの位置を記憶する。</string>
   <string name="user_blocked">ブロックを解除</string>
+  <string name="users_blocked">Blocked these users.</string>
   <string name="user_unblocked">このユーザーのブロックを解除しました。</string>
   <string name="reported_user_for_spam">スパムとして報告</string>
+  <string name="reported_users_for_spam">Reported these users for spam.</string>
   <string name="filename_hint">ファイル名</string>
   <string name="overwrite_confirm">ファイルはすでに存在します。上書きしますか？</string>
   <string name="save_as">名前を付けて保存</string>
@@ -187,8 +189,9 @@
   <string name="block">ブロック</string>
   <string name="unblock">ブロックを解除</string>
   <string name="report_for_spam">スパムを報告</string>
-  
+  <string name="mute_user">Mute user</string>
   <string name="user_muted">このユーザーをフィルターリストに追加する。ホーム / つながり にこのユーザーのツイートを非表示にする。</string>
+  <string name="users_muted">複数のユーザーをフィルターリストに追加する。ホーム / つながり にこのユーザーのツイートを非表示にする。</string>
   <string name="inbox">受信箱</string>
   <string name="outbox">送信箱</string>
   <string name="load_images">画像を読み込む</string>
@@ -225,16 +228,6 @@
   <string name="list_created_by_user">このユーザーが作成したリスト</string>
   <string name="report_errors_automatically">エラー報告の自動送信</string>
   <string name="report_errors_automatically_summary">エラー報告を自動的に送信します。個人データを収集することはありません。</string>
-  <string name="Nminutes_quantity_one">1分</string>
-  <string name="Nminutes_quantity_other"><xliff:g id="minutes">%d</xliff:g> 分</string>
-  <string name="Nhours_quantity_one">1時間</string>
-  <string name="Nhours_quantity_other"><xliff:g id="hours">%d</xliff:g> 時間</string>
-  <string name="Ndays_quantity_one">1日</string>
-  <string name="Ndays_quantity_other"><xliff:g id="days">%d</xliff:g> 日</string>
-  <string name="Nmonths_quantity_one">1ヶ月</string>
-  <string name="Nmonths_quantity_other"><xliff:g id="months">%d</xliff:g> ヶ月</string>
-  <string name="Nyears_quantity_one">1年</string>
-  <string name="Nyears_quantity_other"><xliff:g id="years">%d</xliff:g> 年</string>
   <string name="Ntweets_quantity_one">新しいツイートが一件あります。</string>
   <string name="Ntweets_quantity_other">新しいツイートが <xliff:g id="items">%d</xliff:g>+ 件あります。</string>
   <string name="Nmentions_quantity_one">自分宛ツイートがあります。</string>
@@ -258,11 +251,10 @@
   <string name="trends_location_summary">ローカルトレンドの場所を変更する。</string>
   <string name="trends">トレンド</string>
   <string name="accounts">アカウント</string>
+  <string name="account">アカウント</string>
   <string name="hires_profile_image">高解像度プロファイル画像</string>
   <string name="mention_this_user">このユーザー宛にツイート</string>
   <string name="signing_in_please_wait">サインインしています、しばらくお待ちください。もう一度戻るボタンを押すと終了します。</string>
-  <string name="force_ssl_connection">SSL通信の強制設定</string>
-  <string name="force_ssl_connection_summary">APIと他のリクエストを強制的にSSL通信にする</string>
   <string name="connectivity">接続性</string>
   <string name="add_member">ユーザーを追加</string>
   <string name="add_success">追加しました</string>
@@ -275,5 +267,59 @@
   <string name="view_user_list">ユーザーリストを表示</string>
   <string name="open">開く</string>
   <string name="uninstall">アンインストール</string>
-  <string name="users_retweeted_this">ユーザーがこれをリツイートしました</string>
+  <string name="users_retweeted_this">ユーザーがリツイートしました</string>
+  <string name="saved_searches">保存した検索</string>
+  <string name="add_saved_search">保存した検索を追加</string>
+  <string name="custom_tabs">カスタムタブ</string>
+  <string name="retweeted_to_me">リツイート・タイムライン</string>
+  <string name="add_tab">タブを追加</string>
+  <string name="tab_type">タブ類型</string>
+  <string name="unused">未使用</string>
+  <string name="list_name">リスト名</string>
+  <string name="edit_tab">リストを編集</string>
+  <string name="move_up">上に移動</string>
+  <string name="move_down">下に移動</string>
+  <string name="unsaved_change_back_pressed">保存されていない変更があります。もう一度戻るボタンを押すと破棄します。</string>
+  <string name="invalid_settings">無効な設定が見つかりました。</string>
+  <string name="icon">アイコン</string>
+  <string name="pick_file">ファイルを選択</string>
+  <string name="user_timeline">特定ユーザーのタイムライン</string>
+  <string name="notification_ringtone">通知音</string>
+  <string name="notification_light_color">LED色</string>
+  <string name="invalid_image">無効な画像。</string>
+  <string name="fast_list_processing">Fast list processing</string>
+  <string name="fast_list_processing_summary">ユーザー色指定と自分宛ツイートハイライトを無効にすると性能を向上させる。</string>
+  <string name="share_format">共有形式</string>
+  <string name="share_format_summary">\"[TITLE]\" = タイトル\n\"[TEXT]\" = テキスト</string>
+  <string name="network">ネットワーク</string>
+  <string name="content_and_storage">コンテンツ &amp; ストレージ</string>
+  <string name="image_uploader">画像アップローダー</string>
+  <string name="image_uploader_default">デフォルト（ツイッター）</string>
+  <string name="home_refresh">ホームTLの更新</string>
+  <string name="error_message_image_upload_failed">画像をアップロードできません。</string>
+  <string name="error_message_image_uploader_not_found">画像アップローダーが見つかりません。</string>
+  <string name="image_upload_format">画像をアップロード時のツイート形式</string>
+  <string name="image_upload_format_summary">\"[LINK]\" = 画像リンク\n\"[TEXT]\" = ツイートするコンテンツ</string>
+  <string name="tweet_shortener">Tweet shortener</string>
+  <string name="tweet_shortener_default">無 (送信を取り消す)</string>
+  <string name="error_message_status_too_long">ツイートのテキストは長過ぎます。</string>
+  <string name="error_message_tweet_shorten_failed">ツイートを短縮できません。</string>
+  <string name="error_message_tweet_shortener_not_found">ツイート短縮サービスが見つかりません。</string>
+  <string name="multimedia_contents">マルティメディア・コンテンツ</string>
+  <string name="show_absolute_time">絶対時間を表示</string>
+  <string name="show_absolute_time_summary">ツイートの時間を絶対時間で表示する</string>
+  <string name="mute_source">ソースを非表示</string>
+  <string name="source_muted">\"<xliff:g id="source">%s</xliff:g>\"をフィルタリストに追加しました。ホーム / つながり にこのユーザーのツイートを非表示にする。</string>
+  <string name="user_mentions">ユーザーメンション</string>
+  <string name="dual_pane_layout">デュアルペインのレイアウト</string>
+  <string name="landscape">ランドスケープ</string>
+  <string name="portrait">ポートレイト</string>
+  <string name="quick_send">エンターキーを押すと送信</string>
+  <string name="quick_send_summary">エンターキーを押すと送信する</string>
+  <string name="unsaved_tweet">ツイートを送信しません。また、ツイートが保存されていません。</string>
+  <string name="discard">破棄</string>
+  <string name="multi_select">複数選択</string>
+  <string name="Nitems_selected_quantity_one">1 アイテムが選択</string>
+  <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> アイテムが選択</string>
+  <string name="view">表示</string>
 </resources>

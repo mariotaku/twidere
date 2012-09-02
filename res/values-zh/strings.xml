@@ -111,6 +111,7 @@
   <string name="content">內容</string>
   <string name="customize">自定義</string>
   <string name="set_color">設定顏色</string>
+  <string name="clear">清除</string>
   <string name="pick_color">選取顏色</string>
   <string name="follow">關注</string>
   <string name="unfollow">取消關注</string>
@@ -171,8 +172,10 @@
   <string name="remember_position">記住位置</string>
   <string name="remember_position_summary">打開Twidere時，恢復到退出前列表/頁面的位置</string>
   <string name="user_blocked">你阻止了這個用戶。</string>
+  <string name="users_blocked">你阻止了這些用戶。</string>
   <string name="user_unblocked">你解除了對這個用戶的阻止。</string>
   <string name="reported_user_for_spam">你已報告這個用戶發送垃圾信息。</string>
+  <string name="reported_users_for_spam">你已報告這些用戶發送垃圾信息。</string>
   <string name="filename_hint">檔案名</string>
   <string name="overwrite_confirm">檔案已經存在，覆蓋嗎？</string>
   <string name="save_as">保存為</string>
@@ -188,6 +191,7 @@
   <string name="report_for_spam">報告垃圾信息</string>
   <string name="mute_user">過濾用戶</string>
   <string name="user_muted">你過濾了這個用戶，你將不會在主頁/提及中看到這個用戶的推文。</string>
+  <string name="users_muted">你過濾了這些用戶，你將不會在主頁/提及中看到這些用戶的推文。</string>
   <string name="inbox">收件箱</string>
   <string name="outbox">發件箱</string>
   <string name="load_images">載入圖片</string>
@@ -283,8 +287,8 @@
   <string name="notification_ringtone">鈴聲</string>
   <string name="notification_light_color">燈光顏色</string>
   <string name="invalid_image">無效的圖像。</string>
-  <string name="skip_image_preview_processing">跳過預覽圖片的處理</string>
-  <string name="skip_image_preview_processing_summary">使推文列表更加流暢，但是禁用圖像預覽——甚至推文中的圖片指示也不會顯示。</string>
+  <string name="fast_list_processing">快速列表處理</string>
+  <string name="fast_list_processing_summary">禁用用戶顏色標籤、提及高亮等以使列表更加順暢。</string>
   <string name="share_format">分享格式</string>
   <string name="share_format_summary">\"[TITLE]\" = 分享內容的標題\n\"[TEXT]\" = 分享內容的正文</string>
   <string name="network">網絡</string>
@@ -312,4 +316,10 @@
   <string name="portrait">縱向模式</string>
   <string name="quick_send">按“回車”發送</string>
   <string name="quick_send_summary">按“回車”發送推文。</string>
+  <string name="unsaved_tweet">推文還沒有發送或保存。</string>
+  <string name="discard">捨棄</string>
+  <string name="multi_select">多選</string>
+  <string name="Nitems_selected_quantity_one">已選擇 1 項</string>
+  <string name="Nitems_selected_quantity_other">已選擇 <xliff:g id="items">%d</xliff:g> 項</string>
+  <string name="view">查看</string>
 </resources>
