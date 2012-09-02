@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.mariotaku.twidere.view.ExtendedFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
-	<org.mariotaku.twidere.view.ColorView
-		android:id="@+id/status_background"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_gravity="center"
-		android:background="@drawable/ic_label_user"/>
-
-	<RelativeLayout
+	<org.mariotaku.twidere.view.ExtendedRelativeLayout
 		android:id="@+id/status_content"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -86,7 +79,7 @@
 			android:paddingLeft="6dp"
 			android:paddingTop="3dp"
 			android:textColor="?android:attr/textColorSecondary"/>
-	</RelativeLayout>
+	</org.mariotaku.twidere.view.ExtendedRelativeLayout>
 
 	<TextView
 		android:id="@+id/list_gap_text"
@@ -99,4 +92,4 @@
 		android:textStyle="bold"
 		android:visibility="gone"/>
 
-</org.mariotaku.twidere.view.ExtendedFrameLayout>
+</FrameLayout>

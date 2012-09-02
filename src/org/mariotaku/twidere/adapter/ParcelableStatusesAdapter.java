@@ -138,11 +138,12 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 			if (!mFastProcessingEnabled) {
 				holder.setUserColor(getUserColor(mContext, status.user_id));
-				holder.status_background.setColor(getStatusBackground(
+				holder.setHighlightColor(getStatusBackground(
 						status.text_plain.contains('@' + getAccountUsername(mContext, status.account_id)),
 						status.is_favorite, status.is_retweet));
 			} else {
 				holder.setUserColor(Color.TRANSPARENT);
+				holder.setHighlightColor(Color.TRANSPARENT);
 			}
 
 			holder.setTextSize(mTextSize);

@@ -19,32 +19,31 @@
 
 package org.mariotaku.twidere.model;
 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.ColorView;
-
 import android.content.Context;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+ 
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.view.ExtendedRelativeLayout;
 
 public class StatusViewHolder {
 
 	public final ImageView profile_image, image_preview;
-	public final ColorView status_background;
 	public final TextView name, text, time, reply_retweet_status;
-	private final View content, status_content, gap_indicator;
+	private final View content, gap_indicator;
+	private final ExtendedRelativeLayout status_content;
 	public boolean show_as_gap;
+	private boolean account_color_enabled;
 	private float text_size;
 
 	public StatusViewHolder(View view, Context context) {
 		content = view;
-		status_content = view.findViewById(R.id.status_content);
+		status_content = (ExtendedRelativeLayout) view.findViewById(R.id.status_content);
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		image_preview = (ImageView) view.findViewById(R.id.image_preview);
-		status_background = (ColorView) view.findViewById(R.id.status_background);
 		name = (TextView) view.findViewById(R.id.name);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
@@ -52,15 +51,18 @@ public class StatusViewHolder {
 	}
 
 	public void setAccountColor(int color) {
-		final Drawable background = status_content.getBackground();
-		if (background != null) {
-			background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-			status_content.invalidate();
-		}
+		status_content.drawRight(account_color_enabled ? color : Color.TRANSPARENT);
 	}
 
 	public void setAccountColorEnabled(boolean enabled) {
-		status_content.setBackgroundResource(enabled ? R.drawable.ic_label_account : 0);
+		account_color_enabled = enabled;
+		if (!enabled) {
+			status_content.drawRight(Color.TRANSPARENT);
+		}
+	}
+	
+	public void setHighlightColor(int color) {
+		status_content.drawBackground(color);
 	}
 
 	public void setSelected(boolean selected) {
@@ -74,7 +76,6 @@ public class StatusViewHolder {
 	public void setShowAsGap(boolean show_gap) {
 		show_as_gap = show_gap;
 		status_content.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		status_background.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
 
@@ -89,11 +90,7 @@ public class StatusViewHolder {
 	}
 
 	public void setUserColor(int color) {
-		final Drawable background = status_background.getBackground();
-		if (background != null) {
-			background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-			status_background.invalidate();
-		}
+		status_content.drawLeft(color);
 	}
 
 }
