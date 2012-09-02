@@ -173,8 +173,10 @@
 	<string name="remember_position">Remember position</string>
 	<string name="remember_position_summary">Remember list/tab position before closing Twidere</string>
 	<string name="user_blocked">Blocked this user.</string>
+	<string name="users_blocked">Blocked these users.</string>
 	<string name="user_unblocked">Unblocked this user.</string>
 	<string name="reported_user_for_spam">Reported this user for spam.</string>
+	<string name="reported_users_for_spam">Reported these users for spam.</string>
 	<string name="filename_hint">Filename</string>
 	<string name="overwrite_confirm">File exists, overwrite?</string>
 	<string name="save_as">Save as</string>

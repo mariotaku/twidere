@@ -20,10 +20,9 @@
 package org.mariotaku.twidere.model;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.ColorView;
+import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,46 +30,45 @@ import android.widget.TextView;
 public class UserViewHolder {
 
 	public final ImageView profile_image;
-	public final ColorView user_background;
 	public final TextView name, description;
-	private final View content, user_content, gap_indicator;
+	private final View gap_indicator;
+	private final ColorLabelRelativeLayout content;
 	public boolean show_as_gap;
+	private boolean account_color_enabled;
 	private float text_size;
 
 	public UserViewHolder(View view) {
-		content = view;
-		user_content = view.findViewById(R.id.user_content);
+		content = (ColorLabelRelativeLayout) view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		description = (TextView) view.findViewById(R.id.description);
-		user_background = (ColorView) view.findViewById(R.id.user_background);
 	}
 
 	public void setAccountColor(int color) {
-		final Drawable background = user_content.getBackground();
-		if (background != null) {
-			background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-			user_content.invalidate();
-		}
+		content.drawRight(account_color_enabled && !show_as_gap ? color : Color.TRANSPARENT);
 	}
 
 	public void setAccountColorEnabled(boolean enabled) {
-		user_content.setBackgroundResource(enabled ? R.drawable.ic_label_account : 0);
+		account_color_enabled = enabled && !show_as_gap;
+		if (!account_color_enabled) {
+			content.drawRight(Color.TRANSPARENT);
+		}
+	}
+
+	public void setHighlightColor(int color) {
+		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
 	}
 
 	public void setSelected(boolean selected) {
-		if (!show_as_gap) {
-			content.setBackgroundResource(selected ? R.drawable.list_focused_holo : 0);
-		} else {
-			content.setBackgroundResource(0);
-		}
+		content.setBackgroundColor(selected && !show_as_gap ? 0x600099CC : Color.TRANSPARENT);
 	}
 
 	public void setShowAsGap(boolean show_gap) {
 		show_as_gap = show_gap;
-		user_content.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		user_background.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		description.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
 
@@ -83,11 +81,7 @@ public class UserViewHolder {
 	}
 
 	public void setUserColor(int color) {
-		final Drawable background = user_background.getBackground();
-		if (background != null) {
-			background.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-			user_background.invalidate();
-		}
+		content.drawLeft(show_as_gap ? Color.TRANSPARENT : color);
 	}
 
 }

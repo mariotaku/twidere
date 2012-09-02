@@ -19,27 +19,26 @@
 
 package org.mariotaku.twidere.model;
 
-import android.content.Context;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
+
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
- 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.ExtendedRelativeLayout;
 
 public class StatusViewHolder {
 
 	public final ImageView profile_image, image_preview;
 	public final TextView name, text, time, reply_retweet_status;
 	private final View gap_indicator;
-	private final ExtendedRelativeLayout content;
+	private final ColorLabelRelativeLayout content;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
 
 	public StatusViewHolder(View view) {
-		content = (ExtendedRelativeLayout) view;
+		content = (ColorLabelRelativeLayout) view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		image_preview = (ImageView) view.findViewById(R.id.image_preview);
@@ -59,13 +58,13 @@ public class StatusViewHolder {
 			content.drawRight(Color.TRANSPARENT);
 		}
 	}
-	
+
 	public void setHighlightColor(int color) {
-		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);	
+		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
 	}
 
 	public void setSelected(boolean selected) {
-		content.setBackgroundColor(selected && !show_as_gap ? 0x8033B5E5 : 0);
+		content.setBackgroundColor(selected && !show_as_gap ? 0x600099CC : Color.TRANSPARENT);
 	}
 
 	public void setShowAsGap(boolean show_gap) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.mariotaku.twidere.view.ExtendedRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"	
+<org.mariotaku.twidere.view.ColorLabelRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:padding="6dp">
 
@@ -11,13 +11,13 @@
 		android:layout_alignParentRight="true"
 		android:scaleType="fitCenter"/>
 
-	<TextView	
+	<TextView
 		android:id="@+id/name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginRight="3dp"	
+		android:layout_marginRight="3dp"
 		android:layout_toLeftOf="@+id/profile_image"
 		android:gravity="center_vertical|right"
 		android:singleLine="true"
@@ -37,7 +37,7 @@
 		android:gravity="right"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
-	
+
 	<TextView
 		android:id="@+id/time"
 		android:layout_width="wrap_content"
@@ -86,5 +86,5 @@
 		android:textColor="#606060"
 		android:textStyle="bold"
 		android:visibility="gone"/>
-</org.mariotaku.twidere.view.ExtendedRelativeLayout>
 
+</org.mariotaku.twidere.view.ColorLabelRelativeLayout>

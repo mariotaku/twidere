@@ -19,13 +19,13 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openConversation;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.popupmenu.PopupMenu;
@@ -36,6 +36,7 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.NoDuplicatesList;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
@@ -177,7 +178,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
 			} else {
 				if (mApplication.isMultiSelectActive()) {
-					final ArrayList<Object> list = mApplication.getSelectedItems();
+					final NoDuplicatesList<Object> list = mApplication.getSelectedItems();
 					if (!list.contains(status)) {
 						list.add(status);
 					} else {
@@ -198,7 +199,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			if (holder.show_as_gap) return false;
 			mSelectedStatus = getListAdapter().findStatus(id);
 			if (mApplication.isMultiSelectActive()) {
-				final ArrayList<Object> list = mApplication.getSelectedItems();
+				final NoDuplicatesList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(mSelectedStatus)) {
 					list.add(mSelectedStatus);
 				} else {
@@ -225,6 +226,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	@Override
 	public void onLoadFinished(Loader<Data> loader, Data data) {
 		mData = data;
+		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
 		setListShown(true);
 	}
 
@@ -306,7 +308,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				if (!mApplication.isMultiSelectActive()) {
 					mApplication.startMultiSelect();
 				}
-				final ArrayList<Object> list = mApplication.getSelectedItems();
+				final NoDuplicatesList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(status)) {
 					list.add(status);
 				}

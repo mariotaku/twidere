@@ -2,14 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
+		android:id="@id/reply"
+		android:icon="@drawable/ic_menu_reply"
+		android:showAsAction="always"
+		android:title="@string/reply"/>
+	<item
 		android:id="@+id/more_submenu"
 		android:icon="@drawable/ic_menu_more"
 		android:title="@string/more">
 		<menu>
-			<item
-				android:id="@id/reply"
-				android:icon="@drawable/ic_menu_reply"
-				android:title="@string/reply"/>
 			<item
 				android:id="@+id/mute_submenu"
 				android:icon="@drawable/ic_menu_mute"

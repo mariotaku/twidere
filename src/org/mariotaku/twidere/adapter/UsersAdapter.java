@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -43,7 +44,8 @@ import android.widget.ArrayAdapter;
 public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
 
 	private final LazyImageLoader mProfileImageLoader;
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName, mMultiSelectEnabled;
+	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName, mShowAccountColor,
+			mMultiSelectEnabled;
 	private float mTextSize;
 	private final ArrayList<Long> mSelectedUserIds;
 	private final Context mContext;
@@ -100,6 +102,12 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			holder.setSelected(mSelectedUserIds.contains(user.user_id));
 		} else {
 			holder.setSelected(false);
+		}
+
+		holder.setAccountColorEnabled(mShowAccountColor);
+
+		if (mShowAccountColor) {
+			holder.setAccountColor(getAccountColor(mContext, user.account_id));
 		}
 
 		holder.setUserColor(getUserColor(mContext, user.user_id));
@@ -165,6 +173,13 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	public void setMultiSelectEnabled(boolean multi) {
 		if (mMultiSelectEnabled != multi) {
 			mMultiSelectEnabled = multi;
+			notifyDataSetChanged();
+		}
+	}
+
+	public void setShowAccountColor(boolean show) {
+		if (show != mShowAccountColor) {
+			mShowAccountColor = show;
 			notifyDataSetChanged();
 		}
 	}

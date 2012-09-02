@@ -31,6 +31,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.NoDuplicatesList;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Application;
@@ -164,7 +165,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	@SuppressWarnings("serial")
-	public class ItemsList extends ArrayList<Object> {
+	public class ItemsList extends NoDuplicatesList<Object> {
 
 		@Override
 		public boolean add(Object object) {
@@ -184,6 +185,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		public void clear() {
 			super.clear();
 			mSelectedStatusIds.clear();
+			mSelectedUserIds.clear();
 			final Intent intent = new Intent(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
 			intent.setPackage(getPackageName());
 			sendBroadcast(intent);

@@ -832,7 +832,7 @@ public class TwidereService extends Service implements Constants {
 							+ " IN (" + user_id_where + ")";
 					mResolver.delete(uri, where, null);
 				}
-				Toast.makeText(TwidereService.this, R.string.user_blocked, Toast.LENGTH_SHORT).show();
+				Toast.makeText(TwidereService.this, R.string.users_blocked, Toast.LENGTH_SHORT).show();
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_ids);
@@ -1679,7 +1679,7 @@ public class TwidereService extends Service implements Constants {
 							+ " IN (" + user_id_where + ")";
 					mResolver.delete(uri, where, null);
 				}
-				Toast.makeText(TwidereService.this, R.string.reported_user_for_spam, Toast.LENGTH_SHORT).show();
+				Toast.makeText(TwidereService.this, R.string.reported_users_for_spam, Toast.LENGTH_SHORT).show();
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_ids);

@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ import org.mariotaku.twidere.adapter.UsersAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.util.NoDuplicatesList;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -148,7 +151,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		final ParcelableUser user = mAdapter.findItem(id);
 		if (user == null) return;
 		if (mApplication.isMultiSelectActive()) {
-			final ArrayList<Object> list = mApplication.getSelectedItems();
+			final NoDuplicatesList<Object> list = mApplication.getSelectedItems();
 			if (!list.contains(user)) {
 				list.add(user);
 			} else {
@@ -165,7 +168,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		final UsersAdapter adapter = getListAdapter();
 		mSelectedUser = adapter.findItem(id);
 		if (mApplication.isMultiSelectActive()) {
-			final ArrayList<Object> list = mApplication.getSelectedItems();
+			final NoDuplicatesList<Object> list = mApplication.getSelectedItems();
 			if (!list.contains(mSelectedUser)) {
 				list.add(mSelectedUser);
 			} else {
@@ -189,6 +192,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	public void onLoadFinished(Loader<List<ParcelableUser>> loader, List<ParcelableUser> data) {
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
+		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
 		onRefreshComplete();
 		setListShown(true);
 	}
@@ -213,7 +217,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 				if (!mApplication.isMultiSelectActive()) {
 					mApplication.startMultiSelect();
 				}
-				final ArrayList<Object> list = mApplication.getSelectedItems();
+				final NoDuplicatesList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(mSelectedUser)) {
 					list.add(mSelectedUser);
 				}
@@ -243,6 +247,23 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
+		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
+		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
+		mAdapter.setDisplayProfileImage(display_profile_image);
+		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
+		mAdapter.setTextSize(text_size);
+		mAdapter.setDisplayName(display_name);
+		mAdapter.notifyDataSetChanged();
+	}
+
+	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
 				&& totalItemCount >= visibleItemCount;
@@ -263,23 +284,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
-		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
-		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
-		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
-		mAdapter.setTextSize(text_size);
-		mAdapter.setDisplayName(display_name);
-		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override

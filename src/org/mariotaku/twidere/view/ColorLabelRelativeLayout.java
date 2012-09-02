@@ -27,21 +27,21 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
-public class ExtendedRelativeLayout extends RelativeLayout {
+public class ColorLabelRelativeLayout extends RelativeLayout {
 
 	private final Paint mPaintLeft = new Paint(), mPaintRight = new Paint(), mPaintBackground = new Paint();
 	private final Rect mRectLeft = new Rect(), mRectRight = new Rect(), mRectBackground = new Rect();
-	private final float mDensity;		
+	private final float mDensity;
 
-	public ExtendedRelativeLayout(Context context) {
+	public ColorLabelRelativeLayout(Context context) {
 		this(context, null);
 	}
 
-	public ExtendedRelativeLayout(Context context, AttributeSet attrs) {
+	public ColorLabelRelativeLayout(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public ExtendedRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
+	public ColorLabelRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		setWillNotDraw(false);
 		mDensity = context.getResources().getDisplayMetrics().density;
@@ -50,13 +50,17 @@ public class ExtendedRelativeLayout extends RelativeLayout {
 		mPaintBackground.setColor(Color.TRANSPARENT);
 	}
 
+	public void drawBackground(int color) {
+		drawLabel(mPaintLeft.getColor(), mPaintRight.getColor(), color);
+	}
+
 	public void drawLabel(int left, int right, int background) {
 		mPaintBackground.setColor(background);
 		mPaintLeft.setColor(left);
 		mPaintRight.setColor(right);
 		invalidate();
 	}
-	
+
 	public void drawLeft(int color) {
 		drawLabel(color, mPaintRight.getColor(), mPaintBackground.getColor());
 	}
@@ -64,11 +68,7 @@ public class ExtendedRelativeLayout extends RelativeLayout {
 	public void drawRight(int color) {
 		drawLabel(mPaintLeft.getColor(), color, mPaintBackground.getColor());
 	}
-	
-	public void drawBackground(int color) {
-		drawLabel(mPaintLeft.getColor(), mPaintRight.getColor(), color);
-	}
-	
+
 	@Override
 	public void onDraw(Canvas canvas) {
 		canvas.drawRect(mRectBackground, mPaintBackground);
@@ -80,8 +80,8 @@ public class ExtendedRelativeLayout extends RelativeLayout {
 	@Override
 	public void onSizeChanged(int w, int h, int oldw, int oldh) {
 		mRectBackground.set(0, 0, w, h);
-		mRectLeft.set(0, 0, (int)(4 * mDensity), h);
-		mRectRight.set(w - (int)(4 * mDensity), 0, w, h);
+		mRectLeft.set(0, 0, (int) (4 * mDensity), h);
+		mRectRight.set(w - (int) (4 * mDensity), 0, w, h);
 		super.onSizeChanged(w, h, oldw, oldh);
 	}
 }

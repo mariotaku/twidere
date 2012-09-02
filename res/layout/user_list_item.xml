@@ -1,50 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.mariotaku.twidere.view.ColorLabelRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/user_content"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content">
+	android:layout_height="wrap_content"
+	android:padding="6dp">
 
-	<org.mariotaku.twidere.view.ColorView
-		android:id="@+id/user_background"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="@drawable/ic_label_user"/>
+	<org.mariotaku.twidere.view.RoundCorneredImageView
+		android:id="@+id/profile_image"
+		android:layout_width="@dimen/profile_image_size"
+		android:layout_height="@dimen/profile_image_size"
+		android:scaleType="fitCenter"/>
 
-	<RelativeLayout
-		android:id="@+id/user_content"
-		android:layout_width="match_parent"
+	<TextView
+		android:id="@+id/name"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:padding="6dp">
+		android:layout_alignParentTop="true"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_marginLeft="6dp"
+		android:layout_toRightOf="@+id/profile_image"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="?android:attr/textColorPrimary"
+		android:textStyle="bold"/>
 
-		<org.mariotaku.twidere.view.RoundCorneredImageView
-			android:id="@+id/profile_image"
-			android:layout_width="@dimen/profile_image_size"
-			android:layout_height="@dimen/profile_image_size"
-			android:scaleType="fitCenter"/>
-
-		<TextView
-			android:id="@+id/name"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentTop="true"
-			android:layout_alignWithParentIfMissing="true"
-			android:layout_marginLeft="6dp"
-			android:layout_toRightOf="@+id/profile_image"
-			android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorPrimary"
-			android:textStyle="bold"/>
-
-		<TextView
-			android:id="@+id/description"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignLeft="@+id/name"
-			android:layout_alignParentRight="true"
-			android:layout_alignWithParentIfMissing="true"
-			android:layout_below="@+id/name"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorSecondary"/>
-	</RelativeLayout>
+	<TextView
+		android:id="@+id/description"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/name"
+		android:layout_alignParentRight="true"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_below="@+id/name"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="?android:attr/textColorSecondary"/>
 
 	<TextView
 		android:id="@+id/list_gap_text"
@@ -57,4 +46,4 @@
 		android:textStyle="bold"
 		android:visibility="gone"/>
 
-</FrameLayout>
+</org.mariotaku.twidere.view.ColorLabelRelativeLayout>

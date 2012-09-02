@@ -1,6 +1,9 @@
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.mariotaku.actionbarcompat.ActionMode;
 import org.mariotaku.twidere.R;
@@ -8,8 +11,10 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.NoDuplicatesList;
+import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -30,6 +35,7 @@ import com.twitter.Extractor;
 public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback {
 
 	private TwidereApplication mApplication;
+	private ServiceInterface mService;
 
 	private ActionMode mActionMode;
 
@@ -49,12 +55,13 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		final ArrayList<Object> selected_items = mApplication.getSelectedItems();
+		final NoDuplicatesList<Object> selected_items = mApplication.getSelectedItems();
 		switch (item.getItemId()) {
 			case MENU_REPLY: {
 				final Extractor extractor = new Extractor();
 				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 				final Bundle bundle = new Bundle();
+				final String[] account_names = getAccountScreenNames(this);
 				final NoDuplicatesList<String> all_mentions = new NoDuplicatesList<String>();
 				for (final Object object : selected_items) {
 					if (object instanceof ParcelableStatus) {
@@ -66,10 +73,12 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 						all_mentions.add(user.screen_name);
 					}
 				}
+				all_mentions.removeAll(Arrays.asList(account_names));
 				bundle.putStringArray(INTENT_KEY_MENTIONS, all_mentions.toArray(new String[all_mentions.size()]));
 				intent.putExtras(bundle);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(intent);
+				mode.finish();
 				break;
 			}
 			case MENU_MUTE_USER: {
@@ -99,18 +108,62 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				resolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
 				editor.putBoolean(PREFERENCE_KEY_ENABLE_FILTER, true).commit();
 				Toast.makeText(this, R.string.users_muted, Toast.LENGTH_SHORT).show();
+				mode.finish();
 				break;
 			}
 			case MENU_BLOCK: {
+				final int count = selected_items.size();
+				if (count >= 1) {
+					final Object obj = selected_items.get(0);
+					final long account_id;
+					final ArrayList<Long> ids_list = new ArrayList<Long>();
+					if (obj instanceof ParcelableUser) {
+						account_id = ((ParcelableUser) obj).account_id;
+					} else if (obj instanceof ParcelableStatus) {
+						account_id = ((ParcelableStatus) obj).account_id;
+					} else {
+						account_id = -1;
+					}
+					for (final Object selected_item : selected_items) {
+						if (selected_item instanceof ParcelableUser) {
+							ids_list.add(((ParcelableUser) selected_item).user_id);
+						} else if (selected_item instanceof ParcelableStatus) {
+							ids_list.add(((ParcelableStatus) selected_item).user_id);
+						}
+					}
+					if (account_id > 0) {
+						mService.createMultiBlock(account_id, ArrayUtils.fromList(ids_list));
+					}
+				}
+				mode.finish();
 				break;
 			}
 			case MENU_REPORT_SPAM: {
-				break;
-			}
-		}
-		if (item.getItemId() != R.id.more_submenu) {
-			if (mode != null) {
+				final int count = selected_items.size();
+				if (count >= 1) {
+					final Object obj = selected_items.get(0);
+					final long account_id;
+					final ArrayList<Long> ids_list = new ArrayList<Long>();
+					if (obj instanceof ParcelableUser) {
+						account_id = ((ParcelableUser) obj).account_id;
+					} else if (obj instanceof ParcelableStatus) {
+						account_id = ((ParcelableStatus) obj).account_id;
+					} else {
+						account_id = -1;
+					}
+					for (final Object selected_item : selected_items) {
+						if (selected_item instanceof ParcelableUser) {
+							ids_list.add(((ParcelableUser) selected_item).user_id);
+						} else if (selected_item instanceof ParcelableStatus) {
+							ids_list.add(((ParcelableStatus) selected_item).user_id);
+						}
+					}
+					if (account_id > 0) {
+						mService.reportMultiSpam(account_id, ArrayUtils.fromList(ids_list));
+					}
+				}
 				mode.finish();
+				break;
 			}
 		}
 		return true;
@@ -120,6 +173,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		mApplication = getTwidereApplication();
+		mService = mApplication.getServiceInterface();
 		super.onCreate(savedInstanceState);
 	}
 
