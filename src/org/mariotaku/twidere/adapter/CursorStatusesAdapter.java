@@ -234,7 +234,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
 		if (!(tag instanceof StatusViewHolder)) {
-			final StatusViewHolder holder = new StatusViewHolder(view, context);
+			final StatusViewHolder holder = new StatusViewHolder(view);
 			view.setTag(holder);
 			holder.profile_image.setOnClickListener(this);
 			holder.image_preview.setOnClickListener(this);

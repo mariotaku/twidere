@@ -109,7 +109,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		if (tag instanceof StatusViewHolder) {
 			holder = (StatusViewHolder) tag;
 		} else {
-			holder = new StatusViewHolder(view, mContext);
+			holder = new StatusViewHolder(view);
 			view.setTag(holder);
 			holder.image_preview.setOnClickListener(this);
 			holder.profile_image.setOnClickListener(this);

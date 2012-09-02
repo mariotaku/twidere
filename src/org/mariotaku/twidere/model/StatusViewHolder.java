@@ -32,15 +32,14 @@ public class StatusViewHolder {
 
 	public final ImageView profile_image, image_preview;
 	public final TextView name, text, time, reply_retweet_status;
-	private final View content, gap_indicator;
-	private final ExtendedRelativeLayout status_content;
+	private final View gap_indicator;
+	private final ExtendedRelativeLayout content;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
 
-	public StatusViewHolder(View view, Context context) {
-		content = view;
-		status_content = (ExtendedRelativeLayout) view.findViewById(R.id.status_content);
+	public StatusViewHolder(View view) {
+		content = (ExtendedRelativeLayout) view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		image_preview = (ImageView) view.findViewById(R.id.image_preview);
@@ -51,31 +50,36 @@ public class StatusViewHolder {
 	}
 
 	public void setAccountColor(int color) {
-		status_content.drawRight(account_color_enabled ? color : Color.TRANSPARENT);
+		content.drawRight(account_color_enabled && !show_as_gap ? color : Color.TRANSPARENT);
 	}
 
 	public void setAccountColorEnabled(boolean enabled) {
-		account_color_enabled = enabled;
-		if (!enabled) {
-			status_content.drawRight(Color.TRANSPARENT);
+		account_color_enabled = enabled && !show_as_gap;
+		if (!account_color_enabled) {
+			content.drawRight(Color.TRANSPARENT);
 		}
 	}
 	
 	public void setHighlightColor(int color) {
-		status_content.drawBackground(color);
+		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);	
 	}
 
 	public void setSelected(boolean selected) {
-		if (!show_as_gap) {
-			content.setBackgroundResource(selected ? R.drawable.list_focused_holo : 0);
-		} else {
-			content.setBackgroundResource(0);
-		}
+		content.setBackgroundColor(selected && !show_as_gap ? 0x8033B5E5 : 0);
 	}
 
 	public void setShowAsGap(boolean show_gap) {
 		show_as_gap = show_gap;
-		status_content.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		if (show_as_gap) {
+			content.setBackgroundResource(0);
+			content.drawLabel(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT);
+		}
+		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		image_preview.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		text.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		time.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		reply_retweet_status.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
 
@@ -90,7 +94,7 @@ public class StatusViewHolder {
 	}
 
 	public void setUserColor(int color) {
-		status_content.drawLeft(color);
+		content.drawLeft(show_as_gap ? Color.TRANSPARENT : color);
 	}
 
 }
