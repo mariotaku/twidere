@@ -49,7 +49,6 @@
   <string name="description_permission_read_databases">Ler tweets, rascunhos, contas, mensagens diretas, etc de dados armazenados.</string>
   <string name="description_permission_write_databases">Escrever tweets, rascunhos, contas, mensagens diretas, etc para dados armazenados.</string>
   <string name="open_in_browser">Abrir no navegador</string>
-  <string name="just_now">Agora</string>
   <string name="tap_to_load_more">Toque para carregar mais</string>
   <string name="delete">Apagar</string>
   <string name="retweet">Retweetar</string>
@@ -78,18 +77,14 @@
   <string name="consumer_key_summary">Chave de consumidor para OAuth/xAuth, deixe em branco por padrão.</string>
   <string name="consumer_secret">Segredo de Consumidor</string>
   <string name="consumer_secret_summary">Segredo de consumidor para OAuth/xAuth, deixe em branco por padrão.</string>
-  <string name="warn_expert_only">Atenção! Chaves/segredos de consumidor incorretos vão provocar erros de conexão!</string>
   <string name="ignore_ssl_error">Ignorar Erros SSL</string>
-  <string name="ignore_ssl_error_summary">Ignora os erros de SSL, ative caso você esteja tendo problemas com um servidor de API personalizado.</string>
   <string name="gzip_compressing">Compressão GZip</string>
   <string name="gzip_compressing_summary">Comprime todas as solicitações de API, pode reduzir o uso de tráfego de dados,mas pode não funcionar em todos os servidores da API.</string>
   <string name="storage">Armazenamento</string>
   <string name="database_item_limit">Limite de Dados Armazenados</string>
-  <string name="database_item_limit_summary">Limite máximo de itens armazenados para cada conta, defina um valor menor para economizar espaço e aumentar a velocidade de carregamento.</string>
   <string name="clear_cache">Limpar o cache</string>
   <string name="clear_cache_summary">Limpar as imagens de perfil armazenadas em cache.</string>
   <string name="clear_databases">Limpar dados armazenados</string>
-  <string name="clear_databases_summary">Limpar todos tweets, perfis e mensagens. Você não irá perder as credenciais da sua conta.</string>
   <string name="look_and_feel">Visual e tátil</string>
   <string name="dark_theme">Usar o tema escuro</string>
   <string name="dark_theme_summary">Usar o tema Holo Dark no Twidere.</string>
@@ -99,7 +94,6 @@
   <string name="quote_user">Citação <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
   <string name="filter">Filtro</string>
-  <string name="filter_summary">Esconder os tweets de usuários/ conteúdos indesejados ou que contém palavras-chave específicas</string>
   <string name="users">Usuários</string>
   <string name="keywords">Palavras-Chave</string>
   <string name="sources">Recursos</string>
@@ -112,14 +106,11 @@
   <string name="bottom_compose_button">Botão de escrever no fundo</string>
   <string name="bottom_compose_button_summary">Coloca o botão de escrever ao fundo, você pode ativá-lo se sua tela for grande.</string>
   <string name="leftside_compose_button">Botão de escrever no lado esquerdo</string>
-  <string name="leftside_compose_button_summary">Coloca o botão de escrever a esquerda da tela.</string>
   <string name="load_item_limit">Limite de itens para carregar</string>
   <string name="load_item_limit_summary">Definir limite de itens por carregamento.</string>
   <string name="load_more_automatically">Carregar conteúdo adicional automaticamente</string>
-  <string name="load_more_automatically_summary">Carregar conteúdo adicional (Ex.: foto, mapa, estado, etc.) automaticamente</string>
   <string name="quote">Citação</string>
   <string name="add_rule">Adicionar regra</string>
-  <string name="longclick_to_delete">Mantenha pressionado para apagar.</string>
   <string name="retweet_success">Retweetado com sucesso.</string>
   <string name="cancel_retweet_success">Retweet cancelado com sucesso.</string>
   <string name="delete_success">Apagado com sucesso.</string>
@@ -148,7 +139,6 @@
   <string name="retry">Tentar novamente</string>
   <string name="more">Mais</string>
   <string name="quote_format">Formato das Citações de Tweet</string>
-
   <string name="direct_messages">Mensagens Diretas</string>
   <string name="capital_on">ON</string>
   <string name="capital_off">OFF</string>
@@ -168,7 +158,6 @@
   <string name="user_unblocked">Desbloquear este usuário.</string>
   <string name="reported_user_for_spam">Denunciar este usuário por spam.</string>
   <string name="filename_hint">Nome do arquivo</string>
-  <string name="overwrite_confirm">Este arquivo já exsite,deseja substituir?</string>
   <string name="save_as">Salvar como</string>
   <string name="please_wait">Por favor espere.</string>
   <string name="file_saved_to">Arquivo salvado para <xliff:g id="filename">%s</xliff:g> .</string>
@@ -178,9 +167,6 @@
   <string name="proxy_port">Proxy Port</string>
   <string name="block">Bloquear</string>
   <string name="unblock">Desbloquear</string>
-  <string name="report_for_spam">Denunciar por spam</string>
-  
-  <string name="user_muted">Adicionar este usuário pra a lista de filtros. Você não irá ver tweets desse usuário em sua lista de tweets/lista de menções.</string>
   <string name="inbox">Caixa de Entrada</string>
   <string name="outbox">Caixa de Saída</string>
   <string name="load_images">Carregar imagens</string>
@@ -198,12 +184,6 @@
   <string name="new_notifications">Novas notificações</string>
   <string name="refresh_on_start">Atualizar ao iniciar</string>
   <string name="refresh_after_tweet">Atualizar depois de tweetar</string>
-  <string name="Nminutes_quantity_one">1 min</string>
-  <string name="Nminutes_quantity_other"><xliff:g id="minutos">%d</xliff:g> min</string>
-  <string name="Nhours_quantity_one">1 hr</string>
-  <string name="Ndays_quantity_one">1 dia</string>
-  <string name="Nmonths_quantity_one">1 mês</string>
-  <string name="Nyears_quantity_one">1 ano</string>
   <string name="Ntweets_quantity_one">Você tem um novo tweet.</string>
   <string name="Nmentions_quantity_one">Alguém mencionou você.</string>
   <string name="item_5_minutes">5 minutos</string>

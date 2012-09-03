@@ -11,18 +11,20 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.text.DateFormat;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.model.DMConversationsEntryViewHolder;
+import org.mariotaku.twidere.model.DirectMessageEntryViewHolder;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
 import org.mariotaku.twidere.util.BaseAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +32,7 @@ import android.view.ViewGroup;
 public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements BaseAdapterInterface {
 
 	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName, mShowAccountColor,
-			mShowAbsoluteTime;
+			mShowAbsoluteTime, mFastProcessingEnabled;
 	private final LazyImageLoader mProfileImageLoader;
 	private float mTextSize;
 
@@ -41,9 +43,10 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		final DMConversationsEntryViewHolder holder = (DMConversationsEntryViewHolder) view.getTag();
+		final DirectMessageEntryViewHolder holder = (DirectMessageEntryViewHolder) view.getTag();
 
 		final long account_id = cursor.getLong(ConversationsEntry.IDX_ACCOUNT_ID);
+		final long conversation_id = cursor.getLong(ConversationsEntry.IDX_CONVERSATION_ID);
 		final long message_timestamp = cursor.getLong(ConversationsEntry.IDX_MESSAGE_TIMESTAMP);
 		final boolean is_outgoing = cursor.getInt(ConversationsEntry.IDX_IS_OUTGOING) == 1;
 
@@ -53,6 +56,12 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 
 		if (mShowAccountColor) {
 			holder.setAccountColor(getAccountColor(mContext, account_id));
+		}
+
+		if (!mFastProcessingEnabled) {
+			holder.setUserColor(getUserColor(mContext, conversation_id));
+		} else {
+			holder.setUserColor(Color.TRANSPARENT);
 		}
 
 		holder.setTextSize(mTextSize);
@@ -101,8 +110,8 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
-		if (!(tag instanceof DMConversationsEntryViewHolder)) {
-			view.setTag(new DMConversationsEntryViewHolder(view, context));
+		if (!(tag instanceof DirectMessageEntryViewHolder)) {
+			view.setTag(new DirectMessageEntryViewHolder(view, context));
 		}
 		return view;
 	}
@@ -127,6 +136,13 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	public void setDisplayProfileImage(boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
+			notifyDataSetChanged();
+		}
+	}
+
+	public void setFastProcessingEnabled(boolean enabled) {
+		if (enabled != mFastProcessingEnabled) {
+			mFastProcessingEnabled = enabled;
 			notifyDataSetChanged();
 		}
 	}

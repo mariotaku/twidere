@@ -51,7 +51,6 @@
   <string name="description_permission_write_databases">كتابة تغريدات, المسودات, الحسابات, الرسائل المباشرة, إلخ... إلى قاعدة البيانات.</string>
   <string name="description_permission_access_service">تحديث/إرسال التغريدات, الرسائل المباشرة</string>
   <string name="open_in_browser">فتح بالمستعرض</string>
-  <string name="just_now">الآن</string>
   <string name="tap_to_load_more">اضغط للتحميل اكثر</string>
   <string name="delete">حذف</string>
   <string name="retweet">اعادة تغريد</string>
@@ -80,23 +79,18 @@
   <string name="consumer_key_summary">شفرة الـConsumer key للـOAuth/xAuth, اتركه فارغ للإفتراضي.</string>
   <string name="consumer_secret">شفرة الـConsumer secret</string>
   <string name="consumer_secret_summary">شفرة الـConsumer secret للـOAuth/xAuth, اتركه فارغ للإفتراضي.</string>
-  <string name="warn_expert_only">كن حذر! إستخدام شفرة خاطئة للـconsumer key أو الـsecret يسبب أخطاء في الإتصال !</string>
   <string name="ignore_ssl_error">تجاهل أخطاء الـSSL</string>
-  <string name="ignore_ssl_error_summary">تجاهل أخطاء الـSSL, قم بتفعيله في حال مواجهة مشاكل مع خوادم الـAPI المخصصة.</string>
   <string name="gzip_compressing">GZip compressing</string>
   <string name="gzip_compressing_summary">ضغط جميع طلبات الـAPI, هذا يقلل من إستخدام البيانات, لكن قد لايعمل على جميع خوادم الـAPI.</string>
   <string name="storage">المساحة</string>
   <string name="database_item_limit">الحد الأقصى للتغريدات في قاعدة البيانات</string>
-  <string name="database_item_limit_summary">أقصى عدد من التغريدات المخزنة في قاعدة البيانات لكل حساب, قم بوضع عدد صغير لتوفير مساحة أكبر وزيادة في سرعة التحميل.</string>
   <string name="clear_cache">حذف الكاش</string>
   <string name="clear_cache_summary">إزالة صور الملفات الشخصية المخزنة مؤقتاً في الذاكرة.</string>
   <string name="clear_databases">حذف قاعدة البيانات</string>
-  <string name="clear_databases_summary">إزالة جميع التغريدات, الحسابات, الرسائل. لن تفقد بيانات حساباتك.</string>
   <string name="look_and_feel">طريقة العرض</string>
   <string name="dark_theme">إستخدام الموضوع الداكن</string>
   <string name="dark_theme_summary">إستخدام الموضوع الداكن لـTwidere.</string>
   <string name="display_profile_image">عرض صورة الملف الشخضي</string>
-  <string name="image_load_summary">سيؤدي تعطيل هذا الخيار لزيادة سرعة الانتقال بين التغريدات وتقليل إستخدام البيانات.</string>
   <string name="in_reply_to">رداً على <xliff:g id="user_name">%s</xliff:g></string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> أعاد التغريدة</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> و <xliff:g id="retweet_count">%2$d</xliff:g> قاموا بإعادة التغريدة</string>
@@ -105,7 +99,6 @@
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, عَبر <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">عَبر <xliff:g id="source">%s</xliff:g></string>
   <string name="filter">التصفية</string>
-  <string name="filter_summary">إخفاء التغريدات من مصادر/مستخدمين او تحتوي على كلمات محددة غير مرغوب بها</string>
   <string name="users">المستخدمين</string>
   <string name="keywords">الكلمات الدلالية</string>
   <string name="sources">المصادر</string>
@@ -118,14 +111,11 @@
   <string name="bottom_compose_button">زر كتابة التغريدة في الأسفل</string>
   <string name="bottom_compose_button_summary">وضع زر كتابة التغريدة على اليسار (مناسب للأجهزة ذات الشاشة الكبيرة).</string>
   <string name="leftside_compose_button">زر كتابة التغريدة على اليسار</string>
-  <string name="leftside_compose_button_summary">وضع زر كتابة التغريدة على اليسار.</string>
   <string name="load_item_limit">الحد الأقصى لعدد التغريدات</string>
   <string name="load_item_limit_summary">الحد الأقصى لعدد التغريدات المحملة في كل مرة.</string>
   <string name="load_more_automatically">تحميل محتويات التغريدة تلقائياً</string>
-  <string name="load_more_automatically_summary">تحميل محتويات التغريدة (الصورة, الموقع, إلخ...) تلقائياً</string>
   <string name="quote">اقتباس:</string>
   <string name="add_rule">اضافة شرط</string>
-  <string name="longclick_to_delete">اضغط ضغطة مطولة للحذف.</string>
   <string name="retweet_success">تم إعادة التغريد بنجاح.</string>
   <string name="cancel_retweet_success">تم إلغاء إعادة التغريدة بنجاح.</string>
   <string name="delete_success">تم الحذف بنجاح.</string>
@@ -154,7 +144,6 @@
   <string name="retry">إعادة المحاولة</string>
   <string name="more">المزيد</string>
   <string name="quote_format">تنسيق الإقتباس</string>
-
   <string name="direct_messages">الرسائل المباشرة</string>
   <string name="capital_on">تشغيل</string>
   <string name="capital_off">إغلاق</string>
@@ -175,7 +164,6 @@
   <string name="user_unblocked">تم إلغاء الحظر عن هذا المستخدم.</string>
   <string name="reported_user_for_spam">التبليغ عن إساءة هذا المستخدم</string>
   <string name="filename_hint">إسم الملف</string>
-  <string name="overwrite_confirm">الملف موجود مسبقاً, هل تود الكتابة عليه؟</string>
   <string name="save_as">حفظ ك</string>
   <string name="please_wait">يرجى الإنتظار.</string>
   <string name="file_saved_to">تم التخزين في <xliff:g id="filename">%s</xliff:g> .
@@ -188,14 +176,10 @@
   <string name="proxy_port">منفذ البروكسي</string>
   <string name="block">حجب</string>
   <string name="unblock">رفع الحجب</string>
-  <string name="report_for_spam">التبليغ عن إساءة</string>
-  
-  <string name="user_muted">تم إضافة الحساب لقائمة الكتم. لن تظهر لديك تغريدات هذا المستخدم في الخط الزمني الرئيسي / الإشارات.</string>
   <string name="inbox">الصندوق الوارد</string>
   <string name="outbox">الصندوق الصادر</string>
   <string name="load_images">تحميل الصور</string>
   <string name="stop_service_after_closed">إيقاف خدمة twidere بعد الإغلاق.</string>
-  <string name="stop_service_after_closed_summary">لا أعرف لماذا ترغب في تفعيل هذا الخيار, لكن في حال واجهتك أي مشكلة بعد تفعيله, تذكر, هذا خطأك.</string>
   <string name="other_settings">إعدادات أخرى</string>
   <string name="refresh_and_notifications">التحديث &amp; الإخطارات</string>
   <string name="auto_refresh">تحديث تلقائي</string>
@@ -213,11 +197,9 @@
   <string name="load_earlier_messages">عرض رسائل سابقة</string>
   <string name="screen_name">إسم العرض</string>
   <string name="sort_timeline_by_time">فرز التغريدات حسب الوقت</string>
-  <string name="sort_timeline_by_time_summary">هذا قد يجعل التغريدات المعادة تظهر في أماكن خاطئة, لكنه مفيد في حال إستخدام خدمات أخرى كـIdenti.ca.</string>
   <string name="refresh_on_start">تحديث عند التشغيل</string>
   <string name="refresh_on_start_summary">تحديث الخط الزمني, الإشارات عند تشغيل Twidere.</string>
   <string name="refresh_after_tweet">تحديث بعد إرسال التغريدة</string>
-  <string name="refresh_after_tweet_summary">تحديث الخط الزمني, الإشارات بعد إرسالك لتغريدة.</string>
   <string name="list_timeline">الخط الزمني للقائمة</string>
   <string name="list_members">أعضاء القائمة</string>
   <string name="list_subscribers">المشتركون في القائمة</string>
@@ -227,22 +209,9 @@
   <string name="list_created_by_user">تم إنشاء القائمة من قبل هذا المستخدم</string>
   <string name="report_errors_automatically">التبليغ عن الأخطاء تلقائياً</string>
   <string name="report_errors_automatically_summary">إرسال تقرير عن الأخطاء تلقائياً, لن يتم تضمين أي معلومات شخصية في التقرير.</string>
-  <string name="Nminutes_quantity_one">دقيقة</string>
-  <string name="Nminutes_quantity_other"><xliff:g id="minutes">%d</xliff:g> دقيقة</string>
-  <string name="Nhours_quantity_one">ساعة</string>
-  <string name="Nhours_quantity_other"><xliff:g id="hours">%d</xliff:g> ساعات</string>
-  <string name="Ndays_quantity_one">يوم</string>
-  <string name="Ndays_quantity_other"><xliff:g id="days">%d</xliff:g> أيام</string>
-  <string name="Nmonths_quantity_one">شهر</string>
-  <string name="Nmonths_quantity_other"><xliff:g id="months">%d</xliff:g> أشهر</string>
-  <string name="Nyears_quantity_one">سنة</string>
-  <string name="Nyears_quantity_other"><xliff:g id="years">%d</xliff:g> سنوات</string>
   <string name="Ntweets_quantity_one">لديك تغريدة جديدة.</string>
-  <string name="Ntweets_quantity_other">لديك <xliff:g id="items">%d</xliff:g> تغريدة جديدة.</string>
   <string name="Nmentions_quantity_one">أحدهم أشار إليك.</string>
-  <string name="Nmentions_quantity_other">لديك <xliff:g id="items">%d</xliff:g> إشارة.</string>
   <string name="Ndirect_messages_quantity_one">لديك رسالة مباشرة جديدة.</string>
-  <string name="Ndirect_messages_quantity_other">لديك <xliff:g id="items">%d</xliff:g> رسالة خاصة.</string>
   <string name="item_1_minute">دقيقة واحدة</string>
   <string name="item_5_minutes">5 دقائق</string>
   <string name="item_10_minutes">10 دقائق</string>
@@ -253,18 +222,16 @@
   <string name="item_4_hours">4 ساعات</string>
   <string name="inline_image_preview">معاينة الصورة في الخط الزمني مباشرة</string>
   <string name="solid_color_background">خلفية غير متدرجة</string>
-  <string name="solid_color_background_summary">هذا سيكون مفيداً إذا كانت شاشة جهازك من نوع AMOLED.</string>
   <string name="followed_you">يُتابعك</string>
   <string name="user_list">قائمة المستخدم</string>
   <string name="trends_location">موقع التداولات</string>
   <string name="trends_location_summary">تعيين موقع التداولات المحلية.</string>
   <string name="trends">التداولات</string>
   <string name="accounts">الحسابات</string>
+  <string name="account">حساب</string>
   <string name="hires_profile_image">صور شخصية عالية الدقة</string>
   <string name="mention_this_user">الإشارة لهذا المستخدم</string>
   <string name="signing_in_please_wait">جارِ تسجيل الدخول ، رجاءً إنتظر أو إنقر على زر العودة للخروج.</string>
-  <string name="force_ssl_connection">فرض الإتصال بـSSL</string>
-  <string name="force_ssl_connection_summary">فرض إستخدام SSL في الـAPI وبعض الطلبات الأخرى.</string>
   <string name="connectivity">الإتصال</string>
   <string name="add_member">إضافة عضو</string>
   <string name="add_success">تم الإضافة بنجاح</string>
@@ -278,4 +245,17 @@
   <string name="open">فتح</string>
   <string name="uninstall">إلغاء التنصيب</string>
   <string name="users_retweeted_this">المستخدمين الذين قاموا بإعادة التغريد</string>
+  <string name="saved_searches">عمليات البحث المحفوظة</string>
+  <string name="add_saved_search">إضافة كبحث محفوظ</string>
+  <string name="custom_tabs">علامات تبويب مخصصة</string>
+  <string name="add_tab">إضافة علامة التبويب</string>
+  <string name="tab_type">نوع التبويب</string>
+  <string name="unused">غير مستخدم</string>
+  <string name="list_name">اسم القائمة</string>
+  <string name="edit_tab">تعديل علامة تبويب</string>
+  <string name="move_up">التحرك للأعلى</string>
+  <string name="move_down">التحرك للأسفل</string>
+  <string name="invalid_settings">تم العثور على إعدادات غير صحيحة.</string>
+  <string name="icon">أيقونة</string>
+  <string name="pick_file">اختيار ملف</string>
 </resources>

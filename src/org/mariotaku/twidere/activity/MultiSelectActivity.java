@@ -56,6 +56,8 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 		final NoDuplicatesList<Object> selected_items = mApplication.getSelectedItems();
+		final int count = selected_items.size();
+		if (count < 1) return false;
 		switch (item.getItemId()) {
 			case MENU_REPLY: {
 				final Extractor extractor = new Extractor();
@@ -112,55 +114,19 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				break;
 			}
 			case MENU_BLOCK: {
-				final int count = selected_items.size();
-				if (count >= 1) {
-					final Object obj = selected_items.get(0);
-					final long account_id;
-					final ArrayList<Long> ids_list = new ArrayList<Long>();
-					if (obj instanceof ParcelableUser) {
-						account_id = ((ParcelableUser) obj).account_id;
-					} else if (obj instanceof ParcelableStatus) {
-						account_id = ((ParcelableStatus) obj).account_id;
-					} else {
-						account_id = -1;
-					}
-					for (final Object selected_item : selected_items) {
-						if (selected_item instanceof ParcelableUser) {
-							ids_list.add(((ParcelableUser) selected_item).user_id);
-						} else if (selected_item instanceof ParcelableStatus) {
-							ids_list.add(((ParcelableStatus) selected_item).user_id);
-						}
-					}
-					if (account_id > 0) {
-						mService.createMultiBlock(account_id, ArrayUtils.fromList(ids_list));
-					}
+				final long account_id = getFirstSelectAccountId(selected_items);
+				final long[] user_ids = getSelectedUserIds(selected_items);
+				if (account_id > 0 && user_ids != null) {
+					mService.createMultiBlock(account_id, user_ids);
 				}
 				mode.finish();
 				break;
 			}
 			case MENU_REPORT_SPAM: {
-				final int count = selected_items.size();
-				if (count >= 1) {
-					final Object obj = selected_items.get(0);
-					final long account_id;
-					final ArrayList<Long> ids_list = new ArrayList<Long>();
-					if (obj instanceof ParcelableUser) {
-						account_id = ((ParcelableUser) obj).account_id;
-					} else if (obj instanceof ParcelableStatus) {
-						account_id = ((ParcelableStatus) obj).account_id;
-					} else {
-						account_id = -1;
-					}
-					for (final Object selected_item : selected_items) {
-						if (selected_item instanceof ParcelableUser) {
-							ids_list.add(((ParcelableUser) selected_item).user_id);
-						} else if (selected_item instanceof ParcelableStatus) {
-							ids_list.add(((ParcelableStatus) selected_item).user_id);
-						}
-					}
-					if (account_id > 0) {
-						mService.reportMultiSpam(account_id, ArrayUtils.fromList(ids_list));
-					}
+				final long account_id = getFirstSelectAccountId(selected_items);
+				final long[] user_ids = getSelectedUserIds(selected_items);
+				if (account_id > 0 && user_ids != null) {
+					mService.reportMultiSpam(account_id, user_ids);
 				}
 				mode.finish();
 				break;
@@ -230,6 +196,26 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				mActionMode = null;
 			}
 		}
+	}
+
+	private static long getFirstSelectAccountId(NoDuplicatesList<Object> selected_items) {
+		final Object obj = selected_items.get(0);
+		if (obj instanceof ParcelableUser)
+			return ((ParcelableUser) obj).account_id;
+		else if (obj instanceof ParcelableStatus) return ((ParcelableStatus) obj).account_id;
+		return -1;
+	}
+
+	private static long[] getSelectedUserIds(NoDuplicatesList<Object> selected_items) {
+		final ArrayList<Long> ids_list = new ArrayList<Long>();
+		for (final Object item : selected_items) {
+			if (item instanceof ParcelableUser) {
+				ids_list.add(((ParcelableUser) item).user_id);
+			} else if (item instanceof ParcelableStatus) {
+				ids_list.add(((ParcelableStatus) item).user_id);
+			}
+		}
+		return ArrayUtils.fromList(ids_list);
 	}
 
 }

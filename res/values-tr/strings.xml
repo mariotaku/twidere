@@ -27,7 +27,6 @@
   <string name="select_account">Hesap seç</string>
   <string name="username">Kullanıcı ismi</string>
   <string name="password">Şifre</string>
-  <string name="just_now">Şu an</string>
   <string name="delete">Sil</string>
   <string name="share">Paylaş</string>
   <string name="view_image">Resim</string>
@@ -69,7 +68,6 @@
   <string name="retry">Tekrar Dene</string>
   <string name="more">Dahası</string>
   <string name="quote_format">Alıntı Boyutu</string>
-
   <string name="direct_messages">Yönlendirilen mesajlar</string>
   <string name="capital_on">AÇIK</string>
   <string name="capital_off">KAPALI</string>

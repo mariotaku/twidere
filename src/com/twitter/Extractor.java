@@ -14,6 +14,16 @@ public class Extractor {
 	protected boolean extractURLWithoutProtocol = true;
 
 	/**
+	 * Fullwidth at sign: '@'
+	 */
+	private static final char FULLWIDTH_AT_SIGN = '\uff20';
+
+	/**
+	 * Fullwidth number sign: '#'
+	 */
+	private static final char FULLWIDTH_NUMBER_SIGN = '\uff03';
+
+	/**
 	 * Create a new extractor.
 	 */
 	public Extractor() {
@@ -154,11 +164,11 @@ public class Extractor {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		// Performance optimization.
-		// If text doesn't contain @/＠ at all, the text doesn't
+		// If text doesn't contain @ at all, the text doesn't
 		// contain @mention. So we can simply return an empty list.
 		boolean found = false;
 		for (final char c : text.toCharArray()) {
-			if (c == '@' || c == '＠') {
+			if (c == '@' || c == FULLWIDTH_AT_SIGN) {
 				found = true;
 				break;
 			}
@@ -332,11 +342,11 @@ public class Extractor {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		// Performance optimization.
-		// If text doesn't contain #/＃ at all, text doesn't contain
+		// If text doesn't contain # at all, text doesn't contain
 		// hashtag, so we can simply return an empty list.
 		boolean found = false;
 		for (final char c : text.toCharArray()) {
-			if (c == '#' || c == '＃') {
+			if (c == '#' || c == FULLWIDTH_NUMBER_SIGN) {
 				found = true;
 				break;
 			}

@@ -22,6 +22,7 @@ package org.mariotaku.twidere.service;
 import static org.mariotaku.twidere.util.Utils.buildQueryUri;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
@@ -2387,6 +2388,8 @@ public class TwidereService extends Service implements Constants {
 			final Uri query_uri = buildQueryUri(uri, false);
 
 			final ArrayList<Long> newly_inserted_ids = new ArrayList<Long>();
+			final long[] old_ids = getAllStatusesIds(TwidereService.this, uri,
+					mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false));
 			for (final ListResponse<twitter4j.Status> response : responses) {
 				final long account_id = response.account_id;
 				final List<twitter4j.Status> statuses = response.list;
@@ -2468,9 +2471,12 @@ public class TwidereService extends Service implements Constants {
 				}
 				succeed = true;
 			}
+			final long[] new_ids = getAllStatusesIds(TwidereService.this, uri,
+					mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false));
 			final Bundle bundle = new Bundle();
 			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
-			bundle.putInt(INTENT_KEY_ITEMS_INSERTED, total_items_inserted);
+			getAllStatusesIds(TwidereService.this, uri, mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false));
+			bundle.putInt(INTENT_KEY_ITEMS_INSERTED, new_ids.length - old_ids.length);
 			if (should_set_min_id && total_items_inserted > 0) {
 				bundle.putLong(INTENT_KEY_MIN_ID, ListUtils.min(newly_inserted_ids));
 			}

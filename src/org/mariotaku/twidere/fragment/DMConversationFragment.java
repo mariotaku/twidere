@@ -31,7 +31,7 @@ import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
-import org.mariotaku.twidere.model.DMConversationViewHolder;
+import org.mariotaku.twidere.model.DirectMessageConversationViewHolder;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -266,14 +266,14 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		final Object tag = view.getTag();
-		if (tag instanceof DMConversationViewHolder) {
+		if (tag instanceof DirectMessageConversationViewHolder) {
 		}
 	}
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
 		final Object tag = view.getTag();
-		if (tag instanceof DMConversationViewHolder) {
+		if (tag instanceof DirectMessageConversationViewHolder) {
 			final ParcelableDirectMessage dm = mSelectedDirectMessage = mAdapter.findItem(id);
 			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_direct_message);

@@ -28,7 +28,7 @@ import static org.mariotaku.twidere.util.Utils.parseURL;
 import java.net.URL;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.model.DMConversationViewHolder;
+import org.mariotaku.twidere.model.DirectMessageConversationViewHolder;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.util.DirectMessagesAdapterInterface;
@@ -57,7 +57,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		final DMConversationViewHolder holder = (DMConversationViewHolder) view.getTag();
+		final DirectMessageConversationViewHolder holder = (DirectMessageConversationViewHolder) view.getTag();
 
 		final long account_id = cursor.getLong(mIndices.account_id);
 		final long message_timestamp = cursor.getLong(mIndices.message_timestamp);
@@ -125,8 +125,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
-		if (!(tag instanceof DMConversationViewHolder)) {
-			view.setTag(new DMConversationViewHolder(view, context));
+		if (!(tag instanceof DirectMessageConversationViewHolder)) {
+			view.setTag(new DirectMessageConversationViewHolder(view, context));
 		}
 		return view;
 	}

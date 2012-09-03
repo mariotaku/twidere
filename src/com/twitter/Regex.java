@@ -50,8 +50,18 @@ public class Regex {
   private static final String HASHTAG_ALPHA = "[" + HASHTAG_ALPHA_CHARS +"]";
   private static final String HASHTAG_ALPHA_NUMERIC = "[" + HASHTAG_ALPHA_NUMERIC_CHARS +"]";
 
+  /**
+	 * Fullwidth at sign: '@'
+	 */
+	private static final char FULLWIDTH_AT_SIGN = '\uff20';
+	
+	/**
+	 * Fullwidth number sign: '#'
+	 */
+	private static final char FULLWIDTH_NUMBER_SIGN = '\uff03';
+  
   /* URL related hash regex collection */
-  private static final String URL_VALID_PRECEEDING_CHARS = "(?:[^A-Z0-9@＠$#＃\u202A-\u202E]|^)";
+  private static final String URL_VALID_PRECEEDING_CHARS = "(?:[^A-Z0-9@"+FULLWIDTH_AT_SIGN+"$#"+FULLWIDTH_NUMBER_SIGN+"\u202A-\u202E]|^)";
 
   private static final String URL_VALID_CHARS = "[\\p{Alnum}" + LATIN_ACCENTS_CHARS + "]";
   private static final String URL_VALID_SUBDOMAIN = "(?:(?:" + URL_VALID_CHARS + "[" + URL_VALID_CHARS + "\\-_]*)?" + URL_VALID_CHARS + "\\.)";
@@ -144,7 +154,7 @@ public class Regex {
   public static final int VALID_HASHTAG_GROUP_HASHTAG_FULL = 2;
   public static final int VALID_HASHTAG_GROUP_HASH = 3;
   public static final int VALID_HASHTAG_GROUP_TAG = 4;
-  public static final Pattern INVALID_HASHTAG_MATCH_END = Pattern.compile("^(?:[#＃]|://)");
+  public static final Pattern INVALID_HASHTAG_MATCH_END = Pattern.compile("^(?:[#"+FULLWIDTH_NUMBER_SIGN+"]|://)");
 
   public static final Pattern AT_SIGNS = Pattern.compile("[" + AT_SIGNS_CHARS + "]");
   public static final Pattern VALID_MENTION_OR_LIST = Pattern.compile("([^a-z0-9_!#$%&*" + AT_SIGNS_CHARS + "]|^|RT:?)(" + AT_SIGNS + "+)([a-z0-9_]{1,20})(\\/([a-z][a-z0-9_\\-]{0,24}))?", Pattern.CASE_INSENSITIVE);

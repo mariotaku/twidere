@@ -63,6 +63,11 @@ public class Autolink {
 	protected LinkTextModifier linkTextModifier = null;
 	private Extractor extractor = new Extractor();
 
+	/**
+	 * Fullwidth ellipsis: '...'
+	 */
+	private static final String FULLWIDTH_ELLIPSIS = "\u2026";
+
 	public Autolink() {
 		urlClass = null;
 		listClass = DEFAULT_LIST_CLASS;
@@ -345,72 +350,16 @@ public class Autolink {
 		CharSequence linkText = escapeHTML(url);
 
 		if (entity.displayURL != null && entity.expandedURL != null) {
-			// Goal: If a user copies and pastes a tweet containing t.co'ed
-			// link, the resulting paste
-			// should contain the full original URL (expanded_url), not the
-			// display URL.
-			//
-			// Method: Whenever possible, we actually emit HTML that contains
-			// expanded_url, and use
-			// font-size:0 to hide those parts that should not be displayed
-			// (because they are not part of display_url).
-			// Elements with font-size:0 get copied even though they are not
-			// visible.
-			// Note that display:none doesn't work here. Elements with
-			// display:none don't get copied.
-			//
-			// Additionally, we want to *display* ellipses, but we don't want
-			// them copied. To make this happen we
-			// wrap the ellipses in a tco-ellipsis class and provide an onCopy
-			// handler that sets display:none on
-			// everything with the tco-ellipsis class.
-			//
-			// As an example: The user tweets "hi http://longdomainname.com/foo"
-			// This gets shortened to "hi http://t.co/xyzabc", with display_url
-			// = "…nname.com/foo"
-			// This will get rendered as:
-			// <span class='tco-ellipsis'> <!-- This stuff should get displayed
-			// but not copied -->
-			// …
-			// <!-- There's a chance the onCopy event handler might not fire. In
-			// case that happens,
-			// we include an &nbsp; here so that the … doesn't bump up against
-			// the URL and ruin it.
-			// The &nbsp; is inside the tco-ellipsis span so that when the
-			// onCopy handler *does*
-			// fire, it doesn't get copied. Otherwise the copied text would have
-			// two spaces in a row,
-			// e.g. "hi  http://longdomainname.com/foo".
-			// <span style='font-size:0'>&nbsp;</span>
-			// </span>
-			// <span style='font-size:0'> <!-- This stuff should get copied but
-			// not displayed -->
-			// http://longdomai
-			// </span>
-			// <span class='js-display-url'> <!-- This stuff should get
-			// displayed *and* copied -->
-			// nname.com/foo
-			// </span>
-			// <span class='tco-ellipsis'> <!-- This stuff should get displayed
-			// but not copied -->
-			// <span style='font-size:0'>&nbsp;</span>
-			// …
-			// </span>
-			//
-			// Exception: pic.twitter.com images, for which expandedUrl =
-			// "https://twitter.com/#!/username/status/1234/photo/1
-			// For those URLs, display_url is not a substring of expanded_url,
-			// so we don't do anything special to render the elided parts.
-			// For a pic.twitter.com URL, the only elided part will be the
-			// "https://", so this is fine.
-			final String displayURLSansEllipses = entity.displayURL.replace("…", "");
+			final String displayURLSansEllipses = entity.displayURL.replace(FULLWIDTH_ELLIPSIS, "");
 			final int diplayURLIndexInExpandedURL = entity.expandedURL.indexOf(displayURLSansEllipses);
 			if (diplayURLIndexInExpandedURL != -1) {
 				final String beforeDisplayURL = entity.expandedURL.substring(0, diplayURLIndexInExpandedURL);
 				final String afterDisplayURL = entity.expandedURL.substring(diplayURLIndexInExpandedURL
 						+ displayURLSansEllipses.length());
-				final String precedingEllipsis = entity.displayURL.startsWith("…") ? "…" : "";
-				final String followingEllipsis = entity.displayURL.endsWith("…") ? "…" : "";
+				final String precedingEllipsis = entity.displayURL.startsWith(FULLWIDTH_ELLIPSIS) ? FULLWIDTH_ELLIPSIS
+						: "";
+				final String followingEllipsis = entity.displayURL.endsWith(FULLWIDTH_ELLIPSIS) ? FULLWIDTH_ELLIPSIS
+						: "";
 				final String invisibleSpan = "<span " + invisibleTagAttrs + ">";
 
 				final StringBuilder sb = new StringBuilder("<span class='tco-ellipsis'>");

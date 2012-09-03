@@ -174,10 +174,11 @@ import android.widget.Toast;
 
 public final class Utils implements Constants {
 
-	private static UriMatcher CONTENT_PROVIDER_URI_MATCHER;
-	public static final HashMap<String, Class<? extends Fragment>> CUSTOM_TABS_FRAGMENT_MAP;
-	public static final HashMap<String, Integer> CUSTOM_TABS_TYPE_NAME_MAP;
-	public static final HashMap<String, Integer> CUSTOM_TABS_ICON_NAME_MAP;
+	private static final UriMatcher CONTENT_PROVIDER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+	private static final UriMatcher LINK_HANDLER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+	public static final HashMap<String, Class<? extends Fragment>> CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();
+	public static final HashMap<String, Integer> CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
+	public static final HashMap<String, Integer> CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
 
 	private static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new HostnameVerifier() {
 		@Override
@@ -216,7 +217,6 @@ public final class Utils implements Constants {
 	}
 
 	static {
-		CONTENT_PROVIDER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
@@ -241,7 +241,28 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, URI_TRENDS_LOCAL);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TABS, URI_TABS);
 
-		CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER, null, LINK_ID_USER);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_TIMELINE, null, LINK_ID_USER_TIMELINE);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_FOLLOWERS, null, LINK_ID_USER_FOLLOWERS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_FRIENDS, null, LINK_ID_USER_FRIENDS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_FAVORITES, null, LINK_ID_USER_FAVORITES);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_BLOCKS, null, LINK_ID_USER_BLOCKS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, LINK_ID_CONVERSATION);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_DIRECT_MESSAGES_CONVERSATION, null,
+				LINK_ID_DIRECT_MESSAGES_CONVERSATION);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_DETAILS, null, LINK_ID_LIST_DETAILS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_TYPES, null, LINK_ID_LIST_TYPES);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_TIMELINE, null, LINK_ID_LIST_TIMELINE);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERS, null, LINK_ID_LIST_MEMBERS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIBERS, null, LINK_ID_LIST_SUBSCRIBERS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_CREATED, null, LINK_ID_LIST_CREATED);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIPTIONS, null, LINK_ID_LIST_SUBSCRIPTIONS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERSHIPS, null, LINK_ID_LIST_MEMBERSHIPS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USERS_RETWEETED_STATUS, null, LINK_ID_USERS_RETWEETED_STATUS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SAVED_SEARCHES, null, LINK_ID_SAVED_SEARCHES);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_RETWEETED_TO_ME, null, LINK_ID_RETWEETED_TO_ME);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_MENTIONS, null, LINK_ID_USER_MENTIONS);
 
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_CREATED, UserListCreatedFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERS, UserListMembersFragment.class);
@@ -260,8 +281,6 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_TIMELINE, UserTimelineFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_TRENDS, TrendsFragment.class);
 
-		CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
-
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_CREATED, R.string.list_created_by_user);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_MEMBERS, R.string.list_members);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_MEMBERSHIPS, R.string.list_following_user);
@@ -278,8 +297,6 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_MENTIONS, R.string.user_mentions);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_TIMELINE, R.string.user_timeline);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_TRENDS, R.string.trends);
-
-		CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
 
 		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);
 		CUSTOM_TABS_ICON_NAME_MAP.put("fire", R.drawable.ic_tab_fire);
@@ -304,9 +321,9 @@ public final class Utils implements Constants {
 	private static Map<Long, Integer> sAccountColors = new LinkedHashMap<Long, Integer>();
 
 	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
+
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
-
 	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
 			DirectMessages.Outbox.CONTENT_URI };
 
@@ -761,6 +778,22 @@ public final class Utils implements Constants {
 		m = PATTERN_MOBYPICTURE.matcher(link);
 		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID));
 		return null;
+	}
+
+	public static long[] getAllStatusesIds(Context context, Uri uri, boolean filter_enabled) {
+		if (context == null) return new long[0];
+		final ContentResolver resolver = context.getContentResolver();
+		final ArrayList<Long> ids_list = new ArrayList<Long>();
+		final Cursor cur = resolver.query(uri, new String[] { Statuses.STATUS_ID },
+				filter_enabled ? buildFilterWhereClause(getTableNameForContentUri(uri), null) : null, null, null);
+		if (cur == null) return new long[0];
+		cur.moveToFirst();
+		while (!cur.isAfterLast()) {
+			ids_list.add(cur.getLong(0));
+			cur.moveToNext();
+		}
+		cur.close();
+		return ArrayUtils.fromList(ids_list);
 	}
 
 	public static String getBiggerTwitterProfileImage(String url) {
@@ -1640,6 +1673,10 @@ public final class Utils implements Constants {
 			// Ignore.
 		}
 		return -1;
+	}
+
+	public static int matchLinkId(Uri uri) {
+		return LINK_HANDLER_URI_MATCHER.match(uri);
 	}
 
 	public static void notifyForUpdatedUri(Context context, Uri uri) {

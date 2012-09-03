@@ -432,6 +432,28 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_TRENDS_LOCAL = 17;
 	public static final int URI_TABS = 18;
 
+	public static final int LINK_ID_STATUS = 1;
+	public static final int LINK_ID_USER = 2;
+	public static final int LINK_ID_USER_TIMELINE = 3;
+	public static final int LINK_ID_USER_FAVORITES = 4;
+	public static final int LINK_ID_USER_FOLLOWERS = 5;
+	public static final int LINK_ID_USER_FRIENDS = 6;
+	public static final int LINK_ID_USER_BLOCKS = 7;
+	public static final int LINK_ID_CONVERSATION = 8;
+	public static final int LINK_ID_DIRECT_MESSAGES_CONVERSATION = 9;
+	public static final int LINK_ID_LIST_DETAILS = 10;
+	public static final int LINK_ID_LIST_TYPES = 11;
+	public static final int LINK_ID_LIST_TIMELINE = 12;
+	public static final int LINK_ID_LIST_MEMBERS = 13;
+	public static final int LINK_ID_LIST_SUBSCRIBERS = 14;
+	public static final int LINK_ID_LIST_CREATED = 15;
+	public static final int LINK_ID_LIST_SUBSCRIPTIONS = 16;
+	public static final int LINK_ID_LIST_MEMBERSHIPS = 17;
+	public static final int LINK_ID_USERS_RETWEETED_STATUS = 18;
+	public static final int LINK_ID_SAVED_SEARCHES = 19;
+	public static final int LINK_ID_RETWEETED_TO_ME = 20;
+	public static final int LINK_ID_USER_MENTIONS = 21;
+
 	public static final String DIR_NAME_PROFILE_IMAGES = "profile_images";
 	public static final String DIR_NAME_CACHED_THUMBNAILS = "cached_thumbnails";
 

@@ -46,10 +46,11 @@
   <string name="label_permission_group_access_twidere">Akses aplikasi Twidere</string>
   <string name="label_permission_read_databases">Baca database Twidere</string>
   <string name="label_permission_write_databases">Tulis database Twidere</string>
+  <string name="label_permission_access_service">Mengakses layanan Twidere</string>
   <string name="description_permission_read_databases">Baca tweets, konsep, akun, pesan dan sebagainya dari database.</string>
   <string name="description_permission_write_databases">Simpan tweets, konsep, akun, pesan dan sebagainya ke database.</string>
+  <string name="description_permission_access_service">Refresh/mengirim tweets, pesan langsung</string>
   <string name="open_in_browser">Buka di Browser</string>
-  <string name="just_now">Baru saja</string>
   <string name="tap_to_load_more">Ketuk untuk memuat lebih</string>
   <string name="delete">Hapus</string>
   <string name="retweet">Retweet</string>
@@ -78,18 +79,14 @@
   <string name="consumer_key_summary">Kode Consumer Key OAuth/xAuth, kosongkan untuk tetapan default.</string>
   <string name="consumer_secret">Kode Consumer Secret</string>
   <string name="consumer_secret_summary">Kode Consumer Secret untuk OAuth/xAuth, kosongkan untuk tetapan default.</string>
-  <string name="warn_expert_only">Mohon diperhatikan! Kode consumer key/secret yang salah akan mengakibatkan koneksi error!</string>
   <string name="ignore_ssl_error">Abaikan kesalahan SSL</string>
-  <string name="ignore_ssl_error_summary">Abaikan kesalahan SSL, aktifkan jika anda mengalami masalah dengan server API custom.</string>
   <string name="gzip_compressing">Kompresi GZip</string>
   <string name="gzip_compressing_summary">Kompres permintaan API, itu dapat menghemat penggunaan lalu lintas data, tapi mungkin tidak berjalan di semua server API.</string>
   <string name="storage">Penyimpanan</string>
   <string name="database_item_limit">Batasan item database</string>
-  <string name="database_item_limit_summary">Batas atas dari item yang tersimpan di database untuk tiap akun, tetapkan ke nilai yang lebih kecil untuk menghemat ruang penyimpanan dan meningkatkan kecepatan pemuatan.</string>
   <string name="clear_cache">Bersihkan tembolok</string>
   <string name="clear_cache_summary">Bersihkan tembolok gambar profil.</string>
   <string name="clear_databases">Bersihkan database</string>
-  <string name="clear_databases_summary">Bersihkan semua tweets, profil, dan pesan. Data akun anda tidak akan hilang.</string>
   <string name="look_and_feel">Tampilan dan nuansa</string>
   <string name="dark_theme">Gunakan tema gelap</string>
   <string name="dark_theme_summary">Gunakan tema gelap untuk Twidere.</string>
@@ -98,8 +95,8 @@
   <string name="reply_to">Balasan untuk <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Mengutip <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
+  <string name="source">melalui <xliff:g id="source"> %s </xliff:g></string>
   <string name="filter">Filter</string>
-  <string name="filter_summary">Sembunyikan tweets dari pengguna / sumber yang tidak diinginkan atau berisi kata kunci tertentu</string>
   <string name="users">Pengguna</string>
   <string name="keywords">Kata kunci</string>
   <string name="sources">Sumber</string>
@@ -112,14 +109,11 @@
   <string name="bottom_compose_button">Tombol susun dibawah</string>
   <string name="bottom_compose_button_summary">Letakkan tombol susun dibawah, anda dapat mengaktifkan ini jika ukuran layar anda lebar.</string>
   <string name="leftside_compose_button">Tombol susun di sebelah kiri</string>
-  <string name="leftside_compose_button_summary">Letakkan tombol susun di sebelah kiri.</string>
   <string name="load_item_limit">Memuat batas item</string>
   <string name="load_item_limit_summary">Tetapkan batas item per pengambilan.</string>
   <string name="load_more_automatically">Muat konten selanjutnya secara otomatis</string>
-  <string name="load_more_automatically_summary">Memuat lebih banyak konten (misalnya foto, peta, status, dll) secara otomatis</string>
   <string name="quote">Kutip</string>
   <string name="add_rule">Tambah aturan</string>
-  <string name="longclick_to_delete">Tekan lama untuk menghapus.</string>
   <string name="retweet_success">Retweet sukses.</string>
   <string name="cancel_retweet_success">Pembatalan retweet sukses.</string>
   <string name="delete_success">Penghapusan sukses.</string>
@@ -148,7 +142,6 @@
   <string name="retry">Coba lagi</string>
   <string name="more">Lebih</string>
   <string name="quote_format">Format kutipan</string>
-
   <string name="direct_messages">Pesan langsung</string>
   <string name="capital_on">AKTIF</string>
   <string name="capital_off">NONAKTIF</string>
@@ -168,7 +161,6 @@
   <string name="user_unblocked">Unblock pengguna ini.</string>
   <string name="reported_user_for_spam">Laporkan sebagai spam.</string>
   <string name="filename_hint">Nama berkas</string>
-  <string name="overwrite_confirm">Berkas sudah ada, timpa?</string>
   <string name="save_as">Simpan sebagai</string>
   <string name="please_wait">Tunggu sebentar.</string>
   <string name="file_saved_to">File disimpan ke <xliff:g id="filename">%s</xliff:g>.</string>
@@ -179,21 +171,49 @@
   <string name="proxy_port">Port Proxy</string>
   <string name="block">Blok</string>
   <string name="unblock">Hilangkan Blokir</string>
-  <string name="report_for_spam">Laporkan sebagai spam</string>
-  
-  <string name="user_muted">Pengguna ini sudah didaftarkan pada daftar filter. Anda tidak akan melihat tweets dari pengguna ini dalam timeline/mention.</string>
+  <string name="mute_user">Bisukan pengguna</string>
   <string name="inbox">Kotak masuk</string>
   <string name="outbox">Kotak keluar</string>
   <string name="load_images">Memuat gambar</string>
   <string name="stop_service_after_closed">Hentikan layanan setelah Twidere ditutup.</string>
-  <string name="stop_service_after_closed_summary">Saya tidak tahu mengapa anda ingin mengaktifkan ini, tapi jika terdapat masalah, ingat, itu adalah kesalahan anda.</string>
   <string name="other_settings">Pengaturan lainnya</string>
   <string name="refresh_and_notifications">Refresh &amp; Notifikasi</string>
   <string name="auto_refresh">Refresh otomatis</string>
   <string name="refresh_interval">Interval refresh</string>
   <string name="content_to_refresh">Konten yang di-refresh</string>
+  <string name="content_to_nofity">Konten untuk diberitahukan</string>
+  <string name="notifications_type">Jenis pemberitahuan</string>
+  <string name="notifications_type_summary">Pilihan ini TIDAK akan menimpa pengaturan sistem.</string>
+  <string name="sound">Suara</string>
+  <string name="vibration">Getaran</string>
+  <string name="lights">Lampu</string>
   <string name="notifications">Notifikasi</string>
   <string name="new_notifications">Notifikasi baru</string>
   <string name="load_earlier_messages">Muat direct message sebelumnya</string>
   <string name="screen_name">Nama layar</string>
+  <string name="sort_timeline_by_time">Urutkan timeline berdasarkan waktu</string>
+  <string name="Ntweets_quantity_one">Anda mempunyai sebuah tweet baru.</string>
+  <string name="Nmentions_quantity_one">Seseorang menyebut Anda.</string>
+  <string name="Ndirect_messages_quantity_one">Anda mempunyai sebuah direct message baru.</string>
+  <string name="item_1_minute">1 menit</string>
+  <string name="item_5_minutes">5 menit</string>
+  <string name="item_10_minutes">10 menit</string>
+  <string name="item_15_minutes">15 menit</string>
+  <string name="item_30_minutes">30 menit</string>
+  <string name="item_1_hour">1 jam</string>
+  <string name="item_2_hours">2 jam</string>
+  <string name="item_4_hours">4 jam</string>
+  <string name="inline_image_preview">Pratinjau gambar inline</string>
+  <string name="followed_you">Mengikuti Anda</string>
+  <string name="trends">Tren</string>
+  <string name="accounts">Akun</string>
+  <string name="tweet_shortener_default">Tidak ada (batal mengirim)</string>
+  <string name="error_message_status_too_long">Kicauan terlalu panjang.</string>
+  <string name="error_message_tweet_shorten_failed">Penyingkat kicauan gagal.</string>
+  <string name="error_message_tweet_shortener_not_found">Pemendek kicauan tidak ditemukan, mungkin tidak dipasang.</string>
+  <string name="multimedia_contents">Isi multimedia</string>
+  <string name="show_absolute_time">Tampilkan waktu absolut</string>
+  <string name="mute_source">Bisukan sumber</string>
+  <string name="source_muted">Menambahkan \"<xliff:g id="source">%s</xliff:g>\" untuk menyaring daftar. Anda tidak akan melihat kicauan dari sumber di timeline rumah Anda / daftar menyebutkan.</string>
+  <string name="user_mentions">Pengguna menyebutkan</string>
 </resources>
