@@ -34,6 +34,9 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
+import org.mariotaku.twidere.util.SetLayerTypeAccessor;
+import android.view.Window;
+import android.view.View;
 
 @SuppressLint("Registered")
 class BaseDialogActivity extends FragmentActivity implements Constants, ActivityThemeChangeInterface {
@@ -93,9 +96,10 @@ class BaseDialogActivity extends FragmentActivity implements Constants, Activity
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
+			final Window w = getWindow();
 			if (hardware_acceleration) {
-				getWindow().setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-									 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+				w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+						   WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
 			}
 		}
 	}

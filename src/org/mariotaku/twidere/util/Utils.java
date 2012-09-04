@@ -473,7 +473,7 @@ public final class Utils implements Constants {
 			final StringBuilder where = new StringBuilder();
 			where.append(Statuses._ID + " NOT IN (");
 			where.append(" SELECT " + CachedUsers._ID + " FROM " + table);
-			where.append(" LIMIT " + Math.sqrt(item_limit) * 16 + ")");
+			where.append(" LIMIT " + (int) (Math.sqrt(item_limit) * 16) + ")");
 			resolver.delete(uri, where.toString(), null);
 		}
 	}
@@ -1015,7 +1015,7 @@ public final class Utils implements Constants {
 	public static PreviewImage getPreviewImage(String html, boolean include_preview) {
 		if (html == null) return new PreviewImage(false, null, null);
 		if (!include_preview)
-			return new PreviewImage(html.contains("://p.twimg.com/") || html.contains("://instagr.am/")
+			return new PreviewImage(html.contains(".twimg.com/") || html.contains("://instagr.am/")
 					|| html.contains("://instagram.com/") || html.contains("://imgur.com/")
 					|| html.contains("://i.imgur.com/") || html.contains("://twitpic.com/")
 					|| html.contains("://img.ly/") || html.contains("://yfrog.com/")

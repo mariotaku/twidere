@@ -36,6 +36,9 @@ import android.view.WindowManager;
 
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
+import android.view.Window;
+import org.mariotaku.twidere.util.SetLayerTypeAccessor;
+import android.view.View;
 
 public class BaseActivity extends ActionBarFragmentActivity implements Constants, ActivityThemeChangeInterface {
 
@@ -103,9 +106,10 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	public void setHardwareAcceleration() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, true);
+			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
+			final Window w = getWindow();
 			if (hardware_acceleration) {
-				getWindow().setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+				w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
 					WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
 			}
 		}
@@ -114,7 +118,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	public boolean isHardwareAccelerationChanged() {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, true);
+		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
 		return mHardwareAccelerated != hardware_acceleration;
 	}
 }
