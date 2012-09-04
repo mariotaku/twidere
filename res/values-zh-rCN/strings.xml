@@ -322,4 +322,6 @@
   <string name="Nitems_selected_quantity_one">已选择 1 项</string>
   <string name="Nitems_selected_quantity_other">已选择 <xliff:g id="items">%d</xliff:g> 项</string>
   <string name="view">查看</string>
+  <string name="hardware_acceleration">硬件加速</string>
+  <string name="hardware_acceleration_summary">一些设备启用后会更流畅，另一些可能会有反效果。仅支持Android 3.0+的设备。</string>
 </resources>

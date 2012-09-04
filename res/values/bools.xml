@@ -3,5 +3,6 @@
 
 	<item name="tab_display_label" type="bool">false</item>
 	<item name="home_display_icon" type="bool">false</item>
+	<item name="hw_accel_supported" type="bool">false</item>
 
 </resources>

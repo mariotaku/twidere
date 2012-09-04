@@ -473,7 +473,7 @@ public final class Utils implements Constants {
 			final StringBuilder where = new StringBuilder();
 			where.append(Statuses._ID + " NOT IN (");
 			where.append(" SELECT " + CachedUsers._ID + " FROM " + table);
-			where.append(" LIMIT " + item_limit * 8 + ")");
+			where.append(" LIMIT " + Math.sqrt(item_limit) * 16 + ")");
 			resolver.delete(uri, where.toString(), null);
 		}
 	}
