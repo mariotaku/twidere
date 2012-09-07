@@ -36,6 +36,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ColorAnalyser;
 
@@ -92,6 +93,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	private Button mSignInButton, mSignUpButton;
 	private LinearLayout mSigninSignup, mUsernamePassword;
 	private ImageButton mSetColorButton;
+	private TwidereApplication mApplication;
 
 	private AbstractTask<?> mTask;
 
@@ -222,6 +224,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	public void onCreate(Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
+		mApplication = TwidereApplication.getInstance(this);
 		setContentView(R.layout.twitter_login);
 		mEditUsername = (EditText) findViewById(R.id.username);
 		mEditPassword = (EditText) findViewById(R.id.password);
@@ -392,6 +395,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		final boolean enable_proxy = preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
 		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY);
 		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET);
+		//cb.setHostAddressResolver(mApplication.getHostAddressResolver());
 		setUserAgent(this, cb);
 		if (!isNullOrEmpty(mRESTBaseURL)) {
 			cb.setRestBaseURL(mRESTBaseURL);
@@ -423,7 +427,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		if (enable_proxy) {
 			final String proxy_host = preferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
 			final int proxy_port = parseInt(preferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
-			if (isNullOrEmpty(proxy_host) && proxy_port > 0) {
+			if (!isNullOrEmpty(proxy_host) && proxy_port > 0) {
 				cb.setHttpProxyHost(proxy_host);
 				cb.setHttpProxyPort(proxy_port);
 			}

@@ -21,6 +21,7 @@ package org.mariotaku.twidere.app;
 
 import static org.mariotaku.twidere.Constants.CRASH_REPORT_FORM_KEY;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.acra.ACRA;
@@ -33,8 +34,11 @@ import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesList;
 import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwidereHostAddressResolver;
 
+import twitter4j.HostAddressResolver;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -59,6 +63,10 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			mAsyncTaskManager = AsyncTaskManager.getInstance();
 		}
 		return mAsyncTaskManager;
+	}
+	
+	public static TwidereApplication getInstance(Context context) {
+		return context != null ? (TwidereApplication) context.getApplicationContext() : null;
 	}
 
 	public LazyImageLoader getPreviewImageLoader() {
@@ -117,6 +125,10 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		super.onCreate();
 		mServiceInterface = ServiceInterface.getInstance(this);
+		try {
+			mResolver = new TwidereHostAddressResolver(this);
+		} catch (IOException e) {
+		}
 	}
 
 	@Override
@@ -162,6 +174,12 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		final Intent intent = new Intent(BROADCAST_MULTI_SELECT_STATE_CHANGED);
 		intent.setPackage(getPackageName());
 		sendBroadcast(intent);
+	}
+	
+	private TwidereHostAddressResolver mResolver;
+	
+	public HostAddressResolver getHostAddressResolver() {
+		return mResolver;
 	}
 
 	@SuppressWarnings("serial")

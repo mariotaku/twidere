@@ -79,6 +79,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
@@ -1285,6 +1286,7 @@ public final class Utils implements Constants {
 	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities,
 			boolean include_rts) {
 		if (context == null) return null;
+		final TwidereApplication app = TwidereApplication.getInstance(context);
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences != null ? preferences.getBoolean(
@@ -1307,6 +1309,7 @@ public final class Utils implements Constants {
 			if (cur.getCount() == 1) {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
+				cb.setHostAddressResolver(app.getHostAddressResolver());
 				setUserAgent(context, cb);
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
@@ -1317,7 +1320,6 @@ public final class Utils implements Constants {
 						cb.setHttpProxyHost(proxy_host);
 						cb.setHttpProxyPort(proxy_port);
 					}
-
 				}
 				final String rest_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_BASE_URL));
 				final String signing_rest_base_url = cur.getString(cur

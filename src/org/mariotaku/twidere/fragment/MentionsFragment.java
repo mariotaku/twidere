@@ -65,7 +65,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 					getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 				}
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
-				if (getServiceInterface().isMentionsRefreshing()) {
+				if (mService.isMentionsRefreshing()) {
 					setRefreshing(false);
 				}
 			}
@@ -79,17 +79,17 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 
 	@Override
 	public int getStatuses(long[] account_ids, long[] max_ids) {
-		return getServiceInterface().getMentions(account_ids, max_ids);
+		return mService.getMentions(account_ids, max_ids);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mService = getServiceInterface();
 		mShouldRestorePosition = true;
 		super.onActivityCreated(savedInstanceState);
 		mListView = getListView();
 		mListView.setOnTouchListener(this);
-		mService = getServiceInterface();
 	}
 
 	@Override

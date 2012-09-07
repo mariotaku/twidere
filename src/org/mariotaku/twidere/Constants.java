@@ -42,6 +42,7 @@ public interface Constants extends TwitterConstants {
 	public static final String LOGTAG = APP_NAME;
 
 	public static final String USER_COLOR_PREFERENCES_NAME = "user_colors";
+	public static final String HOST_MAPPING_PREFERENCES_NAME = "host_mapping";
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
@@ -215,6 +216,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_CUSTOM_TABS = INTENT_PACKAGE_PREFIX + "CUSTOM_TABS";
 	public static final String INTENT_ACTION_NEW_CUSTOM_TAB = INTENT_PACKAGE_PREFIX + "NEW_CUSTOM_TAB";
 	public static final String INTENT_ACTION_EDIT_CUSTOM_TAB = INTENT_PACKAGE_PREFIX + "EDIT_CUSTOM_TAB";
+	public static final String INTENT_ACTION_EDIT_HOST_MAPPING = INTENT_PACKAGE_PREFIX + "EDIT_HOST_MAPPING";
 
 	public static final String INTENT_ACTION_EXTENSION_EDIT_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_EDIT_IMAGE";
 	public static final String INTENT_ACTION_EXTENSION_UPLOAD = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD";

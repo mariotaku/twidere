@@ -66,7 +66,7 @@ public class BaseListFragment extends ListFragment implements Constants {
 	}
 
 	public ServiceInterface getServiceInterface() {
-		return getApplication().getServiceInterface();
+		return getApplication() != null ? getApplication().getServiceInterface() : null;
 	}
 
 	public SharedPreferences getSharedPreferences(String name, int mode) {

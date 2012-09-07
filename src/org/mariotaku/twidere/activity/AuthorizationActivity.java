@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.parseInt;
+import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.WebViewProxySettings;
@@ -74,7 +75,7 @@ public class AuthorizationActivity extends BaseActivity {
 		final boolean enable_proxy = mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
 		final String proxy_host = mPreferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
 		final int proxy_port = parseInt(mPreferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
-		if (enable_proxy && proxy_host != null && proxy_port > 0) {
+		if (enable_proxy && !isNullOrEmpty(proxy_host) && proxy_port > 0) {
 			WebViewProxySettings.setProxy(mWebView, proxy_host, proxy_port);
 		} else {
 			WebViewProxySettings.resetProxy(mWebView);
