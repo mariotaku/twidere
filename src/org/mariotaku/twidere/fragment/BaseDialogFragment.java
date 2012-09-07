@@ -33,6 +33,10 @@ import android.support.v4.app.DialogFragment;
 
 public class BaseDialogFragment extends DialogFragment implements Constants {
 
+	public BaseDialogFragment() {
+
+	}
+
 	public ActionBarFragmentActivity getActionBarActivity() {
 		final Activity activity = getActivity();
 		if (activity instanceof ActionBarFragmentActivity) return (ActionBarFragmentActivity) activity;

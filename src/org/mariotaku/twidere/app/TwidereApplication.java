@@ -58,15 +58,17 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private final ArrayList<Long> mSelectedStatusIds = new ArrayList<Long>();
 	private final ArrayList<Long> mSelectedUserIds = new ArrayList<Long>();
 
+	private TwidereHostAddressResolver mResolver;
+
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager == null) {
 			mAsyncTaskManager = AsyncTaskManager.getInstance();
 		}
 		return mAsyncTaskManager;
 	}
-	
-	public static TwidereApplication getInstance(Context context) {
-		return context != null ? (TwidereApplication) context.getApplicationContext() : null;
+
+	public HostAddressResolver getHostAddressResolver() {
+		return mResolver;
 	}
 
 	public LazyImageLoader getPreviewImageLoader() {
@@ -127,7 +129,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		mServiceInterface = ServiceInterface.getInstance(this);
 		try {
 			mResolver = new TwidereHostAddressResolver(this);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 		}
 	}
 
@@ -175,11 +177,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		intent.setPackage(getPackageName());
 		sendBroadcast(intent);
 	}
-	
-	private TwidereHostAddressResolver mResolver;
-	
-	public HostAddressResolver getHostAddressResolver() {
-		return mResolver;
+
+	public static TwidereApplication getInstance(Context context) {
+		return context != null ? (TwidereApplication) context.getApplicationContext() : null;
 	}
 
 	@SuppressWarnings("serial")

@@ -16,28 +16,27 @@ import org.xbill.DNS.Section;
 import org.xbill.DNS.SimpleResolver;
 import org.xbill.DNS.Type;
 
+import twitter4j.HostAddressResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import twitter4j.HostAddressResolver;
 
 public class TwidereHostAddressResolver implements Constants, HostAddressResolver {
 
 	private final Resolver mResolver;
 	private final SharedPreferences mPreferences;
 	private final LinkedHashMap<String, String> mHostCache = new LinkedHashMap<String, String>(512, 0.75f, false);
-	
+
 	public TwidereHostAddressResolver(Context context) throws IOException {
 		mPreferences = context.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = new SimpleResolver("8.8.8.8");
 		mResolver.setTCP(true);
 	}
-	
+
 	@Override
 	public String resolve(String host) throws IOException {
-		//First, I'll try to load address cached.
+		// First, I'll try to load address cached.
 		if (mHostCache.containsKey(host)) return mHostCache.get(host);
-		//Then I'll try to load from custom host mapping.
+		// Then I'll try to load from custom host mapping.
 		if (mPreferences.contains(host)) {
 			final String host_addr = mPreferences.getString(host, null);
 			mHostCache.put(host, host_addr);
@@ -49,8 +48,8 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 		final Record[] records = response.getSectionArray(Section.ANSWER);
 		if (records == null || records.length < 1) throw new IOException("Could not find " + host);
 		String host_addr = null;
-		//Test each IP address resolved.
-		for (Record record : records) {
+		// Test each IP address resolved.
+		for (final Record record : records) {
 			if (record instanceof ARecord) {
 				final InetAddress ipv4_addr = ((ARecord) record).getAddress();
 				if (ipv4_addr.isReachable(300)) {
@@ -61,7 +60,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 			} else if (record instanceof AAAARecord) {
 			}
 		}
-		//No address is reachable, but I believe the IP is correct.
+		// No address is reachable, but I believe the IP is correct.
 		if (host_addr == null) {
 			final Record record = records[0];
 			if (record instanceof ARecord) {

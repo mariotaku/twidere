@@ -47,6 +47,10 @@ public class BaseListFragment extends ListFragment implements Constants {
 		}
 	};
 
+	public BaseListFragment() {
+
+	}
+
 	public ActionBarFragmentActivity getActionBarActivity() {
 		final Activity activity = getActivity();
 		if (activity instanceof ActionBarFragmentActivity) return (ActionBarFragmentActivity) activity;

@@ -19,8 +19,8 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.parseInt;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.WebViewProxySettings;

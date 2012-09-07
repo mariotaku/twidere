@@ -34,6 +34,10 @@ import android.support.v4.app.Fragment;
 
 public class BaseFragment extends Fragment implements Constants {
 
+	public BaseFragment() {
+
+	}
+
 	public ActionBarFragmentActivity getActionBarActivity() {
 		final Activity activity = getActivity();
 		if (activity instanceof ActionBarFragmentActivity) return (ActionBarFragmentActivity) activity;

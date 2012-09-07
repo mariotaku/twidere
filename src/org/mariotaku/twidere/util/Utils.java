@@ -44,6 +44,8 @@ import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_A
 import static org.mariotaku.twidere.util.TwidereLinkify.YFROG_GROUP_ID;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
@@ -124,6 +126,7 @@ import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
 import twitter4j.DirectMessage;
 import twitter4j.EntitySupport;
+import twitter4j.HostAddressResolver;
 import twitter4j.MediaEntity;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -324,6 +327,7 @@ public final class Utils implements Constants {
 	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
 
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
+
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
 	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
 			DirectMessages.Outbox.CONTENT_URI };
@@ -846,6 +850,25 @@ public final class Utils implements Constants {
 		canvas.drawLines(points, paint);
 
 		return bm;
+	}
+
+	public static HttpURLConnection getConnection(URL url_orig, boolean ignore_ssl_error, Proxy proxy,
+			HostAddressResolver resolver) throws IOException {
+		if (url_orig == null) return null;
+		final HttpURLConnection con;
+		final String url_string = url_orig.toString();
+		final String host = url_orig.getHost();
+		final String resolved_host = resolver != null ? resolver.resolve(host) : null;
+		con = (HttpURLConnection) new URL(resolved_host != null ? url_string.replace("://" + host, "://"
+				+ resolved_host) : url_string).openConnection(proxy);
+		if (resolved_host != null) {
+			con.setRequestProperty("Host", host);
+		}
+		con.setInstanceFollowRedirects(false);
+		if (ignore_ssl_error) {
+			setIgnoreSSLError(con);
+		}
+		return con;
 	}
 
 	public static long getDefaultAccountId(Context context) {
@@ -1428,41 +1451,6 @@ public final class Utils implements Constants {
 		final String full_size = "http://yfrog.com/" + id + ":medium";
 		return new ImageSpec(thumbnail_size, full_size);
 
-	}
-
-	public static boolean isFiltered(Context context, String screen_name, String source, String text) {
-		if (context == null) return false;
-		final ContentResolver resolver = context.getContentResolver();
-		final String[] cols = new String[] { Filters.TEXT };
-		Cursor cur;
-		if (screen_name != null) {
-			cur = resolver.query(Filters.Users.CONTENT_URI, cols, null, null, null);
-			cur.moveToFirst();
-			while (!cur.isAfterLast()) {
-				if (screen_name.equals(cur.getString(0))) return true;
-				cur.moveToNext();
-			}
-			cur.close();
-		}
-		if (source != null) {
-			cur = resolver.query(Filters.Sources.CONTENT_URI, cols, null, null, null);
-			cur.moveToFirst();
-			while (!cur.isAfterLast()) {
-				if (HtmlEscapeHelper.unescape(source).equals(cur.getString(0))) return true;
-				cur.moveToNext();
-			}
-			cur.close();
-		}
-		if (text != null) {
-			cur = resolver.query(Filters.Users.CONTENT_URI, cols, null, null, null);
-			cur.moveToFirst();
-			while (!cur.isAfterLast()) {
-				if (text.contains(cur.getString(0))) return true;
-				cur.moveToNext();
-			}
-			cur.close();
-		}
-		return false;
 	}
 
 	public static boolean isMyAccount(Context context, long account_id) {

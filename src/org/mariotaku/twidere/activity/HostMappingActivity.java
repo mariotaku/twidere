@@ -1,5 +1,204 @@
 package org.mariotaku.twidere.activity;
 
-public class HostMappingActivity extends BaseActivity {
+import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static org.mariotaku.twidere.util.Utils.parseString;
 
+import java.util.Map;
+
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.BaseDialogFragment;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class HostMappingActivity extends BaseActivity implements OnItemClickListener, OnItemLongClickListener {
+
+	private ListView mListView;
+	private HostMappingAdapter mAdapter;
+	private SharedPreferences mPreferences;
+
+	private DialogFragment mDialogFragment;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mPreferences = getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		setContentView(R.layout.base_list);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		mAdapter = new HostMappingAdapter(this);
+		mListView = (ListView) findViewById(android.R.id.list);
+		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
+		reload();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_host_mapping, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+		Toast.makeText(this, R.string.longclick_to_delete, Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+		final SharedPreferences.Editor editor = mPreferences.edit();
+		editor.remove(mAdapter.getItem(position));
+		final boolean ret = editor.commit();
+		reload();
+		return ret;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				onBackPressed();
+				break;
+			case MENU_ADD:
+				mDialogFragment = (DialogFragment) Fragment.instantiate(this, AddMappingDialogFragment.class.getName());
+				mDialogFragment.show(getSupportFragmentManager(), "add_mapping");
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	public void reload() {
+		if (mAdapter == null) return;
+		mAdapter.reload();
+	}
+
+	public static class AddMappingDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
+
+		private EditText mEditHost, mEditAddress;
+		private String mHost, mAddress;
+
+		public AddMappingDialogFragment() {
+
+		}
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			switch (which) {
+				case DialogInterface.BUTTON_POSITIVE: {
+					mHost = parseString(mEditHost.getText());
+					mAddress = parseString(mEditAddress.getText());
+					if (isNullOrEmpty(mHost) || isNullOrEmpty(mAddress)) return;
+					final SharedPreferences prefs = getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME,
+							Context.MODE_PRIVATE);
+					final SharedPreferences.Editor editor = prefs.edit();
+					editor.putString(mHost, mAddress);
+					editor.commit();
+					final FragmentActivity activity = getActivity();
+					if (activity instanceof HostMappingActivity) {
+						((HostMappingActivity) activity).reload();
+					}
+					break;
+				}
+			}
+
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
+			mHost = bundle != null ? bundle.getString(INTENT_KEY_TEXT1) : null;
+			mAddress = bundle != null ? bundle.getString(INTENT_KEY_TEXT2) : null;
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.host_mapping_dialog_view, null);
+			builder.setView(view);
+			mEditHost = (EditText) view.findViewById(R.id.host);
+			mEditAddress = (EditText) view.findViewById(R.id.address);
+			if (mHost != null) {
+				mEditHost.setText(mHost);
+			}
+			if (mAddress != null) {
+				mEditAddress.setText(mAddress);
+			}
+			builder.setTitle(R.string.add_host_mapping);
+			builder.setPositiveButton(android.R.string.ok, this);
+			builder.setNegativeButton(android.R.string.cancel, null);
+			return builder.create();
+		}
+
+		@Override
+		public void onSaveInstanceState(Bundle outState) {
+			outState.putString(INTENT_KEY_TEXT1, mHost);
+			outState.putString(INTENT_KEY_TEXT2, mAddress);
+			super.onSaveInstanceState(outState);
+		}
+
+	}
+
+	static class HostMappingAdapter extends BaseAdapter {
+
+		private final SharedPreferences mPreferences;
+		private final LayoutInflater mInflater;
+		private Map<String, ?> mData;
+		private String[] mKeys;
+
+		public HostMappingAdapter(Context context) {
+			mPreferences = context.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			mInflater = LayoutInflater.from(context);
+		}
+
+		@Override
+		public int getCount() {
+			return mData != null ? mData.size() : 0;
+		}
+
+		@Override
+		public String getItem(int position) {
+			return mKeys.length > 0 && position < mKeys.length ? mKeys[position] : null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			final Object obj = getItem(position);
+			return obj != null ? obj.hashCode() : 0;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			final View view = convertView != null ? convertView : mInflater.inflate(
+					android.R.layout.simple_list_item_2, null);
+			final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+			final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+			final String key = getItem(position);
+			text1.setText(key);
+			text2.setText(mPreferences.getString(key, null));
+			return view;
+		}
+
+		public void reload() {
+			mData = mPreferences.getAll();
+			mKeys = mData.keySet().toArray(new String[mData.size()]);
+			notifyDataSetChanged();
+		}
+
+	}
 }

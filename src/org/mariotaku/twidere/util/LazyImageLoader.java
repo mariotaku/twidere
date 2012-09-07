@@ -21,6 +21,7 @@ package org.mariotaku.twidere.util;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
@@ -45,7 +46,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.app.TwidereApplication;
 
+import twitter4j.HostAddressResolver;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -80,6 +83,7 @@ public class LazyImageLoader implements Constants {
 	private boolean mIgnoreSSLError;
 	private Proxy mProxy;
 	private final SharedPreferences mPreferences;
+	private final HostAddressResolver mResolver;
 
 	public LazyImageLoader(Context context, String cache_dir_name, int fallback_image_res, int required_width,
 			int required_height, int mem_cache_capacity) {
@@ -92,6 +96,7 @@ public class LazyImageLoader implements Constants {
 		mRequiredHeight = required_height % 2 == 0 ? required_height : required_height + 1;
 		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProxy = getProxy(context);
+		mResolver = TwidereApplication.getInstance(context).getHostAddressResolver();
 		mIgnoreSSLError = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 	}
 
@@ -290,7 +295,7 @@ public class LazyImageLoader implements Constants {
 			// from web
 			try {
 				Bitmap bitmap = null;
-				final HttpURLConnection conn = (HttpURLConnection) url.openConnection(mProxy);
+				final HttpURLConnection conn = getConnection(url, mIgnoreSSLError, mProxy, mResolver);
 				if (mIgnoreSSLError) {
 					setIgnoreSSLError(conn);
 				}

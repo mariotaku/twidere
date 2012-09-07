@@ -21,9 +21,9 @@ package org.mariotaku.twidere.activity;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.parseURL;
-import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.File;
@@ -37,9 +37,11 @@ import java.net.URL;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.view.ImageViewer;
 
+import twitter4j.HostAddressResolver;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -74,6 +76,8 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			showErrorToast(ImageViewerActivity.this, msg.obj, true);
 		}
 	};
+
+	private HostAddressResolver mResolver;
 
 	@Override
 	public void onClick(View view) {
@@ -138,6 +142,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 	@Override
 	protected void onCreate(Bundle icicle) {
+		mResolver = TwidereApplication.getInstance(this).getHostAddressResolver();
 		super.onCreate(icicle);
 		setContentView(R.layout.image_viewer);
 		loadImage();
@@ -255,11 +260,8 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				// from web
 				try {
 					Bitmap bitmap = null;
-					final HttpURLConnection conn = (HttpURLConnection) url
-							.openConnection(getProxy(ImageViewerActivity.this));
-					if (ignore_ssl_error) {
-						setIgnoreSSLError(conn);
-					}
+					final HttpURLConnection conn = getConnection(url, ignore_ssl_error,
+							getProxy(ImageViewerActivity.this), mResolver);
 					conn.setConnectTimeout(30000);
 					conn.setReadTimeout(30000);
 					conn.setInstanceFollowRedirects(true);

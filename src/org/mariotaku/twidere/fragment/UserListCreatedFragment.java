@@ -15,6 +15,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,7 +55,8 @@ public class UserListCreatedFragment extends BaseUserListsListFragment {
 				if (mDialogFragment != null && mDialogFragment.isAdded()) {
 					mDialogFragment.dismiss();
 				}
-				mDialogFragment = new CreateUserListDialogFragment();
+				mDialogFragment = (DialogFragment) Fragment.instantiate(getActivity(),
+						CreateUserListDialogFragment.class.getName());
 				final Bundle args = new Bundle();
 				args.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId());
 				mDialogFragment.setArguments(args);
@@ -74,6 +76,10 @@ public class UserListCreatedFragment extends BaseUserListsListFragment {
 		private long mAccountId;
 		private boolean mIsPublic;
 		private ServiceInterface mService;
+
+		public CreateUserListDialogFragment() {
+
+		}
 
 		@Override
 		public void onClick(DialogInterface dialog, int which) {

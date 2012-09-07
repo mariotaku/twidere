@@ -395,7 +395,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		final boolean enable_proxy = preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
 		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY);
 		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET);
-		//cb.setHostAddressResolver(mApplication.getHostAddressResolver());
+		cb.setHostAddressResolver(mApplication.getHostAddressResolver());
 		setUserAgent(this, cb);
 		if (!isNullOrEmpty(mRESTBaseURL)) {
 			cb.setRestBaseURL(mRESTBaseURL);

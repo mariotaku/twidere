@@ -402,6 +402,15 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".activity.HostMappingActivity"
+			android:label="@string/custom_host_mapping">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.EDIT_HOST_MAPPING"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
 
 		<service
 			android:name=".service.TwidereService"

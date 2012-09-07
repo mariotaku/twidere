@@ -19,6 +19,13 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.restartActivity;
+
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -27,16 +34,8 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.FragmentActivity;
-import android.view.WindowManager;
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
-
-import static org.mariotaku.twidere.util.Utils.restartActivity;
-import org.mariotaku.twidere.util.SetLayerTypeAccessor;
 import android.view.Window;
-import android.view.View;
+import android.view.WindowManager;
 
 @SuppressLint("Registered")
 class BaseDialogActivity extends FragmentActivity implements Constants, ActivityThemeChangeInterface {
@@ -46,6 +45,13 @@ class BaseDialogActivity extends FragmentActivity implements Constants, Activity
 
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();
+	}
+
+	public boolean isHardwareAccelerationChanged() {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
+		return mHardwareAccelerated != hardware_acceleration;
 	}
 
 	@Override
@@ -75,39 +81,32 @@ class BaseDialogActivity extends FragmentActivity implements Constants, Activity
 		boolean show_anim = false;
 		try {
 			final float transition_animation = Settings.System.getFloat(getContentResolver(),
-																		Settings.System.TRANSITION_ANIMATION_SCALE);
+					Settings.System.TRANSITION_ANIMATION_SCALE);
 			show_anim = transition_animation > 0.0;
 		} catch (final SettingNotFoundException e) {
 			e.printStackTrace();
 		}
 		restartActivity(this, show_anim);
 	}
-	
+
+	public void setHardwareAcceleration() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(
+					PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
+			final Window w = getWindow();
+			if (hardware_acceleration) {
+				w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+						WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+			}
+		}
+	}
+
 	@Override
 	public void setTheme() {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mThemeId = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false) ? R.style.Theme_Twidere_Dialog
 				: R.style.Theme_Twidere_Light_Dialog;
 		setTheme(mThemeId);
-	}
-	
-
-	public void setHardwareAcceleration() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
-			final Window w = getWindow();
-			if (hardware_acceleration) {
-				w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-						   WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-			}
-		}
-	}
-
-	public boolean isHardwareAccelerationChanged() {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
-		return mHardwareAccelerated != hardware_acceleration;
 	}
 }

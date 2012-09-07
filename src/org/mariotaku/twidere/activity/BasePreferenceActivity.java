@@ -19,23 +19,22 @@
 
 package org.mariotaku.twidere.activity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Bundle;
-import android.provider.Settings;
-import android.provider.Settings.SettingNotFoundException;
-import android.view.WindowManager;
+import static org.mariotaku.twidere.util.Utils.restartActivity;
+
 import org.mariotaku.actionbarcompat.ActionBarPreferenceActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
 
-import static org.mariotaku.twidere.util.Utils.restartActivity;
-import org.mariotaku.twidere.util.SetLayerTypeAccessor;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
 import android.view.Window;
-import android.view.View;
+import android.view.WindowManager;
 
 class BasePreferenceActivity extends ActionBarPreferenceActivity implements Constants, ActivityThemeChangeInterface {
 
@@ -47,6 +46,13 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 
 	public boolean isDarkTheme() {
 		return mIsDarkTheme;
+	}
+
+	public boolean isHardwareAccelerationChanged() {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
+		return mHardwareAccelerated != hardware_acceleration;
 	}
 
 	public boolean isSolidColorBackground() {
@@ -80,12 +86,25 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 		boolean show_anim = false;
 		try {
 			final float transition_animation = Settings.System.getFloat(getContentResolver(),
-																		Settings.System.TRANSITION_ANIMATION_SCALE);
+					Settings.System.TRANSITION_ANIMATION_SCALE);
 			show_anim = transition_animation > 0.0;
 		} catch (final SettingNotFoundException e) {
 			e.printStackTrace();
 		}
 		restartActivity(this, show_anim);
+	}
+
+	public void setHardwareAcceleration() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(
+					PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
+			final Window w = getWindow();
+			if (hardware_acceleration) {
+				w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+						WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+			}
+		}
 	}
 
 	@Override
@@ -98,24 +117,5 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 		if (mIsSolidColorBackground) {
 			getWindow().setBackgroundDrawableResource(is_dark_theme ? android.R.color.black : android.R.color.white);
 		}
-	}
-	
-	public void setHardwareAcceleration() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
-			final Window w = getWindow();
-			if (hardware_acceleration) {
-				w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-						   WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-			}
-		}
-	}
-
-	public boolean isHardwareAccelerationChanged() {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
-		return mHardwareAccelerated != hardware_acceleration;
 	}
 }
