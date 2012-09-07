@@ -323,5 +323,7 @@
 	<string name="Nitems_selected_quantity_one">1 item selected</string>
 	<string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> items selected</string>
 	<string name="view">View</string>
+	<string name="hardware_acceleration">Hardware acceleration</string>
+	<string name="hardware_acceleration_summary">Some devices will smoother after enabled, SOME WILL NOT. Android 3.0+ ONLY. THIS WILL NOT OVERRIDE SYSTEM SETTINGS!</string>
 
 </resources>

@@ -13,8 +13,7 @@
 			android:id="@android:id/list"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:layout_above="@+id/divider_horizontal"
-			android:layerType="software"/>
+			android:layout_above="@+id/divider_horizontal"/>
 
 		<View
 			android:id="@+id/divider_horizontal"

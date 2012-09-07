@@ -4,8 +4,7 @@
 	<org.mariotaku.twidere.view.ExtendedViewPager
 		android:id="@+id/pager"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layerType="software"/>
+		android:layout_height="match_parent"/>
 
 	<ImageButton
 		android:id="@+id/button_compose"

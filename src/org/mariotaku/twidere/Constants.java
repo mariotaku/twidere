@@ -185,6 +185,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_QUICK_SEND = "quick_send";
 	public static final String PREFERENCE_KEY_COMPOSE_ACCOUNTS = "compose_accounts";
 	public static final String PREFERENCE_KEY_FAST_LIST_PROCESSING = "fast_list_processing";
+	public static final String PREFERENCE_KEY_HARDWARE_ACCELERATION = "hardware_acceleration";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

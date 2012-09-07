@@ -76,7 +76,7 @@ public class TwidereLinkify {
 	public static final String AVAILABLE_URL_SCHEME_PREFIX = "(https?:\\/\\/)?";
 	public static final String AVAILABLE_IMAGE_SHUFFIX = "(png|jpeg|jpg|gif|bmp)";
 
-	private static final String STRING_PATTERN_TWITTER_IMAGES_DOMAIN = "p\\.twimg\\.com";
+	private static final String STRING_PATTERN_TWITTER_IMAGES_DOMAIN = "(p|pbs)\\.twimg\\.com";
 	private static final String STRING_PATTERN_SINA_WEIBO_IMAGES_DOMAIN = "[\\w\\d]+\\.sinaimg\\.cn|[\\w\\d]+\\.sina\\.cn";
 	private static final String STRING_PATTERN_LOCKERZ_AND_PLIXI_DOMAIN = "plixi\\.com\\/p|lockerz\\.com\\/s";
 	private static final String STRING_PATTERN_INSTAGRAM_DOMAIN = "instagr\\.am|instagram\\.com";
@@ -89,7 +89,7 @@ public class TwidereLinkify {
 
 	private static final String STRING_PATTERN_IMAGES_NO_SCHEME = "[^:\\/\\/].+?\\." + AVAILABLE_IMAGE_SHUFFIX;
 	private static final String STRING_PATTERN_TWITTER_IMAGES_NO_SCHEME = STRING_PATTERN_TWITTER_IMAGES_DOMAIN
-			+ "\\/([\\d\\w\\-_]+)\\.(png|jpeg|jpg|gif|bmp)";
+			+ "(\\/media)?\\/([\\d\\w\\-_]+)\\.(png|jpeg|jpg|gif|bmp)";
 	private static final String STRING_PATTERN_SINA_WEIBO_IMAGES_NO_SCHEME = "("
 			+ STRING_PATTERN_SINA_WEIBO_IMAGES_DOMAIN + ")" + "\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES
 			+ "\\/(([\\d\\w]+)\\.(png|jpeg|jpg|gif|bmp))";
