@@ -20,6 +20,6 @@ public class UserMentionsFragment extends SearchTweetsFragment {
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		return new TweetSearchLoader(getActivity(), account_id, screen_name.startsWith("@") ? screen_name : "@"
-				+ screen_name, max_id, getData());
+				+ screen_name, max_id, getData(), getClass().getSimpleName());
 	}
 }

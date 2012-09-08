@@ -27,7 +27,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
-import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTimestampFromDate;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
@@ -251,7 +250,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		mProfileImageLoader.displayImage(
 				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-						: getNormalTwitterProfileImage(profile_image_url_string)), mProfileImageView);
+						: profile_image_url_string), mProfileImageView);
 		// }
 		mUser = user;
 		mAdapter.notifyDataSetChanged();

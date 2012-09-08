@@ -39,7 +39,7 @@ import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spanned;
 
-public class ParcelableStatus implements Parcelable {
+public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus> {
 
 	public static final Parcelable.Creator<ParcelableStatus> CREATOR = new Parcelable.Creator<ParcelableStatus>() {
 		@Override
@@ -161,6 +161,39 @@ public class ParcelableStatus implements Parcelable {
 
 	}
 
+	public ParcelableStatus(SerializableStatus in) {
+		retweet_id = in.retweet_id;
+		retweeted_by_id = in.retweeted_by_id;
+		status_id = in.status_id;
+		account_id = in.account_id;
+		user_id = in.user_id;
+		status_timestamp = in.status_timestamp;
+		retweet_count = in.retweet_count;
+		in_reply_to_status_id = in.in_reply_to_status_id;
+		is_gap = in.is_gap;
+		is_retweet = in.is_retweet;
+		is_favorite = in.is_favorite;
+		is_protected = in.is_protected;
+		is_verified = in.is_verified;
+		has_media = in.has_media;
+		retweeted_by_name = in.retweeted_by_name;
+		retweeted_by_screen_name = in.retweeted_by_screen_name;
+		text_html = in.text_html;
+		text_plain = in.text_plain;
+		name = in.name;
+		screen_name = in.screen_name;
+		in_reply_to_screen_name = in.in_reply_to_screen_name;
+		source = in.source;
+		profile_image_url_string = in.profile_image_url_string;
+		image_preview_url_string = in.image_preview_url_string;
+		image_orig_url_string = in.image_orig_url_string;
+		location_string = in.location_string;
+		location = new ParcelableLocation(in.location);
+		image_preview_url = in.image_preview_url;
+		profile_image_url = in.profile_image_url;
+		text = text_html != null ? Html.fromHtml(text_html) : null;
+	}
+
 	public ParcelableStatus(Status status, long account_id, boolean is_gap) {
 
 		this.is_gap = is_gap;
@@ -242,6 +275,15 @@ public class ParcelableStatus implements Parcelable {
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
+	}
+
+	@Override
+	public int compareTo(ParcelableStatus another) {
+		if (another == null) return 0;
+		final long diff = another.status_id - status_id;
+		if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+		if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+		return (int) diff;
 	}
 
 	@Override

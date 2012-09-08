@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.util.List;
@@ -45,7 +44,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 
 	public UserListsAdapter(Context context) {
 		super(context, R.layout.user_list_list_item, R.id.description);
-		final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
+		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
 		application.getServiceInterface();
 	}
@@ -89,8 +88,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 						parseURL(getBiggerTwitterProfileImage(user_list.user_profile_image_url_string)),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(
-						parseURL(getNormalTwitterProfileImage(user_list.user_profile_image_url_string)),
+				mProfileImageLoader.displayImage(parseURL(user_list.user_profile_image_url_string),
 						holder.profile_image);
 			}
 		}

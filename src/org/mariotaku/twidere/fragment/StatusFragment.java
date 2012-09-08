@@ -26,7 +26,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
-import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -201,7 +200,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 		mProfileImageLoader.displayImage(
 				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string)
-						: getNormalTwitterProfileImage(status.profile_image_url_string)), mProfileImageView);
+						: status.profile_image_url_string), mProfileImageView);
 		final List<ImageSpec> images = getImagesInStatus(status.text_html);
 		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		mImagesPreviewFragment.addAll(images);

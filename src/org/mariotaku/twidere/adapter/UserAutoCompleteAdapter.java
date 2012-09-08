@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.twidere.Constants;
@@ -81,8 +80,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
 						image_view);
 			} else {
-				mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(profile_image_url_string)),
-						image_view);
+				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), image_view);
 			}
 		}
 		super.bindView(view, context, cursor);

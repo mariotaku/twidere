@@ -47,7 +47,8 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
-		return new UserTimelineLoader(getActivity(), account_id, user_id, screen_name, max_id, getData());
+		return new UserTimelineLoader(getActivity(), account_id, user_id, screen_name, max_id, getData(), getClass()
+				.getSimpleName());
 	}
 
 	@Override
@@ -57,6 +58,18 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 			isAllItemsLoaded = total != -1 && total == adapter.getCount();
 		}
 
+	}
+
+	@Override
+	public void onDestroy() {
+		UserTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		super.onDestroy();
+	}
+
+	@Override
+	public void onDestroyView() {
+		UserTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		super.onDestroyView();
 	}
 
 }

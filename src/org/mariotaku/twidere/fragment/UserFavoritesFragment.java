@@ -72,9 +72,11 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		if (user_id != -1)
-			return new UserFavoritesLoader(getActivity(), account_id, user_id, max_id, getData());
+			return new UserFavoritesLoader(getActivity(), account_id, user_id, max_id, getData(), getClass()
+					.getSimpleName());
 		else
-			return new UserFavoritesLoader(getActivity(), account_id, screen_name, max_id, getData());
+			return new UserFavoritesLoader(getActivity(), account_id, screen_name, max_id, getData(), getClass()
+					.getSimpleName());
 	}
 
 	@Override
@@ -86,6 +88,18 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 			}
 			isAllItemsLoaded = total != -1 && total == adapter.getCount();
 		}
+	}
+
+	@Override
+	public void onDestroy() {
+		UserFavoritesLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		super.onDestroy();
+	}
+	
+	@Override
+	public void onDestroyView() {
+		UserFavoritesLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		super.onDestroyView();
 	}
 
 	@Override

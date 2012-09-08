@@ -22,60 +22,38 @@ package org.mariotaku.twidere.loader;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
+import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.model.ParcelableStatus;
 
+import twitter4j.Activity;
+import twitter4j.Paging;
+import twitter4j.ResponseList;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.content.AsyncTaskLoader;
 
-public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>> implements Constants {
+public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Activity>> implements Constants {
 
 	private final Twitter mTwitter;
 	private final long mAccountId;
-	private final String mClassName;
-	private final List<ParcelableStatus> mData;
-	private final boolean mFirstLoad;
+	private final List<Activity> mData;
 
-	public ParcelableStatusesLoader(Context context, long account_id, List<ParcelableStatus> data, String class_name) {
+	public Twitter4JActivitiesLoader(Context context, long account_id, List<Activity> data) {
 		super(context);
-		mClassName = class_name;
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
-		mFirstLoad = data == null;
-		mData = data != null ? data : new ArrayList<ParcelableStatus>();
-	}
-
-	public boolean containsStatus(long status_id) {
-		for (final ParcelableStatus status : mData) {
-			if (status.status_id == status_id) return true;
-		}
-		return false;
-	}
-
-	public synchronized boolean deleteStatus(long status_id) {
-		try {
-			final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
-			for (final ParcelableStatus status : mData) {
-				if (status.status_id == status_id) {
-					data_to_remove.add(status);
-				}
-			}
-			return mData.removeAll(data_to_remove);
-		} catch (final ConcurrentModificationException e) {
-			// This shouldn't happen.
-		}
-		return false;
+		mData = data != null ? data : new ArrayList<Activity>();
 	}
 
 	public long getAccountId() {
 		return mAccountId;
 	}
 
-	public List<ParcelableStatus> getData() {
+	public List<Activity> getData() {
 		return mData;
 	}
 
@@ -84,16 +62,30 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 	}
 
 	@Override
-	public void onStartLoading() {
+	public List<Activity> loadInBackground() {
+		ResponseList<Activity> statuses = null;
+		try {
+			final Paging paging = new Paging();
+			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
+					Context.MODE_PRIVATE);
+			final int load_item_limit = prefs
+					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
+			paging.setCount(load_item_limit > 100 ? 100 : load_item_limit);
+			statuses = getActivities(paging);
+		} catch (final TwitterException e) {
+			e.printStackTrace();
+		}
+		if (statuses != null) {
+			Collections.sort(statuses);
+		}
+		return statuses;
+	}
+
+	@Override
+	protected void onStartLoading() {
 		forceLoad();
 	}
 
-	protected String getClassName() {
-		return mClassName;
-	}
-
-	protected boolean isFirstLoad() {
-		return mFirstLoad;
-	}
+	abstract ResponseList<Activity> getActivities(Paging paging) throws TwitterException;
 
 }

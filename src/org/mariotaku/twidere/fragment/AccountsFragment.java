@@ -301,7 +301,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		public AccountsAdapter(Context context) {
 			super(context, R.layout.account_list_item, null, new String[] { Accounts.USERNAME },
 					new int[] { android.R.id.text1 }, 0);
-			final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
+			final TwidereApplication application = TwidereApplication.getInstance(context);
 			mProfileImageLoader = application.getProfileImageLoader();
 			mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		}

@@ -42,12 +42,24 @@ public class RetweetedToMeFragment extends ParcelableStatusesListFragment {
 			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 		}
-		return new RetweetedToMeLoader(getActivity(), account_id, max_id, getData());
+		return new RetweetedToMeLoader(getActivity(), account_id, max_id, getData(), getClass().getSimpleName());
 	}
 
 	@Override
 	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
 
+	}
+
+	@Override
+	public void onDestroy() {
+		RetweetedToMeLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		super.onDestroy();
+	}
+	
+	@Override
+	public void onDestroyView() {
+		RetweetedToMeLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		super.onDestroyView();
 	}
 
 }

@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.Utils.findUserList;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
@@ -181,7 +180,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		mProfileImageLoader.displayImage(
 				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-						: getNormalTwitterProfileImage(profile_image_url_string)), mProfileImageView);
+						: profile_image_url_string), mProfileImageView);
 		mUserList = user_list;
 		if (mUserId == mAccountId) {
 			mFollowMoreButton.setText(R.string.more);

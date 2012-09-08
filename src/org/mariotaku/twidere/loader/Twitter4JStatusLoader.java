@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.loader;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -36,19 +35,9 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
 	private final long mMaxId;
 
-	public static final Comparator<Status> TWITTER4J_STATUS_ID_COMPARATOR = new Comparator<Status>() {
-
-		@Override
-		public int compare(Status object1, Status object2) {
-			final long diff = object2.getId() - object1.getId();
-			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
-			return (int) diff;
-		}
-	};
-
-	public Twitter4JStatusLoader(Context context, long account_id, long max_id, List<ParcelableStatus> data) {
-		super(context, account_id, data);
+	public Twitter4JStatusLoader(Context context, long account_id, long max_id, List<ParcelableStatus> data,
+			String class_name) {
+		super(context, account_id, data, class_name);
 		mMaxId = max_id;
 	}
 
@@ -74,7 +63,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			e.printStackTrace();
 		}
 		if (statuses != null) {
-			Collections.sort(statuses, TWITTER4J_STATUS_ID_COMPARATOR);
+			Collections.sort(statuses);
 			final int size = statuses.size();
 			for (int i = 0; i < size; i++) {
 				final Status status = statuses.get(i);

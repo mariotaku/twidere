@@ -41,6 +41,15 @@
 			android:summary="@string/tcp_dns_query_summary"
 			android:title="@string/tcp_dns_query"/>
 
+		<EditTextPreference
+			android:defaultValue="8.8.8.8"
+			android:dialogTitle="@string/dns_server"
+			android:key="dns_server"
+			android:singleLine="true"
+			android:summary="@string/dns_server_summary"
+			android:title="@string/dns_server"
+			android:typeface="monospace"/>
+
 		<Preference
 			android:key="custom_host_mapping"
 			android:summary="@string/custom_host_mapping_summary"

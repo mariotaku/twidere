@@ -95,6 +95,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_DIRECT_MESSAGES = "direct_messages";
 	public static final String AUTHORITY_TRENDS = "trends";
 	public static final String AUTHORITY_USER_MENTIONS = "user_mentions";
+	public static final String AUTHORITY_ACTIVITIES_ABOUT_ME = "activities_about_me";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -186,6 +187,8 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_COMPOSE_ACCOUNTS = "compose_accounts";
 	public static final String PREFERENCE_KEY_FAST_LIST_PROCESSING = "fast_list_processing";
 	public static final String PREFERENCE_KEY_HARDWARE_ACCELERATION = "hardware_acceleration";
+	public static final String PREFERENCE_KEY_TCP_DNS_QUERY = "tcp_dns_query";
+	public static final String PREFERENCE_KEY_DNS_SERVER = "dns_server";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

@@ -21,7 +21,6 @@ package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.parseURL;
@@ -53,7 +52,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	public UsersAdapter(Context context) {
 		super(context, R.layout.user_list_item, R.id.description);
 		mContext = context;
-		final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
+		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
 		application.getServiceInterface();
 		mSelectedUserIds = application.getSelectedUserIds();
@@ -122,8 +121,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(user.profile_image_url_string)),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(user.profile_image_url_string)),
-						holder.profile_image);
+				mProfileImageLoader.displayImage(parseURL(user.profile_image_url_string), holder.profile_image);
 			}
 		}
 

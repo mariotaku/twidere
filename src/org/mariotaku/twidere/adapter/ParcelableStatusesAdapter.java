@@ -27,7 +27,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -71,7 +70,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public ParcelableStatusesAdapter(Context context) {
 		super(context, R.layout.status_list_item, R.id.text);
 		mContext = context;
-		final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
+		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
@@ -179,9 +178,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 							parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string)),
 							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(
-							parseURL(getNormalTwitterProfileImage(status.profile_image_url_string)),
-							holder.profile_image);
+					mProfileImageLoader.displayImage(parseURL(status.profile_image_url_string), holder.profile_image);
 				}
 				holder.profile_image.setOnClickListener(this);
 				holder.profile_image.setTag(position);

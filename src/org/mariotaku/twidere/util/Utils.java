@@ -82,6 +82,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.fragment.ActivitiesAboutMeFragment;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
@@ -284,6 +285,7 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_MENTIONS, UserMentionsFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_TIMELINE, UserTimelineFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_TRENDS, TrendsFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_ACTIVITIES_ABOUT_ME, ActivitiesAboutMeFragment.class);
 
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_CREATED, R.string.list_created_by_user);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_MEMBERS, R.string.list_members);
@@ -301,6 +303,7 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_MENTIONS, R.string.user_mentions);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_TIMELINE, R.string.user_timeline);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_TRENDS, R.string.trends);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_ACTIVITIES_ABOUT_ME, R.string.activities_about_me);
 
 		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);
 		CUSTOM_TABS_ICON_NAME_MAP.put("fire", R.drawable.ic_tab_fire);

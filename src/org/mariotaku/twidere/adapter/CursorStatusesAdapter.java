@@ -28,7 +28,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
@@ -75,7 +74,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	public CursorStatusesAdapter(Context context) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
-		final TwidereApplication application = (TwidereApplication) context.getApplicationContext();
+		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
@@ -174,8 +173,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
 							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(profile_image_url_string)),
-							holder.profile_image);
+					mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
 				}
 				holder.profile_image.setTag(position);
 			}

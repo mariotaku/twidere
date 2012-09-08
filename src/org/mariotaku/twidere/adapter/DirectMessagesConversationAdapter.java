@@ -22,7 +22,6 @@ package org.mariotaku.twidere.adapter;
 import static org.mariotaku.twidere.util.Utils.findDirectMessageInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.net.URL;
@@ -80,7 +79,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		if (mDisplayProfileImage) {
 			final String sender_profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
 			final URL sender_profile_image_url = parseURL(mDisplayHiResProfileImage ? getBiggerTwitterProfileImage(sender_profile_image_url_string)
-					: getNormalTwitterProfileImage(sender_profile_image_url_string));
+					: sender_profile_image_url_string);
 
 			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_left);
 			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_right);

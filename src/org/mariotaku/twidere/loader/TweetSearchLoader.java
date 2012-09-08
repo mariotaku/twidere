@@ -49,8 +49,9 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		}
 	};
 
-	public TweetSearchLoader(Context context, long account_id, String query, long max_id, List<ParcelableStatus> data) {
-		super(context, account_id, data);
+	public TweetSearchLoader(Context context, long account_id, String query, long max_id, List<ParcelableStatus> data,
+			String class_name) {
+		super(context, account_id, data, class_name);
 		mQuery = query;
 		mMaxId = max_id;
 	}

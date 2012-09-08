@@ -991,13 +991,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		 * onPullDownToRefresh will be called only when the user has Pulled Down
 		 * from the top, and released.
 		 */
-		public void onPullDownToRefresh();
+		void onPullDownToRefresh();
 
 		/**
 		 * onPullUpToRefresh will be called only when the user has Pulled Up
 		 * from the bottom, and released.
 		 */
-		public void onPullUpToRefresh();
+		void onPullUpToRefresh();
 
 	}
 

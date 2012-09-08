@@ -44,7 +44,7 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 			query = args.getString(INTENT_KEY_QUERY);
 		}
-		return new TweetSearchLoader(getActivity(), account_id, query, max_id, getData());
+		return new TweetSearchLoader(getActivity(), account_id, query, max_id, getData(), getClass().getSimpleName());
 	}
 
 	@Override

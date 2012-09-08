@@ -10,7 +10,6 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_TEXT;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getNormalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
@@ -82,8 +81,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(parseURL(getNormalTwitterProfileImage(profile_image_url_string)),
-						holder.profile_image);
+				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
 			}
 		}
 

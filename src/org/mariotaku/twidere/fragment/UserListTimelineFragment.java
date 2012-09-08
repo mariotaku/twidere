@@ -49,12 +49,24 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 			list_name = args.getString(INTENT_KEY_LIST_NAME);
 		}
 		return new ListTimelineLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, max_id,
-				getData());
+				getData(), getClass().getSimpleName());
 	}
 
 	@Override
 	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
 
+	}
+	
+	@Override
+	public void onDestroy() {
+		ListTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		super.onDestroy();
+	}
+	
+	@Override
+	public void onDestroyView() {
+		ListTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		super.onDestroyView();
 	}
 
 }

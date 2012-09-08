@@ -19,11 +19,16 @@
 
 package org.mariotaku.twidere.fragment;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.SerializableStatus;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -36,6 +41,8 @@ import android.support.v4.content.Loader;
 public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
 	private ParcelableStatusesAdapter mAdapter;
+
+	private List<ParcelableStatus> mData;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -61,16 +68,15 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	};
 
 	public final void deleteStatus(long status_id) {
-		if (status_id <= 0) return;
-		final List<ParcelableStatus> data = getData();
+		if (status_id <= 0 || mData == null) return;
 		final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
-		for (final ParcelableStatus status : data) {
+		for (final ParcelableStatus status : mData) {
 			if (status.status_id == status_id || status.retweet_id == status_id) {
 				data_to_remove.add(status);
 			}
 		}
-		data.removeAll(data_to_remove);
-		mAdapter.setData(data, true);
+		mData.removeAll(data_to_remove);
+		mAdapter.setData(mData, true);
 	}
 
 	@Override
@@ -102,15 +108,16 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+		mData = getData();
 		if (savedInstanceState != null) {
 			final ArrayList<ParcelableStatus> data = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
-			if (data != null && getData() != null) {
-				getData().clear();
-				getData().addAll(data);
+			if (data != null && mData != null) {
+				mData.clear();
+				mData.addAll(data);
 			}
 		}
 		mAdapter = new ParcelableStatusesAdapter(getActivity());
-		mAdapter.setData(getData());
+		mAdapter.setData(mData);
 		super.onActivityCreated(savedInstanceState);
 	}
 
@@ -126,9 +133,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public void onDestroyView() {
-		if (getData() != null) {
-			getData().clear();
-		}
 		super.onDestroyView();
 	}
 
@@ -144,7 +148,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public final void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
 		super.onLoadFinished(loader, data);
 		if (!isLoaderUsed()) return;
-		mAdapter.setData(data);
+		mData = data;
+		mAdapter.setData(mData);
 		onDataLoaded(loader, mAdapter);
 		onRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
@@ -173,8 +178,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		if (getData() instanceof ArrayList) {
-			outState.putParcelableArrayList(INTENT_KEY_DATA, (ArrayList<? extends Parcelable>) getData());
+		if (mData instanceof ArrayList) {
+			outState.putParcelableArrayList(INTENT_KEY_DATA, (ArrayList<? extends Parcelable>) mData);
 		}
 		super.onSaveInstanceState(outState);
 	}
@@ -191,5 +196,31 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public void onStop() {
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
+	}
+
+	public void writeSerializableStatuses(final long account_id) {
+		final Context context = getActivity();
+		if (context == null) return;
+		new Thread() {
+
+			@Override
+			public synchronized void start() {
+				try {
+					final ArrayList<SerializableStatus> statuses = new ArrayList<SerializableStatus>();
+					for (final ParcelableStatus status : mData) {
+						statuses.add(new SerializableStatus(status));
+					}
+					final FileOutputStream fos = new FileOutputStream(new File(context.getCacheDir(), getClass()
+							.getSimpleName() + "." + account_id));
+					final ObjectOutputStream os = new ObjectOutputStream(fos);
+					os.writeObject(statuses);
+					os.close();
+					fos.close();
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}.start();
 	}
 }
