@@ -326,7 +326,7 @@
 	<string name="hardware_acceleration">Hardware acceleration</string>
 	<string name="hardware_acceleration_summary">Some devices will smoother after enabled, SOME WILL NOT. Android 3.0+ ONLY. THIS WILL NOT OVERRIDE SYSTEM SETTINGS!</string>
 	<string name="custom_host_mapping">Custom host mapping</string>
-	<string name="custom_host_mapping_summary">Host mapping like /etc/hosts, but does not requre any additional permissions.</string>
+	<string name="custom_host_mapping_summary">Host mapping like /etc/hosts, but does not require any additional permissions.</string>
 	<string name="host">Host</string>
 	<string name="address">Address (Can be another host address)</string>
 	<string name="add_host_mapping">Add host mapping</string>
