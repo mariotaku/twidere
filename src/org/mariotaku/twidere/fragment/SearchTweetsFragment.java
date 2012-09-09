@@ -39,17 +39,32 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
 		long account_id = -1, max_id = -1;
 		String query = null;
+		boolean is_home_tab = false;
 		if (args != null) {
 			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 			query = args.getString(INTENT_KEY_QUERY);
+			is_home_tab = args.getBoolean(INTENT_KEY_IS_HOME_TAB);
 		}
-		return new TweetSearchLoader(getActivity(), account_id, query, max_id, getData(), getClass().getSimpleName());
+		return new TweetSearchLoader(getActivity(), account_id, query, max_id, getData(), getClass().getSimpleName(),
+				is_home_tab);
 	}
 
 	@Override
 	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
 
+	}
+
+	@Override
+	public void onDestroy() {
+		TweetSearchLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		super.onDestroy();
+	}
+
+	@Override
+	public void onDestroyView() {
+		TweetSearchLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		super.onDestroyView();
 	}
 
 }

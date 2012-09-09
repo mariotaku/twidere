@@ -21,6 +21,12 @@ package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +40,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 
 public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Activity>> implements Constants {
@@ -41,11 +48,17 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 	private final Twitter mTwitter;
 	private final long mAccountId;
 	private final List<Activity> mData;
+	private final boolean mIsFirstLoad, mIsHomeTab;
+	private final String mClassName;
 
-	public Twitter4JActivitiesLoader(Context context, long account_id, List<Activity> data) {
+	public Twitter4JActivitiesLoader(Context context, long account_id, List<Activity> data, String class_name,
+			boolean is_home_tab) {
 		super(context);
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
+		mIsFirstLoad = data == null;
+		mIsHomeTab = is_home_tab;
+		mClassName = class_name;
 		mData = data != null ? data : new ArrayList<Activity>();
 	}
 
@@ -63,7 +76,21 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 
 	@Override
 	public List<Activity> loadInBackground() {
-		ResponseList<Activity> statuses = null;
+		if (mIsFirstLoad && mIsHomeTab && mClassName != null) {
+			try {
+				final File f = new File(getContext().getCacheDir(), mClassName + "." + getAccountId());
+				final FileInputStream fis = new FileInputStream(f);
+				final ObjectInputStream in = new ObjectInputStream(fis);
+				@SuppressWarnings("unchecked")
+				final List<Activity> cached_activities = (List<Activity>) in.readObject();
+				in.close();
+				fis.close();
+				return cached_activities;
+			} catch (final IOException e) {
+			} catch (final ClassNotFoundException e) {
+			}
+		}
+		ResponseList<Activity> activities = null;
 		try {
 			final Paging paging = new Paging();
 			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
@@ -71,14 +98,14 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 			final int load_item_limit = prefs
 					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 			paging.setCount(load_item_limit > 100 ? 100 : load_item_limit);
-			statuses = getActivities(paging);
+			activities = getActivities(paging);
 		} catch (final TwitterException e) {
 			e.printStackTrace();
 		}
-		if (statuses != null) {
-			Collections.sort(statuses);
+		if (activities != null) {
+			Collections.sort(activities);
 		}
-		return statuses;
+		return activities;
 	}
 
 	@Override
@@ -87,5 +114,19 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 	}
 
 	abstract ResponseList<Activity> getActivities(Paging paging) throws TwitterException;
+
+	public static void writeSerializableStatuses(Object instance, Context context, List<Activity> data, Bundle args) {
+		if (instance == null || context == null || data == null || args == null) return;
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		try {
+			final FileOutputStream fos = new FileOutputStream(new File(context.getCacheDir(), instance.getClass()
+					.getSimpleName() + "." + account_id));
+			final ObjectOutputStream os = new ObjectOutputStream(fos);
+			os.writeObject(data);
+			os.close();
+			fos.close();
+		} catch (final IOException e) {
+		}
+	}
 
 }

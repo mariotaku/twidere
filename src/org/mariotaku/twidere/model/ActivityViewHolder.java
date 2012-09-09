@@ -33,7 +33,7 @@ public class ActivityViewHolder {
 	public final ImageView profile_image;
 	public final ImageView activity_profile_image_1, activity_profile_image_2, activity_profile_image_3,
 			activity_profile_image_4, activity_profile_image_5;
-	public final TextView title, text, time;
+	public final TextView title, text, time, reply_status;
 	public final ViewGroup activity_profile_image_container;
 	private final ColorLabelRelativeLayout content;
 	private boolean account_color_enabled;
@@ -45,6 +45,7 @@ public class ActivityViewHolder {
 		title = (TextView) view.findViewById(R.id.title);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
+		reply_status = (TextView) view.findViewById(R.id.reply_status);
 		activity_profile_image_container = (ViewGroup) view.findViewById(R.id.activity_profile_image_container);
 		activity_profile_image_1 = (ImageView) view.findViewById(R.id.activity_profile_image_1);
 		activity_profile_image_2 = (ImageView) view.findViewById(R.id.activity_profile_image_2);
@@ -63,6 +64,9 @@ public class ActivityViewHolder {
 		text.setEllipsize(null);
 		time.setText(null);
 		time.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+		reply_status.setVisibility(View.GONE);
+		reply_status.setText(null);
+		reply_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 		activity_profile_image_container.setVisibility(View.GONE);
 		final int activity_profile_image_count = activity_profile_image_container.getChildCount();
 		for (int i = 0; i < activity_profile_image_count; i++) {
@@ -87,6 +91,7 @@ public class ActivityViewHolder {
 			text.setTextSize(text_size);
 			title.setTextSize(text_size * 1.05f);
 			time.setTextSize(text_size * 0.65f);
+			reply_status.setTextSize(text_size * 0.65f);
 		}
 	}
 

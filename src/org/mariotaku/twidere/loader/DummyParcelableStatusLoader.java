@@ -29,7 +29,7 @@ import android.content.Context;
 public class DummyParcelableStatusLoader extends ParcelableStatusesLoader {
 
 	public DummyParcelableStatusLoader(Context context, long account_id, List<ParcelableStatus> data) {
-		super(context, account_id, data, null);
+		super(context, account_id, data, null, false);
 	}
 
 	@Override

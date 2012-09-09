@@ -21,6 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
 import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.parseURL;
@@ -68,6 +69,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	private ImageButton mRefreshStopSaveButton;
 	private boolean mImageLoading, mImageLoaded;
 	private File mImageFile;
+	private String mUserAgent;
 
 	private final Handler mErrorHandler = new Handler() {
 
@@ -144,6 +146,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	protected void onCreate(Bundle icicle) {
 		mResolver = TwidereApplication.getInstance(this).getHostAddressResolver();
 		super.onCreate(icicle);
+		mUserAgent = getBrowserUserAgent(this);
 		setContentView(R.layout.image_viewer);
 		loadImage();
 	}
@@ -260,34 +263,44 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				// from web
 				try {
 					Bitmap bitmap = null;
-					final HttpURLConnection conn = getConnection(url, ignore_ssl_error,
-							getProxy(ImageViewerActivity.this), mResolver);
-					conn.setConnectTimeout(30000);
-					conn.setReadTimeout(30000);
-					conn.setInstanceFollowRedirects(true);
-					response_msg = conn.getResponseMessage();
-					response_code = conn.getResponseCode();
-					final InputStream is = conn.getInputStream();
-					final OutputStream os = new FileOutputStream(cache_file);
-					copyStream(is, os);
-					os.close();
-					bitmap = decodeFile(cache_file);
-					if (bitmap == null) {
-						if (response_code > 0) {
-							final Message msg = new Message();
-							if (response_code == 200) {
-								msg.obj = getString(R.string.invalid_image);
-							} else {
-								msg.obj = response_msg != null ? response_code + ": " + response_msg : response_code;
-							}
-							mErrorHandler.sendMessage(msg);
+					HttpURLConnection conn = null;
+					int retryCount = 0;
+					URL request_url = url;
+
+					while (retryCount < 5) {
+						conn = getConnection(request_url, ignore_ssl_error, getProxy(ImageViewerActivity.this),
+								mResolver);
+						conn.addRequestProperty("User-Agent", mUserAgent);
+						conn.setConnectTimeout(30000);
+						conn.setReadTimeout(30000);
+						conn.setInstanceFollowRedirects(false);
+						response_code = conn.getResponseCode();
+						response_msg = conn.getResponseMessage();
+						if (response_code != 301 && response_code != 302) {
+							break;
 						}
-						// The file is corrupted, so we remove it from cache.
-						if (cache_file.isFile()) {
-							cache_file.delete();
+						final String loc = conn.getHeaderField("Location");
+						if (loc == null) {
+							break;
 						}
+						request_url = new URL(loc);
+						retryCount++;
 					}
-					return bitmap;
+					if (conn != null) {
+						final InputStream is = conn.getInputStream();
+						final OutputStream os = new FileOutputStream(cache_file);
+						copyStream(is, os);
+						os.close();
+						bitmap = decodeFile(cache_file);
+						if (bitmap == null) {
+							// The file is corrupted, so we remove it from
+							// cache.
+							if (cache_file.isFile()) {
+								cache_file.delete();
+							}
+						} else
+							return bitmap;
+					}
 				} catch (final FileNotFoundException e) {
 					init();
 				} catch (final IOException e) {

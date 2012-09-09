@@ -32,7 +32,7 @@ import org.mariotaku.twidere.adapter.UsersAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.NoDuplicatesList;
+import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -151,7 +151,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		final ParcelableUser user = mAdapter.findItem(id);
 		if (user == null) return;
 		if (mApplication.isMultiSelectActive()) {
-			final NoDuplicatesList<Object> list = mApplication.getSelectedItems();
+			final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
 			if (!list.contains(user)) {
 				list.add(user);
 			} else {
@@ -168,7 +168,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		final UsersAdapter adapter = getListAdapter();
 		mSelectedUser = adapter.findItem(id);
 		if (mApplication.isMultiSelectActive()) {
-			final NoDuplicatesList<Object> list = mApplication.getSelectedItems();
+			final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
 			if (!list.contains(mSelectedUser)) {
 				list.add(mSelectedUser);
 			} else {
@@ -217,7 +217,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 				if (!mApplication.isMultiSelectActive()) {
 					mApplication.startMultiSelect();
 				}
-				final NoDuplicatesList<Object> list = mApplication.getSelectedItems();
+				final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(mSelectedUser)) {
 					list.add(mSelectedUser);
 				}

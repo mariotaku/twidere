@@ -21,10 +21,10 @@ package org.mariotaku.twidere.util;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
 import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.parseURL;
-import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,6 +83,7 @@ public class LazyImageLoader implements Constants {
 	private boolean mIgnoreSSLError;
 	private Proxy mProxy;
 	private final SharedPreferences mPreferences;
+	private final String mUserAgent;
 	private final HostAddressResolver mResolver;
 
 	public LazyImageLoader(Context context, String cache_dir_name, int fallback_image_res, int required_width,
@@ -96,8 +97,9 @@ public class LazyImageLoader implements Constants {
 		mRequiredHeight = required_height % 2 == 0 ? required_height : required_height + 1;
 		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProxy = getProxy(context);
-		mResolver = TwidereApplication.getInstance(context).getHostAddressResolver();
 		mIgnoreSSLError = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+		mUserAgent = getBrowserUserAgent(context);
+		mResolver = TwidereApplication.getInstance(context).getHostAddressResolver();
 	}
 
 	public void clearFileCache() {
@@ -286,28 +288,54 @@ public class LazyImageLoader implements Constants {
 
 		public Bitmap getBitmap(URL url) {
 			if (url == null) return null;
-			final File f = mFileCache.getFile(url);
+			final File cache_file = mFileCache.getFile(url);
 
 			// from SD cache
-			final Bitmap b = decodeFile(f);
-			if (b != null) return b;
+			final Bitmap cached_bitmap = decodeFile(cache_file);
+			if (cached_bitmap != null) return cached_bitmap;
+
+			String response_msg = null;
+			int response_code = -1;
 
 			// from web
 			try {
 				Bitmap bitmap = null;
-				final HttpURLConnection conn = getConnection(url, mIgnoreSSLError, mProxy, mResolver);
-				if (mIgnoreSSLError) {
-					setIgnoreSSLError(conn);
+				HttpURLConnection conn = null;
+				int retryCount = 0;
+				URL request_url = url;
+
+				while (retryCount < 5) {
+					conn = getConnection(request_url, mIgnoreSSLError, mProxy, mResolver);
+					conn.addRequestProperty("User-Agent", mUserAgent);
+					conn.setConnectTimeout(30000);
+					conn.setReadTimeout(30000);
+					conn.setInstanceFollowRedirects(false);
+					response_code = conn.getResponseCode();
+					response_msg = conn.getResponseMessage();
+					if (response_code != 301 && response_code != 302) {
+						break;
+					}
+					final String loc = conn.getHeaderField("Location");
+					if (loc == null) {
+						break;
+					}
+					request_url = new URL(loc);
+					retryCount++;
 				}
-				conn.setConnectTimeout(30000);
-				conn.setReadTimeout(30000);
-				conn.setInstanceFollowRedirects(true);
-				final InputStream is = conn.getInputStream();
-				final OutputStream os = new FileOutputStream(f);
-				copyStream(is, os);
-				os.close();
-				bitmap = decodeFile(f);
-				return bitmap;
+				if (conn != null) {
+					final InputStream is = conn.getInputStream();
+					final OutputStream os = new FileOutputStream(cache_file);
+					copyStream(is, os);
+					os.close();
+					bitmap = decodeFile(cache_file);
+					if (bitmap == null) {
+						// The file is corrupted, so we remove it from cache.
+						if (cache_file.isFile()) {
+							cache_file.delete();
+						}
+					} else
+						return bitmap;
+				}
 			} catch (final FileNotFoundException e) {
 				// Storage state may changed, so call FileCache.init() again.
 				// e.printStackTrace();

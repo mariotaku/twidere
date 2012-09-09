@@ -38,11 +38,14 @@ public class RetweetedToMeFragment extends ParcelableStatusesListFragment {
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
 		long account_id = -1, max_id = -1;
+		boolean is_home_tab = false;
 		if (args != null) {
 			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
+			is_home_tab = args.getBoolean(INTENT_KEY_IS_HOME_TAB);
 		}
-		return new RetweetedToMeLoader(getActivity(), account_id, max_id, getData(), getClass().getSimpleName());
+		return new RetweetedToMeLoader(getActivity(), account_id, max_id, getData(), getClass().getSimpleName(),
+				is_home_tab);
 	}
 
 	@Override
@@ -55,7 +58,7 @@ public class RetweetedToMeFragment extends ParcelableStatusesListFragment {
 		RetweetedToMeLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
 		super.onDestroy();
 	}
-	
+
 	@Override
 	public void onDestroyView() {
 		RetweetedToMeLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());

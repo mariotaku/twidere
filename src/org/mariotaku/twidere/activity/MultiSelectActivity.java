@@ -13,7 +13,7 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ListUtils;
-import org.mariotaku.twidere.util.NoDuplicatesList;
+import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.content.BroadcastReceiver;
@@ -55,7 +55,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		final NoDuplicatesList<Object> selected_items = mApplication.getSelectedItems();
+		final NoDuplicatesLinkedList<Object> selected_items = mApplication.getSelectedItems();
 		final int count = selected_items.size();
 		if (count < 1) return false;
 		switch (item.getItemId()) {
@@ -64,7 +64,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 				final Bundle bundle = new Bundle();
 				final String[] account_names = getAccountScreenNames(this);
-				final NoDuplicatesList<String> all_mentions = new NoDuplicatesList<String>();
+				final NoDuplicatesLinkedList<String> all_mentions = new NoDuplicatesLinkedList<String>();
 				for (final Object object : selected_items) {
 					if (object instanceof ParcelableStatus) {
 						final ParcelableStatus status = (ParcelableStatus) object;
@@ -89,7 +89,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				final SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME,
 						Context.MODE_PRIVATE).edit();
 				final ArrayList<ContentValues> values_list = new ArrayList<ContentValues>();
-				final NoDuplicatesList<String> names_list = new NoDuplicatesList<String>();
+				final NoDuplicatesLinkedList<String> names_list = new NoDuplicatesLinkedList<String>();
 				for (final Object object : selected_items) {
 					if (object instanceof ParcelableStatus) {
 						final ParcelableStatus status = (ParcelableStatus) object;
@@ -198,7 +198,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 		}
 	}
 
-	private static long getFirstSelectAccountId(NoDuplicatesList<Object> selected_items) {
+	private static long getFirstSelectAccountId(NoDuplicatesLinkedList<Object> selected_items) {
 		final Object obj = selected_items.get(0);
 		if (obj instanceof ParcelableUser)
 			return ((ParcelableUser) obj).account_id;
@@ -206,7 +206,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 		return -1;
 	}
 
-	private static long[] getSelectedUserIds(NoDuplicatesList<Object> selected_items) {
+	private static long[] getSelectedUserIds(NoDuplicatesLinkedList<Object> selected_items) {
 		final ArrayList<Long> ids_list = new ArrayList<Long>();
 		for (final Object item : selected_items) {
 			if (item instanceof ParcelableUser) {

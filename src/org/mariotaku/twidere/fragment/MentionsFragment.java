@@ -65,7 +65,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 					getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 				}
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
-				if (mService.isMentionsRefreshing()) {
+				if (mService != null && mService.isMentionsRefreshing()) {
 					setRefreshing(false);
 				}
 			}

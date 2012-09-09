@@ -49,19 +49,9 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 
 	private long mLoadedUserId = -1;
 
-	public UserFavoritesLoader(Context context, long account_id, long user_id, long max_id,
-			List<ParcelableStatus> data, String class_name) {
-		this(context, account_id, user_id, null, max_id, data, class_name);
-	}
-
-	public UserFavoritesLoader(Context context, long account_id, String user_screenname, long max_id,
-			List<ParcelableStatus> data, String class_name) {
-		this(context, account_id, -1, user_screenname, max_id, data, class_name);
-	}
-
-	private UserFavoritesLoader(Context context, long account_id, long user_id, String user_screenname, long max_id,
-			List<ParcelableStatus> data, String class_name) {
-		super(context, account_id, max_id, data, class_name);
+	public UserFavoritesLoader(Context context, long account_id, long user_id, String user_screenname, long max_id,
+			List<ParcelableStatus> data, String class_name, boolean is_home_tab) {
+		super(context, account_id, max_id, data, class_name, is_home_tab);
 		mUserId = user_id;
 		mUserScreenName = user_screenname;
 	}
@@ -100,7 +90,7 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 
 	@Override
 	public List<ParcelableStatus> loadInBackground() {
-		if (isFirstLoad()) {
+		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
 				final File f = new File(getContext().getCacheDir(), getClassName() + "." + getAccountId() + "."
 						+ mUserId + "." + mUserScreenName);

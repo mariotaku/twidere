@@ -21,12 +21,12 @@ package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
 import twitter4j.Twitter;
 import android.content.Context;
@@ -38,27 +38,29 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 	private final long mAccountId;
 	private final String mClassName;
 	private final List<ParcelableStatus> mData;
-	private final boolean mFirstLoad;
+	private final boolean mFirstLoad, mIsHomeTab;
 
-	public ParcelableStatusesLoader(Context context, long account_id, List<ParcelableStatus> data, String class_name) {
+	public ParcelableStatusesLoader(Context context, long account_id, List<ParcelableStatus> data, String class_name,
+			boolean is_home_tab) {
 		super(context);
 		mClassName = class_name;
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
 		mFirstLoad = data == null;
-		mData = data != null ? data : new ArrayList<ParcelableStatus>();
+		mData = data != null ? data : new NoDuplicatesArrayList<ParcelableStatus>();
+		mIsHomeTab = is_home_tab;
 	}
 
-	public boolean containsStatus(long status_id) {
+	protected boolean containsStatus(long status_id) {
 		for (final ParcelableStatus status : mData) {
 			if (status.status_id == status_id) return true;
 		}
 		return false;
 	}
 
-	public synchronized boolean deleteStatus(long status_id) {
+	protected synchronized boolean deleteStatus(long status_id) {
 		try {
-			final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
+			final NoDuplicatesArrayList<ParcelableStatus> data_to_remove = new NoDuplicatesArrayList<ParcelableStatus>();
 			for (final ParcelableStatus status : mData) {
 				if (status.status_id == status_id) {
 					data_to_remove.add(status);
@@ -71,29 +73,33 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 		return false;
 	}
 
-	public long getAccountId() {
+	protected long getAccountId() {
 		return mAccountId;
-	}
-
-	public List<ParcelableStatus> getData() {
-		return mData;
-	}
-
-	public Twitter getTwitter() {
-		return mTwitter;
-	}
-
-	@Override
-	public void onStartLoading() {
-		forceLoad();
 	}
 
 	protected String getClassName() {
 		return mClassName;
 	}
 
+	protected List<ParcelableStatus> getData() {
+		return mData;
+	}
+
+	protected Twitter getTwitter() {
+		return mTwitter;
+	}
+
 	protected boolean isFirstLoad() {
 		return mFirstLoad;
+	}
+
+	protected boolean isHomeTab() {
+		return mIsHomeTab;
+	}
+
+	@Override
+	protected void onStartLoading() {
+		forceLoad();
 	}
 
 }

@@ -47,8 +47,8 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 	private int mTotalItemsCount;
 
 	public UserTimelineLoader(Context context, long account_id, long user_id, String user_screenname, long max_id,
-			List<ParcelableStatus> data, String class_name) {
-		super(context, account_id, max_id, data, class_name);
+			List<ParcelableStatus> data, String class_name, boolean is_home_tab) {
+		super(context, account_id, max_id, data, class_name, is_home_tab);
 		mUserId = user_id;
 		mUserScreenName = user_screenname;
 	}
@@ -76,7 +76,7 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 
 	@Override
 	public List<ParcelableStatus> loadInBackground() {
-		if (isFirstLoad() && getClassName() != null) {
+		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
 				final File f = new File(getContext().getCacheDir(), getClassName() + "." + getAccountId() + "."
 						+ mUserId + "." + mUserScreenName);

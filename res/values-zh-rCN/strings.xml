@@ -160,7 +160,7 @@
 	<string name="capital_on">开启</string>
 	<string name="capital_off">关闭</string>
 	<string name="blocked_users">已阻止的用户</string>
-	<string name="set_as_default">设置为默认</string>
+	<string name="set_as_default">设为默认</string>
 	<string name="default_account">默认帐号</string>
 	<string name="search_users">搜索用户</string>
 	<string name="search_tweets">搜索推文</string>
@@ -299,8 +299,8 @@
 	<string name="home_refresh">在主页时间线刷新</string>
 	<string name="error_message_image_upload_failed">图像上传失败。</string>
 	<string name="error_message_image_uploader_not_found">未找到图片上传扩展，它可能已经被卸载了。</string>
-	<string name="image_upload_format">设定上传图片时推文的格式（仅第三方服务有效）</string>
-	<string name="image_upload_format_summary">\"[LINK]\" = 图像链接\n\"[TEXT]\" =推文内容</string>
+	<string name="image_upload_format">上传图片的推文格式</string>
+	<string name="image_upload_format_summary">\"[LINK]\" = 图像链接\n\"[TEXT]\" = 推文内容\n（仅第三方有效。）</string>
 	<string name="tweet_shortener">推文缩短服务</string>
 	<string name="tweet_shortener_default">无（不发送过长推文）</string>
 	<string name="error_message_status_too_long">推文太长。</string>
@@ -339,10 +339,6 @@
 	<string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人收藏了你的推文。</string>
 	<string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> 提到了你。</string>
 	<string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人关注了你。</string>
-	<string name="activity_about_me_mention"><xliff:g id="user">%s</xliff:g> 提到了你。</string>
-	<string name="activity_about_me_mention_multi"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> 提到了你。</string>
-	<string name="activity_about_me_reply"><xliff:g id="user">%s</xliff:g> 回复了你的推文。</string>
-	<string name="activity_about_me_reply_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人回复了你的推文。</string>
 	<string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> 转推了你的推文。</string>
 	<string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人转推了你的推文。</string>
 

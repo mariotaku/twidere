@@ -36,15 +36,15 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 	private final long mMaxId;
 
 	public Twitter4JStatusLoader(Context context, long account_id, long max_id, List<ParcelableStatus> data,
-			String class_name) {
-		super(context, account_id, data, class_name);
+			String class_name, boolean is_home_tab) {
+		super(context, account_id, data, class_name, is_home_tab);
 		mMaxId = max_id;
 	}
 
 	public abstract ResponseList<Status> getStatuses(Paging paging) throws TwitterException;
 
 	@Override
-	public List<ParcelableStatus> loadInBackground() {
+	public synchronized List<ParcelableStatus> loadInBackground() {
 		final List<ParcelableStatus> data = getData();
 		final long account_id = getAccountId();
 		ResponseList<Status> statuses = null;
@@ -63,15 +63,11 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			e.printStackTrace();
 		}
 		if (statuses != null) {
-			Collections.sort(statuses);
-			final int size = statuses.size();
-			for (int i = 0; i < size; i++) {
-				final Status status = statuses.get(i);
-				deleteStatus(status.getId());
+			for (final Status status : statuses) {
 				data.add(new ParcelableStatus(status, account_id, false));
 			}
 		}
-		Collections.sort(data, ParcelableStatus.STATUS_ID_COMPARATOR);
+		Collections.sort(data);
 		return data;
 	}
 

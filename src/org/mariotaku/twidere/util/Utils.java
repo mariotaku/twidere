@@ -175,6 +175,7 @@ import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 public final class Utils implements Constants {
@@ -332,6 +333,7 @@ public final class Utils implements Constants {
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
 
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+
 	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
 			DirectMessages.Outbox.CONTENT_URI };
 
@@ -811,6 +813,12 @@ public final class Utils implements Constants {
 		return url;
 	}
 
+	public static String getBrowserUserAgent(Context context) {
+		if (context == null) return null;
+		final WebView wv = new WebView(context);
+		return wv.getSettings().getUserAgentString();
+	}
+
 	public static Bitmap getColorPreviewBitmap(Context context, int color) {
 		if (context == null) return null;
 		final float density = context.getResources().getDisplayMetrics().density;
@@ -865,7 +873,7 @@ public final class Utils implements Constants {
 		con = (HttpURLConnection) new URL(resolved_host != null ? url_string.replace("://" + host, "://"
 				+ resolved_host) : url_string).openConnection(proxy);
 		if (resolved_host != null) {
-			con.setRequestProperty("Host", host);
+			con.addRequestProperty("Host", host);
 		}
 		con.setInstanceFollowRedirects(false);
 		if (ignore_ssl_error) {
@@ -1264,6 +1272,7 @@ public final class Utils implements Constants {
 				final String type = cur.getString(idx_type);
 				final String name = cur.getString(idx_name);
 				final Bundle args = parseArguments(cur.getString(idx_arguments));
+				args.putBoolean(INTENT_KEY_IS_HOME_TAB, true);
 				final Class<? extends Fragment> fragment = CUSTOM_TABS_FRAGMENT_MAP.get(type);
 				if (name != null && fragment != null) {
 					tabs.add(new TabSpec(name, getTabIconObject(icon_type), fragment, args, position));

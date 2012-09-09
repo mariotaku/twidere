@@ -370,6 +370,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		switch (view.getId()) {
 			case R.id.follow: {
 				if (mUser != null && mAccountId != mUser.getId()) {
+					mFollowProgress.setVisibility(View.VISIBLE);
+					mFollowButton.setVisibility(View.GONE);
 					if (mFriendship.isSourceFollowingTarget()) {
 						mService.destroyFriendship(mAccountId, mUser.getId());
 					} else {

@@ -15,9 +15,12 @@ import java.util.List;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
+import org.mariotaku.twidere.loader.Twitter4JActivitiesLoader;
 import org.mariotaku.twidere.model.ActivityViewHolder;
+import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.BaseAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.Activity.Action;
 import twitter4j.Status;
@@ -33,12 +36,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 public class ActivitiesAboutMeFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<twitter4j.Activity>> {
 
 	private ActivitiesAdapter mAdapter;
 	private SharedPreferences mPreferences;
+	private List<twitter4j.Activity> mData;
+	private long mAccountId;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -52,24 +58,104 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 	@Override
 	public Loader<List<twitter4j.Activity>> onCreateLoader(int id, Bundle args) {
-		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		return new ActivitiesAboutMeLoader(getActivity(), account_id, null);
+		final long account_id = mAccountId = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+		final boolean is_home_tab = args != null ? args.getBoolean(INTENT_KEY_IS_HOME_TAB) : false;
+		return new ActivitiesAboutMeLoader(getActivity(), account_id, mData, getClass().getSimpleName(), is_home_tab);
+	}
+
+	@Override
+	public void onDestroy() {
+		Twitter4JActivitiesLoader.writeSerializableStatuses(this, getActivity(), mData, getArguments());
+		super.onDestroy();
+	}
+
+	@Override
+	public void onDestroyView() {
+		Twitter4JActivitiesLoader.writeSerializableStatuses(this, getActivity(), mData, getArguments());
+		super.onDestroyView();
+	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		if (mAccountId <= 0) return;
+		final int adapter_pos = position - l.getHeaderViewsCount();
+		final twitter4j.Activity item = mAdapter.getItem(adapter_pos);
+		final User[] sources = item.getSources();
+		final Status[] target_statuses = item.getTargetStatuses();
+		final int sources_length = sources != null ? sources.length : 0;
+		final Action action = item.getAction();
+		if (sources_length > 0) {
+			final User first_source = sources[0];
+			final Status[] target_objects = item.getTargetObjects();
+			switch (action.getActionId()) {
+				case Action.ACTION_FAVORITE: {
+					if (sources_length == 1) {
+						Utils.openUserProfile(getActivity(), mAccountId, first_source.getId(),
+								first_source.getScreenName());
+					} else {
+						if (target_statuses != null && target_statuses.length > 0) {
+							final Status status = target_statuses[0];
+							Utils.openUserRetweetedStatus(getActivity(), mAccountId, status.getId());
+						}
+					}
+					break;
+				}
+				case Action.ACTION_FOLLOW: {
+					if (sources_length == 1) {
+						Utils.openUserProfile(getActivity(), mAccountId, first_source.getId(),
+								first_source.getScreenName());
+					} else {
+						Utils.openUserFollowers(getActivity(), mAccountId, mAccountId, null);
+					}
+					break;
+				}
+				case Action.ACTION_MENTION: {
+					if (target_objects != null && target_objects.length > 0) {
+						final Status status = target_objects[0];
+						Utils.openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
+					}
+					break;
+				}
+				case Action.ACTION_REPLY: {
+					if (target_statuses != null && target_statuses.length > 0) {
+						final Status status = target_statuses[0];
+						Utils.openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
+					}
+					break;
+				}
+				case Action.ACTION_RETWEET: {
+					if (sources_length == 1) {
+						Utils.openUserProfile(getActivity(), mAccountId, first_source.getId(),
+								first_source.getScreenName());
+					} else {
+						if (target_objects != null && target_objects.length > 0) {
+							final Status status = target_objects[0];
+							Utils.openUserRetweetedStatus(getActivity(), mAccountId, status.getId());
+						}
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	@Override
 	public void onLoaderReset(Loader<List<twitter4j.Activity>> loader) {
 		mAdapter.setData(null);
+		mData = null;
 	}
 
 	@Override
 	public void onLoadFinished(Loader<List<twitter4j.Activity>> loader, List<twitter4j.Activity> data) {
 		mAdapter.setData(data);
+		mData = data;
+		onRefreshComplete();
 		setListShown(true);
 	}
 
 	@Override
 	public void onPullDownToRefresh() {
-
+		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 
 	@Override
@@ -80,14 +166,9 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	@Override
 	public void onResume() {
 		super.onResume();
-		// mLoadMoreAutomatically =
-		// mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY,
-		// false);
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
-		// final boolean display_image_preview =
-		// mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		mAdapter.setDisplayProfileImage(display_profile_image);
@@ -152,10 +233,9 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					holder.time.setText(getRelativeTimeSpanString(created_at.getTime()));
 				}
 			}
-			final User[] sources = item.getSources(), target_users = item.getTargetUsers();
+			final User[] sources = item.getSources();
 			final Status[] target_statuses = item.getTargetStatuses();
 			final int sources_length = sources != null ? sources.length : 0;
-			final int target_users_length = target_users != null ? target_users.length : 0;
 			final int target_statuses_length = target_statuses != null ? target_statuses.length : 0;
 			final Action action = item.getAction();
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
@@ -200,16 +280,29 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 						if (target_objects != null && target_objects.length > 0) {
 							final Status status = target_objects[0];
 							holder.text.setText(status.getText());
+							if (status.getInReplyToStatusId() > 0 && status.getInReplyToScreenName() != null) {
+								holder.reply_status.setVisibility(View.VISIBLE);
+								holder.reply_status.setText(mContext.getString(R.string.in_reply_to,
+										status.getInReplyToScreenName()));
+								holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(
+										R.drawable.ic_indicator_reply, 0, 0, 0);
+							}
 						}
 						setProfileImage(first_source.getProfileImageURL(), holder);
 						break;
 					}
 					case Action.ACTION_REPLY: {
 						holder.title.setText(name);
-						holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_reply, 0);
 						if (target_statuses_length > 0) {
 							final Status status = target_statuses[0];
 							holder.text.setText(status.getText());
+							if (status.getInReplyToStatusId() > 0 && status.getInReplyToScreenName() != null) {
+								holder.reply_status.setVisibility(View.VISIBLE);
+								holder.reply_status.setText(mContext.getString(R.string.in_reply_to,
+										status.getInReplyToScreenName()));
+								holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(
+										R.drawable.ic_indicator_reply, 0, 0, 0);
+							}
 						}
 						setProfileImage(first_source.getProfileImageURL(), holder);
 						break;

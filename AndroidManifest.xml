@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="37"
+	android:versionCode="38"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -407,6 +407,15 @@
 			android:label="@string/custom_host_mapping">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.EDIT_HOST_MAPPING"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.CreateComposeShortcutActivity"
+			android:label="@string/compose">
+			<intent-filter>
+				<action android:name="android.intent.action.CREATE_SHORTCUT"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

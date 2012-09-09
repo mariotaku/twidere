@@ -50,6 +50,7 @@ public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnI
 		mWindow.setWidth(mContext.getResources().getDimensionPixelSize(R.dimen.popup_window_width));
 		mWindow.setAdapter(mAdapter);
 		mWindow.setOnItemClickListener(this);
+		mWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_BELOW);
 		mWindow.setModal(true);
 	}
 

@@ -331,6 +331,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_IS_PHOTO_ATTACHED = "is_photo_attached";
 	public static final String INTENT_KEY_IS_IMAGE_ATTACHED = "is_image_attached";
 	public static final String INTENT_KEY_ACTIVATED_ONLY = "activated_only";
+	public static final String INTENT_KEY_IS_HOME_TAB = "is_home_tab";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;

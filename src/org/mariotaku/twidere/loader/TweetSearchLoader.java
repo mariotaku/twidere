@@ -19,12 +19,20 @@
 
 package org.mariotaku.twidere.loader;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.SerializableStatus;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
 import twitter4j.Query;
 import twitter4j.Tweet;
@@ -32,32 +40,46 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
 public class TweetSearchLoader extends ParcelableStatusesLoader {
 
 	private final String mQuery;
 	private final long mMaxId;
 
-	public static final Comparator<Tweet> TWITTER4J_TWEET_ID_COMPARATOR = new Comparator<Tweet>() {
-
-		@Override
-		public int compare(Tweet object1, Tweet object2) {
-			final long diff = object2.getId() - object1.getId();
-			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
-			return (int) diff;
-		}
-	};
-
 	public TweetSearchLoader(Context context, long account_id, String query, long max_id, List<ParcelableStatus> data,
-			String class_name) {
-		super(context, account_id, data, class_name);
+			String class_name, boolean is_home_tab) {
+		super(context, account_id, data, class_name, is_home_tab);
 		mQuery = query;
 		mMaxId = max_id;
 	}
 
 	@Override
 	public synchronized List<ParcelableStatus> loadInBackground() {
+		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
+			try {
+				final File f = new File(getContext().getCacheDir(), getClassName() + "." + getAccountId() + "."
+						+ mQuery);
+				final FileInputStream fis = new FileInputStream(f);
+				final ObjectInputStream in = new ObjectInputStream(fis);
+				@SuppressWarnings("unchecked")
+				final ArrayList<SerializableStatus> statuses = (ArrayList<SerializableStatus>) in.readObject();
+				in.close();
+				fis.close();
+				final NoDuplicatesArrayList<ParcelableStatus> result = new NoDuplicatesArrayList<ParcelableStatus>();
+				for (final SerializableStatus status : statuses) {
+					result.add(new ParcelableStatus(status));
+				}
+				final List<ParcelableStatus> data = getData();
+				if (data != null) {
+					data.addAll(result);
+				}
+				Collections.sort(data);
+				return data;
+			} catch (final IOException e) {
+			} catch (final ClassNotFoundException e) {
+			}
+		}
 		final List<ParcelableStatus> data = getData();
 		final long account_id = getAccountId();
 		final Twitter twitter = getTwitter();
@@ -79,7 +101,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		}
 		if (tweets != null) {
 			try {
-				Collections.sort(tweets, TWITTER4J_TWEET_ID_COMPARATOR);
+				Collections.sort(tweets);
 			} catch (final ConcurrentModificationException e) {
 				// This shouldn't happen.
 				e.printStackTrace();
@@ -95,12 +117,40 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 			}
 		}
 		try {
-			Collections.sort(data, ParcelableStatus.STATUS_ID_COMPARATOR);
+			Collections.sort(data);
 		} catch (final ConcurrentModificationException e) {
 			// This shouldn't happen.
 			e.printStackTrace();
 		}
 		return data;
+	}
+
+	public static void writeSerializableStatuses(Object instance, Context context, List<ParcelableStatus> data,
+			Bundle args) {
+		if (instance == null || context == null || data == null || args == null) return;
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		final String query = screen_name != null ? screen_name.startsWith("@") ? screen_name : "@" + screen_name : args
+				.getString(INTENT_KEY_QUERY);
+		final int items_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
+				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
+		try {
+			final NoDuplicatesArrayList<SerializableStatus> statuses = new NoDuplicatesArrayList<SerializableStatus>();
+			final int count = data.size();
+			for (int i = 0; i < count; i++) {
+				if (i >= items_limit) {
+					break;
+				}
+				statuses.add(new SerializableStatus(data.get(i)));
+			}
+			final FileOutputStream fos = new FileOutputStream(new File(context.getCacheDir(), instance.getClass()
+					.getSimpleName() + "." + account_id + "." + query));
+			final ObjectOutputStream os = new ObjectOutputStream(fos);
+			os.writeObject(statuses);
+			os.close();
+			fos.close();
+		} catch (final IOException e) {
+		}
 	}
 
 }

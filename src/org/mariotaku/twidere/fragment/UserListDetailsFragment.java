@@ -262,6 +262,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			case R.id.follow_more: {
 				if (mUserList == null) return;
 				if (mAccountId != mUserId) {
+					mFollowMoreButton.setVisibility(View.GONE);
 					if (mUserList.isFollowing()) {
 						mService.destroyUserListSubscription(mAccountId, mUserList.getId());
 					} else {

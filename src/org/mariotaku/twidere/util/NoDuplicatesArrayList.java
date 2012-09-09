@@ -1,10 +1,13 @@
 package org.mariotaku.twidere.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
-@SuppressWarnings("serial")
-public class NoDuplicatesList<E> extends LinkedList<E> {
+public class NoDuplicatesArrayList<E> extends ArrayList<E> {
+
+	private static final long serialVersionUID = -7277301117508689125L;
+
 	@Override
 	public boolean add(E e) {
 		if (contains(e))

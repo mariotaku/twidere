@@ -32,7 +32,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.NoDuplicatesList;
+import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
 
@@ -183,7 +183,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	@SuppressWarnings("serial")
-	public class ItemsList extends NoDuplicatesList<Object> {
+	public class ItemsList extends NoDuplicatesLinkedList<Object> {
 
 		@Override
 		public boolean add(Object object) {

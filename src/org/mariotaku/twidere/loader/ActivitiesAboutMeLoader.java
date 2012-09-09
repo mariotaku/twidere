@@ -11,8 +11,9 @@ import android.content.Context;
 
 public class ActivitiesAboutMeLoader extends Twitter4JActivitiesLoader {
 
-	public ActivitiesAboutMeLoader(Context context, long account_id, List<Activity> data) {
-		super(context, account_id, data);
+	public ActivitiesAboutMeLoader(Context context, long account_id, List<Activity> data, String class_name,
+			boolean is_home_tab) {
+		super(context, account_id, data, class_name, is_home_tab);
 	}
 
 	@Override
