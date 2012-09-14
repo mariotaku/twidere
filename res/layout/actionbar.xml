@@ -43,7 +43,7 @@
 			android:gravity="center_vertical"
 			android:orientation="vertical">
 
-			<TextView
+			<TextView android:layerType="software"
 				android:id="@id/actionbar_title"
 				style="?attr/actionBarTitleStyle"
 				android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-			<TextView
+			<TextView android:layerType="software"
 				android:id="@id/actionbar_subtitle"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"

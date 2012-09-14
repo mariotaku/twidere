@@ -357,10 +357,8 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
 		mAdapter.setDisplayName(display_name);
 		mAdapter.setTextSize(text_size);
 	}

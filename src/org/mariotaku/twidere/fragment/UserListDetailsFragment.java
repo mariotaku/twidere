@@ -177,7 +177,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		linkify.addAllLinks();
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
 		final String profile_image_url_string = parseString(user.getProfileImageURL());
-		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
+		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 		mProfileImageLoader.displayImage(
 				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
 						: profile_image_url_string), mProfileImageView);

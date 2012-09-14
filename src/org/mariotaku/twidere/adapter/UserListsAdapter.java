@@ -39,13 +39,15 @@ import android.widget.ArrayAdapter;
 public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements BaseAdapterInterface {
 
 	private final LazyImageLoader mProfileImageLoader;
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName;
+	private boolean mDisplayProfileImage, mDisplayName;
+	private final boolean mDisplayHiResProfileImage;
 	private float mTextSize;
 
 	public UserListsAdapter(Context context) {
 		super(context, R.layout.user_list_list_item, R.id.description);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
+		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		application.getServiceInterface();
 	}
 
@@ -108,14 +110,6 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			if (clear_old || findItemByUserId(user.list_id) == null) {
 				add(user);
 			}
-		}
-	}
-
-	@Override
-	public void setDisplayHiResProfileImage(boolean display) {
-		if (display != mDisplayHiResProfileImage) {
-			mDisplayHiResProfileImage = display;
-			notifyDataSetChanged();
 		}
 	}
 

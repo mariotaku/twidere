@@ -43,8 +43,8 @@ import android.widget.ArrayAdapter;
 public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
 
 	private final LazyImageLoader mProfileImageLoader;
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName, mShowAccountColor,
-			mMultiSelectEnabled;
+	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mMultiSelectEnabled;
+	private final boolean mDisplayHiResProfileImage;
 	private float mTextSize;
 	private final ArrayList<Long> mSelectedUserIds;
 	private final Context mContext;
@@ -55,6 +55,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
 		application.getServiceInterface();
+		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		mSelectedUserIds = application.getSelectedUserIds();
 	}
 
@@ -141,14 +142,6 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 			if (clear_old || findItemByUserId(user.user_id) == null) {
 				add(user);
 			}
-		}
-	}
-
-	@Override
-	public void setDisplayHiResProfileImage(boolean display) {
-		if (display != mDisplayHiResProfileImage) {
-			mDisplayHiResProfileImage = display;
-			notifyDataSetChanged();
 		}
 	}
 

@@ -19,13 +19,9 @@
 
 package org.mariotaku.twidere.app;
 
-import static org.mariotaku.twidere.Constants.CRASH_REPORT_FORM_KEY;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.acra.ACRA;
-import org.acra.annotation.ReportsCrashes;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -43,7 +39,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
-@ReportsCrashes(formKey = CRASH_REPORT_FORM_KEY)
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
@@ -117,13 +112,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	@Override
 	public void onCreate() {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		if (!isDebugBuild() && mPreferences.getBoolean(PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY, true)) {
-			try {
-				ACRA.init(this);
-			} catch (final Exception e) {
-				// Ignore.
-			}
-		}
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		super.onCreate();
 		mServiceInterface = ServiceInterface.getInstance(this);
@@ -156,10 +144,10 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public void reloadConnectivitySettings() {
 		if (mPreviewImageLoader != null) {
-			mPreviewImageLoader.reloadConnectivitySettings();
+			mPreviewImageLoader.reloadProxySettings();
 		}
 		if (mProfileImageLoader != null) {
-			mProfileImageLoader.reloadConnectivitySettings();
+			mProfileImageLoader.reloadProxySettings();
 		}
 	}
 

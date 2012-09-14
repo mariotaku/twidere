@@ -13,7 +13,7 @@
 		android:gravity="center"
 		android:scaleType="fitCenter"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@android:id/text1"
 		style="?attr/tabTextStyle"
 		android:layout_width="wrap_content"

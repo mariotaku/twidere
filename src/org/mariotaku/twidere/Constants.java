@@ -169,9 +169,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND = "notification_have_sound";
 	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION = "notification_have_vibration";
 	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS = "notification_have_lights";
-	public static final String PREFERENCE_KEY_REPORT_ERRORS_AUTOMATICALLY = "report_errors_automatically";
 	public static final String PREFERENCE_KEY_LOCAL_TRENDS_WOEID = "local_trends_woeid";
-	public static final String PREFERENCE_KEY_HIRES_PROFILE_IMAGE = "hires_profile_image";
 	public static final String PREFERENCE_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
 	public static final String PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR = "notification_light_color";
 	public static final String PREFERENCE_KEY_SHARE_FORMAT = "share_format";
@@ -185,7 +183,6 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT = "dual_pane_in_portrait";
 	public static final String PREFERENCE_KEY_QUICK_SEND = "quick_send";
 	public static final String PREFERENCE_KEY_COMPOSE_ACCOUNTS = "compose_accounts";
-	public static final String PREFERENCE_KEY_FAST_LIST_PROCESSING = "fast_list_processing";
 	public static final String PREFERENCE_KEY_HARDWARE_ACCELERATION = "hardware_acceleration";
 	public static final String PREFERENCE_KEY_TCP_DNS_QUERY = "tcp_dns_query";
 	public static final String PREFERENCE_KEY_DNS_SERVER = "dns_server";

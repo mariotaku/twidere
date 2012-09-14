@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 
 import twitter4j.Twitter;
 import android.content.Context;
@@ -47,7 +47,7 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
 		mFirstLoad = data == null;
-		mData = data != null ? data : new NoDuplicatesArrayList<ParcelableStatus>();
+		mData = data != null ? data : new NoDuplicatesLinkedList<ParcelableStatus>();
 		mIsHomeTab = is_home_tab;
 	}
 
@@ -60,7 +60,7 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 
 	protected synchronized boolean deleteStatus(long status_id) {
 		try {
-			final NoDuplicatesArrayList<ParcelableStatus> data_to_remove = new NoDuplicatesArrayList<ParcelableStatus>();
+			final NoDuplicatesLinkedList<ParcelableStatus> data_to_remove = new NoDuplicatesLinkedList<ParcelableStatus>();
 			for (final ParcelableStatus status : mData) {
 				if (status.status_id == status_id) {
 					data_to_remove.add(status);

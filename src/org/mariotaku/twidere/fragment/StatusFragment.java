@@ -196,7 +196,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			mInReplyToView.setText(getString(R.string.in_reply_to, status.in_reply_to_screen_name));
 		}
 
-		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
+		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 
 		mProfileImageLoader.displayImage(
 				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string)

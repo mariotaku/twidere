@@ -17,12 +17,6 @@
 			android:title="@string/display_profile_image"/>
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:dependency="display_profile_image"
-			android:key="hires_profile_image"
-			android:summary="@string/image_load_summary"
-			android:title="@string/hires_profile_image"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
 			android:key="inline_image_preview"
 			android:summary="@string/image_load_summary"
 			android:title="@string/inline_image_preview"/>
@@ -89,9 +83,9 @@
 			android:title="@string/show_absolute_time"/>
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:key="fast_list_processing"
-			android:summary="@string/fast_list_processing_summary"
-			android:title="@string/fast_list_processing"/>
+			android:key="sort_timeline_by_time"
+			android:summary="@string/sort_timeline_by_time_summary"
+			android:title="@string/sort_timeline_by_time"/>
 
 		<org.mariotaku.twidere.preference.TrendsLocationPreference
 			android:key="trends_location"

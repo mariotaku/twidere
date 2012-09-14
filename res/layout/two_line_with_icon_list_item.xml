@@ -16,14 +16,14 @@
 		android:layout_height="fill_parent" 
 		android:gravity="center_vertical">
 		
-		<TextView android:id="@android:id/text1" 
+		<TextView android:layerType="software" android:id="@android:id/text1" 
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" 
 			android:singleLine="true"
 			android:ellipsize="marquee" 
 			android:textAppearance="?android:attr/textAppearanceLarge"/>
 			
-		<TextView android:id="@android:id/text2" 
+		<TextView android:layerType="software" android:id="@android:id/text2" 
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content" 
 			android:singleLine="true" 

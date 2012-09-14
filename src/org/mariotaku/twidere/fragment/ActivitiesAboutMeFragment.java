@@ -168,11 +168,9 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		super.onResume();
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean hires_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_HIRES_PROFILE_IMAGE, false);
 		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayHiResProfileImage(hires_profile_image);
 		mAdapter.setDisplayName(display_name);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
@@ -180,8 +178,8 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 	static class ActivitiesAdapter extends BaseAdapter implements BaseAdapterInterface {
 
-		private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName, mShowAccountColor,
-				mShowAbsoluteTime;
+		private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowAbsoluteTime;
+		private final boolean mDisplayHiResProfileImage;
 		private float mTextSize;
 
 		private final LazyImageLoader mProfileImageLoader;
@@ -194,6 +192,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			mContext = context;
 			final TwidereApplication application = TwidereApplication.getInstance(context);
 			mProfileImageLoader = application.getProfileImageLoader();
+			mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		}
 
 		@Override
@@ -333,14 +332,6 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		public void setData(List<twitter4j.Activity> data) {
 			mData = data != null ? data : new ArrayList<twitter4j.Activity>();
 			notifyDataSetChanged();
-		}
-
-		@Override
-		public void setDisplayHiResProfileImage(boolean display) {
-			if (display != mDisplayHiResProfileImage) {
-				mDisplayHiResProfileImage = display;
-				notifyDataSetChanged();
-			}
 		}
 
 		@Override

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item name="tab_display_label" type="bool">false</item>
 	<item name="home_display_icon" type="bool">false</item>
 	<item name="hw_accel_supported" type="bool">false</item>
+	<item name="hires_profile_image" type="bool">false</item>
 
 </resources>

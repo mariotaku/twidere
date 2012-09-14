@@ -6,7 +6,7 @@
 	android:orientation="vertical"
 	android:paddingLeft="8dp">
 
-	<TextView
+	<TextView android:layerType="software"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/search_base_url"
@@ -20,7 +20,7 @@
 		android:inputType="textUri"
 		android:singleLine="true"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/upload_base_url"
@@ -34,7 +34,7 @@
 		android:inputType="textUri"
 		android:singleLine="true"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/oauth_base_url"
@@ -48,7 +48,7 @@
 		android:inputType="textUri"
 		android:singleLine="true"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/signing_rest_base_url"
@@ -62,7 +62,7 @@
 		android:inputType="textUri"
 		android:singleLine="true"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/signing_oauth_base_url"

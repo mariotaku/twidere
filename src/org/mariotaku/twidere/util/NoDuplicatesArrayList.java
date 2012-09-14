@@ -2,7 +2,6 @@ package org.mariotaku.twidere.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 public class NoDuplicatesArrayList<E> extends ArrayList<E> {
 
@@ -27,14 +26,14 @@ public class NoDuplicatesArrayList<E> extends ArrayList<E> {
 
 	@Override
 	public boolean addAll(Collection<? extends E> collection) {
-		final Collection<E> copy = new LinkedList<E>(collection);
+		final Collection<E> copy = new ArrayList<E>(collection);
 		copy.removeAll(this);
 		return super.addAll(copy);
 	}
 
 	@Override
 	public boolean addAll(int index, Collection<? extends E> collection) {
-		final Collection<E> copy = new LinkedList<E>(collection);
+		final Collection<E> copy = new ArrayList<E>(collection);
 		copy.removeAll(this);
 		return super.addAll(index, copy);
 	}

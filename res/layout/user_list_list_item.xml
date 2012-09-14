@@ -10,7 +10,7 @@
 		android:layout_height="@dimen/profile_image_size"
 		android:scaleType="fitCenter"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@+id/name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorPrimary"
-		android:textStyle="bold"/><TextView
+		android:textStyle="bold"/><TextView android:layerType="software"
 		android:id="@+id/owner"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
 		android:drawablePadding="3dp"
 		android:textColor="?android:attr/textColorSecondary"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@+id/description"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@+id/list_gap_text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

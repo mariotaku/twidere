@@ -45,7 +45,6 @@ import org.mariotaku.twidere.view.ImageViewer;
 import twitter4j.HostAddressResolver;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -219,15 +218,11 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private final Uri uri;
 		private final ImageViewer image_view;
-		private final boolean ignore_ssl_error;
 		private File mCacheDir;
-		private final SharedPreferences prefs;
 
 		public ImageLoader(Uri uri, ImageViewer image_view) {
 			this.uri = uri;
 			this.image_view = image_view;
-			prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-			ignore_ssl_error = prefs.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 			init();
 		}
 
@@ -268,8 +263,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					URL request_url = url;
 
 					while (retryCount < 5) {
-						conn = getConnection(request_url, ignore_ssl_error, getProxy(ImageViewerActivity.this),
-								mResolver);
+						conn = getConnection(request_url, true, getProxy(ImageViewerActivity.this), mResolver);
 						conn.addRequestProperty("User-Agent", mUserAgent);
 						conn.setConnectTimeout(30000);
 						conn.setReadTimeout(30000);

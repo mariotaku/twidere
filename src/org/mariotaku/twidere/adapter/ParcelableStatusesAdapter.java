@@ -45,35 +45,41 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 
-public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface,
+public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAdapterInterface,
 		OnClickListener {
 
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mDisplayName,
-			mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled, mFastProcessingEnabled;
+	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowAbsoluteTime,
+			mGapDisallowed, mMultiSelectEnabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
+	private final LayoutInflater mInflater;
 	private final ArrayList<Long> mSelectedStatusIds;
+	private final boolean mDisplayHiResProfileImage;
+	private final NoDuplicatesArrayList<ParcelableStatus> mData = new NoDuplicatesArrayList<ParcelableStatus>();
 
 	public ParcelableStatusesAdapter(Context context) {
-		super(context, R.layout.status_list_item, R.id.text);
+		super();
 		mContext = context;
+		mInflater = LayoutInflater.from(context);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
+		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	public ParcelableStatus findItemByStatusId(long status_id) {
@@ -93,6 +99,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		}
 		return null;
 	}
+	
+	public void add(ParcelableStatus status) {
+		mData.add(status);
+		notifyDataSetChanged();
+	}
 
 	public ParcelableStatus getStatus(int position) {
 		return getItem(position);
@@ -100,8 +111,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-
-		final View view = super.getView(position, convertView, parent);
+		final View view = convertView != null ? convertView : mInflater.inflate(R.layout.status_list_item, null);
 		final Object tag = view.getTag();
 		final StatusViewHolder holder;
 
@@ -121,6 +131,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		holder.setShowAsGap(show_gap);
 		holder.setAccountColorEnabled(mShowAccountColor);
 
+		holder.text.setText(status.text_unescaped);
+		
 		if (mShowAccountColor) {
 			holder.setAccountColor(getAccountColor(mContext, status.account_id));
 		}
@@ -135,15 +147,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.setSelected(false);
 			}
 
-			if (!mFastProcessingEnabled) {
-				holder.setUserColor(getUserColor(mContext, status.user_id));
-				holder.setHighlightColor(getStatusBackground(
-						status.text_plain.contains('@' + getAccountUsername(mContext, status.account_id)),
-						status.is_favorite, status.is_retweet));
-			} else {
-				holder.setUserColor(Color.TRANSPARENT);
-				holder.setHighlightColor(Color.TRANSPARENT);
-			}
+			holder.setUserColor(getUserColor(mContext, status.user_id));
+			holder.setHighlightColor(getStatusBackground(
+					status.text_plain.contains('@' + getAccountUsername(mContext, status.account_id)),
+					status.is_favorite, status.is_retweet));
 
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(
@@ -218,28 +225,15 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		}
 	}
 
+	public void clear() {
+		mData.clear();
+	}
+	
 	public void setData(List<ParcelableStatus> data) {
-		setData(data, false);
-	}
-
-	public void setData(List<ParcelableStatus> data, boolean clear_old) {
-		if (clear_old) {
-			clear();
-		}
+		clear();
 		if (data == null) return;
-		for (final ParcelableStatus status : data) {
-			if (clear_old || findItemByStatusId(status.status_id) == null) {
-				add(status);
-			}
-		}
-	}
-
-	@Override
-	public void setDisplayHiResProfileImage(boolean display) {
-		if (display != mDisplayHiResProfileImage) {
-			mDisplayHiResProfileImage = display;
-			notifyDataSetChanged();
-		}
+		mData.addAll(data);
+		notifyDataSetChanged();
 	}
 
 	@Override
@@ -262,14 +256,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void setDisplayProfileImage(boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setFastProcessingEnabled(boolean enabled) {
-		if (enabled != mFastProcessingEnabled) {
-			mFastProcessingEnabled = enabled;
 			notifyDataSetChanged();
 		}
 	}
@@ -313,5 +299,20 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public int getCount() {
+		return mData.size();
+	}
+
+	@Override
+	public ParcelableStatus getItem(int position) {
+		return mData.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return mData.get(position).status_id;
 	}
 }
