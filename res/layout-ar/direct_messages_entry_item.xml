@@ -11,7 +11,7 @@
 		android:layout_alignParentRight="true"
 		android:scaleType="fitCenter"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@+id/name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
 		android:textColor="?android:attr/textColorPrimary"
 		android:textStyle="bold"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@+id/time"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

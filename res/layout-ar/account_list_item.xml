@@ -39,14 +39,14 @@
 		android:orientation="vertical"
 		android:padding="4dp">
 
-		<TextView
+		<TextView android:layerType="software"
 			android:id="@android:id/text1"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-		<TextView
+		<TextView android:layerType="software"
 			android:id="@android:id/text2"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

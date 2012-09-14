@@ -76,7 +76,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			}
 		}
 		mData.removeAll(data_to_remove);
-		mAdapter.setData(mData, true);
+		mAdapter.setData(mData);
 	}
 
 	@Override
@@ -110,11 +110,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mData = getData();
 		if (savedInstanceState != null) {
-			final ArrayList<ParcelableStatus> data = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
-			if (data != null && mData != null) {
-				mData.clear();
-				mData.addAll(data);
-			}
+			mData = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
 		}
 		mAdapter = new ParcelableStatusesAdapter(getActivity());
 		mAdapter.setData(mData);

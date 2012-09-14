@@ -45,14 +45,14 @@
 			android:paddingLeft="8dp"
 			android:paddingRight="8dp">
 
-			<TextView
+			<TextView android:layerType="software"
 				android:id="@+id/name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-			<TextView
+			<TextView android:layerType="software"
 				android:id="@+id/screen_name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
 
-			<TextView
+			<TextView android:layerType="software"
 				android:id="@+id/followed_you_indicator"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -110,13 +110,13 @@
 		android:orientation="vertical"
 		android:padding="4dp">
 
-		<TextView
+		<TextView android:layerType="software"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/description"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-		<TextView
+		<TextView android:layerType="software"
 			android:id="@+id/description"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -132,14 +132,14 @@
 		android:orientation="vertical"
 		android:padding="4dp">
 
-		<TextView
+		<TextView android:layerType="software"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:singleLine="true"
 			android:text="@string/location"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-		<TextView
+		<TextView android:layerType="software"
 			android:id="@+id/location"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -156,14 +156,14 @@
 		android:orientation="vertical"
 		android:padding="4dp">
 
-		<TextView
+		<TextView android:layerType="software"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:singleLine="true"
 			android:text="@string/url"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-		<TextView
+		<TextView android:layerType="software"
 			android:id="@+id/url"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -190,14 +190,14 @@
 			android:orientation="vertical"
 			android:padding="4dp">
 
-			<TextView
+			<TextView android:layerType="software"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:singleLine="true"
 				android:text="@string/created_at"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-			<TextView
+			<TextView android:layerType="software"
 				android:id="@+id/created_at"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -255,7 +255,7 @@
 			android:orientation="vertical"
 			android:padding="4dp">
 
-			<TextView
+			<TextView android:layerType="software"
 				android:id="@+id/tweet_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -263,7 +263,7 @@
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="?android:attr/textColorPrimary"/>
 
-			<TextView
+			<TextView android:layerType="software"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:singleLine="true"
@@ -288,7 +288,7 @@
 			android:orientation="vertical"
 			android:padding="4dp">
 
-			<TextView
+			<TextView android:layerType="software"
 				android:id="@+id/followers_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -296,7 +296,7 @@
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="?android:attr/textColorPrimary"/>
 
-			<TextView
+			<TextView android:layerType="software"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:singleLine="true"
@@ -321,7 +321,7 @@
 			android:orientation="vertical"
 			android:padding="4dp">
 
-			<TextView
+			<TextView android:layerType="software"
 				android:id="@+id/friends_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -329,7 +329,7 @@
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="?android:attr/textColorPrimary"/>
 
-			<TextView
+			<TextView android:layerType="software"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:singleLine="true"

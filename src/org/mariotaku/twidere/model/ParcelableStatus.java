@@ -60,7 +60,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 
 	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, name, screen_name,
 			in_reply_to_screen_name, source, profile_image_url_string, image_preview_url_string, image_orig_url_string,
-			location_string;
+			location_string, text_unescaped;
 	public final ParcelableLocation location;
 
 	public final Spanned text;
@@ -114,6 +114,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
+		text_unescaped = unescape(text_html);
 	}
 
 	public ParcelableStatus(Parcel in) {
@@ -147,7 +148,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		image_preview_url = parseURL(image_preview_url_string);
 		profile_image_url = parseURL(profile_image_url_string);
 		text = text_html != null ? Html.fromHtml(text_html) : null;
-
+		text_unescaped = unescape(text_html);
 	}
 
 	public ParcelableStatus(SerializableStatus in) {
@@ -181,6 +182,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		image_preview_url = in.image_preview_url;
 		profile_image_url = in.profile_image_url;
 		text = text_html != null ? Html.fromHtml(text_html) : null;
+		text_unescaped = unescape(text_html);
 	}
 
 	public ParcelableStatus(Status status, long account_id, boolean is_gap) {
@@ -224,6 +226,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
+		text_unescaped = unescape(text_html);
 	}
 
 	public ParcelableStatus(Tweet tweet, long account_id, boolean is_gap) {
@@ -264,6 +267,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
+		text_unescaped = unescape(text_html);
 	}
 
 	@Override
@@ -281,10 +285,9 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public final boolean equals(Object o) {
 		if (!(o instanceof ParcelableStatus)) return false;
-		final ParcelableStatus that = (ParcelableStatus) o;
-		return status_id == that.status_id;
+		return this.status_id == ((ParcelableStatus) o).status_id;
 	}
 
 	@Override

@@ -27,8 +27,6 @@ public interface StatusesAdapterInterface extends BaseAdapterInterface {
 
 	public void setDisplayImagePreview(boolean preview);
 
-	public void setFastProcessingEnabled(boolean enabled);
-
 	public void setGapDisallowed(boolean disallowed);
 
 	public void setMultiSelectEnabled(boolean multi);

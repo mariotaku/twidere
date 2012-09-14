@@ -42,16 +42,18 @@ import android.view.ViewGroup;
 
 public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements DirectMessagesAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName;
+	private boolean mDisplayProfileImage, mDisplayName;
 	private final LazyImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
 	private DirectMessageCursorIndices mIndices;
+	private final boolean mDisplayHiResProfileImage;
 
 	public DirectMessagesConversationAdapter(Context context, LazyImageLoader loader) {
 		super(context, R.layout.direct_message_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
 		mImageLoader = loader;
+		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	@Override
@@ -128,14 +130,6 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			view.setTag(new DirectMessageConversationViewHolder(view, context));
 		}
 		return view;
-	}
-
-	@Override
-	public void setDisplayHiResProfileImage(boolean display) {
-		if (display != mDisplayHiResProfileImage) {
-			mDisplayHiResProfileImage = display;
-			notifyDataSetChanged();
-		}
 	}
 
 	@Override

@@ -14,7 +14,7 @@
 		android:layout_height="match_parent"
 		android:background="@drawable/item_background_holo_light">
 
-		<TextView
+		<TextView android:layerType="software"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"

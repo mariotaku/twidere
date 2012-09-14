@@ -54,7 +54,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
@@ -63,13 +62,14 @@ import android.view.ViewGroup;
 
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
 
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayImagePreview, mDisplayName,
-			mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled, mFastProcessingEnabled;
+	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowAbsoluteTime,
+			mGapDisallowed, mMultiSelectEnabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
 	private StatusCursorIndices mIndices;
 	private final ArrayList<Long> mSelectedStatusIds;
+	private final boolean mDisplayHiResProfileImage;
 
 	public CursorStatusesAdapter(Context context) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
@@ -78,6 +78,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
+		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	@Override
@@ -121,14 +122,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				holder.setSelected(false);
 			}
 
-			if (!mFastProcessingEnabled) {
-				holder.setUserColor(getUserColor(mContext, user_id));
-				holder.setHighlightColor(getStatusBackground(
-						text.contains('@' + getAccountUsername(mContext, account_id)), is_favorite, is_retweet));
-			} else {
-				holder.setUserColor(Color.TRANSPARENT);
-				holder.setHighlightColor(Color.TRANSPARENT);
-			}
+			holder.setUserColor(getUserColor(mContext, user_id));
+			holder.setHighlightColor(getStatusBackground(text.contains('@' + getAccountUsername(mContext, account_id)),
+					is_favorite, is_retweet));
 
 			holder.setAccountColorEnabled(mShowAccountColor);
 
@@ -136,8 +132,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				holder.setAccountColor(getAccountColor(mContext, account_id));
 			}
 
-			final PreviewImage preview = !mFastProcessingEnabled || mDisplayImagePreview ? getPreviewImage(text,
-					mDisplayImagePreview) : null;
+			final PreviewImage preview = mDisplayImagePreview ? getPreviewImage(text, mDisplayImagePreview) : null;
 			final boolean has_media = preview != null ? preview.has_image : false;
 
 			holder.setTextSize(mTextSize);
@@ -265,14 +260,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setDisplayHiResProfileImage(boolean display) {
-		if (display != mDisplayHiResProfileImage) {
-			mDisplayHiResProfileImage = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
 	public void setDisplayImagePreview(boolean preview) {
 		if (preview != mDisplayImagePreview) {
 			mDisplayImagePreview = preview;
@@ -292,14 +279,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	public void setDisplayProfileImage(boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setFastProcessingEnabled(boolean enabled) {
-		if (enabled != mFastProcessingEnabled) {
-			mFastProcessingEnabled = enabled;
 			notifyDataSetChanged();
 		}
 	}

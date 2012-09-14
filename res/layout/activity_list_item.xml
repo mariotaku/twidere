@@ -10,7 +10,7 @@
 		android:layout_height="@dimen/profile_image_size"
 		android:scaleType="fitCenter"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@+id/title"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
 		android:textColor="?android:attr/textColorPrimary"
 		android:textStyle="bold"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@+id/time"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
 			android:scaleType="fitCenter"/>
 	</LinearLayout>
 
-	<TextView
+	<TextView android:layerType="software"
 		android:id="@+id/reply_status"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

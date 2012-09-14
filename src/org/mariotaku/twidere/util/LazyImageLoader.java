@@ -51,7 +51,6 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import twitter4j.HostAddressResolver;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -80,9 +79,7 @@ public class LazyImageLoader implements Constants {
 	private final ExecutorService mExecutorService;
 	private final int mFallbackRes;
 	private final int mRequiredWidth, mRequiredHeight;
-	private boolean mIgnoreSSLError;
 	private Proxy mProxy;
-	private final SharedPreferences mPreferences;
 	private final String mUserAgent;
 	private final HostAddressResolver mResolver;
 
@@ -95,9 +92,7 @@ public class LazyImageLoader implements Constants {
 		mFallbackRes = fallback_image_res;
 		mRequiredWidth = required_width % 2 == 0 ? required_width : required_width + 1;
 		mRequiredHeight = required_height % 2 == 0 ? required_height : required_height + 1;
-		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProxy = getProxy(context);
-		mIgnoreSSLError = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 		mUserAgent = getBrowserUserAgent(context);
 		mResolver = TwidereApplication.getInstance(context).getHostAddressResolver();
 	}
@@ -141,9 +136,8 @@ public class LazyImageLoader implements Constants {
 		return null;
 	}
 
-	public void reloadConnectivitySettings() {
+	public void reloadProxySettings() {
 		mProxy = getProxy(mContext);
-		mIgnoreSSLError = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 	}
 
 	private void copyStream(InputStream is, OutputStream os) {
@@ -294,7 +288,6 @@ public class LazyImageLoader implements Constants {
 			final Bitmap cached_bitmap = decodeFile(cache_file);
 			if (cached_bitmap != null) return cached_bitmap;
 
-			String response_msg = null;
 			int response_code = -1;
 
 			// from web
@@ -305,13 +298,12 @@ public class LazyImageLoader implements Constants {
 				URL request_url = url;
 
 				while (retryCount < 5) {
-					conn = getConnection(request_url, mIgnoreSSLError, mProxy, mResolver);
+					conn = getConnection(request_url, true, mProxy, mResolver);
 					conn.addRequestProperty("User-Agent", mUserAgent);
 					conn.setConnectTimeout(30000);
 					conn.setReadTimeout(30000);
 					conn.setInstanceFollowRedirects(false);
 					response_code = conn.getResponseCode();
-					response_msg = conn.getResponseMessage();
 					if (response_code != 301 && response_code != 302) {
 						break;
 					}

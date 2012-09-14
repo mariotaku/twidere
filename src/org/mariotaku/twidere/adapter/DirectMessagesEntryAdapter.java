@@ -30,14 +30,15 @@ import android.view.ViewGroup;
 
 public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements BaseAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayHiResProfileImage, mDisplayName, mShowAccountColor,
-			mShowAbsoluteTime, mFastProcessingEnabled;
+	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowAbsoluteTime, mFastProcessingEnabled;
 	private final LazyImageLoader mProfileImageLoader;
 	private float mTextSize;
+	private final boolean mDisplayHiResProfileImage;
 
 	public DirectMessagesEntryAdapter(Context context, LazyImageLoader loader) {
 		super(context, R.layout.direct_messages_entry_item, null, new String[0], new int[0], 0);
 		mProfileImageLoader = loader;
+		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	@Override
@@ -112,14 +113,6 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 			view.setTag(new DirectMessageEntryViewHolder(view, context));
 		}
 		return view;
-	}
-
-	@Override
-	public void setDisplayHiResProfileImage(boolean display) {
-		if (display != mDisplayHiResProfileImage) {
-			mDisplayHiResProfileImage = display;
-			notifyDataSetChanged();
-		}
 	}
 
 	@Override

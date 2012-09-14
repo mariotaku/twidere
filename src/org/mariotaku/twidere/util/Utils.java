@@ -950,23 +950,23 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getImglyImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = "http://img.ly/show/thumb/" + id;
-		final String full_size = "http://img.ly/show/full/" + id;
+		final String thumbnail_size = "https://img.ly/show/thumb/" + id;
+		final String full_size = "https://img.ly/show/full/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 
 	}
 
 	public static ImageSpec getImgurImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = "http://i.imgur.com/" + id + "s.jpg";
-		final String full_size = "http://i.imgur.com/" + id + ".jpg";
+		final String thumbnail_size = "https://i.imgur.com/" + id + "s.jpg";
+		final String full_size = "https://i.imgur.com/" + id + ".jpg";
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
 	public static ImageSpec getInstagramImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = "http://instagr.am/p/" + id + "/media/?size=t";
-		final String full_size = "http://instagr.am/p/" + id + "/media/?size=l";
+		final String thumbnail_size = "https://instagr.am/p/" + id + "/media/?size=t";
+		final String full_size = "https://instagr.am/p/" + id + "/media/?size=l";
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
@@ -1020,16 +1020,16 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getLockerzAndPlixiImage(String url) {
 		if (isNullOrEmpty(url)) return null;
-		final String thumbnail_size = "http://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
-		final String full_size = "http://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
+		final String thumbnail_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
+		final String full_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
 		return new ImageSpec(thumbnail_size, full_size);
 
 	}
 
 	public static ImageSpec getMobyPictureImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = "http://moby.to/" + id + ":thumb";
-		final String full_size = "http://moby.to/" + id + ":full";
+		final String thumbnail_size = "https://moby.to/" + id + ":thumb";
+		final String full_size = "https://moby.to/" + id + ":full";
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
@@ -1297,15 +1297,15 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getTwitgooImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = "http://twitgoo.com/show/thumb/" + id;
-		final String full_size = "http://twitgoo.com/show/img/" + id;
+		final String thumbnail_size = "https://twitgoo.com/show/thumb/" + id;
+		final String full_size = "https://twitgoo.com/show/img/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
 	public static ImageSpec getTwitpicImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = "http://twitpic.com/show/thumb/" + id;
-		final String full_size = "http://twitpic.com/show/large/" + id;
+		final String thumbnail_size = "https://twitpic.com/show/thumb/" + id;
+		final String full_size = "https://twitpic.com/show/large/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
@@ -1459,8 +1459,8 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getYfrogImage(String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = "http://yfrog.com/" + id + ":small";
-		final String full_size = "http://yfrog.com/" + id + ":medium";
+		final String thumbnail_size = "https://yfrog.com/" + id + ":small";
+		final String full_size = "https://yfrog.com/" + id + ":medium";
 		return new ImageSpec(thumbnail_size, full_size);
 
 	}
