@@ -337,7 +337,7 @@
 	<string name="activities_about_me">关于我的活动</string>
 	<string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> 收藏了你的推文。</string>
 	<string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人收藏了你的推文。</string>
-	<string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> 提到了你。</string>
+	<string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> 关注了你。</string>
 	<string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人关注了你。</string>
 	<string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> 转推了你的推文。</string>
 	<string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人转推了你的推文。</string>

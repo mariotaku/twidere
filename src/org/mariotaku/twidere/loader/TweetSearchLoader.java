@@ -136,12 +136,11 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		try {
 			final NoDuplicatesArrayList<SerializableStatus> statuses = new NoDuplicatesArrayList<SerializableStatus>();
-			final int count = data.size();
-			for (int i = 0; i < count; i++) {
-				if (i >= items_limit) {
-					break;
-				}
-				statuses.add(new SerializableStatus(data.get(i)));
+			int i = 0;
+			for (ParcelableStatus status : data) {
+				if (i >= items_limit) break;
+				statuses.add(new SerializableStatus(status));
+				i++;
 			}
 			final FileOutputStream fos = new FileOutputStream(new File(context.getCacheDir(), instance.getClass()
 					.getSimpleName() + "." + account_id + "." + query));
@@ -150,6 +149,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 			os.close();
 			fos.close();
 		} catch (final IOException e) {
+		} catch (final ArrayIndexOutOfBoundsException e) {
 		}
 	}
 

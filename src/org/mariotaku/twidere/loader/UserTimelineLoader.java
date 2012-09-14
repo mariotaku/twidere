@@ -91,9 +91,7 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 					result.add(new ParcelableStatus(status));
 				}
 				final List<ParcelableStatus> data = getData();
-				if (data != null) {
-					data.addAll(result);
-				}
+				data.addAll(result);
 				Collections.sort(data);
 				return data;
 			} catch (final IOException e) {
