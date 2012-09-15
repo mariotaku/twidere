@@ -30,11 +30,17 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 	private static final String DEFAULT_DNS_SERVER = "8.8.8.8";
 
 	public TwidereHostAddressResolver(Context context) throws IOException {
+		this(context, false);
+	}
+	
+	public TwidereHostAddressResolver(Context context, boolean local_only) throws IOException {
 		mHostMapping = context.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final String dns_address = mPreferences.getString(PREFERENCE_KEY_DNS_SERVER, DEFAULT_DNS_SERVER);
-		mResolver = new SimpleResolver(!isNullOrEmpty(dns_address) ? dns_address : DEFAULT_DNS_SERVER);
-		mResolver.setTCP(true);
+		mResolver = !local_only ? new SimpleResolver(!isNullOrEmpty(dns_address) ? dns_address : DEFAULT_DNS_SERVER) : null;
+		if (mResolver != null) {
+			mResolver.setTCP(true);
+		}
 	}
 
 	@Override
@@ -62,7 +68,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 			}
 		}
 		// Use TCP DNS Query if enabled.
-		if (mPreferences.getBoolean(PREFERENCE_KEY_TCP_DNS_QUERY, false)) {
+		if (mResolver != null && mPreferences.getBoolean(PREFERENCE_KEY_TCP_DNS_QUERY, false)) {
 			final Name name = new Name(host);
 			final Record query = Record.newRecord(name, Type.A, DClass.IN);
 			final Message response = mResolver.send(Message.newQuery(query));
