@@ -100,13 +100,13 @@
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">via <xliff:g id="source">%s</xliff:g></string>
   <string name="filter">Szűrő</string>
-  <string name="filter_summary">Tweetek elrejtése kéretlen felhasználóktól/forrásokból, vagy amelyek a megadott kulcsszavakat tartalmazzák</string>
   <string name="users">Felhasználók</string>
   <string name="keywords">Kulcsszavak</string>
   <string name="sources">Források</string>
   <string name="content">Tartalom</string>
   <string name="customize">Testreszabás</string>
   <string name="set_color">Szín beállítása</string>
+  <string name="clear">Törlés</string>
   <string name="pick_color">Szín kiválasztása</string>
   <string name="follow">Követés</string>
   <string name="unfollow">Követés megszüntetése</string>
@@ -138,7 +138,6 @@
   <string name="text_size_summary">Státusz szöveg mérete.</string>
   <string name="cannot_get_location">Helyzet meghatározása sikertelen.</string>
   <string name="drafts">Piszkozatok</string>
-  <string name="send_all">Mindent elküld</string>
   <string name="delete_all">Mindent töröl</string>
   <string name="description">Leírás</string>
   <string name="location">Tartózkodási hely</string>
@@ -180,8 +179,8 @@
   <string name="proxy_port">Proxy Port</string>
   <string name="block">Blokkol</string>
   <string name="unblock">Engedélyez</string>
+  <string name="report_for_spam">Spam jelentése</string>
   <string name="inbox">Beérkezett üzenetek</string>
-  <string name="outbox">Küldendő</string>
   <string name="load_images">Képek betöltése</string>
   <string name="stop_service_after_closed">Háttérszolgáltatás leállítása a Twidere bezárásakor.</string>
   <string name="stop_service_after_closed_summary">Nem tudom, miért akarja ezt engedélyezni, de ha ezek után bármi problémája támad, emlékezzen: ez mind az Ön hibája.</string>
@@ -199,7 +198,6 @@
   <string name="lights">Fények</string>
   <string name="notifications">Értesítések</string>
   <string name="new_notifications">Új értesítések</string>
-  <string name="load_earlier_messages">Korábbi üzenetek betöltése</string>
   <string name="screen_name">Kijelzett név</string>
   <string name="sort_timeline_by_time">Rendezés idő szerint</string>
   <string name="sort_timeline_by_time_summary">Ez a tweetek rossz helyen történő megjelenését okozhatja, de jól jöhet, ha más szolgáltatást is használ, pl. Identi.ca-t.</string>
@@ -213,8 +211,6 @@
   <string name="list_following_user">Felhasználó követőinek listázása</string>
   <string name="list_user_followed">Felhasználó által követett felhasználók listázása</string>
   <string name="list_created_by_user">Felhasználó által létrehozott tartalmak listázása</string>
-  <string name="report_errors_automatically">Hibajelzés automatikusan</string>
-  <string name="report_errors_automatically_summary">Hibák jelzése automatikusan; ez nem jár semmilyen személyes adat gyűjtésével.</string>
   <string name="Ntweets_quantity_one">Önnek egy új tweetje érkezett.</string>
   <string name="Nmentions_quantity_one">Valaki emlegette önt.</string>
   <string name="Ndirect_messages_quantity_one">Önnek egy új közvetlen üzenete van.</string>
@@ -236,7 +232,6 @@
   <string name="trends">Trendek</string>
   <string name="accounts">Fiókok</string>
   <string name="account">Felhasználói fiók</string>
-  <string name="hires_profile_image">Nagyfelbontású profilkép</string>
   <string name="mention_this_user">Felhasználó megemlítése</string>
   <string name="signing_in_please_wait">Bejelentkezés folyamatban, kérem várjon, vagy nyomjon VISSZA gombot a kilépéshez.</string>
   <string name="connectivity">Kapcsolat</string>
@@ -278,10 +273,13 @@
   <string name="image_uploader_default">Alapértelmezett (Twitter)</string>
   <string name="error_message_image_upload_failed">Képfeltöltés sikertelen.</string>
   <string name="error_message_image_uploader_not_found">Képfeltöltő nem található, talán el lett távolítva.</string>
-  <string name="image_upload_format">Tweet formátum képfeltöltéskor</string>
   <string name="tweet_shortener">Tweet rövidítő</string>
   <string name="tweet_shortener_default">Egyik sem (Küldés megszakítása)</string>
   <string name="error_message_status_too_long">Tweet túl hosszú.</string>
   <string name="error_message_tweet_shorten_failed">Tweet rövidítés sikertelen.</string>
   <string name="error_message_tweet_shortener_not_found">Tweet rövidítő nem található, talán el lett távolítva.</string>
+  <string name="landscape">Fekvő</string>
+  <string name="portrait">Álló</string>
+  <string name="discard">Elvetés</string>
+  <string name="view">Nézet</string>
 </resources>

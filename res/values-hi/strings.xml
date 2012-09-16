@@ -133,7 +133,6 @@
   <string name="text_size_summary">स्थितियों के टेक्स्ट का माप |</string>
   <string name="cannot_get_location">आपके स्थान को प्राप्त नहीं कर सकते.</string>
   <string name="drafts">ड्राफ्ट्स</string>
-  <string name="send_all">सभी भेजे</string>
   <string name="delete_all">सभी मिटाए</string>
   <string name="description">विवरण</string>
   <string name="location">स्थान</string>
@@ -175,7 +174,6 @@
   <string name="block">ब्लाक</string>
   <string name="unblock">अनब्लाक</string>
   <string name="inbox">इनबॉक्स</string>
-  <string name="outbox">आउटबॉक्स</string>
   <string name="load_images">छवियों को लोड</string>
   <string name="stop_service_after_closed">ट्विदेर बंद होने के बाद सेवा को रोक दें।</string>
   <string name="other_settings">अन्य सेटिंग्स</string>
@@ -192,7 +190,6 @@
   <string name="lights">बत्ती</string>
   <string name="notifications">सूचनाएँ</string>
   <string name="new_notifications">नई सूचनाएँ</string>
-  <string name="load_earlier_messages">पहले प्रत्यक्ष संदेश लोड करे</string>
   <string name="screen_name">स्क्रीन नाम</string>
   <string name="sort_timeline_by_time">मुख्यपृष्ठ को समय से भेद किजीये</string>
   <string name="refresh_on_start">शुरू करने पर ताज़ा करें</string>
@@ -205,8 +202,6 @@
   <string name="list_following_user">इस उपयोगकर्ता का फोल्लोवेर्स सूचीबद्ध करें</string>
   <string name="list_user_followed">इस उपयोगकर्ता का पालन की सूचीबद्ध करें</string>
   <string name="list_created_by_user">यह उपयोगकर्ता के द्वारा बनाई गई, सूचीबद्ध करें</string>
-  <string name="report_errors_automatically">स्वचालित रूप से त्रुटियाँ रिपोर्ट</string>
-  <string name="report_errors_automatically_summary">त्रुटियाँ रिपोर्ट स्वचालित रूप से, यह आपके व्यक्तिगत डेटा एकत्रित नहीं करेगा।</string>
   <string name="Ntweets_quantity_one">आप के लिए एक नया ट्वीट है|.</string>
   <string name="Nmentions_quantity_one">किसी ने आपका ज़िक्र किया|.</string>
   <string name="Ndirect_messages_quantity_one">आप के लिए नया सीधा संदेश है।.</string>
@@ -226,7 +221,6 @@
   <string name="trends_location_summary">स्थानीय रुझान के लिए स्थान निर्धारित करें।</string>
   <string name="trends">रुझान</string>
   <string name="accounts">खातों</string>
-  <string name="hires_profile_image">उच्च रिज़ॉल्यूशन प्रोफ़ाइल छवि</string>
   <string name="mention_this_user">इस उपयोगकर्ता का उल्लेख करे</string>
   <string name="signing_in_please_wait">साइन इन हो रहा है, कृपया प्रतीक्षा करें या BACK फिर से दबाये छोड़नेके लिए|</string>
   <string name="connectivity">कनेक्टिविटी</string>

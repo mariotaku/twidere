@@ -79,7 +79,6 @@
   <string name="consumer_key_summary">Consumer key for OAuth/xAuth, lascia vuota per usare quella default.</string>
   <string name="consumer_secret">Consumer secret</string>
   <string name="consumer_secret_summary">Consumer secret for OAuth/xAuth, lascia vuoto per usare quello default.</string>
-  <string name="warn_expert_only">Attenzione! Una Consumer key errata genererà errori di connessione!</string>
   <string name="ignore_ssl_error">Ignora errori SSL</string>
   <string name="ignore_ssl_error_summary">Ignorare l\'errore SSL, abilitare se sono presenti problemi con il server API personalizzato.</string>
   <string name="gzip_compressing">Compressione GZip</string>
@@ -104,7 +103,6 @@
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">via <xliff:g id="source">%s</xliff:g></string>
   <string name="filter">Filtro</string>
-  <string name="filter_summary">Nascondere tweets da utenti/sorgenti indesiderate o tweets contenenti parole chiave specifiche</string>
   <string name="users">Utenti</string>
   <string name="keywords">Keywords</string>
   <string name="sources">Fonti</string>
@@ -143,7 +141,6 @@
   <string name="text_size_summary">Dimensione del testo degli status.</string>
   <string name="cannot_get_location">Non è possibile ottenere la tua posizione.</string>
   <string name="drafts">Bozze</string>
-  <string name="send_all">Invia tutto</string>
   <string name="delete_all">Cancella tutto</string>
   <string name="description">Descrizione</string>
   <string name="location">Località</string>
@@ -192,7 +189,6 @@
   <string name="user_muted">Utenti aggiunti all\'elenco dei filtri. Non si vedranno tweets da questi utenti nella timeline o tra le menzioni.</string>
   <string name="users_muted">Utenti aggiunti all\'elenco dei filtri. Non si vedranno tweets da questi utenti nella timeline o tra le menzioni.</string>
   <string name="inbox">Inbox</string>
-  <string name="outbox">Outbox</string>
   <string name="load_images">Carica immagini</string>
   <string name="stop_service_after_closed">Stop service after twidere closed.</string>
   <string name="stop_service_after_closed_summary">Non so perché si dovrebbe attivare questa opzione, ma se si hanno problemi dopo la sua attivazione, ricordo che è tutta colpa tua.</string>
@@ -210,7 +206,6 @@
   <string name="lights">Lights Led</string>
   <string name="notifications">Notifiche</string>
   <string name="new_notifications">Nuove notifiche</string>
-  <string name="load_earlier_messages">Carica messaggi diretti precedenti</string>
   <string name="screen_name">Screen name</string>
   <string name="sort_timeline_by_time">Timeline in ordine cronologico</string>
   <string name="sort_timeline_by_time_summary">Questo può causare un errato posizionamento dei retweet, ma puo essere d\'aiuto nel caso si usino altri servizi come Identi.ca.</string>
@@ -225,8 +220,6 @@
   <string name="list_following_user">Questo utente sta seguendo</string>
   <string name="list_user_followed">Questo utente è seguito da</string>
   <string name="list_created_by_user">Lista creata da questo utente</string>
-  <string name="report_errors_automatically">Invia Report degli errori automaticamente</string>
-  <string name="report_errors_automatically_summary">Report errori automatico, non raccoglierà i tuoi dati personali.</string>
   <string name="Ntweets_quantity_one">Hai un nuovo tweet.</string>
   <string name="Ntweets_quantity_other">Hai <xliff:g id="items">%d</xliff:g> nuovi tweets.</string>
   <string name="Nmentions_quantity_one">Qualcuno ti ha menzionato.</string>
@@ -251,7 +244,6 @@
   <string name="trends">Trends</string>
   <string name="accounts">Accounts</string>
   <string name="account">Account</string>
-  <string name="hires_profile_image">Immagine profilo alta risoluzione</string>
   <string name="mention_this_user">Menziona questo utente</string>
   <string name="signing_in_please_wait">In collegamento, si prega di attendere o premere INDIETRO nuovamente per uscire.</string>
   <string name="connectivity">Connettività</string>
@@ -286,8 +278,6 @@
   <string name="notification_ringtone">Ringtone</string>
   <string name="notification_light_color">Light Color</string>
   <string name="invalid_image">Immagine non valida.</string>
-  <string name="fast_list_processing">Elaborazione veloce della lista</string>
-  <string name="fast_list_processing_summary">Disabilitare la colorazione del nome utente e l\'evidenziazione delle menzioni per ottenere prestazioni migliori.</string>
   <string name="share_format">Share format</string>
   <string name="share_format_summary">\"[TITLE]\" = Content title\n\"[TEXT]\" = Content text</string>
   <string name="network">Rete</string>
@@ -297,7 +287,6 @@
   <string name="home_refresh">Refresh in home timeline</string>
   <string name="error_message_image_upload_failed">Caricamento dell\'immagine non riuscito.</string>
   <string name="error_message_image_uploader_not_found">Image uploader non trovato, forse è stato disinstallato.</string>
-  <string name="image_upload_format">Formato tweet quando si carica un\'immagine</string>
   <string name="tweet_shortener">Tweet shortener</string>
   <string name="error_message_status_too_long">Tweet troppo lungo.</string>
   <string name="error_message_tweet_shorten_failed">Abbreviazione del tweet non riuscita.</string>

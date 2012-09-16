@@ -72,6 +72,16 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	}
 
 	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.save: {
+				onBackPressed();
+				break;
+			}
+		}
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
@@ -154,16 +164,6 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		}
 		outState.putLongArray(Constants.INTENT_KEY_IDS, ids);
 		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	public void onClick(View view) {
-		switch (view.getId()) {
-			case R.id.save: {
-				onBackPressed();
-				break;
-			}
-		}
 	}
 
 }

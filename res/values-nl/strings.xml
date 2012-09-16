@@ -133,7 +133,6 @@
   <string name="text_size_summary">Lettergrootte van statussen.</string>
   <string name="cannot_get_location">Kan uw locatie niet verkrijgen.</string>
   <string name="drafts">Concepten</string>
-  <string name="send_all">Stuur alle</string>
   <string name="delete_all">Verwijder alle</string>
   <string name="description">Beschrijving</string>
   <string name="location">Locatie</string>
@@ -175,7 +174,6 @@
   <string name="block">Blokkeren</string>
   <string name="unblock">Blokkering opheffen</string>
   <string name="inbox">Inbox</string>
-  <string name="outbox">Outbox</string>
   <string name="load_images">Afbeeldingen laden</string>
   <string name="stop_service_after_closed">Stop service nadat Twidere is gesloten.</string>
   <string name="other_settings">Andere instellingen</string>
@@ -192,7 +190,6 @@
   <string name="lights">Lichten</string>
   <string name="notifications">Notificaties</string>
   <string name="new_notifications">Nieuwe notificaties</string>
-  <string name="load_earlier_messages">Laad eerdere directe berichten</string>
   <string name="screen_name">Schermnaam</string>
   <string name="sort_timeline_by_time">Sorteer tijdlijn bij tijd</string>
   <string name="refresh_on_start">Vernieuw bij starten</string>
@@ -205,8 +202,6 @@
   <string name="list_following_user">Lijst(en) die deze gebruiker volgen</string>
   <string name="list_user_followed">Lijst(en) die deze gebruiker volgt</string>
   <string name="list_created_by_user">Lijst gecreëerd door deze gebruiker</string>
-  <string name="report_errors_automatically">Meld fouten automatisch</string>
-  <string name="report_errors_automatically_summary">Rapporteer fouten automatisch, uw persoonlijke gegevens worden niet verzameld.</string>
   <string name="Ntweets_quantity_one">U hebt een nieuwe tweet.</string>
   <string name="Nmentions_quantity_one">Iemand vermeldde u.</string>
   <string name="Ndirect_messages_quantity_one">U heeft een nieuw direct bericht.</string>
@@ -226,7 +221,6 @@
   <string name="trends_location_summary">Stel locatie in voor lokale trends.</string>
   <string name="trends">Trends</string>
   <string name="accounts">Accounts</string>
-  <string name="hires_profile_image">Hi-res profielafbeelding</string>
   <string name="mention_this_user">Vermeld deze gebruiker</string>
   <string name="signing_in_please_wait">Bezig met inloggen, even geduld alstublieft of druk op TERUG om te stoppen.</string>
   <string name="connectivity">Connectiviteit</string>

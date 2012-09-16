@@ -68,7 +68,6 @@
   <string name="text_size">Tamany del text</string>
   <string name="cannot_get_location">No es pot obtenir la teva localització.</string>
   <string name="drafts">Esborranys</string>
-  <string name="send_all">Envia-ho tot</string>
   <string name="delete_all">Suprimeix tot</string>
   <string name="description">Descripció</string>
   <string name="location">Localització</string>
@@ -104,7 +103,6 @@
   <string name="lights">Llums</string>
   <string name="notifications">Notificacions</string>
   <string name="new_notifications">Noves notificacions</string>
-  <string name="load_earlier_messages">Carregar missatges directes anteriors</string>
   <string name="Ntweets_quantity_one">Tens un nou tweet.</string>
   <string name="Nmentions_quantity_one">Algú t\'ha esmentat.</string>
   <string name="Ndirect_messages_quantity_one">Tens un nou missatge directe.</string>

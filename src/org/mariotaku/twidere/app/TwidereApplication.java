@@ -70,7 +70,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		if (mPreviewImageLoader == null) {
 			final int preview_image_size = getResources().getDimensionPixelSize(R.dimen.preview_image_size);
 			mPreviewImageLoader = new LazyImageLoader(this, DIR_NAME_CACHED_THUMBNAILS,
-					R.drawable.image_preview_fallback, preview_image_size, preview_image_size, 30);
+					R.drawable.image_preview_fallback, preview_image_size, preview_image_size, 10);
 		}
 		return mPreviewImageLoader;
 	}
@@ -150,7 +150,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			mProfileImageLoader.reloadProxySettings();
 		}
 	}
-
+	
 	public void startMultiSelect() {
 		mMultiSelectActive = true;
 		final Intent intent = new Intent(BROADCAST_MULTI_SELECT_STATE_CHANGED);

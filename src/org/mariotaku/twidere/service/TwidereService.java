@@ -113,7 +113,8 @@ public class TwidereService extends Service implements Constants {
 
 	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
 
-	private PendingIntent mPendingRefreshIntent;
+	private PendingIntent mPendingRefreshHomeTimelineIntent, mPendingRefreshMentionsIntent,
+			mPendingRefreshDirectMessagesIntent;
 
 	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -129,18 +130,22 @@ public class TwidereService extends Service implements Constants {
 				if (extras != null && extras.containsKey(INTENT_KEY_NOTIFICATION_ID)) {
 					clearNotification(extras.getInt(INTENT_KEY_NOTIFICATION_ID));
 				}
-			} else if (BROADCAST_AUTO_REFRESH.equals(action)) {
+			} else if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
 				final long[] activated_ids = getActivatedAccountIds(context);
 				if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
 					if (!isHomeTimelineRefreshing()) {
 						getHomeTimeline(activated_ids, null, true);
 					}
 				}
+			} else if (BROADCAST_REFRESH_MENTIONS.equals(action)) {
+				final long[] activated_ids = getActivatedAccountIds(context);
 				if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
 					if (!isMentionsRefreshing()) {
 						getMentions(activated_ids, null, true);
 					}
 				}
+			} else if (BROADCAST_REFRESH_DIRECT_MESSAGES.equals(action)) {
+				final long[] activated_ids = getActivatedAccountIds(context);
 				if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
 					if (!isReceivedDirectMessagesRefreshing()) {
 						getReceivedDirectMessages(activated_ids, null, true);
@@ -341,11 +346,16 @@ public class TwidereService extends Service implements Constants {
 		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mResolver = getContentResolver();
-		final Intent refresh_intent = new Intent(BROADCAST_AUTO_REFRESH);
-		mPendingRefreshIntent = PendingIntent.getBroadcast(this, 0, refresh_intent, 0);
+		mPendingRefreshHomeTimelineIntent = PendingIntent.getBroadcast(this, 0, new Intent(
+				BROADCAST_REFRESH_HOME_TIMELINE), 0);
+		mPendingRefreshMentionsIntent = PendingIntent.getBroadcast(this, 0, new Intent(BROADCAST_REFRESH_MENTIONS), 0);
+		mPendingRefreshDirectMessagesIntent = PendingIntent.getBroadcast(this, 0, new Intent(
+				BROADCAST_REFRESH_DIRECT_MESSAGES), 0);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		filter.addAction(BROADCAST_NOTIFICATION_CLEARED);
-		filter.addAction(BROADCAST_AUTO_REFRESH);
+		filter.addAction(BROADCAST_REFRESH_HOME_TIMELINE);
+		filter.addAction(BROADCAST_REFRESH_MENTIONS);
+		filter.addAction(BROADCAST_REFRESH_DIRECT_MESSAGES);
 		registerReceiver(mStateReceiver, filter);
 
 		startAutoRefresh();
@@ -394,19 +404,25 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public boolean startAutoRefresh() {
-		mAlarmManager.cancel(mPendingRefreshIntent);
+		stopAutoRefresh();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
 			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
 			if (update_interval <= 0) return false;
 			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-					update_interval, mPendingRefreshIntent);
+					update_interval, mPendingRefreshHomeTimelineIntent);
+			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+					update_interval, mPendingRefreshMentionsIntent);
+			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+					update_interval, mPendingRefreshDirectMessagesIntent);
 			return true;
 		}
 		return false;
 	}
 
 	public void stopAutoRefresh() {
-		mAlarmManager.cancel(mPendingRefreshIntent);
+		mAlarmManager.cancel(mPendingRefreshHomeTimelineIntent);
+		mAlarmManager.cancel(mPendingRefreshMentionsIntent);
+		mAlarmManager.cancel(mPendingRefreshDirectMessagesIntent);
 	}
 
 	public boolean test() {
@@ -1409,6 +1425,15 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPreExecute() {
+			mAlarmManager.cancel(mPendingRefreshHomeTimelineIntent);
+			if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
+						"30")) * 60 * 1000;
+				if (update_interval > 0) {
+					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+							+ update_interval, update_interval, mPendingRefreshHomeTimelineIntent);
+				}
+			}
 			super.onPreExecute();
 		}
 
@@ -1470,6 +1495,15 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPreExecute() {
+			mAlarmManager.cancel(mPendingRefreshMentionsIntent);
+			if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
+						"30")) * 60 * 1000;
+				if (update_interval > 0) {
+					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+							+ update_interval, update_interval, mPendingRefreshMentionsIntent);
+				}
+			}
 			super.onPreExecute();
 		}
 
@@ -1487,6 +1521,20 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public ResponseList<DirectMessage> getDirectMessages(Twitter twitter, Paging paging) throws TwitterException {
 			return twitter.getDirectMessages(paging);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			mAlarmManager.cancel(mPendingRefreshDirectMessagesIntent);
+			if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
+						"30")) * 60 * 1000;
+				if (update_interval > 0) {
+					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+							+ update_interval, update_interval, mPendingRefreshDirectMessagesIntent);
+				}
+			}
+			super.onPreExecute();
 		}
 
 		@Override

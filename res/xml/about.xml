@@ -34,7 +34,7 @@
 			android:title="Cem Uluer">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="http://zettahub.de"/>
+				android:data="twidere://user?user_id=289472337"/>
 		</Preference>
 		<Preference
 			android:summary="Français"

@@ -76,7 +76,6 @@
   <string name="consumer_key_summary">Clé client pour OAuth/xAuth, laissez vide pour celle par défaut.</string>
   <string name="consumer_secret">Mot de passe client</string>
   <string name="consumer_secret_summary">Mot de passe client pour OAuth/xAuth, laissez vide pour celui par défaut.</string>
-  <string name="warn_expert_only">Attention ! Un mauvais secret/clé utilisateur engendrera des erreurs de connexion !</string>
   <string name="ignore_ssl_error">Ignorer les erreurs SSL</string>
   <string name="ignore_ssl_error_summary">Ignorer les erreurs SSL, à activer si vous avez des problèmes avec une API personnalisée.</string>
   <string name="gzip_compressing">Compression GZip</string>
@@ -136,7 +135,6 @@
   <string name="text_size_summary">Taille du texte des tweets.</string>
   <string name="cannot_get_location">Impossible d\'acquérir votre position.</string>
   <string name="drafts">Brouillons</string>
-  <string name="send_all">Envoyer tout</string>
   <string name="delete_all">Supprimer tout</string>
   <string name="description">Description</string>
   <string name="location">Emplacement</string>
@@ -180,7 +178,6 @@
   <string name="block">Bloquer</string>
   <string name="unblock">Débloquer</string>
   <string name="inbox">Boîte de réception</string>
-  <string name="outbox">Boîte d\'envoi</string>
   <string name="load_images">Charger les images</string>
   <string name="stop_service_after_closed">Arrêter le service après la fermeture de twidere.</string>
   <string name="stop_service_after_closed_summary">Je ne sais pas pourquoi vous voudriez activer ça, mais si vous avez le moindre problème après, n\'oubliez pas que c\'est de votre faute.</string>
@@ -198,7 +195,6 @@
   <string name="lights">Lumières</string>
   <string name="notifications">Notifications</string>
   <string name="new_notifications">Nouvelles notifications</string>
-  <string name="load_earlier_messages">Charger des messages directes plus anciens</string>
   <string name="sort_timeline_by_time">Trier le fil d\'actualité par ordre chronologique</string>
   <string name="sort_timeline_by_time_summary">Ceci peut faire apparaître les retweets au mauvais endroit, mais peut être utile si vous utilisez d\'autres services comme Identi.ca.</string>
   <string name="refresh_on_start">Rafraîchir au démarrage</string>
@@ -210,8 +206,6 @@
   <string name="list_subscribers">Liste « abonnés »</string>
   <string name="type_to_compose">Tapez pour composer</string>
   <string name="list_created_by_user">Liste créé par cet utilisateur</string>
-  <string name="report_errors_automatically">Signaler les erreurs automatiquement</string>
-  <string name="report_errors_automatically_summary">Signale automatiquement les erreurs, sans collecter vos données personnelles.</string>
   <string name="Ntweets_quantity_one">Vous avez un nouveau tweet.</string>
   <string name="Ntweets_quantity_other">Vous avez <xliff:g id="items">%d</xliff:g> nouveaux tweets.</string>
   <string name="Nmentions_quantity_one">Quelqu\'un vous a mentionné.</string>
@@ -235,7 +229,6 @@
   <string name="trends">Tendances</string>
   <string name="accounts">Comptes</string>
   <string name="account">Compte</string>
-  <string name="hires_profile_image">Image de profil HD</string>
   <string name="mention_this_user">Mentionner cet utilisateur</string>
   <string name="signing_in_please_wait">Connexion en cours, veuillez patienter ou appuyer sur RETOUR à nouveau pour quitter.</string>
   <string name="connectivity">Connectivité</string>
@@ -274,7 +267,6 @@
   <string name="content_and_storage">Contenu &amp; Stockage</string>
   <string name="image_uploader_default">Défaut (Twitter)</string>
   <string name="error_message_image_upload_failed">L\'envoi de l\'image a échoué.</string>
-  <string name="image_upload_format_summary">\"[LINK]\" = Lien de l\'image\n\"[TEXT]\" = Contenu du tweet</string>
   <string name="tweet_shortener">Raccourcisseur de tweet</string>
   <string name="tweet_shortener_default">Aucun (Annuler l\'envoi)</string>
   <string name="error_message_status_too_long">Tweet trop long.</string>

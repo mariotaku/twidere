@@ -43,20 +43,20 @@
 			android:gravity="center_vertical"
 			android:orientation="vertical">
 
-			<TextView android:layerType="software"
+			<TextView
 				android:id="@id/actionbar_title"
 				style="?attr/actionBarTitleStyle"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:ellipsize="marquee"
+				android:layerType="software"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-			<TextView android:layerType="software"
+			<TextView
 				android:id="@id/actionbar_subtitle"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:ellipsize="marquee"
+				android:layerType="software"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:visibility="gone"/>
@@ -74,11 +74,12 @@
 		<ProgressBar
 			android:id="@id/actionbar_progress_indeterminate"
 			style="?actionBarIndeterminateProgressStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_width="@dimen/actionbar_height"
+			android:layout_height="@dimen/actionbar_height"
 			android:layout_gravity="center_vertical"
 			android:layout_weight="0"
 			android:indeterminateOnly="true"
+			android:padding="2dp"
 			android:visibility="gone"/>
 
 		<LinearLayout

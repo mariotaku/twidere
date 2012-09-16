@@ -508,7 +508,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void copyStream(InputStream is, OutputStream os) throws IOException {
-		final int buffer_size = 1024;
+		final int buffer_size = 8192;
 		final byte[] bytes = new byte[buffer_size];
 		int count = is.read(bytes, 0, buffer_size);
 		while (count != -1) {

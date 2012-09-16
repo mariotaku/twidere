@@ -79,7 +79,6 @@
   <string name="consumer_key_summary">OAuth/xAuth 所需的 Consumer key，留空則使用預設。</string>
   <string name="consumer_secret">Consumer secret</string>
   <string name="consumer_secret_summary">OAuth/xAuth 所需的 Consumer secret，留空則使用預設。</string>
-  <string name="warn_expert_only">請小心！錯誤的 Consumer key/secret 將導致連接錯誤！</string>
   <string name="ignore_ssl_error">忽略SSL錯誤</string>
   <string name="ignore_ssl_error_summary">忽略SSL證書錯誤，如果你使用支持SSL的自定義API登錄時發生問題，請啟用此項。</string>
   <string name="gzip_compressing">GZip 壓縮</string>
@@ -104,7 +103,6 @@
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>，來自<xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">來自<xliff:g id="source">%s</xliff:g></string>
   <string name="filter">過濾</string>
-  <string name="filter_summary">隱藏不想看到的用戶/來源或包含指定的關鍵字的推文。</string>
   <string name="users">用戶</string>
   <string name="keywords">關鍵詞</string>
   <string name="sources">來源</string>
@@ -143,7 +141,6 @@
   <string name="text_size_summary">推文的文字尺寸。</string>
   <string name="cannot_get_location">不能獲得你的位置。</string>
   <string name="drafts">草稿</string>
-  <string name="send_all">全部發送</string>
   <string name="delete_all">全部刪除</string>
   <string name="description">簡介</string>
   <string name="location">位置</string>
@@ -193,7 +190,6 @@
   <string name="user_muted">你過濾了這個用戶，你將不會在主頁/提及中看到這個用戶的推文。</string>
   <string name="users_muted">你過濾了這些用戶，你將不會在主頁/提及中看到這些用戶的推文。</string>
   <string name="inbox">收件箱</string>
-  <string name="outbox">發件箱</string>
   <string name="load_images">載入圖片</string>
   <string name="stop_service_after_closed">關閉後停止後端服務</string>
   <string name="stop_service_after_closed_summary">我不建議你啟用它，希望你去找找Android的後台管理機制看一下，這不是Windows，這是Android。</string>
@@ -211,7 +207,6 @@
   <string name="lights">LED閃爍</string>
   <string name="notifications">通知</string>
   <string name="new_notifications">新通知</string>
-  <string name="load_earlier_messages">加載更早的私信</string>
   <string name="screen_name">用戶名</string>
   <string name="sort_timeline_by_time">按時間順序排序時間綫</string>
   <string name="sort_timeline_by_time_summary">這可能使得被轉推的推文顯示在錯誤的位置，不過如果你使用其他服務比如（Identi.ca），這個選項會有不少幫助。</string>
@@ -226,8 +221,6 @@
   <string name="list_following_user">關注用戶的列表</string>
   <string name="list_user_followed">用戶關注的列表</string>
   <string name="list_created_by_user">用戶創建的列表</string>
-  <string name="report_errors_automatically">自動報告錯誤</string>
-  <string name="report_errors_automatically_summary">出現問題自動報告，這並不會收集你的個人信息。</string>
   <string name="Ntweets_quantity_one">你有一條新推文。</string>
   <string name="Ntweets_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 條新推文。</string>
   <string name="Nmentions_quantity_one">有人提及了你。</string>
@@ -252,7 +245,6 @@
   <string name="trends">話題</string>
   <string name="accounts">帳號</string>
   <string name="account">帳號</string>
-  <string name="hires_profile_image">高質量個人資料圖片</string>
   <string name="mention_this_user">提及這個用戶</string>
   <string name="signing_in_please_wait">正在登錄，請稍等或按BACK退出。</string>
   <string name="connectivity">連接性</string>
@@ -287,8 +279,6 @@
   <string name="notification_ringtone">鈴聲</string>
   <string name="notification_light_color">燈光顏色</string>
   <string name="invalid_image">無效的圖像。</string>
-  <string name="fast_list_processing">快速列表處理</string>
-  <string name="fast_list_processing_summary">禁用用戶顏色標籤、提及高亮等以使列表更加順暢。</string>
   <string name="share_format">分享格式</string>
   <string name="share_format_summary">\"[TITLE]\" = 分享內容的標題\n\"[TEXT]\" = 分享內容的正文</string>
   <string name="network">網絡</string>
@@ -298,8 +288,8 @@
   <string name="home_refresh">在主頁時間綫刷新</string>
   <string name="error_message_image_upload_failed">圖像上傳失敗。</string>
   <string name="error_message_image_uploader_not_found">未找到圖片上傳擴展，它可能已經被卸載了。</string>
-  <string name="image_upload_format">設定上傳圖片時推文的格式（僅第三方服務有效）</string>
-  <string name="image_upload_format_summary">\"[LINK]\" = 圖像連結\n\"[TEXT]\" =推文內容</string>
+  <string name="image_upload_format">上傳圖片的推文格式</string>
+  <string name="image_upload_format_summary">\"[LINK]\" = 圖像連結\n\"[TEXT]\" = 推文內容\n（僅第三方有效。）</string>
   <string name="tweet_shortener">推文縮短服務</string>
   <string name="tweet_shortener_default">無（不發送過長推文）</string>
   <string name="error_message_status_too_long">推文太長。</string>
@@ -322,4 +312,22 @@
   <string name="Nitems_selected_quantity_one">已選擇 1 項</string>
   <string name="Nitems_selected_quantity_other">已選擇 <xliff:g id="items">%d</xliff:g> 項</string>
   <string name="view">查看</string>
+  <string name="hardware_acceleration">硬件加速</string>
+  <string name="hardware_acceleration_summary">一些設備啟用將更流暢，另一些則相反。僅在Android 3.0以上有效，並且不會覆蓋系統設定！</string>
+  <string name="custom_host_mapping">自定義主機映射</string>
+  <string name="custom_host_mapping_summary">如同/etc/hosts的主機映射，但不需要任何額外的權限。</string>
+  <string name="host">主機名</string>
+  <string name="address">地址（可以是另一個主機名）</string>
+  <string name="add_host_mapping">添加主機名映射</string>
+  <string name="tcp_dns_query">TCP DNS查詢方式</string>
+  <string name="tcp_dns_query_summary">使用TCP協議進行DNS查詢，這可以避免DNS緩存投毒。</string>
+  <string name="dns_server">DNS 伺服器</string>
+  <string name="dns_server_summary">為API請求指定DNS伺服器</string>
+  <string name="activities_about_me">關於我的活動</string>
+  <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> 收藏了你的推文。</string>
+  <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人收藏了你的推文。</string>
+  <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> 提到了你。</string>
+  <string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人關注了你。</string>
+  <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> 轉推了你的推文。</string>
+  <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人轉推了你的推文。</string>
 </resources>

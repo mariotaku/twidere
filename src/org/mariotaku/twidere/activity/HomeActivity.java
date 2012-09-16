@@ -199,7 +199,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		int initial_tab = -1;
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
-			if (refreshed_ids != null && !refresh_on_start) {
+			if (refreshed_ids != null && !refresh_on_start && savedInstanceState == null) {
 				mService.getHomeTimeline(refreshed_ids, null);
 				mService.getMentions(refreshed_ids, null);
 			}

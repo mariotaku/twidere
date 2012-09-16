@@ -79,7 +79,6 @@
   <string name="consumer_key_summary">OAuth/xAuth用のConsumer key。空白のままにして置くとデフォルト値が適用。</string>
   <string name="consumer_secret">Consumer secret</string>
   <string name="consumer_secret_summary">OAuth/xAuth用のConsumer secret。空白のままにして置くとデフォルト値が適用。</string>
-  <string name="warn_expert_only">ご注意ください! 間違ったconsumer key/secretは接続エラーを起こすかもしれません。</string>
   <string name="ignore_ssl_error">SSLエラーを無視</string>
   <string name="ignore_ssl_error_summary">SSLエラーを無視する。カスタムAPIサーバーに問題がある場合、有効にしてみましょう。</string>
   <string name="gzip_compressing">GZip 圧縮</string>
@@ -104,7 +103,6 @@
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g><xliff:g id="source">%2$s</xliff:g>から</string>
   <string name="source">via <xliff:g id="source">%s</xliff:g></string>
   <string name="filter">フィルター</string>
-  <string name="filter_summary">見たくないユーザー、ソースまた特定キーワードの含むツイートを隠す。</string>
   <string name="users">ユーザー</string>
   <string name="keywords">キーワード</string>
   <string name="sources">ソース</string>
@@ -143,7 +141,6 @@
   <string name="text_size_summary">ツイートのフォントサイズ。</string>
   <string name="cannot_get_location">位置情報が取得できません。</string>
   <string name="drafts">下書き</string>
-  <string name="send_all">全てを送信</string>
   <string name="delete_all">すべてを削除</string>
   <string name="description">自己紹介</string>
   <string name="location">現在地</string>
@@ -193,7 +190,6 @@
   <string name="user_muted">このユーザーをフィルターリストに追加する。ホーム / つながり にこのユーザーのツイートを非表示にする。</string>
   <string name="users_muted">複数のユーザーをフィルターリストに追加する。ホーム / つながり にこのユーザーのツイートを非表示にする。</string>
   <string name="inbox">受信箱</string>
-  <string name="outbox">送信箱</string>
   <string name="load_images">画像を読み込む</string>
   <string name="stop_service_after_closed">終了してサービスを停止</string>
   <string name="stop_service_after_closed_summary">無効にするほうが良いです。</string>
@@ -211,7 +207,6 @@
   <string name="lights">LED通知</string>
   <string name="notifications">通知</string>
   <string name="new_notifications">新しい通知</string>
-  <string name="load_earlier_messages">以前のダイレクトメッセージを読み込む</string>
   <string name="screen_name">ユーザー名</string>
   <string name="sort_timeline_by_time">タイムラインを時間順に並び替える</string>
   <string name="sort_timeline_by_time_summary">タイムラインでリツイートしたアイテムの位置ズレを起こるかもしれませんが, 他のサビース（例えばIdenti.caとか）を利用している時、この機能を有効にすることをお勧めします。</string>
@@ -226,8 +221,6 @@
   <string name="list_following_user">このユーザーが追加されているリスト</string>
   <string name="list_user_followed">リストフォロー</string>
   <string name="list_created_by_user">このユーザーが作成したリスト</string>
-  <string name="report_errors_automatically">エラー報告の自動送信</string>
-  <string name="report_errors_automatically_summary">エラー報告を自動的に送信します。個人データを収集することはありません。</string>
   <string name="Ntweets_quantity_one">新しいツイートが一件あります。</string>
   <string name="Ntweets_quantity_other">新しいツイートが <xliff:g id="items">%d</xliff:g>+ 件あります。</string>
   <string name="Nmentions_quantity_one">自分宛ツイートがあります。</string>
@@ -252,7 +245,6 @@
   <string name="trends">トレンド</string>
   <string name="accounts">アカウント</string>
   <string name="account">アカウント</string>
-  <string name="hires_profile_image">高解像度プロファイル画像</string>
   <string name="mention_this_user">このユーザー宛にツイート</string>
   <string name="signing_in_please_wait">サインインしています、しばらくお待ちください。もう一度戻るボタンを押すと終了します。</string>
   <string name="connectivity">接続性</string>
@@ -287,8 +279,6 @@
   <string name="notification_ringtone">通知音</string>
   <string name="notification_light_color">LED色</string>
   <string name="invalid_image">無効な画像。</string>
-  <string name="fast_list_processing">スクロール加速</string>
-  <string name="fast_list_processing_summary">ユーザー色指定と自分宛ツイートハイライトを無効にすると性能を向上させる。</string>
   <string name="share_format">共有形式</string>
   <string name="share_format_summary">\"[TITLE]\" = タイトル\n\"[TEXT]\" = テキスト</string>
   <string name="network">ネットワーク</string>
@@ -322,4 +312,22 @@
   <string name="Nitems_selected_quantity_one">1 アイテムが選択</string>
   <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> アイテムが選択</string>
   <string name="view">表示</string>
+  <string name="hardware_acceleration">ハードウェア・アクセラレーション</string>
+  <string name="hardware_acceleration_summary">有効するとスクロールをよりスムーズにします。（一部のデバイスは有効にしても動かない）アンドロイド3.0以上のみ。システムの設定を上書きしません。</string>
+  <string name="custom_host_mapping">カスタム・ホスト・マッピング</string>
+  <string name="custom_host_mapping_summary">特別な許可を取らなくても/etc/hostsのようにホストマッピングができる。</string>
+  <string name="host">ホスト</string>
+  <string name="address">アドレス (他のホストアドレスも可)</string>
+  <string name="add_host_mapping">ホストマッピングを追加</string>
+  <string name="tcp_dns_query">TCP DNS クエリー</string>
+  <string name="tcp_dns_query_summary">TCP プロトコルでDNS リクエストを通信し、DNSキャッシュ汚染を回避できる。</string>
+  <string name="dns_server">DNS サーバー</string>
+  <string name="dns_server_summary">API用のDNS サーバーを設定する。</string>
+  <string name="activities_about_me">アクティビティ</string>
+  <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> があなたのツイートを気に入りました。</string>
+  <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人があなたのツイートを気に入りました。</string>
+  <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> があなたをフォローしました。</string>
+  <string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人があなたをフォローしました。</string>
+  <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> があなたのツイートをリツイートしました。</string>
+  <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人があなたのツイートをリツイートしました。</string>
 </resources>

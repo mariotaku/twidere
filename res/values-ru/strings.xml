@@ -62,7 +62,6 @@
   <string name="license">Открытый исходный код</string>
   <string name="license_summary">Лицензия GPLv3.</string>
   <string name="api">API</string>
-  <string name="warn_expert_only">Внимание! Неправильный ключ/секрет приведет к ошибке подключения!</string>
   <string name="ignore_ssl_error">Игнорировать ошибки SSL</string>
   <string name="ignore_ssl_error_summary">Игнорировать ошибки SSL, включите, если у вас проблемы с пользовательских API сервера.</string>
   <string name="gzip_compressing">Сжатие GZip</string>
@@ -84,7 +83,6 @@
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, через <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">через <xliff:g id="source">%s</xliff:g></string>
   <string name="filter">Фильтр</string>
-  <string name="filter_summary">Скрыть твиты от нежелательных пользователей/источников или твиты с определенными ключевыми словами</string>
   <string name="users">Пользователи</string>
   <string name="keywords">Ключевые слова</string>
   <string name="sources">Источники</string>
@@ -121,7 +119,6 @@
   <string name="text_size_summary">Размер текста статусов.</string>
   <string name="cannot_get_location">Не удается получить ваше местоположение.</string>
   <string name="drafts">Черновики</string>
-  <string name="send_all">Отправить все</string>
   <string name="delete_all">Удалить все</string>
   <string name="description">Описание</string>
   <string name="location">Местоположение</string>
@@ -168,7 +165,6 @@
   <string name="user_muted">Пользователь добавлен в фильтр. Вы не увидите его твиты.</string>
   <string name="users_muted">Пользователи добавлены в фильтр. Вы не будете видеть твиты от этих пользователей в вашей ленте/упоминаниях.</string>
   <string name="inbox">Входящие</string>
-  <string name="outbox">Исходящие</string>
   <string name="load_images">Загрузить изображения</string>
   <string name="stop_service_after_closed">Остановка службы после закрытия twidere.</string>
   <string name="stop_service_after_closed_summary">Я не знаю почему вы бы хотели включить это, но если у вас возникли какие-либо проблемы после этого, помните, что это ваша вина.</string>
@@ -191,8 +187,6 @@
   <string name="list_members">Список пользователей</string>
   <string name="list_subscribers">Список подписчиков</string>
   <string name="list_created_by_user">Список, созданный этим пользователем</string>
-  <string name="report_errors_automatically">Сообщать об ошибках автоматически</string>
-  <string name="report_errors_automatically_summary">Сообщать об ошибках автоматически, не используя личные данные</string>
   <string name="Ntweets_quantity_one">У вас есть новый твит.</string>
   <string name="Ntweets_quantity_other">У вас <xliff:g id="items">%d</xliff:g> новых твитов</string>
   <string name="Nmentions_quantity_one">Кто-то упомянул вас.</string>
@@ -216,7 +210,6 @@
   <string name="trends">Тренды</string>
   <string name="accounts">Аккаунты</string>
   <string name="account">Аккаунт</string>
-  <string name="hires_profile_image">Высокое качество изображений</string>
   <string name="mention_this_user">Упомянуть этого пользователя</string>
   <string name="signing_in_please_wait">Авторизация, пожалуйста, подождите или вернитесь назад для выхода</string>
   <string name="connectivity">подключение</string>
@@ -254,7 +247,6 @@
   <string name="image_uploader_default">По-умолчанию (Твиттер)</string>
   <string name="error_message_image_upload_failed">Неудачная загрузка изображения.</string>
   <string name="error_message_image_uploader_not_found">Загрузчик изображений не найден, возможно он был удален.</string>
-  <string name="image_upload_format">Формат твита при загрузке изображений</string>
   <string name="tweet_shortener">Твит слишком короткий</string>
   <string name="tweet_shortener_default">Отменить отправку</string>
   <string name="error_message_status_too_long">Твит слишком длинный.</string>

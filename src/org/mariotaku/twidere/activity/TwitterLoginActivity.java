@@ -22,49 +22,33 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
-import static org.mariotaku.twidere.util.Utils.getConnection;
-import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.parseInt;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.ccil.cowan.tagsoup.HTMLSchema;
-import org.ccil.cowan.tagsoup.Parser;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ColorAnalyser;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
+import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 
-import twitter4j.HostAddressResolver;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
-import twitter4j.auth.RequestToken;
 import twitter4j.auth.TwipOModeAuthorization;
-import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -541,7 +525,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
 			final Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-			final OAuthAuthenticator authenticator = new OAuthAuthenticator(TwitterLoginActivity.this,
+			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(TwitterLoginActivity.this,
 					mBrowserUserAgent, twitter);
 			try {
 				final AccessToken access_token = authenticator.getOAuthAccessToken(mUsername, mPassword);
@@ -664,169 +648,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				this.succeed = succeed;
 				this.exception = exception;
 			}
-		}
-	}
-
-	static class OAuthAuthenticator {
-
-		private final SharedPreferences preferences;
-		private final HostAddressResolver resolver;
-
-		private final Context context;
-		private final Twitter twitter;
-
-		private final String user_agent;
-
-		private String authenticity_token, callback_url;
-
-		private final ContentHandler mAuthenticityTokenHandler = new DummyContentHandler() {
-
-			@Override
-			public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-				if ("input".equalsIgnoreCase(localName)
-						&& "authenticity_token".equalsIgnoreCase(atts.getValue("", "name"))) {
-					final String authenticity_token = atts.getValue("", "value");
-					if (!isNullOrEmpty(authenticity_token)) {
-						setAuthenticityToken(authenticity_token);
-					}
-				}
-			}
-		};
-
-		private final ContentHandler mCallbackURLHandler = new DummyContentHandler() {
-
-			@Override
-			public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-				if ("meta".equalsIgnoreCase(localName) && "refresh".equalsIgnoreCase(atts.getValue("", "http-equiv"))) {
-					final String content = atts.getValue("", "content");
-					final String url_prefix = "url=";
-					final int idx = content.indexOf(url_prefix);
-					if (!isNullOrEmpty(content) && idx != -1) {
-						final String url = content.substring(idx + url_prefix.length());
-						if (!isNullOrEmpty(url)) {
-							callback_url = url;
-						}
-					}
-				}
-			}
-		};
-
-		public OAuthAuthenticator(Context context, String user_agent, Twitter twitter) {
-			this.context = context;
-			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-			resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
-			this.user_agent = user_agent;
-			this.twitter = twitter;
-		}
-
-		public InputStream getHTTPContent(String url_string, String method) throws IOException {
-			final URL url = parseURL(url_string);
-			final Proxy proxy = getProxy(context);
-			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-			final HttpURLConnection conn = getConnection(url, ignore_ssl_error, proxy, resolver);
-			if (conn == null) return null;
-			conn.addRequestProperty("User-Agent", user_agent);
-			if (method != null) {
-				conn.setRequestMethod(method);
-			}
-			return conn.getInputStream();
-		}
-
-		public AccessToken getOAuthAccessToken(String username, String password) throws ParserConfigurationException,
-				SAXException, IOException, TwitterException {
-			final RequestToken request_token = twitter.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
-			final String oauth_token = request_token.getToken();
-			readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), "GET"));
-			if (authenticity_token == null) throw new IOException("Cannot get authenticity token.");
-			final Configuration conf = twitter.getConfiguration();
-			final StringBuilder authorization_url_builder = new StringBuilder(conf.getOAuthAuthorizationURL());
-			authorization_url_builder.append("?authenticity_token=" + authenticity_token);
-			authorization_url_builder.append("&oauth_token=" + oauth_token);
-			authorization_url_builder.append("&session[username_or_email]=" + username);
-			authorization_url_builder.append("&session[password]=" + password);
-			readCallbackURL(getHTTPContent(authorization_url_builder.toString(), "POST"));
-			if (callback_url == null) throw new IOException("Cannot get callback URL.");
-			if (!callback_url.startsWith(DEFAULT_OAUTH_CALLBACK))
-				throw new IOException("Wrong OAuth callback URL " + callback_url);
-			final String oauth_verifier = Uri.parse(callback_url).getQueryParameter(OAUTH_VERIFIER);
-			if (isNullOrEmpty(oauth_verifier)) throw new IOException("Cannot get OAuth verifier.");
-			return twitter.getOAuthAccessToken(request_token, oauth_verifier);
-		}
-
-		public void readAuthenticityToken(InputStream stream) throws ParserConfigurationException, SAXException,
-				IOException {
-			final InputSource source = new InputSource(stream);
-			final Parser parser = new Parser();
-			parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
-			parser.setContentHandler(mAuthenticityTokenHandler);
-			parser.parse(source);
-		}
-
-		public void readCallbackURL(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
-			final InputSource source = new InputSource(stream);
-			final Parser parser = new Parser();
-			parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
-			parser.setContentHandler(mCallbackURLHandler);
-			parser.parse(source);
-		}
-
-		private void setAuthenticityToken(String authenticity_token) {
-			this.authenticity_token = authenticity_token;
-		}
-
-		private static class DummyContentHandler implements ContentHandler {
-			@Override
-			public void characters(char[] ch, int start, int length) throws SAXException {
-			}
-
-			@Override
-			public void endDocument() throws SAXException {
-			}
-
-			@Override
-			public void endElement(String uri, String localName, String qName) throws SAXException {
-			}
-
-			@Override
-			public void endPrefixMapping(String prefix) throws SAXException {
-			}
-
-			@Override
-			public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-			}
-
-			@Override
-			public void processingInstruction(String target, String data) throws SAXException {
-			}
-
-			@Override
-			public void setDocumentLocator(Locator locator) {
-			}
-
-			@Override
-			public void skippedEntity(String name) throws SAXException {
-			}
-
-			@Override
-			public void startDocument() throws SAXException {
-
-			}
-
-			@Override
-			public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-			}
-
-			@Override
-			public void startPrefixMapping(String prefix, String uri) throws SAXException {
-			}
-		}
-
-		/**
-		 * Lazy initialization holder for HTML parser. This class will a) be
-		 * preloaded by the zygote, or b) not loaded until absolutely necessary.
-		 */
-		private static class HtmlParser {
-			private static final HTMLSchema schema = new HTMLSchema();
 		}
 	}
 

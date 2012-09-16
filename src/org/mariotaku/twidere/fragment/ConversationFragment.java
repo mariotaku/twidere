@@ -26,7 +26,7 @@ import static org.mariotaku.twidere.util.Utils.showErrorToast;
 import java.util.List;
 
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
-import org.mariotaku.twidere.loader.DummyParcelableStatusLoader;
+import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
 import twitter4j.Twitter;
@@ -59,7 +59,7 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		return new DummyParcelableStatusLoader(getActivity(), account_id, getData());
+		return new DummyParcelableStatusesLoader(getActivity(), account_id, getData());
 	}
 
 	@Override

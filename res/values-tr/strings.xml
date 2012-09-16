@@ -58,7 +58,6 @@
   <string name="text_size_summary">Durumum yazı boyutu.</string>
   <string name="cannot_get_location">Konumunuz alınamıyor.</string>
   <string name="drafts">Taslaklar</string>
-  <string name="send_all">Hepsini Gönder</string>
   <string name="delete_all">Hepsini Sil</string>
   <string name="description">Açıklama</string>
   <string name="location">Konum</string>
