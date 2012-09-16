@@ -1771,13 +1771,6 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
 
 			if (result.data != null && result.data.getId() > 0) {
-				final ContentValues values = makeStatusContentValues(result.data, account_id);
-				final StringBuilder where = new StringBuilder();
-				where.append(Statuses.STATUS_ID + " = " + status_id);
-				where.append(" OR " + Statuses.RETWEET_ID + " = " + status_id);
-				for (final Uri uri : TweetStore.STATUSES_URIS) {
-					mResolver.update(uri, values, where.toString(), null);
-				}
 				Toast.makeText(TwidereService.this, R.string.retweet_success, Toast.LENGTH_SHORT).show();
 				final Intent intent = new Intent(BROADCAST_RETWEET_CHANGED);
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
