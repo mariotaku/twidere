@@ -92,12 +92,12 @@ public class OAuthPasswordAuthenticator {
 		readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), "GET"));
 		if (authenticity_token == null) throw new IOException("Cannot get authenticity token.");
 		final Configuration conf = twitter.getConfiguration();
-		final StringBuilder authorization_url_builder = new StringBuilder(conf.getOAuthAuthorizationURL());
-		authorization_url_builder.append("?authenticity_token=" + authenticity_token);
-		authorization_url_builder.append("&oauth_token=" + oauth_token);
-		authorization_url_builder.append("&session[username_or_email]=" + username);
-		authorization_url_builder.append("&session[password]=" + password);
-		readCallbackURL(getHTTPContent(authorization_url_builder.toString(), "POST"));
+		final Uri.Builder authorization_url_builder = Uri.parse(conf.getOAuthAuthorizationURL()).buildUpon();
+		authorization_url_builder.appendQueryParameter("authenticity_token", authenticity_token);
+		authorization_url_builder.appendQueryParameter("oauth_token", oauth_token);
+		authorization_url_builder.appendQueryParameter("session[username_or_email]", username);
+		authorization_url_builder.appendQueryParameter("session[password]", password);
+		readCallbackURL(getHTTPContent(authorization_url_builder.build().toString(), "POST"));
 		if (callback_url == null) throw new IOException("Cannot get callback URL.");
 		if (!callback_url.startsWith(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK))
 			throw new IOException("Wrong OAuth callback URL " + callback_url);
