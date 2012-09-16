@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library;
 
-import org.mariotaku.twidere.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -43,8 +41,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	private View mEmptyView;
 	private FrameLayout mRefreshableViewHolder;
 
-	private boolean mShowIndicator;
-
 	public PullToRefreshAdapterViewBase(Context context) {
 		super(context);
 		mRefreshableView.setOnScrollListener(this);
@@ -62,19 +58,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 	@Override
 	abstract public ContextMenuInfo getContextMenuInfo();
-
-	/**
-	 * Gets whether an indicator graphic should be displayed when the View is in
-	 * a state where a Pull-to-Refresh can happen. An example of this state is
-	 * when the Adapter View is scrolled to the top and the mode is set to
-	 * {@link Mode#PULL_DOWN_TO_REFRESH}. The default value is
-	 * {@value #DEFAULT_SHOW_INDICATOR}.
-	 * 
-	 * @return true if the indicators will be shown
-	 */
-	public boolean getShowIndicator() {
-		return mShowIndicator;
-	}
 
 	@Override
 	public final void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
@@ -200,7 +183,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	@Override
 	protected void handleStyledAttributes(TypedArray a) {
 		// Set Show Indicator to the XML value, or default value
-		mShowIndicator = a.getBoolean(R.styleable.PullToRefresh_ptrShowIndicator, DEFAULT_SHOW_INDICATOR);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout.TouchInterceptor;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+@SuppressLint("Registered")
 public class DualPaneActivity extends BaseActivity implements OnBackStackChangedListener {
 
 	private SharedPreferences mPreferences;

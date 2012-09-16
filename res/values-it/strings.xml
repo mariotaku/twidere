@@ -79,18 +79,23 @@
   <string name="consumer_key_summary">Consumer key for OAuth/xAuth, lascia vuota per usare quella default.</string>
   <string name="consumer_secret">Consumer secret</string>
   <string name="consumer_secret_summary">Consumer secret for OAuth/xAuth, lascia vuoto per usare quello default.</string>
+  <string name="warn_expert_only">Attenzione! Una Consumer key errata genererà errori di connessione!</string>
   <string name="ignore_ssl_error">Ignora errori SSL</string>
+  <string name="ignore_ssl_error_summary">Ignorare l\'errore SSL, abilitare se sono presenti problemi con il server API personalizzato.</string>
   <string name="gzip_compressing">Compressione GZip</string>
   <string name="gzip_compressing_summary">Comprimi tutte le richieste API, è possibile ridurre l\'utilizzo di traffico dati, ma potrebbe non funzionare su tutti i server API.</string>
   <string name="storage">Archivio</string>
   <string name="database_item_limit">Limite di elementi del database</string>
+  <string name="database_item_limit_summary">Limite massimo degli elementi memorizzati nel database per ogni account, impostare su un valore inferiore per risparmiare spazio e aumentare la velocità di caricamento.</string>
   <string name="clear_cache">Cancella cache</string>
   <string name="clear_cache_summary">Cancella cache delle immagini profilo memorizzate.</string>
   <string name="clear_databases">Cancella i database</string>
+  <string name="clear_databases_summary">Cancella tutti i tweet, profili, messaggi. Le credenziali degli account non saranno perse.</string>
   <string name="look_and_feel">Aspetto e funzionamento</string>
   <string name="dark_theme">Utilizza il tema scuro</string>
   <string name="dark_theme_summary">Usa il tema scuro per Twidere.</string>
   <string name="display_profile_image">Mostra immagine profilo</string>
+  <string name="image_load_summary">Disabilitando questo sarà aumentata la velocità di scorrimento della lista e ridotto l\'uso di traffico.</string>
   <string name="in_reply_to">Risposta a <xliff:g id="username"> %s </xliff:g></string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> Ha retwittato questo</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> e <xliff:g id="retweet_count">%2$d</xliff:g> altri hanno retwittato questo</string>
@@ -99,23 +104,28 @@
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">via <xliff:g id="source">%s</xliff:g></string>
   <string name="filter">Filtro</string>
+  <string name="filter_summary">Nascondere tweets da utenti/sorgenti indesiderate o tweets contenenti parole chiave specifiche</string>
   <string name="users">Utenti</string>
   <string name="keywords">Keywords</string>
   <string name="sources">Fonti</string>
   <string name="content">Contenuto</string>
   <string name="customize">Personalizza</string>
   <string name="set_color">Imposta colore</string>
+  <string name="clear">Elimina</string>
   <string name="pick_color">Scegli colore</string>
   <string name="follow">Segui</string>
   <string name="unfollow">Smetti di seguire</string>
   <string name="bottom_compose_button">Bottone componi in basso</string>
   <string name="bottom_compose_button_summary">Mettere il tasto componi nella parte inferiore, è possibile attivare questa opzione se lo schermo è grande.</string>
   <string name="leftside_compose_button">Tasto componi a sinistra</string>
+  <string name="leftside_compose_button_summary">Sposta il tasto \"componi\" a sinistra.</string>
   <string name="load_item_limit">Limite oggetti caricati</string>
   <string name="load_item_limit_summary">Imposta il limite oggetti per update.</string>
   <string name="load_more_automatically">﻿Caricare automaticamente più contenuti</string>
+  <string name="load_more_automatically_summary">Carica più contenuti (ad esempio foto, mappe, status ecc) automaticamente</string>
   <string name="quote">Cita</string>
   <string name="add_rule">Aggiungi regola</string>
+  <string name="longclick_to_delete">Tap lungo per cancellare.</string>
   <string name="retweet_success">Retweet eseguito.</string>
   <string name="cancel_retweet_success">Retweet annullato.</string>
   <string name="delete_success">Eliminato.</string>
@@ -162,9 +172,12 @@
   <string name="remember_position">Ricorda posizione</string>
   <string name="remember_position_summary">Ricorda la posizione elenco/tab prima di chiudere Twidere</string>
   <string name="user_blocked">Blocca questo utente.</string>
+  <string name="users_blocked">Utenti bloccati.</string>
   <string name="user_unblocked">Sblocca questo utente.</string>
   <string name="reported_user_for_spam">Segnala questo utente per spam.</string>
+  <string name="reported_users_for_spam">Segnala questi utenti per spam.</string>
   <string name="filename_hint">Nome file</string>
+  <string name="overwrite_confirm">File esistente, sovrascrivere?</string>
   <string name="save_as">Salva come</string>
   <string name="please_wait">Attendere prego.</string>
   <string name="file_saved_to">File salvato in <xliff:g id="filename"> %s </xliff:g>.</string>
@@ -175,10 +188,14 @@
   <string name="proxy_port">Porta proxy</string>
   <string name="block">Blocca</string>
   <string name="unblock">Sblocca</string>
+  <string name="report_for_spam">Segnala spam</string>
+  <string name="user_muted">Utenti aggiunti all\'elenco dei filtri. Non si vedranno tweets da questi utenti nella timeline o tra le menzioni.</string>
+  <string name="users_muted">Utenti aggiunti all\'elenco dei filtri. Non si vedranno tweets da questi utenti nella timeline o tra le menzioni.</string>
   <string name="inbox">Inbox</string>
   <string name="outbox">Outbox</string>
   <string name="load_images">Carica immagini</string>
   <string name="stop_service_after_closed">Stop service after twidere closed.</string>
+  <string name="stop_service_after_closed_summary">Non so perché si dovrebbe attivare questa opzione, ma se si hanno problemi dopo la sua attivazione, ricordo che è tutta colpa tua.</string>
   <string name="other_settings">Altre impostazioni</string>
   <string name="refresh_and_notifications">Aggiorna &amp; notifiche</string>
   <string name="auto_refresh">Auto refresh</string>
@@ -196,9 +213,11 @@
   <string name="load_earlier_messages">Carica messaggi diretti precedenti</string>
   <string name="screen_name">Screen name</string>
   <string name="sort_timeline_by_time">Timeline in ordine cronologico</string>
+  <string name="sort_timeline_by_time_summary">Questo può causare un errato posizionamento dei retweet, ma puo essere d\'aiuto nel caso si usino altri servizi come Identi.ca.</string>
   <string name="refresh_on_start">Aggiorna all\'avvio</string>
   <string name="refresh_on_start_summary">Aggiorna timeline/ menzioni all\'avvio.</string>
   <string name="refresh_after_tweet">Aggiorna dopo il tweet</string>
+  <string name="refresh_after_tweet_summary">Aggiorna la timeline e le menzioni dopo aver inviato un tweet.</string>
   <string name="list_timeline">Elenco timeline</string>
   <string name="list_members">Elenco iscritti</string>
   <string name="list_subscribers">Elenco abbonati</string>
@@ -224,6 +243,7 @@
   <string name="item_4_hours">4 ore</string>
   <string name="inline_image_preview">Inline image preview</string>
   <string name="solid_color_background">Sfondo a tinta unita</string>
+  <string name="solid_color_background_summary">Questo può essere utile se lo schermo del dispositivo è AMOLED.</string>
   <string name="followed_you">Ti segue</string>
   <string name="user_list">Liste utente</string>
   <string name="trends_location">Località per i Trends</string>
@@ -266,10 +286,36 @@
   <string name="notification_ringtone">Ringtone</string>
   <string name="notification_light_color">Light Color</string>
   <string name="invalid_image">Immagine non valida.</string>
+  <string name="fast_list_processing">Elaborazione veloce della lista</string>
+  <string name="fast_list_processing_summary">Disabilitare la colorazione del nome utente e l\'evidenziazione delle menzioni per ottenere prestazioni migliori.</string>
   <string name="share_format">Share format</string>
   <string name="share_format_summary">\"[TITLE]\" = Content title\n\"[TEXT]\" = Content text</string>
   <string name="network">Rete</string>
   <string name="content_and_storage">Content &amp; Storage</string>
   <string name="image_uploader">Image uploader</string>
+  <string name="image_uploader_default">Predefinito (Twitter)</string>
   <string name="home_refresh">Refresh in home timeline</string>
+  <string name="error_message_image_upload_failed">Caricamento dell\'immagine non riuscito.</string>
+  <string name="error_message_image_uploader_not_found">Image uploader non trovato, forse è stato disinstallato.</string>
+  <string name="image_upload_format">Formato tweet quando si carica un\'immagine</string>
+  <string name="tweet_shortener">Tweet shortener</string>
+  <string name="error_message_status_too_long">Tweet troppo lungo.</string>
+  <string name="error_message_tweet_shorten_failed">Abbreviazione del tweet non riuscita.</string>
+  <string name="error_message_tweet_shortener_not_found">Tweet shortener non trovato, forse è stato disinstallato.</string>
+  <string name="multimedia_contents">Contenuti multimediali</string>
+  <string name="show_absolute_time">Visualizza il tempo assoluto</string>
+  <string name="show_absolute_time_summary">Visualizza il tempo assoluto nei tweets</string>
+  <string name="source_muted">Aggiunto \"<xliff:g id="source"> %s </xliff:g>\" all\'elenco dei filtri. Non vedrete i tweets da questa fonte nella timeline o tra le menzioni.</string>
+  <string name="user_mentions">Menzioni utente</string>
+  <string name="dual_pane_layout">Layout a doppio riquadro</string>
+  <string name="landscape">Landscape</string>
+  <string name="portrait">Portrait</string>
+  <string name="quick_send">Premi \"Invio\" per inviare</string>
+  <string name="quick_send_summary">Inviare tweet alla pressione di \"Invio\".</string>
+  <string name="unsaved_tweet">Tweet non ancora salvato o inviato.</string>
+  <string name="discard">Annulla</string>
+  <string name="multi_select">Selezione multipla</string>
+  <string name="Nitems_selected_quantity_one">Un elemento selezionato</string>
+  <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> elementi selezionati</string>
+  <string name="view">Visualizza</string>
 </resources>

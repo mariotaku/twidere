@@ -16,6 +16,7 @@ import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.ServiceInterface;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import com.twitter.Extractor;
 
+@SuppressLint("Registered")
 public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback {
 
 	private TwidereApplication mApplication;

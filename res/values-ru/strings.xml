@@ -260,6 +260,8 @@
   <string name="error_message_status_too_long">Твит слишком длинный.</string>
   <string name="error_message_tweet_shorten_failed">Ошибка укоротителя ссылок.</string>
   <string name="error_message_tweet_shortener_not_found">Укоротитель ссылок не найден, возможно он был удален.</string>
+  <string name="show_absolute_time">Показать абсолютное время</string>
+  <string name="show_absolute_time_summary">Показать абсолютное время в твитах</string>
   <string name="user_mentions">Упоминания пользователя</string>
   <string name="quick_send">Нажмите «Enter» для отправки</string>
   <string name="quick_send_summary">Отправить твит по нажатию «Enter».</string>

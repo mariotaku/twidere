@@ -1,5 +1,6 @@
 package org.mariotaku.actionbarcompat;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 
+@SuppressLint("Registered")
 public class ActionBarFragmentActivity extends FragmentActivity {
 
 	private ActionBarCompat mActionBarCompat = ActionBarCompat.getInstance(this);

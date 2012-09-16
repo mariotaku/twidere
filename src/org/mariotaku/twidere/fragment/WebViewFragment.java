@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.showErrorToast;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.BaseActivity;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -41,6 +42,7 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+@SuppressLint("SetJavaScriptEnabled")
 public class WebViewFragment extends BaseFragment {
 
 	private WebView mWebView;
