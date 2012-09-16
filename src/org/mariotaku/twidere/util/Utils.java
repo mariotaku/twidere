@@ -45,6 +45,8 @@ import static org.mariotaku.twidere.util.TwidereLinkify.YFROG_GROUP_ID;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -503,6 +505,16 @@ public final class Utils implements Constants {
 		editor.remove(Long.toString(user_id));
 		editor.commit();
 		sUserColors.remove(user_id);
+	}
+
+	public static void copyStream(InputStream is, OutputStream os) throws IOException {
+		final int buffer_size = 1024;
+		final byte[] bytes = new byte[buffer_size];
+		int count = is.read(bytes, 0, buffer_size);
+		while (count != -1) {
+			os.write(bytes, 0, count);
+			count = is.read(bytes, 0, buffer_size);
+		}
 	}
 
 	public static ParcelableDirectMessage findDirectMessageInDatabases(Context context, long account_id, long message_id) {

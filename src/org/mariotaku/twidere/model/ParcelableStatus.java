@@ -287,7 +287,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 	@Override
 	public final boolean equals(Object o) {
 		if (!(o instanceof ParcelableStatus)) return false;
-		return this.status_id == ((ParcelableStatus) o).status_id;
+		return status_id == ((ParcelableStatus) o).status_id;
 	}
 
 	@Override

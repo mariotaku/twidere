@@ -384,7 +384,6 @@ public interface Constants extends TwitterConstants {
 	public static final int REQUEST_SELECT_ACCOUNT = 3;
 	public static final int REQUEST_COMPOSE = 4;
 	public static final int REQUEST_EDIT_API = 5;
-	public static final int REQUEST_GOTO_AUTHORIZATION = 6;
 	public static final int REQUEST_SET_COLOR = 7;
 	public static final int REQUEST_SAVE_FILE = 8;
 	public static final int REQUEST_EDIT_IMAGE = 9;

@@ -21,6 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
 import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.getProxy;
@@ -339,20 +340,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			mProgress.setVisibility(View.VISIBLE);
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
 			super.onPreExecute();
-		}
-
-		private void copyStream(InputStream is, OutputStream os) {
-			final int buffer_size = 1024;
-			try {
-				final byte[] bytes = new byte[buffer_size];
-				int count = is.read(bytes, 0, buffer_size);
-				while (count != -1) {
-					os.write(bytes, 0, count);
-					count = is.read(bytes, 0, buffer_size);
-				}
-			} catch (final IOException e) {
-				// e.printStackTrace();
-			}
 		}
 
 		private Bitmap decodeFile(File f) {

@@ -58,8 +58,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAdapterInterface,
-		OnClickListener {
+public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAdapterInterface, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowAbsoluteTime,
 			mGapDisallowed, mMultiSelectEnabled;
@@ -82,6 +81,15 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
+	public void add(ParcelableStatus status) {
+		mData.add(status);
+		notifyDataSetChanged();
+	}
+
+	public void clear() {
+		mData.clear();
+	}
+
 	public ParcelableStatus findItemByStatusId(long status_id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
@@ -99,10 +107,20 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		}
 		return null;
 	}
-	
-	public void add(ParcelableStatus status) {
-		mData.add(status);
-		notifyDataSetChanged();
+
+	@Override
+	public int getCount() {
+		return mData.size();
+	}
+
+	@Override
+	public ParcelableStatus getItem(int position) {
+		return mData.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return mData.get(position).status_id;
 	}
 
 	public ParcelableStatus getStatus(int position) {
@@ -132,7 +150,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		holder.setAccountColorEnabled(mShowAccountColor);
 
 		holder.text.setText(status.text_unescaped);
-		
+
 		if (mShowAccountColor) {
 			holder.setAccountColor(getAccountColor(mContext, status.account_id));
 		}
@@ -225,10 +243,6 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		}
 	}
 
-	public void clear() {
-		mData.clear();
-	}
-	
 	public void setData(List<ParcelableStatus> data) {
 		clear();
 		if (data == null) return;
@@ -299,20 +313,5 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
-	}
-
-	@Override
-	public int getCount() {
-		return mData.size();
-	}
-
-	@Override
-	public ParcelableStatus getItem(int position) {
-		return mData.get(position);
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return mData.get(position).status_id;
 	}
 }

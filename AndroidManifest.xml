@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="38"
+	android:versionCode="39"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -128,15 +128,6 @@
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="android.intent.action.MANAGE_NETWORK_USAGE"/>
 				<action android:name="org.mariotaku.twidere.SETTINGS"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.AuthorizationActivity"
-			android:label="@string/login_to_twitter">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

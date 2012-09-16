@@ -35,7 +35,7 @@
 		android:textColor="?android:attr/textColorPrimary"
 		android:textStyle="bold"/>
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -43,6 +43,8 @@
 		android:layout_alignRight="@+id/name"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/name"
+		android:autoLink="all"
+		android:layerType="software"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 

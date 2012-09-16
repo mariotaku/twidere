@@ -11,7 +11,7 @@
 		android:layout_alignParentRight="true"
 		android:scaleType="fitCenter"/>
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@+id/name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -19,12 +19,13 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_marginRight="6dp"
 		android:layout_toLeftOf="@+id/profile_image"
+		android:layerType="software"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorPrimary"
 		android:textStyle="bold"/>
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -32,12 +33,14 @@
 		android:layout_alignRight="@+id/name"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/name"
+		android:autoLink="all"
 		android:gravity="right"
+		android:layerType="software"
 		android:maxLines="3"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@+id/time"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -47,6 +50,7 @@
 		android:layout_marginLeft="6dp"
 		android:drawablePadding="3dp"
 		android:gravity="center_vertical|right"
+		android:layerType="software"
 		android:paddingTop="3dp"
 		android:textColor="?android:attr/textColorSecondary"/>
 

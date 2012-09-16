@@ -33,12 +33,13 @@ import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.SparseBooleanArray;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener {
+public class SelectAccountActivity extends BaseDialogActivity implements OnItemClickListener, OnClickListener {
 
 	private ListView mListView;
 	private SimpleCursorAdapter mAdapter;
@@ -153,6 +154,16 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 		}
 		outState.putLongArray(Constants.INTENT_KEY_IDS, ids);
 		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.save: {
+				onBackPressed();
+				break;
+			}
+		}
 	}
 
 }

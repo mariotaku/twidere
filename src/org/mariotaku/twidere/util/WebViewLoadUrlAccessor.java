@@ -1,7 +1,9 @@
 package org.mariotaku.twidere.util;
-import android.webkit.WebView;
+
 import java.util.Map;
+
 import android.os.Build;
+import android.webkit.WebView;
 
 public class WebViewLoadUrlAccessor {
 

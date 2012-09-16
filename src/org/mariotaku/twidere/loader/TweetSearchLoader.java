@@ -137,8 +137,10 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		try {
 			final NoDuplicatesArrayList<SerializableStatus> statuses = new NoDuplicatesArrayList<SerializableStatus>();
 			int i = 0;
-			for (ParcelableStatus status : data) {
-				if (i >= items_limit) break;
+			for (final ParcelableStatus status : data) {
+				if (i >= items_limit) {
+					break;
+				}
 				statuses.add(new SerializableStatus(status));
 				i++;
 			}

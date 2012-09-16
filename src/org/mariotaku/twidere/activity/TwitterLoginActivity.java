@@ -20,26 +20,42 @@
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
+import static org.mariotaku.twidere.util.Utils.getConnection;
+import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.parseInt;
+import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.ccil.cowan.tagsoup.HTMLSchema;
+import org.ccil.cowan.tagsoup.Parser;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ColorAnalyser;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
 
+import twitter4j.HostAddressResolver;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -48,6 +64,7 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.RequestToken;
 import twitter4j.auth.TwipOModeAuthorization;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -87,7 +104,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	private boolean mUserColorSet;
 	private long mLoggedId;
 	private boolean mBackPressed = false;
-	private RequestToken mRequestToken;
+	private String mBrowserUserAgent;
 
 	private EditText mEditUsername, mEditPassword;
 	private Button mSignInButton, mSignUpButton;
@@ -134,8 +151,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
 
 						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
-						final boolean hide_username_password = mAuthType == Accounts.AUTH_TYPE_OAUTH
-								|| mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
+						final boolean hide_username_password = mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
 						findViewById(R.id.username_password).setVisibility(
 								hide_username_password ? View.GONE : View.VISIBLE);
 						((LinearLayout) findViewById(R.id.sign_in_sign_up))
@@ -144,24 +160,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 					}
 				}
 				setSignInButton();
-				break;
-			case REQUEST_GOTO_AUTHORIZATION:
-				if (resultCode == RESULT_OK) {
-					Bundle bundle = new Bundle();
-					if (data != null) {
-						bundle = data.getExtras();
-					}
-					if (bundle != null) {
-						final String oauth_verifier = bundle.getString(OAUTH_VERIFIER);
-						if (oauth_verifier != null && mRequestToken != null) {
-							if (mTask != null) {
-								mTask.cancel(true);
-							}
-							mTask = new CallbackAuthTask(mRequestToken, oauth_verifier);
-							mTask.execute();
-						}
-					}
-				}
 				break;
 			case REQUEST_SET_COLOR:
 				if (resultCode == BaseActivity.RESULT_OK) if (data != null && data.getExtras() != null) {
@@ -224,6 +222,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	public void onCreate(Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
+		mBrowserUserAgent = getBrowserUserAgent(this);
 		mApplication = TwidereApplication.getInstance(this);
 		setContentView(R.layout.twitter_login);
 		mEditUsername = (EditText) findViewById(R.id.username);
@@ -270,8 +269,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mUsername = bundle.getString(Accounts.USERNAME);
 		mPassword = bundle.getString(Accounts.PASSWORD);
 		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
-		mUsernamePassword.setVisibility(mAuthType == Accounts.AUTH_TYPE_OAUTH ? View.GONE : View.VISIBLE);
-		mSigninSignup.setOrientation(mAuthType == Accounts.AUTH_TYPE_OAUTH ? LinearLayout.VERTICAL
+		mUsernamePassword.setVisibility(mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE ? View.GONE : View.VISIBLE);
+		mSigninSignup.setOrientation(mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE ? LinearLayout.VERTICAL
 				: LinearLayout.HORIZONTAL);
 
 		mEditUsername.setText(mUsername);
@@ -431,14 +430,13 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				cb.setHttpProxyHost(proxy_host);
 				cb.setHttpProxyPort(proxy_port);
 			}
-
 		}
 		return cb;
 	}
 
 	private void setSignInButton() {
 		mSignInButton.setEnabled(mEditPassword.getText().length() > 0 && mEditUsername.getText().length() > 0
-				|| mAuthType == Accounts.AUTH_TYPE_OAUTH || mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE);
+				|| mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE);
 	}
 
 	private void setUserColorButton() {
@@ -477,84 +475,15 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	}
 
-	class CallbackAuthTask extends AbstractTask<CallbackAuthTask.Response> {
-
-		private RequestToken requestToken;
-		private String oauthVerifier;
-
-		public CallbackAuthTask(RequestToken requestToken, String oauthVerifier) {
-			this.requestToken = requestToken;
-			this.oauthVerifier = oauthVerifier;
-		}
+	class LoginTask extends AbstractTask<LoginTask.LoginResponse> {
 
 		@Override
-		protected Response doInBackground(Void... params) {
-			final ContentResolver resolver = getContentResolver();
-			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			setAPI(cb);
-			final Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-			AccessToken accessToken = null;
-			User user = null;
-			try {
-				accessToken = twitter.getOAuthAccessToken(requestToken, oauthVerifier);
-				user = twitter.showUser(accessToken.getUserId());
-			} catch (final TwitterException e) {
-				return new Response(false, false, e);
-			}
-			if (!mUserColorSet) {
-				analyseUserProfileColor(user.getProfileImageURL().toString());
-			}
-			mLoggedId = user.getId();
-			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId)) return new Response(false, true, null);
-			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRESTBaseURL,
-					mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL, null,
-					Accounts.AUTH_TYPE_OAUTH);
-			if (values != null) {
-				resolver.insert(Accounts.CONTENT_URI, values);
-			}
-			return new Response(true, false, null);
-		}
-
-		@Override
-		protected void onPostExecute(Response result) {
-			if (result.succeed) {
-				final Intent intent = new Intent(INTENT_ACTION_HOME);
-				final Bundle bundle = new Bundle();
-				bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
-				intent.putExtras(bundle);
-				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-				startActivity(intent);
-				finish();
-			} else if (result.is_logged_in) {
-				Toast.makeText(TwitterLoginActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
-			} else {
-				showErrorToast(TwitterLoginActivity.this, result.exception, true);
-			}
-			super.onPostExecute(result);
-		}
-
-		class Response {
-			public boolean succeed, is_logged_in;
-			public TwitterException exception;
-
-			public Response(boolean succeed, boolean is_logged_in, TwitterException exception) {
-				this.succeed = succeed;
-				this.is_logged_in = is_logged_in;
-				this.exception = exception;
-			}
-		}
-
-	}
-
-	class LoginTask extends AbstractTask<LoginTask.Response> {
-
-		@Override
-		protected Response doInBackground(Void... params) {
+		protected LoginResponse doInBackground(Void... params) {
 			return doAuth();
 		}
 
 		@Override
-		protected void onPostExecute(Response result) {
+		protected void onPostExecute(LoginResponse result) {
 
 			if (result.succeed) {
 				final Intent intent = new Intent(INTENT_ACTION_HOME);
@@ -564,11 +493,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				startActivity(intent);
 				finish();
-			} else if (result.open_browser) {
-				mRequestToken = result.request_token;
-				final Uri uri = Uri.parse(mRequestToken.getAuthorizationURL());
-				startActivityForResult(new Intent(Intent.ACTION_DEFAULT, uri, getApplicationContext(),
-						AuthorizationActivity.class), REQUEST_GOTO_AUTHORIZATION);
 			} else if (result.already_logged_in) {
 				Toast.makeText(TwitterLoginActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
 			} else {
@@ -577,7 +501,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			super.onPostExecute(result);
 		}
 
-		private Response authBasic() {
+		private LoginResponse authBasic() {
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
@@ -588,7 +512,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			try {
 				user = twitter.verifyCredentials();
 			} catch (final TwitterException e) {
-				return new Response(false, false, false, Accounts.AUTH_TYPE_BASIC, null, e);
+				return new LoginResponse(false, false, Accounts.AUTH_TYPE_BASIC, e);
 			}
 
 			if (user != null && user.getId() > 0) {
@@ -599,35 +523,52 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 				mLoggedId = user.getId();
 				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
-					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
+					return new LoginResponse(true, false, Accounts.AUTH_TYPE_BASIC, null);
 				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRESTBaseURL,
 						mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL,
 						mPassword, Accounts.AUTH_TYPE_BASIC);
 				if (values != null) {
 					resolver.insert(Accounts.CONTENT_URI, values);
 				}
-				return new Response(false, false, true, Accounts.AUTH_TYPE_BASIC, null, null);
+				return new LoginResponse(false, true, Accounts.AUTH_TYPE_BASIC, null);
 
 			}
-			return new Response(false, false, false, Accounts.AUTH_TYPE_BASIC, null, null);
+			return new LoginResponse(false, false, Accounts.AUTH_TYPE_BASIC, null);
 		}
 
-		private Response authOAuth() {
+		private LoginResponse authOAuth() {
+			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
 			final Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-			RequestToken requestToken = null;
+			final OAuthAuthenticator authenticator = new OAuthAuthenticator(TwitterLoginActivity.this,
+					mBrowserUserAgent, twitter);
 			try {
-				requestToken = twitter.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
-			} catch (final TwitterException e) {
-				return new Response(false, false, false, Accounts.AUTH_TYPE_OAUTH, null, e);
+				final AccessToken access_token = authenticator.getOAuthAccessToken(mUsername, mPassword);
+				if (access_token.getUserId() > 0) {
+					final User user = twitter.showUser(access_token.getUserId());
+					final String profile_image_url = parseString(user.getProfileImageURL());
+					if (!mUserColorSet) {
+						analyseUserProfileColor(profile_image_url);
+					}
+					mLoggedId = access_token.getUserId();
+					if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
+						return new LoginResponse(true, false, Accounts.AUTH_TYPE_OAUTH, null);
+					final ContentValues values = makeAccountContentValues(mUserColor, access_token, user, mRESTBaseURL,
+							mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL,
+							null, Accounts.AUTH_TYPE_OAUTH);
+					if (values != null) {
+						resolver.insert(Accounts.CONTENT_URI, values);
+					}
+					return new LoginResponse(false, true, Accounts.AUTH_TYPE_OAUTH, null);
+				}
+			} catch (final Exception e) {
+				return new LoginResponse(false, false, Accounts.AUTH_TYPE_OAUTH, e);
 			}
-			if (requestToken != null)
-				return new Response(true, false, false, Accounts.AUTH_TYPE_OAUTH, requestToken, null);
-			return new Response(false, false, false, Accounts.AUTH_TYPE_OAUTH, null, null);
+			return new LoginResponse(false, false, Accounts.AUTH_TYPE_OAUTH, null);
 		}
 
-		private Response authTwipOMode() {
+		private LoginResponse authTwipOMode() {
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
@@ -637,7 +578,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			try {
 				user = twitter.verifyCredentials();
 			} catch (final TwitterException e) {
-				return new Response(false, false, false, Accounts.AUTH_TYPE_TWIP_O_MODE, null, e);
+				return new LoginResponse(false, false, Accounts.AUTH_TYPE_TWIP_O_MODE, e);
 			}
 
 			if (user != null && user.getId() > 0) {
@@ -648,20 +589,20 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 				mLoggedId = user.getId();
 				if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
-					return new Response(false, true, false, Accounts.AUTH_TYPE_BASIC, null, null);
+					return new LoginResponse(true, false, Accounts.AUTH_TYPE_TWIP_O_MODE, null);
 				final ContentValues values = makeAccountContentValues(mUserColor, null, user, mRESTBaseURL,
 						mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL, null,
 						Accounts.AUTH_TYPE_TWIP_O_MODE);
 				if (values != null) {
 					resolver.insert(Accounts.CONTENT_URI, values);
 				}
-				return new Response(false, false, true, Accounts.AUTH_TYPE_TWIP_O_MODE, null, null);
+				return new LoginResponse(false, true, Accounts.AUTH_TYPE_TWIP_O_MODE, null);
 
 			}
-			return new Response(false, false, false, Accounts.AUTH_TYPE_TWIP_O_MODE, null, null);
+			return new LoginResponse(false, false, Accounts.AUTH_TYPE_TWIP_O_MODE, null);
 		}
 
-		private Response authxAuth() {
+		private LoginResponse authxAuth() {
 			final ContentResolver resolver = getContentResolver();
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
@@ -672,7 +613,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				accessToken = twitter.getOAuthAccessToken(mUsername, mPassword);
 				user = twitter.showUser(accessToken.getUserId());
 			} catch (final TwitterException e) {
-				return new Response(false, false, false, Accounts.AUTH_TYPE_XAUTH, null, e);
+				return new LoginResponse(false, false, Accounts.AUTH_TYPE_XAUTH, e);
 			}
 			if (!mUserColorSet) {
 				analyseUserProfileColor(user.getProfileImageURL().toString());
@@ -680,18 +621,18 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 			mLoggedId = user.getId();
 			if (isUserLoggedIn(TwitterLoginActivity.this, mLoggedId))
-				return new Response(false, true, false, Accounts.AUTH_TYPE_XAUTH, null, null);
+				return new LoginResponse(true, false, Accounts.AUTH_TYPE_XAUTH, null);
 			final ContentValues values = makeAccountContentValues(mUserColor, accessToken, user, mRESTBaseURL,
 					mOAuthBaseURL, mSigningRESTBaseURL, mSigningOAuthBaseURL, mSearchBaseURL, mUploadBaseURL, null,
 					Accounts.AUTH_TYPE_XAUTH);
 			if (values != null) {
 				resolver.insert(Accounts.CONTENT_URI, values);
 			}
-			return new Response(false, false, true, Accounts.AUTH_TYPE_XAUTH, null, null);
+			return new LoginResponse(false, true, Accounts.AUTH_TYPE_XAUTH, null);
 
 		}
 
-		private Response doAuth() {
+		private LoginResponse doAuth() {
 			switch (mAuthType) {
 				case Accounts.AUTH_TYPE_OAUTH:
 					return authOAuth();
@@ -713,35 +654,179 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			return obj.toString();
 		}
 
-		class Response {
+		class LoginResponse {
 
-			public boolean open_browser, already_logged_in, succeed;
-			public RequestToken request_token;
-			public TwitterException exception;
+			public final boolean already_logged_in, succeed;
+			public final Exception exception;
 
-			public Response(boolean open_browser, boolean already_logged_in, boolean succeed, int auth_type,
-					RequestToken request_token, TwitterException exception) {
-				this.open_browser = open_browser;
+			public LoginResponse(boolean already_logged_in, boolean succeed, int auth_type, Exception exception) {
 				this.already_logged_in = already_logged_in;
 				this.succeed = succeed;
-				if (exception != null) {
-					this.exception = exception;
-					return;
-				}
-				switch (auth_type) {
-					case Accounts.AUTH_TYPE_OAUTH:
-						if (open_browser && request_token == null)
-							throw new IllegalArgumentException("Request Token cannot be null in oauth mode!");
-						this.request_token = request_token;
-						break;
-					case Accounts.AUTH_TYPE_XAUTH:
-					case Accounts.AUTH_TYPE_BASIC:
-					case Accounts.AUTH_TYPE_TWIP_O_MODE:
-						if (request_token != null)
-							throw new IllegalArgumentException("Request Token must be null in xauth/basic/twip_o mode!");
-						break;
+				this.exception = exception;
+			}
+		}
+	}
+
+	static class OAuthAuthenticator {
+
+		private final SharedPreferences preferences;
+		private final HostAddressResolver resolver;
+
+		private final Context context;
+		private final Twitter twitter;
+
+		private final String user_agent;
+
+		private String authenticity_token, callback_url;
+
+		private final ContentHandler mAuthenticityTokenHandler = new DummyContentHandler() {
+
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+				if ("input".equalsIgnoreCase(localName)
+						&& "authenticity_token".equalsIgnoreCase(atts.getValue("", "name"))) {
+					final String authenticity_token = atts.getValue("", "value");
+					if (!isNullOrEmpty(authenticity_token)) {
+						setAuthenticityToken(authenticity_token);
+					}
 				}
 			}
+		};
+
+		private final ContentHandler mCallbackURLHandler = new DummyContentHandler() {
+
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+				if ("meta".equalsIgnoreCase(localName) && "refresh".equalsIgnoreCase(atts.getValue("", "http-equiv"))) {
+					final String content = atts.getValue("", "content");
+					final String url_prefix = "url=";
+					final int idx = content.indexOf(url_prefix);
+					if (!isNullOrEmpty(content) && idx != -1) {
+						final String url = content.substring(idx + url_prefix.length());
+						if (!isNullOrEmpty(url)) {
+							callback_url = url;
+						}
+					}
+				}
+			}
+		};
+
+		public OAuthAuthenticator(Context context, String user_agent, Twitter twitter) {
+			this.context = context;
+			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+			resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
+			this.user_agent = user_agent;
+			this.twitter = twitter;
+		}
+
+		public InputStream getHTTPContent(String url_string, String method) throws IOException {
+			final URL url = parseURL(url_string);
+			final Proxy proxy = getProxy(context);
+			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+			final HttpURLConnection conn = getConnection(url, ignore_ssl_error, proxy, resolver);
+			if (conn == null) return null;
+			conn.addRequestProperty("User-Agent", user_agent);
+			if (method != null) {
+				conn.setRequestMethod(method);
+			}
+			return conn.getInputStream();
+		}
+
+		public AccessToken getOAuthAccessToken(String username, String password) throws ParserConfigurationException,
+				SAXException, IOException, TwitterException {
+			final RequestToken request_token = twitter.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
+			final String oauth_token = request_token.getToken();
+			readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), "GET"));
+			if (authenticity_token == null) throw new IOException("Cannot get authenticity token.");
+			final Configuration conf = twitter.getConfiguration();
+			final StringBuilder authorization_url_builder = new StringBuilder(conf.getOAuthAuthorizationURL());
+			authorization_url_builder.append("?authenticity_token=" + authenticity_token);
+			authorization_url_builder.append("&oauth_token=" + oauth_token);
+			authorization_url_builder.append("&session[username_or_email]=" + username);
+			authorization_url_builder.append("&session[password]=" + password);
+			readCallbackURL(getHTTPContent(authorization_url_builder.toString(), "POST"));
+			if (callback_url == null) throw new IOException("Cannot get callback URL.");
+			if (!callback_url.startsWith(DEFAULT_OAUTH_CALLBACK))
+				throw new IOException("Wrong OAuth callback URL " + callback_url);
+			final String oauth_verifier = Uri.parse(callback_url).getQueryParameter(OAUTH_VERIFIER);
+			if (isNullOrEmpty(oauth_verifier)) throw new IOException("Cannot get OAuth verifier.");
+			return twitter.getOAuthAccessToken(request_token, oauth_verifier);
+		}
+
+		public void readAuthenticityToken(InputStream stream) throws ParserConfigurationException, SAXException,
+				IOException {
+			final InputSource source = new InputSource(stream);
+			final Parser parser = new Parser();
+			parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
+			parser.setContentHandler(mAuthenticityTokenHandler);
+			parser.parse(source);
+		}
+
+		public void readCallbackURL(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
+			final InputSource source = new InputSource(stream);
+			final Parser parser = new Parser();
+			parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
+			parser.setContentHandler(mCallbackURLHandler);
+			parser.parse(source);
+		}
+
+		private void setAuthenticityToken(String authenticity_token) {
+			this.authenticity_token = authenticity_token;
+		}
+
+		private static class DummyContentHandler implements ContentHandler {
+			@Override
+			public void characters(char[] ch, int start, int length) throws SAXException {
+			}
+
+			@Override
+			public void endDocument() throws SAXException {
+			}
+
+			@Override
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+			}
+
+			@Override
+			public void endPrefixMapping(String prefix) throws SAXException {
+			}
+
+			@Override
+			public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+			}
+
+			@Override
+			public void processingInstruction(String target, String data) throws SAXException {
+			}
+
+			@Override
+			public void setDocumentLocator(Locator locator) {
+			}
+
+			@Override
+			public void skippedEntity(String name) throws SAXException {
+			}
+
+			@Override
+			public void startDocument() throws SAXException {
+
+			}
+
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+			}
+
+			@Override
+			public void startPrefixMapping(String prefix, String uri) throws SAXException {
+			}
+		}
+
+		/**
+		 * Lazy initialization holder for HTML parser. This class will a) be
+		 * preloaded by the zygote, or b) not loaded until absolutely necessary.
+		 */
+		private static class HtmlParser {
+			private static final HTMLSchema schema = new HTMLSchema();
 		}
 	}
 
