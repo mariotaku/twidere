@@ -76,9 +76,9 @@
   <string name="license_summary">Twidere ist unter GPLv3 lizenziert.</string>
   <string name="api">API</string>
   <string name="consumer_key">Benutzerschlüssel</string>
-  <string name="consumer_key_summary">Benutzerschlüssel für OAuth/xAuth, freilassen für Standart.</string>
+  <string name="consumer_key_summary">Benutzerschlüssel für OAuth/xAuth, freilassen für Standard.</string>
   <string name="consumer_secret">Benutzergeheimnis</string>
-  <string name="consumer_secret_summary">Benutzergeheimnis für OAuth/xAuth, freilassen für Standart.</string>
+  <string name="consumer_secret_summary">Benutzergeheimnis für OAuth/xAuth, freilassen für Standard.</string>
   <string name="ignore_ssl_error">Ignoriere SSL Fehler</string>
   <string name="ignore_ssl_error_summary">SSL-Fehler ignorieren; zu aktivieren, falls Probleme mit dem benutzerdefinierten API-Server auftreten.</string>
   <string name="gzip_compressing">GZip Komprimierung</string>
