@@ -3,7 +3,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_name">Twidere</string>
   <string name="compose">Neuer Tweet</string>
-  <string name="add_account">Account hinzufügen</string>
+  <string name="add_account">Konto hinzufügen</string>
   <string name="settings">Einstellungen</string>
   <string name="send">Senden</string>
   <string name="add_location">Ort hinzufügen</string>
@@ -35,10 +35,10 @@
   <string name="mentions">Erwähnungen</string>
   <string name="error_occurred">Ein Fehler ist aufgetreten, versuche es erneut.</string>
   <string name="error_already_logged_in">Du bist schon eingeloggt.</string>
-  <string name="no_account_selected">Sie müssen mindestens ein Account wählen.</string>
+  <string name="no_account_selected">Sie müssen mindestens ein Konto wählen.</string>
   <string name="error_unknown_error">Fehler: Unbekannter Fehler, es ist wohl ein Bug.</string>
   <string name="error_message">Fehler <xliff:g id="message">%s</xliff:g></string>
-  <string name="select_account">Account auswählen</string>
+  <string name="select_account">Konto auswählen</string>
   <string name="username">Benutzername</string>
   <string name="password">Passwort</string>
   <string name="label_tweetstore_provider">Twidere Datenbank Anbieter</string>
@@ -47,8 +47,8 @@
   <string name="label_permission_read_databases">Lese Twidere Datenbank aus</string>
   <string name="label_permission_write_databases">Schreibe in die Twidere Datenbank</string>
   <string name="label_permission_access_service">Zugriff auf den Twidere-Dienst</string>
-  <string name="description_permission_read_databases">Lese Tweets, Entwürfe, Accounts, Direktnachrichten etc. von Datenbank.</string>
-  <string name="description_permission_write_databases">Schreibe Tweets, Entwürfe, Accounts, Direktnachrichten etc. zur Datenbank.</string>
+  <string name="description_permission_read_databases">Lese Tweets, Entwürfe, Konten, Direktnachrichten etc. von Datenbank.</string>
+  <string name="description_permission_write_databases">Schreibe Tweets, Entwürfe, Konten, Direktnachrichten etc. zur Datenbank.</string>
   <string name="description_permission_access_service">Aktualisieren/Senden von Tweets, Direktnachrichten</string>
   <string name="open_in_browser">Im Browser öffnen</string>
   <string name="tap_to_load_more">Weitere Tweets laden</string>
@@ -85,11 +85,11 @@
   <string name="gzip_compressing_summary">Komprimiere alle API Anfragen, es kann den Datenverbrauch verringern, doch könnte nicht mit allen API-Servern funktionieren</string>
   <string name="storage">Speicher</string>
   <string name="database_item_limit">Datenbank-Element Limit</string>
-  <string name="database_item_limit_summary">Anzahl der Objekte, die maximal pro Account gespeichert werden. Ein niedrigerer Wert spart Speicherplatz und erhöht die Ladegeschwindigkeit.</string>
+  <string name="database_item_limit_summary">Anzahl der Objekte, die maximal pro Konto gespeichert werden. Ein niedrigerer Wert spart Speicherplatz und erhöht die Ladegeschwindigkeit.</string>
   <string name="clear_cache">Cache löschen</string>
   <string name="clear_cache_summary">Lösche Profilbild-Cache.</string>
   <string name="clear_databases">Lösche Datenbank</string>
-  <string name="clear_databases_summary">Alle Tweets, Profile und Nachrichten löschen. Deine Account-Informationen werden nicht gelöscht.</string>
+  <string name="clear_databases_summary">Alle Tweets, Profile und Nachrichten löschen. Deine Kontoinformationen werden nicht gelöscht.</string>
   <string name="look_and_feel">Aussehen</string>
   <string name="dark_theme">Benutze dunkles Theme</string>
   <string name="dark_theme_summary">Benutze das dunkle Theme für Twidere.</string>
@@ -156,12 +156,12 @@
   <string name="capital_on">AN</string>
   <string name="capital_off">AUS</string>
   <string name="blocked_users">Blockierte Benutzer</string>
-  <string name="set_as_default">Als Standart setzen</string>
-  <string name="default_account">Standart Account</string>
+  <string name="set_as_default">Als Standard setzen</string>
+  <string name="default_account">Standardkonto</string>
   <string name="search_users">Suche Benutzer</string>
   <string name="search_tweets">Suche Tweets</string>
   <string name="created_at">Erstellt am</string>
-  <string name="set_default_account_hint">Bitte ein Standardaccount wählen.</string>
+  <string name="set_default_account_hint">Bitte ein Standardkonto wählen.</string>
   <string name="daily_trends">Tägliche Trends</string>
   <string name="weekly_trends">Wöchentliche Trends</string>
   <string name="local_trends">Lokale Trends</string>
