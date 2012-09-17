@@ -27,6 +27,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.content.Context;
 
 public class ImagesPreviewFragment extends BaseFragment implements OnItemClickListener, OnClickListener,
 		OnTouchListener {
@@ -62,7 +63,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mAdapter = new ImagesAdapter(getApplication());
+		mAdapter = new ImagesAdapter(getActivity());
 		mGallery.setAdapter(mAdapter);
 		mGallery.setOnItemClickListener(this);
 		mLoadImagesIndicator.setOnClickListener(this);
@@ -138,13 +139,8 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		return false;
 	}
 
-	public boolean remove(String url_string) {
-		if (mAdapter == null) return false;
-		return mAdapter.remove(url_string);
-	}
-
 	public void show() {
-		if (mAdapter == null || !isAdded()) return;
+		if (mAdapter == null) return;
 		update();
 		mLoadImagesIndicator.setVisibility(View.GONE);
 		mGallery.setVisibility(View.VISIBLE);
@@ -156,36 +152,36 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		mAdapter.addAll(mData);
 	}
 
-	class ImagesAdapter extends BaseAdapter {
+	static class ImagesAdapter extends BaseAdapter {
 
-		private final List<ImageSpec> mUrls = new ArrayList<ImageSpec>();
+		private final List<ImageSpec> mImages = new ArrayList<ImageSpec>();
 		private final LazyImageLoader mImageLoader;
 		private final LayoutInflater mInflater;
 
-		public ImagesAdapter(TwidereApplication context) {
-			mImageLoader = context.getPreviewImageLoader();
+		public ImagesAdapter(Context context) {
+			mImageLoader = TwidereApplication.getInstance(context).getPreviewImageLoader();
 			mInflater = LayoutInflater.from(context);
 		}
 
 		public boolean addAll(Collection<? extends ImageSpec> images) {
-			final boolean ret = images != null && mUrls.addAll(images);
+			final boolean ret = images != null && mImages.addAll(images);
 			notifyDataSetChanged();
 			return ret;
 		}
 
 		public void clear() {
-			mUrls.clear();
+			mImages.clear();
 			notifyDataSetChanged();
 		}
 
 		@Override
 		public int getCount() {
-			return mUrls.size();
+			return mImages.size();
 		}
 
 		@Override
 		public ImageSpec getItem(int position) {
-			return mUrls.get(position);
+			return mImages.get(position);
 		}
 
 		@Override
@@ -201,12 +197,6 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 			final ImageSpec spec = getItem(position);
 			mImageLoader.displayImage(spec != null ? parseURL(spec.thumbnail_link) : null, image);
 			return view;
-		}
-
-		public boolean remove(String url_string) {
-			final boolean ret = mUrls.remove(url_string);
-			notifyDataSetChanged();
-			return ret;
 		}
 
 	}

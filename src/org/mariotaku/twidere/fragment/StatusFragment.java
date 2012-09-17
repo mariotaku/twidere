@@ -254,11 +254,11 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		final FragmentTransaction ft = fm.beginTransaction();
 		ft.replace(R.id.images_preview, mImagesPreviewFragment);
 		ft.commit();
-		if (mStatus != null) {
-			displayStatus(mStatus);
-		} else {
-			getStatus(false);
-		}
+//		if (mStatus != null) {
+//			displayStatus(mStatus);
+//		} else {
+//			getStatus(false);
+//		}
 
 	}
 
@@ -467,6 +467,12 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		filter.addAction(BROADCAST_FAVORITE_CHANGED);
 		filter.addAction(BROADCAST_RETWEET_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
+		
+		if (mStatus != null) {
+			displayStatus(mStatus);
+		} else {
+			getStatus(false);
+		}
 		updateUserColor();
 	}
 
