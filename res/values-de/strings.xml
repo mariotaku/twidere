@@ -192,7 +192,7 @@
   <string name="inbox">Eingang</string>
   <string name="load_images">Bilder laden</string>
   <string name="stop_service_after_closed">Dienst nach Schliessen von Twidere beenden.</string>
-  <string name="stop_service_after_closed_summary">I weiß nicht weshalb man das aktivieren wollen würde, aber falls irgendwelche Probleme danach auftauchen, denke man dran, dass man ganz allein Schuld daran hat.</string>
+  <string name="stop_service_after_closed_summary">Ich weiß nicht weshalb man dies aktivieren sollte, aber falls es damit irgendwelche Probleme gibt, trägt man selbst die Verantwortung.</string>
   <string name="other_settings">Weitere Einstellungen</string>
   <string name="refresh_and_notifications">Aktualisierung &amp; Benachrichtigungen</string>
   <string name="auto_refresh">Automatisch aktualisieren</string>
@@ -224,7 +224,7 @@
   <string name="Ntweets_quantity_one">Sie haben einen neuen Tweet.</string>
   <string name="Ntweets_quantity_other">Du hast <xliff:g id="items">%d</xliff:g> neue Tweets.</string>
   <string name="Nmentions_quantity_one">Jemand hat Sie erwähnt.</string>
-  <string name="Nmentions_quantity_other">Du hast <xliff:g id="items">%d</xliff:g> Mentions.</string>
+  <string name="Nmentions_quantity_other">Du hast <xliff:g id="items">%d</xliff:g> Erwähnungen.</string>
   <string name="Ndirect_messages_quantity_one">Sie haben eine neue Direktnachricht.</string>
   <string name="Ndirect_messages_quantity_other">Du hast <xliff:g id="items">%d</xliff:g> Direktnachrichten.</string>
   <string name="item_1_minute">1 Minute</string>
@@ -235,7 +235,7 @@
   <string name="item_1_hour">1 Stunde</string>
   <string name="item_2_hours">2 Stunden</string>
   <string name="item_4_hours">4 Stunden</string>
-  <string name="inline_image_preview">Inline Bildvorschau</string>
+  <string name="inline_image_preview">Eingebettete Bildvorschau</string>
   <string name="solid_color_background">Einfarbiger Hintergrund</string>
   <string name="solid_color_background_summary">Eventuell sinnvoll für Geräte mit AMOLED-Display.</string>
   <string name="followed_you">Folgte Ihnen</string>
@@ -271,7 +271,7 @@
   <string name="edit_tab">Tab bearbeiten</string>
   <string name="move_up">Nach oben</string>
   <string name="move_down">Nach unten</string>
-  <string name="unsaved_change_back_pressed">Sie haben ungesicherte Änderungen, drücken Sie zurück um diese zu verwerfen.</string>
+  <string name="unsaved_change_back_pressed">Sie haben ungespeicherte Änderungen, drücken Sie zurück um diese zu verwerfen.</string>
   <string name="invalid_settings">Ungültige Einstellungen gefunden.</string>
   <string name="icon">Symbol</string>
   <string name="pick_file">Datei auswählen</string>
