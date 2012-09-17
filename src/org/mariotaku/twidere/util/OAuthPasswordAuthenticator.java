@@ -87,6 +87,8 @@ public class OAuthPasswordAuthenticator {
 
 	public AccessToken getOAuthAccessToken(String username, String password) throws ParserConfigurationException,
 			SAXException, IOException, TwitterException {
+		authenticity_token = null;
+		callback_url = null;
 		final RequestToken request_token = twitter.getOAuthRequestToken(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK);
 		final String oauth_token = request_token.getToken();
 		readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), "GET"));
@@ -117,6 +119,7 @@ public class OAuthPasswordAuthenticator {
 		if (method != null) {
 			conn.setRequestMethod(method);
 		}
+		conn.setDoInput(true);
 		return conn.getInputStream();
 	}
 

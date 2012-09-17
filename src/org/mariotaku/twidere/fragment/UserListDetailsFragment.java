@@ -62,7 +62,6 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.InputFilter;
@@ -85,9 +84,51 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 
 public class UserListDetailsFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemClickListener, Panes.Right {
+OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemClickListener, LoaderCallbacks<UserListDetailsFragment.Response<UserList>>, Panes.Right {
+
+	public Loader<Response<UserList>> onCreateLoader(int id, Bundle args) {	
+		mListContainer.setVisibility(View.VISIBLE);
+		mErrorRetryContainer.setVisibility(View.GONE);
+		setListShown(false);
+		setProgressBarIndeterminateVisibility(true);
+		long account_id = -1, user_id = -1;
+		int list_id = -1;
+		String screen_name = null, list_name = null;
+		if (args != null) {
+			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+			list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
+			list_name = args.getString(INTENT_KEY_LIST_NAME);
+			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		}
+		return new ListInfoLoader(this, account_id, list_id, list_name, user_id, screen_name);
+	}
+
+	public void onLoadFinished(Loader<Response<UserList>> loader, Response<UserList> data) {
+		if (data == null) return;
+		if (getActivity() == null) return;
+		if (data.value != null) {
+			final UserList user = data.value;
+			setListShown(true);
+			changeUserList(mAccountId, user);
+			mErrorRetryContainer.setVisibility(View.GONE);
+		} else {
+			showErrorToast(getActivity(), data.exception, false);
+			mListContainer.setVisibility(View.GONE);
+			mErrorRetryContainer.setVisibility(View.VISIBLE);
+		}
+		setProgressBarIndeterminateVisibility(false);
+	}
+
+	public void onLoaderReset(Loader<Response<UserList>> loader) {
+		// TODO: Implement this method
+	}
+	
 
 	private LazyImageLoader mProfileImageLoader;
 	private ImageView mProfileImageView;
@@ -97,7 +138,6 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	private UserProfileActionAdapter mAdapter;
 	private ListView mListView;
-	private ListInfoTask mUserInfoTask;
 	private View mHeaderView;
 	private long mAccountId, mUserId;
 	private final DialogFragment mAddMemberDialogFragment = new AddMemberDialogFragment(),
@@ -139,13 +179,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	public void changeUserList(long account_id, UserList user_list) {
 		if (user_list == null || getActivity() == null || !isMyActivatedAccount(getActivity(), account_id)) return;
-		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
-			mUserInfoTask.cancel(true);
-		}
+		getLoaderManager().destroyLoader(0);
 		final User user = user_list.getUser();
 		if (user == null) return;
 		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), user_list.getId());
-		mUserInfoTask = null;
 		mErrorRetryContainer.setVisibility(View.GONE);
 		mAccountId = account_id;
 		mUserListId = user_list.getId();
@@ -192,14 +229,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mAdapter.notifyDataSetChanged();
 	}
 
-	public void getUserInfo(long account_id, int list_id, String list_name, long user_id, String screen_name) {
+	public void getUserListInfo(boolean init, long account_id, int list_id, String list_name, long user_id, String screen_name) {
 		mAccountId = account_id;
 		mUserListId = list_id;
 		mUserName = screen_name;
-		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
-			mUserInfoTask.cancel(true);
-		}
-		mUserInfoTask = null;
+		getLoaderManager().destroyLoader(0);
 		if (!isMyActivatedAccount(getActivity(), mAccountId)) {
 			mListContainer.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
@@ -207,15 +241,21 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 
 		if (list_id > 0 || list_name != null && (user_id > 0 || screen_name != null)) {
-			mUserInfoTask = new ListInfoTask(getActivity(), account_id, list_id, list_name, user_id, screen_name);
 		} else {
 			mListContainer.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
 			return;
 		}
-
-		if (mUserInfoTask != null) {
-			mUserInfoTask.execute();
+		final Bundle args = new Bundle();
+		args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+		args.putLong(INTENT_KEY_USER_ID, user_id);
+		args.putInt(INTENT_KEY_LIST_ID, list_id);
+		args.putString(INTENT_KEY_LIST_NAME, list_name);
+		args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+		if (init) {
+			getLoaderManager().initLoader(0, args, this);
+		} else {
+			getLoaderManager().restartLoader(0, args, this);
 		}
 	}
 
@@ -252,7 +292,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
-		getUserInfo(account_id, list_id, list_name, user_id, screen_name);
+		getUserListInfo(true, account_id, list_id, list_name, user_id, screen_name);
 
 	}
 
@@ -313,9 +353,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	@Override
 	public void onDestroyView() {
 		mUserList = null;
-		if (mUserInfoTask != null) {
-			mUserInfoTask.cancel(true);
-		}
+		getLoaderManager().destroyLoader(0);
 		super.onDestroyView();
 	}
 
@@ -434,7 +472,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	private void reloadUserListInfo() {
-		getUserInfo(mAccountId, mUserListId, mUserName, mUserId, mUserName);
+		getUserListInfo(false, mAccountId, mUserListId, mUserName, mUserId, mUserName);
 	}
 
 	public static class AddMemberDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
@@ -562,16 +600,21 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	class ListInfoTask extends AsyncTask<Void, Void, Response<UserList>> {
+	public static class ListInfoLoader extends AsyncTaskLoader<Response<UserList>> {
 
 		private final Twitter twitter;
 		private final long user_id;
 		private final int list_id;
 		private final String screen_name, list_name;
+		private final UserListDetailsFragment fragment;
+		private final Context context;
 
-		private ListInfoTask(Context context, long account_id, int list_id, String list_name, long user_id,
+		private ListInfoLoader(UserListDetailsFragment fragment, long account_id, int list_id, String list_name, long user_id,
 				String screen_name) {
-			twitter = getTwitterInstance(context, account_id, true);
+			super(fragment.getActivity());
+			this.fragment = fragment;
+			this.context = fragment.getActivity();
+			this.twitter = getTwitterInstance(context, account_id, true);
 			this.user_id = user_id;
 			this.list_id = list_id;
 			this.screen_name = screen_name;
@@ -579,7 +622,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 
 		@Override
-		protected Response<UserList> doInBackground(Void... args) {
+		public Response<UserList> loadInBackground() {
 			try {
 				if (list_id > 0)
 					return new Response<UserList>(twitter.showUserList(list_id), null);
@@ -589,38 +632,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				return new Response<UserList>(null, e);
 			}
 		}
-
+		
 		@Override
-		protected void onCancelled() {
-			setProgressBarIndeterminateVisibility(false);
-			super.onCancelled();
-		}
-
-		@Override
-		protected void onPostExecute(Response<UserList> result) {
-			if (result == null) return;
-			if (getActivity() == null) return;
-			if (result.value != null) {
-				final UserList user = result.value;
-				setListShown(true);
-				changeUserList(mAccountId, user);
-				mErrorRetryContainer.setVisibility(View.GONE);
-			} else {
-				showErrorToast(getActivity(), result.exception, false);
-				mListContainer.setVisibility(View.GONE);
-				mErrorRetryContainer.setVisibility(View.VISIBLE);
-			}
-			setProgressBarIndeterminateVisibility(false);
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onPreExecute() {
-			mListContainer.setVisibility(View.VISIBLE);
-			mErrorRetryContainer.setVisibility(View.GONE);
-			setListShown(false);
-			setProgressBarIndeterminateVisibility(true);
-			super.onPreExecute();
+		public void onStartLoading() {
+			forceLoad();
 		}
 
 	}
@@ -680,7 +695,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	class Response<T> {
+	static class Response<T> {
 		public final T value;
 		public final TwitterException exception;
 
