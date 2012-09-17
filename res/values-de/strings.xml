@@ -41,7 +41,7 @@
   <string name="select_account">Konto auswählen</string>
   <string name="username">Benutzername</string>
   <string name="password">Passwort</string>
-  <string name="label_tweetstore_provider">Twidere Datenbank Anbieter</string>
+  <string name="label_tweetstore_provider">Twidere Datenbankanbieter</string>
   <string name="label_backend_service">Backend-Dienst der App</string>
   <string name="label_permission_group_access_twidere">Greife auf Twidere zu</string>
   <string name="label_permission_read_databases">Lese Twidere Datenbank aus</string>
@@ -150,7 +150,7 @@
   <string name="refresh">Aktualisieren</string>
   <string name="retry">Wiederholen</string>
   <string name="more">Mehr</string>
-  <string name="quote_format">Zitat-Format</string>
+  <string name="quote_format">Zitierformat</string>
   <string name="quote_format_summary">\"[TEXT]\" = Tweet Text\n \"[NAME]\" = Twitter Benutzername</string>
   <string name="direct_messages">Direktnachrichten</string>
   <string name="capital_on">AN</string>
@@ -260,7 +260,7 @@
   <string name="open">Öffnen</string>
   <string name="uninstall">Deinstallieren</string>
   <string name="users_retweeted_this">Benutzer retweeteten dies</string>
-  <string name="saved_searches">Gespeicherte Suchedurchläufe</string>
+  <string name="saved_searches">Gespeicherte Suchdurchläufe</string>
   <string name="add_saved_search">Gespeicherte Suche hinzufügen</string>
   <string name="custom_tabs">Benutzerdefinierte Tabs</string>
   <string name="retweeted_to_me">Retweeted Timeline</string>
