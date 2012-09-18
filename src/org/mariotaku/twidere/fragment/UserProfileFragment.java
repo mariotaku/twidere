@@ -884,6 +884,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 						mFollowedYouIndicator.setVisibility(result.value.isSourceFollowedByTarget() ? View.VISIBLE
 								: View.GONE);
 					}
+
+					final ContentResolver resolver = getContentResolver();
+					final String where = CachedUsers.USER_ID + " = " + mUserId;
+					resolver.delete(CachedUsers.CONTENT_URI, where, null);
+					//I bet you don't want to see blocked user in your auto complete list.
+					if (!mFriendship.isSourceBlockingTarget()) {
+						final ContentValues cached_values = makeCachedUserContentValues(mUser);	
+						if (cached_values != null) {
+							resolver.insert(CachedUsers.CONTENT_URI, cached_values);
+						}
+					}
 				}
 			}
 			mFollowProgress.setVisibility(View.GONE);
@@ -1002,11 +1013,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (result.value != null && result.value.getId() > 0) {
 				final User user = result.value;
 				final ContentResolver resolver = getContentResolver();
-				final ContentValues cached_values = makeCachedUserContentValues(result.value);
-				if (cached_values != null) {
-					resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + "=" + result.value.getId(), null);
-					resolver.insert(CachedUsers.CONTENT_URI, makeCachedUserContentValues(result.value));
-				}
 				setListShown(true);
 				changeUser(mAccountId, user);
 				mErrorRetryContainer.setVisibility(View.GONE);
@@ -1018,7 +1024,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					}
 					values.put(Accounts.USERNAME, user.getScreenName());
 					final String where = Accounts.USER_ID + " = " + user.getId();
-					getContentResolver().update(Accounts.CONTENT_URI, values, where, null);
+					resolver.update(Accounts.CONTENT_URI, values, where, null);
 				}
 			} else {
 				mListContainer.setVisibility(View.GONE);

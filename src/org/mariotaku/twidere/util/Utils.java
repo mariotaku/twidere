@@ -885,7 +885,7 @@ public final class Utils implements Constants {
 		con = (HttpURLConnection) new URL(resolved_host != null ? url_string.replace("://" + host, "://"
 				+ resolved_host) : url_string).openConnection(proxy);
 		if (resolved_host != null) {
-			con.addRequestProperty("Host", host);
+			con.setRequestProperty("Host", host);
 		}
 		con.setInstanceFollowRedirects(false);
 		if (ignore_ssl_error) {

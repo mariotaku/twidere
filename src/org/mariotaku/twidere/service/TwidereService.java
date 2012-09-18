@@ -692,7 +692,11 @@ public class TwidereService extends Service implements Constants {
 					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = "
 							+ user_id;
 					mResolver.delete(uri, where, null);
+					
 				}
+				//I bet you don't want to see this user in your auto complete list.
+				final String where = CachedUsers.USER_ID + " = " + user_id;
+				mResolver.delete(CachedUsers.CONTENT_URI, where, null);
 				Toast.makeText(TwidereService.this, R.string.user_blocked, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
@@ -843,12 +847,15 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(ListResponse<Long> result) {
 			if (result != null) {
-				final String user_id_where = ListUtils.toString(result.list, ',', false);
+				final String user_ids = ListUtils.toString(result.list, ',', false);
 				for (final Uri uri : Utils.STATUSES_URIS) {
 					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID
-							+ " IN (" + user_id_where + ")";
+							+ " IN (" + user_ids + ")";
 					mResolver.delete(uri, where, null);
-				}
+				}			
+				//I bet you don't want to see these users in your auto complete list.
+				final String where = CachedUsers.USER_ID + " IN (" + user_ids + ")";
+				mResolver.delete(CachedUsers.CONTENT_URI, where, null);
 				Toast.makeText(TwidereService.this, R.string.users_blocked, Toast.LENGTH_SHORT).show();
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);

@@ -546,7 +546,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 					}
 					return new LoginResponse(false, true, Accounts.AUTH_TYPE_OAUTH, null);
 				}
-			} catch (final Exception e) {
+			} catch (final OAuthPasswordAuthenticator.AuthenticationException e) {
+				return new LoginResponse(false, false, Accounts.AUTH_TYPE_OAUTH, e);
+			} catch (final TwitterException e) {
 				return new LoginResponse(false, false, Accounts.AUTH_TYPE_OAUTH, e);
 			}
 			return new LoginResponse(false, false, Accounts.AUTH_TYPE_OAUTH, null);

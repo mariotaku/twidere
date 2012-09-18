@@ -32,6 +32,8 @@ import twitter4j.conf.Configuration;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import org.mariotaku.twidere.R;
+import java.io.FileNotFoundException;
 
 public class OAuthPasswordAuthenticator {
 
@@ -48,7 +50,7 @@ public class OAuthPasswordAuthenticator {
 	private final ContentHandler mAuthenticityTokenHandler = new DummyContentHandler() {
 
 		@Override
-		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+		public void startElement(String uri, String localName, String qName, Attributes atts) {
 			if ("input".equalsIgnoreCase(localName) && "authenticity_token".equalsIgnoreCase(atts.getValue("", "name"))) {
 				final String authenticity_token = atts.getValue("", "value");
 				if (!isNullOrEmpty(authenticity_token)) {
@@ -61,7 +63,7 @@ public class OAuthPasswordAuthenticator {
 	private final ContentHandler mCallbackURLHandler = new DummyContentHandler() {
 
 		@Override
-		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+		public void startElement(String uri, String localName, String qName, Attributes atts) {
 			if ("meta".equalsIgnoreCase(localName) && "refresh".equalsIgnoreCase(atts.getValue("", "http-equiv"))) {
 				final String content = atts.getValue("", "content");
 				final String url_prefix = "url=";
@@ -85,27 +87,37 @@ public class OAuthPasswordAuthenticator {
 		this.twitter = twitter;
 	}
 
-	public AccessToken getOAuthAccessToken(String username, String password) throws ParserConfigurationException,
-			SAXException, IOException, TwitterException {
+	public AccessToken getOAuthAccessToken(String username, String password) throws AuthenticationException {
 		authenticity_token = null;
 		callback_url = null;
-		final RequestToken request_token = twitter.getOAuthRequestToken(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK);
-		final String oauth_token = request_token.getToken();
-		readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), "GET"));
-		if (authenticity_token == null) throw new IOException("Cannot get authenticity token.");
-		final Configuration conf = twitter.getConfiguration();
-		final Uri.Builder authorization_url_builder = Uri.parse(conf.getOAuthAuthorizationURL()).buildUpon();
-		authorization_url_builder.appendQueryParameter("authenticity_token", authenticity_token);
-		authorization_url_builder.appendQueryParameter("oauth_token", oauth_token);
-		authorization_url_builder.appendQueryParameter("session[username_or_email]", username);
-		authorization_url_builder.appendQueryParameter("session[password]", password);
-		readCallbackURL(getHTTPContent(authorization_url_builder.build().toString(), "POST"));
-		if (callback_url == null) throw new IOException("Cannot get callback URL.");
-		if (!callback_url.startsWith(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK))
-			throw new IOException("Wrong OAuth callback URL " + callback_url);
-		final String oauth_verifier = Uri.parse(callback_url).getQueryParameter(TwitterLoginActivity.OAUTH_VERIFIER);
-		if (isNullOrEmpty(oauth_verifier)) throw new IOException("Cannot get OAuth verifier.");
-		return twitter.getOAuthAccessToken(request_token, oauth_verifier);
+		try {
+		 final RequestToken request_token = twitter.getOAuthRequestToken(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK);
+			final String oauth_token = request_token.getToken();
+			readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), "GET"));
+			if (authenticity_token == null) throw new IOException("Cannot get authenticity token.");
+			final Configuration conf = twitter.getConfiguration();
+			final Uri.Builder authorization_url_builder = Uri.parse(conf.getOAuthAuthorizationURL()).buildUpon();
+			authorization_url_builder.appendQueryParameter("authenticity_token", authenticity_token);
+			authorization_url_builder.appendQueryParameter("oauth_token", oauth_token);
+			authorization_url_builder.appendQueryParameter("session[username_or_email]", username);
+			authorization_url_builder.appendQueryParameter("session[password]", password);
+			readCallbackURL(getHTTPContent(authorization_url_builder.build().toString(), "POST"));
+			if (callback_url == null) throw new AuthenticationException(context.getString(R.string.cannot_get_callback_url));
+			if (!callback_url.startsWith(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK))
+				throw new IOException("Wrong OAuth callback URL " + callback_url);
+			final String oauth_verifier = Uri.parse(callback_url).getQueryParameter(TwitterLoginActivity.OAUTH_VERIFIER);
+			if (isNullOrEmpty(oauth_verifier)) throw new IOException("Cannot get OAuth verifier.");
+			return twitter.getOAuthAccessToken(request_token, oauth_verifier);
+		} catch (FileNotFoundException e) {
+			//TODO handle this exception
+			throw new AuthenticationException("Failed to sign in, I'm working on this problem.");
+		} catch (IOException e) {
+			throw new AuthenticationException(e);
+		} catch (SAXException e) {		
+			throw new AuthenticationException(e);
+		} catch (TwitterException e) {
+			throw new AuthenticationException(e);
+		}
 	}
 
 	private InputStream getHTTPContent(String url_string, String method) throws IOException {
@@ -120,11 +132,11 @@ public class OAuthPasswordAuthenticator {
 			conn.setRequestMethod(method);
 		}
 		conn.setDoInput(true);
+		conn.setDoOutput(false);
 		return conn.getInputStream();
 	}
 
-	private void readAuthenticityToken(InputStream stream) throws ParserConfigurationException, SAXException,
-			IOException {
+	private void readAuthenticityToken(InputStream stream) throws SAXException, IOException {
 		final InputSource source = new InputSource(stream);
 		final Parser parser = new Parser();
 		parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
@@ -132,7 +144,7 @@ public class OAuthPasswordAuthenticator {
 		parser.parse(source);
 	}
 
-	private void readCallbackURL(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
+	private void readCallbackURL(InputStream stream) throws SAXException, IOException {
 		final InputSource source = new InputSource(stream);
 		final Parser parser = new Parser();
 		parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
@@ -146,27 +158,27 @@ public class OAuthPasswordAuthenticator {
 
 	static class DummyContentHandler implements ContentHandler {
 		@Override
-		public void characters(char[] ch, int start, int length) throws SAXException {
+		public void characters(char[] ch, int start, int length) {
 		}
 
 		@Override
-		public void endDocument() throws SAXException {
+		public void endDocument() {
 		}
 
 		@Override
-		public void endElement(String uri, String localName, String qName) throws SAXException {
+		public void endElement(String uri, String localName, String qName) {
 		}
 
 		@Override
-		public void endPrefixMapping(String prefix) throws SAXException {
+		public void endPrefixMapping(String prefix) {
 		}
 
 		@Override
-		public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+		public void ignorableWhitespace(char[] ch, int start, int length) {
 		}
 
 		@Override
-		public void processingInstruction(String target, String data) throws SAXException {
+		public void processingInstruction(String target, String data) {
 		}
 
 		@Override
@@ -174,20 +186,20 @@ public class OAuthPasswordAuthenticator {
 		}
 
 		@Override
-		public void skippedEntity(String name) throws SAXException {
+		public void skippedEntity(String name) {
 		}
 
 		@Override
-		public void startDocument() throws SAXException {
+		public void startDocument() {
 
 		}
 
 		@Override
-		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+		public void startElement(String uri, String localName, String qName, Attributes atts) {
 		}
 
 		@Override
-		public void startPrefixMapping(String prefix, String uri) throws SAXException {
+		public void startPrefixMapping(String prefix, String uri) {
 		}
 	}
 
@@ -197,5 +209,20 @@ public class OAuthPasswordAuthenticator {
 	 */
 	static final class HtmlParser {
 		private static final HTMLSchema schema = new HTMLSchema();
+	}
+	
+	public static final class AuthenticationException extends IOException {
+		
+		public AuthenticationException() {
+			super();
+		}
+		
+		public AuthenticationException(String message) {
+			super(message);
+		}
+		
+		public AuthenticationException(Exception cause) {
+			super(cause);
+		}
 	}
 }

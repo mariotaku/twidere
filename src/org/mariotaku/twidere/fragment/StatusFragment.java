@@ -635,7 +635,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 					final int max_idx = address.getMaxAddressLineIndex();
 					for (int i = 0; i < max_idx; i++) {
 						builder.append(address.getAddressLine(i));
-						if (i != address.getMaxAddressLineIndex() - 1) {
+						if (i != max_idx - 1) {
 							builder.append(", ");
 						}
 					}
