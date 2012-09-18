@@ -113,7 +113,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 				if (deleteStatus(tweet.getId())) {
 					deleted_count++;
 				}
-				data.add(new ParcelableStatus(tweet, account_id, i == tweets.size() - 1 ? deleted_count > 1 : false));
+				data.add(new ParcelableStatus(tweet, account_id, false));
 			}
 		}
 		try {
