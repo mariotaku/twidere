@@ -106,13 +106,10 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 				// This shouldn't happen.
 				e.printStackTrace();
 			}
-			int deleted_count = 0;
 			final int size = tweets.size();
 			for (int i = 0; i < size; i++) {
 				final Tweet tweet = tweets.get(i);
-				if (deleteStatus(tweet.getId())) {
-					deleted_count++;
-				}
+				deleteStatus(tweet.getId());
 				data.add(new ParcelableStatus(tweet, account_id, false));
 			}
 		}

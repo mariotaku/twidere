@@ -64,6 +64,9 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.text.InputFilter;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -84,74 +87,34 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 
 public class UserListDetailsFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemClickListener, LoaderCallbacks<UserListDetailsFragment.Response<UserList>>, Panes.Right {
-
-	public Loader<Response<UserList>> onCreateLoader(int id, Bundle args) {	
-		mListContainer.setVisibility(View.VISIBLE);
-		mErrorRetryContainer.setVisibility(View.GONE);
-		setListShown(false);
-		setProgressBarIndeterminateVisibility(true);
-		long account_id = -1, user_id = -1;
-		int list_id = -1;
-		String screen_name = null, list_name = null;
-		if (args != null) {
-			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
-			list_name = args.getString(INTENT_KEY_LIST_NAME);
-			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		}
-		return new ListInfoLoader(this, account_id, list_id, list_name, user_id, screen_name);
-	}
-
-	public void onLoadFinished(Loader<Response<UserList>> loader, Response<UserList> data) {
-		if (data == null) return;
-		if (getActivity() == null) return;
-		if (data.value != null) {
-			final UserList user = data.value;
-			setListShown(true);
-			changeUserList(mAccountId, user);
-			mErrorRetryContainer.setVisibility(View.GONE);
-		} else {
-			showErrorToast(getActivity(), data.exception, false);
-			mListContainer.setVisibility(View.GONE);
-			mErrorRetryContainer.setVisibility(View.VISIBLE);
-		}
-		setProgressBarIndeterminateVisibility(false);
-	}
-
-	public void onLoaderReset(Loader<Response<UserList>> loader) {
-		// TODO: Implement this method
-	}
-	
+		OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemClickListener,
+		LoaderCallbacks<UserListDetailsFragment.Response<UserList>>, Panes.Right {
 
 	private LazyImageLoader mProfileImageLoader;
+
 	private ImageView mProfileImageView;
+
 	private TextView mListNameView, mUserNameView, mDescriptionView, mErrorMessageView;
+
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer;
 	private Button mFollowMoreButton, mRetryButton;
-
 	private UserProfileActionAdapter mAdapter;
 	private ListView mListView;
 	private View mHeaderView;
+
 	private long mAccountId, mUserId;
 	private final DialogFragment mAddMemberDialogFragment = new AddMemberDialogFragment(),
 			mEditUserListDialogFragment = new EditUserListDialogFragment();
-
 	private UserList mUserList = null;
-
 	private int mUserListId;
-
 	private String mUserName, mUserScreenName, mListName;
 
 	private ServiceInterface mService;
 
 	private SharedPreferences mPreferences;
+
 	private boolean mDisplayName;
 
 	private PopupMenu mPopupMenu;
@@ -174,7 +137,6 @@ OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemCli
 			}
 		}
 	};
-
 	private View mListContainer, mErrorRetryContainer;
 
 	public void changeUserList(long account_id, UserList user_list) {
@@ -229,7 +191,8 @@ OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemCli
 		mAdapter.notifyDataSetChanged();
 	}
 
-	public void getUserListInfo(boolean init, long account_id, int list_id, String list_name, long user_id, String screen_name) {
+	public void getUserListInfo(boolean init, long account_id, int list_id, String list_name, long user_id,
+			String screen_name) {
 		mAccountId = account_id;
 		mUserListId = list_id;
 		mUserName = screen_name;
@@ -331,6 +294,25 @@ OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemCli
 	}
 
 	@Override
+	public Loader<Response<UserList>> onCreateLoader(int id, Bundle args) {
+		mListContainer.setVisibility(View.VISIBLE);
+		mErrorRetryContainer.setVisibility(View.GONE);
+		setListShown(false);
+		setProgressBarIndeterminateVisibility(true);
+		long account_id = -1, user_id = -1;
+		int list_id = -1;
+		String screen_name = null, list_name = null;
+		if (args != null) {
+			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+			list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
+			list_name = args.getString(INTENT_KEY_LIST_NAME);
+			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		}
+		return new ListInfoLoader(this, account_id, list_id, list_name, user_id, screen_name);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mHeaderView = inflater.inflate(R.layout.user_list_detail_header, null);
 		mNameContainer = mHeaderView.findViewById(R.id.name_container);
@@ -403,6 +385,28 @@ OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemCli
 				break;
 			}
 		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Response<UserList>> loader) {
+		// TODO: Implement this method
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Response<UserList>> loader, Response<UserList> data) {
+		if (data == null) return;
+		if (getActivity() == null) return;
+		if (data.value != null) {
+			final UserList user = data.value;
+			setListShown(true);
+			changeUserList(mAccountId, user);
+			mErrorRetryContainer.setVisibility(View.GONE);
+		} else {
+			showErrorToast(getActivity(), data.exception, false);
+			mListContainer.setVisibility(View.GONE);
+			mErrorRetryContainer.setVisibility(View.VISIBLE);
+		}
+		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
@@ -609,12 +613,12 @@ OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemCli
 		private final UserListDetailsFragment fragment;
 		private final Context context;
 
-		private ListInfoLoader(UserListDetailsFragment fragment, long account_id, int list_id, String list_name, long user_id,
-				String screen_name) {
+		private ListInfoLoader(UserListDetailsFragment fragment, long account_id, int list_id, String list_name,
+				long user_id, String screen_name) {
 			super(fragment.getActivity());
 			this.fragment = fragment;
-			this.context = fragment.getActivity();
-			this.twitter = getTwitterInstance(context, account_id, true);
+			context = fragment.getActivity();
+			twitter = getTwitterInstance(context, account_id, true);
 			this.user_id = user_id;
 			this.list_id = list_id;
 			this.screen_name = screen_name;
@@ -632,7 +636,7 @@ OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemCli
 				return new Response<UserList>(null, e);
 			}
 		}
-		
+
 		@Override
 		public void onStartLoading() {
 			forceLoad();

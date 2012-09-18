@@ -7,14 +7,14 @@ import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.TwitterLoginActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.xml.sax.Attributes;
@@ -29,13 +29,10 @@ import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
+import twitter4j.internal.http.HttpParameter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import org.mariotaku.twidere.R;
-import java.io.FileNotFoundException;
-import twitter4j.internal.http.HttpParameter;
-import java.io.OutputStream;
 
 public class OAuthPasswordAuthenticator {
 
@@ -93,7 +90,8 @@ public class OAuthPasswordAuthenticator {
 		authenticity_token = null;
 		callback_url = null;
 		try {
-		 final RequestToken request_token = twitter.getOAuthRequestToken(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK);
+			final RequestToken request_token = twitter
+					.getOAuthRequestToken(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK);
 			final String oauth_token = request_token.getToken();
 			readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), false, null));
 			if (authenticity_token == null) throw new IOException("Cannot get authenticity token.");
@@ -104,20 +102,19 @@ public class OAuthPasswordAuthenticator {
 			params[2] = new HttpParameter("session[username_or_email]", username);
 			params[3] = new HttpParameter("session[password]", password);
 			readCallbackURL(getHTTPContent(conf.getOAuthAuthorizationURL().toString(), true, params));
-			if (callback_url == null) throw new AuthenticationException(context.getString(R.string.cannot_get_callback_url));
+			if (callback_url == null)
+				throw new AuthenticationException(context.getString(R.string.cannot_get_callback_url));
 			if (!callback_url.startsWith(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK))
 				throw new IOException("Wrong OAuth callback URL " + callback_url);
-			final String oauth_verifier = Uri.parse(callback_url).getQueryParameter(TwitterLoginActivity.OAUTH_VERIFIER);
+			final String oauth_verifier = Uri.parse(callback_url)
+					.getQueryParameter(TwitterLoginActivity.OAUTH_VERIFIER);
 			if (isNullOrEmpty(oauth_verifier)) throw new IOException("Cannot get OAuth verifier.");
 			return twitter.getOAuthAccessToken(request_token, oauth_verifier);
-		} catch (FileNotFoundException e) {
-			//TODO handle this exception
-			throw new AuthenticationException("Failed to sign in, I'm working on this problem.");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new AuthenticationException(e);
-		} catch (SAXException e) {		
+		} catch (final SAXException e) {
 			throw new AuthenticationException(e);
-		} catch (TwitterException e) {
+		} catch (final TwitterException e) {
 			throw new AuthenticationException(e);
 		}
 	}
@@ -163,6 +160,23 @@ public class OAuthPasswordAuthenticator {
 
 	private void setAuthenticityToken(String authenticity_token) {
 		this.authenticity_token = authenticity_token;
+	}
+
+	public static final class AuthenticationException extends Exception {
+
+		private static final long serialVersionUID = -5629194721838256378L;
+
+		public AuthenticationException() {
+			super();
+		}
+
+		public AuthenticationException(Exception cause) {
+			super(cause);
+		}
+
+		public AuthenticationException(String message) {
+			super(message);
+		}
 	}
 
 	static class DummyContentHandler implements ContentHandler {
@@ -218,20 +232,5 @@ public class OAuthPasswordAuthenticator {
 	 */
 	static final class HtmlParser {
 		private static final HTMLSchema schema = new HTMLSchema();
-	}
-	
-	public static final class AuthenticationException extends Exception {
-		
-		public AuthenticationException() {
-			super();
-		}
-		
-		public AuthenticationException(String message) {
-			super(message);
-		}
-		
-		public AuthenticationException(Exception cause) {
-			super(cause);
-		}
 	}
 }

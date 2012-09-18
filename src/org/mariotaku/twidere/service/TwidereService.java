@@ -692,9 +692,10 @@ public class TwidereService extends Service implements Constants {
 					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = "
 							+ user_id;
 					mResolver.delete(uri, where, null);
-					
+
 				}
-				//I bet you don't want to see this user in your auto complete list.
+				// I bet you don't want to see this user in your auto complete
+				// list.
 				final String where = CachedUsers.USER_ID + " = " + user_id;
 				mResolver.delete(CachedUsers.CONTENT_URI, where, null);
 				Toast.makeText(TwidereService.this, R.string.user_blocked, Toast.LENGTH_SHORT).show();
@@ -852,8 +853,9 @@ public class TwidereService extends Service implements Constants {
 					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID
 							+ " IN (" + user_ids + ")";
 					mResolver.delete(uri, where, null);
-				}			
-				//I bet you don't want to see these users in your auto complete list.
+				}
+				// I bet you don't want to see these users in your auto complete
+				// list.
 				final String where = CachedUsers.USER_ID + " IN (" + user_ids + ")";
 				mResolver.delete(CachedUsers.CONTENT_URI, where, null);
 				Toast.makeText(TwidereService.this, R.string.users_blocked, Toast.LENGTH_SHORT).show();
@@ -1434,11 +1436,10 @@ public class TwidereService extends Service implements Constants {
 		protected void onPreExecute() {
 			mAlarmManager.cancel(mPendingRefreshHomeTimelineIntent);
 			if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
-						"30")) * 60 * 1000;
+				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
 				if (update_interval > 0) {
-					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-							+ update_interval, update_interval, mPendingRefreshHomeTimelineIntent);
+					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+							update_interval, mPendingRefreshHomeTimelineIntent);
 				}
 			}
 			super.onPreExecute();
@@ -1504,11 +1505,10 @@ public class TwidereService extends Service implements Constants {
 		protected void onPreExecute() {
 			mAlarmManager.cancel(mPendingRefreshMentionsIntent);
 			if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
-						"30")) * 60 * 1000;
+				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
 				if (update_interval > 0) {
-					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-							+ update_interval, update_interval, mPendingRefreshMentionsIntent);
+					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+							update_interval, mPendingRefreshMentionsIntent);
 				}
 			}
 			super.onPreExecute();
@@ -1531,25 +1531,24 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPreExecute() {
-			mAlarmManager.cancel(mPendingRefreshDirectMessagesIntent);
-			if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
-						"30")) * 60 * 1000;
-				if (update_interval > 0) {
-					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-							+ update_interval, update_interval, mPendingRefreshDirectMessagesIntent);
-				}
-			}
-			super.onPreExecute();
-		}
-
-		@Override
 		protected void onPostExecute(List<ListResponse<DirectMessage>> responses) {
 			super.onPostExecute(responses);
 			mStoreReceivedDirectMessagesTaskId = mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses,
 					is_auto_refresh), true);
 			mGetReceivedDirectMessagesTaskId = -1;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			mAlarmManager.cancel(mPendingRefreshDirectMessagesIntent);
+			if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
+				if (update_interval > 0) {
+					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+							update_interval, mPendingRefreshDirectMessagesIntent);
+				}
+			}
+			super.onPreExecute();
 		}
 
 	}

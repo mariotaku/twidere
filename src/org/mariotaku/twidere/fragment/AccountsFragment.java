@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
@@ -297,6 +298,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		private final SharedPreferences mPreferences;
 		private int mUserColorIdx, mProfileImageIdx, mUserIdIdx;
 		private long mDefaultAccountId;
+		private final boolean mDisplayHiResProfileImage;
 
 		public AccountsAdapter(Context context) {
 			super(context, R.layout.account_list_item, null, new String[] { Accounts.USERNAME },
@@ -304,6 +306,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			final TwidereApplication application = TwidereApplication.getInstance(context);
 			mProfileImageLoader = application.getProfileImageLoader();
 			mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		}
 
 		@Override
@@ -312,7 +315,13 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 			final ViewHolder holder = (ViewHolder) view.getTag();
 			holder.setAccountColor(color);
 			holder.setIsDefault(mDefaultAccountId != -1 && mDefaultAccountId == cursor.getLong(mUserIdIdx));
-			mProfileImageLoader.displayImage(parseURL(cursor.getString(mProfileImageIdx)), holder.profile_image);
+			final String profile_image_url_string = cursor.getString(mProfileImageIdx);
+			if (mDisplayHiResProfileImage) {
+				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
+						holder.profile_image);
+			} else {
+				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
+			}
 			super.bindView(view, context, cursor);
 		}
 

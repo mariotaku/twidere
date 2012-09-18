@@ -11,6 +11,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,7 +28,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
-import android.content.Context;
 
 public class ImagesPreviewFragment extends BaseFragment implements OnItemClickListener, OnClickListener,
 		OnTouchListener {

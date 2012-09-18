@@ -150,7 +150,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			mProfileImageLoader.reloadProxySettings();
 		}
 	}
-	
+
 	public void startMultiSelect() {
 		mMultiSelectActive = true;
 		final Intent intent = new Intent(BROADCAST_MULTI_SELECT_STATE_CHANGED);

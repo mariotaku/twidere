@@ -89,12 +89,15 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.text.InputFilter;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -123,7 +126,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private LazyImageLoader mProfileImageLoader;
 
 	private ImageView mProfileImageView;
-	private GetFriendshipTask mGetFriendshipTask;
 	private View mFollowContainer, mMoreOptionsContainer;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowedYouIndicator, mErrorMessageView;
@@ -134,7 +136,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private UserProfileActionAdapter mAdapter;
 
 	private ListView mListView;
-	private UserInfoTask mUserInfoTask;
 	private View mHeaderView;
 	private long mAccountId;
 	private Relationship mFriendship;
@@ -188,17 +189,127 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private View mListContainer, mErrorRetryContainer;
 
+	private boolean mGetUserInfoLoaderInitialized;
+
+	private static final int LOADER_ID_USER = 1;
+
+	private static final int LOADER_ID_FRIENDSHIP = 2;
+
+	private boolean mGetFriendShipLoaderInitialized;
+
+	private LoaderCallbacks<Response<User>> mUserInfoLoaderCallbacks = new LoaderCallbacks<Response<User>>() {
+
+		@Override
+		public Loader<Response<User>> onCreateLoader(int id, Bundle args) {
+			mListContainer.setVisibility(View.VISIBLE);
+			mErrorRetryContainer.setVisibility(View.GONE);
+			setListShown(false);
+			setProgressBarIndeterminateVisibility(true);
+			return new UserInfoLoader(getActivity(), mAccountId, mUserId, mScreenName);
+		}
+
+		@Override
+		public void onLoaderReset(Loader<Response<User>> loader) {
+
+		}
+
+		@Override
+		public void onLoadFinished(Loader<Response<User>> loader, Response<User> data) {
+			if (getActivity() == null) return;
+			if (data == null) return;
+			if (data.value != null && data.value.getId() > 0) {
+				final User user = data.value;
+				final ContentResolver resolver = getContentResolver();
+				setListShown(true);
+				changeUser(mAccountId, user);
+				mErrorRetryContainer.setVisibility(View.GONE);
+				if (isMyAccount(getActivity(), user.getId())) {
+					final ContentValues values = new ContentValues();
+					final URL profile_image_url = user.getProfileImageURL();
+					if (profile_image_url != null) {
+						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url.toString());
+					}
+					values.put(Accounts.USERNAME, user.getScreenName());
+					final String where = Accounts.USER_ID + " = " + user.getId();
+					resolver.update(Accounts.CONTENT_URI, values, where, null);
+				}
+			} else {
+				mListContainer.setVisibility(View.GONE);
+				mErrorRetryContainer.setVisibility(View.VISIBLE);
+			}
+			setProgressBarIndeterminateVisibility(false);
+		}
+
+	};
+
+	private LoaderCallbacks<Response<Relationship>> mFriendshipLoaderCallbacks = new LoaderCallbacks<Response<Relationship>>() {
+
+		@Override
+		public Loader<Response<Relationship>> onCreateLoader(int id, Bundle args) {
+			final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mUserId);
+			mFollowedYouIndicator.setVisibility(View.GONE);
+			mFollowContainer.setVisibility(is_my_activated_account ? View.GONE : View.VISIBLE);
+			mFollowButton.setVisibility(View.GONE);
+			mFollowProgress.setVisibility(View.VISIBLE);
+			mMoreOptionsContainer.setVisibility(is_my_activated_account ? View.GONE : View.VISIBLE);
+			mMoreOptionsButton.setVisibility(View.GONE);
+			mMoreOptionsProgress.setVisibility(View.VISIBLE);
+			return new GetFriendshipLoader(getActivity(), mAccountId, mUserId);
+		}
+
+		@Override
+		public void onLoaderReset(Loader<Response<Relationship>> loader) {
+
+		}
+
+		@Override
+		public void onLoadFinished(Loader<Response<Relationship>> loader, Response<Relationship> data) {
+			mFriendship = null;
+			if (data.exception == null) {
+				final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mUserId);
+				mFollowContainer.setVisibility(data.value == null ? View.GONE : View.VISIBLE);
+				if (!is_my_activated_account) {
+					mMoreOptionsContainer.setVisibility(data.value == null ? View.GONE : View.VISIBLE);
+				}
+				if (data.value != null) {
+					mFriendship = data.value;
+					mFollowButton.setVisibility(View.VISIBLE);
+					mFollowButton.setText(mFriendship.isSourceFollowingTarget() ? R.string.unfollow : R.string.follow);
+					if (!is_my_activated_account) {
+						mMoreOptionsButton.setVisibility(View.VISIBLE);
+						mFollowedYouIndicator.setVisibility(data.value.isSourceFollowedByTarget() ? View.VISIBLE
+								: View.GONE);
+					}
+
+					final ContentResolver resolver = getContentResolver();
+					final String where = CachedUsers.USER_ID + " = " + mUserId;
+					resolver.delete(CachedUsers.CONTENT_URI, where, null);
+					// I bet you don't want to see blocked user in your auto
+					// complete list.
+					if (!mFriendship.isSourceBlockingTarget()) {
+						final ContentValues cached_values = makeCachedUserContentValues(mUser);
+						if (cached_values != null) {
+							resolver.insert(CachedUsers.CONTENT_URI, cached_values);
+						}
+					}
+				}
+			}
+			mFollowProgress.setVisibility(View.GONE);
+			mMoreOptionsProgress.setVisibility(View.GONE);
+		}
+
+	};
+
 	public void changeUser(long account_id, User user) {
 		mFriendship = null;
 		mUserId = -1;
 		mAccountId = -1;
 		if (user == null || user.getId() <= 0 || getActivity() == null
 				|| !isMyActivatedAccount(getActivity(), account_id)) return;
-		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
-			mUserInfoTask.cancel(true);
-		}
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_USER);
+		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
 		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), user.getId());
-		mUserInfoTask = null;
 		mErrorRetryContainer.setVisibility(View.GONE);
 		mAccountId = account_id;
 		mUserId = user.getId();
@@ -261,28 +372,26 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAccountId = account_id;
 		mUserId = user_id;
 		mScreenName = screen_name;
-		if (mUserInfoTask != null && mUserInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
-			mUserInfoTask.cancel(true);
-		}
-		mUserInfoTask = null;
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_USER);
+		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
 		if (!isMyActivatedAccount(getActivity(), mAccountId)) {
 			mListContainer.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
 			return;
 		}
 
-		if (user_id != -1) {
-			mUserInfoTask = new UserInfoTask(getActivity(), account_id, user_id);
-		} else if (screen_name != null) {
-			mUserInfoTask = new UserInfoTask(getActivity(), account_id, screen_name);
+		if (!mGetUserInfoLoaderInitialized) {
+			lm.initLoader(LOADER_ID_USER, null, mUserInfoLoaderCallbacks);
+			mGetUserInfoLoaderInitialized = true;
 		} else {
+			lm.restartLoader(LOADER_ID_USER, null, mUserInfoLoaderCallbacks);
+		}
+
+		if (account_id == -1 || user_id == -1 && screen_name == null) {
 			mListContainer.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
 			return;
-		}
-
-		if (mUserInfoTask != null) {
-			mUserInfoTask.execute();
 		}
 	}
 
@@ -487,12 +596,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	public void onDestroyView() {
 		mUser = null;
 		mFriendship = null;
-		if (mGetFriendshipTask != null) {
-			mGetFriendshipTask.cancel(true);
-		}
-		if (mUserInfoTask != null) {
-			mUserInfoTask.cancel(true);
-		}
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_USER);
+		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
 		super.onDestroyView();
 	}
 
@@ -704,11 +810,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	private void getFriendship() {
-		if (mGetFriendshipTask != null) {
-			mGetFriendshipTask.cancel(true);
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
+		if (!mGetFriendShipLoaderInitialized) {
+			lm.initLoader(LOADER_ID_FRIENDSHIP, null, mFriendshipLoaderCallbacks);
+			mGetFriendShipLoaderInitialized = true;
+		} else {
+			lm.restartLoader(LOADER_ID_FRIENDSHIP, null, mFriendshipLoaderCallbacks);
 		}
-		mGetFriendshipTask = new GetFriendshipTask();
-		mGetFriendshipTask.execute();
 	}
 
 	private void pickImage() {
@@ -833,6 +942,50 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
+	public static class GetFriendshipLoader extends AsyncTaskLoader<Response<Relationship>> {
+
+		private final Context context;
+		private final long account_id, user_id;
+
+		public GetFriendshipLoader(Context context, long account_id, long user_id) {
+			super(context);
+			this.context = context;
+			this.account_id = account_id;
+			this.user_id = user_id;
+		}
+
+		@Override
+		public Response<Relationship> loadInBackground() {
+			return getFriendship();
+		}
+
+		@Override
+		protected void onStartLoading() {
+			forceLoad();
+		}
+
+		private Response<Relationship> getFriendship() {
+			if (account_id == user_id) return new Response<Relationship>(null, null);
+			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			try {
+				final Relationship result = twitter.showFriendship(account_id, user_id);
+				return new Response<Relationship>(result, null);
+			} catch (final TwitterException e) {
+				return new Response<Relationship>(null, e);
+			}
+		}
+	}
+
+	public static class Response<T> {
+		public final T value;
+		public final Exception exception;
+
+		public Response(T value, Exception exception) {
+			this.value = value;
+			this.exception = exception;
+		}
+	}
+
 	class FavoritesAction extends ListAction {
 
 		@Override
@@ -852,90 +1005,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			openUserFavorites(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
-	}
-
-	class GetFriendshipTask extends AsyncTask<Void, Void, Response<Relationship>> {
-
-		private final boolean is_my_activated_account;
-
-		GetFriendshipTask() {
-			is_my_activated_account = isMyActivatedAccount(getActivity(), mUser.getId());
-		}
-
-		@Override
-		protected Response<Relationship> doInBackground(Void... params) {
-			return getFriendship();
-		}
-
-		@Override
-		protected void onPostExecute(Response<Relationship> result) {
-			mFriendship = null;
-			if (result.exception == null) {
-				mFollowContainer.setVisibility(result.value == null ? View.GONE : View.VISIBLE);
-				if (!is_my_activated_account) {
-					mMoreOptionsContainer.setVisibility(result.value == null ? View.GONE : View.VISIBLE);
-				}
-				if (result.value != null) {
-					mFriendship = result.value;
-					mFollowButton.setVisibility(View.VISIBLE);
-					mFollowButton.setText(mFriendship.isSourceFollowingTarget() ? R.string.unfollow : R.string.follow);
-					if (!is_my_activated_account) {
-						mMoreOptionsButton.setVisibility(View.VISIBLE);
-						mFollowedYouIndicator.setVisibility(result.value.isSourceFollowedByTarget() ? View.VISIBLE
-								: View.GONE);
-					}
-
-					final ContentResolver resolver = getContentResolver();
-					final String where = CachedUsers.USER_ID + " = " + mUserId;
-					resolver.delete(CachedUsers.CONTENT_URI, where, null);
-					//I bet you don't want to see blocked user in your auto complete list.
-					if (!mFriendship.isSourceBlockingTarget()) {
-						final ContentValues cached_values = makeCachedUserContentValues(mUser);	
-						if (cached_values != null) {
-							resolver.insert(CachedUsers.CONTENT_URI, cached_values);
-						}
-					}
-				}
-			}
-			mFollowProgress.setVisibility(View.GONE);
-			mMoreOptionsProgress.setVisibility(View.GONE);
-			super.onPostExecute(result);
-			mGetFriendshipTask = null;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			mFollowedYouIndicator.setVisibility(View.GONE);
-			mFollowContainer.setVisibility(is_my_activated_account ? View.GONE : View.VISIBLE);
-			mFollowButton.setVisibility(View.GONE);
-			mFollowProgress.setVisibility(View.VISIBLE);
-			mMoreOptionsContainer.setVisibility(is_my_activated_account ? View.GONE : View.VISIBLE);
-			mMoreOptionsButton.setVisibility(View.GONE);
-			mMoreOptionsProgress.setVisibility(View.VISIBLE);
-			super.onPreExecute();
-		}
-
-		private Response<Relationship> getFriendship() {
-			if (mUser == null) return new Response<Relationship>(null, null);
-			if (mAccountId == mUser.getId()) return new Response<Relationship>(null, null);
-			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
-			try {
-				final Relationship result = twitter.showFriendship(mAccountId, mUser.getId());
-				return new Response<Relationship>(result, null);
-			} catch (final TwitterException e) {
-				return new Response<Relationship>(null, e);
-			}
-		}
-	}
-
-	class Response<T> {
-		public final T value;
-		public final TwitterException exception;
-
-		public Response(T value, TwitterException exception) {
-			this.value = value;
-			this.exception = exception;
-		}
 	}
 
 	class SavedSearchesAction extends ListAction {
@@ -968,28 +1037,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	class UserInfoTask extends AsyncTask<Void, Void, Response<User>> {
+	static class UserInfoLoader extends AsyncTaskLoader<Response<User>> {
 
 		private final Twitter twitter;
 		private final long user_id;
 		private final String screen_name;
 
-		private UserInfoTask(Context context, long account_id, long user_id, String screen_name) {
+		private UserInfoLoader(Context context, long account_id, long user_id, String screen_name) {
+			super(context);
 			twitter = getTwitterInstance(context, account_id, true);
 			this.user_id = user_id;
 			this.screen_name = screen_name;
 		}
 
-		UserInfoTask(Context context, long account_id, long user_id) {
-			this(context, account_id, user_id, null);
-		}
-
-		UserInfoTask(Context context, long account_id, String screen_name) {
-			this(context, account_id, -1, screen_name);
-		}
-
 		@Override
-		protected Response<User> doInBackground(Void... args) {
+		public Response<User> loadInBackground() {
 			try {
 				if (user_id != -1)
 					return new Response<User>(twitter.showUser(user_id), null);
@@ -1001,46 +1063,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		@Override
-		protected void onCancelled() {
-			setProgressBarIndeterminateVisibility(false);
-			super.onCancelled();
-		}
-
-		@Override
-		protected void onPostExecute(Response<User> result) {
-			if (result == null) return;
-			if (getActivity() == null) return;
-			if (result.value != null && result.value.getId() > 0) {
-				final User user = result.value;
-				final ContentResolver resolver = getContentResolver();
-				setListShown(true);
-				changeUser(mAccountId, user);
-				mErrorRetryContainer.setVisibility(View.GONE);
-				if (isMyAccount(getActivity(), user.getId())) {
-					final ContentValues values = new ContentValues();
-					final URL profile_image_url = user.getProfileImageURL();
-					if (profile_image_url != null) {
-						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url.toString());
-					}
-					values.put(Accounts.USERNAME, user.getScreenName());
-					final String where = Accounts.USER_ID + " = " + user.getId();
-					resolver.update(Accounts.CONTENT_URI, values, where, null);
-				}
-			} else {
-				mListContainer.setVisibility(View.GONE);
-				mErrorRetryContainer.setVisibility(View.VISIBLE);
-			}
-			setProgressBarIndeterminateVisibility(false);
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onPreExecute() {
-			mListContainer.setVisibility(View.VISIBLE);
-			mErrorRetryContainer.setVisibility(View.GONE);
-			setListShown(false);
-			setProgressBarIndeterminateVisibility(true);
-			super.onPreExecute();
+		protected void onStartLoading() {
+			forceLoad();
 		}
 
 	}
@@ -1075,7 +1099,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
+	static class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
 
 		public UserProfileActionAdapter(Context context) {
 			super(context, R.layout.user_action_list_item, android.R.id.text1);

@@ -78,11 +78,14 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -119,10 +122,6 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 	private ImagesPreviewFragment mImagesPreviewFragment;
 
-	private FollowInfoTask mFollowInfoTask;
-	private GetStatusTask mGetStatusTask;
-	private LocationInfoTask mLocationInfoTask;
-
 	private ParcelableStatus mStatus;
 
 	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -148,6 +147,104 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			}
 		}
 	};
+
+	private static final String INTENT_KEY_OMIT_INTENT_EXTRA = "omit_intent_extra";
+
+	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized;
+
+	final LoaderCallbacks<Response<ParcelableStatus>> mStatusLoaderCallbacks = new LoaderCallbacks<Response<ParcelableStatus>>() {
+
+		@Override
+		public Loader<Response<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
+			mStatusLoadProgress.setVisibility(View.VISIBLE);
+			mStatusContent.setVisibility(View.INVISIBLE);
+			mStatusContent.setEnabled(false);
+			setProgressBarIndeterminateVisibility(true);
+			final boolean omit_intent_extra = args != null ? args.getBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, true) : true;
+			return new StatusLoader(getActivity(), omit_intent_extra, getArguments(), mAccountId, mStatusId);
+		}
+
+		@Override
+		public void onLoaderReset(Loader<Response<ParcelableStatus>> loader) {
+
+		}
+
+		@Override
+		public void onLoadFinished(Loader<Response<ParcelableStatus>> loader, Response<ParcelableStatus> data) {
+			if (data.value == null) {
+				showErrorToast(getActivity(), data.exception, true);
+			} else {
+				displayStatus(data.value);
+				mStatusLoadProgress.setVisibility(View.GONE);
+				mStatusContent.setVisibility(View.VISIBLE);
+				mStatusContent.setEnabled(true);
+			}
+			setProgressBarIndeterminateVisibility(false);
+		}
+
+	};
+
+	final LoaderCallbacks<String> mLocationLoaderCallbacks = new LoaderCallbacks<String>() {
+
+		@Override
+		public Loader<String> onCreateLoader(int id, Bundle args) {
+			return new LocationInfoLoader(getActivity(), mStatus != null ? mStatus.location : null);
+		}
+
+		@Override
+		public void onLoaderReset(Loader<String> loader) {
+
+		}
+
+		@Override
+		public void onLoadFinished(Loader<String> loader, String data) {
+			if (data != null) {
+				mLocationView.setText(data);
+				mLocationInfoDisplayed = true;
+			} else {
+				mLocationView.setText(R.string.view_map);
+				mLocationInfoDisplayed = false;
+			}
+		}
+
+	};
+
+	final LoaderCallbacks<Response<Boolean>> mFollowInfoLoaderCallbacks = new LoaderCallbacks<Response<Boolean>>() {
+
+		@Override
+		public Loader<Response<Boolean>> onCreateLoader(int id, Bundle args) {
+			mFollowIndicator.setVisibility(View.VISIBLE);
+			mFollowButton.setVisibility(View.GONE);
+			mFollowInfoProgress.setVisibility(View.VISIBLE);
+			return new FollowInfoLoader(getActivity(), mStatus);
+		}
+
+		@Override
+		public void onLoaderReset(Loader<Response<Boolean>> loader) {
+
+		}
+
+		@Override
+		public void onLoadFinished(Loader<Response<Boolean>> loader, Response<Boolean> data) {
+			if (data.exception == null) {
+				mFollowIndicator.setVisibility(data.value == null || data.value ? View.GONE : View.VISIBLE);
+				if (data.value != null) {
+					mFollowButton.setVisibility(data.value ? View.GONE : View.VISIBLE);
+					mFollowInfoDisplayed = true;
+				}
+			}
+			mFollowInfoProgress.setVisibility(View.GONE);
+		}
+
+	};
+
+	private static final int LOADER_ID_STATUS = 1;
+
+	private static final int LOADER_ID_FOLLOW = 2;
+
+	private static final int LOADER_ID_LOCATION = 3;
+
+	private boolean mFollowInfoLoaderInitialized;
 
 	public void displayStatus(ParcelableStatus status) {
 		mStatus = null;
@@ -254,11 +351,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		final FragmentTransaction ft = fm.beginTransaction();
 		ft.replace(R.id.images_preview, mImagesPreviewFragment);
 		ft.commit();
-//		if (mStatus != null) {
-//			displayStatus(mStatus);
-//		} else {
-//			getStatus(false);
-//		}
+		getStatus(false);
 
 	}
 
@@ -344,15 +437,10 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		mStatus = null;
 		mAccountId = -1;
 		mStatusId = -1;
-		if (mGetStatusTask != null) {
-			mGetStatusTask.cancel(true);
-		}
-		if (mFollowInfoTask != null) {
-			mFollowInfoTask.cancel(true);
-		}
-		if (mLocationInfoTask != null) {
-			mLocationInfoTask.cancel(true);
-		}
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_STATUS);
+		lm.destroyLoader(LOADER_ID_LOCATION);
+		lm.destroyLoader(LOADER_ID_FOLLOW);
 		super.onDestroyView();
 	}
 
@@ -467,12 +555,6 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		filter.addAction(BROADCAST_FAVORITE_CHANGED);
 		filter.addAction(BROADCAST_RETWEET_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		
-		if (mStatus != null) {
-			displayStatus(mStatus);
-		} else {
-			getStatus(false);
-		}
 		updateUserColor();
 	}
 
@@ -483,30 +565,40 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	}
 
 	private void getStatus(boolean omit_intent_extra) {
-		if (mGetStatusTask != null) {
-			mGetStatusTask.cancel(true);
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_STATUS);
+		final Bundle args = new Bundle();
+		args.putBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, omit_intent_extra);
+		if (!mStatusLoaderInitialized) {
+			lm.initLoader(LOADER_ID_STATUS, args, mStatusLoaderCallbacks);
+			mStatusLoaderInitialized = true;
+		} else {
+			lm.restartLoader(LOADER_ID_STATUS, args, mStatusLoaderCallbacks);
 		}
-		mGetStatusTask = new GetStatusTask(omit_intent_extra);
-		mGetStatusTask.execute();
-
 	}
 
 	private void showFollowInfo(boolean force) {
 		if (mFollowInfoDisplayed && !force) return;
-		if (mFollowInfoTask != null) {
-			mFollowInfoTask.cancel(true);
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_FOLLOW);
+		if (!mFollowInfoLoaderInitialized) {
+			lm.initLoader(LOADER_ID_FOLLOW, null, mLocationLoaderCallbacks);
+			mFollowInfoLoaderInitialized = true;
+		} else {
+			lm.restartLoader(LOADER_ID_FOLLOW, null, mLocationLoaderCallbacks);
 		}
-		mFollowInfoTask = new FollowInfoTask();
-		mFollowInfoTask.execute();
 	}
 
 	private void showLocationInfo(boolean force) {
 		if (mLocationInfoDisplayed && !force) return;
-		if (mLocationInfoTask != null) {
-			mLocationInfoTask.cancel(true);
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_LOCATION);
+		if (!mLocationLoaderInitialized) {
+			lm.initLoader(LOADER_ID_LOCATION, null, mLocationLoaderCallbacks);
+			mLocationLoaderInitialized = true;
+		} else {
+			lm.restartLoader(LOADER_ID_LOCATION, null, mLocationLoaderCallbacks);
 		}
-		mLocationInfoTask = new LocationInfoTask();
-		mLocationInfoTask.execute();
 	}
 
 	private void updateUserColor() {
@@ -519,115 +611,22 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		}
 	}
 
-	class FollowInfoTask extends AsyncTask<Void, Void, Response<Boolean>> {
+	public static class LocationInfoLoader extends AsyncTaskLoader<String> {
 
-		@Override
-		protected Response<Boolean> doInBackground(Void... params) {
-			return isAllFollowing();
+		private final Context context;
+		private final ParcelableLocation location;
+
+		public LocationInfoLoader(Context context, ParcelableLocation location) {
+			super(context);
+			this.context = context;
+			this.location = location;
 		}
 
 		@Override
-		protected void onPostExecute(Response<Boolean> result) {
-			if (getActivity() == null) return;
-			if (result.exception == null) {
-				mFollowIndicator.setVisibility(result.value == null || result.value ? View.GONE : View.VISIBLE);
-				if (result.value != null) {
-					mFollowButton.setVisibility(result.value ? View.GONE : View.VISIBLE);
-					mFollowInfoDisplayed = true;
-				}
-			}
-			mFollowInfoProgress.setVisibility(View.GONE);
-			super.onPostExecute(result);
-			mFollowInfoTask = null;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			if (getActivity() == null) return;
-			mFollowIndicator.setVisibility(View.VISIBLE);
-			mFollowButton.setVisibility(View.GONE);
-			mFollowInfoProgress.setVisibility(View.VISIBLE);
-			super.onPreExecute();
-		}
-
-		private Response<Boolean> isAllFollowing() {
-			if (mStatus == null) return new Response<Boolean>(null, null);
-			if (isMyActivatedAccount(getActivity(), mStatus.user_id)) return new Response<Boolean>(true, null);
-			final Twitter twitter = getTwitterInstance(getActivity(), mStatus.account_id, false);
-			if (twitter == null) return new Response<Boolean>(null, null);
-			try {
-				final Relationship result = twitter.showFriendship(mStatus.account_id, mStatus.user_id);
-				if (!result.isSourceFollowingTarget()) return new Response<Boolean>(false, null);
-			} catch (final TwitterException e) {
-				return new Response<Boolean>(null, e);
-			}
-			return new Response<Boolean>(null, null);
-		}
-	}
-
-	class GetStatusTask extends AsyncTask<Void, Void, Response<ParcelableStatus>> {
-
-		private final boolean omit_intent_extra;
-
-		public GetStatusTask(boolean omit_intent_extra) {
-			this.omit_intent_extra = omit_intent_extra;
-		}
-
-		@Override
-		protected Response<ParcelableStatus> doInBackground(Void... params) {
-			ParcelableStatus status = null;
-			if (!omit_intent_extra) {
-				status = getArguments().getParcelable(INTENT_KEY_STATUS);
-				if (status != null) return new Response<ParcelableStatus>(status, null);
-			}
-			status = findStatusInDatabases(getActivity(), mAccountId, mStatusId);
-			if (status != null) return new Response<ParcelableStatus>(status, null);
-
-			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, false);
-			try {
-				return new Response<ParcelableStatus>(new ParcelableStatus(twitter.showStatus(mStatusId), mAccountId,
-						false), null);
-			} catch (final TwitterException e) {
-				return new Response<ParcelableStatus>(null, e);
-			}
-		}
-
-		@Override
-		protected void onPostExecute(Response<ParcelableStatus> result) {
-			if (getActivity() == null) return;
-			if (result.value == null) {
-				showErrorToast(getActivity(), result.exception, true);
-			} else {
-				displayStatus(result.value);
-				mStatusLoadProgress.setVisibility(View.GONE);
-				mStatusContent.setVisibility(View.VISIBLE);
-				mStatusContent.setEnabled(true);
-			}
-			setProgressBarIndeterminateVisibility(false);
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onPreExecute() {
-			if (getActivity() == null) return;
-			mStatusLoadProgress.setVisibility(View.VISIBLE);
-			mStatusContent.setVisibility(View.INVISIBLE);
-			mStatusContent.setEnabled(false);
-			setProgressBarIndeterminateVisibility(true);
-			super.onPreExecute();
-		}
-
-	}
-
-	class LocationInfoTask extends AsyncTask<Void, Void, String> {
-
-		@Override
-		protected String doInBackground(Void... params) {
-			if (getActivity() == null || mStatus == null) return null;
-			final ParcelableLocation location = mStatus.location;
+		public String loadInBackground() {
 			if (location == null) return null;
 			try {
-				final Geocoder coder = new Geocoder(getActivity());
+				final Geocoder coder = new Geocoder(context);
 				final List<Address> addresses = coder.getFromLocation(location.latitude, location.longitude, 1);
 				if (addresses.size() == 1) {
 					final Address address = addresses.get(0);
@@ -649,26 +648,98 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
-			if (result != null) {
-				mLocationView.setText(result);
-				mLocationInfoDisplayed = true;
-			} else {
-				mLocationView.setText(R.string.view_map);
-				mLocationInfoDisplayed = false;
-			}
-			super.onPostExecute(result);
+		protected void onStartLoading() {
+			forceLoad();
 		}
 
 	}
 
-	class Response<T> {
+	public static class Response<T> {
 		public final T value;
 		public final TwitterException exception;
 
 		public Response(T value, TwitterException exception) {
 			this.value = value;
 			this.exception = exception;
+		}
+	}
+
+	public static class StatusLoader extends AsyncTaskLoader<Response<ParcelableStatus>> {
+
+		private final boolean omit_intent_extra;
+		private final Context context;
+		private final Bundle intent_args;
+		private final long account_id, status_id;
+
+		public StatusLoader(Context context, boolean omit_intent_extra, Bundle intent_args, long account_id,
+				long status_id) {
+			super(context);
+			this.context = context;
+			this.intent_args = intent_args;
+			this.account_id = account_id;
+			this.status_id = status_id;
+			this.omit_intent_extra = omit_intent_extra;
+		}
+
+		@Override
+		public Response<ParcelableStatus> loadInBackground() {
+			ParcelableStatus status = null;
+			if (!omit_intent_extra) {
+				status = intent_args.getParcelable(INTENT_KEY_STATUS);
+				if (status != null) return new Response<ParcelableStatus>(status, null);
+			}
+			status = findStatusInDatabases(context, account_id, status_id);
+			if (status != null) return new Response<ParcelableStatus>(status, null);
+
+			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			try {
+				return new Response<ParcelableStatus>(new ParcelableStatus(twitter.showStatus(status_id), account_id,
+						false), null);
+			} catch (final TwitterException e) {
+				return new Response<ParcelableStatus>(null, e);
+			}
+		}
+
+		@Override
+		protected void onStartLoading() {
+			forceLoad();
+		}
+
+	}
+
+	static class FollowInfoLoader extends AsyncTaskLoader<Response<Boolean>> {
+
+		private final ParcelableStatus status;
+		private final Context context;
+
+		public FollowInfoLoader(Context context, ParcelableStatus status) {
+			super(context);
+			this.context = context;
+			this.status = status;
+		}
+
+		@Override
+		public Response<Boolean> loadInBackground() {
+			return isAllFollowing();
+		}
+
+		@Override
+		protected void onStartLoading() {
+			forceLoad();
+		}
+
+		private Response<Boolean> isAllFollowing() {
+			if (status == null) return new Response<Boolean>(null, null);
+			if (isMyActivatedAccount(context, status.user_id)) return new Response<Boolean>(true, null);
+			final Twitter twitter = getTwitterInstance(context, status.account_id, false);
+			if (twitter == null) return new Response<Boolean>(null, null);
+			try {
+				final Relationship result = twitter.showFriendship(status.account_id, status.user_id);
+				if (!result.isSourceFollowingTarget()) return new Response<Boolean>(false, null);
+			} catch (final TwitterException e) {
+				return new Response<Boolean>(null, e);
+			}
+			return new Response<Boolean>(null, null);
 		}
 	}
 

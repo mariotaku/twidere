@@ -45,39 +45,31 @@ import org.mariotaku.twidere.view.ImageViewer;
 
 import twitter4j.HostAddressResolver;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
-public class ImageViewerActivity extends FragmentActivity implements Constants, OnClickListener {
+public class ImageViewerActivity extends FragmentActivity implements Constants, OnClickListener,
+		LoaderCallbacks<ImageViewerActivity.ImageLoader.Result> {
 
 	private ImageViewer mImageView;
-	private ImageLoader mImageLoader;
 	private View mProgress;
 	private ImageButton mRefreshStopSaveButton;
 	private boolean mImageLoading, mImageLoaded;
 	private File mImageFile;
 	private String mUserAgent;
-
-	private final Handler mErrorHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			showErrorToast(ImageViewerActivity.this, msg.obj, true);
-		}
-	};
 
 	private HostAddressResolver mResolver;
 
@@ -91,7 +83,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			}
 			case R.id.refresh_stop_save: {
 				if (!mImageLoaded && !mImageLoading) {
-					loadImage();
+					loadImage(false);
 				} else if (!mImageLoaded && mImageLoading) {
 					stopLoading();
 				} else if (mImageLoaded) {
@@ -143,42 +135,75 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	}
 
 	@Override
+	public Loader<ImageLoader.Result> onCreateLoader(int id, Bundle args) {
+		mImageLoading = true;
+		mProgress.setVisibility(View.VISIBLE);
+		mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
+		final Uri uri = (Uri) (args != null ? args.getParcelable(INTENT_KEY_URI) : null);
+		return new ImageLoader(this, mResolver, uri, mUserAgent);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<ImageLoader.Result> loader) {
+
+	}
+
+	@Override
+	public void onLoadFinished(Loader<ImageLoader.Result> loader, ImageLoader.Result data) {
+		if (data.bitmap != null) {
+			mImageLoading = false;
+			mImageView.setBitmap(data.bitmap);
+			mImageFile = data.file;
+			mImageLoaded = true;
+			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_save);
+		} else {
+			mImageView.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.broken_image));
+			mImageFile = null;
+			mImageLoaded = false;
+			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+			showErrorToast(this, data.exception, true);
+		}
+		mProgress.setVisibility(View.GONE);
+	}
+
+	@Override
 	protected void onCreate(Bundle icicle) {
 		mResolver = TwidereApplication.getInstance(this).getHostAddressResolver();
 		super.onCreate(icicle);
 		mUserAgent = getBrowserUserAgent(this);
 		setContentView(R.layout.image_viewer);
-		loadImage();
+		loadImage(true);
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		mImageView.recycle();
-		if (mImageLoader != null && !mImageLoader.isCancelled()) {
-			mImageLoader.cancel();
-		}
+		stopLoading();
 	}
 
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		setIntent(intent);
-		loadImage();
+		loadImage(false);
 	}
 
-	private void loadImage() {
-		if (mImageLoader != null && mImageLoader.getStatus() == Status.RUNNING) {
-			mImageLoader.cancel();
-		}
+	private void loadImage(boolean init) {
+		getSupportLoaderManager().destroyLoader(0);
 		final Uri uri = getIntent().getData();
 		if (uri == null) {
 			finish();
 			return;
 		}
 		mImageView.setBitmap(null);
-		mImageLoader = new ImageLoader(uri, mImageView);
-		mImageLoader.execute();
+		final Bundle args = new Bundle();
+		args.putParcelable(INTENT_KEY_URI, uri);
+		if (init) {
+			getSupportLoaderManager().initLoader(0, args, this);
+		} else {
+			getSupportLoaderManager().restartLoader(0, args, this);
+		}
 	}
 
 	private void saveImage() {
@@ -208,43 +233,43 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	}
 
 	private void stopLoading() {
-		if (mImageLoader != null) {
-			mImageLoader.cancel();
+		getSupportLoaderManager().destroyLoader(0);
+		mImageLoading = false;
+		if (!mImageLoaded) {
+			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+			mImageView.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.refresh_image));
+			mProgress.setVisibility(View.GONE);
 		}
 	}
 
-	class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
+	public static class ImageLoader extends AsyncTaskLoader<ImageLoader.Result> {
 
 		private static final String CACHE_DIR_NAME = "cached_images";
 
 		private final Uri uri;
-		private final ImageViewer image_view;
+
+		private final Context context;
+		private final String user_agent;
+		private final HostAddressResolver resolver;
 		private File mCacheDir;
 
-		public ImageLoader(Uri uri, ImageViewer image_view) {
+		public ImageLoader(Context context, HostAddressResolver resolver, Uri uri, String user_agent) {
+			super(context);
+			this.context = context;
+			this.resolver = resolver;
 			this.uri = uri;
-			this.image_view = image_view;
+			this.user_agent = user_agent;
 			init();
 		}
 
-		protected void cancel() {
-			mImageLoading = false;
-			cancel(true);
-			if (!mImageLoaded) {
-				mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
-				image_view.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.refresh_image));
-				mProgress.setVisibility(View.GONE);
-			}
-		}
-
 		@Override
-		protected Bitmap doInBackground(Void... args) {
+		public Result loadInBackground() {
 
-			if (uri == null) return null;
+			if (uri == null) return new Result(null, null, null);
 			final String scheme = uri.getScheme();
 			if ("http".equals(scheme) || "https".equals(scheme)) {
 				final URL url = parseURL(uri.toString());
-				if (url == null) return null;
+				if (url == null) return new Result(null, null, null);
 				if (mCacheDir == null || !mCacheDir.exists()) {
 					init();
 				}
@@ -252,9 +277,8 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 				// from SD cache
 				final Bitmap cached_bitmap = decodeFile(cache_file);
-				if (cached_bitmap != null) return cached_bitmap;
+				if (cached_bitmap != null) return new Result(cached_bitmap, cache_file, null);
 
-				String response_msg = null;
 				int response_code = -1;
 				// from web
 				try {
@@ -264,13 +288,12 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					URL request_url = url;
 
 					while (retryCount < 5) {
-						conn = getConnection(request_url, true, getProxy(ImageViewerActivity.this), mResolver);
-						conn.addRequestProperty("User-Agent", mUserAgent);
+						conn = getConnection(request_url, true, getProxy(context), resolver);
+						conn.addRequestProperty("User-Agent", user_agent);
 						conn.setConnectTimeout(30000);
 						conn.setReadTimeout(30000);
 						conn.setInstanceFollowRedirects(false);
 						response_code = conn.getResponseCode();
-						response_msg = conn.getResponseMessage();
 						if (response_code != 301 && response_code != 302) {
 							break;
 						}
@@ -294,52 +317,23 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 								cache_file.delete();
 							}
 						} else
-							return bitmap;
+							return new Result(bitmap, cache_file, null);
 					}
 				} catch (final FileNotFoundException e) {
 					init();
 				} catch (final IOException e) {
-					final Message msg = new Message();
-					msg.obj = e;
-					mErrorHandler.sendMessage(msg);
+					return new Result(null, null, e);
 				}
-				if (response_code > 0) {
-					final Message msg = new Message();
-					if (response_code == 200) {
-						msg.obj = getString(R.string.invalid_image);
-					} else {
-						msg.obj = response_msg != null ? response_code + ": " + response_msg : response_code;
-					}
-					mErrorHandler.sendMessage(msg);
-				}
-			} else if ("file".equals(scheme)) return decodeFile(new File(uri.getPath()));
+			} else if ("file".equals(scheme)) {
+				final File file = new File(uri.getPath());
+				return new Result(decodeFile(file), file, null);
+			}
 			return null;
 		}
 
 		@Override
-		protected void onPostExecute(Bitmap result) {
-			mImageLoading = false;
-			if (image_view != null) {
-				if (result != null) {
-					image_view.setBitmap(result);
-					mImageLoaded = true;
-					mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_save);
-				} else {
-					image_view.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.broken_image));
-					mImageLoaded = false;
-					mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
-				}
-			}
-			mProgress.setVisibility(View.GONE);
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onPreExecute() {
-			mImageLoading = true;
-			mProgress.setVisibility(View.VISIBLE);
-			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
-			super.onPreExecute();
+		protected void onStartLoading() {
+			forceLoad();
 		}
 
 		private Bitmap decodeFile(File f) {
@@ -358,12 +352,9 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				}
 				if (bitmap == null) {
 					break;
-				} else {
-					mImageFile = f;
 				}
 				return bitmap;
 			}
-			mImageFile = null;
 			return null;
 		}
 
@@ -376,14 +367,26 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			/* Find the dir to save cached images. */
 			if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 				mCacheDir = new File(
-						Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(ImageViewerActivity.this)
+						Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(context)
 								: new File(getExternalStorageDirectory().getPath() + "/Android/data/"
-										+ getPackageName() + "/cache/"), CACHE_DIR_NAME);
+										+ context.getPackageName() + "/cache/"), CACHE_DIR_NAME);
 			} else {
-				mCacheDir = new File(getCacheDir(), CACHE_DIR_NAME);
+				mCacheDir = new File(context.getCacheDir(), CACHE_DIR_NAME);
 			}
 			if (mCacheDir != null && !mCacheDir.exists()) {
 				mCacheDir.mkdirs();
+			}
+		}
+
+		public static class Result {
+			public final Bitmap bitmap;
+			public final File file;
+			public final Exception exception;
+
+			public Result(Bitmap bitmap, File file, Exception exception) {
+				this.bitmap = bitmap;
+				this.file = file;
+				this.exception = exception;
 			}
 		}
 	}
