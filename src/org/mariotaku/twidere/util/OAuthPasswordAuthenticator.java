@@ -34,6 +34,8 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import org.mariotaku.twidere.R;
 import java.io.FileNotFoundException;
+import twitter4j.internal.http.HttpParameter;
+import java.io.OutputStream;
 
 public class OAuthPasswordAuthenticator {
 
@@ -93,15 +95,15 @@ public class OAuthPasswordAuthenticator {
 		try {
 		 final RequestToken request_token = twitter.getOAuthRequestToken(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK);
 			final String oauth_token = request_token.getToken();
-			readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), "GET"));
+			readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), false, null));
 			if (authenticity_token == null) throw new IOException("Cannot get authenticity token.");
 			final Configuration conf = twitter.getConfiguration();
-			final Uri.Builder authorization_url_builder = Uri.parse(conf.getOAuthAuthorizationURL()).buildUpon();
-			authorization_url_builder.appendQueryParameter("authenticity_token", authenticity_token);
-			authorization_url_builder.appendQueryParameter("oauth_token", oauth_token);
-			authorization_url_builder.appendQueryParameter("session[username_or_email]", username);
-			authorization_url_builder.appendQueryParameter("session[password]", password);
-			readCallbackURL(getHTTPContent(authorization_url_builder.build().toString(), "POST"));
+			final HttpParameter[] params = new HttpParameter[4];
+			params[0] = new HttpParameter("authenticity_token", authenticity_token);
+			params[1] = new HttpParameter("oauth_token", oauth_token);
+			params[2] = new HttpParameter("session[username_or_email]", username);
+			params[3] = new HttpParameter("session[password]", password);
+			readCallbackURL(getHTTPContent(conf.getOAuthAuthorizationURL().toString(), true, params));
 			if (callback_url == null) throw new AuthenticationException(context.getString(R.string.cannot_get_callback_url));
 			if (!callback_url.startsWith(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK))
 				throw new IOException("Wrong OAuth callback URL " + callback_url);
@@ -120,7 +122,7 @@ public class OAuthPasswordAuthenticator {
 		}
 	}
 
-	private InputStream getHTTPContent(String url_string, String method) throws IOException {
+	private InputStream getHTTPContent(String url_string, boolean post, HttpParameter[] params) throws IOException {
 		final URL url = parseURL(url_string);
 		final Proxy proxy = getProxy(context);
 		final boolean ignore_ssl_error = preferences.getBoolean(TwitterLoginActivity.PREFERENCE_KEY_IGNORE_SSL_ERROR,
@@ -128,11 +130,18 @@ public class OAuthPasswordAuthenticator {
 		final HttpURLConnection conn = getConnection(url, ignore_ssl_error, proxy, resolver);
 		if (conn == null) return null;
 		conn.addRequestProperty("User-Agent", user_agent);
-		if (method != null) {
-			conn.setRequestMethod(method);
+		conn.setRequestMethod(post ? "POST" : "GET");
+		if (post && params != null) {
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			final String postParam = HttpParameter.encodeParameters(params);
+			final byte[] bytes = postParam.getBytes("UTF-8");
+			conn.setRequestProperty("Content-Length", Integer.toString(bytes.length));
+			conn.setDoOutput(true);
+			final OutputStream os = conn.getOutputStream();
+			os.write(bytes);
+			os.flush();
+			os.close();
 		}
-		conn.setDoInput(true);
-		conn.setDoOutput(false);
 		return conn.getInputStream();
 	}
 
@@ -211,7 +220,7 @@ public class OAuthPasswordAuthenticator {
 		private static final HTMLSchema schema = new HTMLSchema();
 	}
 	
-	public static final class AuthenticationException extends IOException {
+	public static final class AuthenticationException extends Exception {
 		
 		public AuthenticationException() {
 			super();
