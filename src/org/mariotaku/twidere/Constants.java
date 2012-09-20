@@ -470,6 +470,7 @@ public interface Constants extends TwitterConstants {
 	public static final int NOTIFICATION_ID_HOME_TIMELINE = 1;
 	public static final int NOTIFICATION_ID_MENTIONS = 2;
 	public static final int NOTIFICATION_ID_DIRECT_MESSAGES = 3;
+	public static final int NOTIFICATION_ID_DRAFTS = 4;
 
 	public static final String ICON_SPECIAL_TYPE_CUSTOMIZE = "_customize";
 }

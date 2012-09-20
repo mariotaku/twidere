@@ -465,8 +465,12 @@ public class TwidereService extends Service implements Constants {
 		builder.setAutoCancel(true);
 		builder.setWhen(System.currentTimeMillis());
 		builder.setSmallIcon(icon);
-		builder.setDeleteIntent(PendingIntent.getBroadcast(this, 0, delete_intent, PendingIntent.FLAG_UPDATE_CURRENT));
-		builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent, PendingIntent.FLAG_UPDATE_CURRENT));
+		if (delete_intent != null) {
+			builder.setDeleteIntent(PendingIntent.getBroadcast(this, 0, delete_intent, PendingIntent.FLAG_UPDATE_CURRENT));
+		}
+		if (content_intent != null) {			
+			builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent, PendingIntent.FLAG_UPDATE_CURRENT));
+		}
 		int defaults = 0;
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
 			builder.setSound(Uri.parse(mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE,
@@ -2819,6 +2823,11 @@ public class TwidereService extends Service implements Constants {
 					values.put(Drafts.IMAGE_URI, parseString(image_uri));
 				}
 				mResolver.insert(Drafts.CONTENT_URI, values);
+				final String title = getString(R.string.tweet_not_sent);
+				final String message = getString(R.string.tweet_not_sent_summary);
+				final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
+				final Notification notification = buildNotification(title, message, R.drawable.ic_stat_tweet, intent, null);
+				mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
 			}
 			super.onPostExecute(result);
 			if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {

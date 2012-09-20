@@ -22,6 +22,7 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
+import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
@@ -525,7 +526,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
 			final Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(twitter, mBrowserUserAgent);
+			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(twitter, getProxy(TwitterLoginActivity.this), mBrowserUserAgent);
 			try {
 				final AccessToken access_token = authenticator.getOAuthAccessToken(mUsername, mPassword);
 				if (access_token.getUserId() > 0) {

@@ -4,7 +4,6 @@ import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -78,15 +77,13 @@ public class OAuthPasswordAuthenticator implements Constants {
 		}
 	};
 
-	public OAuthPasswordAuthenticator(Twitter twitter, String user_agent) {
+	public OAuthPasswordAuthenticator(Twitter twitter, Proxy proxy, String user_agent) {
 		final Configuration conf = twitter.getConfiguration();
 		this.twitter = twitter;
 		this.user_agent = user_agent;
+		this.proxy = proxy;
 		resolver = conf.getHostAddressResolver();
 		ignore_ssl_error = conf.isSSLErrorIgnored();
-		final String proxy_host = conf.getHttpProxyHost();
-		final SocketAddress addr = !isNullOrEmpty(proxy_host) ? InetSocketAddress.createUnresolved(proxy_host, conf.getHttpProxyPort()) : null;
-		proxy = conf.isProxyConfigured() && addr != null ? Proxy.NO_PROXY : new Proxy(Proxy.Type.HTTP, addr);
 	}
 
 	public AccessToken getOAuthAccessToken(String username, String password) throws AuthenticationException, OAuthPasswordAuthenticator.CallbackURLException {
