@@ -403,12 +403,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+		if (event == null) return false;
 		switch (event.getKeyCode()) {
 			case KeyEvent.KEYCODE_ENTER: {
 				send();
 				return true;
 			}
-
 		}
 		return false;
 	}

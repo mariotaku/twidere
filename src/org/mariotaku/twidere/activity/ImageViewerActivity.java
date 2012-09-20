@@ -150,7 +150,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 	@Override
 	public void onLoadFinished(Loader<ImageLoader.Result> loader, ImageLoader.Result data) {
-		if (data.bitmap != null) {
+		if (data !=null && data.bitmap != null) {
 			mImageLoading = false;
 			mImageView.setBitmap(data.bitmap);
 			mImageFile = data.file;
@@ -161,7 +161,9 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			mImageFile = null;
 			mImageLoaded = false;
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
-			showErrorToast(this, data.exception, true);
+			if (data != null) {
+				showErrorToast(this, data.exception, true);
+			}
 		}
 		mProgress.setVisibility(View.GONE);
 	}
@@ -328,7 +330,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				final File file = new File(uri.getPath());
 				return new Result(decodeFile(file), file, null);
 			}
-			return null;
+			return new Result(null, null, null);
 		}
 
 		@Override

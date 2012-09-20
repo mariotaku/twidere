@@ -525,8 +525,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			setAPI(cb);
 			final Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(TwitterLoginActivity.this,
-					mBrowserUserAgent, twitter);
+			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(twitter, mBrowserUserAgent);
 			try {
 				final AccessToken access_token = authenticator.getOAuthAccessToken(mUsername, mPassword);
 				if (access_token.getUserId() > 0) {
