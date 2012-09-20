@@ -2833,7 +2833,13 @@ public class TwidereService extends Service implements Constants {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {
 				final long[] activated_ids = getActivatedAccountIds(TwidereService.this);
 				getHomeTimeline(activated_ids, null);
-				getMentions(activated_ids, null);
+				if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
+					getMentions(account_ids, null);
+				}
+				if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
+					getReceivedDirectMessages(account_ids, null);
+					//getSentDirectMessages(account_ids, null);
+				}
 			}
 		}
 
