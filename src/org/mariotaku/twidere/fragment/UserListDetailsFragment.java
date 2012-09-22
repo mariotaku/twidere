@@ -79,7 +79,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -647,10 +646,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListMembersAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 2;
 		}
-		
+
 		@Override
 		public String getName() {
 			return getString(R.string.list_members);
@@ -671,10 +671,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListSubscribersAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 3;
 		}
-		
+
 		@Override
 		public String getName() {
 			return getString(R.string.list_subscribers);
@@ -695,10 +696,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListTimelineAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 1;
 		}
-		
+
 		@Override
 		public String getName() {
 			return getString(R.string.list_timeline);

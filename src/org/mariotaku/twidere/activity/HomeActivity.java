@@ -259,7 +259,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
 				mService.getReceivedDirectMessages(account_ids, null);
-				//mService.getSentDirectMessages(account_ids, null);
+				// mService.getSentDirectMessages(account_ids, null);
 			}
 		}
 	}

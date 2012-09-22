@@ -325,7 +325,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		out.writeString(location_string);
 	}
 
-	private long getTime(Date date) {
+	private static long getTime(Date date) {
 		return date != null ? date.getTime() : 0;
 	}
 }
