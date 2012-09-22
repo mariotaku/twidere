@@ -332,5 +332,8 @@
 	<string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> retweeted your tweet.</string>
 	<string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others retweeted your tweet.</string>
 	<string name="cannot_get_callback_url">Cannot get callback, please check your user name and password.</string>
+	<string name="tweet_not_sent">Tweet not sent.</string>
+	<string name="tweet_not_sent_summary">Tweet not sent, and saved to drafts.</string>
+	<string name="incoming_friendships">Pending follow requests</string>
 
 </resources>

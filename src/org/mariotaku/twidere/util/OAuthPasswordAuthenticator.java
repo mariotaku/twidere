@@ -1,22 +1,27 @@
 package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.Utils.getConnection;
-import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.TwitterLoginActivity;
-import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.Constants;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -29,20 +34,15 @@ import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
-import twitter4j.internal.http.HttpParameter;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.Uri;
 
-public class OAuthPasswordAuthenticator {
 
-	private final SharedPreferences preferences;
+public class OAuthPasswordAuthenticator implements Constants {
+
+	private final boolean ignore_ssl_error;
 	private final HostAddressResolver resolver;
-
-	private final Context context;
 	private final Twitter twitter;
-
 	private final String user_agent;
+	private final Proxy proxy;
 
 	private String authenticity_token, callback_url;
 
@@ -77,21 +77,21 @@ public class OAuthPasswordAuthenticator {
 		}
 	};
 
-	public OAuthPasswordAuthenticator(Context context, String user_agent, Twitter twitter) {
-		this.context = context;
-		preferences = context.getSharedPreferences(TwitterLoginActivity.SHARED_PREFERENCES_NAME,
-				TwitterLoginActivity.MODE_PRIVATE);
-		resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
-		this.user_agent = user_agent;
+	public OAuthPasswordAuthenticator(Twitter twitter, Proxy proxy, String user_agent) {
+		final Configuration conf = twitter.getConfiguration();
 		this.twitter = twitter;
+		this.user_agent = user_agent;
+		this.proxy = proxy;
+		resolver = conf.getHostAddressResolver();
+		ignore_ssl_error = conf.isSSLErrorIgnored();
 	}
 
-	public AccessToken getOAuthAccessToken(String username, String password) throws AuthenticationException {
+	public AccessToken getOAuthAccessToken(String username, String password) throws AuthenticationException, OAuthPasswordAuthenticator.CallbackURLException {
 		authenticity_token = null;
 		callback_url = null;
 		try {
 			final RequestToken request_token = twitter
-					.getOAuthRequestToken(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK);
+					.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
 			final String oauth_token = request_token.getToken();
 			readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), false, null));
 			if (authenticity_token == null) throw new IOException("Cannot get authenticity token.");
@@ -103,11 +103,11 @@ public class OAuthPasswordAuthenticator {
 			params[3] = new HttpParameter("session[password]", password);
 			readCallbackURL(getHTTPContent(conf.getOAuthAuthorizationURL().toString(), true, params));
 			if (callback_url == null)
-				throw new AuthenticationException(context.getString(R.string.cannot_get_callback_url));
-			if (!callback_url.startsWith(TwitterLoginActivity.DEFAULT_OAUTH_CALLBACK))
+				throw new CallbackURLException();
+			if (!callback_url.startsWith(DEFAULT_OAUTH_CALLBACK))
 				throw new IOException("Wrong OAuth callback URL " + callback_url);
-			final String oauth_verifier = Uri.parse(callback_url)
-					.getQueryParameter(TwitterLoginActivity.OAUTH_VERIFIER);
+			final String oauth_verifier = parseParameters(callback_url.substring(callback_url.indexOf("?") + 1))
+				.get(OAUTH_VERIFIER);
 			if (isNullOrEmpty(oauth_verifier)) throw new IOException("Cannot get OAuth verifier.");
 			return twitter.getOAuthAccessToken(request_token, oauth_verifier);
 		} catch (final IOException e) {
@@ -121,9 +121,6 @@ public class OAuthPasswordAuthenticator {
 
 	private InputStream getHTTPContent(String url_string, boolean post, HttpParameter[] params) throws IOException {
 		final URL url = parseURL(url_string);
-		final Proxy proxy = getProxy(context);
-		final boolean ignore_ssl_error = preferences.getBoolean(TwitterLoginActivity.PREFERENCE_KEY_IGNORE_SSL_ERROR,
-				false);
 		final HttpURLConnection conn = getConnection(url, ignore_ssl_error, proxy, resolver);
 		if (conn == null) return null;
 		conn.addRequestProperty("User-Agent", user_agent);
@@ -161,24 +158,40 @@ public class OAuthPasswordAuthenticator {
 	private void setAuthenticityToken(String authenticity_token) {
 		this.authenticity_token = authenticity_token;
 	}
+	
+	public static final class CallbackURLException extends AuthenticationException {
 
-	public static final class AuthenticationException extends Exception {
+	}
+
+	public static class AuthenticationException extends Exception {
 
 		private static final long serialVersionUID = -5629194721838256378L;
 
-		public AuthenticationException() {
+		AuthenticationException() {
 			super();
 		}
 
-		public AuthenticationException(Exception cause) {
+		AuthenticationException(Exception cause) {
 			super(cause);
 		}
 
-		public AuthenticationException(String message) {
+		AuthenticationException(String message) {
 			super(message);
 		}
 	}
 
+	private static Map<String, String> parseParameters(String raw_params_string) {
+		if (raw_params_string == null) return Collections.emptyMap();
+		final Map<String, String> params_map = new HashMap<String, String>();
+		final String[] raw_params_array = raw_params_string.split("&");
+		for (String raw_param : raw_params_array) {
+			final String[] raw_param_segment = raw_param.split("=");
+			if (raw_param_segment.length != 2) continue;
+			params_map.put(URLDecoder.decode(raw_param_segment[0]), URLDecoder.decode(raw_param_segment[1]));
+		}
+		return params_map;
+	}
+	
 	static class DummyContentHandler implements ContentHandler {
 		@Override
 		public void characters(char[] ch, int start, int length) {
@@ -232,5 +245,54 @@ public class OAuthPasswordAuthenticator {
 	 */
 	static final class HtmlParser {
 		private static final HTMLSchema schema = new HTMLSchema();
+	}
+	
+	static final class HttpParameter {
+		final String name;
+		final String value;
+
+
+		HttpParameter(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		static String encode(String value) {
+			String encoded = null;
+			try {
+				encoded = URLEncoder.encode(value, "UTF-8");
+			} catch (final UnsupportedEncodingException ignore) {
+			}
+			final StringBuffer buf = new StringBuffer(encoded.length());
+			char focus;
+			for (int i = 0; i < encoded.length(); i++) {
+				focus = encoded.charAt(i);
+				if (focus == '*') {
+					buf.append("%2A");
+				} else if (focus == '+') {
+					buf.append("%20");
+				} else if (focus == '%' && i + 1 < encoded.length() && encoded.charAt(i + 1) == '7'
+						   && encoded.charAt(i + 2) == 'E') {
+					buf.append('~');
+					i += 2;
+				} else {
+					buf.append(focus);
+				}
+			}
+			return buf.toString();
+		}
+
+		static String encodeParameters(HttpParameter[] httpParams) {
+			if (null == httpParams) return "";
+			final StringBuffer buf = new StringBuffer();
+			for (int j = 0; j < httpParams.length; j++) {
+				if (j != 0) {
+					buf.append("&");
+				}
+				buf.append(encode(httpParams[j].name)).append("=").append(encode(httpParams[j].value));
+			}
+			return buf.toString();
+		}
+
 	}
 }

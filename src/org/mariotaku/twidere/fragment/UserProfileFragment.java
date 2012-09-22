@@ -37,6 +37,7 @@ import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedUserName;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
+import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
 import static org.mariotaku.twidere.util.Utils.openSavedSearches;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserBlocks;
@@ -57,6 +58,7 @@ import java.net.URL;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -133,7 +135,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mTweetsContainer, mFollowersContainer, mFriendsContainer, mProfileNameContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
-	private UserProfileActionAdapter mAdapter;
+	private ListActionAdapter mAdapter;
 
 	private ListView mListView;
 	private View mHeaderView;
@@ -219,20 +221,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (data == null) return;
 			if (data.value != null && data.value.getId() > 0) {
 				final User user = data.value;
-				final ContentResolver resolver = getContentResolver();
 				setListShown(true);
 				changeUser(mAccountId, user);
 				mErrorRetryContainer.setVisibility(View.GONE);
-				if (isMyAccount(getActivity(), user.getId())) {
-					final ContentValues values = new ContentValues();
-					final URL profile_image_url = user.getProfileImageURL();
-					if (profile_image_url != null) {
-						values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url.toString());
-					}
-					values.put(Accounts.USERNAME, user.getScreenName());
-					final String where = Accounts.USER_ID + " = " + user.getId();
-					resolver.update(Accounts.CONTENT_URI, values, where, null);
-				}
 			} else {
 				mListContainer.setVisibility(View.GONE);
 				mErrorRetryContainer.setVisibility(View.VISIBLE);
@@ -304,6 +295,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFriendship = null;
 		mUserId = -1;
 		mAccountId = -1;
+		mAdapter.clear();
 		if (user == null || user.getId() <= 0 || getActivity() == null
 				|| !isMyActivatedAccount(getActivity(), account_id)) return;
 		final LoaderManager lm = getLoaderManager();
@@ -364,6 +356,27 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 						: profile_image_url_string), mProfileImageView);
 		// }
 		mUser = user;
+		if (isMyAccount(getActivity(), user.getId())) {
+			final ContentResolver resolver = getContentResolver();
+			final ContentValues values = new ContentValues();
+			final URL profile_image_url = user.getProfileImageURL();
+			if (profile_image_url != null) {
+				values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url.toString());
+			}
+			values.put(Accounts.USERNAME, user.getScreenName());
+			final String where = Accounts.USER_ID + " = " + user.getId();
+			resolver.update(Accounts.CONTENT_URI, values, where, null);
+		}
+		mAdapter.add(new FavoritesAction());
+		mAdapter.add(new UserMentionsAction());
+		mAdapter.add(new UserListTypesAction());
+		if (user.getId() == mAccountId) {
+			mAdapter.add(new SavedSearchesAction());
+			if (user.isProtected()) {
+				mAdapter.add(new IncomingFriendshipsAction());
+			}
+			mAdapter.add(new UserBlocksAction());
+		}
 		mAdapter.notifyDataSetChanged();
 		getFriendship();
 	}
@@ -409,14 +422,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		mProfileImageLoader = getApplication().getProfileImageLoader();
-		mAdapter = new UserProfileActionAdapter(getActivity());
-		mAdapter.add(new FavoritesAction());
-		mAdapter.add(new UserMentionsAction());
-		mAdapter.add(new UserListTypesAction());
-		if (isMyActivatedAccount(getActivity(), user_id) || isMyActivatedUserName(getActivity(), screen_name)) {
-			mAdapter.add(new SavedSearchesAction());
-			mAdapter.add(new UserBlocksAction());
-		}
+		mAdapter = new ListActionAdapter(getActivity());
 		mProfileImageContainer.setOnClickListener(this);
 		mProfileImageContainer.setOnLongClickListener(this);
 		mNameContainer.setOnClickListener(this);
@@ -988,6 +994,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	class FavoritesAction extends ListAction {
 
+		public long getId() {
+			return 1;
+		}
+
 		@Override
 		public String getName() {
 			return getString(R.string.favorites);
@@ -1007,7 +1017,31 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
+
+	class IncomingFriendshipsAction extends ListAction {
+
+		public long getId() {
+			return 5;
+		}
+
+		@Override
+		public String getName() {
+			return getString(R.string.incoming_friendships);
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null) return;
+			openIncomingFriendships(getActivity(), mAccountId);
+		}
+
+	}
+	
 	class SavedSearchesAction extends ListAction {
+
+		public long getId() {
+			return 4;
+		}
 
 		@Override
 		public String getName() {
@@ -1024,6 +1058,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	class UserBlocksAction extends ListAction {
 
+		public long getId() {
+			return 6;
+		}
+		
 		@Override
 		public String getName() {
 			return getString(R.string.blocked_users);
@@ -1071,6 +1109,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	class UserListTypesAction extends ListAction {
 
+		public long getId() {
+			return 3;
+		}
+
 		@Override
 		public String getName() {
 			return getString(R.string.user_list);
@@ -1086,6 +1128,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	class UserMentionsAction extends ListAction {
 
+		public long getId() {
+			return 2;
+		}
+
 		@Override
 		public String getName() {
 			return getString(R.string.user_mentions);
@@ -1099,29 +1145,4 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	static class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
-
-		public UserProfileActionAdapter(Context context) {
-			super(context, R.layout.user_action_list_item, android.R.id.text1);
-		}
-
-		public ListAction findItem(long id) {
-			final int count = getCount();
-			for (int i = 0; i < count; i++) {
-				if (id == getItemId(i)) return getItem(i);
-			}
-			return null;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			final View view = super.getView(position, convertView, parent);
-			final TextView summary_view = (TextView) view.findViewById(android.R.id.text2);
-			final String summary = getItem(position).getSummary();
-			summary_view.setText(summary);
-			summary_view.setVisibility(!isNullOrEmpty(summary) ? View.VISIBLE : View.GONE);
-			return view;
-		}
-
-	}
 }

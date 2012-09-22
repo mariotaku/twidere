@@ -87,6 +87,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ActivitiesAboutMeFragment;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
+import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
@@ -271,6 +272,7 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SAVED_SEARCHES, null, LINK_ID_SAVED_SEARCHES);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_RETWEETED_TO_ME, null, LINK_ID_RETWEETED_TO_ME);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_MENTIONS, null, LINK_ID_USER_MENTIONS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_INCOMING_FRIENDSHIPS, null, LINK_ID_INCOMING_FRIENDSHIPS);
 
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_CREATED, UserListCreatedFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERS, UserListMembersFragment.class);
@@ -1777,6 +1779,24 @@ public final class Utils implements Constants {
 					builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
 				}
 			}
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+	
+	public static void openIncomingFriendships(Activity activity, long account_id) {
+		if (activity == null) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new IncomingFriendshipsFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_INCOMING_FRIENDSHIPS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}

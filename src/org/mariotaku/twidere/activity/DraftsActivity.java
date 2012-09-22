@@ -195,6 +195,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	public void onStart() {
 		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
+		mService.clearNotification(NOTIFICATION_ID_DRAFTS);
 		super.onStart();
 	}
 
@@ -223,7 +224,6 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 		intent.putExtras(bundle);
 		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
 		startActivityForResult(intent, REQUEST_COMPOSE);
-
 	}
 
 	private void sendDraft(DraftItem draft) {

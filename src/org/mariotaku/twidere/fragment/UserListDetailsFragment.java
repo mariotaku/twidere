@@ -38,6 +38,7 @@ import static org.mariotaku.twidere.util.Utils.showErrorToast;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
@@ -100,7 +101,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer;
 	private Button mFollowMoreButton, mRetryButton;
-	private UserProfileActionAdapter mAdapter;
+	private ListActionAdapter mAdapter;
 	private ListView mListView;
 	private View mHeaderView;
 
@@ -239,7 +240,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		mProfileImageLoader = getApplication().getProfileImageLoader();
-		mAdapter = new UserProfileActionAdapter(getActivity());
+		mAdapter = new ListActionAdapter(getActivity());
 		mAdapter.add(new ListTimelineAction());
 		mAdapter.add(new ListMembersAction());
 		mAdapter.add(new ListSubscribersAction());
@@ -646,6 +647,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListMembersAction extends ListAction {
 
+		public long getId() {
+			return 2;
+		}
+		
 		@Override
 		public String getName() {
 			return getString(R.string.list_members);
@@ -666,6 +671,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListSubscribersAction extends ListAction {
 
+		public long getId() {
+			return 3;
+		}
+		
 		@Override
 		public String getName() {
 			return getString(R.string.list_subscribers);
@@ -686,6 +695,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListTimelineAction extends ListAction {
 
+		public long getId() {
+			return 1;
+		}
+		
 		@Override
 		public String getName() {
 			return getString(R.string.list_timeline);
@@ -709,29 +722,4 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 	}
 
-	class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
-
-		public UserProfileActionAdapter(Context context) {
-			super(context, R.layout.user_action_list_item, android.R.id.text1);
-		}
-
-		public ListAction findItem(long id) {
-			final int count = getCount();
-			for (int i = 0; i < count; i++) {
-				if (id == getItemId(i)) return getItem(i);
-			}
-			return null;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			final View view = super.getView(position, convertView, parent);
-			final TextView summary_view = (TextView) view.findViewById(android.R.id.text2);
-			final String summary = getItem(position).getSummary();
-			summary_view.setText(summary);
-			summary_view.setVisibility(!isNullOrEmpty(summary) ? View.VISIBLE : View.GONE);
-			return view;
-		}
-
-	}
 }
