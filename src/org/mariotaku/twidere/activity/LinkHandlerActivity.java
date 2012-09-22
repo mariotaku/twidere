@@ -58,6 +58,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.Window;
+import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 
 public class LinkHandlerActivity extends MultiSelectActivity {
 
@@ -376,6 +377,11 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						finish();
 						return false;
 					}
+					break;
+				}
+				case LINK_ID_INCOMING_FRIENDSHIPS: {
+					setTitle(R.string.incoming_friendships);
+					fragment = new IncomingFriendshipsFragment();
 					break;
 				}
 				default: {

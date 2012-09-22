@@ -20,6 +20,9 @@
 package org.mariotaku.twidere.model;
 
 public abstract class ListAction {
+
+	public abstract long getId();
+ 
 	public abstract String getName();
 
 	public String getSummary() {

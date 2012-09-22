@@ -5,6 +5,7 @@ import static org.mariotaku.twidere.util.Utils.openUserListMemberships;
 import static org.mariotaku.twidere.util.Utils.openUserListSubscriptions;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
 
@@ -18,7 +19,7 @@ import android.widget.ListView;
 
 public class UserListTypesFragment extends BaseListFragment implements OnItemClickListener, Panes.Left {
 
-	private UserProfileActionAdapter mAdapter;
+	private ListActionAdapter mAdapter;
 	private ListView mListView;
 	private long mAccountId, mUserId;
 	private String mScreenName;
@@ -32,7 +33,7 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 			mUserId = args.getLong(INTENT_KEY_USER_ID, -1);
 			mScreenName = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
-		mAdapter = new UserProfileActionAdapter(getActivity());
+		mAdapter = new ListActionAdapter(getActivity());
 		mAdapter.add(new UserCreatedListAction());
 		mAdapter.add(new UserFollowedListAction());
 		mAdapter.add(new ListsFollowingUserAction());
@@ -53,6 +54,10 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 
 	class ListsFollowingUserAction extends ListAction {
 
+		public long getId() {
+			return 3;
+		}
+		
 		@Override
 		public String getName() {
 			return getString(R.string.list_following_user);
@@ -66,6 +71,10 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 
 	class UserCreatedListAction extends ListAction {
 
+		public long getId() {
+			return 1;
+		}
+		
 		@Override
 		public String getName() {
 			return getString(R.string.list_created_by_user);
@@ -79,6 +88,10 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 
 	class UserFollowedListAction extends ListAction {
 
+		public long getId() {
+			return 2;
+		}
+
 		@Override
 		public String getName() {
 			return getString(R.string.list_user_followed);
@@ -90,18 +103,4 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 		}
 	}
 
-	class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
-
-		public UserProfileActionAdapter(Context context) {
-			super(context, R.layout.user_action_list_item, android.R.id.text1);
-		}
-
-		public ListAction findItem(long id) {
-			final int count = getCount();
-			for (int i = 0; i < count; i++) {
-				if (id == getItemId(i)) return getItem(i);
-			}
-			return null;
-		}
-	}
 }

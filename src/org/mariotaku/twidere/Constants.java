@@ -96,6 +96,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_TRENDS = "trends";
 	public static final String AUTHORITY_USER_MENTIONS = "user_mentions";
 	public static final String AUTHORITY_ACTIVITIES_ABOUT_ME = "activities_about_me";
+	public static final String AUTHORITY_INCOMING_FRIENDSHIPS = "incoming_friendships";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -458,6 +459,7 @@ public interface Constants extends TwitterConstants {
 	public static final int LINK_ID_SAVED_SEARCHES = 19;
 	public static final int LINK_ID_RETWEETED_TO_ME = 20;
 	public static final int LINK_ID_USER_MENTIONS = 21;
+	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;
 
 	public static final String DIR_NAME_PROFILE_IMAGES = "profile_images";
 	public static final String DIR_NAME_CACHED_THUMBNAILS = "cached_thumbnails";

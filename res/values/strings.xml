@@ -334,5 +334,6 @@
 	<string name="cannot_get_callback_url">Cannot get callback, please check your user name and password.</string>
 	<string name="tweet_not_sent">Tweet not sent.</string>
 	<string name="tweet_not_sent_summary">Tweet not sent, and saved to drafts.</string>
+	<string name="incoming_friendships">Pending follow requests</string>
 
 </resources>

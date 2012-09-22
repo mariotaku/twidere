@@ -481,6 +481,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			} else if (result.already_logged_in) {
 				Toast.makeText(TwitterLoginActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
 			} else {
+				result.exception.printStackTrace();
 				showErrorToast(TwitterLoginActivity.this, result.exception, true);
 			}
 			super.onPostExecute(result);
