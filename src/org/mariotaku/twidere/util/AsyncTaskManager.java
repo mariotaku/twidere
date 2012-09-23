@@ -47,7 +47,7 @@ public class AsyncTaskManager {
 		final ManagedAsyncTask task = findTask(hashCode);
 		if (task != null) {
 			task.cancel(mayInterruptIfRunning);
-			mTasks.remove(hashCode);
+			mTasks.remove(task);
 			return true;
 		}
 		return false;
