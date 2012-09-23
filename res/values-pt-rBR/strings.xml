@@ -96,8 +96,8 @@
   <string name="display_profile_image">Exibir a imagem de perfil</string>
   <string name="image_load_summary">desativá-lo irá aumentar a velocidade de carregamento da lista e reduzir o uso de tráfego.</string>
   <string name="in_reply_to">Em resposta de <xliff:g id="user_name">%s</xliff:g></string>
-  <string name="retweeted_by"><xliff:g id="user_name"> %s </xliff:g> retweetou isso</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name"> %1$ s </xliff:g> e <xliff:g id="retweet_count"> %2$ d </xliff:g> outros retweetaram isso</string>
+  <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweetou isso</string>
+  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> e <xliff:g id="retweet_count">%2$d</xliff:g> outros retweetaram isso</string>
   <string name="reply_to">Responder para <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Citação <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>

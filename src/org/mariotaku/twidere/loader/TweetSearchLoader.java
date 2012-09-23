@@ -77,6 +77,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 				Collections.sort(data);
 				return data;
 			} catch (final IOException e) {
+			} catch (final ConcurrentModificationException e) {			
 			} catch (final ClassNotFoundException e) {
 			}
 		}
