@@ -51,12 +51,12 @@ public class WebViewFragment extends BaseFragment {
 		return mWebView;
 	}
 
-	public final void loadUrl(String url) {
+	public final void loadUrl(final String url) {
 		mWebView.loadUrl(url == null ? "about:blank" : url);
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mWebView = (WebView) getView().findViewById(R.id.webview);
 		mWebView.setWebViewClient(new DefaultWebViewClient(getActivity()));
@@ -70,26 +70,26 @@ public class WebViewFragment extends BaseFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.webview, container, false);
 	}
 
-	public final void setWebViewClient(WebViewClient client) {
+	public final void setWebViewClient(final WebViewClient client) {
 		mWebView.setWebViewClient(client);
 	}
 
 	public static class DefaultWebViewClient extends WebViewClient {
 
-		private FragmentActivity mActivity;
-		private SharedPreferences mPreferences;
+		private final FragmentActivity mActivity;
+		private final SharedPreferences mPreferences;
 
-		public DefaultWebViewClient(FragmentActivity activity) {
+		public DefaultWebViewClient(final FragmentActivity activity) {
 			mActivity = activity;
 			mPreferences = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		}
 
 		@Override
-		public void onPageFinished(WebView view, String url) {
+		public void onPageFinished(final WebView view, final String url) {
 			super.onPageFinished(view, url);
 			if (mActivity instanceof BaseActivity) {
 				mActivity.setTitle(view.getTitle());
@@ -98,7 +98,7 @@ public class WebViewFragment extends BaseFragment {
 		}
 
 		@Override
-		public void onPageStarted(WebView view, String url, Bitmap favicon) {
+		public void onPageStarted(final WebView view, final String url, final Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
 			if (mActivity instanceof BaseActivity) {
 				((BaseActivity) mActivity).setSupportProgressBarIndeterminateVisibility(true);
@@ -107,7 +107,7 @@ public class WebViewFragment extends BaseFragment {
 
 		@TargetApi(8)
 		@Override
-		public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+		public void onReceivedSslError(final WebView view, final SslErrorHandler handler, final SslError error) {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false)) {
 				handler.proceed();
 			} else {
@@ -116,7 +116,7 @@ public class WebViewFragment extends BaseFragment {
 		}
 
 		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+		public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
 			try {
 				mActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 			} catch (final ActivityNotFoundException e) {

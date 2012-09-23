@@ -284,7 +284,7 @@ public final class TweetStore implements Constants {
 			public static final int IDX_CONVERSATION_ID = 9;
 			public static final int IDX_MESSAGE_TIMESTAMP = 10;
 
-			public static String buildSQL(String where) {
+			public static String buildSQL(final String where) {
 				final StringBuilder builder = new StringBuilder();
 				builder.append("SELECT " + _ID + ", MAX(" + MAX_TIMESTAMP_TEMP + ") AS" + MAX_TIMESTAMP + ", "
 						+ MAX_STATUS_ID + ", " + ACCOUNT_ID + ", " + IS_OUTGOING + ", " + NAME + ", " + SCREEN_NAME

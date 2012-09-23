@@ -37,7 +37,7 @@ public class MapViewerActivity extends FragmentActivity implements Constants, On
 	private Fragment mFragment;
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.close: {
 				onBackPressed();
@@ -51,7 +51,7 @@ public class MapViewerActivity extends FragmentActivity implements Constants, On
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map_viewer);
 		final Uri uri = getIntent().getData();

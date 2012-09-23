@@ -20,17 +20,17 @@ import android.widget.Toast;
 
 public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListener {
 
-	private Menu mMenu;
+	private final Menu mMenu;
 	private final Context mContext;
 	private OnMenuItemClickListener mItemClickListener;
 
 	private PopupMenu mPopupMenu;
 
-	public MenuBar(Context context) {
+	public MenuBar(final Context context) {
 		this(context, null);
 	}
 
-	public MenuBar(Context context, AttributeSet attrs) {
+	public MenuBar(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		mContext = context;
 		mMenu = new MenuImpl(context);
@@ -44,7 +44,7 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 		return new MenuInflater(mContext);
 	}
 
-	public void inflate(int menuRes) {
+	public void inflate(final int menuRes) {
 		mMenu.clear();
 		new MenuInflater(mContext).inflate(menuRes, mMenu);
 	}
@@ -59,7 +59,7 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		if (mItemClickListener != null) return mItemClickListener.onMenuItemClick(item);
 		return false;
 	}
@@ -69,7 +69,7 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 	 * 
 	 * @param listener Listener
 	 */
-	public void setOnMenuItemClickListener(OnMenuItemClickListener listener) {
+	public void setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
 		mItemClickListener = listener;
 	}
 
@@ -108,7 +108,7 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 		actionButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View view) {
+			public void onClick(final View view) {
 				if (!item.isEnabled()) return;
 				if (item.hasSubMenu()) {
 					mPopupMenu = PopupMenu.getInstance(mContext, view);
@@ -125,7 +125,7 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 		actionButton.setOnLongClickListener(new View.OnLongClickListener() {
 
 			@Override
-			public boolean onLongClick(View v) {
+			public boolean onLongClick(final View v) {
 				if (item.getItemId() == android.R.id.home) return false;
 
 				final Toast t = Toast.makeText(mContext, item.getTitle(), Toast.LENGTH_SHORT);

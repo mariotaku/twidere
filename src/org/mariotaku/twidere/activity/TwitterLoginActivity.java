@@ -99,27 +99,27 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	private AbstractTask<?> mTask;
 
-	private Handler mBackPressedHandler = new Handler() {
+	private final Handler mBackPressedHandler = new Handler() {
 
 		@Override
-		public void handleMessage(Message msg) {
+		public void handleMessage(final Message msg) {
 			mBackPressed = false;
 		}
 
 	};
 
 	@Override
-	public void afterTextChanged(Editable s) {
+	public void afterTextChanged(final Editable s) {
 
 	}
 
 	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+	public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
 
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_EDIT_API:
 				if (resultCode == RESULT_OK) {
@@ -176,7 +176,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	@Override
-	public void onClick(View v) {
+	public void onClick(final View v) {
 		switch (v.getId()) {
 			case R.id.sign_up: {
 				final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(TWITTER_SIGNUP_URL));
@@ -204,7 +204,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		mBrowserUserAgent = getBrowserUserAgent(this);
@@ -268,7 +268,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_login, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -282,7 +282,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 
 		Intent intent = new Intent();
 
@@ -319,7 +319,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		saveEditedText();
 		outState.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
 		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
@@ -335,11 +335,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	@Override
-	public void onTextChanged(CharSequence s, int start, int before, int count) {
+	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
 		setSignInButton();
 	}
 
-	private void analyseUserProfileColor(String url_string) {
+	private void analyseUserProfileColor(final String url_string) {
 		final boolean ignore_ssl_error = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE).getBoolean(
 				PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 		try {
@@ -372,7 +372,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 	}
 
-	private ConfigurationBuilder setAPI(ConfigurationBuilder cb) {
+	private ConfigurationBuilder setAPI(final ConfigurationBuilder cb) {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
@@ -436,7 +436,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	private abstract class AbstractTask<Result> extends AsyncTask<Void, Void, Result> {
 
 		@Override
-		protected void onPostExecute(Result result) {
+		protected void onPostExecute(final Result result) {
 			setSupportProgressBarIndeterminateVisibility(false);
 			mTask = null;
 			mEditPassword.setEnabled(true);
@@ -463,12 +463,12 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	class LoginTask extends AbstractTask<LoginTask.LoginResponse> {
 
 		@Override
-		protected LoginResponse doInBackground(Void... params) {
+		protected LoginResponse doInBackground(final Void... params) {
 			return doAuth();
 		}
 
 		@Override
-		protected void onPostExecute(LoginResponse result) {
+		protected void onPostExecute(final LoginResponse result) {
 
 			if (result.succeed) {
 				final Intent intent = new Intent(INTENT_ACTION_HOME);
@@ -637,7 +637,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			return authOAuth();
 		}
 
-		private String parseString(Object obj) {
+		private String parseString(final Object obj) {
 			if (obj == null) return null;
 			return obj.toString();
 		}
@@ -647,7 +647,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			public final boolean already_logged_in, succeed;
 			public final Exception exception;
 
-			public LoginResponse(boolean already_logged_in, boolean succeed, int auth_type, Exception exception) {
+			public LoginResponse(final boolean already_logged_in, final boolean succeed, final int auth_type,
+					final Exception exception) {
 				this.already_logged_in = already_logged_in;
 				this.succeed = succeed;
 				this.exception = exception;

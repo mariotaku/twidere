@@ -36,7 +36,7 @@ public class DirectMessageEntryViewHolder {
 	private float text_size;
 	private boolean account_color_enabled;
 
-	public DirectMessageEntryViewHolder(View view, Context context) {
+	public DirectMessageEntryViewHolder(final View view, final Context context) {
 		content = (ColorLabelRelativeLayout) view;
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
@@ -44,18 +44,18 @@ public class DirectMessageEntryViewHolder {
 		time = (TextView) view.findViewById(R.id.time);
 	}
 
-	public void setAccountColor(int color) {
+	public void setAccountColor(final int color) {
 		content.drawRight(account_color_enabled ? color : Color.TRANSPARENT);
 	}
 
-	public void setAccountColorEnabled(boolean enabled) {
+	public void setAccountColorEnabled(final boolean enabled) {
 		account_color_enabled = enabled;
 		if (!account_color_enabled) {
 			content.drawRight(Color.TRANSPARENT);
 		}
 	}
 
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
 			text.setTextSize(text_size);
@@ -64,7 +64,7 @@ public class DirectMessageEntryViewHolder {
 		}
 	}
 
-	public void setUserColor(int color) {
+	public void setUserColor(final int color) {
 		content.drawLeft(color);
 	}
 }

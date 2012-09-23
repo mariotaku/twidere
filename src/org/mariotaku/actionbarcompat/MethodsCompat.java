@@ -11,7 +11,7 @@ final class MethodsCompat {
 	}
 
 	@TargetApi(11)
-	public static void invalidateOptionsMenu(Activity activity) {
+	public static void invalidateOptionsMenu(final Activity activity) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			activity.invalidateOptionsMenu();
 		}

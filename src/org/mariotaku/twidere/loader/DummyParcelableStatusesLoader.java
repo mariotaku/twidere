@@ -9,7 +9,7 @@ import android.content.Context;
 
 public final class DummyParcelableStatusesLoader extends ParcelableStatusesLoader {
 
-	public DummyParcelableStatusesLoader(Context context, long account_id, List<ParcelableStatus> data) {
+	public DummyParcelableStatusesLoader(final Context context, final long account_id, final List<ParcelableStatus> data) {
 		super(context, account_id, data, null, false);
 	}
 

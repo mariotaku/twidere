@@ -40,10 +40,10 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 	private int mCurrentItem;
 	private TitleProvider mAdapter;
 
-	private OnClickListener mTabClickListener = new OnClickListener() {
+	private final OnClickListener mTabClickListener = new OnClickListener() {
 
 		@Override
-		public void onClick(View view) {
+		public void onClick(final View view) {
 			if (!mPagingEnabled) return;
 			final TabView tabView = (TabView) view;
 			if (mCurrentItem == tabView.getIndex()) {
@@ -65,11 +65,11 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 
 	private boolean mPagingEnabled = true;
 
-	public TabPageIndicator(Context context) {
+	public TabPageIndicator(final Context context) {
 		super(context);
 	}
 
-	public TabPageIndicator(Context context, AttributeSet attrs) {
+	public TabPageIndicator(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		setHorizontalScrollBarEnabled(false);
 
@@ -122,7 +122,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 	}
 
 	@Override
-	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	public void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
 		final boolean lockedExpanded = widthMode == MeasureSpec.EXACTLY;
 		setFillViewport(lockedExpanded);
@@ -149,21 +149,21 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 	}
 
 	@Override
-	public void onPageScrolled(int arg0, float arg1, int arg2) {
+	public void onPageScrolled(final int arg0, final float arg1, final int arg2) {
 		if (mListener != null) {
 			mListener.onPageScrolled(arg0, arg1, arg2);
 		}
 	}
 
 	@Override
-	public void onPageScrollStateChanged(int arg0) {
+	public void onPageScrollStateChanged(final int arg0) {
 		if (mListener != null) {
 			mListener.onPageScrollStateChanged(arg0);
 		}
 	}
 
 	@Override
-	public void onPageSelected(int position) {
+	public void onPageSelected(final int position) {
 		setCurrentItem(position);
 		mAdapter.onPageSelected(position);
 		if (mListener != null) {
@@ -172,7 +172,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		}
 	}
 
-	public void setCurrentItem(int item) {
+	public void setCurrentItem(final int item) {
 		if (mViewPager == null) return;
 		// throw new IllegalStateException("ViewPager has not been bound.");
 		mCurrentItem = item;
@@ -189,16 +189,16 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		}
 	}
 
-	public void setOnPageChangeListener(ExtendedViewPager.OnPageChangeListener listener) {
+	public void setOnPageChangeListener(final ExtendedViewPager.OnPageChangeListener listener) {
 		mListener = listener;
 	}
 
-	public void setPagingEnabled(boolean enabled) {
+	public void setPagingEnabled(final boolean enabled) {
 		mViewPager.setPagingEnabled(enabled);
 		mPagingEnabled = enabled;
 	}
 
-	public void setViewPager(ExtendedViewPager pager) {
+	public void setViewPager(final ExtendedViewPager pager) {
 		final PagerAdapter adapter = pager.getAdapter();
 		if (adapter == null) return;
 		// throw new IllegalStateException("ViewPager has not been bound.");
@@ -210,16 +210,16 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		notifyDataSetChanged();
 	}
 
-	public void setViewPager(ExtendedViewPager pager, int initialPosition) {
+	public void setViewPager(final ExtendedViewPager pager, final int initialPosition) {
 		setViewPager(pager);
 		setCurrentItem(initialPosition);
 	}
 
-	private void addTab(Drawable icon, int index) {
+	private void addTab(final Drawable icon, final int index) {
 		addTab(null, icon, index);
 	}
 
-	private void addTab(String text, Drawable icon, int index) {
+	private void addTab(final String text, final Drawable icon, final int index) {
 		// Workaround for not being able to pass a defStyle on pre-3.0
 		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
 		tabView.init(this, text, icon, index);
@@ -229,7 +229,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
 	}
 
-	private void addTab(String text, int index) {
+	private void addTab(final String text, final int index) {
 		addTab(text, null, index);
 	}
 
@@ -255,7 +255,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		private TabPageIndicator mParent;
 		private int mIndex;
 
-		public TabView(Context context, AttributeSet attrs) {
+		public TabView(final Context context, final AttributeSet attrs) {
 			super(context, attrs);
 		}
 
@@ -263,11 +263,11 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			return mIndex;
 		}
 
-		public void init(TabPageIndicator parent, Drawable icon, int index) {
+		public void init(final TabPageIndicator parent, final Drawable icon, final int index) {
 			init(parent, null, icon, index);
 		}
 
-		public void init(TabPageIndicator parent, String text, Drawable icon, int index) {
+		public void init(final TabPageIndicator parent, final String text, final Drawable icon, final int index) {
 			mParent = parent;
 			mIndex = index;
 
@@ -280,12 +280,12 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			textView.setText(text);
 		}
 
-		public void init(TabPageIndicator parent, String text, int index) {
+		public void init(final TabPageIndicator parent, final String text, final int index) {
 			init(parent, text, null, index);
 		}
 
 		@Override
-		public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		public void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
 			// Re-measure if we went beyond our maximum size.

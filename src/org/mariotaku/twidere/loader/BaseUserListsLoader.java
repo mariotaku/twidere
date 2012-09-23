@@ -23,7 +23,8 @@ public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<Parcelabl
 
 	private long mNextCursor, mPrevCursor;
 
-	public BaseUserListsLoader(Context context, long account_id, long cursor, List<ParcelableUserList> data) {
+	public BaseUserListsLoader(final Context context, final long account_id, final long cursor,
+			final List<ParcelableUserList> data) {
 		super(context);
 		if (data != null) {
 			mData.addAll(data);
@@ -79,7 +80,7 @@ public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<Parcelabl
 		forceLoad();
 	}
 
-	private boolean hasId(int id) {
+	private boolean hasId(final int id) {
 		for (final ParcelableUserList user : mData) {
 			if (user.list_id == id) return true;
 		}

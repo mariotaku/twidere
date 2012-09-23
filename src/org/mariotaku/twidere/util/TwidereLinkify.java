@@ -200,7 +200,7 @@ public class TwidereLinkify {
 	 */
 	public static final MatchFilter sUrlMatchFilter = new MatchFilter() {
 		@Override
-		public final boolean acceptMatch(CharSequence s, int start, int end) {
+		public final boolean acceptMatch(final CharSequence s, final int start, final int end) {
 			if (start == 0) return true;
 
 			if (s.charAt(start - 1) == '@') return false;
@@ -209,7 +209,7 @@ public class TwidereLinkify {
 		}
 	};
 
-	public TwidereLinkify(TextView view) {
+	public TwidereLinkify(final TextView view) {
 		this.view = view;
 		view.setMovementMethod(LinkMovementMethod.getInstance());
 	}
@@ -232,7 +232,7 @@ public class TwidereLinkify {
 	 *            to the url of links that do not have a scheme specified in the
 	 *            link text
 	 */
-	public final void addLinks(int type) {
+	public final void addLinks(final int type) {
 		final SpannableString string = SpannableString.valueOf(view.getText());
 		switch (type) {
 			case LINK_TYPE_MENTION_LIST: {
@@ -304,11 +304,11 @@ public class TwidereLinkify {
 		return mOnLinkClickListener;
 	}
 
-	public void setOnLinkClickListener(OnLinkClickListener listener) {
+	public void setOnLinkClickListener(final OnLinkClickListener listener) {
 		mOnLinkClickListener = listener;
 	}
 
-	private final boolean addCashtagLinks(Spannable spannable) {
+	private final boolean addCashtagLinks(final Spannable spannable) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_CASHTAG.matcher(spannable);
 
@@ -324,7 +324,7 @@ public class TwidereLinkify {
 		return hasMatches;
 	}
 
-	private final boolean addHashtagLinks(Spannable spannable) {
+	private final boolean addHashtagLinks(final Spannable spannable) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_HASHTAG.matcher(spannable);
 
@@ -340,7 +340,7 @@ public class TwidereLinkify {
 		return hasMatches;
 	}
 
-	private final boolean addMentionOrListLinks(Spannable spannable) {
+	private final boolean addMentionOrListLinks(final Spannable spannable) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_MENTION_OR_LIST.matcher(spannable);
 
@@ -361,13 +361,13 @@ public class TwidereLinkify {
 		return hasMatches;
 	}
 
-	private final void applyLink(String url, int start, int end, Spannable text, int type) {
+	private final void applyLink(final String url, final int start, final int end, final Spannable text, final int type) {
 		final LinkSpan span = new LinkSpan(url, type, mOnLinkClickListener);
 
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 
-	private static final void addLinkMovementMethod(TextView t) {
+	private static final void addLinkMovementMethod(final TextView t) {
 		final MovementMethod m = t.getMovementMethod();
 
 		if (m == null || !(m instanceof LinkMovementMethod)) {
@@ -377,8 +377,8 @@ public class TwidereLinkify {
 		}
 	}
 
-	private static final void gatherLinks(ArrayList<LinkSpec> links, Spannable s, Pattern pattern, String[] schemes,
-			MatchFilter matchFilter, TransformFilter transformFilter) {
+	private static final void gatherLinks(final ArrayList<LinkSpec> links, final Spannable s, final Pattern pattern,
+			final String[] schemes, final MatchFilter matchFilter, final TransformFilter transformFilter) {
 		final Matcher m = pattern.matcher(s);
 
 		while (m.find()) {
@@ -398,7 +398,8 @@ public class TwidereLinkify {
 		}
 	}
 
-	private static final String makeUrl(String url, String[] prefixes, Matcher m, TransformFilter filter) {
+	private static final String makeUrl(String url, final String[] prefixes, final Matcher m,
+			final TransformFilter filter) {
 		if (filter != null) {
 			url = filter.transformUrl(m, url);
 		}
@@ -483,14 +484,14 @@ public class TwidereLinkify {
 		private final int type;
 		private final OnLinkClickListener listener;
 
-		public LinkSpan(String url, int type, OnLinkClickListener listener) {
+		public LinkSpan(final String url, final int type, final OnLinkClickListener listener) {
 			super(url);
 			this.type = type;
 			this.listener = listener;
 		}
 
 		@Override
-		public void onClick(View widget) {
+		public void onClick(final View widget) {
 			if (listener != null) {
 				listener.onLinkClick(getURL(), type);
 			}

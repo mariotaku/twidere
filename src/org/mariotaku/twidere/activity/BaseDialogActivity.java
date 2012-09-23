@@ -63,7 +63,7 @@ class BaseDialogActivity extends FragmentActivity implements Constants, Activity
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);

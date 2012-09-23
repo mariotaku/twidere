@@ -13,11 +13,11 @@ import android.widget.TextView;
 
 public class ListActionAdapter extends ArrayAdapter<ListAction> {
 
-	public ListActionAdapter(Context context) {
+	public ListActionAdapter(final Context context) {
 		super(context, R.layout.list_action_item, android.R.id.text1);
 	}
 
-	public ListAction findItem(long id) {
+	public ListAction findItem(final long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (id == getItemId(i)) return getItem(i);
@@ -26,12 +26,12 @@ public class ListActionAdapter extends ArrayAdapter<ListAction> {
 	}
 
 	@Override
-	public long getItemId(int position) {
+	public long getItemId(final int position) {
 		return getItem(position).getId();
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
 		final TextView summary_view = (TextView) view.findViewById(android.R.id.text2);
 		final String summary = getItem(position).getSummary();

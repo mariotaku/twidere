@@ -44,10 +44,10 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	private CursorStatusesAdapter mAdapter;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action) || BROADCAST_FILTERS_UPDATED.equals(action)) {
 				if (isAdded() && !isDetached()) {
@@ -81,13 +81,13 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		mAdapter = new CursorStatusesAdapter(getActivity());
 		super.onActivityCreated(savedInstanceState);
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID, Statuses.USER_ID,
 				Statuses.STATUS_TIMESTAMP, Statuses.TEXT, Statuses.NAME, Statuses.SCREEN_NAME,
 				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME, Statuses.IN_REPLY_TO_STATUS_ID,
@@ -106,13 +106,13 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
+	public void onLoaderReset(final Loader<Cursor> loader) {
 		super.onLoaderReset(loader);
 		mAdapter.swapCursor(null);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		super.onLoadFinished(loader, data);
 		mAdapter.swapCursor(data);
 	}

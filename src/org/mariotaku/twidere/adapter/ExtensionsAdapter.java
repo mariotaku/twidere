@@ -16,12 +16,12 @@ import android.widget.BaseAdapter;
 
 public class ExtensionsAdapter extends BaseAdapter {
 
-	private PackageManager pm;
-	private Context context;
+	private final PackageManager pm;
+	private final Context context;
 
 	private final List<ResolveInfo> mData = new ArrayList<ResolveInfo>();
 
-	public ExtensionsAdapter(Context context, PackageManager pm) {
+	public ExtensionsAdapter(final Context context, final PackageManager pm) {
 		this.pm = pm;
 		this.context = context;
 	}
@@ -32,17 +32,17 @@ public class ExtensionsAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public ResolveInfo getItem(int position) {
+	public ResolveInfo getItem(final int position) {
 		return mData.get(position);
 	}
 
 	@Override
-	public long getItemId(int position) {
+	public long getItemId(final int position) {
 		return getItem(position).hashCode();
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = convertView != null ? convertView : LayoutInflater.from(context).inflate(
 				R.layout.two_line_with_icon_list_item, parent, false);
 		final ExtensionsViewHolder viewholder = view.getTag() == null ? new ExtensionsViewHolder(view)
@@ -55,7 +55,7 @@ public class ExtensionsAdapter extends BaseAdapter {
 		return view;
 	}
 
-	public void setData(List<ResolveInfo> data) {
+	public void setData(final List<ResolveInfo> data) {
 		mData.clear();
 		if (data != null) {
 			mData.addAll(data);

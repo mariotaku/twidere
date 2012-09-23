@@ -47,7 +47,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	private int mAuthType;
 
 	@Override
-	public void onCheckedChanged(RadioGroup group, int checkedId) {
+	public void onCheckedChanged(final RadioGroup group, final int checkedId) {
 		switch (checkedId) {
 			case R.id.oauth: {
 				mAuthType = Accounts.AUTH_TYPE_OAUTH;
@@ -69,7 +69,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	}
 
 	@Override
-	public void onClick(View v) {
+	public void onClick(final View v) {
 		switch (v.getId()) {
 			case R.id.save: {
 				saveEditedText();
@@ -117,7 +117,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_api);
 		mEditRestBaseURL = (EditText) findViewById(R.id.rest_base_url);
@@ -152,7 +152,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		saveEditedText();
 		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 		outState.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);

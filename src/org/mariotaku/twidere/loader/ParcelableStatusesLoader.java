@@ -40,8 +40,8 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 	private final List<ParcelableStatus> mData;
 	private final boolean mFirstLoad, mIsHomeTab;
 
-	public ParcelableStatusesLoader(Context context, long account_id, List<ParcelableStatus> data, String class_name,
-			boolean is_home_tab) {
+	public ParcelableStatusesLoader(final Context context, final long account_id, final List<ParcelableStatus> data,
+			final String class_name, final boolean is_home_tab) {
 		super(context);
 		mClassName = class_name;
 		mTwitter = getTwitterInstance(context, account_id, true);
@@ -51,14 +51,14 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 		mIsHomeTab = is_home_tab;
 	}
 
-	protected boolean containsStatus(long status_id) {
+	protected boolean containsStatus(final long status_id) {
 		for (final ParcelableStatus status : mData) {
 			if (status.status_id == status_id) return true;
 		}
 		return false;
 	}
 
-	protected synchronized boolean deleteStatus(long status_id) {
+	protected synchronized boolean deleteStatus(final long status_id) {
 		try {
 			final NoDuplicatesLinkedList<ParcelableStatus> data_to_remove = new NoDuplicatesLinkedList<ParcelableStatus>();
 			for (final ParcelableStatus status : mData) {

@@ -32,24 +32,24 @@ import android.widget.ImageView;
 
 public class RoundCorneredImageView extends ImageView {
 
-	private Path mPath = new Path();
+	private final Path mPath = new Path();
 
-	public RoundCorneredImageView(Context context) {
+	public RoundCorneredImageView(final Context context) {
 		this(context, null);
 	}
 
-	public RoundCorneredImageView(Context context, AttributeSet attrs) {
+	public RoundCorneredImageView(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public RoundCorneredImageView(Context context, AttributeSet attrs, int defStyle) {
+	public RoundCorneredImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		init();
 		createPath();
 	}
 
 	@Override
-	public void onDraw(Canvas canvas) {
+	public void onDraw(final Canvas canvas) {
 		try {
 			canvas.clipPath(mPath);
 		} catch (final UnsupportedOperationException e) {
@@ -60,7 +60,7 @@ public class RoundCorneredImageView extends ImageView {
 	}
 
 	@Override
-	public void onSizeChanged(int w, int h, int oldw, int oldh) {
+	public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		createPath();
 		super.onSizeChanged(w, h, oldw, oldh);
 	}

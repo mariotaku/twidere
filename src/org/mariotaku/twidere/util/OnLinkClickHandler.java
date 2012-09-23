@@ -17,13 +17,13 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 	private final Activity activity;
 	private final long account_id;
 
-	public OnLinkClickHandler(Context context, long account_id) {
+	public OnLinkClickHandler(final Context context, final long account_id) {
 		activity = context instanceof Activity ? (Activity) context : null;
 		this.account_id = account_id;
 	}
 
 	@Override
-	public void onLinkClick(String link, int type) {
+	public void onLinkClick(final String link, final int type) {
 		if (activity == null) return;
 		switch (type) {
 			case TwidereLinkify.LINK_TYPE_MENTION_LIST: {

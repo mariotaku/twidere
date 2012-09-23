@@ -77,7 +77,8 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 	private static InputFilter VALID_FILENAME_FILTER = new InputFilter() {
 
 		@Override
-		public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+		public CharSequence filter(final CharSequence source, final int start, final int end, final Spanned dest,
+				final int dstart, final int dend) {
 			for (int i = start; i < end; i++) {
 				final char c = source.charAt(i);
 				switch (c) {
@@ -100,12 +101,12 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 	};
 
 	@Override
-	public void afterTextChanged(Editable s) {
+	public void afterTextChanged(final Editable s) {
 
 	}
 
 	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+	public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
 
 	}
 
@@ -125,7 +126,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 	}
 
 	@Override
-	public void onClick(DialogInterface dialog, int id) {
+	public void onClick(final DialogInterface dialog, final int id) {
 		switch (id) {
 			case DialogInterface.BUTTON_POSITIVE: {
 				if (mSaveFileTask != null) {
@@ -143,7 +144,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		final String action = getIntent().getAction();
 		mCurrentDirectory = getExternalStorageDirectory();
 		final String source_filename = getIntent().getStringExtra(INTENT_KEY_FILE_SOURCE);
@@ -175,37 +176,37 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 	}
 
 	@Override
-	public Loader<List<File>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<File>> onCreateLoader(final int id, final Bundle args) {
 		return new DirectoriesLoader(this, mCurrentDirectory);
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_file_save_as, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mCurrentDirectory = mAdapter.getItem(position);
 		invalidateSupportOptionsMenu();
 		getSupportLoaderManager().restartLoader(0, null, this);
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<File>> loader) {
+	public void onLoaderReset(final Loader<List<File>> loader) {
 		mAdapter.setData(null);
 
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<File>> loader, List<File> data) {
+	public void onLoadFinished(final Loader<List<File>> loader, final List<File> data) {
 		mAdapter.setData(data);
 
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				onBackPressed();
@@ -242,7 +243,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
+	public boolean onPrepareOptionsMenu(final Menu menu) {
 		final MenuItem item = menu.findItem(MENU_SAVE);
 		if (item != null) {
 			final int filename_length = mEditFileName != null ? mEditFileName.getText().toString().trim().length() : 0;
@@ -253,12 +254,12 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 	}
 
 	@Override
-	public void onTextChanged(CharSequence s, int start, int before, int count) {
+	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
 		invalidateSupportOptionsMenu();
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(final Bundle outState) {
 		mFileName = mEditFileName != null ? mEditFileName.getText().toString() : null;
 		outState.putString(INTENT_KEY_FILENAME, mFileName);
 		super.onSaveInstanceState(outState);
@@ -267,7 +268,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 	public static class OverwriteComfirmFragment extends BaseDialogFragment {
 
 		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final FileSaveAsActivity activity = (FileSaveAsActivity) getActivity();
 			final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 			builder.setMessage(R.string.overwrite_confirm);
@@ -281,7 +282,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 	public static class SaveProgressFragment extends BaseDialogFragment {
 
 		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final FileSaveAsActivity activity = (FileSaveAsActivity) getActivity();
 			final ProgressDialog dialog = new ProgressDialog(activity);
 			dialog.setCancelable(false);
@@ -298,7 +299,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 
 		private final List<File> mData = new ArrayList<File>();
 
-		public DirectoriesAdapter(Context context) {
+		public DirectoriesAdapter(final Context context) {
 			mInflater = LayoutInflater.from(context);
 			mContext = context;
 		}
@@ -309,17 +310,17 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 		}
 
 		@Override
-		public File getItem(int position) {
+		public File getItem(final int position) {
 			return mData.get(position);
 		}
 
 		@Override
-		public long getItemId(int position) {
+		public long getItemId(final int position) {
 			return getItem(position).hashCode();
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final View view = convertView != null ? convertView : mInflater.inflate(
 					android.R.layout.simple_list_item_1, parent, false);
 			final TextView text = (TextView) (view instanceof TextView ? view : view.findViewById(android.R.id.text1));
@@ -334,7 +335,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 			return view;
 		}
 
-		public void setData(List<File> data) {
+		public void setData(final List<File> data) {
 			mData.clear();
 			if (data != null) {
 				mData.addAll(data);
@@ -350,12 +351,12 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 
 		private static final Comparator<File> NAME_COMPARATOR = new Comparator<File>() {
 			@Override
-			public int compare(File file1, File file2) {
+			public int compare(final File file1, final File file2) {
 				return file1.getName().compareTo(file2.getName());
 			}
 		};
 
-		public DirectoriesLoader(Context context, File path) {
+		public DirectoriesLoader(final Context context, final File path) {
 			super(context);
 			this.path = path;
 		}
@@ -392,13 +393,13 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 
 		private final File src, dst;
 
-		public SaveFileTask(File src, File dst) {
+		public SaveFileTask(final File src, final File dst) {
 			this.src = src;
 			this.dst = dst;
 		}
 
 		@Override
-		protected Boolean doInBackground(Void... args) {
+		protected Boolean doInBackground(final Void... args) {
 			if (src == null || dst == null) return false;
 			try {
 				if (dst.isDirectory()) {
@@ -421,7 +422,7 @@ public class FileSaveAsActivity extends BaseActivity implements Constants, OnIte
 		}
 
 		@Override
-		protected void onPostExecute(Boolean result) {
+		protected void onPostExecute(final Boolean result) {
 			mSaveProgressFragment.dismiss();
 			super.onPostExecute(result);
 			if (result != null) {

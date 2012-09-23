@@ -23,13 +23,13 @@ public class PreviewImage {
 	public final boolean has_image;
 	public final String matched_url, orig_url;
 
-	public PreviewImage(boolean has_image, String matched_url, String orig_url) {
+	public PreviewImage(final boolean has_image, final String matched_url, final String orig_url) {
 		this.has_image = has_image;
 		this.matched_url = matched_url;
 		this.orig_url = orig_url;
 	}
 
-	public PreviewImage(ImageSpec spec, String orig_url) {
+	public PreviewImage(final ImageSpec spec, final String orig_url) {
 		this(spec != null && spec.thumbnail_link != null, spec.thumbnail_link, orig_url);
 	}
 

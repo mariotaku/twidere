@@ -43,7 +43,7 @@ public abstract class PopupMenu {
 
 	public abstract void show();
 
-	public static PopupMenu getInstance(Context context, View view) {
+	public static PopupMenu getInstance(final Context context, final View view) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 			return new PopupMenuNative(context, view);
 		else

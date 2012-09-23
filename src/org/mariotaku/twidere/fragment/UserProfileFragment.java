@@ -160,10 +160,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private PopupMenu mPopupMenu;
 
 	private SharedPreferences mPreferences;
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			if (mUser == null) return;
 			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
@@ -197,10 +197,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private boolean mGetFriendShipLoaderInitialized;
 
-	private LoaderCallbacks<Response<User>> mUserInfoLoaderCallbacks = new LoaderCallbacks<Response<User>>() {
+	private final LoaderCallbacks<Response<User>> mUserInfoLoaderCallbacks = new LoaderCallbacks<Response<User>>() {
 
 		@Override
-		public Loader<Response<User>> onCreateLoader(int id, Bundle args) {
+		public Loader<Response<User>> onCreateLoader(final int id, final Bundle args) {
 			mListContainer.setVisibility(View.VISIBLE);
 			mErrorRetryContainer.setVisibility(View.GONE);
 			setListShown(false);
@@ -209,12 +209,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		@Override
-		public void onLoaderReset(Loader<Response<User>> loader) {
+		public void onLoaderReset(final Loader<Response<User>> loader) {
 
 		}
 
 		@Override
-		public void onLoadFinished(Loader<Response<User>> loader, Response<User> data) {
+		public void onLoadFinished(final Loader<Response<User>> loader, final Response<User> data) {
 			if (getActivity() == null) return;
 			if (data == null) return;
 			if (data.value != null && data.value.getId() > 0) {
@@ -231,10 +231,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	};
 
-	private LoaderCallbacks<Response<Relationship>> mFriendshipLoaderCallbacks = new LoaderCallbacks<Response<Relationship>>() {
+	private final LoaderCallbacks<Response<Relationship>> mFriendshipLoaderCallbacks = new LoaderCallbacks<Response<Relationship>>() {
 
 		@Override
-		public Loader<Response<Relationship>> onCreateLoader(int id, Bundle args) {
+		public Loader<Response<Relationship>> onCreateLoader(final int id, final Bundle args) {
 			final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mUserId);
 			mFollowedYouIndicator.setVisibility(View.GONE);
 			mFollowContainer.setVisibility(is_my_activated_account ? View.GONE : View.VISIBLE);
@@ -247,12 +247,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		@Override
-		public void onLoaderReset(Loader<Response<Relationship>> loader) {
+		public void onLoaderReset(final Loader<Response<Relationship>> loader) {
 
 		}
 
 		@Override
-		public void onLoadFinished(Loader<Response<Relationship>> loader, Response<Relationship> data) {
+		public void onLoadFinished(final Loader<Response<Relationship>> loader, final Response<Relationship> data) {
 			mFriendship = null;
 			if (data.exception == null) {
 				final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mUserId);
@@ -289,7 +289,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	};
 
-	public void changeUser(long account_id, User user) {
+	public void changeUser(final long account_id, final User user) {
 		mFriendship = null;
 		mUserId = -1;
 		mAccountId = -1;
@@ -379,7 +379,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		getFriendship();
 	}
 
-	public void getUserInfo(long account_id, long user_id, String screen_name) {
+	public void getUserInfo(final long account_id, final long user_id, final String screen_name) {
 		mAccountId = account_id;
 		mUserId = user_id;
 		mScreenName = screen_name;
@@ -407,7 +407,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		mService = getApplication().getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
@@ -442,7 +442,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
 		if (intent == null) return;
 		switch (requestCode) {
 			case REQUEST_TAKE_PHOTO: {
@@ -479,7 +479,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.follow: {
 				if (mUser != null && mAccountId != mUser.getId()) {
@@ -559,7 +559,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		mHeaderView = inflater.inflate(R.layout.user_profile_header, null, false);
 		mNameContainer = mHeaderView.findViewById(R.id.name_container);
 		mNameView = (TextView) mHeaderView.findViewById(R.id.name);
@@ -607,7 +607,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final ListAction action = mAdapter.findItem(id);
 		if (action != null) {
 			action.onClick();
@@ -615,14 +615,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final ListAction action = mAdapter.findItem(id);
 		if (action != null) return action.onLongClick();
 		return false;
 	}
 
 	@Override
-	public void onLinkClick(String link, int type) {
+	public void onLinkClick(final String link, final int type) {
 		if (mUser == null) return;
 		switch (type) {
 			case TwidereLinkify.LINK_TYPE_MENTION_LIST: {
@@ -655,7 +655,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public boolean onLongClick(View view) {
+	public boolean onLongClick(final View view) {
 		if (mUser == null) return false;
 		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mUser.getId());
 		if (!is_my_activated_account) return false;
@@ -713,7 +713,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		if (mUser == null || mService == null) return false;
 		switch (item.getItemId()) {
 			case MENU_TAKE_PHOTO: {
@@ -865,7 +865,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private ServiceInterface mService;
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
 					mText = mEditText.getText().toString();
@@ -894,7 +894,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			mService = getApplication().getServiceInterface();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
 			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
@@ -936,7 +936,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		@Override
-		public void onSaveInstanceState(Bundle outState) {
+		public void onSaveInstanceState(final Bundle outState) {
 			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 			outState.putString(INTENT_KEY_TEXT, mText);
 			outState.putInt(INTENT_KEY_TYPE, mType);
@@ -951,7 +951,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private final Context context;
 		private final long account_id, user_id;
 
-		public GetFriendshipLoader(Context context, long account_id, long user_id) {
+		public GetFriendshipLoader(final Context context, final long account_id, final long user_id) {
 			super(context);
 			this.context = context;
 			this.account_id = account_id;
@@ -984,7 +984,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public final T value;
 		public final Exception exception;
 
-		public Response(T value, Exception exception) {
+		public Response(final T value, final Exception exception) {
 			this.value = value;
 			this.exception = exception;
 		}
@@ -1082,7 +1082,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private final long user_id;
 		private final String screen_name;
 
-		private UserInfoLoader(Context context, long account_id, long user_id, String screen_name) {
+		private UserInfoLoader(final Context context, final long account_id, final long user_id,
+				final String screen_name) {
 			super(context);
 			twitter = getTwitterInstance(context, account_id, true);
 			this.user_id = user_id;

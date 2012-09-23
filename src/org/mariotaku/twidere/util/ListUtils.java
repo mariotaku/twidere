@@ -23,7 +23,7 @@ import java.util.List;
 
 public class ListUtils {
 
-	public static long min(List<Long> list) {
+	public static long min(final List<Long> list) {
 		long min = -1;
 		for (final long item : list) {
 			if (min == -1) {
@@ -36,7 +36,7 @@ public class ListUtils {
 		return min;
 	}
 
-	public static <T> String toString(List<T> list, char token, boolean include_space) {
+	public static <T> String toString(final List<T> list, final char token, final boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
 		final int size = list.size();
 		for (int i = 0; i < size; i++) {
@@ -51,7 +51,7 @@ public class ListUtils {
 		return builder.toString();
 	}
 
-	public static String toStringForSQL(List<String> list) {
+	public static String toStringForSQL(final List<String> list) {
 		final StringBuilder builder = new StringBuilder();
 		final int size = list.size();
 		for (int i = 0; i < size; i++) {

@@ -30,17 +30,17 @@ public class ParcelableLocation implements Parcelable {
 
 	public static final Parcelable.Creator<ParcelableUserList> CREATOR = new Parcelable.Creator<ParcelableUserList>() {
 		@Override
-		public ParcelableUserList createFromParcel(Parcel in) {
+		public ParcelableUserList createFromParcel(final Parcel in) {
 			return new ParcelableUserList(in);
 		}
 
 		@Override
-		public ParcelableUserList[] newArray(int size) {
+		public ParcelableUserList[] newArray(final int size) {
 			return new ParcelableUserList[size];
 		}
 	};
 
-	public ParcelableLocation(GeoLocation location) {
+	public ParcelableLocation(final GeoLocation location) {
 		if (location == null) {
 			latitude = -1;
 			longitude = -1;
@@ -50,12 +50,12 @@ public class ParcelableLocation implements Parcelable {
 		longitude = location.getLongitude();
 	}
 
-	public ParcelableLocation(Parcel in) {
+	public ParcelableLocation(final Parcel in) {
 		latitude = in.readDouble();
 		longitude = in.readDouble();
 	}
 
-	public ParcelableLocation(String location_string) {
+	public ParcelableLocation(final String location_string) {
 		if (location_string == null) {
 			latitude = -1;
 			longitude = -1;
@@ -87,12 +87,12 @@ public class ParcelableLocation implements Parcelable {
 	}
 
 	@Override
-	public void writeToParcel(Parcel out, int flags) {
+	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeDouble(latitude);
 		out.writeDouble(longitude);
 	}
 
-	public static boolean isValidLocation(ParcelableLocation location) {
+	public static boolean isValidLocation(final ParcelableLocation location) {
 		return location != null && location.isValid();
 	}
 }

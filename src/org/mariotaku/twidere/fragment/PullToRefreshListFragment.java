@@ -72,7 +72,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 * to have the built-in indeterminant progress state be shown.
 	 */
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final Context context = getActivity();
 
 		final FrameLayout root = new FrameLayout(context);
@@ -138,7 +138,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 * 
 	 * @param mode - Mode to set the View to
 	 */
-	public final void setMode(Mode mode) {
+	public final void setMode(final Mode mode) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setMode(mode);
 	}
@@ -151,7 +151,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setPullLabel(String pullLabel, Mode mode) {
+	public void setPullLabel(final String pullLabel, final Mode mode) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setPullLabel(pullLabel);
 	}
@@ -161,7 +161,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 * 
 	 * @param enable Whether Pull-To-Refresh should be used
 	 */
-	public final void setPullToRefreshEnabled(boolean enable) {
+	public final void setPullToRefreshEnabled(final boolean enable) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setPullToRefreshEnabled(enable);
 
@@ -174,7 +174,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 * @param doScroll - true if you want to force a scroll to the Refreshing
 	 *            view.
 	 */
-	public final void setRefreshing(boolean doScroll) {
+	public final void setRefreshing(final boolean doScroll) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setRefreshing(doScroll);
 
@@ -186,7 +186,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 * 
 	 * @param releaseLabel - String to display
 	 */
-	public void setRefreshingLabel(String refreshingLabel) {
+	public void setRefreshingLabel(final String refreshingLabel) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setRefreshingLabel(refreshingLabel);
 	}
@@ -199,7 +199,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setRefreshingLabel(String refreshingLabel, Mode mode) {
+	public void setRefreshingLabel(final String refreshingLabel, final Mode mode) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setRefreshingLabel(refreshingLabel, mode);
 	}
@@ -211,7 +211,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 * 
 	 * @param releaseLabel - String to display
 	 */
-	public void setReleaseLabel(String releaseLabel) {
+	public void setReleaseLabel(final String releaseLabel) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setReleaseLabel(releaseLabel);
 	}
@@ -225,7 +225,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setReleaseLabel(String releaseLabel, Mode mode) {
+	public void setReleaseLabel(final String releaseLabel, final Mode mode) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setReleaseLabel(releaseLabel, mode);
 	}
@@ -236,7 +236,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 * 
 	 * @param showView
 	 */
-	public final void setShowViewWhileRefreshing(boolean showView) {
+	public final void setShowViewWhileRefreshing(final boolean showView) {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setShowViewWhileRefreshing(showView);
 	}

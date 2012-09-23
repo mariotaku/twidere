@@ -29,25 +29,25 @@ public class ColorView extends View {
 
 	private int mColor = Color.TRANSPARENT;
 
-	public ColorView(Context context) {
+	public ColorView(final Context context) {
 		this(context, null);
 	}
 
-	public ColorView(Context context, AttributeSet attrs) {
+	public ColorView(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public ColorView(Context context, AttributeSet attrs, int defStyle) {
+	public ColorView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
-	public void setColor(int color) {
+	public void setColor(final int color) {
 		mColor = color;
 		invalidate();
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas) {
+	protected void onDraw(final Canvas canvas) {
 		super.onDraw(canvas);
 		canvas.drawColor(mColor);
 	}

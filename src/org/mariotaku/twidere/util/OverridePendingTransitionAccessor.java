@@ -25,7 +25,7 @@ import android.app.Activity;
 public class OverridePendingTransitionAccessor {
 
 	@TargetApi(5)
-	public static void overridePendingTransition(Activity activity, int enter_anim, int exit_anim) {
+	public static void overridePendingTransition(final Activity activity, final int enter_anim, final int exit_anim) {
 		activity.overridePendingTransition(enter_anim, exit_anim);
 	}
 

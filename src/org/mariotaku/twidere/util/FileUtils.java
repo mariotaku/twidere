@@ -62,7 +62,7 @@ public final class FileUtils {
 	 * @throws IOException if an IO error occurs during copying
 	 * @see #copyFileToDirectory(File, File)
 	 */
-	public static void copyFile(File srcFile, File destFile) throws IOException {
+	public static void copyFile(final File srcFile, final File destFile) throws IOException {
 		if (srcFile == null) throw new NullPointerException("Source must not be null");
 		if (destFile == null) throw new NullPointerException("Destination must not be null");
 		if (srcFile.exists() == false) throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
@@ -102,7 +102,7 @@ public final class FileUtils {
 	 * @throws IOException if an IO error occurs during copying
 	 * @see #copyFile(File, File, boolean)
 	 */
-	public static void copyFileToDirectory(File srcFile, File destDir) throws IOException {
+	public static void copyFileToDirectory(final File srcFile, final File destDir) throws IOException {
 		if (destDir == null) throw new NullPointerException("Destination must not be null");
 		if (destDir.exists() && destDir.isDirectory() == false)
 			throw new IllegalArgumentException("Destination '" + destDir + "' is not a directory");
@@ -134,7 +134,7 @@ public final class FileUtils {
 	 * @param closeable the object to close, may be null or already closed
 	 * @since 2.0
 	 */
-	private static void closeQuietly(Closeable closeable) {
+	private static void closeQuietly(final Closeable closeable) {
 		try {
 			if (closeable != null) {
 				closeable.close();
@@ -168,7 +168,7 @@ public final class FileUtils {
 	 * 
 	 * @param input the InputStream to close, may be null or already closed
 	 */
-	private static void closeQuietly(InputStream input) {
+	private static void closeQuietly(final InputStream input) {
 		closeQuietly((Closeable) input);
 	}
 
@@ -197,7 +197,7 @@ public final class FileUtils {
 	 * 
 	 * @param output the OutputStream to close, may be null or already closed
 	 */
-	private static void closeQuietly(OutputStream output) {
+	private static void closeQuietly(final OutputStream output) {
 		closeQuietly((Closeable) output);
 	}
 
@@ -209,7 +209,8 @@ public final class FileUtils {
 	 * @param preserveFileDate whether to preserve the file date
 	 * @throws IOException if an error occurs
 	 */
-	private static void doCopyFile(File srcFile, File destFile, boolean preserveFileDate) throws IOException {
+	private static void doCopyFile(final File srcFile, final File destFile, final boolean preserveFileDate)
+			throws IOException {
 		if (destFile.exists() && destFile.isDirectory())
 			throw new IOException("Destination '" + destFile + "' exists but is a directory");
 

@@ -59,7 +59,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	private final Handler mErrorToastHandler = new Handler() {
 
 		@Override
-		public void handleMessage(Message msg) {
+		public void handleMessage(final Message msg) {
 			if (msg.obj instanceof Exception) {
 				showErrorToast(getContext(), msg.obj, false);
 			}
@@ -69,7 +69,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	};
 
 	@Override
-	public int bulkInsert(Uri uri, ContentValues[] values) {
+	public int bulkInsert(final Uri uri, final ContentValues[] values) {
 		final String table = getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
@@ -88,7 +88,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	};
 
 	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {
+	public int delete(final Uri uri, final String selection, final String[] selectionArgs) {
 		final String table = getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
@@ -105,12 +105,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	}
 
 	@Override
-	public String getType(Uri uri) {
+	public String getType(final Uri uri) {
 		return null;
 	}
 
 	@Override
-	public Uri insert(Uri uri, ContentValues values) {
+	public Uri insert(final Uri uri, final ContentValues values) {
 		final String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
 		if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table))
@@ -138,7 +138,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	}
 
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+	public Cursor query(final Uri uri, final String[] projection, final String selection, final String[] selectionArgs,
+			final String sortOrder) {
 		final String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
 		final String projection_string = projection != null ? ArrayUtils.toString(projection, ',', false) : "*";
@@ -233,7 +234,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	}
 
 	@Override
-	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+	public int update(final Uri uri, final ContentValues values, final String selection, final String[] selectionArgs) {
 		final String table = getTableNameForContentUri(uri);
 		int result = 0;
 		if (table != null) {
@@ -257,7 +258,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		return result;
 	}
 
-	private void onDatabaseUpdated(Uri uri, boolean is_insert) {
+	private void onDatabaseUpdated(final Uri uri, final boolean is_insert) {
 		if (uri == null || "false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) return;
 		final Context context = getContext();
 		switch (getTableId(uri)) {
@@ -327,12 +328,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	public static class DatabaseHelper extends SQLiteOpenHelper {
 
-		public DatabaseHelper(Context context, String name, int version) {
+		public DatabaseHelper(final Context context, final String name, final int version) {
 			super(context, name, null, version);
 		}
 
 		@Override
-		public void onCreate(SQLiteDatabase db) {
+		public void onCreate(final SQLiteDatabase db) {
 			db.beginTransaction();
 			db.execSQL(createTable(TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, true));
 			db.execSQL(createTable(TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, true));
@@ -356,16 +357,17 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		}
 
 		@Override
-		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		public void onDowngrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
 			handleVersionChange(db);
 		}
 
 		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
 			handleVersionChange(db);
 		}
 
-		private String createTable(String tableName, String[] columns, String[] types, boolean create_if_not_exists) {
+		private String createTable(final String tableName, final String[] columns, final String[] types,
+				final boolean create_if_not_exists) {
 			if (tableName == null || columns == null || types == null || types.length != columns.length
 					|| types.length == 0)
 				throw new IllegalArgumentException("Invalid parameters for creating table " + tableName);
@@ -384,7 +386,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			return stringBuilder.append(");").toString();
 		}
 
-		private void handleVersionChange(SQLiteDatabase db) {
+		private void handleVersionChange(final SQLiteDatabase db) {
 			safeUpgrade(db, TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, true, false);
 			safeUpgrade(db, TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, true, true);
 			safeUpgrade(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, true, true);

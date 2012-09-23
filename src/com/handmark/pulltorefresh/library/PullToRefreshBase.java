@@ -96,17 +96,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// Constructors
 	// ===========================================================
 
-	public PullToRefreshBase(Context context) {
+	public PullToRefreshBase(final Context context) {
 		super(context);
 		init(context, null);
 	}
 
-	public PullToRefreshBase(Context context, AttributeSet attrs) {
+	public PullToRefreshBase(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		init(context, attrs);
 	}
 
-	public PullToRefreshBase(Context context, Mode mode) {
+	public PullToRefreshBase(final Context context, final Mode mode) {
 		super(context);
 		mMode = mode;
 		init(context, null);
@@ -195,7 +195,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	@Override
-	public final boolean onInterceptTouchEvent(MotionEvent event) {
+	public final boolean onInterceptTouchEvent(final MotionEvent event) {
 
 		if (!mPullToRefreshEnabled) return false;
 
@@ -261,7 +261,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	@Override
-	public final boolean onTouchEvent(MotionEvent event) {
+	public final boolean onTouchEvent(final MotionEvent event) {
 		if (!mPullToRefreshEnabled) return false;
 
 		if (isRefreshing() && mDisableScrollingWhileRefreshing) return true;
@@ -329,7 +329,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param disableScrollingWhileRefreshing - true if you want to disable
 	 *            scrolling while refreshing
 	 */
-	public final void setDisableScrollingWhileRefreshing(boolean disableScrollingWhileRefreshing) {
+	public final void setDisableScrollingWhileRefreshing(final boolean disableScrollingWhileRefreshing) {
 		mDisableScrollingWhileRefreshing = disableScrollingWhileRefreshing;
 	}
 
@@ -344,7 +344,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param filterEvents - true if you want to filter Touch Events. Default is
 	 *            true.
 	 */
-	public final void setFilterTouchEvents(boolean filterEvents) {
+	public final void setFilterTouchEvents(final boolean filterEvents) {
 		mFilterTouchEvents = filterEvents;
 	}
 
@@ -354,7 +354,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param label - Label to set
 	 */
-	public void setLastUpdatedLabel(CharSequence label) {
+	public void setLastUpdatedLabel(final CharSequence label) {
 		if (null != mHeaderLayout) {
 			mHeaderLayout.setSubHeaderText(label);
 		}
@@ -367,7 +367,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	@Override
-	public void setLongClickable(boolean longClickable) {
+	public void setLongClickable(final boolean longClickable) {
 		getRefreshableView().setLongClickable(longClickable);
 	}
 
@@ -376,7 +376,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param mode - Mode to set the View to
 	 */
-	public final void setMode(Mode mode) {
+	public final void setMode(final Mode mode) {
 		if (mode != mMode) {
 			if (DEBUG) {
 				Log.d(LOG_TAG, "Setting mode to: " + mode);
@@ -391,7 +391,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param listener - Listener to be used when the Widget is set to Refresh
 	 */
-	public final void setOnRefreshListener(OnRefreshListener listener) {
+	public final void setOnRefreshListener(final OnRefreshListener listener) {
 		mOnRefreshListener = listener;
 	}
 
@@ -400,7 +400,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param listener - Listener to be used when the Widget is set to Refresh
 	 */
-	public final void setOnRefreshListener(OnRefreshListener2 listener) {
+	public final void setOnRefreshListener(final OnRefreshListener2 listener) {
 		mOnRefreshListener2 = listener;
 	}
 
@@ -410,7 +410,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param releaseLabel - String to display
 	 */
-	public void setPullLabel(String pullLabel) {
+	public void setPullLabel(final String pullLabel) {
 		setPullLabel(pullLabel, Mode.BOTH);
 	}
 
@@ -422,7 +422,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setPullLabel(String pullLabel, Mode mode) {
+	public void setPullLabel(final String pullLabel, final Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
 			mHeaderLayout.setPullLabel(pullLabel);
 		}
@@ -436,7 +436,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param enable Whether Pull-To-Refresh should be used
 	 */
-	public final void setPullToRefreshEnabled(boolean enable) {
+	public final void setPullToRefreshEnabled(final boolean enable) {
 		mPullToRefreshEnabled = enable;
 	}
 
@@ -451,7 +451,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param doScroll - true if you want to force a scroll to the Refreshing
 	 *            view.
 	 */
-	public final void setRefreshing(boolean doScroll) {
+	public final void setRefreshing(final boolean doScroll) {
 		if (!isRefreshing()) {
 			setRefreshingInternal(doScroll);
 			mState = MANUAL_REFRESHING;
@@ -464,7 +464,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param releaseLabel - String to display
 	 */
-	public void setRefreshingLabel(String refreshingLabel) {
+	public void setRefreshingLabel(final String refreshingLabel) {
 		setRefreshingLabel(refreshingLabel, Mode.BOTH);
 	}
 
@@ -476,7 +476,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setRefreshingLabel(String refreshingLabel, Mode mode) {
+	public void setRefreshingLabel(final String refreshingLabel, final Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
 			mHeaderLayout.setRefreshingLabel(refreshingLabel);
 		}
@@ -492,7 +492,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param releaseLabel - String to display
 	 */
-	public void setReleaseLabel(String releaseLabel) {
+	public void setReleaseLabel(final String releaseLabel) {
 		setReleaseLabel(releaseLabel, Mode.BOTH);
 	}
 
@@ -505,7 +505,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setReleaseLabel(String releaseLabel, Mode mode) {
+	public void setReleaseLabel(final String releaseLabel, final Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
 			mHeaderLayout.setReleaseLabel(releaseLabel);
 		}
@@ -520,11 +520,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param showView
 	 */
-	public final void setShowViewWhileRefreshing(boolean showView) {
+	public final void setShowViewWhileRefreshing(final boolean showView) {
 		mShowViewWhileRefreshing = showView;
 	}
 
-	protected void addRefreshableView(Context context, T refreshableView) {
+	protected void addRefreshableView(final Context context, final T refreshableView) {
 		addView(refreshableView, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f));
 	}
 
@@ -566,7 +566,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param a - TypedArray of PullToRefresh Attributes
 	 */
-	protected void handleStyledAttributes(TypedArray a) {
+	protected void handleStyledAttributes(final TypedArray a) {
 	}
 
 	/**
@@ -616,7 +616,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	@Override
-	protected void onRestoreInstanceState(Parcelable state) {
+	protected void onRestoreInstanceState(final Parcelable state) {
 		if (state instanceof Bundle) {
 			final Bundle bundle = (Bundle) state;
 
@@ -670,11 +670,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		smoothScrollTo(0);
 	}
 
-	protected final void setHeaderScroll(int y) {
+	protected final void setHeaderScroll(final int y) {
 		scrollTo(0, y);
 	}
 
-	protected void setRefreshingInternal(boolean doScroll) {
+	protected void setRefreshingInternal(final boolean doScroll) {
 		mState = REFRESHING;
 
 		if (mMode.canPullDown()) {
@@ -693,7 +693,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	protected final void smoothScrollTo(int y) {
+	protected final void smoothScrollTo(final int y) {
 		if (null != mCurrentSmoothScrollRunnable) {
 			mCurrentSmoothScrollRunnable.stop();
 		}
@@ -736,7 +736,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		mCurrentMode = mMode != Mode.BOTH ? mMode : Mode.PULL_DOWN_TO_REFRESH;
 	}
 
-	private void init(Context context, AttributeSet attrs) {
+	private void init(final Context context, final AttributeSet attrs) {
 		setOrientation(LinearLayout.VERTICAL);
 
 		final ViewConfiguration config = ViewConfiguration.get(context);
@@ -791,7 +791,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return false;
 	}
 
-	private void measureView(View child) {
+	private void measureView(final View child) {
 		ViewGroup.LayoutParams p = child.getLayoutParams();
 		if (p == null) {
 			p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -897,7 +897,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		private int mIntValue;
 
 		// The modeInt values need to match those from attrs.xml
-		Mode(int modeInt) {
+		Mode(final int modeInt) {
 			mIntValue = modeInt;
 		}
 
@@ -928,7 +928,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		 * @return Mode that modeInt maps to, or PULL_DOWN_TO_REFRESH by
 		 *         default.
 		 */
-		public static Mode mapIntToMode(int modeInt) {
+		public static Mode mapIntToMode(final int modeInt) {
 			switch (modeInt) {
 				case 0x1:
 				default:
@@ -1015,7 +1015,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		private long mStartTime = -1;
 		private int mCurrentY = -1;
 
-		public SmoothScrollRunnable(Handler handler, int fromY, int toY) {
+		public SmoothScrollRunnable(final Handler handler, final int fromY, final int toY) {
 			mHandler = handler;
 			mScrollFromY = fromY;
 			mScrollToY = toY;

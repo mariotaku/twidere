@@ -35,7 +35,7 @@ public class Extractor {
 	 * @param text of the tweet from which to extract cashtags
 	 * @return List of cashtags referenced (without the leading $ sign)
 	 */
-	public List<String> extractCashtags(String text) {
+	public List<String> extractCashtags(final String text) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		final ArrayList<String> extracted = new ArrayList<String>();
@@ -52,7 +52,7 @@ public class Extractor {
 	 * @param text of the tweet from which to extract cashtags
 	 * @return List of cashtags referenced (without the leading $ sign)
 	 */
-	public List<Entity> extractCashtagsWithIndices(String text) {
+	public List<Entity> extractCashtagsWithIndices(final String text) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		// Performance optimization.
@@ -76,7 +76,7 @@ public class Extractor {
 	 * @param text text of tweet
 	 * @return list of extracted entities
 	 */
-	public List<Entity> extractEntitiesWithIndices(String text) {
+	public List<Entity> extractEntitiesWithIndices(final String text) {
 		final ArrayList<Entity> entities = new ArrayList<Entity>();
 		entities.addAll(extractURLsWithIndices(text));
 		entities.addAll(extractHashtagsWithIndices(text, false));
@@ -93,11 +93,11 @@ public class Extractor {
 	 * @param text of the tweet from which to extract hashtags
 	 * @return List of hashtags referenced (without the leading # sign)
 	 */
-	public List<String> extractHashtags(String text) {
+	public List<String> extractHashtags(final String text) {
 		return extractHashtags(text, true);
 	}
 
-	public List<String> extractHashtags(String text, boolean exclude_duplicate) {
+	public List<String> extractHashtags(final String text, final boolean exclude_duplicate) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		final ArrayList<String> extracted = new ArrayList<String>();
@@ -116,7 +116,7 @@ public class Extractor {
 	 * @param text of the tweet from which to extract hashtags
 	 * @return List of hashtags referenced (without the leading # sign)
 	 */
-	public List<Entity> extractHashtagsWithIndices(String text) {
+	public List<Entity> extractHashtagsWithIndices(final String text) {
 		return extractHashtagsWithIndices(text, true);
 	}
 
@@ -127,11 +127,11 @@ public class Extractor {
 	 * @param text of the tweet from which to extract usernames
 	 * @return List of usernames referenced (without the leading @ sign)
 	 */
-	public List<String> extractMentionedScreennames(String text) {
+	public List<String> extractMentionedScreennames(final String text) {
 		return extractMentionedScreennames(text, true);
 	}
 
-	public List<String> extractMentionedScreennames(String text, boolean exclude_duplicate) {
+	public List<String> extractMentionedScreennames(final String text, final boolean exclude_duplicate) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		final ArrayList<String> extracted = new ArrayList<String>();
@@ -150,7 +150,7 @@ public class Extractor {
 	 * @param text of the tweet from which to extract usernames
 	 * @return List of usernames referenced (without the leading @ sign)
 	 */
-	public List<Entity> extractMentionedScreennamesWithIndices(String text) {
+	public List<Entity> extractMentionedScreennamesWithIndices(final String text) {
 		final ArrayList<Entity> extracted = new ArrayList<Entity>();
 		for (final Entity entity : extractMentionsOrListsWithIndices(text)) {
 			if (entity.listSlug == null) {
@@ -160,7 +160,7 @@ public class Extractor {
 		return extracted;
 	}
 
-	public List<Entity> extractMentionsOrListsWithIndices(String text) {
+	public List<Entity> extractMentionsOrListsWithIndices(final String text) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		// Performance optimization.
@@ -202,7 +202,7 @@ public class Extractor {
 	 * @return username referenced, if any (without the leading @ sign). Returns
 	 *         null if this is not a reply.
 	 */
-	public String extractReplyScreenname(String text) {
+	public String extractReplyScreenname(final String text) {
 		if (text == null) return null;
 
 		final Matcher matcher = Regex.VALID_REPLY.matcher(text);
@@ -222,7 +222,7 @@ public class Extractor {
 	 * @param text of the tweet from which to extract URLs
 	 * @return List of URLs referenced.
 	 */
-	public List<String> extractURLs(String text) {
+	public List<String> extractURLs(final String text) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		final ArrayList<String> urls = new ArrayList<String>();
@@ -238,7 +238,7 @@ public class Extractor {
 	 * @param text of the tweet from which to extract URLs
 	 * @return List of URLs referenced.
 	 */
-	public List<Entity> extractURLsWithIndices(String text) {
+	public List<Entity> extractURLsWithIndices(final String text) {
 		if (text == null || text.length() == 0
 				|| (extractURLWithoutProtocol ? text.indexOf('.') : text.indexOf(':')) == -1) // Performance
 																								// optimization.
@@ -295,7 +295,7 @@ public class Extractor {
 	 * 
 	 * @param entities entities with Unicode based indices
 	 */
-	public void modifyIndicesFromUnicodeToUTF16(String text, List<Entity> entities) {
+	public void modifyIndicesFromUnicodeToUTF16(final String text, final List<Entity> entities) {
 		final IndexConverter convert = new IndexConverter(text);
 
 		for (final Entity entity : entities) {
@@ -317,7 +317,7 @@ public class Extractor {
 	 * 
 	 * @param entities entities with UTF-16 based indices
 	 */
-	public void modifyIndicesFromUTF16ToToUnicode(String text, List<Entity> entities) {
+	public void modifyIndicesFromUTF16ToToUnicode(final String text, final List<Entity> entities) {
 		final IndexConverter convert = new IndexConverter(text);
 
 		for (final Entity entity : entities) {
@@ -326,7 +326,7 @@ public class Extractor {
 		}
 	}
 
-	public void setExtractURLWithoutProtocol(boolean extractURLWithoutProtocol) {
+	public void setExtractURLWithoutProtocol(final boolean extractURLWithoutProtocol) {
 		this.extractURLWithoutProtocol = extractURLWithoutProtocol;
 	}
 
@@ -338,7 +338,7 @@ public class Extractor {
 	 *            and remove overlapping ones
 	 * @return List of hashtags referenced (without the leading # sign)
 	 */
-	private List<Entity> extractHashtagsWithIndices(String text, boolean checkUrlOverlap) {
+	private List<Entity> extractHashtagsWithIndices(final String text, final boolean checkUrlOverlap) {
 		if (text == null || text.length() == 0) return Collections.emptyList();
 
 		// Performance optimization.
@@ -384,11 +384,11 @@ public class Extractor {
 		return extracted;
 	}
 
-	private void removeOverlappingEntities(List<Entity> entities) {
+	private void removeOverlappingEntities(final List<Entity> entities) {
 		// sort by index
 		Collections.<Entity> sort(entities, new Comparator<Entity>() {
 			@Override
-			public int compare(Entity e1, Entity e2) {
+			public int compare(final Entity e1, final Entity e2) {
 				return e1.start - e2.start;
 			}
 		});
@@ -425,7 +425,7 @@ public class Extractor {
 
 		protected String expandedURL = null;
 
-		public Entity(int start, int end, String value, String listSlug, Type type) {
+		public Entity(final int start, final int end, final String value, final String listSlug, final Type type) {
 			this.start = start;
 			this.end = end;
 			this.value = value;
@@ -433,22 +433,22 @@ public class Extractor {
 			this.type = type;
 		}
 
-		public Entity(int start, int end, String value, Type type) {
+		public Entity(final int start, final int end, final String value, final Type type) {
 			this(start, end, value, null, type);
 		}
 
-		public Entity(Matcher matcher, Type type, int groupNumber) {
+		public Entity(final Matcher matcher, final Type type, final int groupNumber) {
 			// Offset -1 on start index to include @, # symbols for mentions and
 			// hashtags
 			this(matcher, type, groupNumber, -1);
 		}
 
-		public Entity(Matcher matcher, Type type, int groupNumber, int startOffset) {
+		public Entity(final Matcher matcher, final Type type, final int groupNumber, final int startOffset) {
 			this(matcher.start(groupNumber) + startOffset, matcher.end(groupNumber), matcher.group(groupNumber), type);
 		}
 
 		@Override
-		public boolean equals(Object obj) {
+		public boolean equals(final Object obj) {
 			if (this == obj) return true;
 
 			if (!(obj instanceof Entity)) return false;
@@ -494,11 +494,11 @@ public class Extractor {
 			return type.hashCode() + value.hashCode() + start + end;
 		}
 
-		public void setDisplayURL(String displayURL) {
+		public void setDisplayURL(final String displayURL) {
 			this.displayURL = displayURL;
 		}
 
-		public void setExpandedURL(String expandedURL) {
+		public void setExpandedURL(final String expandedURL) {
 			this.expandedURL = expandedURL;
 		}
 
@@ -524,7 +524,7 @@ public class Extractor {
 		protected int codePointIndex = 0;
 		protected int charIndex = 0;
 
-		IndexConverter(String text) {
+		IndexConverter(final String text) {
 			this.text = text;
 		}
 
@@ -533,7 +533,7 @@ public class Extractor {
 		 * @return the code unit index that corresponds to the specified code
 		 *         point index.
 		 */
-		int codePointsToCodeUnits(int codePointIndex) {
+		int codePointsToCodeUnits(final int codePointIndex) {
 			// Note that offsetByCodePoints accepts negative indices.
 			charIndex = text.offsetByCodePoints(charIndex, codePointIndex - this.codePointIndex);
 			this.codePointIndex = codePointIndex;
@@ -545,7 +545,7 @@ public class Extractor {
 		 * @return The code point index that corresponds to the specified
 		 *         character index.
 		 */
-		int codeUnitsToCodePoints(int charIndex) {
+		int codeUnitsToCodePoints(final int charIndex) {
 			if (charIndex < this.charIndex) {
 				codePointIndex -= text.codePointCount(charIndex, this.charIndex);
 			} else {

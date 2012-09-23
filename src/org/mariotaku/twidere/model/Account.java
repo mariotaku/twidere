@@ -14,13 +14,13 @@ public class Account implements CharSequence {
 	public final String username;
 	public final long account_id;
 
-	Account(Cursor cursor, Indices indices) {
+	Account(final Cursor cursor, final Indices indices) {
 		username = cursor.getString(indices.username);
 		account_id = cursor.getLong(indices.account_id);
 	}
 
 	@Override
-	public char charAt(int index) {
+	public char charAt(final int index) {
 		return username.charAt(index);
 	}
 
@@ -30,7 +30,7 @@ public class Account implements CharSequence {
 	}
 
 	@Override
-	public CharSequence subSequence(int start, int end) {
+	public CharSequence subSequence(final int start, final int end) {
 		return username.subSequence(start, end);
 	}
 
@@ -39,7 +39,7 @@ public class Account implements CharSequence {
 		return username;
 	}
 
-	public static List<Account> getAccounts(Context context, boolean activated_only) {
+	public static List<Account> getAccounts(final Context context, final boolean activated_only) {
 		if (context == null) {
 			Collections.emptyList();
 		}
@@ -63,7 +63,7 @@ public class Account implements CharSequence {
 
 		public final int username, account_id;
 
-		public Indices(Cursor cursor) {
+		public Indices(final Cursor cursor) {
 			username = cursor.getColumnIndex(Accounts.USERNAME);
 			account_id = cursor.getColumnIndex(Accounts.USER_ID);
 		}

@@ -156,7 +156,7 @@
   <string name="capital_on">开启</string>
   <string name="capital_off">关闭</string>
   <string name="blocked_users">已阻止的用户</string>
-  <string name="set_as_default">设置为默认</string>
+  <string name="set_as_default">设为默认</string>
   <string name="default_account">默认帐号</string>
   <string name="search_users">搜索用户</string>
   <string name="search_tweets">搜索推文</string>
@@ -330,4 +330,8 @@
   <string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人关注了你。</string>
   <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> 转推了你的推文。</string>
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人转推了你的推文。</string>
+  <string name="cannot_get_callback_url">不能获得回调，请检查你的用户名和密码是否正确。</string>
+  <string name="tweet_not_sent">推文未发送。</string>
+  <string name="tweet_not_sent_summary">推文未发送，并被保存到草稿箱。</string>
+  <string name="incoming_friendships">待定的关注请求</string>
 </resources>

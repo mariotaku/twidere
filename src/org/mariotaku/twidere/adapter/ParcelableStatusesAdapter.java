@@ -70,7 +70,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	private final boolean mDisplayHiResProfileImage;
 	private final NoDuplicatesArrayList<ParcelableStatus> mData = new NoDuplicatesArrayList<ParcelableStatus>();
 
-	public ParcelableStatusesAdapter(Context context) {
+	public ParcelableStatusesAdapter(final Context context) {
 		super();
 		mContext = context;
 		mInflater = LayoutInflater.from(context);
@@ -81,7 +81,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
-	public void add(ParcelableStatus status) {
+	public void add(final ParcelableStatus status) {
 		mData.add(status);
 		notifyDataSetChanged();
 	}
@@ -90,7 +90,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		mData.clear();
 	}
 
-	public ParcelableStatus findItemByStatusId(long status_id) {
+	public ParcelableStatus findItemByStatusId(final long status_id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			final ParcelableStatus status = getItem(i);
@@ -100,7 +100,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public ParcelableStatus findStatus(long id) {
+	public ParcelableStatus findStatus(final long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) return getItem(i);
@@ -114,21 +114,21 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public ParcelableStatus getItem(int position) {
+	public ParcelableStatus getItem(final int position) {
 		return mData.get(position);
 	}
 
 	@Override
-	public long getItemId(int position) {
+	public long getItemId(final int position) {
 		return mData.get(position).status_id;
 	}
 
-	public ParcelableStatus getStatus(int position) {
+	public ParcelableStatus getStatus(final int position) {
 		return getItem(position);
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = convertView != null ? convertView : mInflater.inflate(R.layout.status_list_item, null);
 		final Object tag = view.getTag();
 		final StatusViewHolder holder;
@@ -220,7 +220,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		final Object tag = view.getTag();
 		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
 		if (status == null) return;
@@ -243,7 +243,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		}
 	}
 
-	public void setData(List<ParcelableStatus> data) {
+	public void setData(final List<ParcelableStatus> data) {
 		clear();
 		if (data == null) return;
 		mData.addAll(data);
@@ -251,7 +251,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public void setDisplayImagePreview(boolean preview) {
+	public void setDisplayImagePreview(final boolean preview) {
 		if (preview != mDisplayImagePreview) {
 			mDisplayImagePreview = preview;
 			notifyDataSetChanged();
@@ -259,7 +259,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public void setDisplayName(boolean display) {
+	public void setDisplayName(final boolean display) {
 		if (display != mDisplayName) {
 			mDisplayName = display;
 			notifyDataSetChanged();
@@ -267,7 +267,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public void setDisplayProfileImage(boolean display) {
+	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
@@ -275,7 +275,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public void setGapDisallowed(boolean disallowed) {
+	public void setGapDisallowed(final boolean disallowed) {
 		if (mGapDisallowed != disallowed) {
 			mGapDisallowed = disallowed;
 			notifyDataSetChanged();
@@ -284,7 +284,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public void setMultiSelectEnabled(boolean multi) {
+	public void setMultiSelectEnabled(final boolean multi) {
 		if (mMultiSelectEnabled != multi) {
 			mMultiSelectEnabled = multi;
 			notifyDataSetChanged();
@@ -292,7 +292,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public void setShowAbsoluteTime(boolean show) {
+	public void setShowAbsoluteTime(final boolean show) {
 		if (show != mShowAbsoluteTime) {
 			mShowAbsoluteTime = show;
 			notifyDataSetChanged();
@@ -300,7 +300,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public void setShowAccountColor(boolean show) {
+	public void setShowAccountColor(final boolean show) {
 		if (show != mShowAccountColor) {
 			mShowAccountColor = show;
 			notifyDataSetChanged();
@@ -308,7 +308,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
 			notifyDataSetChanged();

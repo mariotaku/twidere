@@ -56,7 +56,7 @@ public class SearchActivity extends MultiSelectActivity implements OnItemSelecte
 	private Spinner mSpinner;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		final Intent intent = getIntent();
@@ -111,7 +111,7 @@ public class SearchActivity extends MultiSelectActivity implements OnItemSelecte
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+	public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
 		final Fragment fragment = Fragment.instantiate(this, mAdapter.getItem(position).cls.getName());
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		fragment.setArguments(mArguments);
@@ -120,12 +120,12 @@ public class SearchActivity extends MultiSelectActivity implements OnItemSelecte
 	}
 
 	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
+	public void onNothingSelected(final AdapterView<?> parent) {
 
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
 				finish();
@@ -138,7 +138,7 @@ public class SearchActivity extends MultiSelectActivity implements OnItemSelecte
 		public final Class<? extends Fragment> cls;
 		public final String name;
 
-		public SpinnerSpec(Class<? extends Fragment> cls, String name) {
+		public SpinnerSpec(final Class<? extends Fragment> cls, final String name) {
 			this.cls = cls;
 			this.name = name;
 		}

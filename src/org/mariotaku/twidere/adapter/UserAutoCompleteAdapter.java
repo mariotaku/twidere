@@ -54,7 +54,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 
 	private final boolean mDisplayProfileImage, mDisplayHiResProfileImage;
 
-	public UserAutoCompleteAdapter(Context context) {
+	public UserAutoCompleteAdapter(final Context context) {
 		super(context, R.layout.user_autocomplete_list_item, null, FROM, TO, 0);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = context.getContentResolver();
@@ -68,7 +68,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	}
 
 	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
+	public void bindView(final View view, final Context context, final Cursor cursor) {
 		if (mCursorClosed) return;
 
 		final ImageView image_view = (ImageView) view.findViewById(android.R.id.icon);
@@ -87,7 +87,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	}
 
 	@Override
-	public void changeCursor(Cursor cursor) {
+	public void changeCursor(final Cursor cursor) {
 		if (mCursorClosed) return;
 		if (cursor != null) {
 			mProfileImageUrlIdx = cursor.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
@@ -106,7 +106,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	}
 
 	@Override
-	public CharSequence convertToString(Cursor cursor) {
+	public CharSequence convertToString(final Cursor cursor) {
 		if (mCursorClosed) return null;
 		return cursor.getString(mScreenNameIdx);
 	}

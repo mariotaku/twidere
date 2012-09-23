@@ -34,15 +34,15 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 
 	private UserAutoCompleteAdapter mAdapter;
 
-	public StatusComposeEditText(Context context) {
+	public StatusComposeEditText(final Context context) {
 		this(context, null);
 	}
 
-	public StatusComposeEditText(Context context, AttributeSet attrs) {
+	public StatusComposeEditText(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.autoCompleteTextViewStyle);
 	}
 
-	public StatusComposeEditText(Context context, AttributeSet attrs, int defStyle) {
+	public StatusComposeEditText(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mAdapter = new UserAutoCompleteAdapter(context);
 		setTokenizer(new ScreenNameTokenizer());
@@ -73,7 +73,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 	static class ScreenNameTokenizer implements Tokenizer {
 
 		@Override
-		public int findTokenEnd(CharSequence text, int cursor) {
+		public int findTokenEnd(final CharSequence text, final int cursor) {
 			int i = cursor;
 			final int len = text.length();
 
@@ -89,7 +89,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 		}
 
 		@Override
-		public int findTokenStart(CharSequence text, int cursor) {
+		public int findTokenStart(final CharSequence text, final int cursor) {
 			int start = cursor;
 
 			while (start > 0 && text.charAt(start - 1) != ' ') {
@@ -110,7 +110,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 		}
 
 		@Override
-		public CharSequence terminateToken(CharSequence text) {
+		public CharSequence terminateToken(final CharSequence text) {
 			int i = text.length();
 
 			while (i > 0 && text.charAt(i - 1) == '@') {

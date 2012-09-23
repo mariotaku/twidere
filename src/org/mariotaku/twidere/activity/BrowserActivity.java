@@ -36,7 +36,7 @@ public class BrowserActivity extends BaseActivity {
 	private Uri mUri = Uri.parse("about:blank");
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(new FrameLayout(this));
@@ -57,7 +57,7 @@ public class BrowserActivity extends BaseActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
 				finish();

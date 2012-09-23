@@ -32,7 +32,7 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			((ActionBarCompatBase) mActionBarCompat).requestCustomTitleView();
 			super.onCreate(savedInstanceState);
@@ -49,7 +49,7 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	 * Note: marking menu items as invisible/visible is not currently supported.
 	 */
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		boolean retValue = super.onCreateOptionsMenu(menu);
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			retValue = true;
@@ -58,7 +58,7 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	}
 
 	@Override
-	public void onPostCreate(Bundle savedInstanceState) {
+	public void onPostCreate(final Bundle savedInstanceState) {
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
 		}
@@ -66,7 +66,7 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
+	public boolean onPrepareOptionsMenu(final Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			((ActionBarCompatBase) mActionBarCompat).hideInRealMenu(menu);
@@ -75,14 +75,14 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	}
 
 	@Override
-	public void onTitleChanged(CharSequence title, int color) {
+	public void onTitleChanged(final CharSequence title, final int color) {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			getSupportActionBar().setTitle(title);
 		}
 		super.onTitleChanged(title, color);
 	}
 
-	public void requestSupportWindowFeature(int featureId) {
+	public void requestSupportWindowFeature(final int featureId) {
 		if (mActionBarCompat instanceof ActionBarCompatNative) {
 			requestWindowFeature(featureId);
 		} else {
@@ -97,7 +97,7 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	}
 
 	@Override
-	public void setContentView(int layoutResID) {
+	public void setContentView(final int layoutResID) {
 		super.setContentView(layoutResID);
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
@@ -105,7 +105,7 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	}
 
 	@Override
-	public void setContentView(View view) {
+	public void setContentView(final View view) {
 		super.setContentView(view);
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
@@ -113,14 +113,14 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	}
 
 	@Override
-	public void setContentView(View view, LayoutParams params) {
+	public void setContentView(final View view, final LayoutParams params) {
 		super.setContentView(view, params);
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
 		}
 	}
 
-	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
+	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			((ActionBarCompatBase) mActionBarCompat).setProgressBarIndeterminateVisibility(visible);
 		} else {

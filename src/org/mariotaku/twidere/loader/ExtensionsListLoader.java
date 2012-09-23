@@ -19,10 +19,10 @@ import android.support.v4.content.AsyncTaskLoader;
 public class ExtensionsListLoader extends AsyncTaskLoader<List<ResolveInfo>> {
 
 	private ExtensionsListLoader.PackageIntentReceiver mPackageObserver;
-	private ExtensionsListLoader.InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
-	private PackageManager mPackageManager;
+	private final ExtensionsListLoader.InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
+	private final PackageManager mPackageManager;
 
-	public ExtensionsListLoader(Context context, PackageManager pm) {
+	public ExtensionsListLoader(final Context context, final PackageManager pm) {
 		super(context);
 		mPackageManager = pm;
 	}
@@ -90,7 +90,7 @@ public class ExtensionsListLoader extends AsyncTaskLoader<List<ResolveInfo>> {
 		final Configuration mLastConfiguration = new Configuration();
 		int mLastDensity;
 
-		boolean applyNewConfig(Resources res) {
+		boolean applyNewConfig(final Resources res) {
 			final int configChanges = mLastConfiguration.updateFrom(res.getConfiguration());
 			final boolean densityChanged = mLastDensity != res.getDisplayMetrics().densityDpi;
 			if (densityChanged
@@ -110,7 +110,7 @@ public class ExtensionsListLoader extends AsyncTaskLoader<List<ResolveInfo>> {
 
 		final ExtensionsListLoader mLoader;
 
-		public PackageIntentReceiver(ExtensionsListLoader loader) {
+		public PackageIntentReceiver(final ExtensionsListLoader loader) {
 			mLoader = loader;
 			final IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
 			filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
@@ -127,7 +127,7 @@ public class ExtensionsListLoader extends AsyncTaskLoader<List<ResolveInfo>> {
 		}
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			// Tell the loader about the change.
 			mLoader.onContentChanged();
 		}

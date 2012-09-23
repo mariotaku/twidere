@@ -49,7 +49,7 @@ public class UserListSubscribersFragment extends BaseUsersListFragment {
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
 			mCursor = savedInstanceState.getLong(INTENT_KEY_PAGE, -1);
 		}
@@ -63,7 +63,7 @@ public class UserListSubscribersFragment extends BaseUsersListFragment {
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<ParcelableUser>> loader, List<ParcelableUser> data) {
+	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
 		if (loader instanceof ListSubscribersLoader) {
 			final long cursor = ((ListSubscribersLoader) loader).getNextCursor();
 			if (cursor != -2) {
@@ -74,7 +74,7 @@ public class UserListSubscribersFragment extends BaseUsersListFragment {
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		outState.putLong(INTENT_KEY_PAGE, mCursor);
 		super.onSaveInstanceState(outState);
 	}

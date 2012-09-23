@@ -53,10 +53,10 @@ public class ImageViewer extends View {
 
 	private static final int ZOOM_IN_1 = 1, ZOOM_OUT_1 = 2, DOUBLE_TAP_TIMEOUT = 3, ZOOM_IN_2 = 4, ZOOM_OUT_2 = 5;
 
-	private Handler mHandler = new Handler() {
+	private final Handler mHandler = new Handler() {
 
 		@Override
-		public void handleMessage(Message msg) {
+		public void handleMessage(final Message msg) {
 			switch (msg.what) {
 				case ZOOM_IN_1: {
 					mHandler.removeMessages(ZOOM_IN_1);
@@ -128,22 +128,22 @@ public class ImageViewer extends View {
 
 	};
 
-	public ImageViewer(Context context) {
+	public ImageViewer(final Context context) {
 		this(context, null);
 	}
 
-	public ImageViewer(Context context, AttributeSet attrs) {
+	public ImageViewer(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public ImageViewer(Context context, AttributeSet attrs, int defStyle) {
+	public ImageViewer(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mPaint.setColor(Color.BLACK);
 		mBackgroundPaint.setColor(Color.TRANSPARENT);
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
+	public boolean onTouchEvent(final MotionEvent event) {
 		final int pointer_count = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR ? GetPointerCountAccessor
 				.getPointerCount(event) : 1;
 		if (pointer_count > 1)
@@ -160,7 +160,7 @@ public class ImageViewer extends View {
 		}
 	}
 
-	public void setBitmap(Bitmap bitmap) {
+	public void setBitmap(final Bitmap bitmap) {
 		recycle();
 		mBitmap = bitmap;
 		mMinZoomFactor = getMinZoom(bitmap);
@@ -206,7 +206,7 @@ public class ImageViewer extends View {
 		canvas.drawBitmap(mBitmap, src, dst, mPaint);
 	}
 
-	private float getMinZoom(Bitmap bitmap) {
+	private float getMinZoom(final Bitmap bitmap) {
 		float zoom = 1.0f;
 		if (bitmap != null) {
 			zoom = Math.min((float) getWidth() / bitmap.getWidth(), (float) getHeight() / bitmap.getHeight());
@@ -217,7 +217,7 @@ public class ImageViewer extends View {
 		return zoom;
 	}
 
-	private boolean onSingleTouchEvent(MotionEvent event) {
+	private boolean onSingleTouchEvent(final MotionEvent event) {
 		final int x = (int) event.getX();
 		final int y = (int) event.getY();
 
@@ -254,7 +254,7 @@ public class ImageViewer extends View {
 		return true;
 	}
 
-	private void shift(int dx, int dy) {
+	private void shift(final int dx, final int dy) {
 		if (mBitmap == null || mBitmap.isRecycled()) return;
 
 		final int w = (int) (getWidth() / mZoomFactor);
@@ -286,7 +286,7 @@ public class ImageViewer extends View {
 
 	static class GetPointerCountAccessor {
 		@TargetApi(5)
-		public static int getPointerCount(MotionEvent event) {
+		public static int getPointerCount(final MotionEvent event) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) return event.getPointerCount();
 			return 1;
 		}
@@ -295,7 +295,7 @@ public class ImageViewer extends View {
 	@TargetApi(5)
 	static class OnMultiTouchEventCompat {
 
-		private static boolean onMultiTouchEvent(ImageViewer viewer, MotionEvent event) {
+		private static boolean onMultiTouchEvent(final ImageViewer viewer, final MotionEvent event) {
 			viewer.isWaitingForDoubleTap = false;
 			final int pointer_count = event.getPointerCount();
 			final float diffX = event.getX(0) - event.getX(1), diffY = event.getY(0) - event.getY(1);

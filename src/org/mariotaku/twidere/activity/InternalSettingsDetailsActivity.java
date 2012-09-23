@@ -16,7 +16,7 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		setTheme();
 		super.onCreate(savedInstanceState);
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
@@ -29,7 +29,7 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 	}
 
 	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(final int keyCode, final KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_BACK: {
 				final Activity activity = getParent();

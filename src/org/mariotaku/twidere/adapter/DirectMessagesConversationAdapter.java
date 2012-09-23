@@ -49,7 +49,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	private DirectMessageCursorIndices mIndices;
 	private final boolean mDisplayHiResProfileImage;
 
-	public DirectMessagesConversationAdapter(Context context, LazyImageLoader loader) {
+	public DirectMessagesConversationAdapter(final Context context, final LazyImageLoader loader) {
 		super(context, R.layout.direct_message_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
 		mImageLoader = loader;
@@ -57,7 +57,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
+	public void bindView(final View view, final Context context, final Cursor cursor) {
 		final DirectMessageConversationViewHolder holder = (DirectMessageConversationViewHolder) view.getTag();
 
 		final long account_id = cursor.getLong(mIndices.account_id);
@@ -91,7 +91,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	@Override
-	public ParcelableDirectMessage findItem(long id) {
+	public ParcelableDirectMessage findItem(final long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) {
@@ -104,12 +104,12 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		return null;
 	}
 
-	public long findItemIdByPosition(int position) {
+	public long findItemIdByPosition(final int position) {
 		if (position >= 0 && position < getCount()) return getItem(position).getLong(mIndices.message_id);
 		return -1;
 	}
 
-	public int findItemPositionByStatusId(long status_id) {
+	public int findItemPositionByStatusId(final long status_id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItem(i).getLong(mIndices.message_id) == status_id) return i;
@@ -118,12 +118,12 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	@Override
-	public Cursor getItem(int position) {
+	public Cursor getItem(final int position) {
 		return (Cursor) super.getItem(position);
 	}
 
 	@Override
-	public View newView(Context context, Cursor cursor, ViewGroup parent) {
+	public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
 		if (!(tag instanceof DirectMessageConversationViewHolder)) {
@@ -133,7 +133,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	@Override
-	public void setDisplayName(boolean display) {
+	public void setDisplayName(final boolean display) {
 		if (display != mDisplayName) {
 			mDisplayName = display;
 			notifyDataSetChanged();
@@ -141,7 +141,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	@Override
-	public void setDisplayProfileImage(boolean display) {
+	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
@@ -149,7 +149,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	@Override
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
 			notifyDataSetChanged();
@@ -157,7 +157,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	@Override
-	public Cursor swapCursor(Cursor cursor) {
+	public Cursor swapCursor(final Cursor cursor) {
 		if (cursor != null) {
 			mIndices = new DirectMessageCursorIndices(cursor);
 		} else {

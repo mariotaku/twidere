@@ -17,11 +17,11 @@ public abstract class ActionBarCompat {
 	 * wrapped menu inflater that can read action bar metadata from a menu
 	 * resource pre-ICS.
 	 */
-	MenuInflater getMenuInflater(MenuInflater inflater) {
+	MenuInflater getMenuInflater(final MenuInflater inflater) {
 		return inflater;
 	}
 
-	public static ActionBarCompat getInstance(Activity activity) {
+	public static ActionBarCompat getInstance(final Activity activity) {
 		if (activity == null) return null;
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)

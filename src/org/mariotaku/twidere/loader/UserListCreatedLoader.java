@@ -15,8 +15,8 @@ public class UserListCreatedLoader extends BaseUserListsLoader {
 	private final long mUserId;
 	private final String mScreenName;
 
-	public UserListCreatedLoader(Context context, long account_id, long user_id, String screen_name, long cursor,
-			List<ParcelableUserList> data) {
+	public UserListCreatedLoader(final Context context, final long account_id, final long user_id,
+			final String screen_name, final long cursor, final List<ParcelableUserList> data) {
 		super(context, account_id, cursor, data);
 		mUserId = user_id;
 		mScreenName = screen_name;

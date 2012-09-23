@@ -44,7 +44,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 
 	private final List<ImageSpec> mData = new ArrayList<ImageSpec>();
 
-	public boolean addAll(Collection<? extends ImageSpec> images) {
+	public boolean addAll(final Collection<? extends ImageSpec> images) {
 		mData.clear();
 		return images != null && mData.addAll(images);
 	}
@@ -61,7 +61,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mAdapter = new ImagesAdapter(getActivity());
 		mGallery.setAdapter(mAdapter);
@@ -70,7 +70,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	}
 
 	@Override
-	public void onClick(View v) {
+	public void onClick(final View v) {
 		switch (v.getId()) {
 			case R.id.load_images: {
 				show();
@@ -80,7 +80,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.images_preview, null, false);
 		mGallery = (Gallery) view.findViewById(R.id.preview_gallery);
 		mGallery.setOnTouchListener(this);
@@ -89,7 +89,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		final ImageSpec spec = mAdapter.getItem(position);
 		if (spec == null) return;
 		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
@@ -126,7 +126,7 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	}
 
 	@Override
-	public boolean onTouch(View view, MotionEvent event) {
+	public boolean onTouch(final View view, final MotionEvent event) {
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				mBusy = true;
@@ -158,12 +158,12 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		private final LazyImageLoader mImageLoader;
 		private final LayoutInflater mInflater;
 
-		public ImagesAdapter(Context context) {
+		public ImagesAdapter(final Context context) {
 			mImageLoader = TwidereApplication.getInstance(context).getPreviewImageLoader();
 			mInflater = LayoutInflater.from(context);
 		}
 
-		public boolean addAll(Collection<? extends ImageSpec> images) {
+		public boolean addAll(final Collection<? extends ImageSpec> images) {
 			final boolean ret = images != null && mImages.addAll(images);
 			notifyDataSetChanged();
 			return ret;
@@ -180,18 +180,18 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		}
 
 		@Override
-		public ImageSpec getItem(int position) {
+		public ImageSpec getItem(final int position) {
 			return mImages.get(position);
 		}
 
 		@Override
-		public long getItemId(int position) {
+		public long getItemId(final int position) {
 			final ImageSpec spec = getItem(position);
 			return spec != null ? spec.hashCode() : 0;
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.images_preview_item, null);
 			final ImageView image = (ImageView) view.findViewById(R.id.image);
 			final ImageSpec spec = getItem(position);

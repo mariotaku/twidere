@@ -32,7 +32,7 @@ public class DirectMessageConversationViewHolder {
 	public final TextView name, text, time;
 	private float text_size;
 
-	public DirectMessageConversationViewHolder(View view, Context context) {
+	public DirectMessageConversationViewHolder(final View view, final Context context) {
 		profile_image_left = (ImageView) view.findViewById(R.id.profile_image_left);
 		profile_image_right = (ImageView) view.findViewById(R.id.profile_image_right);
 		name = (TextView) view.findViewById(R.id.name);
@@ -41,7 +41,7 @@ public class DirectMessageConversationViewHolder {
 
 	}
 
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
 			text.setTextSize(text_size);

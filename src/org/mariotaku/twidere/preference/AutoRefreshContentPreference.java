@@ -19,22 +19,22 @@ public class AutoRefreshContentPreference extends Preference implements Constant
 	private boolean[] checked_items;
 	private SharedPreferences prefs;
 
-	public AutoRefreshContentPreference(Context context) {
+	public AutoRefreshContentPreference(final Context context) {
 		this(context, null);
 	}
 
-	public AutoRefreshContentPreference(Context context, AttributeSet attrs) {
+	public AutoRefreshContentPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public AutoRefreshContentPreference(Context context, AttributeSet attrs, int defStyle) {
+	public AutoRefreshContentPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		checked_items = new boolean[3];
 		setOnPreferenceClickListener(this);
 	}
 
 	@Override
-	public void onClick(DialogInterface dialog, int which) {
+	public void onClick(final DialogInterface dialog, final int which) {
 		if (prefs == null) return;
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE:
@@ -49,12 +49,12 @@ public class AutoRefreshContentPreference extends Preference implements Constant
 	}
 
 	@Override
-	public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+	public void onClick(final DialogInterface dialog, final int which, final boolean isChecked) {
 		checked_items[which] = isChecked;
 	}
 
 	@Override
-	public boolean onPreferenceClick(Preference preference) {
+	public boolean onPreferenceClick(final Preference preference) {
 		prefs = getSharedPreferences();
 		if (prefs == null) return false;
 		checked_items = new boolean[] { prefs.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false),

@@ -37,7 +37,7 @@ public class UserViewHolder {
 	private boolean account_color_enabled;
 	private float text_size;
 
-	public UserViewHolder(View view) {
+	public UserViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
@@ -45,26 +45,26 @@ public class UserViewHolder {
 		description = (TextView) view.findViewById(R.id.description);
 	}
 
-	public void setAccountColor(int color) {
+	public void setAccountColor(final int color) {
 		content.drawRight(account_color_enabled && !show_as_gap ? color : Color.TRANSPARENT);
 	}
 
-	public void setAccountColorEnabled(boolean enabled) {
+	public void setAccountColorEnabled(final boolean enabled) {
 		account_color_enabled = enabled && !show_as_gap;
 		if (!account_color_enabled) {
 			content.drawRight(Color.TRANSPARENT);
 		}
 	}
 
-	public void setHighlightColor(int color) {
+	public void setHighlightColor(final int color) {
 		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
 	}
 
-	public void setSelected(boolean selected) {
+	public void setSelected(final boolean selected) {
 		content.setBackgroundColor(selected && !show_as_gap ? 0x600099CC : Color.TRANSPARENT);
 	}
 
-	public void setShowAsGap(boolean show_gap) {
+	public void setShowAsGap(final boolean show_gap) {
 		show_as_gap = show_gap;
 		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		description.setVisibility(show_gap ? View.GONE : View.VISIBLE);
@@ -72,7 +72,7 @@ public class UserViewHolder {
 		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
 
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
 			description.setTextSize(text_size);
@@ -80,7 +80,7 @@ public class UserViewHolder {
 		}
 	}
 
-	public void setUserColor(int color) {
+	public void setUserColor(final int color) {
 		content.drawLeft(show_as_gap ? Color.TRANSPARENT : color);
 	}
 

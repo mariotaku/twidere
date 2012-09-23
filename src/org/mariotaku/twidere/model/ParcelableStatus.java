@@ -43,12 +43,12 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 
 	public static final Parcelable.Creator<ParcelableStatus> CREATOR = new Parcelable.Creator<ParcelableStatus>() {
 		@Override
-		public ParcelableStatus createFromParcel(Parcel in) {
+		public ParcelableStatus createFromParcel(final Parcel in) {
 			return new ParcelableStatus(in);
 		}
 
 		@Override
-		public ParcelableStatus[] newArray(int size) {
+		public ParcelableStatus[] newArray(final int size) {
 			return new ParcelableStatus[size];
 		}
 	};
@@ -70,7 +70,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 	public static final Comparator<ParcelableStatus> TIMESTAMP_COMPARATOR = new Comparator<ParcelableStatus>() {
 
 		@Override
-		public int compare(ParcelableStatus object1, ParcelableStatus object2) {
+		public int compare(final ParcelableStatus object1, final ParcelableStatus object2) {
 			final long diff = object2.status_timestamp - object1.status_timestamp;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
@@ -78,7 +78,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		}
 	};
 
-	public ParcelableStatus(Cursor cursor, StatusCursorIndices indices) {
+	public ParcelableStatus(final Cursor cursor, final StatusCursorIndices indices) {
 		retweet_id = indices.retweet_id != -1 ? cursor.getLong(indices.retweet_id) : -1;
 		retweeted_by_id = indices.retweeted_by_id != -1 ? cursor.getLong(indices.retweeted_by_id) : -1;
 		status_id = indices.status_id != -1 ? cursor.getLong(indices.status_id) : -1;
@@ -117,7 +117,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		text_unescaped = unescape(text_html);
 	}
 
-	public ParcelableStatus(Parcel in) {
+	public ParcelableStatus(final Parcel in) {
 		retweet_id = in.readLong();
 		retweeted_by_id = in.readLong();
 		status_id = in.readLong();
@@ -151,7 +151,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		text_unescaped = unescape(text_html);
 	}
 
-	public ParcelableStatus(SerializableStatus in) {
+	public ParcelableStatus(final SerializableStatus in) {
 		retweet_id = in.retweet_id;
 		retweeted_by_id = in.retweeted_by_id;
 		status_id = in.status_id;
@@ -185,7 +185,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		text_unescaped = unescape(text_html);
 	}
 
-	public ParcelableStatus(Status status, long account_id, boolean is_gap) {
+	public ParcelableStatus(Status status, final long account_id, final boolean is_gap) {
 
 		this.is_gap = is_gap;
 		this.account_id = account_id;
@@ -229,7 +229,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		text_unescaped = unescape(text_html);
 	}
 
-	public ParcelableStatus(Tweet tweet, long account_id, boolean is_gap) {
+	public ParcelableStatus(final Tweet tweet, final long account_id, final boolean is_gap) {
 
 		this.is_gap = is_gap;
 		status_id = tweet.getId();
@@ -271,7 +271,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 	}
 
 	@Override
-	public int compareTo(ParcelableStatus another) {
+	public int compareTo(final ParcelableStatus another) {
 		if (another == null) return 0;
 		final long diff = another.status_id - status_id;
 		if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
@@ -285,7 +285,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 	}
 
 	@Override
-	public final boolean equals(Object o) {
+	public final boolean equals(final Object o) {
 		if (!(o instanceof ParcelableStatus)) return false;
 		return status_id == ((ParcelableStatus) o).status_id;
 	}
@@ -296,7 +296,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 	}
 
 	@Override
-	public void writeToParcel(Parcel out, int flags) {
+	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(retweet_id);
 		out.writeLong(retweeted_by_id);
 		out.writeLong(status_id);
@@ -325,7 +325,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		out.writeString(location_string);
 	}
 
-	private static long getTime(Date date) {
+	private static long getTime(final Date date) {
 		return date != null ? date.getTime() : 0;
 	}
 }

@@ -70,7 +70,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);

@@ -41,10 +41,10 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 
 	private ActionMode mActionMode;
 
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
 				updateMultiSelectState();
@@ -56,7 +56,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 	};
 
 	@Override
-	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
 		final NoDuplicatesLinkedList<Object> selected_items = mApplication.getSelectedItems();
 		final int count = selected_items.size();
 		if (count < 1) return false;
@@ -152,26 +152,26 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		mApplication = getTwidereApplication();
 		mService = mApplication.getServiceInterface();
 		super.onCreate(savedInstanceState);
 	}
 
 	@Override
-	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+	public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
 		new MenuInflater(this).inflate(R.menu.action_multi_select, menu);
 		return true;
 	}
 
 	@Override
-	public void onDestroyActionMode(ActionMode mode) {
+	public void onDestroyActionMode(final ActionMode mode) {
 		mApplication.stopMultiSelect();
 		mActionMode = null;
 	}
 
 	@Override
-	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
 		return true;
 	}
 
@@ -213,7 +213,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 		}
 	}
 
-	private static long getFirstSelectAccountId(NoDuplicatesLinkedList<Object> selected_items) {
+	private static long getFirstSelectAccountId(final NoDuplicatesLinkedList<Object> selected_items) {
 		final Object obj = selected_items.get(0);
 		if (obj instanceof ParcelableUser)
 			return ((ParcelableUser) obj).account_id;
@@ -221,7 +221,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 		return -1;
 	}
 
-	private static long[] getSelectedUserIds(NoDuplicatesLinkedList<Object> selected_items) {
+	private static long[] getSelectedUserIds(final NoDuplicatesLinkedList<Object> selected_items) {
 		final ArrayList<Long> ids_list = new ArrayList<Long>();
 		for (final Object item : selected_items) {
 			if (item instanceof ParcelableUser) {

@@ -47,8 +47,8 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 	private final String mQuery;
 	private final long mMaxId;
 
-	public TweetSearchLoader(Context context, long account_id, String query, long max_id, List<ParcelableStatus> data,
-			String class_name, boolean is_home_tab) {
+	public TweetSearchLoader(final Context context, final long account_id, final String query, final long max_id,
+			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
 		super(context, account_id, data, class_name, is_home_tab);
 		mQuery = query;
 		mMaxId = max_id;
@@ -122,8 +122,8 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		return data;
 	}
 
-	public static void writeSerializableStatuses(Object instance, Context context, List<ParcelableStatus> data,
-			Bundle args) {
+	public static void writeSerializableStatuses(final Object instance, final Context context,
+			final List<ParcelableStatus> data, final Bundle args) {
 		if (instance == null || context == null || data == null || args == null) return;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);

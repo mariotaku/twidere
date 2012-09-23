@@ -76,10 +76,10 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 
 	private ParcelableUser mSelectedUser;
 
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
 				mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
@@ -110,7 +110,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	public abstract Loader<List<ParcelableUser>> newLoaderInstance();
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -133,7 +133,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Tell the framework to try to keep this fragment around
 		// during a configuration change.
@@ -141,13 +141,13 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public Loader<List<ParcelableUser>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		return newLoaderInstance();
 	}
 
 	@Override
-	public final void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public final void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final ParcelableUser user = mAdapter.findItem(id);
 		if (user == null) return;
 		if (mApplication.isMultiSelectActive()) {
@@ -163,7 +163,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedUser = null;
 		final UsersAdapter adapter = getListAdapter();
 		mSelectedUser = adapter.findItem(id);
@@ -184,12 +184,12 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<ParcelableUser>> loader) {
+	public void onLoaderReset(final Loader<List<ParcelableUser>> loader) {
 		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<ParcelableUser>> loader, List<ParcelableUser> data) {
+	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
@@ -198,7 +198,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedUser == null) return false;
 		switch (item.getItemId()) {
 			case MENU_VIEW_PROFILE: {
@@ -262,7 +262,8 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+			final int totalItemCount) {
 		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
 				&& totalItemCount >= visibleItemCount;
 
@@ -281,7 +282,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 	}
 
 	@Override
@@ -302,7 +303,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		super.onStop();
 	}
 
-	protected void openUserProfile(long user_id, String screen_name) {
+	protected void openUserProfile(final long user_id, final String screen_name) {
 		final FragmentActivity activity = getActivity();
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;

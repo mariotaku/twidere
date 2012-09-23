@@ -191,18 +191,18 @@ public final class Utils implements Constants {
 
 	private static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new HostnameVerifier() {
 		@Override
-		public boolean verify(String hostname, SSLSession session) {
+		public boolean verify(final String hostname, final SSLSession session) {
 			return true;
 		}
 	};
 
 	private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] { new X509TrustManager() {
 		@Override
-		public void checkClientTrusted(X509Certificate[] chain, String authType) {
+		public void checkClientTrusted(final X509Certificate[] chain, final String authType) {
 		}
 
 		@Override
-		public void checkServerTrusted(X509Certificate[] chain, String authType) {
+		public void checkServerTrusted(final X509Certificate[] chain, final String authType) {
 		}
 
 		@Override
@@ -345,7 +345,7 @@ public final class Utils implements Constants {
 		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
 	}
 
-	public static String buildActivatedStatsWhereClause(Context context, String selection) {
+	public static String buildActivatedStatsWhereClause(final Context context, final String selection) {
 		if (context == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
 		final StringBuilder builder = new StringBuilder();
@@ -361,7 +361,7 @@ public final class Utils implements Constants {
 		return builder.toString();
 	}
 
-	public static String buildArguments(Bundle args) {
+	public static String buildArguments(final Bundle args) {
 		final Set<String> keys = args.keySet();
 		final JSONObject json = new JSONObject();
 		for (final String key : keys) {
@@ -389,7 +389,8 @@ public final class Utils implements Constants {
 		return json.toString();
 	}
 
-	public static Uri buildDirectMessageConversationUri(long account_id, long conversation_id, String screen_name) {
+	public static Uri buildDirectMessageConversationUri(final long account_id, final long conversation_id,
+			final String screen_name) {
 		if (conversation_id <= 0 && screen_name == null) return TweetStore.NULL_CONTENT_URI;
 		final Uri.Builder builder = conversation_id > 0 ? DirectMessages.Conversation.CONTENT_URI.buildUpon()
 				: DirectMessages.Conversation.CONTENT_URI_SCREEN_NAME.buildUpon();
@@ -398,7 +399,7 @@ public final class Utils implements Constants {
 		return builder.build();
 	}
 
-	public static String buildFilterWhereClause(String table, String selection) {
+	public static String buildFilterWhereClause(final String table, final String selection) {
 		if (table == null) return null;
 		final StringBuilder builder = new StringBuilder();
 		if (selection != null) {
@@ -430,14 +431,14 @@ public final class Utils implements Constants {
 		return builder.toString();
 	}
 
-	public static Uri buildQueryUri(Uri uri, boolean notify) {
+	public static Uri buildQueryUri(final Uri uri, final boolean notify) {
 		if (uri == null) return null;
 		final Uri.Builder uribuilder = uri.buildUpon();
 		uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify));
 		return uribuilder.build();
 	}
 
-	public static boolean bundleEquals(Bundle args1, Bundle args2) {
+	public static boolean bundleEquals(final Bundle args1, final Bundle args2) {
 		if (args1 == null || args2 == null) return args1 == args2;
 		final Iterator<String> keys = args1.keySet().iterator();
 		while (keys.hasNext()) {
@@ -447,7 +448,7 @@ public final class Utils implements Constants {
 		return true;
 	}
 
-	public static synchronized void cleanDatabasesByItemLimit(Context context) {
+	public static synchronized void cleanDatabasesByItemLimit(final Context context) {
 		if (context == null) return;
 		final ContentResolver resolver = context.getContentResolver();
 		final int item_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
@@ -500,7 +501,7 @@ public final class Utils implements Constants {
 		sAccountNames.clear();
 	}
 
-	public static void clearUserColor(Context context, long user_id) {
+	public static void clearUserColor(final Context context, final long user_id) {
 		if (context == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final SharedPreferences.Editor editor = prefs.edit();
@@ -509,7 +510,7 @@ public final class Utils implements Constants {
 		sUserColors.remove(user_id);
 	}
 
-	public static void copyStream(InputStream is, OutputStream os) throws IOException {
+	public static void copyStream(final InputStream is, final OutputStream os) throws IOException {
 		final int buffer_size = 8192;
 		final byte[] bytes = new byte[buffer_size];
 		int count = is.read(bytes, 0, buffer_size);
@@ -519,7 +520,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static ParcelableDirectMessage findDirectMessageInDatabases(Context context, long account_id, long message_id) {
+	public static ParcelableDirectMessage findDirectMessageInDatabases(final Context context, final long account_id,
+			final long message_id) {
 		if (context == null) return null;
 		final ContentResolver resolver = context.getContentResolver();
 		ParcelableDirectMessage message = null;
@@ -539,7 +541,8 @@ public final class Utils implements Constants {
 		return message;
 	}
 
-	public static ParcelableStatus findStatusInDatabases(Context context, long account_id, long status_id) {
+	public static ParcelableStatus findStatusInDatabases(final Context context, final long account_id,
+			final long status_id) {
 		if (context == null) return null;
 		final ContentResolver resolver = context.getContentResolver();
 		ParcelableStatus status = null;
@@ -559,7 +562,8 @@ public final class Utils implements Constants {
 		return status;
 	}
 
-	public static UserList findUserList(Twitter twitter, long user_id, String list_name) throws TwitterException {
+	public static UserList findUserList(final Twitter twitter, final long user_id, final String list_name)
+			throws TwitterException {
 		if (twitter == null || user_id <= 0 || list_name == null) return null;
 		final ResponseList<UserList> response = twitter.getUserLists(user_id, -1);
 		for (final UserList list : response) {
@@ -568,15 +572,16 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static UserList findUserList(Twitter twitter, long user_id, String screen_name, String list_name)
-			throws TwitterException {
+	public static UserList findUserList(final Twitter twitter, final long user_id, final String screen_name,
+			final String list_name) throws TwitterException {
 		if (user_id > 0)
 			return findUserList(twitter, user_id, list_name);
 		else if (screen_name != null) return findUserList(twitter, screen_name, list_name);
 		return null;
 	}
 
-	public static UserList findUserList(Twitter twitter, String screen_name, String list_name) throws TwitterException {
+	public static UserList findUserList(final Twitter twitter, final String screen_name, final String list_name)
+			throws TwitterException {
 		if (twitter == null || screen_name == null || list_name == null) return null;
 		final ResponseList<UserList> response = twitter.getUserLists(screen_name, -1);
 		for (final UserList list : response) {
@@ -585,7 +590,7 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static String formatStatusText(Status status) {
+	public static String formatStatusText(final Status status) {
 		if (status == null) return null;
 		final String text = status.getRawText();
 		if (text == null) return null;
@@ -594,7 +599,7 @@ public final class Utils implements Constants {
 		return builder.build(true);
 	}
 
-	public static String formatTimeStampString(Context context, long timestamp) {
+	public static String formatTimeStampString(final Context context, final long timestamp) {
 		if (context == null) return null;
 		final Time then = new Time();
 		then.set(timestamp);
@@ -615,12 +620,12 @@ public final class Utils implements Constants {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static String formatTimeStampString(Context context, String date_time) {
+	public static String formatTimeStampString(final Context context, final String date_time) {
 		if (context == null) return null;
 		return formatTimeStampString(context, Date.parse(date_time));
 	}
 
-	public static String formatToLongTimeString(Context context, long timestamp) {
+	public static String formatToLongTimeString(final Context context, final long timestamp) {
 		if (context == null) return null;
 		final Time then = new Time();
 		then.set(timestamp);
@@ -634,7 +639,7 @@ public final class Utils implements Constants {
 		return DateUtils.formatDateTime(context, timestamp, format_flags);
 	}
 
-	public static String formatTweetText(Tweet tweet) {
+	public static String formatTweetText(final Tweet tweet) {
 		if (tweet == null) return null;
 		final String text = tweet.getRawText();
 		if (text == null) return null;
@@ -643,7 +648,7 @@ public final class Utils implements Constants {
 		return builder.build(true);
 	}
 
-	public static int getAccountColor(Context context, long account_id) {
+	public static int getAccountColor(final Context context, final long account_id) {
 		if (context == null) return Color.TRANSPARENT;
 		Integer color = sAccountColors.get(account_id);
 		if (color == null) {
@@ -662,7 +667,7 @@ public final class Utils implements Constants {
 		return color;
 	}
 
-	public static long getAccountId(Context context, String username) {
+	public static long getAccountId(final Context context, final String username) {
 		if (context == null) return -1;
 		long user_id = -1;
 
@@ -678,7 +683,7 @@ public final class Utils implements Constants {
 		return user_id;
 	}
 
-	public static long[] getAccountIds(Context context) {
+	public static long[] getAccountIds(final Context context) {
 		long[] accounts = new long[0];
 		if (context == null) return accounts;
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
@@ -698,7 +703,7 @@ public final class Utils implements Constants {
 		return accounts;
 	}
 
-	public static String[] getAccountScreenNames(Context context) {
+	public static String[] getAccountScreenNames(final Context context) {
 		String[] accounts = new String[0];
 		if (context == null) return accounts;
 		final String[] cols = new String[] { Accounts.USERNAME };
@@ -718,7 +723,7 @@ public final class Utils implements Constants {
 		return accounts;
 	}
 
-	public static String getAccountUsername(Context context, long account_id) {
+	public static String getAccountUsername(final Context context, final long account_id) {
 		if (context == null) return null;
 		String username = sAccountNames.get(account_id);
 		if (username == null) {
@@ -736,7 +741,7 @@ public final class Utils implements Constants {
 		return username;
 	}
 
-	public static long[] getActivatedAccountIds(Context context) {
+	public static long[] getActivatedAccountIds(final Context context) {
 		long[] accounts = new long[0];
 		if (context == null) return accounts;
 		final String[] cols = new String[] { Accounts.USER_ID };
@@ -757,7 +762,7 @@ public final class Utils implements Constants {
 		return accounts;
 	}
 
-	public static String[] getActivatedAccountScreenNames(Context context) {
+	public static String[] getActivatedAccountScreenNames(final Context context) {
 		String[] accounts = new String[0];
 		if (context == null) return accounts;
 		final String[] cols = new String[] { Accounts.USERNAME };
@@ -778,7 +783,7 @@ public final class Utils implements Constants {
 		return accounts;
 	}
 
-	public static ImageSpec getAllAvailableImage(String link) {
+	public static ImageSpec getAllAvailableImage(final String link) {
 		if (link == null) return null;
 		Matcher m;
 		m = PATTERN_TWITTER_IMAGES.matcher(link);
@@ -804,7 +809,7 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static long[] getAllStatusesIds(Context context, Uri uri, boolean filter_enabled) {
+	public static long[] getAllStatusesIds(final Context context, final Uri uri, final boolean filter_enabled) {
 		if (context == null) return new long[0];
 		final ContentResolver resolver = context.getContentResolver();
 		final ArrayList<Long> ids_list = new ArrayList<Long>();
@@ -820,20 +825,20 @@ public final class Utils implements Constants {
 		return ArrayUtils.fromList(ids_list);
 	}
 
-	public static String getBiggerTwitterProfileImage(String url) {
+	public static String getBiggerTwitterProfileImage(final String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
 			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_bigger");
 		return url;
 	}
 
-	public static String getBrowserUserAgent(Context context) {
+	public static String getBrowserUserAgent(final Context context) {
 		if (context == null) return null;
 		final WebView wv = new WebView(context);
 		return wv.getSettings().getUserAgentString();
 	}
 
-	public static Bitmap getColorPreviewBitmap(Context context, int color) {
+	public static Bitmap getColorPreviewBitmap(final Context context, final int color) {
 		if (context == null) return null;
 		final float density = context.getResources().getDisplayMetrics().density;
 		final int width = (int) (32 * density), height = (int) (32 * density);
@@ -877,8 +882,8 @@ public final class Utils implements Constants {
 		return bm;
 	}
 
-	public static HttpURLConnection getConnection(URL url_orig, boolean ignore_ssl_error, Proxy proxy,
-			HostAddressResolver resolver) throws IOException {
+	public static HttpURLConnection getConnection(final URL url_orig, final boolean ignore_ssl_error,
+			final Proxy proxy, final HostAddressResolver resolver) throws IOException {
 		if (url_orig == null) return null;
 		final HttpURLConnection con;
 		final String url_string = url_orig.toString();
@@ -896,24 +901,25 @@ public final class Utils implements Constants {
 		return con;
 	}
 
-	public static long getDefaultAccountId(Context context) {
+	public static long getDefaultAccountId(final Context context) {
 		if (context == null) return -1;
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
 		return preferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
 	}
 
-	public static Twitter getDefaultTwitterInstance(Context context, boolean include_entities) {
+	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities) {
 		if (context == null) return null;
 		return getDefaultTwitterInstance(context, include_entities, true);
 	}
 
-	public static Twitter getDefaultTwitterInstance(Context context, boolean include_entities, boolean include_rts) {
+	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities,
+			final boolean include_rts) {
 		if (context == null) return null;
 		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, include_rts);
 	}
 
-	public static String getImagePathFromUri(Context context, Uri uri) {
+	public static String getImagePathFromUri(final Context context, final Uri uri) {
 		if (context == null || uri == null) return null;
 
 		final String media_uri_start = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString();
@@ -941,7 +947,7 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static List<ImageSpec> getImagesInStatus(String status_string) {
+	public static List<ImageSpec> getImagesInStatus(final String status_string) {
 		if (status_string == null) return Collections.emptyList();
 		final List<ImageSpec> images = new ArrayList<ImageSpec>();
 		final Matcher matcher = PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML.matcher(status_string);
@@ -951,7 +957,7 @@ public final class Utils implements Constants {
 		return images;
 	}
 
-	public static String getImageUploadStatus(Context context, String link, String text) {
+	public static String getImageUploadStatus(final Context context, final String link, final String text) {
 		if (context == null) return null;
 		String image_upload_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 				.getString(PREFERENCE_KEY_IMAGE_UPLOAD_FORMAT, PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT);
@@ -962,7 +968,7 @@ public final class Utils implements Constants {
 		return image_upload_format.replace(FORMAT_PATTERN_LINK, link).replace(FORMAT_PATTERN_TEXT, text);
 	}
 
-	public static ImageSpec getImglyImage(String id) {
+	public static ImageSpec getImglyImage(final String id) {
 		if (isNullOrEmpty(id)) return null;
 		final String thumbnail_size = "https://img.ly/show/thumb/" + id;
 		final String full_size = "https://img.ly/show/full/" + id;
@@ -970,21 +976,21 @@ public final class Utils implements Constants {
 
 	}
 
-	public static ImageSpec getImgurImage(String id) {
+	public static ImageSpec getImgurImage(final String id) {
 		if (isNullOrEmpty(id)) return null;
 		final String thumbnail_size = "https://i.imgur.com/" + id + "s.jpg";
 		final String full_size = "https://i.imgur.com/" + id + ".jpg";
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static ImageSpec getInstagramImage(String id) {
+	public static ImageSpec getInstagramImage(final String id) {
 		if (isNullOrEmpty(id)) return null;
 		final String thumbnail_size = "https://instagr.am/p/" + id + "/media/?size=t";
 		final String full_size = "https://instagr.am/p/" + id + "/media/?size=l";
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static long[] getLastMessageIdsFromDatabase(Context context, Uri uri) {
+	public static long[] getLastMessageIdsFromDatabase(final Context context, final Uri uri) {
 		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
 		final String[] cols = new String[] { DirectMessages.MESSAGE_ID };
@@ -1008,7 +1014,7 @@ public final class Utils implements Constants {
 		return status_ids;
 	}
 
-	public static long[] getLastStatusIdsFromDatabase(Context context, Uri uri) {
+	public static long[] getLastStatusIdsFromDatabase(final Context context, final Uri uri) {
 		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
 		final String[] cols = new String[] { Statuses.STATUS_ID };
@@ -1032,7 +1038,7 @@ public final class Utils implements Constants {
 		return status_ids;
 	}
 
-	public static ImageSpec getLockerzAndPlixiImage(String url) {
+	public static ImageSpec getLockerzAndPlixiImage(final String url) {
 		if (isNullOrEmpty(url)) return null;
 		final String thumbnail_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
 		final String full_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
@@ -1040,28 +1046,28 @@ public final class Utils implements Constants {
 
 	}
 
-	public static ImageSpec getMobyPictureImage(String id) {
+	public static ImageSpec getMobyPictureImage(final String id) {
 		if (isNullOrEmpty(id)) return null;
 		final String thumbnail_size = "https://moby.to/" + id + ":thumb";
 		final String full_size = "https://moby.to/" + id + ":full";
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static String getNormalTwitterProfileImage(String url) {
+	public static String getNormalTwitterProfileImage(final String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
 			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_normal");
 		return url;
 	}
 
-	public static String getOriginalTwitterProfileImage(String url) {
+	public static String getOriginalTwitterProfileImage(final String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
 			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "");
 		return url;
 	}
 
-	public static PreviewImage getPreviewImage(String html, boolean include_preview) {
+	public static PreviewImage getPreviewImage(final String html, final boolean include_preview) {
 		if (html == null) return new PreviewImage(false, null, null);
 		if (!include_preview)
 			return new PreviewImage(html.contains(".twimg.com/") || html.contains("://instagr.am/")
@@ -1106,7 +1112,7 @@ public final class Utils implements Constants {
 		return new PreviewImage(false, null, null);
 	}
 
-	public static Proxy getProxy(Context context) {
+	public static Proxy getProxy(final Context context) {
 		if (context == null) return null;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean enable_proxy = prefs.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
@@ -1120,7 +1126,7 @@ public final class Utils implements Constants {
 		return Proxy.NO_PROXY;
 	}
 
-	public static String getQuoteStatus(Context context, String screen_name, String text) {
+	public static String getQuoteStatus(final Context context, final String screen_name, final String text) {
 		if (context == null) return null;
 		String quote_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
 				PREFERENCE_KEY_QUOTE_FORMAT, PREFERENCE_DEFAULT_QUOTE_FORMAT);
@@ -1130,7 +1136,7 @@ public final class Utils implements Constants {
 		return quote_format.replace(FORMAT_PATTERN_NAME, screen_name).replace(FORMAT_PATTERN_TEXT, text);
 	}
 
-	public static String getShareStatus(Context context, String title, String text) {
+	public static String getShareStatus(final Context context, final String title, final String text) {
 		if (context == null) return null;
 		String share_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
 				PREFERENCE_KEY_SHARE_FORMAT, PREFERENCE_DEFAULT_SHARE_FORMAT);
@@ -1141,14 +1147,14 @@ public final class Utils implements Constants {
 		return share_format.replace(FORMAT_PATTERN_TITLE, title).replace(FORMAT_PATTERN_TEXT, text);
 	}
 
-	public static ImageSpec getSinaWeiboImage(String url) {
+	public static ImageSpec getSinaWeiboImage(final String url) {
 		if (isNullOrEmpty(url)) return null;
 		final String thumbnail_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/thumbnail/");
 		final String full_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/large/");
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static int getStatusBackground(boolean is_mention, boolean is_favorite, boolean is_retweet) {
+	public static int getStatusBackground(final boolean is_mention, final boolean is_favorite, final boolean is_retweet) {
 		if (is_mention)
 			return 0x1A33B5E5;
 		else if (is_favorite)
@@ -1157,7 +1163,7 @@ public final class Utils implements Constants {
 		return Color.TRANSPARENT;
 	}
 
-	public static ArrayList<Long> getStatusIdsInDatabase(Context context, Uri uri, long account_id) {
+	public static ArrayList<Long> getStatusIdsInDatabase(final Context context, final Uri uri, final long account_id) {
 		final ArrayList<Long> list = new ArrayList<Long>();
 		if (context == null) return list;
 		final ContentResolver resolver = context.getContentResolver();
@@ -1176,7 +1182,7 @@ public final class Utils implements Constants {
 		return list;
 	}
 
-	public static int getStatusTypeIconRes(boolean is_fav, boolean has_location, boolean has_media) {
+	public static int getStatusTypeIconRes(final boolean is_fav, final boolean has_location, final boolean has_media) {
 		if (is_fav)
 			return R.drawable.ic_indicator_starred;
 		else if (has_media)
@@ -1185,7 +1191,7 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
-	public static Drawable getTabIconDrawable(Context context, Object icon_obj) {
+	public static Drawable getTabIconDrawable(final Context context, final Object icon_obj) {
 		if (context == null) return null;
 		final Resources res = context.getResources();
 		if (icon_obj instanceof Integer) {
@@ -1205,7 +1211,7 @@ public final class Utils implements Constants {
 		return res.getDrawable(R.drawable.ic_tab_list);
 	}
 
-	public static Object getTabIconObject(String type) {
+	public static Object getTabIconObject(final String type) {
 		if (type == null) return R.drawable.ic_tab_list;
 		final Integer value = CUSTOM_TABS_ICON_NAME_MAP.get(type);
 		if (value != null)
@@ -1221,12 +1227,12 @@ public final class Utils implements Constants {
 		return R.drawable.ic_tab_list;
 	}
 
-	public static int getTableId(Uri uri) {
+	public static int getTableId(final Uri uri) {
 		if (uri == null) return -1;
 		return CONTENT_PROVIDER_URI_MATCHER.match(uri);
 	}
 
-	public static String getTableNameForContentUri(Uri uri) {
+	public static String getTableNameForContentUri(final Uri uri) {
 		if (uri == null) return null;
 		switch (getTableId(uri)) {
 			case URI_ACCOUNTS:
@@ -1270,7 +1276,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static List<TabSpec> getTabs(Context context) {
+	public static List<TabSpec> getTabs(final Context context) {
 		if (context == null) return Collections.emptyList();
 		final ArrayList<TabSpec> tabs = new ArrayList<TabSpec>();
 		final ContentResolver resolver = context.getContentResolver();
@@ -1298,42 +1304,43 @@ public final class Utils implements Constants {
 		return tabs;
 	}
 
-	public static String getTabTypeName(Context context, String type) {
+	public static String getTabTypeName(final Context context, final String type) {
 		if (context == null) return null;
 		final Integer res_id = CUSTOM_TABS_TYPE_NAME_MAP.get(type);
 		return res_id != null ? context.getString(res_id) : null;
 	}
 
-	public static long getTimestampFromDate(Date date) {
+	public static long getTimestampFromDate(final Date date) {
 		if (date == null) return -1;
 		return date.getTime();
 	}
 
-	public static ImageSpec getTwitgooImage(String id) {
+	public static ImageSpec getTwitgooImage(final String id) {
 		if (isNullOrEmpty(id)) return null;
 		final String thumbnail_size = "https://twitgoo.com/show/thumb/" + id;
 		final String full_size = "https://twitgoo.com/show/img/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static ImageSpec getTwitpicImage(String id) {
+	public static ImageSpec getTwitpicImage(final String id) {
 		if (isNullOrEmpty(id)) return null;
 		final String thumbnail_size = "https://twitpic.com/show/thumb/" + id;
 		final String full_size = "https://twitpic.com/show/large/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static ImageSpec getTwitterImage(String url) {
+	public static ImageSpec getTwitterImage(final String url) {
 		if (isNullOrEmpty(url)) return null;
 		return new ImageSpec(url + ":thumb", url);
 	}
 
-	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities) {
+	public static Twitter getTwitterInstance(final Context context, final long account_id,
+			final boolean include_entities) {
 		return getTwitterInstance(context, account_id, include_entities, true);
 	}
 
-	public static Twitter getTwitterInstance(Context context, long account_id, boolean include_entities,
-			boolean include_rts) {
+	public static Twitter getTwitterInstance(final Context context, final long account_id,
+			final boolean include_entities, final boolean include_rts) {
 		if (context == null) return null;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
@@ -1429,12 +1436,13 @@ public final class Utils implements Constants {
 		return twitter;
 	}
 
-	public static Twitter getTwitterInstance(Context context, String account_username, boolean include_entities) {
+	public static Twitter getTwitterInstance(final Context context, final String account_username,
+			final boolean include_entities) {
 		return getTwitterInstance(context, account_username, include_entities, true);
 	}
 
-	public static Twitter getTwitterInstance(Context context, String account_username, boolean include_entities,
-			boolean include_rts) {
+	public static Twitter getTwitterInstance(final Context context, final String account_username,
+			final boolean include_entities, final boolean include_rts) {
 		if (context == null) return null;
 		final StringBuilder where = new StringBuilder();
 		where.append(Accounts.USERNAME + " = " + account_username);
@@ -1452,7 +1460,7 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static int getUserColor(Context context, long user_id) {
+	public static int getUserColor(final Context context, final long user_id) {
 		if (context == null) return Color.TRANSPARENT;
 		Integer color = sUserColors.get(user_id);
 		if (color == null) {
@@ -1464,14 +1472,14 @@ public final class Utils implements Constants {
 		return color != null ? color : Color.TRANSPARENT;
 	}
 
-	public static int getUserTypeIconRes(boolean is_verified, boolean is_protected) {
+	public static int getUserTypeIconRes(final boolean is_verified, final boolean is_protected) {
 		if (is_verified)
 			return R.drawable.ic_indicator_verified;
 		else if (is_protected) return R.drawable.ic_indicator_is_protected;
 		return 0;
 	}
 
-	public static ImageSpec getYfrogImage(String id) {
+	public static ImageSpec getYfrogImage(final String id) {
 		if (isNullOrEmpty(id)) return null;
 		final String thumbnail_size = "https://yfrog.com/" + id + ":small";
 		final String full_size = "https://yfrog.com/" + id + ":medium";
@@ -1479,7 +1487,7 @@ public final class Utils implements Constants {
 
 	}
 
-	public static boolean isMyAccount(Context context, long account_id) {
+	public static boolean isMyAccount(final Context context, final long account_id) {
 		if (context == null) return false;
 		for (final long id : getAccountIds(context)) {
 			if (id == account_id) return true;
@@ -1487,7 +1495,7 @@ public final class Utils implements Constants {
 		return false;
 	}
 
-	public static boolean isMyActivatedAccount(Context context, long account_id) {
+	public static boolean isMyActivatedAccount(final Context context, final long account_id) {
 		if (context == null || account_id <= 0) return false;
 		for (final long id : getActivatedAccountIds(context)) {
 			if (id == account_id) return true;
@@ -1495,7 +1503,7 @@ public final class Utils implements Constants {
 		return false;
 	}
 
-	public static boolean isMyActivatedUserName(Context context, String screen_name) {
+	public static boolean isMyActivatedUserName(final Context context, final String screen_name) {
 		if (context == null || screen_name == null) return false;
 		for (final String account_user_name : getActivatedAccountScreenNames(context)) {
 			if (account_user_name.equalsIgnoreCase(screen_name)) return true;
@@ -1503,12 +1511,12 @@ public final class Utils implements Constants {
 		return false;
 	}
 
-	public static boolean isMyRetweet(ParcelableStatus status) {
+	public static boolean isMyRetweet(final ParcelableStatus status) {
 		if (status == null) return false;
 		return status.retweeted_by_id == status.account_id;
 	}
 
-	public static boolean isMyUserName(Context context, String screen_name) {
+	public static boolean isMyUserName(final Context context, final String screen_name) {
 		if (context == null) return false;
 		for (final String account_screen_name : getAccountScreenNames(context)) {
 			if (account_screen_name.equalsIgnoreCase(screen_name)) return true;
@@ -1516,11 +1524,11 @@ public final class Utils implements Constants {
 		return false;
 	}
 
-	public static boolean isNullOrEmpty(CharSequence text) {
+	public static boolean isNullOrEmpty(final CharSequence text) {
 		return text == null || "".equals(text);
 	}
 
-	public static boolean isUserLoggedIn(Context context, long account_id) {
+	public static boolean isUserLoggedIn(final Context context, final long account_id) {
 		if (context == null) return false;
 		final long[] ids = getAccountIds(context);
 		if (ids == null) return false;
@@ -1530,9 +1538,10 @@ public final class Utils implements Constants {
 		return false;
 	}
 
-	public static ContentValues makeAccountContentValues(int color, AccessToken access_token, User user,
-			String rest_base_url, String oauth_base_url, String signing_rest_base_url, String signing_oauth_base_url,
-			String search_base_url, String upload_base_url, String basic_password, int auth_type) {
+	public static ContentValues makeAccountContentValues(final int color, final AccessToken access_token,
+			final User user, final String rest_base_url, final String oauth_base_url,
+			final String signing_rest_base_url, final String signing_oauth_base_url, final String search_base_url,
+			final String upload_base_url, final String basic_password, final int auth_type) {
 		if (user == null || user.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		switch (auth_type) {
@@ -1568,7 +1577,7 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues makeCachedUserContentValues(User user) {
+	public static ContentValues makeCachedUserContentValues(final User user) {
 		if (user == null || user.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		values.put(CachedUsers.NAME, user.getName());
@@ -1578,7 +1587,7 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues makeDirectMessageContentValues(DirectMessage message, long account_id) {
+	public static ContentValues makeDirectMessageContentValues(final DirectMessage message, final long account_id) {
 		if (message == null || message.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		final User sender = message.getSender(), recipient = message.getRecipient();
@@ -1604,7 +1613,7 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues makeStatusContentValues(Status status, long account_id) {
+	public static ContentValues makeStatusContentValues(Status status, final long account_id) {
 		if (status == null || status.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		values.put(Statuses.ACCOUNT_ID, account_id);
@@ -1646,7 +1655,7 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues[] makeTrendsContentValues(List<Trends> trends_list) {
+	public static ContentValues[] makeTrendsContentValues(final List<Trends> trends_list) {
 		if (trends_list == null) return new ContentValues[0];
 		final List<ContentValues> result_list = new ArrayList<ContentValues>();
 		for (final Trends trends : trends_list) {
@@ -1664,7 +1673,7 @@ public final class Utils implements Constants {
 		return result_list.toArray(new ContentValues[result_list.size()]);
 	}
 
-	public static final int matcherEnd(Matcher matcher, int group) {
+	public static final int matcherEnd(final Matcher matcher, final int group) {
 		try {
 			return matcher.end(group);
 		} catch (final IllegalStateException e) {
@@ -1673,7 +1682,7 @@ public final class Utils implements Constants {
 		return -1;
 	}
 
-	public static final String matcherGroup(Matcher matcher, int group) {
+	public static final String matcherGroup(final Matcher matcher, final int group) {
 		try {
 			return matcher.group(group);
 		} catch (final IllegalStateException e) {
@@ -1682,7 +1691,7 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static final int matcherStart(Matcher matcher, int group) {
+	public static final int matcherStart(final Matcher matcher, final int group) {
 		try {
 			return matcher.start(group);
 		} catch (final IllegalStateException e) {
@@ -1691,11 +1700,11 @@ public final class Utils implements Constants {
 		return -1;
 	}
 
-	public static int matchLinkId(Uri uri) {
+	public static int matchLinkId(final Uri uri) {
 		return LINK_HANDLER_URI_MATCHER.match(uri);
 	}
 
-	public static void notifyForUpdatedUri(Context context, Uri uri) {
+	public static void notifyForUpdatedUri(final Context context, final Uri uri) {
 		if (context == null) return;
 		switch (getTableId(uri)) {
 			case URI_STATUSES: {
@@ -1725,12 +1734,12 @@ public final class Utils implements Constants {
 		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
 	}
 
-	public static boolean objectEquals(Object object1, Object object2) {
+	public static boolean objectEquals(final Object object1, final Object object2) {
 		if (object1 == null || object2 == null) return object1 == object2;
 		return object1.equals(object2);
 	}
 
-	public static void openConversation(Activity activity, long account_id, long status_id) {
+	public static void openConversation(final Activity activity, final long account_id, final long status_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -1750,7 +1759,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openDirectMessagesConversation(Activity activity, long account_id, long conversation_id) {
+	public static void openDirectMessagesConversation(final Activity activity, final long account_id,
+			final long conversation_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -1783,7 +1793,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openIncomingFriendships(Activity activity, long account_id) {
+	public static void openIncomingFriendships(final Activity activity, final long account_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -1801,7 +1811,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openSavedSearches(Activity activity, long account_id) {
+	public static void openSavedSearches(final Activity activity, final long account_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -1819,7 +1829,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openStatus(Activity activity, ParcelableStatus status) {
+	public static void openStatus(final Activity activity, final ParcelableStatus status) {
 		if (activity == null || status == null) return;
 		final long account_id = status.account_id, status_id = status.status_id;
 		final Bundle bundle = new Bundle();
@@ -1851,7 +1861,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openTweetSearch(Activity activity, long account_id, String query) {
+	public static void openTweetSearch(final Activity activity, final long account_id, final String query) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -1876,7 +1886,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserBlocks(Activity activity, long account_id) {
+	public static void openUserBlocks(final Activity activity, final long account_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -1894,7 +1904,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserFavorites(Activity activity, long account_id, long user_id, String screen_name) {
+	public static void openUserFavorites(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -1925,7 +1936,8 @@ public final class Utils implements Constants {
 
 	}
 
-	public static void openUserFollowers(Activity activity, long account_id, long user_id, String screen_name) {
+	public static void openUserFollowers(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -1956,7 +1968,8 @@ public final class Utils implements Constants {
 
 	}
 
-	public static void openUserFriends(Activity activity, long account_id, long user_id, String screen_name) {
+	public static void openUserFriends(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -1987,7 +2000,8 @@ public final class Utils implements Constants {
 
 	}
 
-	public static void openUserListCreated(Activity activity, long account_id, long user_id, String screen_name) {
+	public static void openUserListCreated(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2013,8 +2027,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserListDetails(Activity activity, long account_id, int list_id, long user_id,
-			String screen_name, String list_name) {
+	public static void openUserListDetails(final Activity activity, final long account_id, final int list_id,
+			final long user_id, final String screen_name, final String list_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2048,8 +2062,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserListMembers(Activity activity, long account_id, int list_id, long user_id,
-			String screen_name, String list_name) {
+	public static void openUserListMembers(final Activity activity, final long account_id, final int list_id,
+			final long user_id, final String screen_name, final String list_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2083,7 +2097,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserListMemberships(Activity activity, long account_id, long user_id, String screen_name) {
+	public static void openUserListMemberships(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2109,8 +2124,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserListSubscribers(Activity activity, long account_id, int list_id, long user_id,
-			String screen_name, String list_name) {
+	public static void openUserListSubscribers(final Activity activity, final long account_id, final int list_id,
+			final long user_id, final String screen_name, final String list_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2144,7 +2159,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserListSubscriptions(Activity activity, long account_id, long user_id, String screen_name) {
+	public static void openUserListSubscriptions(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2170,8 +2186,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserListTimeline(Activity activity, long account_id, int list_id, long user_id,
-			String screen_name, String list_name) {
+	public static void openUserListTimeline(final Activity activity, final long account_id, final int list_id,
+			final long user_id, final String screen_name, final String list_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2205,7 +2221,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserListTypes(Activity activity, long account_id, long user_id, String screen_name) {
+	public static void openUserListTypes(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2231,7 +2248,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserMentions(Activity activity, long account_id, String screen_name) {
+	public static void openUserMentions(final Activity activity, final long account_id, final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2255,7 +2272,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserProfile(Activity activity, long account_id, long user_id, String screen_name) {
+	public static void openUserProfile(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2285,7 +2303,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserRetweetedStatus(Activity activity, long account_id, long status_id) {
+	public static void openUserRetweetedStatus(final Activity activity, final long account_id, final long status_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2309,7 +2327,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserTimeline(Activity activity, long account_id, long user_id, String screen_name) {
+	public static void openUserTimeline(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
@@ -2340,7 +2359,7 @@ public final class Utils implements Constants {
 
 	}
 
-	public static Bundle parseArguments(String string) {
+	public static Bundle parseArguments(final String string) {
 		final Bundle bundle = new Bundle();
 		if (string != null) {
 			try {
@@ -2379,7 +2398,7 @@ public final class Utils implements Constants {
 		return bundle;
 	}
 
-	public static double parseDouble(String source) {
+	public static double parseDouble(final String source) {
 		if (source == null) return -1;
 		try {
 			return Double.parseDouble(source);
@@ -2389,7 +2408,7 @@ public final class Utils implements Constants {
 		return -1;
 	}
 
-	public static int parseInt(String source) {
+	public static int parseInt(final String source) {
 		if (source == null) return -1;
 		try {
 			return Integer.valueOf(source);
@@ -2399,7 +2418,7 @@ public final class Utils implements Constants {
 		return -1;
 	}
 
-	public static long parseLong(String source) {
+	public static long parseLong(final String source) {
 		if (source == null) return -1;
 		try {
 			return Long.parseLong(source);
@@ -2409,12 +2428,12 @@ public final class Utils implements Constants {
 		return -1;
 	}
 
-	public static String parseString(Object object) {
+	public static String parseString(final Object object) {
 		if (object == null) return null;
 		return String.valueOf(object);
 	}
 
-	public static URL parseURL(String url_string) {
+	public static URL parseURL(final String url_string) {
 		if (url_string == null) return null;
 		try {
 			return new URL(url_string);
@@ -2424,12 +2443,12 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static String replaceLast(String text, String regex, String replacement) {
+	public static String replaceLast(final String text, final String regex, final String replacement) {
 		if (text == null || regex == null || replacement == null) return text;
 		return text.replaceFirst("(?s)" + regex + "(?!.*?" + regex + ")", replacement);
 	}
 
-	public static void restartActivity(Activity activity, boolean animation) {
+	public static void restartActivity(final Activity activity, final boolean animation) {
 		if (activity == null) return;
 		final int enter_anim = animation ? android.R.anim.fade_in : 0;
 		final int exit_anim = animation ? android.R.anim.fade_out : 0;
@@ -2447,7 +2466,7 @@ public final class Utils implements Constants {
 		activity.startActivity(activity.getIntent());
 	}
 
-	public static void setIgnoreSSLError(URLConnection conn) {
+	public static void setIgnoreSSLError(final URLConnection conn) {
 		if (conn instanceof HttpsURLConnection) {
 			((HttpsURLConnection) conn).setHostnameVerifier(ALLOW_ALL_HOSTNAME_VERIFIER);
 			if (IGNORE_ERROR_SSL_FACTORY != null) {
@@ -2456,7 +2475,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void setMenuForStatus(Context context, Menu menu, ParcelableStatus status) {
+	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {
 		if (context == null || menu == null || status == null) return;
 		final int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
 		final MenuItem itemDelete = menu.findItem(R.id.delete_submenu);
@@ -2489,7 +2508,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void setUserAgent(Context context, ConfigurationBuilder cb) {
+	public static void setUserAgent(final Context context, final ConfigurationBuilder cb) {
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean gzip_compressing = prefs.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, true);
 		final PackageManager pm = context.getPackageManager();
@@ -2506,7 +2525,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void setUserColor(Context context, long user_id, int color) {
+	public static void setUserColor(final Context context, final long user_id, final int color) {
 		if (context == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final SharedPreferences.Editor editor = prefs.edit();
@@ -2515,7 +2534,7 @@ public final class Utils implements Constants {
 		sUserColors.put(user_id, color);
 	}
 
-	public static void showErrorToast(Context context, Object e, boolean long_message) {
+	public static void showErrorToast(final Context context, final Object e, final boolean long_message) {
 		if (context == null) return;
 		final String message;
 		if (e != null) {
@@ -2529,12 +2548,12 @@ public final class Utils implements Constants {
 		toast.show();
 	}
 
-	public static String trimLineBreak(String orig) {
+	public static String trimLineBreak(final String orig) {
 		if (orig == null) return null;
 		return orig.replaceAll("\\n+", "\n");
 	}
 
-	private static Bitmap getTabIconFromFile(File file, Resources res) {
+	private static Bitmap getTabIconFromFile(final File file, final Resources res) {
 		if (file == null || !file.exists()) return null;
 		final String path = file.getPath();
 		final BitmapFactory.Options o = new BitmapFactory.Options();
@@ -2546,7 +2565,7 @@ public final class Utils implements Constants {
 		return BitmapFactory.decodeFile(path, o2);
 	}
 
-	private static void parseEntities(HtmlBuilder builder, EntitySupport entities) {
+	private static void parseEntities(final HtmlBuilder builder, final EntitySupport entities) {
 		final URLEntity[] urls = entities.getURLEntities();
 		// Format media.
 		final MediaEntity[] medias = entities.getMediaEntities();

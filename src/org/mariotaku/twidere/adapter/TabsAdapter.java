@@ -46,23 +46,24 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	private boolean mDisplayLabel;
 
-	public TabsAdapter(Context context, FragmentManager fm, TabPageIndicator indicator) {
+	public TabsAdapter(final Context context, final FragmentManager fm, final TabPageIndicator indicator) {
 		super(fm);
 		mContext = context;
 		mIndicator = indicator;
 		clear();
 	}
 
-	public void addTab(Class<? extends Fragment> cls, Bundle args, String name, Integer icon, int position) {
+	public void addTab(final Class<? extends Fragment> cls, final Bundle args, final String name, final Integer icon,
+			final int position) {
 		addTab(new TabSpec(name, icon, cls, args, position));
 	}
 
-	public void addTab(TabSpec spec) {
+	public void addTab(final TabSpec spec) {
 		mTabs.add(spec);
 		notifyDataSetChanged();
 	}
 
-	public void addTabs(Collection<? extends TabSpec> specs) {
+	public void addTabs(final Collection<? extends TabSpec> specs) {
 		mTabs.addAll(specs);
 		notifyDataSetChanged();
 	}
@@ -78,19 +79,19 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	}
 
 	@Override
-	public Drawable getIcon(int position) {
+	public Drawable getIcon(final int position) {
 		return getTabIconDrawable(mContext, mTabs.get(position).icon);
 	}
 
 	@Override
-	public Fragment getItem(int position) {
+	public Fragment getItem(final int position) {
 		final Fragment fragment = Fragment.instantiate(mContext, mTabs.get(position).cls.getName());
 		fragment.setArguments(mTabs.get(position).args);
 		return fragment;
 	}
 
 	@Override
-	public String getTitle(int position) {
+	public String getTitle(final int position) {
 		return mDisplayLabel ? mTabs.get(position).name : null;
 	}
 
@@ -103,7 +104,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	}
 
 	@Override
-	public void onPageReselected(int position) {
+	public void onPageReselected(final int position) {
 		final String action = mTabs.get(position).cls.getName() + HomeActivity.SHUFFIX_SCROLL_TO_TOP;
 		final Intent intent = new Intent(action);
 		intent.setPackage(mContext.getPackageName());
@@ -111,11 +112,11 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	}
 
 	@Override
-	public void onPageSelected(int position) {
+	public void onPageSelected(final int position) {
 
 	}
 
-	public void setDisplayLabel(boolean display_label) {
+	public void setDisplayLabel(final boolean display_label) {
 		mDisplayLabel = display_label;
 
 	}

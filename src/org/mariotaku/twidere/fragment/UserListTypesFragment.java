@@ -23,7 +23,7 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 	private String mScreenName;
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		if (args != null) {
@@ -43,7 +43,7 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final ListAction action = mAdapter.findItem(id);
 		if (action != null) {
 			action.onClick();

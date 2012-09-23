@@ -88,10 +88,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mActivityFirstCreated,
 			mNotReachedBottomBefore = true;
 
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
 				mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
@@ -132,7 +132,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	public abstract boolean isListLoadFinished();
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
 		mAsyncTaskManager = getAsyncTaskManager();
@@ -150,7 +150,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mActivityFirstCreated = true;
 		// Tell the framework to try to keep this fragment around
@@ -168,7 +168,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
 			final ParcelableStatus status = getListAdapter().findStatus(id);
@@ -192,7 +192,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
 			final StatusViewHolder holder = (StatusViewHolder) tag;
@@ -219,19 +219,19 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Data> loader) {
+	public void onLoaderReset(final Loader<Data> loader) {
 		mData = null;
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Data> loader, Data data) {
+	public void onLoadFinished(final Loader<Data> loader, final Data data) {
 		mData = data;
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
 		setListShown(true);
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		final ParcelableStatus status = mSelectedStatus;
 		if (status == null) return false;
 		switch (item.getItemId()) {
@@ -341,7 +341,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+			final int totalItemCount) {
 		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
 				&& totalItemCount >= visibleItemCount;
 
@@ -361,7 +362,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
 			case SCROLL_STATE_TOUCH_SCROLL:

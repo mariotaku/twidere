@@ -28,7 +28,7 @@ public final class ExtensionsViewHolder {
 	public final ImageView icon;
 	public final TextView text1, text2;
 
-	public ExtensionsViewHolder(View view) {
+	public ExtensionsViewHolder(final View view) {
 
 		icon = (ImageView) view.findViewById(android.R.id.icon);
 		text1 = (TextView) view.findViewById(android.R.id.text1);

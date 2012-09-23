@@ -103,7 +103,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	public abstract Loader<List<ParcelableUserList>> newLoaderInstance(long account_id, long user_id, String screen_name);
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -131,7 +131,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Tell the framework to try to keep this fragment around
 		// during a configuration change.
@@ -139,13 +139,13 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	}
 
 	@Override
-	public Loader<List<ParcelableUserList>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<ParcelableUserList>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		return newLoaderInstance(mAccountId, mUserId, mScreenName);
 	}
 
 	@Override
-	public final void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public final void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		if (mApplication.isMultiSelectActive()) return;
 		final ParcelableUserList user_list = mAdapter.findItem(id);
 		if (user_list == null) return;
@@ -154,7 +154,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		if (mApplication.isMultiSelectActive()) return true;
 		mSelectedUserList = null;
 		final UserListsAdapter adapter = getListAdapter();
@@ -167,12 +167,12 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<ParcelableUserList>> loader) {
+	public void onLoaderReset(final Loader<List<ParcelableUserList>> loader) {
 		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<ParcelableUserList>> loader, List<ParcelableUserList> data) {
+	public void onLoadFinished(final Loader<List<ParcelableUserList>> loader, final List<ParcelableUserList> data) {
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
 		if (loader instanceof BaseUserListsLoader) {
@@ -186,7 +186,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedUserList == null) return false;
 		switch (item.getItemId()) {
 			case MENU_VIEW_USER_LIST: {
@@ -226,7 +226,8 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+			final int totalItemCount) {
 		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
 				&& totalItemCount >= visibleItemCount;
 
@@ -245,7 +246,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	}
 
 	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 	}
 
 	@Override
@@ -268,8 +269,8 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 		super.onStop();
 	}
 
-	private void openUserListDetails(Activity activity, long account_id, int list_id, long user_id, String screen_name,
-			String list_name) {
+	private void openUserListDetails(final Activity activity, final long account_id, final int list_id,
+			final long user_id, final String screen_name, final String list_name) {
 		if (activity == null) return;
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;

@@ -100,10 +100,10 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
 	private AccountsAdapter mAccountsAdapter;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)
 					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
@@ -115,20 +115,20 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 		}
 	};
 
-	private TextWatcher mScreenNameTextWatcher = new TextWatcher() {
+	private final TextWatcher mScreenNameTextWatcher = new TextWatcher() {
 
 		@Override
-		public void afterTextChanged(Editable s) {
+		public void afterTextChanged(final Editable s) {
 
 		}
 
 		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
 
 		}
 
 		@Override
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
+		public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
 			if (mScreenNameConfirmButton == null) return;
 			mScreenNameConfirmButton.setEnabled(s.length() > 0 && s.length() < 20);
 		}
@@ -136,17 +136,17 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	private TwidereApplication mApplication;
 
 	@Override
-	public void afterTextChanged(Editable s) {
+	public void afterTextChanged(final Editable s) {
 
 	}
 
 	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+	public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
 
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -190,7 +190,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.send: {
 				send();
@@ -210,7 +210,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Tell the framework to try to keep this fragment around
 		// during a configuration change.
@@ -218,7 +218,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID)) return null;
 		final String[] cols = DirectMessages.COLUMNS;
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
@@ -234,7 +234,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.direct_messages_conversation, null);
 		mListView = (ListView) view.findViewById(android.R.id.list);
 		mEditText = (EditText) view.findViewById(R.id.edit_text);
@@ -253,7 +253,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+	public boolean onEditorAction(final TextView view, final int actionId, final KeyEvent event) {
 		switch (event.getKeyCode()) {
 			case KeyEvent.KEYCODE_ENTER: {
 				send();
@@ -264,14 +264,14 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final Object tag = view.getTag();
 		if (tag instanceof DirectMessageConversationViewHolder) {
 		}
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final Object tag = view.getTag();
 		if (tag instanceof DirectMessageConversationViewHolder) {
 			final ParcelableDirectMessage dm = mSelectedDirectMessage = mAdapter.findItem(id);
@@ -290,25 +290,25 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+	public void onItemSelected(final AdapterView<?> parent, final View view, final int pos, final long id) {
 		mSelectedAccount = null;
 		if (mAccountsAdapter == null) return;
 		mSelectedAccount = mAccountsAdapter.getItem(pos);
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
+	public void onLoaderReset(final Loader<Cursor> loader) {
 		mAdapter.swapCursor(null);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.swapCursor(cursor);
 
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedDirectMessage != null) {
 			final long message_id = mSelectedDirectMessage.message_id;
 			final long account_id = mSelectedDirectMessage.account_id;
@@ -334,12 +334,12 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public void onNothingSelected(AdapterView<?> view) {
+	public void onNothingSelected(final AdapterView<?> view) {
 
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		if (mEditText != null) {
 			outState.putString(INTENT_KEY_TEXT, parseString(mEditText.getText()));
 		}
@@ -373,12 +373,12 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
-	public void onTextChanged(CharSequence s, int start, int before, int count) {
+	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
 		if (mSendButton == null || s == null) return;
 		mSendButton.setEnabled(mValidator.isValidTweet(s.toString()));
 	}
 
-	public void showConversation(long account_id, long conversation_id) {
+	public void showConversation(final long account_id, final long conversation_id) {
 		final Bundle args = new Bundle();
 		args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 		args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
@@ -400,7 +400,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 
 	private static class AccountsAdapter extends ArrayAdapter<Account> {
 
-		public AccountsAdapter(Context context) {
+		public AccountsAdapter(final Context context) {
 			super(context, R.layout.spinner_item, Account.getAccounts(context, true));
 			setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		}

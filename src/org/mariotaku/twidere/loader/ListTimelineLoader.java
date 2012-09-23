@@ -50,8 +50,9 @@ public class ListTimelineLoader extends Twitter4JStatusLoader {
 	private final int mListId;
 	private final Context mContext;
 
-	public ListTimelineLoader(Context context, long account_id, int list_id, long user_id, String screen_name,
-			String list_name, long max_id, List<ParcelableStatus> data, String class_name, boolean is_home_tab) {
+	public ListTimelineLoader(final Context context, final long account_id, final int list_id, final long user_id,
+			final String screen_name, final String list_name, final long max_id, final List<ParcelableStatus> data,
+			final String class_name, final boolean is_home_tab) {
 		super(context, account_id, max_id, data, class_name, is_home_tab);
 		mContext = context;
 		mListId = list_id;
@@ -61,7 +62,7 @@ public class ListTimelineLoader extends Twitter4JStatusLoader {
 	}
 
 	@Override
-	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
+	public ResponseList<Status> getStatuses(final Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
 		if (twitter == null) return null;
 		if (mListId > 0)
@@ -102,8 +103,8 @@ public class ListTimelineLoader extends Twitter4JStatusLoader {
 		return super.loadInBackground();
 	}
 
-	public static void writeSerializableStatuses(Object instance, Context context, List<ParcelableStatus> data,
-			Bundle args) {
+	public static void writeSerializableStatuses(final Object instance, final Context context,
+			final List<ParcelableStatus> data, final Bundle args) {
 		if (instance == null || context == null || data == null || args == null) return;
 		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
