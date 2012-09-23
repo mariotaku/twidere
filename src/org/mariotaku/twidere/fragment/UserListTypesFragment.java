@@ -9,12 +9,10 @@ import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class UserListTypesFragment extends BaseListFragment implements OnItemClickListener, Panes.Left {
@@ -54,10 +52,11 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 
 	class ListsFollowingUserAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 3;
 		}
-		
+
 		@Override
 		public String getName() {
 			return getString(R.string.list_following_user);
@@ -71,10 +70,11 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 
 	class UserCreatedListAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 1;
 		}
-		
+
 		@Override
 		public String getName() {
 			return getString(R.string.list_created_by_user);
@@ -88,6 +88,7 @@ public class UserListTypesFragment extends BaseListFragment implements OnItemCli
 
 	class UserFollowedListAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 2;
 		}

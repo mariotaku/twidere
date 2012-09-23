@@ -1782,7 +1782,7 @@ public final class Utils implements Constants {
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
-	
+
 	public static void openIncomingFriendships(Activity activity, long account_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {

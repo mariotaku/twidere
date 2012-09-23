@@ -124,8 +124,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 			holder.setUserColor(getUserColor(mContext, user_id));
 			if (text != null) {
-				holder.setHighlightColor(getStatusBackground(text.contains('@' + getAccountUsername(mContext, account_id)),
-						is_favorite, is_retweet));
+				holder.setHighlightColor(getStatusBackground(
+						text.contains('@' + getAccountUsername(mContext, account_id)), is_favorite, is_retweet));
 			}
 
 			holder.setAccountColorEnabled(mShowAccountColor);

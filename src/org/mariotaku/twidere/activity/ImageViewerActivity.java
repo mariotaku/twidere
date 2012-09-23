@@ -150,7 +150,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 	@Override
 	public void onLoadFinished(Loader<ImageLoader.Result> loader, ImageLoader.Result data) {
-		if (data !=null && data.bitmap != null) {
+		if (data != null && data.bitmap != null) {
 			mImageLoading = false;
 			mImageView.setBitmap(data.bitmap);
 			mImageFile = data.file;

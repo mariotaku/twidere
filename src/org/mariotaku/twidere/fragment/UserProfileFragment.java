@@ -34,7 +34,6 @@ import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
-import static org.mariotaku.twidere.util.Utils.isMyActivatedUserName;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
@@ -112,7 +111,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -994,6 +992,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	class FavoritesAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 1;
 		}
@@ -1017,9 +1016,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-
 	class IncomingFriendshipsAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 5;
 		}
@@ -1036,9 +1035,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 	}
-	
+
 	class SavedSearchesAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 4;
 		}
@@ -1058,10 +1058,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	class UserBlocksAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 6;
 		}
-		
+
 		@Override
 		public String getName() {
 			return getString(R.string.blocked_users);
@@ -1109,6 +1110,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	class UserListTypesAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 3;
 		}
@@ -1128,6 +1130,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	class UserMentionsAction extends ListAction {
 
+		@Override
 		public long getId() {
 			return 2;
 		}

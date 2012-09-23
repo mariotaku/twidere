@@ -54,8 +54,6 @@ public interface Constants extends TwitterConstants {
 	public static final String MAPS_API_KEY_RELEASE = "0kjPwJOe_zwYjzGc9uYak7vhm_Sf3eob-2L3Xzw";
 	public static final String MAPS_API_KEY_DEBUG = "0kjPwJOe_zwY9p6kT-kygu4mxwysyOOpfkaXqTA";
 
-	public static final String CRASH_REPORT_FORM_KEY = "dEo0SGZpWE5EMWpFakVTUVZlbzZhQ2c6MQ";
-
 	public static final String MAPS_API_KEY = DEBUG ? MAPS_API_KEY_DEBUG : MAPS_API_KEY_RELEASE;
 
 	public static final String SCHEME_HTTP = "http";

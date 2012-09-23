@@ -466,10 +466,12 @@ public class TwidereService extends Service implements Constants {
 		builder.setWhen(System.currentTimeMillis());
 		builder.setSmallIcon(icon);
 		if (delete_intent != null) {
-			builder.setDeleteIntent(PendingIntent.getBroadcast(this, 0, delete_intent, PendingIntent.FLAG_UPDATE_CURRENT));
+			builder.setDeleteIntent(PendingIntent.getBroadcast(this, 0, delete_intent,
+					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
-		if (content_intent != null) {			
-			builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent, PendingIntent.FLAG_UPDATE_CURRENT));
+		if (content_intent != null) {
+			builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent,
+					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
 		int defaults = 0;
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
@@ -2826,7 +2828,8 @@ public class TwidereService extends Service implements Constants {
 				final String title = getString(R.string.tweet_not_sent);
 				final String message = getString(R.string.tweet_not_sent_summary);
 				final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
-				final Notification notification = buildNotification(title, message, R.drawable.ic_stat_tweet, intent, null);
+				final Notification notification = buildNotification(title, message, R.drawable.ic_stat_tweet, intent,
+						null);
 				mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
 			}
 			super.onPostExecute(result);
@@ -2838,7 +2841,7 @@ public class TwidereService extends Service implements Constants {
 				}
 				if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
 					getReceivedDirectMessages(account_ids, null);
-					//getSentDirectMessages(account_ids, null);
+					// getSentDirectMessages(account_ids, null);
 				}
 			}
 		}

@@ -30,6 +30,7 @@ import static org.mariotaku.twidere.util.Utils.parseLong;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
+import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
@@ -58,7 +59,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.Window;
-import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 
 public class LinkHandlerActivity extends MultiSelectActivity {
 
