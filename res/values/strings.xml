@@ -335,5 +335,7 @@
 	<string name="tweet_not_sent">Tweet not sent.</string>
 	<string name="tweet_not_sent_summary">Tweet not sent, and saved to drafts.</string>
 	<string name="incoming_friendships">Pending follow requests</string>
+	<string name="click_to_open_menu">Click to open item menu</string>
+	<string name="click_to_open_menu_summary">Click to open item menu, long-click to multi select.</string>
 
 </resources>

@@ -61,6 +61,7 @@ import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
+import android.view.Menu;
 
 abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
 		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left {
@@ -169,9 +170,11 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		mSelectedStatus = null;
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			final ParcelableStatus status = getListAdapter().findStatus(id);
+			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
+			final ParcelableStatus status = mSelectedStatus = getListAdapter().findStatus(id);
 			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) {
@@ -186,18 +189,24 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 					}
 					return;
 				}
-				openStatus(getActivity(), status);
+				if (click_to_open_menu) {
+					openMenu(view, status);
+				} else {
+					openStatus(getActivity(), status);
+				}
 			}
 		}
 	}
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+		mSelectedStatus = null;
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
+			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			mSelectedStatus = getListAdapter().findStatus(id);
+			final ParcelableStatus status = mSelectedStatus = getListAdapter().findStatus(id);
 			if (mApplication.isMultiSelectActive()) {
 				final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(mSelectedStatus)) {
@@ -207,15 +216,34 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				}
 				return true;
 			}
-			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-			mPopupMenu.inflate(R.menu.action_status);
-			setMenuForStatus(getActivity(), mPopupMenu.getMenu(), mSelectedStatus);
-			mPopupMenu.setOnMenuItemClickListener(this);
-			mPopupMenu.show();
-
+			if (click_to_open_menu) {
+				if (!mApplication.isMultiSelectActive()) {
+					mApplication.startMultiSelect();
+				}
+				final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
+				if (!list.contains(status)) {
+					list.add(status);
+				}
+			} else {
+				openMenu(view, status);
+			}
 			return true;
 		}
 		return false;
+	}
+	
+	private void openMenu(View view, ParcelableStatus status) {
+		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+		mPopupMenu.inflate(R.menu.action_status);
+		final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
+		final Menu menu = mPopupMenu.getMenu();
+		final MenuItem itemView = menu.findItem(MENU_VIEW);
+		if (itemView != null) {
+			itemView.setVisible(click_to_open_menu);
+		}
+		setMenuForStatus(getActivity(), menu, status);
+		mPopupMenu.setOnMenuItemClickListener(this);
+		mPopupMenu.show();
 	}
 
 	@Override
@@ -235,6 +263,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final ParcelableStatus status = mSelectedStatus;
 		if (status == null) return false;
 		switch (item.getItemId()) {
+			case MENU_VIEW: {
+				openStatus(getActivity(), status);
+				break;
+			}
 			case MENU_SHARE: {
 				final Intent intent = new Intent(Intent.ACTION_SEND);
 				intent.setType("text/plain");
