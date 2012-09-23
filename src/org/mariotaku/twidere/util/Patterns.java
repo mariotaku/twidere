@@ -194,7 +194,7 @@ public class Patterns {
 	 * @return A String comprising all of the non-null matched groups
 	 *         concatenated together
 	 */
-	public static final String concatGroups(Matcher matcher) {
+	public static final String concatGroups(final Matcher matcher) {
 		final StringBuilder b = new StringBuilder();
 		final int numGroups = matcher.groupCount();
 
@@ -218,7 +218,7 @@ public class Patterns {
 	 * 
 	 * @return A String comprising all of the digits and plus in the match
 	 */
-	public static final String digitsAndPlusOnly(Matcher matcher) {
+	public static final String digitsAndPlusOnly(final Matcher matcher) {
 		final StringBuilder buffer = new StringBuilder();
 		final String matchingRegion = matcher.group();
 

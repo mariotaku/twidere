@@ -124,10 +124,10 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 	private ParcelableStatus mStatus;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
 				if (mStatus != null && mStatus.user_id == intent.getLongExtra(INTENT_KEY_USER_ID, -1)
@@ -155,7 +155,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	final LoaderCallbacks<Response<ParcelableStatus>> mStatusLoaderCallbacks = new LoaderCallbacks<Response<ParcelableStatus>>() {
 
 		@Override
-		public Loader<Response<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
+		public Loader<Response<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
 			mStatusLoadProgress.setVisibility(View.VISIBLE);
 			mStatusContent.setVisibility(View.INVISIBLE);
 			mStatusContent.setEnabled(false);
@@ -165,12 +165,13 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		}
 
 		@Override
-		public void onLoaderReset(Loader<Response<ParcelableStatus>> loader) {
+		public void onLoaderReset(final Loader<Response<ParcelableStatus>> loader) {
 
 		}
 
 		@Override
-		public void onLoadFinished(Loader<Response<ParcelableStatus>> loader, Response<ParcelableStatus> data) {
+		public void onLoadFinished(final Loader<Response<ParcelableStatus>> loader,
+				final Response<ParcelableStatus> data) {
 			if (data.value == null) {
 				showErrorToast(getActivity(), data.exception, true);
 			} else {
@@ -187,17 +188,17 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	final LoaderCallbacks<String> mLocationLoaderCallbacks = new LoaderCallbacks<String>() {
 
 		@Override
-		public Loader<String> onCreateLoader(int id, Bundle args) {
+		public Loader<String> onCreateLoader(final int id, final Bundle args) {
 			return new LocationInfoLoader(getActivity(), mStatus != null ? mStatus.location : null);
 		}
 
 		@Override
-		public void onLoaderReset(Loader<String> loader) {
+		public void onLoaderReset(final Loader<String> loader) {
 
 		}
 
 		@Override
-		public void onLoadFinished(Loader<String> loader, String data) {
+		public void onLoadFinished(final Loader<String> loader, final String data) {
 			if (data != null) {
 				mLocationView.setText(data);
 				mLocationInfoDisplayed = true;
@@ -212,7 +213,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	final LoaderCallbacks<Response<Boolean>> mFollowInfoLoaderCallbacks = new LoaderCallbacks<Response<Boolean>>() {
 
 		@Override
-		public Loader<Response<Boolean>> onCreateLoader(int id, Bundle args) {
+		public Loader<Response<Boolean>> onCreateLoader(final int id, final Bundle args) {
 			mFollowIndicator.setVisibility(View.VISIBLE);
 			mFollowButton.setVisibility(View.GONE);
 			mFollowInfoProgress.setVisibility(View.VISIBLE);
@@ -220,12 +221,12 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		}
 
 		@Override
-		public void onLoaderReset(Loader<Response<Boolean>> loader) {
+		public void onLoaderReset(final Loader<Response<Boolean>> loader) {
 
 		}
 
 		@Override
-		public void onLoadFinished(Loader<Response<Boolean>> loader, Response<Boolean> data) {
+		public void onLoadFinished(final Loader<Response<Boolean>> loader, final Response<Boolean> data) {
 			if (data.exception == null) {
 				mFollowIndicator.setVisibility(data.value == null || data.value ? View.GONE : View.VISIBLE);
 				if (data.value != null) {
@@ -246,7 +247,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 	private boolean mFollowInfoLoaderInitialized;
 
-	public void displayStatus(ParcelableStatus status) {
+	public void displayStatus(final ParcelableStatus status) {
 		mStatus = null;
 		mImagesPreviewFragment.clear();
 		if (status == null || getActivity() == null) return;
@@ -325,7 +326,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final TwidereApplication application = getApplication();
 		mService = application.getServiceInterface();
@@ -356,7 +357,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
 		if (intent == null || mStatus == null) return;
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
@@ -372,7 +373,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	}
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		if (mStatus == null) return;
 		switch (view.getId()) {
 			case R.id.profile: {
@@ -409,7 +410,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.view_status, container, false);
 		mStatusContent = view.findViewById(R.id.content);
 		mStatusLoadProgress = (ProgressBar) view.findViewById(R.id.status_load_progress);
@@ -445,7 +446,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		if (mStatus == null) return false;
 		final String text_plain = mStatus.text_plain;
 		final String screen_name = mStatus.screen_name;
@@ -564,7 +565,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		super.onStop();
 	}
 
-	private void getStatus(boolean omit_intent_extra) {
+	private void getStatus(final boolean omit_intent_extra) {
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_STATUS);
 		final Bundle args = new Bundle();
@@ -577,7 +578,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		}
 	}
 
-	private void showFollowInfo(boolean force) {
+	private void showFollowInfo(final boolean force) {
 		if (mFollowInfoDisplayed && !force) return;
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_FOLLOW);
@@ -589,7 +590,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		}
 	}
 
-	private void showLocationInfo(boolean force) {
+	private void showLocationInfo(final boolean force) {
 		if (mLocationInfoDisplayed && !force) return;
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_LOCATION);
@@ -616,7 +617,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		private final Context context;
 		private final ParcelableLocation location;
 
-		public LocationInfoLoader(Context context, ParcelableLocation location) {
+		public LocationInfoLoader(final Context context, final ParcelableLocation location) {
 			super(context);
 			this.context = context;
 			this.location = location;
@@ -658,7 +659,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		public final T value;
 		public final TwitterException exception;
 
-		public Response(T value, TwitterException exception) {
+		public Response(final T value, final TwitterException exception) {
 			this.value = value;
 			this.exception = exception;
 		}
@@ -671,8 +672,8 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		private final Bundle intent_args;
 		private final long account_id, status_id;
 
-		public StatusLoader(Context context, boolean omit_intent_extra, Bundle intent_args, long account_id,
-				long status_id) {
+		public StatusLoader(final Context context, final boolean omit_intent_extra, final Bundle intent_args,
+				final long account_id, final long status_id) {
 			super(context);
 			this.context = context;
 			this.intent_args = intent_args;
@@ -712,7 +713,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		private final ParcelableStatus status;
 		private final Context context;
 
-		public FollowInfoLoader(Context context, ParcelableStatus status) {
+		public FollowInfoLoader(final Context context, final ParcelableStatus status) {
 			super(context);
 			this.context = context;
 			this.status = status;

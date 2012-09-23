@@ -51,10 +51,10 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	private PopupMenu mPopupMenu;
 	private ServiceInterface mService;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_USER_LIST_MEMBER_DELETED.equals(action)) {
 				if (!intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) return;
@@ -86,7 +86,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
 			mCursor = savedInstanceState.getLong(INTENT_KEY_PAGE, -1);
 		}
@@ -101,7 +101,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedUser = null;
 		final UsersAdapter adapter = getListAdapter();
 		if (!isMyActivatedAccount(getActivity(), mOwnerId)) return false;
@@ -114,7 +114,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<ParcelableUser>> loader, List<ParcelableUser> data) {
+	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
 		if (loader instanceof ListMembersLoader) {
 			final long cursor = ((ListMembersLoader) loader).getNextCursor();
 			if (mOwnerId <= 0) {
@@ -131,7 +131,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedUser == null) return false;
 		switch (item.getItemId()) {
 			case MENU_DELETE: {
@@ -155,7 +155,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		outState.putLong(INTENT_KEY_PAGE, mCursor);
 		super.onSaveInstanceState(outState);
 	}
@@ -176,7 +176,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 		super.onStop();
 	}
 
-	private void deleteItem(long user_id) {
+	private void deleteItem(final long user_id) {
 		final ArrayList<ParcelableUser> data = getData();
 		final ArrayList<ParcelableUser> users_to_delete = new ArrayList<ParcelableUser>();
 		for (final ParcelableUser item : data) {

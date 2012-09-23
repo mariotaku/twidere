@@ -153,17 +153,17 @@ public class ColorPickerView extends View {
 
 	private Point mStartTouchPoint = null;
 
-	public ColorPickerView(Context context) {
+	public ColorPickerView(final Context context) {
 
 		this(context, null);
 	}
 
-	public ColorPickerView(Context context, AttributeSet attrs) {
+	public ColorPickerView(final Context context, final AttributeSet attrs) {
 
 		this(context, attrs, 0);
 	}
 
-	public ColorPickerView(Context context, AttributeSet attrs, int defStyle) {
+	public ColorPickerView(final Context context, final AttributeSet attrs, final int defStyle) {
 
 		super(context, attrs, defStyle);
 		init();
@@ -216,7 +216,7 @@ public class ColorPickerView extends View {
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
+	public boolean onTouchEvent(final MotionEvent event) {
 
 		boolean update = false;
 
@@ -260,7 +260,7 @@ public class ColorPickerView extends View {
 	}
 
 	@Override
-	public boolean onTrackballEvent(MotionEvent event) {
+	public boolean onTrackballEvent(final MotionEvent event) {
 
 		final float x = event.getX();
 		final float y = event.getY();
@@ -355,7 +355,7 @@ public class ColorPickerView extends View {
 	 * 
 	 * @param res string resource id.
 	 */
-	public void setAlphaSliderText(int res) {
+	public void setAlphaSliderText(final int res) {
 
 		final String text = getContext().getString(res);
 		setAlphaSliderText(text);
@@ -367,7 +367,7 @@ public class ColorPickerView extends View {
 	 * 
 	 * @param text Text that should be shown.
 	 */
-	public void setAlphaSliderText(String text) {
+	public void setAlphaSliderText(final String text) {
 
 		mAlphaSliderText = text;
 		invalidate();
@@ -379,7 +379,7 @@ public class ColorPickerView extends View {
 	 * 
 	 * @param visible
 	 */
-	public void setAlphaSliderVisible(boolean visible) {
+	public void setAlphaSliderVisible(final boolean visible) {
 
 		if (mShowAlphaPanel != visible) {
 			mShowAlphaPanel = visible;
@@ -404,7 +404,7 @@ public class ColorPickerView extends View {
 	 * 
 	 * @param color
 	 */
-	public void setBorderColor(int color) {
+	public void setBorderColor(final int color) {
 
 		mBorderColor = color;
 		invalidate();
@@ -415,7 +415,7 @@ public class ColorPickerView extends View {
 	 * 
 	 * @param color The color that should be selected.
 	 */
-	public void setColor(int color) {
+	public void setColor(final int color) {
 
 		setColor(color, false);
 	}
@@ -427,7 +427,7 @@ public class ColorPickerView extends View {
 	 * @param callback If you want to get a callback to your
 	 *            OnColorChangedListener.
 	 */
-	public void setColor(int color, boolean callback) {
+	public void setColor(final int color, final boolean callback) {
 
 		final int alpha = Color.alpha(color);
 		final int red = Color.red(color);
@@ -456,12 +456,12 @@ public class ColorPickerView extends View {
 	 * 
 	 * @param listener
 	 */
-	public void setOnColorChangedListener(OnColorChangedListener listener) {
+	public void setOnColorChangedListener(final OnColorChangedListener listener) {
 
 		mListener = listener;
 	}
 
-	public void setSliderTrackerColor(int color) {
+	public void setSliderTrackerColor(final int color) {
 
 		mSliderTrackerColor = color;
 
@@ -471,7 +471,7 @@ public class ColorPickerView extends View {
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas) {
+	protected void onDraw(final Canvas canvas) {
 
 		if (mDrawingRect.width() <= 0 || mDrawingRect.height() <= 0) return;
 
@@ -482,7 +482,7 @@ public class ColorPickerView extends View {
 	}
 
 	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 
 		int width = 0;
 		int height = 0;
@@ -526,7 +526,7 @@ public class ColorPickerView extends View {
 	}
 
 	@Override
-	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 
 		super.onSizeChanged(w, h, oldw, oldh);
 
@@ -541,7 +541,7 @@ public class ColorPickerView extends View {
 		setUpAlphaRect();
 	}
 
-	private Point alphaToPoint(int alpha) {
+	private Point alphaToPoint(final int alpha) {
 
 		final RectF rect = mAlphaRect;
 		final float width = rect.width();
@@ -575,19 +575,19 @@ public class ColorPickerView extends View {
 		return offset * 1.5f;
 	}
 
-	private int chooseHeight(int mode, int size) {
+	private int chooseHeight(final int mode, final int size) {
 
 		if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY) return size;
 		return getPrefferedHeight();
 	}
 
-	private int chooseWidth(int mode, int size) {
+	private int chooseWidth(final int mode, final int size) {
 
 		if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY) return size;
 		return getPrefferedWidth();
 	}
 
-	private void drawAlphaPanel(Canvas canvas) {
+	private void drawAlphaPanel(final Canvas canvas) {
 
 		if (!mShowAlphaPanel || mAlphaRect == null || mAlphaPattern == null) return;
 
@@ -629,7 +629,7 @@ public class ColorPickerView extends View {
 
 	}
 
-	private void drawHuePanel(Canvas canvas) {
+	private void drawHuePanel(final Canvas canvas) {
 
 		final RectF rect = mHueRect;
 
@@ -661,7 +661,7 @@ public class ColorPickerView extends View {
 
 	}
 
-	private void drawSatValPanel(Canvas canvas) {
+	private void drawSatValPanel(final Canvas canvas) {
 
 		final RectF rect = mSatValRect;
 
@@ -717,7 +717,7 @@ public class ColorPickerView extends View {
 
 	}
 
-	private Point hueToPoint(float hue) {
+	private Point hueToPoint(final float hue) {
 
 		final RectF rect = mHueRect;
 		final float height = rect.height();
@@ -778,7 +778,7 @@ public class ColorPickerView extends View {
 
 	}
 
-	private boolean moveTrackersIfNeeded(MotionEvent event) {
+	private boolean moveTrackersIfNeeded(final MotionEvent event) {
 
 		if (mStartTouchPoint == null) return false;
 
@@ -879,7 +879,7 @@ public class ColorPickerView extends View {
 		return result;
 	}
 
-	private Point satValToPoint(float sat, float val) {
+	private Point satValToPoint(final float sat, final float val) {
 
 		final RectF rect = mSatValRect;
 		final float height = rect.height();

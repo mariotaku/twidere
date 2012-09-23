@@ -27,7 +27,7 @@ import android.content.Context;
 public class GetExternalCacheDirAccessor {
 
 	@TargetApi(8)
-	public static File getExternalCacheDir(Context context) {
+	public static File getExternalCacheDir(final Context context) {
 		return context.getExternalCacheDir();
 	}
 }

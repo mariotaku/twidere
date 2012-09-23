@@ -24,21 +24,21 @@ public class ActionModeCompat extends ActionMode {
 	private final OnMenuItemClickListener mListener = new OnMenuItemClickListener() {
 
 		@Override
-		public boolean onMenuItemClick(MenuItem item) {
+		public boolean onMenuItemClick(final MenuItem item) {
 			if (mCallbackProxy != null) return mCallbackProxy.onActionItemClicked(ActionModeCompat.this, item);
 			return false;
 		}
 
 	};
 
-	ActionModeCompat(ActionBarCompatBase action_bar, Callback callback) {
+	ActionModeCompat(final ActionBarCompatBase action_bar, final Callback callback) {
 		mCallbackProxy = callback;
 		mActionBar = action_bar;
 		mActionModeContainer = action_bar.startActionMode();
 		mActionModeContainer.findViewById(R.id.action_mode_cancel).setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v) {
+			public void onClick(final View v) {
 				finish();
 			}
 
@@ -95,27 +95,27 @@ public class ActionModeCompat extends ActionMode {
 	}
 
 	@Override
-	public void setSubtitle(CharSequence subtitle) {
+	public void setSubtitle(final CharSequence subtitle) {
 		if (mSubtitleView == null) return;
 		mSubtitleView.setText(subtitle);
 		mTitleView.setVisibility(subtitle != null ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
-	public void setSubtitle(int resId) {
+	public void setSubtitle(final int resId) {
 		if (mSubtitleView == null) return;
 		mSubtitleView.setText(resId);
 		mSubtitleView.setVisibility(resId != 0 ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
-	public void setTitle(CharSequence title) {
+	public void setTitle(final CharSequence title) {
 		if (mTitleView == null) return;
 		mTitleView.setText(title);
 	}
 
 	@Override
-	public void setTitle(int resId) {
+	public void setTitle(final int resId) {
 		if (mTitleView == null) return;
 		mTitleView.setText(resId);
 	}

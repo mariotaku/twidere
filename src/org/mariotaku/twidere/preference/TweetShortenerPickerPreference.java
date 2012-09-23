@@ -29,22 +29,22 @@ public class TweetShortenerPickerPreference extends Preference implements Consta
 
 	private TweetShortenerSpec[] mAvailableTweetShorteners;
 
-	public TweetShortenerPickerPreference(Context context) {
+	public TweetShortenerPickerPreference(final Context context) {
 		this(context, null);
 	}
 
-	public TweetShortenerPickerPreference(Context context, AttributeSet attrs) {
+	public TweetShortenerPickerPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public TweetShortenerPickerPreference(Context context, AttributeSet attrs, int defStyle) {
+	public TweetShortenerPickerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mPackageManager = context.getPackageManager();
 		setOnPreferenceClickListener(this);
 	}
 
 	@Override
-	public void onClick(DialogInterface dialog, int which) {
+	public void onClick(final DialogInterface dialog, final int which) {
 		final SharedPreferences.Editor editor = getEditor();
 		if (editor == null) return;
 		final TweetShortenerSpec spec = mAvailableTweetShorteners[which];
@@ -58,7 +58,7 @@ public class TweetShortenerPickerPreference extends Preference implements Consta
 	}
 
 	@Override
-	public boolean onPreferenceClick(Preference preference) {
+	public boolean onPreferenceClick(final Preference preference) {
 		mPreferences = getSharedPreferences();
 		if (mPreferences == null) return false;
 		final String component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
@@ -80,7 +80,7 @@ public class TweetShortenerPickerPreference extends Preference implements Consta
 		return true;
 	}
 
-	private int getIndex(String cls) {
+	private int getIndex(final String cls) {
 		if (mAvailableTweetShorteners == null) return -1;
 		if (cls == null) return 0;
 		final int count = mAvailableTweetShorteners.length;
@@ -94,13 +94,13 @@ public class TweetShortenerPickerPreference extends Preference implements Consta
 	static class TweetShortenerSpec implements CharSequence {
 		private final String name, cls;
 
-		TweetShortenerSpec(String name, String cls) {
+		TweetShortenerSpec(final String name, final String cls) {
 			this.name = name;
 			this.cls = cls;
 		}
 
 		@Override
-		public char charAt(int index) {
+		public char charAt(final int index) {
 			return name.charAt(index);
 		}
 
@@ -110,7 +110,7 @@ public class TweetShortenerPickerPreference extends Preference implements Consta
 		}
 
 		@Override
-		public CharSequence subSequence(int start, int end) {
+		public CharSequence subSequence(final int start, final int end) {
 			return name.subSequence(start, end);
 		}
 

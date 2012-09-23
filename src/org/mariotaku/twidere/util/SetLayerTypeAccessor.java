@@ -26,7 +26,7 @@ import android.view.View;
 public class SetLayerTypeAccessor {
 
 	@TargetApi(11)
-	public static void setLayerType(View view, int layerType, Paint paint) {
+	public static void setLayerType(final View view, final int layerType, final Paint paint) {
 		view.setLayerType(layerType, paint);
 	}
 }

@@ -16,17 +16,17 @@ public final class MenuAdapter extends ArrayAdapter<MenuItem> {
 
 	private Menu mMenu;
 
-	public MenuAdapter(Context context) {
+	public MenuAdapter(final Context context) {
 		super(context, R.layout.menu_list_item);
 	}
 
 	@Override
-	public long getItemId(int index) {
+	public long getItemId(final int index) {
 		return getItem(index).getItemId();
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final TextView view = (TextView) super.getView(position, convertView, parent);
 		final MenuItem item = getItem(position);
 		view.setEnabled(item.isEnabled());
@@ -35,7 +35,7 @@ public final class MenuAdapter extends ArrayAdapter<MenuItem> {
 		return view;
 	}
 
-	public void setMenu(Menu menu) {
+	public void setMenu(final Menu menu) {
 		mMenu = menu;
 		setMenuItems();
 	}

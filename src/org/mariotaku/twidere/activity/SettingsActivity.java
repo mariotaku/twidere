@@ -56,7 +56,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	private static final String KEY_SETTINGS_OTHER = "settings_other";
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -69,7 +69,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
 				onBackPressed();
@@ -80,7 +80,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onPostCreate(Bundle savedInstanceState) {
+	public void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		final InternalSettingsActivity activity = mFragment.getAttachedActivity();
 		if (activity != null) {
@@ -96,7 +96,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	}
 
 	@Override
-	public boolean onPreferenceClick(Preference preference) {
+	public boolean onPreferenceClick(final Preference preference) {
 		final String key = preference.getKey();
 		final Bundle args = new Bundle();
 		final int res_id;
@@ -158,7 +158,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	}
 
 	@Override
-	public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
 		if (PREFERENCE_KEY_DARK_THEME.equals(key) || PREFERENCE_KEY_SOLID_COLOR_BACKGROUND.equals(key)) {
 			boolean show_anim = false;
 			try {

@@ -39,9 +39,10 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 	private final long mMaxId, mAccountId;
 	private IDs mIDs;
 	private final SharedPreferences mPreferences;
-	private int mLoadItemLimit;
+	private final int mLoadItemLimit;
 
-	public IDsUsersLoader(Context context, long account_id, long max_id, List<ParcelableUser> users_list) {
+	public IDsUsersLoader(final Context context, final long account_id, final long max_id,
+			final List<ParcelableUser> users_list) {
 		super(context, account_id, users_list);
 		mAccountId = account_id;
 		mMaxId = max_id;

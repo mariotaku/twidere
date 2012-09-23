@@ -58,20 +58,20 @@ public class Switch extends CompoundButton {
 	private static final int TOUCH_MODE_DOWN = 1;
 	private static final int TOUCH_MODE_DRAGGING = 2;
 
-	private Drawable mThumbDrawable;
-	private Drawable mTrackDrawable;
-	private int mThumbTextPadding;
-	private int mSwitchMinWidth;
-	private int mSwitchPadding;
+	private final Drawable mThumbDrawable;
+	private final Drawable mTrackDrawable;
+	private final int mThumbTextPadding;
+	private final int mSwitchMinWidth;
+	private final int mSwitchPadding;
 	private CharSequence mTextOn;
 	private CharSequence mTextOff;
 
 	private int mTouchMode;
-	private int mTouchSlop;
+	private final int mTouchSlop;
 	private float mTouchX;
 	private float mTouchY;
-	private VelocityTracker mVelocityTracker = VelocityTracker.obtain();
-	private int mMinFlingVelocity;
+	private final VelocityTracker mVelocityTracker = VelocityTracker.obtain();
+	private final int mMinFlingVelocity;
 
 	private float mThumbPosition;
 	private int mSwitchWidth;
@@ -83,7 +83,7 @@ public class Switch extends CompoundButton {
 	private int mSwitchRight;
 	private int mSwitchBottom;
 
-	private TextPaint mTextPaint;
+	private final TextPaint mTextPaint;
 	private ColorStateList mTextColors;
 	private Layout mOnLayout;
 	private Layout mOffLayout;
@@ -97,7 +97,7 @@ public class Switch extends CompoundButton {
 	 * 
 	 * @param context The Context that will determine this widget's theming.
 	 */
-	public Switch(Context context) {
+	public Switch(final Context context) {
 		this(context, null);
 	}
 
@@ -109,7 +109,7 @@ public class Switch extends CompoundButton {
 	 * @param attrs Specification of attributes that should deviate from default
 	 *            styling.
 	 */
-	public Switch(Context context, AttributeSet attrs) {
+	public Switch(final Context context, final AttributeSet attrs) {
 		this(context, attrs, R.attr.switchStyle);
 	}
 
@@ -124,7 +124,7 @@ public class Switch extends CompoundButton {
 	 *            reference to the default style for this widget. e.g.
 	 *            android.R.attr.switchStyle.
 	 */
-	public Switch(Context context, AttributeSet attrs, int defStyle) {
+	public Switch(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 
 		mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -178,7 +178,7 @@ public class Switch extends CompoundButton {
 	}
 
 	@Override
-	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	public void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
 		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 		int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -238,7 +238,7 @@ public class Switch extends CompoundButton {
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent ev) {
+	public boolean onTouchEvent(final MotionEvent ev) {
 		mVelocityTracker.addMovement(ev);
 		final int action = ev.getAction();
 		switch (action) {
@@ -303,7 +303,7 @@ public class Switch extends CompoundButton {
 	}
 
 	@Override
-	public void setChecked(boolean checked) {
+	public void setChecked(final boolean checked) {
 		super.setChecked(checked);
 		mThumbPosition = checked ? getThumbScrollRange() : 0;
 		invalidate();
@@ -313,7 +313,7 @@ public class Switch extends CompoundButton {
 	 * Sets the switch text color, size, style, hint color, and highlight color
 	 * from the specified TextAppearance resource.
 	 */
-	public void setSwitchTextAppearance(Context context, int resid) {
+	public void setSwitchTextAppearance(final Context context, final int resid) {
 		final TypedArray appearance = context.obtainStyledAttributes(resid, R.styleable.TextAppearance);
 
 		ColorStateList colors;
@@ -349,7 +349,7 @@ public class Switch extends CompoundButton {
 	 * @attr ref android.R.styleable#TextView_typeface
 	 * @attr ref android.R.styleable#TextView_textStyle
 	 */
-	public void setSwitchTypeface(Typeface tf) {
+	public void setSwitchTypeface(final Typeface tf) {
 		if (mTextPaint.getTypeface() != tf) {
 			mTextPaint.setTypeface(tf);
 
@@ -364,7 +364,7 @@ public class Switch extends CompoundButton {
 	 * Typeface that you provided does not have all the bits in the style that
 	 * you specified.
 	 */
-	public void setSwitchTypeface(Typeface tf, int style) {
+	public void setSwitchTypeface(Typeface tf, final int style) {
 		if (style > 0) {
 			if (tf == null) {
 				tf = Typeface.defaultFromStyle(style);
@@ -388,7 +388,7 @@ public class Switch extends CompoundButton {
 	/**
 	 * Sets the text displayed when the button is not in the checked state.
 	 */
-	public void setTextOff(CharSequence textOff) {
+	public void setTextOff(final CharSequence textOff) {
 		mTextOff = textOff;
 		requestLayout();
 	}
@@ -396,7 +396,7 @@ public class Switch extends CompoundButton {
 	/**
 	 * Sets the text displayed when the button is in the checked state.
 	 */
-	public void setTextOn(CharSequence textOn) {
+	public void setTextOn(final CharSequence textOn) {
 		mTextOn = textOn;
 		requestLayout();
 	}
@@ -421,7 +421,7 @@ public class Switch extends CompoundButton {
 	}
 
 	@Override
-	protected int[] onCreateDrawableState(int extraSpace) {
+	protected int[] onCreateDrawableState(final int extraSpace) {
 		final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
 		if (isChecked()) {
 			mergeDrawableStates(drawableState, CHECKED_STATE_SET);
@@ -430,7 +430,7 @@ public class Switch extends CompoundButton {
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas) {
+	protected void onDraw(final Canvas canvas) {
 		super.onDraw(canvas);
 
 		// Draw the switch
@@ -475,7 +475,7 @@ public class Switch extends CompoundButton {
 	}
 
 	@Override
-	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+	protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
 
 		mThumbPosition = isChecked() ? getThumbScrollRange() : 0;
@@ -509,15 +509,15 @@ public class Switch extends CompoundButton {
 	}
 
 	@Override
-	protected boolean verifyDrawable(Drawable who) {
+	protected boolean verifyDrawable(final Drawable who) {
 		return super.verifyDrawable(who) || who == mThumbDrawable || who == mTrackDrawable;
 	}
 
-	private void animateThumbToCheckedState(boolean newCheckedState) {
+	private void animateThumbToCheckedState(final boolean newCheckedState) {
 		setChecked(newCheckedState);
 	}
 
-	private void cancelSuperTouch(MotionEvent ev) {
+	private void cancelSuperTouch(final MotionEvent ev) {
 		final MotionEvent cancel = MotionEvent.obtain(ev);
 		cancel.setAction(MotionEvent.ACTION_CANCEL);
 		super.onTouchEvent(cancel);
@@ -537,7 +537,7 @@ public class Switch extends CompoundButton {
 	/**
 	 * @return true if (x, y) is within the target area of the switch thumb
 	 */
-	private boolean hitThumb(float x, float y) {
+	private boolean hitThumb(final float x, final float y) {
 		mThumbDrawable.getPadding(mTempRect);
 		final int thumbTop = mSwitchTop - mTouchSlop;
 		final int thumbLeft = mSwitchLeft + (int) (mThumbPosition + 0.5f) - mTouchSlop;
@@ -547,7 +547,7 @@ public class Switch extends CompoundButton {
 	}
 
 	@SuppressLint("FloatMath")
-	private Layout makeLayout(CharSequence text) {
+	private Layout makeLayout(final CharSequence text) {
 		return new StaticLayout(text, mTextPaint, (int) Math.ceil(Layout.getDesiredWidth(text, mTextPaint)),
 				Layout.Alignment.ALIGN_NORMAL, 1.f, 0, true);
 	}
@@ -558,7 +558,7 @@ public class Switch extends CompoundButton {
 	 * @param ev Event that triggered the end of drag mode - ACTION_UP or
 	 *            ACTION_CANCEL
 	 */
-	private void stopDrag(MotionEvent ev) {
+	private void stopDrag(final MotionEvent ev) {
 		mTouchMode = TOUCH_MODE_IDLE;
 		// Up and not canceled, also checks the switch has not been disabled
 		// during the drag

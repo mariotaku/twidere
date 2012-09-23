@@ -41,17 +41,17 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 	private final ServiceConnection mConntecion = new ServiceConnection() {
 
 		@Override
-		public void onServiceConnected(ComponentName service, IBinder obj) {
+		public void onServiceConnected(final ComponentName service, final IBinder obj) {
 			mService = IImageUploader.Stub.asInterface(obj);
 		}
 
 		@Override
-		public void onServiceDisconnected(ComponentName service) {
+		public void onServiceDisconnected(final ComponentName service) {
 			mService = null;
 		}
 	};
 
-	private ImageUploaderInterface(Context context, String uploader_name) {
+	private ImageUploaderInterface(final Context context, final String uploader_name) {
 		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
 		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
 		intent.setComponent(component);
@@ -65,7 +65,7 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 	}
 
 	@Override
-	public Uri upload(Uri file_uri, String message) {
+	public Uri upload(final Uri file_uri, final String message) {
 		if (mService == null) return null;
 		try {
 			return mService.upload(file_uri, message);
@@ -85,7 +85,7 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 		}
 	}
 
-	public static ImageUploaderInterface getInstance(Application application, String uploader_name) {
+	public static ImageUploaderInterface getInstance(final Application application, final String uploader_name) {
 		if (uploader_name == null) return null;
 		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
 		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
@@ -98,7 +98,7 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 
 		ContextWrapper wrapped_context;
 
-		ServiceToken(ContextWrapper context) {
+		ServiceToken(final ContextWrapper context) {
 
 			wrapped_context = context;
 		}

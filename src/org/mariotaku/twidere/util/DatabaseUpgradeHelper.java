@@ -42,8 +42,8 @@ public final class DatabaseUpgradeHelper {
 
 	private static final int FIELD_TYPE_BLOB = 4;
 
-	public static void safeUpgrade(SQLiteDatabase db, String table, String[] new_cols, String[] new_types,
-			boolean fast_upgrade, boolean drop_directly) {
+	public static void safeUpgrade(final SQLiteDatabase db, final String table, final String[] new_cols,
+			final String[] new_types, final boolean fast_upgrade, final boolean drop_directly) {
 
 		if (new_cols == null || new_types == null || new_cols.length != new_types.length)
 			throw new IllegalArgumentException("Invalid parameters, length of columns and types not match.");
@@ -129,7 +129,8 @@ public final class DatabaseUpgradeHelper {
 		db.endTransaction();
 	}
 
-	private static String createTable(String tableName, String[] columns, String[] types, boolean create_if_not_exists) {
+	private static String createTable(final String tableName, final String[] columns, final String[] types,
+			final boolean create_if_not_exists) {
 		if (tableName == null || columns == null || types == null || types.length != columns.length
 				|| types.length == 0)
 			throw new IllegalArgumentException("Invalid parameters for creating table " + tableName);
@@ -148,7 +149,7 @@ public final class DatabaseUpgradeHelper {
 		return stringBuilder.append(");").toString();
 	}
 
-	private static String[] getBatchTypeString(SQLiteDatabase db, String table, String[] columns) {
+	private static String[] getBatchTypeString(final SQLiteDatabase db, final String table, final String[] columns) {
 
 		if (columns == null || columns.length == 0) return new String[0];
 		final String[] types = new String[columns.length];
@@ -179,7 +180,7 @@ public final class DatabaseUpgradeHelper {
 
 	}
 
-	private static int getTypeInt(String type) {
+	private static int getTypeInt(final String type) {
 		final int idx = type.contains("(") ? type.indexOf("(") : type.indexOf(" ");
 		final String type_main = idx > -1 ? type.substring(0, idx) : type;
 		if ("NULL".equalsIgnoreCase(type_main))
@@ -194,7 +195,7 @@ public final class DatabaseUpgradeHelper {
 		throw new IllegalStateException("Unknown field type " + type + " !");
 	}
 
-	private static String getTypeString(SQLiteDatabase db, String table, String column) {
+	private static String getTypeString(final SQLiteDatabase db, final String table, final String column) {
 
 		final String sql = "SELECT typeof(" + column + ") FROM " + table;
 		final Cursor cur = db.rawQuery(sql, null);
@@ -207,7 +208,8 @@ public final class DatabaseUpgradeHelper {
 
 	}
 
-	private static boolean isTypeCompatible(String old_type, String new_type, boolean treat_null_as_compatible) {
+	private static boolean isTypeCompatible(final String old_type, final String new_type,
+			final boolean treat_null_as_compatible) {
 		if (old_type != null && new_type != null) {
 			final int old_idx = old_type.contains("(") ? old_type.indexOf("(") : old_type.indexOf(" ");
 			final int new_idx = new_type.contains("(") ? new_type.indexOf("(") : new_type.indexOf(" ");
@@ -221,7 +223,8 @@ public final class DatabaseUpgradeHelper {
 		return false;
 	}
 
-	private static boolean shouldUpgrade(String[] old_cols, String[] old_types, String[] new_cols, String[] new_types) {
+	private static boolean shouldUpgrade(final String[] old_cols, final String[] old_types, final String[] new_cols,
+			final String[] new_types) {
 		if (old_cols == null || old_types == null || new_cols == null || new_types == null)
 			throw new IllegalArgumentException("All arguments cannot be null!");
 		if (old_cols.length != old_types.length || new_cols.length != new_types.length)

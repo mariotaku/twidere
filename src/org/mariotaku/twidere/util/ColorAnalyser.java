@@ -45,7 +45,7 @@ public class ColorAnalyser {
 	 * @param bitmap The {@link Bitmap} to analyse
 	 * @return The rgb {@link Color} in integer (no alpha)
 	 */
-	public static int analyse(Bitmap bitmap) {
+	public static int analyse(final Bitmap bitmap) {
 
 		return analyse(bitmap, 18, 28);
 	}
@@ -59,7 +59,7 @@ public class ColorAnalyser {
 	 * @param height The desired height of scaled bitmap
 	 * @return The rgb {@link Color} in integer (no alpha)
 	 */
-	public static int analyse(Bitmap bitmap, int width, int height) {
+	public static int analyse(final Bitmap bitmap, final int width, final int height) {
 		return analyse(bitmap, width, height, Color.WHITE);
 	}
 
@@ -73,7 +73,7 @@ public class ColorAnalyser {
 	 * @param def The default color returned, if bitmap is null
 	 * @return The rgb {@link Color} in integer (no alpha)
 	 */
-	public static int analyse(Bitmap bitmap, int width, int height, int def) {
+	public static int analyse(final Bitmap bitmap, final int width, final int height, final int def) {
 
 		if (bitmap == null) return def;
 

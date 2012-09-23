@@ -30,7 +30,7 @@ public class StatusCursorIndices {
 			in_reply_to_screen_name, retweeted_by_name, retweeted_by_screen_name, retweet_id, retweeted_by_id, user_id,
 			source, retweet_count;
 
-	public StatusCursorIndices(Cursor cursor) {
+	public StatusCursorIndices(final Cursor cursor) {
 		account_id = cursor.getColumnIndex(Statuses.ACCOUNT_ID);
 		status_id = cursor.getColumnIndex(Statuses.STATUS_ID);
 		status_timestamp = cursor.getColumnIndex(Statuses.STATUS_TIMESTAMP);

@@ -9,7 +9,7 @@ public class Validator {
 	protected int shortUrlLength = 20;
 	protected int shortUrlLengthHttps = 21;
 
-	private Extractor extractor = new Extractor();
+	private final Extractor extractor = new Extractor();
 
 	public int getShortUrlLength() {
 		return shortUrlLength;
@@ -19,7 +19,7 @@ public class Validator {
 		return shortUrlLengthHttps;
 	}
 
-	public int getTweetLength(String text) {
+	public int getTweetLength(final String text) {
 		int length = text.codePointCount(0, text.length());
 
 		for (final Extractor.Entity urlEntity : extractor.extractURLsWithIndices(text)) {
@@ -30,7 +30,7 @@ public class Validator {
 		return length;
 	}
 
-	public boolean isValidTweet(String text) {
+	public boolean isValidTweet(final String text) {
 		if (text == null || text.length() == 0) return false;
 
 		for (final char c : text.toCharArray()) {
@@ -42,11 +42,11 @@ public class Validator {
 		return getTweetLength(text) <= MAX_TWEET_LENGTH;
 	}
 
-	public void setShortUrlLength(int shortUrlLength) {
+	public void setShortUrlLength(final int shortUrlLength) {
 		this.shortUrlLength = shortUrlLength;
 	}
 
-	public void setShortUrlLengthHttps(int shortUrlLengthHttps) {
+	public void setShortUrlLengthHttps(final int shortUrlLengthHttps) {
 		this.shortUrlLengthHttps = shortUrlLengthHttps;
 	}
 }

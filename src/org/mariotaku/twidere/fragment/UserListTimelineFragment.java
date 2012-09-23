@@ -36,7 +36,7 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
 		int list_id = -1;
 		long account_id = -1, max_id = -1, user_id = -1;
 		String screen_name = null, list_name = null;
@@ -55,7 +55,7 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
+	public void onDataLoaded(final Loader<List<ParcelableStatus>> loader, final ParcelableStatusesAdapter adapter) {
 
 	}
 

@@ -46,10 +46,10 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	private long mMinIdToRefresh;
 	private boolean mShouldRestorePosition = false;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			final Bundle extras = intent.getExtras();
 			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
@@ -78,12 +78,12 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	}
 
 	@Override
-	public int getStatuses(long[] account_ids, long[] max_ids) {
+	public int getStatuses(final long[] account_ids, final long[] max_ids) {
 		return mService.getMentions(account_ids, max_ids);
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getServiceInterface();
 		mShouldRestorePosition = true;
@@ -93,7 +93,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		final CursorStatusesAdapter adapter = getListAdapter();
 		long last_viewed_id = -1;
 		{
@@ -148,7 +148,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	}
 
 	@Override
-	public boolean onTouch(View view, MotionEvent ev) {
+	public boolean onTouch(final View view, final MotionEvent ev) {
 		switch (ev.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
 				mService.clearNotification(NOTIFICATION_ID_MENTIONS);

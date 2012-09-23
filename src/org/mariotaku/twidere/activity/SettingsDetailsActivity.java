@@ -7,7 +7,7 @@ public class SettingsDetailsActivity extends BasePreferenceActivity {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
 		final Bundle args = getIntent().getExtras();
@@ -20,7 +20,7 @@ public class SettingsDetailsActivity extends BasePreferenceActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
 				finish();

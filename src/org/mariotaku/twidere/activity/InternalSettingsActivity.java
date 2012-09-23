@@ -35,7 +35,7 @@ import android.view.KeyEvent;
 public class InternalSettingsActivity extends PreferenceActivity implements Constants {
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		setTheme();
 		super.onCreate(savedInstanceState);
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
@@ -43,7 +43,7 @@ public class InternalSettingsActivity extends PreferenceActivity implements Cons
 	}
 
 	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(final int keyCode, final KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_BACK: {
 				final Activity activity = getParent();

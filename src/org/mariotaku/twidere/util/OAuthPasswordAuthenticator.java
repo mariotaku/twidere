@@ -46,7 +46,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 	private final ContentHandler mAuthenticityTokenHandler = new DummyContentHandler() {
 
 		@Override
-		public void startElement(String uri, String localName, String qName, Attributes atts) {
+		public void startElement(final String uri, final String localName, final String qName, final Attributes atts) {
 			if ("input".equalsIgnoreCase(localName) && "authenticity_token".equalsIgnoreCase(atts.getValue("", "name"))) {
 				final String authenticity_token = atts.getValue("", "value");
 				if (!isNullOrEmpty(authenticity_token)) {
@@ -59,7 +59,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 	private final ContentHandler mCallbackURLHandler = new DummyContentHandler() {
 
 		@Override
-		public void startElement(String uri, String localName, String qName, Attributes atts) {
+		public void startElement(final String uri, final String localName, final String qName, final Attributes atts) {
 			if ("meta".equalsIgnoreCase(localName) && "refresh".equalsIgnoreCase(atts.getValue("", "http-equiv"))) {
 				final String content = atts.getValue("", "content");
 				final String url_prefix = "url=";
@@ -74,7 +74,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 		}
 	};
 
-	public OAuthPasswordAuthenticator(Twitter twitter, Proxy proxy, String user_agent) {
+	public OAuthPasswordAuthenticator(final Twitter twitter, final Proxy proxy, final String user_agent) {
 		final Configuration conf = twitter.getConfiguration();
 		this.twitter = twitter;
 		this.user_agent = user_agent;
@@ -83,8 +83,8 @@ public class OAuthPasswordAuthenticator implements Constants {
 		ignore_ssl_error = conf.isSSLErrorIgnored();
 	}
 
-	public AccessToken getOAuthAccessToken(String username, String password) throws AuthenticationException,
-			OAuthPasswordAuthenticator.CallbackURLException {
+	public AccessToken getOAuthAccessToken(final String username, final String password)
+			throws AuthenticationException, OAuthPasswordAuthenticator.CallbackURLException {
 		authenticity_token = null;
 		callback_url = null;
 		try {
@@ -115,7 +115,8 @@ public class OAuthPasswordAuthenticator implements Constants {
 		}
 	}
 
-	private InputStream getHTTPContent(String url_string, boolean post, HttpParameter[] params) throws IOException {
+	private InputStream getHTTPContent(final String url_string, final boolean post, final HttpParameter[] params)
+			throws IOException {
 		final URL url = parseURL(url_string);
 		final HttpURLConnection conn = getConnection(url, ignore_ssl_error, proxy, resolver);
 		if (conn == null) return null;
@@ -135,7 +136,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 		return conn.getInputStream();
 	}
 
-	private void readAuthenticityToken(InputStream stream) throws SAXException, IOException {
+	private void readAuthenticityToken(final InputStream stream) throws SAXException, IOException {
 		final InputSource source = new InputSource(stream);
 		final Parser parser = new Parser();
 		parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
@@ -143,7 +144,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 		parser.parse(source);
 	}
 
-	private void readCallbackURL(InputStream stream) throws SAXException, IOException {
+	private void readCallbackURL(final InputStream stream) throws SAXException, IOException {
 		final InputSource source = new InputSource(stream);
 		final Parser parser = new Parser();
 		parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
@@ -151,11 +152,12 @@ public class OAuthPasswordAuthenticator implements Constants {
 		parser.parse(source);
 	}
 
-	private void setAuthenticityToken(String authenticity_token) {
+	private void setAuthenticityToken(final String authenticity_token) {
 		this.authenticity_token = authenticity_token;
 	}
 
-	private static Map<String, String> parseParameters(String raw_params_string) throws UnsupportedEncodingException {
+	private static Map<String, String> parseParameters(final String raw_params_string)
+			throws UnsupportedEncodingException {
 		if (raw_params_string == null) return Collections.emptyMap();
 		final Map<String, String> params_map = new HashMap<String, String>();
 		final String[] raw_params_array = raw_params_string.split("&");
@@ -178,11 +180,11 @@ public class OAuthPasswordAuthenticator implements Constants {
 			super();
 		}
 
-		AuthenticationException(Exception cause) {
+		AuthenticationException(final Exception cause) {
 			super(cause);
 		}
 
-		AuthenticationException(String message) {
+		AuthenticationException(final String message) {
 			super(message);
 		}
 	}
@@ -195,7 +197,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 
 	static class DummyContentHandler implements ContentHandler {
 		@Override
-		public void characters(char[] ch, int start, int length) {
+		public void characters(final char[] ch, final int start, final int length) {
 		}
 
 		@Override
@@ -203,27 +205,27 @@ public class OAuthPasswordAuthenticator implements Constants {
 		}
 
 		@Override
-		public void endElement(String uri, String localName, String qName) {
+		public void endElement(final String uri, final String localName, final String qName) {
 		}
 
 		@Override
-		public void endPrefixMapping(String prefix) {
+		public void endPrefixMapping(final String prefix) {
 		}
 
 		@Override
-		public void ignorableWhitespace(char[] ch, int start, int length) {
+		public void ignorableWhitespace(final char[] ch, final int start, final int length) {
 		}
 
 		@Override
-		public void processingInstruction(String target, String data) {
+		public void processingInstruction(final String target, final String data) {
 		}
 
 		@Override
-		public void setDocumentLocator(Locator locator) {
+		public void setDocumentLocator(final Locator locator) {
 		}
 
 		@Override
-		public void skippedEntity(String name) {
+		public void skippedEntity(final String name) {
 		}
 
 		@Override
@@ -232,11 +234,11 @@ public class OAuthPasswordAuthenticator implements Constants {
 		}
 
 		@Override
-		public void startElement(String uri, String localName, String qName, Attributes atts) {
+		public void startElement(final String uri, final String localName, final String qName, final Attributes atts) {
 		}
 
 		@Override
-		public void startPrefixMapping(String prefix, String uri) {
+		public void startPrefixMapping(final String prefix, final String uri) {
 		}
 	}
 
@@ -252,12 +254,12 @@ public class OAuthPasswordAuthenticator implements Constants {
 		final String name;
 		final String value;
 
-		HttpParameter(String name, String value) {
+		HttpParameter(final String name, final String value) {
 			this.name = name;
 			this.value = value;
 		}
 
-		static String encode(String value) {
+		static String encode(final String value) {
 			String encoded = null;
 			try {
 				encoded = URLEncoder.encode(value, "UTF-8");
@@ -282,7 +284,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 			return buf.toString();
 		}
 
-		static String encodeParameters(HttpParameter[] httpParams) {
+		static String encodeParameters(final HttpParameter[] httpParams) {
 			if (null == httpParams) return "";
 			final StringBuffer buf = new StringBuffer();
 			for (int j = 0; j < httpParams.length; j++) {

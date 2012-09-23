@@ -144,7 +144,7 @@ public abstract class ActionMode {
 	 * 
 	 * @see #getTag()
 	 */
-	public void setTag(Object tag) {
+	public void setTag(final Object tag) {
 		mTag = tag;
 	}
 

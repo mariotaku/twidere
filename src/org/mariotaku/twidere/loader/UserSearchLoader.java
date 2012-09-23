@@ -36,7 +36,8 @@ public class UserSearchLoader extends ParcelableUsersLoader {
 	private final int mPage;
 	private final long mAccountId;
 
-	public UserSearchLoader(Context context, long account_id, String query, int page, List<ParcelableUser> users_list) {
+	public UserSearchLoader(final Context context, final long account_id, final String query, final int page,
+			final List<ParcelableUser> users_list) {
 		super(context, account_id, users_list);
 		mQuery = query;
 		mPage = page;

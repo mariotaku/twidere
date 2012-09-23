@@ -11,7 +11,7 @@ import android.widget.FrameLayout;
 public class CustomTabsActivity extends BaseActivity {
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(new FrameLayout(this));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -22,7 +22,7 @@ public class CustomTabsActivity extends BaseActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
 				onBackPressed();

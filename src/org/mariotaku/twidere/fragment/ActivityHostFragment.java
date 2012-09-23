@@ -44,7 +44,7 @@ public abstract class ActivityHostFragment<A extends Activity> extends LocalActi
 
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final Intent intent = new Intent(getActivity(), getActivityClass());
 		final Bundle args = getArguments();
 		if (args != null) {

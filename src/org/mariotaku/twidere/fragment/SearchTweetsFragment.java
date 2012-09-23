@@ -36,7 +36,7 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
 		long account_id = -1, max_id = -1;
 		String query = null;
 		boolean is_home_tab = false;
@@ -51,7 +51,7 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
+	public void onDataLoaded(final Loader<List<ParcelableStatus>> loader, final ParcelableStatusesAdapter adapter) {
 
 	}
 

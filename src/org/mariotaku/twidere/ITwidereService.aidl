@@ -24,6 +24,7 @@ interface ITwidereService {
 	int getMentions(in long[] account_ids, in long[] max_ids);
 	int getReceivedDirectMessages(in long[] account_ids, in long[] max_ids);
 	int getSentDirectMessages(in long[] account_ids, in long[] max_ids);
+	int refreshAll();
 	int getDailyTrends(long account_id);
 	int getWeeklyTrends(long account_id);
 	int getLocalTrends(long account_id, int woeid);

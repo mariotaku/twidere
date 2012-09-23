@@ -93,10 +93,10 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	public static final int TAB_POSITION_MESSAGES = 2;
 	private final ArrayList<TabSpec> mCustomTabs = new ArrayList<TabSpec>();
 
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
@@ -151,7 +151,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	}
 
 	@Override
-	public void onClick(View v) {
+	public void onClick(final View v) {
 		switch (v.getId()) {
 			case R.id.compose:
 			case R.id.button_compose:
@@ -181,7 +181,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		mApplication = getTwidereApplication();
 		mService = mApplication.getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -265,13 +265,13 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_home, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				getSupportFragmentManager().popBackStack();
@@ -300,17 +300,17 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	}
 
 	@Override
-	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+	public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
 
 	}
 
 	@Override
-	public void onPageScrollStateChanged(int state) {
+	public void onPageScrollStateChanged(final int state) {
 
 	}
 
 	@Override
-	public void onPageSelected(int position) {
+	public void onPageSelected(final int position) {
 		switch (position) {
 			case TAB_POSITION_HOME: {
 				mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
@@ -329,7 +329,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
+	public boolean onPrepareOptionsMenu(final Menu menu) {
 		final boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
 		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
 		int icon = R.drawable.ic_menu_tweet, title = R.string.compose;
@@ -374,13 +374,13 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	}
 
 	@Override
-	public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
+	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
 		mProgressBarIndeterminateVisible = visible;
 		mProgress.setVisibility(visible || mService.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
 		final ContentResolver resolver = getContentResolver();
 		ContentValues values;
 		switch (requestCode) {
@@ -438,7 +438,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	}
 
 	@Override
-	protected void onNewIntent(Intent intent) {
+	protected void onNewIntent(final Intent intent) {
 		final Bundle bundle = intent.getExtras();
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
@@ -490,14 +490,14 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		super.onStop();
 	}
 
-	protected void setPagingEnabled(boolean enabled) {
+	protected void setPagingEnabled(final boolean enabled) {
 		if (mIndicator != null) {
 			mIndicator.setPagingEnabled(enabled);
 			mIndicator.setEnabled(enabled);
 		}
 	}
 
-	private void initTabs(Collection<? extends TabSpec> tabs) {
+	private void initTabs(final Collection<? extends TabSpec> tabs) {
 		mCustomTabs.clear();
 		mCustomTabs.addAll(tabs);
 		mAdapter.clear();
@@ -513,7 +513,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	}
 
-	private boolean tabsChanged(List<TabSpec> tabs) {
+	private boolean tabsChanged(final List<TabSpec> tabs) {
 		if (mCustomTabs.size() == 0 && tabs == null) return false;
 		if (mCustomTabs.size() != tabs.size()) return true;
 		final int size = mCustomTabs.size();

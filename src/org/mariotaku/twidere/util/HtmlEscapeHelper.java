@@ -289,7 +289,7 @@ public class HtmlEscapeHelper {
 		}
 	};
 
-	public static String escape(String string) {
+	public static String escape(final String string) {
 		final StringBuffer sb = new StringBuffer(string.length());
 		// true if last char was blank
 		boolean lastWasBlankChar = false;

@@ -44,7 +44,7 @@ public class SearchUsersFragment extends BaseUsersListFragment {
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
 			mPage = savedInstanceState.getInt(INTENT_KEY_PAGE, 1);
 		}
@@ -58,7 +58,7 @@ public class SearchUsersFragment extends BaseUsersListFragment {
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<ParcelableUser>> loader, List<ParcelableUser> data) {
+	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
 		if (data != null) {
 			mPage++;
 		}
@@ -66,7 +66,7 @@ public class SearchUsersFragment extends BaseUsersListFragment {
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		outState.putInt(INTENT_KEY_PAGE, mPage);
 		super.onSaveInstanceState(outState);
 	}

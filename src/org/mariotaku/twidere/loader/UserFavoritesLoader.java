@@ -49,15 +49,16 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 
 	private long mLoadedUserId = -1;
 
-	public UserFavoritesLoader(Context context, long account_id, long user_id, String user_screenname, long max_id,
-			List<ParcelableStatus> data, String class_name, boolean is_home_tab) {
+	public UserFavoritesLoader(final Context context, final long account_id, final long user_id,
+			final String user_screenname, final long max_id, final List<ParcelableStatus> data,
+			final String class_name, final boolean is_home_tab) {
 		super(context, account_id, max_id, data, class_name, is_home_tab);
 		mUserId = user_id;
 		mUserScreenName = user_screenname;
 	}
 
 	@Override
-	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
+	public ResponseList<Status> getStatuses(final Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
 		if (twitter == null) return null;
 		if (mUserId != -1) {
@@ -117,8 +118,8 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 		return super.loadInBackground();
 	}
 
-	public static void writeSerializableStatuses(Object instance, Context context, List<ParcelableStatus> data,
-			Bundle args) {
+	public static void writeSerializableStatuses(final Object instance, final Context context,
+			final List<ParcelableStatus> data, final Bundle args) {
 		if (instance == null || context == null || data == null || args == null) return;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);

@@ -34,7 +34,7 @@ public class WebMapFragment extends WebViewFragment {
 	private double latitude, longitude;
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getLocation();
 		setupWebView();
@@ -87,12 +87,12 @@ public class WebMapFragment extends WebViewFragment {
 
 	class MapWebViewClient extends DefaultWebViewClient {
 
-		public MapWebViewClient(FragmentActivity activity) {
+		public MapWebViewClient(final FragmentActivity activity) {
 			super(activity);
 		}
 
 		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+		public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
 			final Uri uri = Uri.parse(url);
 			if (uri.getScheme().equals(mUri.getScheme())) return false;
 

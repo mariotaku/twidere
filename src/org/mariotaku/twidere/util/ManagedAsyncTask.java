@@ -28,24 +28,28 @@ import android.os.AsyncTask;
 public abstract class ManagedAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> implements
 		Constants {
 
-	private AsyncTaskManager manager;
-	private Context context;
+	private final AsyncTaskManager manager;
+	private final Context context;
 
-	public ManagedAsyncTask(Context context, AsyncTaskManager manager) {
+	public ManagedAsyncTask(final Context context, final AsyncTaskManager manager) {
 		this.manager = manager;
 		this.context = context;
 	}
 
 	@Override
-	protected void onCancelled() {
+	protected void finalize() throws Throwable {
 		manager.remove(hashCode());
+		super.finalize();
+	}
+
+	@Override
+	protected void onCancelled() {
 		context.sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED));
 		super.onCancelled();
 	}
 
 	@Override
-	protected void onPostExecute(Result result) {
-		manager.remove(hashCode());
+	protected void onPostExecute(final Result result) {
 		context.sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED));
 		super.onPostExecute(result);
 	}

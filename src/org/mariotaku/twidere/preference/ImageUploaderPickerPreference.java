@@ -29,22 +29,22 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 
 	private ImageUploaderSpec[] mAvailableImageUploaders;
 
-	public ImageUploaderPickerPreference(Context context) {
+	public ImageUploaderPickerPreference(final Context context) {
 		this(context, null);
 	}
 
-	public ImageUploaderPickerPreference(Context context, AttributeSet attrs) {
+	public ImageUploaderPickerPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public ImageUploaderPickerPreference(Context context, AttributeSet attrs, int defStyle) {
+	public ImageUploaderPickerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mPackageManager = context.getPackageManager();
 		setOnPreferenceClickListener(this);
 	}
 
 	@Override
-	public void onClick(DialogInterface dialog, int which) {
+	public void onClick(final DialogInterface dialog, final int which) {
 		final SharedPreferences.Editor editor = getEditor();
 		if (editor == null) return;
 		final ImageUploaderSpec spec = mAvailableImageUploaders[which];
@@ -58,7 +58,7 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 	}
 
 	@Override
-	public boolean onPreferenceClick(Preference preference) {
+	public boolean onPreferenceClick(final Preference preference) {
 		mPreferences = getSharedPreferences();
 		if (mPreferences == null) return false;
 		final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
@@ -80,7 +80,7 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 		return true;
 	}
 
-	private int getIndex(String cls) {
+	private int getIndex(final String cls) {
 		if (mAvailableImageUploaders == null) return -1;
 		if (cls == null) return 0;
 		final int count = mAvailableImageUploaders.length;
@@ -94,13 +94,13 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 	static class ImageUploaderSpec implements CharSequence {
 		private final String name, cls;
 
-		ImageUploaderSpec(String name, String cls) {
+		ImageUploaderSpec(final String name, final String cls) {
 			this.name = name;
 			this.cls = cls;
 		}
 
 		@Override
-		public char charAt(int index) {
+		public char charAt(final int index) {
 			return name.charAt(index);
 		}
 
@@ -110,7 +110,7 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 		}
 
 		@Override
-		public CharSequence subSequence(int start, int end) {
+		public CharSequence subSequence(final int start, final int end) {
 			return name.subSequence(start, end);
 		}
 

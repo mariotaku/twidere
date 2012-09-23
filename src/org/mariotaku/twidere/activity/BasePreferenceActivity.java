@@ -68,7 +68,7 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);

@@ -81,10 +81,10 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	private boolean mActivityFirstCreated;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				if (getActivity() == null) return;
@@ -97,7 +97,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	};
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -110,7 +110,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
 				if (resultCode == Activity.RESULT_OK) if (data != null && data.getExtras() != null) {
@@ -128,13 +128,13 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		mActivityFirstCreated = true;
 		super.onCreate(savedInstanceState);
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final Uri uri = Accounts.CONTENT_URI;
 		final String[] cols = Accounts.COLUMNS;
 		final String where = Accounts.IS_ACTIVATED + " = 1";
@@ -142,7 +142,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.accounts, null);
 	}
 
@@ -153,7 +153,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		if (mApplication.isMultiSelectActive()) return true;
 		if (isDefaultAccountValid() && mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
@@ -169,7 +169,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
+	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		if (mApplication.isMultiSelectActive()) return;
 		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
@@ -184,19 +184,19 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
+	public void onLoaderReset(final Loader<Cursor> loader) {
 		mCursor = null;
 		mAdapter.swapCursor(null);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		mCursor = data;
 		mAdapter.swapCursor(data);
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedUserId <= 0) return false;
 		switch (item.getItemId()) {
 			case MENU_VIEW_PROFILE: {
@@ -263,7 +263,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		return ArrayUtils.contains(activated_ids, default_account_id);
 	}
 
-	private void setDefaultAccount(long account_id) {
+	private void setDefaultAccount(final long account_id) {
 		mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, account_id).commit();
 		mAdapter.notifyDataSetChanged();
 		if (getActivity() instanceof HomeActivity) {
@@ -276,18 +276,18 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		public final ImageView profile_image;
 		private final View content, default_indicator;
 
-		public ViewHolder(View view) {
+		public ViewHolder(final View view) {
 			content = view;
 			profile_image = (ImageView) view.findViewById(android.R.id.icon);
 			default_indicator = view.findViewById(android.R.id.text2);
 		}
 
-		public void setAccountColor(int color) {
+		public void setAccountColor(final int color) {
 			content.getBackground().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 			content.invalidate();
 		}
 
-		public void setIsDefault(boolean is_default) {
+		public void setIsDefault(final boolean is_default) {
 			default_indicator.setVisibility(is_default ? View.VISIBLE : View.GONE);
 		}
 	}
@@ -300,7 +300,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		private long mDefaultAccountId;
 		private final boolean mDisplayHiResProfileImage;
 
-		public AccountsAdapter(Context context) {
+		public AccountsAdapter(final Context context) {
 			super(context, R.layout.account_list_item, null, new String[] { Accounts.USERNAME },
 					new int[] { android.R.id.text1 }, 0);
 			final TwidereApplication application = TwidereApplication.getInstance(context);
@@ -310,7 +310,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 
 		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
+		public void bindView(final View view, final Context context, final Cursor cursor) {
 			final int color = cursor.getInt(mUserColorIdx);
 			final ViewHolder holder = (ViewHolder) view.getTag();
 			holder.setAccountColor(color);
@@ -326,7 +326,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 
 		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+		public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {
 
 			final View view = super.newView(context, cursor, parent);
 			final ViewHolder viewholder = new ViewHolder(view);
@@ -341,7 +341,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 
 		@Override
-		public Cursor swapCursor(Cursor cursor) {
+		public Cursor swapCursor(final Cursor cursor) {
 			if (cursor != null) {
 				mUserColorIdx = cursor.getColumnIndex(Accounts.USER_COLOR);
 				mProfileImageIdx = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);

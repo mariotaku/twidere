@@ -73,10 +73,10 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 
 	private long mAccountId;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_TRENDS_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, TrendsFragment.this);
@@ -85,7 +85,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 	};
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		mService = getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
@@ -107,7 +107,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 	}
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.trends_refresh: {
 				if (mTrendsCategoriesAdapter != null) {
@@ -123,7 +123,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		Uri uri = TweetStore.NULL_CONTENT_URI;
 		if (mTrendsCategoriesAdapter != null && mTrendsSpinner != null) {
 			final TrendsCategory tc = mTrendsCategoriesAdapter.getItem(mTrendsSpinner.getSelectedItemPosition());
@@ -138,7 +138,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.discover, null, false);
 		mTrendsSpinner = (Spinner) view.findViewById(R.id.trends_spinner);
 		mTrendsRefreshButton = (ImageButton) view.findViewById(R.id.trends_refresh);
@@ -146,7 +146,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		if (mApplication.isMultiSelectActive()) return;
 		final Cursor cur = (Cursor) mTrendsAdapter.getItem(position);
 		if (cur == null) return;
@@ -154,24 +154,24 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+	public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
 		if (getActivity() != null && isAdded()) {
 			getLoaderManager().restartLoader(0, null, this);
 		}
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
+	public void onLoaderReset(final Loader<Cursor> loader) {
 		mTrendsAdapter.swapCursor(null);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mTrendsAdapter.swapCursor(cursor);
 	}
 
 	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
+	public void onNothingSelected(final AdapterView<?> parent) {
 
 	}
 
@@ -188,7 +188,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 		super.onStop();
 	}
 
-	private void fetchTrends(int type) {
+	private void fetchTrends(final int type) {
 		switch (type) {
 			case TRENDS_TYPE_DAILY: {
 				mService.getDailyTrends(mAccountId);
@@ -206,7 +206,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 		}
 	}
 
-	private Uri getTrendsQueryUri(int type) {
+	private Uri getTrendsQueryUri(final int type) {
 		switch (type) {
 			case TRENDS_TYPE_DAILY: {
 				return CachedTrends.Daily.CONTENT_URI;
@@ -223,7 +223,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 
 	class TrendsAdapter extends SimpleCursorAdapter {
 
-		public TrendsAdapter(Context context) {
+		public TrendsAdapter(final Context context) {
 			super(context, android.R.layout.simple_list_item_1, null, new String[] { CachedTrends.NAME },
 					new int[] { android.R.id.text1 }, 0);
 		}
@@ -234,7 +234,7 @@ public class TrendsFragment extends BaseListFragment implements OnClickListener,
 		public final int type;
 		public final String name;
 
-		public TrendsCategory(int type, String name) {
+		public TrendsCategory(final int type, final String name) {
 			this.type = type;
 			this.name = name;
 		}

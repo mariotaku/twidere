@@ -39,8 +39,8 @@ public class UserRetweetedStatusLoader extends ParcelableUsersLoader {
 	private final int mPage, mLoadItemLimit;
 	private final List<ParcelableUser> mUsersList;
 
-	public UserRetweetedStatusLoader(Context context, long account_id, long status_id, int page,
-			List<ParcelableUser> users_list) {
+	public UserRetweetedStatusLoader(final Context context, final long account_id, final long status_id,
+			final int page, final List<ParcelableUser> users_list) {
 		super(context, account_id, users_list);
 		mStatusId = status_id;
 		mPage = page;

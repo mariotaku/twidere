@@ -43,7 +43,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	private final boolean mDisplayHiResProfileImage;
 	private float mTextSize;
 
-	public UserListsAdapter(Context context) {
+	public UserListsAdapter(final Context context) {
 		super(context, R.layout.user_list_list_item, R.id.description);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
@@ -51,7 +51,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		application.getServiceInterface();
 	}
 
-	public ParcelableUserList findItem(long id) {
+	public ParcelableUserList findItem(final long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) return getItem(i);
@@ -59,7 +59,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		return null;
 	}
 
-	public ParcelableUserList findItemByUserId(int list_id) {
+	public ParcelableUserList findItemByUserId(final int list_id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			final ParcelableUserList item = getItem(i);
@@ -69,7 +69,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
 		final Object tag = view.getTag();
 		UserListViewHolder holder = null;
@@ -97,11 +97,11 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		return view;
 	}
 
-	public void setData(List<ParcelableUserList> data) {
+	public void setData(final List<ParcelableUserList> data) {
 		setData(data, false);
 	}
 
-	public void setData(List<ParcelableUserList> data, boolean clear_old) {
+	public void setData(final List<ParcelableUserList> data, final boolean clear_old) {
 		if (clear_old) {
 			clear();
 		}
@@ -114,7 +114,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	}
 
 	@Override
-	public void setDisplayName(boolean display) {
+	public void setDisplayName(final boolean display) {
 		if (display != mDisplayName) {
 			mDisplayName = display;
 			notifyDataSetChanged();
@@ -122,7 +122,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	}
 
 	@Override
-	public void setDisplayProfileImage(boolean display) {
+	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
@@ -130,7 +130,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	}
 
 	@Override
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
 			notifyDataSetChanged();

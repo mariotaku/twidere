@@ -8,9 +8,9 @@ import android.view.View;
 @TargetApi(11)
 class ActionBarCompatNative extends ActionBarCompat implements ActionBar {
 
-	private Activity mActivity;
+	private final Activity mActivity;
 
-	public ActionBarCompatNative(Activity activity) {
+	public ActionBarCompatNative(final Activity activity) {
 		mActivity = activity;
 	}
 
@@ -35,57 +35,57 @@ class ActionBarCompatNative extends ActionBarCompat implements ActionBar {
 	}
 
 	@Override
-	public void setBackgroundDrawable(Drawable background) {
+	public void setBackgroundDrawable(final Drawable background) {
 		mActivity.getActionBar().setBackgroundDrawable(background);
 	}
 
 	@Override
-	public void setCustomView(int resId) {
+	public void setCustomView(final int resId) {
 		mActivity.getActionBar().setCustomView(resId);
 	}
 
 	@Override
-	public void setCustomView(View view) {
+	public void setCustomView(final View view) {
 		mActivity.getActionBar().setCustomView(view);
 	}
 
 	@Override
-	public void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
+	public void setDisplayHomeAsUpEnabled(final boolean showHomeAsUp) {
 		mActivity.getActionBar().setDisplayHomeAsUpEnabled(showHomeAsUp);
 	}
 
 	@Override
-	public void setDisplayShowCustomEnabled(boolean showCustom) {
+	public void setDisplayShowCustomEnabled(final boolean showCustom) {
 		mActivity.getActionBar().setDisplayShowCustomEnabled(showCustom);
 	}
 
 	@Override
-	public void setDisplayShowHomeEnabled(boolean showHome) {
+	public void setDisplayShowHomeEnabled(final boolean showHome) {
 		mActivity.getActionBar().setDisplayShowHomeEnabled(showHome);
 	}
 
 	@Override
-	public void setDisplayShowTitleEnabled(boolean showTitle) {
+	public void setDisplayShowTitleEnabled(final boolean showTitle) {
 		mActivity.getActionBar().setDisplayShowTitleEnabled(showTitle);
 	}
 
 	@Override
-	public void setSubtitle(CharSequence subtitle) {
+	public void setSubtitle(final CharSequence subtitle) {
 		mActivity.getActionBar().setSubtitle(subtitle);
 	}
 
 	@Override
-	public void setSubtitle(int resId) {
+	public void setSubtitle(final int resId) {
 		mActivity.getActionBar().setSubtitle(resId);
 	}
 
 	@Override
-	public void setTitle(CharSequence title) {
+	public void setTitle(final CharSequence title) {
 		mActivity.getActionBar().setTitle(title);
 	}
 
 	@Override
-	public void setTitle(int resId) {
+	public void setTitle(final int resId) {
 		mActivity.getActionBar().setTitle(resId);
 	}
 

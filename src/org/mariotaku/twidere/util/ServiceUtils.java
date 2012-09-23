@@ -15,12 +15,13 @@ public final class ServiceUtils implements Constants {
 
 	private static HashMap<Context, ServiceUtils.ServiceBinder> sConnectionMap = new HashMap<Context, ServiceUtils.ServiceBinder>();
 
-	public static ServiceToken bindToService(Context context, Intent intent) {
+	public static ServiceToken bindToService(final Context context, final Intent intent) {
 
 		return bindToService(context, intent, null);
 	}
 
-	public static ServiceToken bindToService(Context context, Intent intent, ServiceConnection callback) {
+	public static ServiceToken bindToService(final Context context, final Intent intent,
+			final ServiceConnection callback) {
 
 		final ContextWrapper cw = new ContextWrapper(context);
 		final ComponentName cn = cw.startService(intent);
@@ -39,7 +40,7 @@ public final class ServiceUtils implements Constants {
 
 		ContextWrapper wrapped_context;
 
-		ServiceToken(ContextWrapper context) {
+		ServiceToken(final ContextWrapper context) {
 
 			wrapped_context = context;
 		}
@@ -47,15 +48,15 @@ public final class ServiceUtils implements Constants {
 
 	static class ServiceBinder implements ServiceConnection {
 
-		private ServiceConnection mCallback;
+		private final ServiceConnection mCallback;
 
-		public ServiceBinder(ServiceConnection callback) {
+		public ServiceBinder(final ServiceConnection callback) {
 
 			mCallback = callback;
 		}
 
 		@Override
-		public void onServiceConnected(ComponentName className, android.os.IBinder service) {
+		public void onServiceConnected(final ComponentName className, final android.os.IBinder service) {
 
 			if (mCallback != null) {
 				mCallback.onServiceConnected(className, service);
@@ -63,7 +64,7 @@ public final class ServiceUtils implements Constants {
 		}
 
 		@Override
-		public void onServiceDisconnected(ComponentName className) {
+		public void onServiceDisconnected(final ComponentName className) {
 
 			if (mCallback != null) {
 				mCallback.onServiceDisconnected(className);

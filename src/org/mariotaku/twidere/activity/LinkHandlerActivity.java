@@ -65,7 +65,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 	private Fragment mFragment;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminateVisibility(false);
@@ -93,7 +93,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
 				onBackPressed();
@@ -116,7 +116,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 		super.onStart();
 	}
 
-	private boolean setFragment(Uri uri) {
+	private boolean setFragment(final Uri uri) {
 		final Bundle extras = getIntent().getExtras();
 		Fragment fragment = null;
 		if (uri != null) {

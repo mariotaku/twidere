@@ -34,12 +34,12 @@ public class ParcelableUserList implements Parcelable {
 
 	public static final Parcelable.Creator<ParcelableUserList> CREATOR = new Parcelable.Creator<ParcelableUserList>() {
 		@Override
-		public ParcelableUserList createFromParcel(Parcel in) {
+		public ParcelableUserList createFromParcel(final Parcel in) {
 			return new ParcelableUserList(in);
 		}
 
 		@Override
-		public ParcelableUserList[] newArray(int size) {
+		public ParcelableUserList[] newArray(final int size) {
 			return new ParcelableUserList[size];
 		}
 	};
@@ -57,7 +57,7 @@ public class ParcelableUserList implements Parcelable {
 	public static final Comparator<ParcelableUserList> POSITION_COMPARATOR = new Comparator<ParcelableUserList>() {
 
 		@Override
-		public int compare(ParcelableUserList object1, ParcelableUserList object2) {
+		public int compare(final ParcelableUserList object1, final ParcelableUserList object2) {
 			final long diff = object1.position - object2.position;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
@@ -65,7 +65,7 @@ public class ParcelableUserList implements Parcelable {
 		}
 	};
 
-	public ParcelableUserList(Parcel in) {
+	public ParcelableUserList(final Parcel in) {
 		position = in.readLong();
 		account_id = in.readLong();
 		list_id = in.readInt();
@@ -80,11 +80,11 @@ public class ParcelableUserList implements Parcelable {
 		user_profile_image_url = parseURL(user_profile_image_url_string);
 	}
 
-	public ParcelableUserList(UserList user, long account_id) {
+	public ParcelableUserList(final UserList user, final long account_id) {
 		this(user, account_id, 0);
 	}
 
-	public ParcelableUserList(UserList list, long account_id, long position) {
+	public ParcelableUserList(final UserList list, final long account_id, final long position) {
 		final User user = list.getUser();
 		this.position = position;
 		this.account_id = account_id;
@@ -111,7 +111,7 @@ public class ParcelableUserList implements Parcelable {
 	}
 
 	@Override
-	public void writeToParcel(Parcel out, int flags) {
+	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(position);
 		out.writeLong(account_id);
 		out.writeInt(list_id);

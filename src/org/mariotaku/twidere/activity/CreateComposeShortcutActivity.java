@@ -11,7 +11,7 @@ import android.os.Bundle;
 public class CreateComposeShortcutActivity extends Activity implements Constants {
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		final Intent intent = new Intent();
 		final Intent launch_intent = new Intent(INTENT_ACTION_COMPOSE);
 		final ShortcutIconResource icon = Intent.ShortcutIconResource.fromContext(this, R.drawable.ic_launcher);

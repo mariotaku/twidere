@@ -12,7 +12,7 @@ public class SavedSearchesLoader extends AsyncTaskLoader<ResponseList<SavedSearc
 
 	private final Twitter twitter;
 
-	public SavedSearchesLoader(Context context, long account_id) {
+	public SavedSearchesLoader(final Context context, final long account_id) {
 		super(context);
 		twitter = getTwitterInstance(context, account_id, false);
 	}

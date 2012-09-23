@@ -51,7 +51,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 	private int mInitialColor;
 
 	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
+	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
 			mInitialColor = savedInstanceState.getInt(Accounts.USER_COLOR, Color.WHITE);
 		}
@@ -63,12 +63,12 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		outState.putInt(Accounts.USER_COLOR, mInitialColor);
 		super.onSaveInstanceState(outState);
 	}
 
-	public void setInitialColor(int color) {
+	public void setInitialColor(final int color) {
 		mInitialColor = color;
 	}
 
@@ -78,7 +78,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 	 * 
 	 * @param listener
 	 */
-	public void setOnColorSelectedListener(OnColorSelectedListener listener) {
+	public void setOnColorSelectedListener(final OnColorSelectedListener listener) {
 		mListener = listener;
 	}
 
@@ -86,7 +86,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 
 		private ColorPickerView mColorPicker;
 
-		public ColorPickerDialog(Context context, int initialColor) {
+		public ColorPickerDialog(final Context context, final int initialColor) {
 
 			super(context);
 
@@ -99,7 +99,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 		}
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			switch (which) {
 				case BUTTON_POSITIVE:
 					if (mListener != null) {
@@ -112,18 +112,18 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 		}
 
 		@Override
-		public void onColorChanged(int color) {
+		public void onColorChanged(final int color) {
 			mInitialColor = color;
 			setIcon(new BitmapDrawable(getContext().getResources(), getPreviewBitmap(color)));
 
 		}
 
-		public void setAlphaSliderVisible(boolean visible) {
+		public void setAlphaSliderVisible(final boolean visible) {
 
 			mColorPicker.setAlphaSliderVisible(visible);
 		}
 
-		private Bitmap getPreviewBitmap(int color) {
+		private Bitmap getPreviewBitmap(final int color) {
 
 			final float density = getContext().getResources().getDisplayMetrics().density;
 			final int width = (int) (32 * density), height = (int) (32 * density);
@@ -167,7 +167,7 @@ public class ColorPickerDialogFragment extends BaseDialogFragment {
 			return bm;
 		}
 
-		private void init(Context context, int color) {
+		private void init(final Context context, final int color) {
 
 			// To fight color branding.
 			getWindow().setFormat(PixelFormat.RGBA_8888);

@@ -38,7 +38,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	private final TouchInterceptor mLeftPaneTouchInterceptor = new TouchInterceptor() {
 
 		@Override
-		public void onInterceptTouchEvent(MotionEvent event) {
+		public void onInterceptTouchEvent(final MotionEvent event) {
 			if (MotionEvent.ACTION_DOWN == event.getAction()) {
 				bringLeftPaneToFront();
 			}
@@ -47,7 +47,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	private final TouchInterceptor mRightPaneTouchInterceptor = new TouchInterceptor() {
 
 		@Override
-		public void onInterceptTouchEvent(MotionEvent event) {
+		public void onInterceptTouchEvent(final MotionEvent event) {
 			if (MotionEvent.ACTION_DOWN == event.getAction()) {
 				bringRightPaneToFront();
 			}
@@ -129,7 +129,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		final Resources res = getResources();
@@ -152,7 +152,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 	}
 
-	public final void showAtPane(int pane, Fragment fragment, boolean addToBackStack) {
+	public final void showAtPane(final int pane, final Fragment fragment, final boolean addToBackStack) {
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		switch (pane) {
 			case PANE_LEFT: {
@@ -174,7 +174,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 		mDetailsFragment = fragment;
 	}
 
-	public final void showFragment(Fragment fragment, boolean add_to_backstack) {
+	public final void showFragment(final Fragment fragment, final boolean add_to_backstack) {
 		if (fragment instanceof Panes.Right) {
 			showAtPane(PANE_RIGHT, fragment, add_to_backstack);
 		} else {

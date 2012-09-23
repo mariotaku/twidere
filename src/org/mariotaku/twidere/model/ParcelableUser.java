@@ -34,12 +34,12 @@ public class ParcelableUser implements Parcelable {
 
 	public static final Parcelable.Creator<ParcelableUser> CREATOR = new Parcelable.Creator<ParcelableUser>() {
 		@Override
-		public ParcelableUser createFromParcel(Parcel in) {
+		public ParcelableUser createFromParcel(final Parcel in) {
 			return new ParcelableUser(in);
 		}
 
 		@Override
-		public ParcelableUser[] newArray(int size) {
+		public ParcelableUser[] newArray(final int size) {
 			return new ParcelableUser[size];
 		}
 	};
@@ -55,7 +55,7 @@ public class ParcelableUser implements Parcelable {
 	public static final Comparator<ParcelableUser> POSITION_COMPARATOR = new Comparator<ParcelableUser>() {
 
 		@Override
-		public int compare(ParcelableUser object1, ParcelableUser object2) {
+		public int compare(final ParcelableUser object1, final ParcelableUser object2) {
 			final long diff = object1.position - object2.position;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
@@ -63,7 +63,7 @@ public class ParcelableUser implements Parcelable {
 		}
 	};
 
-	public ParcelableUser(Parcel in) {
+	public ParcelableUser(final Parcel in) {
 		position = in.readLong();
 		account_id = in.readLong();
 		user_id = in.readLong();
@@ -78,11 +78,11 @@ public class ParcelableUser implements Parcelable {
 		profile_image_url = parseURL(profile_image_url_string);
 	}
 
-	public ParcelableUser(User user, long account_id) {
+	public ParcelableUser(final User user, final long account_id) {
 		this(user, account_id, 0);
 	}
 
-	public ParcelableUser(User user, long account_id, long position) {
+	public ParcelableUser(final User user, final long account_id, final long position) {
 		this.position = position;
 		this.account_id = account_id;
 		user_id = user.getId();
@@ -103,7 +103,7 @@ public class ParcelableUser implements Parcelable {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (!(o instanceof ParcelableUser)) return false;
 		final ParcelableUser that = (ParcelableUser) o;
 		return user_id == that.user_id;
@@ -115,7 +115,7 @@ public class ParcelableUser implements Parcelable {
 	}
 
 	@Override
-	public void writeToParcel(Parcel out, int flags) {
+	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(position);
 		out.writeLong(account_id);
 		out.writeLong(user_id);
@@ -129,7 +129,7 @@ public class ParcelableUser implements Parcelable {
 		out.writeString(profile_image_url_string);
 	}
 
-	private long getTime(Date date) {
+	private long getTime(final Date date) {
 		return date != null ? date.getTime() : 0;
 	}
 }

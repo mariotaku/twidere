@@ -19,22 +19,22 @@ public class NotificationTypePreference extends Preference implements Constants,
 	private boolean[] checked_items;
 	private SharedPreferences prefs;
 
-	public NotificationTypePreference(Context context) {
+	public NotificationTypePreference(final Context context) {
 		this(context, null);
 	}
 
-	public NotificationTypePreference(Context context, AttributeSet attrs) {
+	public NotificationTypePreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public NotificationTypePreference(Context context, AttributeSet attrs, int defStyle) {
+	public NotificationTypePreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		checked_items = new boolean[3];
 		setOnPreferenceClickListener(this);
 	}
 
 	@Override
-	public void onClick(DialogInterface dialog, int which) {
+	public void onClick(final DialogInterface dialog, final int which) {
 		if (prefs == null) return;
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE:
@@ -49,12 +49,12 @@ public class NotificationTypePreference extends Preference implements Constants,
 	}
 
 	@Override
-	public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+	public void onClick(final DialogInterface dialog, final int which, final boolean isChecked) {
 		checked_items[which] = isChecked;
 	}
 
 	@Override
-	public boolean onPreferenceClick(Preference preference) {
+	public boolean onPreferenceClick(final Preference preference) {
 		prefs = getSharedPreferences();
 		if (prefs == null) return false;
 		checked_items = new boolean[] { prefs.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false),

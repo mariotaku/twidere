@@ -37,7 +37,7 @@ public class StatusViewHolder {
 	private boolean account_color_enabled;
 	private float text_size;
 
-	public StatusViewHolder(View view) {
+	public StatusViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
@@ -48,26 +48,26 @@ public class StatusViewHolder {
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
 	}
 
-	public void setAccountColor(int color) {
+	public void setAccountColor(final int color) {
 		content.drawRight(account_color_enabled && !show_as_gap ? color : Color.TRANSPARENT);
 	}
 
-	public void setAccountColorEnabled(boolean enabled) {
+	public void setAccountColorEnabled(final boolean enabled) {
 		account_color_enabled = enabled && !show_as_gap;
 		if (!account_color_enabled) {
 			content.drawRight(Color.TRANSPARENT);
 		}
 	}
 
-	public void setHighlightColor(int color) {
+	public void setHighlightColor(final int color) {
 		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
 	}
 
-	public void setSelected(boolean selected) {
+	public void setSelected(final boolean selected) {
 		content.setBackgroundColor(selected && !show_as_gap ? 0x600099CC : Color.TRANSPARENT);
 	}
 
-	public void setShowAsGap(boolean show_gap) {
+	public void setShowAsGap(final boolean show_gap) {
 		show_as_gap = show_gap;
 		if (show_as_gap) {
 			content.setBackgroundResource(0);
@@ -82,7 +82,7 @@ public class StatusViewHolder {
 		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
 
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
 			text.setTextSize(text_size);
@@ -92,7 +92,7 @@ public class StatusViewHolder {
 		}
 	}
 
-	public void setUserColor(int color) {
+	public void setUserColor(final int color) {
 		content.drawLeft(show_as_gap ? Color.TRANSPARENT : color);
 	}
 

@@ -27,7 +27,7 @@ import android.os.Build;
 @TargetApi(14)
 public class SetHomeButtonEnabledAccessor {
 
-	public static void setHomeButtonEnabled(Activity activity, boolean enabled) {
+	public static void setHomeButtonEnabled(final Activity activity, final boolean enabled) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			final ActionBar action_bar = activity.getActionBar();
 			action_bar.setHomeButtonEnabled(enabled);

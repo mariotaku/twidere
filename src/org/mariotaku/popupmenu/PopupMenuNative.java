@@ -28,18 +28,18 @@ public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnI
 	private Menu mMenu;
 	private final Context mContext;
 	private final View mView;
-	private ListPopupWindow mWindow;
+	private final ListPopupWindow mWindow;
 
 	private boolean mDidAction;
 
-	private MenuAdapter mAdapter;
+	private final MenuAdapter mAdapter;
 
 	/**
 	 * Constructor for default vertical layout
 	 * 
 	 * @param context Context
 	 */
-	public PopupMenuNative(Context context, View view) {
+	public PopupMenuNative(final Context context, final View view) {
 		mContext = context;
 		mView = view;
 		mAdapter = new MenuAdapter(context);
@@ -74,7 +74,7 @@ public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnI
 	}
 
 	@Override
-	public void inflate(int menuRes) {
+	public void inflate(final int menuRes) {
 		new MenuInflater(mContext).inflate(menuRes, mMenu);
 	}
 
@@ -86,7 +86,7 @@ public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnI
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		mDidAction = true;
 		dismiss();
 		final MenuItem item = mAdapter.getItem(position);
@@ -100,7 +100,7 @@ public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnI
 	}
 
 	@Override
-	public boolean onTouch(View v, MotionEvent event) {
+	public boolean onTouch(final View v, final MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
 			mWindow.dismiss();
 
@@ -111,7 +111,7 @@ public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnI
 	}
 
 	@Override
-	public void setMenu(Menu menu) {
+	public void setMenu(final Menu menu) {
 		mMenu = menu;
 	}
 
@@ -121,7 +121,7 @@ public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnI
 	 * clicking on sticky item.
 	 */
 	@Override
-	public void setOnDismissListener(PopupMenu.OnDismissListener listener) {
+	public void setOnDismissListener(final PopupMenu.OnDismissListener listener) {
 		mWindow.setOnDismissListener(listener != null ? this : null);
 
 		mDismissListener = listener;
@@ -133,7 +133,7 @@ public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnI
 	 * @param listener Listener
 	 */
 	@Override
-	public void setOnMenuItemClickListener(OnMenuItemClickListener listener) {
+	public void setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
 		mItemClickListener = listener;
 	}
 
@@ -150,7 +150,7 @@ public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnI
 		return mWindow.isShowing();
 	}
 
-	private void showMenu(Menu menu) {
+	private void showMenu(final Menu menu) {
 		mAdapter.setMenu(menu);
 		mWindow.show();
 	}
