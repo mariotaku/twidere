@@ -1,7 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
-import static android.text.format.DateUtils.formatSameDayTime;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
@@ -226,8 +226,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			final Date created_at = item.getCreatedAt();
 			if (created_at != null) {
 				if (mShowAbsoluteTime) {
-					holder.time.setText(formatSameDayTime(created_at.getTime(), System.currentTimeMillis(),
-							DateFormat.MEDIUM, DateFormat.SHORT));
+					holder.time.setText(formatSameDayTime(mContext, created_at.getTime()));
 				} else {
 					holder.time.setText(getRelativeTimeSpanString(created_at.getTime()));
 				}

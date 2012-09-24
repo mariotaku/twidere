@@ -19,11 +19,11 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static android.text.format.DateUtils.formatSameDayTime;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
+import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
@@ -143,8 +143,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(is_verified, is_protected), 0, 0, 0);
 			holder.name.setText(name);
 			if (mShowAbsoluteTime) {
-				holder.time.setText(formatSameDayTime(status_timestamp, System.currentTimeMillis(), DateFormat.MEDIUM,
-						DateFormat.SHORT));
+				holder.time.setText(formatSameDayTime(context, status_timestamp));
 			} else {
 				holder.time.setText(getRelativeTimeSpanString(status_timestamp));
 			}

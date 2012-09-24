@@ -19,10 +19,10 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static android.text.format.DateUtils.formatSameDayTime;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
+import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
@@ -175,8 +175,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 					getUserTypeIconRes(status.is_verified, status.is_protected), 0, 0, 0);
 			holder.name.setText(mDisplayName ? status.name : status.screen_name);
 			if (mShowAbsoluteTime) {
-				holder.time.setText(formatSameDayTime(status.status_timestamp, System.currentTimeMillis(),
-						DateFormat.MEDIUM, DateFormat.SHORT));
+				holder.time.setText(formatSameDayTime(mContext, status.status_timestamp));
 			} else {
 				holder.time.setText(getRelativeTimeSpanString(status.status_timestamp));
 			}

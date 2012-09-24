@@ -174,6 +174,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
@@ -598,6 +599,15 @@ public final class Utils implements Constants {
 		final HtmlBuilder builder = new HtmlBuilder(text, false);
 		parseEntities(builder, status);
 		return builder.build(true);
+	}
+	
+	public static String formatSameDayTime(final Context context, final long timestamp) {
+		if (context == null) return null;
+		if (DateUtils.isToday(timestamp)) {		
+			return DateUtils.formatDateTime(context, timestamp, DateFormat.is24HourFormat(context) ?
+				DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_24HOUR : DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_12HOUR);
+		}
+		return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE);
 	}
 
 	public static String formatTimeStampString(final Context context, final long timestamp) {
