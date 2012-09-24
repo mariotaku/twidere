@@ -303,7 +303,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	public void onLoadFinished(Loader<LoginResponse> loader, TwitterLoginActivity.LoginResponse result) {
 		if (result.succeed) {
 			final ContentValues values = makeAccountContentValues(result.conf, result.basic_password, result.access_token,
-				  result.user, Accounts.AUTH_TYPE_TWIP_O_MODE, result.color);
+				  result.user, result.auth_type, result.color);
 			if (values != null) {
 				mResolver.insert(Accounts.CONTENT_URI, values);
 			}
