@@ -112,6 +112,8 @@ public class OAuthPasswordAuthenticator implements Constants {
 			throw new AuthenticationException(e);
 		} catch (final TwitterException e) {
 			throw new AuthenticationException(e);
+		} catch (final NullPointerException e) {
+			throw new AuthenticationException(e);
 		}
 	}
 

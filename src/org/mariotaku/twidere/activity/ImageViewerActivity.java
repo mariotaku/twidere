@@ -326,6 +326,8 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					init();
 				} catch (final IOException e) {
 					return new Result(null, null, e);
+				} catch (final NullPointerException e) {
+					return new Result(null, null, e);
 				}
 			} else if ("file".equals(scheme)) {
 				final File file = new File(uri.getPath());

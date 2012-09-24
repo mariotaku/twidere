@@ -146,6 +146,7 @@ import twitter4j.UserList;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.TwipOModeAuthorization;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -1538,10 +1539,8 @@ public final class Utils implements Constants {
 		return false;
 	}
 
-	public static ContentValues makeAccountContentValues(final int color, final AccessToken access_token,
-			final User user, final String rest_base_url, final String oauth_base_url,
-			final String signing_rest_base_url, final String signing_oauth_base_url, final String search_base_url,
-			final String upload_base_url, final String basic_password, final int auth_type) {
+	public static ContentValues makeAccountContentValues(final Configuration conf, final String basic_password, final AccessToken access_token,
+			final User user, final int auth_type, final int color) {
 		if (user == null || user.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		switch (auth_type) {
@@ -1568,12 +1567,12 @@ public final class Utils implements Constants {
 		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 		values.put(Accounts.USER_COLOR, color);
 		values.put(Accounts.IS_ACTIVATED, 1);
-		values.put(Accounts.REST_BASE_URL, rest_base_url);
-		values.put(Accounts.SIGNING_REST_BASE_URL, signing_rest_base_url);
-		values.put(Accounts.SEARCH_BASE_URL, search_base_url);
-		values.put(Accounts.UPLOAD_BASE_URL, upload_base_url);
-		values.put(Accounts.OAUTH_BASE_URL, oauth_base_url);
-		values.put(Accounts.SIGNING_OAUTH_BASE_URL, signing_oauth_base_url);
+		values.put(Accounts.REST_BASE_URL, conf.getRestBaseURL());
+		values.put(Accounts.SIGNING_REST_BASE_URL, conf.getSigningRestBaseURL());
+		values.put(Accounts.SEARCH_BASE_URL, conf.getSearchBaseURL());
+		values.put(Accounts.UPLOAD_BASE_URL, conf.getUploadBaseURL());
+		values.put(Accounts.OAUTH_BASE_URL, conf.getOAuthBaseURL());
+		values.put(Accounts.SIGNING_OAUTH_BASE_URL, conf.getSigningOAuthBaseURL());
 		return values;
 	}
 
