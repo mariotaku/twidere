@@ -3153,8 +3153,9 @@ public class TwidereService extends Service implements Constants {
 			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtras(extras));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false)) {
-				mNewStatusesCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				if (mNewStatusesCount > 0) {
+				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				mNewStatusesCount += items_inserted;
+				if (items_inserted > 0) {
 					final String message = getResources().getQuantityString(R.plurals.Ntweets, mNewStatusesCount,
 							mNewStatusesCount);
 					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
@@ -3234,8 +3235,9 @@ public class TwidereService extends Service implements Constants {
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtras(extras));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) {
-				mNewMentionsCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				if (mNewMentionsCount > 0) {
+				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);				
+				mNewMentionsCount += items_inserted;
+				if (items_inserted > 0) {
 					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 					final Bundle delete_extras = new Bundle();
 					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
@@ -3302,8 +3304,9 @@ public class TwidereService extends Service implements Constants {
 					.putExtra(INTENT_KEY_SUCCEED, succeed));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)) {
-				mNewMessagesCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				if (mNewMessagesCount > 0) {
+				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				mNewMessagesCount += items_inserted;
+				if (items_inserted > 0) {
 					final String message = getResources().getQuantityString(R.plurals.Ndirect_messages,
 							mNewMessagesCount, mNewMessagesCount);
 					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
