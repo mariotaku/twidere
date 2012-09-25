@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
+		android:id="@id/select_account"
+		android:icon="@drawable/ic_menu_accounts"
+		android:showAsAction="always"
+		android:title="@string/select_account"/>
+	<item
 		android:id="@id/send"
 		android:icon="@drawable/ic_menu_send"
 		android:showAsAction="always"

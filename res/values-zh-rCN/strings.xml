@@ -192,7 +192,7 @@
   <string name="inbox">收件箱</string>
   <string name="load_images">载入图片</string>
   <string name="stop_service_after_closed">关闭后停止后端服务</string>
-  <string name="stop_service_after_closed_summary">我不建议你启用它，希望你去找找Android的后台管理机制看一下，这不是Windows，这是Android。</string>
+  <string name="stop_service_after_closed_summary">启用这个选项后你将不能得到自动刷新和通知。并且，我不会对你启用这个选项后带来的任何问题提供技术帮助。</string>
   <string name="other_settings">其他设定</string>
   <string name="refresh_and_notifications">刷新与通知</string>
   <string name="auto_refresh">自动刷新</string>

@@ -454,15 +454,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				startActivity(new Intent(INTENT_ACTION_DRAFTS));
 				break;
 			}
-			case MENU_SELECT_ACCOUNT: {
-				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
-				final Bundle bundle = new Bundle();
-				bundle.putBoolean(INTENT_KEY_ACTIVATED_ONLY, true);
-				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
-				intent.putExtras(bundle);
-				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
-				break;
-			}
 			case MENU_DELETE: {
 				if (mImageUri == null) return false;
 				if (mIsImageAttached && !mIsPhotoAttached) {
@@ -529,6 +520,15 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			}
 			case MENU_SEND: {
 				send();
+				break;
+			}
+			case MENU_SELECT_ACCOUNT: {
+				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
+				final Bundle bundle = new Bundle();
+				bundle.putBoolean(INTENT_KEY_ACTIVATED_ONLY, true);
+				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
 			}
 		}
