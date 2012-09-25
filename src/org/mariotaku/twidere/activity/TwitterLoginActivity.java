@@ -183,19 +183,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 		super.onBackPressed();
 	}
-	
 
-	public Loader<LoginResponse> onCreateLoader(int id, Bundle args) {
-		setSupportProgressBarIndeterminateVisibility(true);
-		mEditPassword.setEnabled(false);
-		mEditUsername.setEnabled(false);
-		mSignInButton.setEnabled(false);
-		mSignUpButton.setEnabled(false);
-		mSetColorButton.setEnabled(false);
-		saveEditedText();
-		return new LoginTask(this, getConfiguration(), mUsername, mPassword, mAuthType, mUserColor);
-	}
-	
 	@Override
 	public void onClick(final View v) {
 		switch (v.getId()) {
@@ -211,7 +199,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			case R.id.set_color: {
 				final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
 				final Bundle bundle = new Bundle();
-				bundle.putInt(Accounts.USER_COLOR, mUserColor);
+				if (mUserColor != null){			
+					bundle.putInt(Accounts.USER_COLOR, mUserColor);
+				}
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
@@ -289,6 +279,18 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	@Override
+	public Loader<LoginResponse> onCreateLoader(int id, Bundle args) {
+		setSupportProgressBarIndeterminateVisibility(true);
+		mEditPassword.setEnabled(false);
+		mEditUsername.setEnabled(false);
+		mSignInButton.setEnabled(false);
+		mSignUpButton.setEnabled(false);
+		mSetColorButton.setEnabled(false);
+		saveEditedText();
+		return new UserCredentialsLoader(this, getConfiguration(), mUsername, mPassword, mAuthType, mUserColor);
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_login, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -300,6 +302,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		super.onDestroy();
 	}
 
+	@Override
 	public void onLoadFinished(Loader<LoginResponse> loader, TwitterLoginActivity.LoginResponse result) {
 		if (result.succeed) {
 			final ContentValues values = makeAccountContentValues(result.conf, result.basic_password, result.access_token,
@@ -331,6 +334,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mSetColorButton.setEnabled(true);
 	}
 
+	@Override
 	public void onLoaderReset(Loader<LoginResponse> loader) {
 	}
 	
@@ -477,7 +481,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 	}
 
-	public static class LoginTask extends AsyncTaskLoader<LoginResponse> {
+	public static class UserCredentialsLoader extends AsyncTaskLoader<LoginResponse> {
 
 		private final Configuration conf;
 		private final String username, password;
@@ -488,7 +492,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		private final ContentResolver resolver;
 		private final SharedPreferences preferences;
 		
-		public LoginTask(Context context, Configuration conf, String username, String password, int auth_type, Integer user_color) {
+		public UserCredentialsLoader(Context context, Configuration conf, String username, String password, int auth_type, Integer user_color) {
 			super(context);
 			resolver = context.getContentResolver();
 			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
