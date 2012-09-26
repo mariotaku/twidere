@@ -66,12 +66,13 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 		final boolean is_outgoing = account_id == sender_id;
 
-		final String name = mDisplayName ? cursor.getString(mIndices.sender_name) : cursor
-				.getString(mIndices.sender_screen_name);
+		final String name = cursor.getString(mIndices.sender_name);
+		final String screen_name = cursor.getString(mIndices.sender_screen_name);
 
 		holder.setTextSize(mTextSize);
 		holder.name.setText(name);
-		holder.name.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
+		holder.screen_name.setText("@" + screen_name);
+		holder.name_container.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
 		holder.text.setText(cursor.getString(mIndices.text));
 		holder.text.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
 		holder.time.setText(formatToLongTimeString(mContext, message_timestamp));
@@ -127,7 +128,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
 		if (!(tag instanceof DirectMessageConversationViewHolder)) {
-			view.setTag(new DirectMessageConversationViewHolder(view, context));
+			view.setTag(new DirectMessageConversationViewHolder(view));
 		}
 		return view;
 	}

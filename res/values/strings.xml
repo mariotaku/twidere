@@ -337,5 +337,7 @@
 	<string name="incoming_friendships">Pending follow requests</string>
 	<string name="click_to_open_menu">Click to open item menu</string>
 	<string name="click_to_open_menu_summary">Click to open item menu, long-click to multi select.</string>
+	<string name="send_follow_request">Send follow request</string>
+	<string name="follow_request_sent">Follow request sent</string>
 
 </resources>

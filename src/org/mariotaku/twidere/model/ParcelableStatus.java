@@ -230,7 +230,6 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 	}
 
 	public ParcelableStatus(final Tweet tweet, final long account_id, final boolean is_gap) {
-
 		this.is_gap = is_gap;
 		status_id = tweet.getId();
 		this.account_id = account_id;
@@ -240,7 +239,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		retweeted_by_name = null;
 		retweeted_by_screen_name = null;
 		user_id = tweet.getFromUserId();
-		name = tweet.getFromUser();
+		name = tweet.getFromUserName();
 		screen_name = tweet.getFromUser();
 		profile_image_url_string = tweet.getProfileImageUrl();
 		profile_image_url = parseURL(profile_image_url_string);

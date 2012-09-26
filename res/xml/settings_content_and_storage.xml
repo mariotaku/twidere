@@ -28,13 +28,6 @@
 			android:key="tweet_shortener"
 			android:title="@string/tweet_shortener"/>
 
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="display_name"
-			android:summaryOff="@string/display_name_summaryoff"
-			android:summaryOn="@string/display_name_summaryon"
-			android:title="@string/display_name"/>
-
 		<EditTextPreference
 			android:defaultValue="RT @[NAME]: [TEXT]"
 			android:dialogTitle="@string/quote_format"

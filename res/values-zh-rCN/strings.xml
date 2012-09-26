@@ -334,4 +334,6 @@
   <string name="tweet_not_sent">推文未发送。</string>
   <string name="tweet_not_sent_summary">推文未发送，并被保存到草稿箱。</string>
   <string name="incoming_friendships">待定的关注请求</string>
+  <string name="send_follow_request">发送关注请求</string>
+  <string name="follow_request_sent">已发送关注请求</string>
 </resources>

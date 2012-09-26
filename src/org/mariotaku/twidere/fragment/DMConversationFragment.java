@@ -241,7 +241,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 		mSendButton = (ImageButton) view.findViewById(R.id.send);
 		mConversationContainer = view.findViewById(R.id.conversation_container);
 		mScreenNameContainer = view.findViewById(R.id.screen_name_container);
-		mEditScreenName = (AutoCompleteTextView) view.findViewById(R.id.screen_name);
+		mEditScreenName = (AutoCompleteTextView) view.findViewById(R.id.edit_screen_name);
 		mAccountSelector = (Spinner) view.findViewById(R.id.account_selector);
 		mScreenNameConfirmButton = (Button) view.findViewById(R.id.screen_name_confirm);
 		return view;
@@ -357,9 +357,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayName(display_name);
 		mAdapter.setTextSize(text_size);
 	}
 

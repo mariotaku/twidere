@@ -165,7 +165,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 
 		mListNameView.setText(mListName);
-		mUserNameView.setText(mDisplayName ? mUserName : mUserScreenName);
+		mUserNameView.setText(mDisplayName ? mUserName : "@" + mUserScreenName);
 		final String description = user_list.getDescription();
 		mDescriptionContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(description) ? View.VISIBLE
 				: View.GONE);
@@ -462,7 +462,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	@Override
 	public void onStart() {
-		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		//mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_USER_LIST_DETAILS_UPDATED);
 		filter.addAction(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);

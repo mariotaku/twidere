@@ -30,7 +30,7 @@ import android.widget.TextView;
 public class UserViewHolder {
 
 	public final ImageView profile_image;
-	public final TextView name, description;
+	public final TextView name, screen_name, description;
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
 	public boolean show_as_gap;
@@ -42,6 +42,7 @@ public class UserViewHolder {
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
+		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		description = (TextView) view.findViewById(R.id.description);
 	}
 
@@ -76,7 +77,8 @@ public class UserViewHolder {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
 			description.setTextSize(text_size);
-			name.setTextSize(text_size * 1.05f);
+			name.setTextSize(text_size);
+			screen_name.setTextSize(text_size * 0.75f);
 		}
 	}
 

@@ -30,7 +30,7 @@ import android.widget.TextView;
 public class StatusViewHolder {
 
 	public final ImageView profile_image, image_preview;
-	public final TextView name, text, time, reply_retweet_status;
+	public final TextView name, screen_name, text, time, reply_retweet_status;
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
 	public boolean show_as_gap;
@@ -43,6 +43,7 @@ public class StatusViewHolder {
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		image_preview = (ImageView) view.findViewById(R.id.image_preview);
 		name = (TextView) view.findViewById(R.id.name);
+		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
@@ -76,6 +77,7 @@ public class StatusViewHolder {
 		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		image_preview.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		screen_name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		text.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		time.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		reply_retweet_status.setVisibility(show_gap ? View.GONE : View.VISIBLE);
@@ -86,7 +88,8 @@ public class StatusViewHolder {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
 			text.setTextSize(text_size);
-			name.setTextSize(text_size * 1.05f);
+			name.setTextSize(text_size);
+			screen_name.setTextSize(text_size * 0.75f);
 			time.setTextSize(text_size * 0.65f);
 			reply_retweet_status.setTextSize(text_size * 0.65f);
 		}

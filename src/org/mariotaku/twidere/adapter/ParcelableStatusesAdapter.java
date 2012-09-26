@@ -60,8 +60,8 @@ import android.widget.BaseAdapter;
 
 public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAdapterInterface, OnClickListener {
 
-	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowAbsoluteTime,
-			mGapDisallowed, mMultiSelectEnabled;
+	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, 
+			mMultiSelectEnabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -157,7 +157,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 
 		if (!show_gap) {
 
-			final CharSequence retweeted_by = mDisplayName ? status.retweeted_by_name : status.retweeted_by_screen_name;
+			final CharSequence retweeted_by = status.retweeted_by_name;
 
 			if (mMultiSelectEnabled) {
 				holder.setSelected(mSelectedStatusIds.contains(status.status_id));
@@ -171,9 +171,10 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 					status.is_favorite, status.is_retweet));
 
 			holder.setTextSize(mTextSize);
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(
-					getUserTypeIconRes(status.is_verified, status.is_protected), 0, 0, 0);
-			holder.name.setText(mDisplayName ? status.name : status.screen_name);
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, 
+					getUserTypeIconRes(status.is_verified, status.is_protected), 0);
+			holder.name.setText(status.name);
+			holder.screen_name.setText("@" + status.screen_name);
 			if (mShowAbsoluteTime) {
 				holder.time.setText(formatSameDayTime(mContext, status.status_timestamp));
 			} else {
@@ -259,10 +260,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 
 	@Override
 	public void setDisplayName(final boolean display) {
-		if (display != mDisplayName) {
-			mDisplayName = display;
-			notifyDataSetChanged();
-		}
+
 	}
 
 	@Override

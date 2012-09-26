@@ -82,7 +82,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		final ParcelableUserList user_list = getItem(position);
 		holder.setTextSize(mTextSize);
 		holder.name.setText(user_list.name);
-		holder.owner.setText(mDisplayName ? user_list.user_name : user_list.user_screen_name);
+		holder.owner.setText(mDisplayName ? user_list.user_name : "@" + user_list.user_screen_name);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {

@@ -21,6 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
@@ -299,8 +300,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 			mIsQuote = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false;
 
-			final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-			final String name = display_name ? mInReplyToName : mInReplyToScreenName;
+			//final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+			final boolean display_name = true;
+			final String name = display_name ? mInReplyToName : "@" + mInReplyToScreenName;
 			if (name != null) {
 				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, name));
 			}
@@ -322,9 +324,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			if (mAccountIds == null || mAccountIds.length == 0) {
 				final long[] ids_in_prefs = ArrayUtils.fromString(
 						mPreferences.getString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, null), ',');
-				final long[] activated_ids = getActivatedAccountIds(this);
-				final long[] intersection = ArrayUtils.intersection(ids_in_prefs, activated_ids);
-				mAccountIds = intersection.length > 0 ? intersection : activated_ids;
+				final long[] account_ids = getAccountIds(this);
+				final long[] intersection = ArrayUtils.intersection(ids_in_prefs, account_ids);
+				mAccountIds = intersection.length > 0 ? intersection : account_ids;
 			}
 			final String action = getIntent().getAction();
 			if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
@@ -525,7 +527,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			case MENU_SELECT_ACCOUNT: {
 				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
 				final Bundle bundle = new Bundle();
-				bundle.putBoolean(INTENT_KEY_ACTIVATED_ONLY, true);
+				bundle.putBoolean(INTENT_KEY_ACTIVATED_ONLY, false);
 				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);

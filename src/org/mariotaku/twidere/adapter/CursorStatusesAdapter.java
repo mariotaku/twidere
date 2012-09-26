@@ -62,8 +62,8 @@ import android.view.ViewGroup;
 
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
 
-	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowAbsoluteTime,
-			mGapDisallowed, mMultiSelectEnabled;
+	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
+		mMultiSelectEnabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -94,11 +94,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 		if (!show_gap) {
 
-			final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
-					.getString(mIndices.retweeted_by_screen_name);
+			final String retweeted_by = cursor.getString(mIndices.retweeted_by_name);
 			final String text = cursor.getString(mIndices.text);
 			final String screen_name = cursor.getString(mIndices.screen_name);
-			final String name = mDisplayName ? cursor.getString(mIndices.name) : screen_name;
+			final String name = cursor.getString(mIndices.name);
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 
 			final long account_id = cursor.getLong(mIndices.account_id);
@@ -140,8 +139,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			holder.setTextSize(mTextSize);
 
 			holder.text.setText(unescape(text));
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(is_verified, is_protected), 0, 0, 0);
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(is_verified, is_protected), 0);
 			holder.name.setText(name);
+			holder.screen_name.setText("@" + screen_name);
 			if (mShowAbsoluteTime) {
 				holder.time.setText(formatSameDayTime(context, status_timestamp));
 			} else {
@@ -270,10 +270,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 	@Override
 	public void setDisplayName(final boolean display) {
-		if (display != mDisplayName) {
-			mDisplayName = display;
-			notifyDataSetChanged();
-		}
+
 	}
 
 	@Override

@@ -31,15 +31,16 @@ import android.widget.TextView;
 public class DirectMessageEntryViewHolder {
 
 	public final ImageView profile_image;
-	public final TextView name, text, time;
+	public final TextView name, screen_name, text, time;
 	private final ColorLabelRelativeLayout content;
 	private float text_size;
 	private boolean account_color_enabled;
 
-	public DirectMessageEntryViewHolder(final View view, final Context context) {
+	public DirectMessageEntryViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
+		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
 	}
@@ -59,7 +60,8 @@ public class DirectMessageEntryViewHolder {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
 			text.setTextSize(text_size);
-			name.setTextSize(text_size * 1.05f);
+			name.setTextSize(text_size);
+			screen_name.setTextSize(text_size * 0.75f);
 			time.setTextSize(text_size * 0.65f);
 		}
 	}

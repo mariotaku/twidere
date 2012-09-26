@@ -21,8 +21,8 @@
 		android:layout_alignParentTop="true"
 		android:scaleType="fitCenter"/>
 
-	<TextView
-		android:id="@+id/name"
+	<LinearLayout
+		android:id="@+id/name_container"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
@@ -31,20 +31,36 @@
 		android:layout_marginRight="6dp"
 		android:layout_toLeftOf="@+id/profile_image_right"
 		android:layout_toRightOf="@+id/profile_image_left"
-		android:layerType="software"
-		android:singleLine="true"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="?android:attr/textColorPrimary"
-		android:textStyle="bold"/>
+		android:orientation="horizontal">
+
+		<TextView android:layerType="software"
+			android:id="@+id/name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:ellipsize="end"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorPrimary"
+			android:textStyle="bold"/>
+
+		<TextView android:layerType="software"
+			android:id="@+id/screen_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:paddingLeft="3dp"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorSecondary"/>	
+	</LinearLayout>
 
 	<TextView
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/name"
-		android:layout_alignRight="@+id/name"
+		android:layout_alignLeft="@+id/name_container"
+		android:layout_alignRight="@+id/name_container"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/name"
+		android:layout_below="@+id/name_container"
 		android:autoLink="all"
 		android:layerType="software"
 		android:textAppearance="?android:attr/textAppearanceSmall"

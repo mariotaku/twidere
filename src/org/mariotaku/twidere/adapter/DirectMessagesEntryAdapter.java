@@ -50,7 +50,8 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		final long message_timestamp = cursor.getLong(ConversationsEntry.IDX_MESSAGE_TIMESTAMP);
 		final boolean is_outgoing = cursor.getInt(ConversationsEntry.IDX_IS_OUTGOING) == 1;
 
-		final String name = mDisplayName ? cursor.getString(IDX_NAME) : cursor.getString(IDX_SCREEN_NAME);
+		final String name = cursor.getString(IDX_NAME);
+		final String screen_name = cursor.getString(IDX_SCREEN_NAME);
 
 		holder.setAccountColorEnabled(mShowAccountColor);
 
@@ -66,6 +67,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 
 		holder.setTextSize(mTextSize);
 		holder.name.setText(name);
+		holder.screen_name.setText("@" + screen_name);
 		holder.text.setText(cursor.getString(IDX_TEXT));
 		if (mShowAbsoluteTime) {
 			holder.time.setText(formatSameDayTime(message_timestamp, System.currentTimeMillis(), DateFormat.MEDIUM,
@@ -110,7 +112,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
 		if (!(tag instanceof DirectMessageEntryViewHolder)) {
-			view.setTag(new DirectMessageEntryViewHolder(view, context));
+			view.setTag(new DirectMessageEntryViewHolder(view));
 		}
 		return view;
 	}

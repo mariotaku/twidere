@@ -43,7 +43,7 @@ import android.widget.ArrayAdapter;
 public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
 
 	private final LazyImageLoader mProfileImageLoader;
-	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mMultiSelectEnabled;
+	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
 	private final boolean mDisplayHiResProfileImage;
 	private float mTextSize;
 	private final ArrayList<Long> mSelectedUserIds;
@@ -113,9 +113,9 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		holder.setUserColor(getUserColor(mContext, user.user_id));
 
 		holder.setTextSize(mTextSize);
-		holder.name.setText(mDisplayName ? user.name : user.screen_name);
-		holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(user.is_verified, user.is_protected), 0,
-				0, 0);
+		holder.name.setText(user.name);
+		holder.screen_name.setText("@" + user.screen_name);
+		holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(user.is_verified, user.is_protected), 0);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {
@@ -147,10 +147,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 
 	@Override
 	public void setDisplayName(final boolean display) {
-		if (display != mDisplayName) {
-			mDisplayName = display;
-			notifyDataSetChanged();
-		}
+		
 	}
 
 	@Override
