@@ -7,7 +7,6 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.net.URL;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +57,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 	@Override
 	public Loader<List<twitter4j.Activity>> onCreateLoader(final int id, final Bundle args) {
+		setProgressBarIndeterminateVisibility(true);
 		final long account_id = mAccountId = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		final boolean is_home_tab = args != null ? args.getBoolean(INTENT_KEY_IS_HOME_TAB) : false;
 		return new ActivitiesAboutMeLoader(getActivity(), account_id, mData, getClass().getSimpleName(), is_home_tab);
@@ -86,7 +86,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		final Action action = item.getAction();
 		if (sources_length > 0) {
 			final User first_source = sources[0];
-			final Status[] target_objects = item.getTargetObjects();
+			final Status[] target_objects = item.getTargetObjectStatuses();
 			switch (action.getActionId()) {
 				case Action.ACTION_FAVORITE: {
 					if (sources_length == 1) {
@@ -147,6 +147,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 	@Override
 	public void onLoadFinished(final Loader<List<twitter4j.Activity>> loader, final List<twitter4j.Activity> data) {
+		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
 		mData = data;
 		onRefreshComplete();
@@ -237,7 +238,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (sources_length > 0) {
 				final User first_source = sources[0];
-				final Status[] target_objects = item.getTargetObjects();
+				final Status[] target_objects = item.getTargetObjectStatuses();
 				final String name = mDisplayName ? first_source.getName() : first_source.getScreenName();
 				switch (action.getActionId()) {
 					case Action.ACTION_FAVORITE: {
@@ -321,6 +322,19 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 						setUserProfileImages(sources, holder);
 						break;
 					}
+					case Action.ACTION_LIST_MEMBER_ADDED: {
+						holder.text.setVisibility(View.GONE);
+						if (sources_length == 1) {
+							holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added, name));
+						} else {
+							holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added_multi, name,
+									sources_length - 1));
+						}
+						holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
+								: View.GONE);
+						setUserProfileImages(sources, holder);
+						break;
+					}
 				}
 			}
 			return view;
@@ -329,14 +343,6 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		public void setData(final List<twitter4j.Activity> data) {
 			mData = data != null ? data : new ArrayList<twitter4j.Activity>();
 			notifyDataSetChanged();
-		}
-
-		@Override
-		public void setDisplayName(final boolean display) {
-			if (display != mDisplayName) {
-				mDisplayName = display;
-				notifyDataSetChanged();
-			}
 		}
 
 		@Override

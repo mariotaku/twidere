@@ -22,7 +22,6 @@ package org.mariotaku.twidere.model;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;

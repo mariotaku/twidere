@@ -59,7 +59,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -113,10 +112,6 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	private ServiceInterface mService;
 
-	private SharedPreferences mPreferences;
-
-	private boolean mDisplayName;
-
 	private PopupMenu mPopupMenu;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -164,8 +159,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			}
 		}
 
-		mListNameView.setText(mListName);
-		mUserNameView.setText(mDisplayName ? mUserName : "@" + mUserScreenName);
+		mListNameView.setText("@" + mUserScreenName + "/" + mListName);
+		mUserNameView.setText(mUserName);
 		final String description = user_list.getDescription();
 		mDescriptionContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(description) ? View.VISIBLE
 				: View.GONE);
@@ -225,7 +220,6 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mService = getApplication().getServiceInterface();
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
@@ -309,7 +303,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			list_name = args.getString(INTENT_KEY_LIST_NAME);
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
-		return new ListInfoLoader(this, account_id, list_id, list_name, user_id, screen_name);
+		return new ListInfoLoader(getActivity(), account_id, list_id, list_name, user_id, screen_name);
 	}
 
 	@Override
@@ -389,7 +383,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	@Override
 	public void onLoaderReset(final Loader<Response<UserList>> loader) {
-		// TODO: Implement this method
+
 	}
 
 	@Override
@@ -462,7 +456,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	@Override
 	public void onStart() {
-		//mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		// mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME,
+		// true);
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_USER_LIST_DETAILS_UPDATED);
 		filter.addAction(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
@@ -610,19 +605,15 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		private final long user_id;
 		private final int list_id;
 		private final String screen_name, list_name;
-		private final UserListDetailsFragment fragment;
-		private final Context context;
 
-		private ListInfoLoader(final UserListDetailsFragment fragment, final long account_id, final int list_id,
-				final String list_name, final long user_id, final String screen_name) {
-			super(fragment.getActivity());
-			this.fragment = fragment;
-			context = fragment.getActivity();
-			twitter = getTwitterInstance(context, account_id, true);
+		private ListInfoLoader(final Context context, final long account_id, final int list_id, final String list_name,
+				final long user_id, final String screen_name) {
+			super(context);
 			this.user_id = user_id;
 			this.list_id = list_id;
 			this.screen_name = screen_name;
 			this.list_name = list_name;
+			twitter = getTwitterInstance(context, account_id, true);
 		}
 
 		@Override

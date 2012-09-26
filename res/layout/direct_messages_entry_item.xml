@@ -21,28 +21,29 @@
 		android:layout_toRightOf="@+id/profile_image"
 		android:orientation="horizontal">
 
-		<TextView android:layerType="software"
+		<TextView
 			android:id="@+id/name"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			
+			android:layerType="software"
 			android:singleLine="true"
-			android:ellipsize="end"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorPrimary"
 			android:textStyle="bold"/>
 
-		<TextView android:layerType="software"
+		<TextView
 			android:id="@+id/screen_name"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:singleLine="true"
+			android:layerType="software"
 			android:paddingLeft="3dp"
+			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorSecondary"/>	
+			android:textColor="?android:attr/textColorSecondary"/>
 	</LinearLayout>
-	
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -50,11 +51,12 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/name_container"
+		android:layerType="software"
 		android:maxLines="3"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@+id/time"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -64,14 +66,16 @@
 		android:layout_marginRight="6dp"
 		android:drawablePadding="3dp"
 		android:gravity="center_vertical|right"
+		android:layerType="software"
 		android:paddingTop="3dp"
 		android:textColor="?android:attr/textColorSecondary"/>
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@+id/list_gap_text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
+		android:layerType="software"
 		android:text="@string/tap_to_load_more"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="#606060"

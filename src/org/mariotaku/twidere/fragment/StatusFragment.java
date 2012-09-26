@@ -308,7 +308,8 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		}
 		mRetweetedStatusView.setVisibility(status.is_protected ? View.GONE : View.VISIBLE);
 		if (status.retweet_id > 0) {
-			//final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+			// final boolean display_name =
+			// mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 			final boolean display_name = true;
 			final String retweeted_by = display_name ? status.retweeted_by_name : status.retweeted_by_screen_name;
 			mRetweetedStatusView.setText(status.retweet_count > 1 ? getString(R.string.retweeted_by_with_count,

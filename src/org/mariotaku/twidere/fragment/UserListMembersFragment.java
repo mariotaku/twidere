@@ -28,7 +28,7 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.UsersAdapter;
-import org.mariotaku.twidere.loader.ListMembersLoader;
+import org.mariotaku.twidere.loader.UserListMembersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.ServiceInterface;
 
@@ -81,7 +81,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 			list_name = args.getString(INTENT_KEY_LIST_NAME);
 		}
-		return new ListMembersLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, mCursor,
+		return new UserListMembersLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, mCursor,
 				getData());
 	}
 
@@ -115,13 +115,13 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 
 	@Override
 	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
-		if (loader instanceof ListMembersLoader) {
-			final long cursor = ((ListMembersLoader) loader).getNextCursor();
+		if (loader instanceof UserListMembersLoader) {
+			final long cursor = ((UserListMembersLoader) loader).getNextCursor();
 			if (mOwnerId <= 0) {
-				mOwnerId = ((ListMembersLoader) loader).getOwnerId();
+				mOwnerId = ((UserListMembersLoader) loader).getOwnerId();
 			}
 			if (mUserListId <= 0) {
-				mUserListId = ((ListMembersLoader) loader).getUserListId();
+				mUserListId = ((UserListMembersLoader) loader).getUserListId();
 			}
 			if (cursor != -2) {
 				mCursor = cursor;

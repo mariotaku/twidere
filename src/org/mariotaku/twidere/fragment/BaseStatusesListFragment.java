@@ -50,6 +50,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
@@ -61,7 +62,6 @@ import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
-import android.view.Menu;
 
 abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
 		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left {
@@ -129,8 +129,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	public boolean isActivityFirstCreated() {
 		return mActivityFirstCreated;
 	}
-
-	public abstract boolean isListLoadFinished();
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
@@ -430,7 +428,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
 	}
-	
+
 	private void openMenu(final View view, final ParcelableStatus status) {
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);

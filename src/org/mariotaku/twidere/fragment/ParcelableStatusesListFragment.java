@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
+import org.mariotaku.twidere.loader.ParcelableStatusesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.SerializableStatus;
 
@@ -34,15 +35,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.content.Loader;
+import android.widget.ListView;
 
 public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
-	private ParcelableStatusesAdapter mAdapter;
+	private SharedPreferences mPreferences;
 
 	private List<ParcelableStatus> mData;
+
+	private ParcelableStatusesAdapter mAdapter;
+	private ListView mListView;
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -115,6 +121,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		mAdapter = new ParcelableStatusesAdapter(getActivity());
 		mAdapter.setData(mData);
 		super.onActivityCreated(savedInstanceState);
+		mListView = getListView();
+		mPreferences = getSharedPreferences();
 	}
 
 	@Override
@@ -125,7 +133,17 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		return newLoaderInstance(args);
 	}
 
-	public abstract void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter);
+	public void onDataLoaded(final Loader<List<ParcelableStatus>> loader, final ParcelableStatusesAdapter adapter) {
+		if (loader instanceof ParcelableStatusesLoader) {
+			final Long last_viewed_id = ((ParcelableStatusesLoader) loader).getLastViewedId();
+			if (last_viewed_id != null && mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true)) {
+				final int position = adapter.findItemPositionByStatusId(last_viewed_id);
+				if (position > -1 && position < mListView.getCount()) {
+					mListView.setSelection(position);
+				}
+			}
+		}
+	}
 
 	@Override
 	public void onDestroyView() {

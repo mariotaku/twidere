@@ -261,8 +261,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					mFollowButton.setText(R.string.unfollow);
 				} else {
 					if (mUser.isProtected()) {
-						mFollowButton.setText(mUser.isFollowRequestSent() ? R.string.follow_request_sent : R.string.send_follow_request);
-					} else {						
+						mFollowButton.setText(mUser.isFollowRequestSent() ? R.string.follow_request_sent
+								: R.string.send_follow_request);
+					} else {
 						mFollowButton.setText(R.string.follow);
 					}
 				}
@@ -296,8 +297,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mUserId = -1;
 		mAccountId = -1;
 		mAdapter.clear();
-		if (user == null || user.getId() <= 0 || getActivity() == null
-				|| !isMyAccount(getActivity(), account_id)) return;
+		if (user == null || user.getId() <= 0 || getActivity() == null || !isMyAccount(getActivity(), account_id))
+			return;
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
@@ -324,8 +325,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(
 				getUserTypeIconRes(user.isVerified(), user.isProtected()), 0, 0, 0);
 		final String description = user.getDescription();
-		mDescriptionContainer.setVisibility(user_is_me || !isNullOrEmpty(description) ? View.VISIBLE
-				: View.GONE);
+		mDescriptionContainer.setVisibility(user_is_me || !isNullOrEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView);
@@ -333,8 +333,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		linkify.addAllLinks();
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
 		final String location = user.getLocation();
-		mLocationContainer
-				.setVisibility(user_is_me || !isNullOrEmpty(location) ? View.VISIBLE : View.GONE);
+		mLocationContainer.setVisibility(user_is_me || !isNullOrEmpty(location) ? View.VISIBLE : View.GONE);
 		mLocationContainer.setOnLongClickListener(this);
 		mLocationView.setText(location);
 		final String url = user.getURL() != null ? user.getURL().toString() : null;
@@ -498,7 +497,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				reloadUserInfo();
 				break;
 			}
-			case R.id.profile_image_container: {	
+			case R.id.profile_image_container: {
 				final Uri uri = Uri.parse(getOriginalTwitterProfileImage(parseString(mUser.getProfileImageURL())));
 				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, uri);
 				intent.setPackage(getActivity().getPackageName());
@@ -969,16 +968,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
-	static final class Response<T> {
-		public final T value;
-		public final Exception exception;
-
-		public Response(final T value1, final Exception exception) {
-			this.value = value1;
-			this.exception = exception;
-		}
-	}
-
 	final class FavoritesAction extends ListAction {
 
 		@Override
@@ -1023,6 +1012,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			openIncomingFriendships(getActivity(), mAccountId);
 		}
 
+	}
+
+	static final class Response<T> {
+		public final T value;
+		public final Exception exception;
+
+		public Response(final T value1, final Exception exception) {
+			this.value = value1;
+			this.exception = exception;
+		}
 	}
 
 	final class SavedSearchesAction extends ListAction {

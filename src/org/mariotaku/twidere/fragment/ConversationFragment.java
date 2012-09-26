@@ -47,11 +47,6 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 	private ParcelableStatusesAdapter mAdapter;
 
 	@Override
-	public boolean isListLoadFinished() {
-		return true;
-	}
-
-	@Override
 	public boolean isLoaderUsed() {
 		return false;
 	}

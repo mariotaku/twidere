@@ -39,7 +39,7 @@ import android.widget.ArrayAdapter;
 public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements BaseAdapterInterface {
 
 	private final LazyImageLoader mProfileImageLoader;
-	private boolean mDisplayProfileImage, mDisplayName;
+	private boolean mDisplayProfileImage;
 	private final boolean mDisplayHiResProfileImage;
 	private float mTextSize;
 
@@ -81,8 +81,8 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		}
 		final ParcelableUserList user_list = getItem(position);
 		holder.setTextSize(mTextSize);
-		holder.name.setText(user_list.name);
-		holder.owner.setText(mDisplayName ? user_list.user_name : "@" + user_list.user_screen_name);
+		holder.name.setText("@" + user_list.user_screen_name + "/" + user_list.name);
+		holder.owner.setText(user_list.user_name);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {
@@ -110,14 +110,6 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			if (clear_old || findItemByUserId(user.list_id) == null) {
 				add(user);
 			}
-		}
-	}
-
-	@Override
-	public void setDisplayName(final boolean display) {
-		if (display != mDisplayName) {
-			mDisplayName = display;
-			notifyDataSetChanged();
 		}
 	}
 

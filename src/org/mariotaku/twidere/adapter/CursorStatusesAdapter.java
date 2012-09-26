@@ -37,7 +37,6 @@ import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 
 import org.mariotaku.twidere.R;
@@ -63,7 +62,7 @@ import android.view.ViewGroup;
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
-		mMultiSelectEnabled;
+			mMultiSelectEnabled, mMentionsHighlightDisabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -124,7 +123,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			holder.setUserColor(getUserColor(mContext, user_id));
 			if (text != null) {
 				holder.setHighlightColor(getStatusBackground(
-						text.contains('@' + getAccountUsername(mContext, account_id)), is_favorite, is_retweet));
+						mMentionsHighlightDisabled ? false : text.contains('@' + getAccountUsername(mContext,
+								account_id)), is_favorite, is_retweet));
 			}
 
 			holder.setAccountColorEnabled(mShowAccountColor);
@@ -269,11 +269,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setDisplayName(final boolean display) {
-
-	}
-
-	@Override
 	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
@@ -288,6 +283,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			notifyDataSetChanged();
 		}
 
+	}
+
+	@Override
+	public void setMentionsHightlightDisabled(final boolean disable) {
+		if (disable != mMentionsHighlightDisabled) {
+			mMentionsHighlightDisabled = disable;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override

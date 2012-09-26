@@ -6,7 +6,7 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.loader.UserListCreatedLoader;
+import org.mariotaku.twidere.loader.UserListsLoader;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.ServiceInterface;
 
@@ -32,7 +32,7 @@ public class UserListCreatedFragment extends BaseUserListsListFragment {
 	@Override
 	public Loader<List<ParcelableUserList>> newLoaderInstance(final long account_id, final long user_id,
 			final String screen_name) {
-		return new UserListCreatedLoader(getActivity(), account_id, user_id, screen_name, getCursor(), getData());
+		return new UserListsLoader(getActivity(), account_id, user_id, screen_name, getCursor(), getData());
 	}
 
 	@Override

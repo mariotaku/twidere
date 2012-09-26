@@ -71,6 +71,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			}
 		}
 	};
+	private CursorStatusesAdapter mAdapter;
 
 	@Override
 	public Uri getContentUri() {
@@ -90,23 +91,24 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 		super.onActivityCreated(savedInstanceState);
 		mListView = getListView();
 		mListView.setOnTouchListener(this);
+		mAdapter = getListAdapter();
+		mAdapter.setMentionsHightlightDisabled(true);
 	}
 
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
-		final CursorStatusesAdapter adapter = getListAdapter();
 		long last_viewed_id = -1;
 		{
 			final int position = mListView.getFirstVisiblePosition();
 			if (position > 0) {
-				last_viewed_id = adapter.findItemIdByPosition(position);
+				last_viewed_id = mAdapter.findItemIdByPosition(position);
 			}
 		}
 		super.onLoadFinished(loader, data);
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		if (mShouldRestorePosition && remember_position) {
 			final long status_id = mPreferences.getLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, -1);
-			final int position = adapter.findItemPositionByStatusId(status_id);
+			final int position = mAdapter.findItemPositionByStatusId(status_id);
 			if (position > -1 && position < mListView.getCount()) {
 				mListView.setSelection(position);
 			}
@@ -114,7 +116,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			return;
 		}
 		if (mMinIdToRefresh > 0 && remember_position) {
-			final int position = adapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id
+			final int position = mAdapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id
 					: mMinIdToRefresh);
 			if (position >= 0 && position < mListView.getCount()) {
 				mListView.setSelection(position);

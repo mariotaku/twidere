@@ -321,8 +321,8 @@ public class LazyImageLoader implements Constants {
 				mFileCache.init();
 			} catch (final IOException e) {
 				// e.printStackTrace();
-			} catch (NullPointerException e) {
-				
+			} catch (final NullPointerException e) {
+
 			}
 			return null;
 		}

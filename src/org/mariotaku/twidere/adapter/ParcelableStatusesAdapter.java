@@ -35,7 +35,6 @@ import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,8 +59,8 @@ import android.widget.BaseAdapter;
 
 public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAdapterInterface, OnClickListener {
 
-	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, 
-			mMultiSelectEnabled;
+	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
+			mMultiSelectEnabled, mMentionsHighlightDisabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -97,6 +96,19 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			if (status.status_id == status_id) return status;
 		}
 		return null;
+	}
+
+	public long findItemIdByPosition(final int position) {
+		if (position >= 0 && position < getCount()) return getItem(position).status_id;
+		return -1;
+	}
+
+	public int findItemPositionByStatusId(final long status_id) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
+			if (getItem(i).status_id == status_id) return i;
+		}
+		return -1;
 	}
 
 	@Override
@@ -167,11 +179,11 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 
 			holder.setUserColor(getUserColor(mContext, status.user_id));
 			holder.setHighlightColor(getStatusBackground(
-					status.text_plain.contains('@' + getAccountUsername(mContext, status.account_id)),
-					status.is_favorite, status.is_retweet));
+					mMentionsHighlightDisabled ? false : status.text_plain.contains('@' + getAccountUsername(mContext,
+							status.account_id)), status.is_favorite, status.is_retweet));
 
 			holder.setTextSize(mTextSize);
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, 
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getUserTypeIconRes(status.is_verified, status.is_protected), 0);
 			holder.name.setText(status.name);
 			holder.screen_name.setText("@" + status.screen_name);
@@ -259,11 +271,6 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public void setDisplayName(final boolean display) {
-
-	}
-
-	@Override
 	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
@@ -278,6 +285,14 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			notifyDataSetChanged();
 		}
 
+	}
+
+	@Override
+	public void setMentionsHightlightDisabled(final boolean disable) {
+		if (disable != mMentionsHighlightDisabled) {
+			mMentionsHighlightDisabled = disable;
+			notifyDataSetChanged();
+		}
 	}
 
 	@Override

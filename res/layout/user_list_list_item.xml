@@ -10,7 +10,7 @@
 		android:layout_height="@dimen/profile_image_size"
 		android:scaleType="fitCenter"/>
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@+id/name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -18,10 +18,13 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_marginLeft="6dp"
 		android:layout_toRightOf="@+id/profile_image"
+		android:layerType="software"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorPrimary"
-		android:textStyle="bold"/><TextView android:layerType="software"
+		android:textStyle="bold"/>
+
+	<TextView
 		android:id="@+id/owner"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -30,9 +33,10 @@
 		android:layout_below="@+id/name"
 		android:layout_marginRight="6dp"
 		android:drawablePadding="3dp"
+		android:layerType="software"
 		android:textColor="?android:attr/textColorSecondary"/>
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@+id/description"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -40,18 +44,8 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/owner"
+		android:layerType="software"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
-
-	<TextView android:layerType="software"
-		android:id="@+id/list_gap_text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_centerInParent="true"
-		android:text="@string/tap_to_load_more"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="#606060"
-		android:textStyle="bold"
-		android:visibility="gone"/>
 
 </RelativeLayout>

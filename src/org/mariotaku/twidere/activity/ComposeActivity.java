@@ -23,7 +23,6 @@ import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
@@ -300,7 +299,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 			mIsQuote = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false;
 
-			//final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+			// final boolean display_name =
+			// mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 			final boolean display_name = true;
 			final String name = display_name ? mInReplyToName : "@" + mInReplyToScreenName;
 			if (name != null) {

@@ -21,7 +21,6 @@ package org.mariotaku.twidere.fragment;
 
 import java.util.List;
 
-import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.loader.UserFavoritesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
@@ -34,7 +33,6 @@ import android.support.v4.content.Loader;
 
 public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 
-	private boolean isAllItemsLoaded = false;
 	private long mUserId;
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
@@ -53,10 +51,7 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 
 	};
 
-	@Override
-	public boolean isListLoadFinished() {
-		return isAllItemsLoaded;
-	}
+	private boolean mIsStatusesSaved = false;
 
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
@@ -78,25 +73,14 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public void onDataLoaded(final Loader<List<ParcelableStatus>> loader, final ParcelableStatusesAdapter adapter) {
-		if (loader instanceof UserFavoritesLoader) {
-			final int total = ((UserFavoritesLoader) loader).getTotalItemsCount();
-			if (mUserId <= 0) {
-				mUserId = ((UserFavoritesLoader) loader).getUserId();
-			}
-			isAllItemsLoaded = total != -1 && total == adapter.getCount();
-		}
-	}
-
-	@Override
 	public void onDestroy() {
-		UserFavoritesLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		saveStatuses();
 		super.onDestroy();
 	}
 
 	@Override
 	public void onDestroyView() {
-		UserFavoritesLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		saveStatuses();
 		super.onDestroyView();
 	}
 
@@ -111,6 +95,14 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	public void onStop() {
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
+	}
+
+	private void saveStatuses() {
+		if (mIsStatusesSaved) return;
+		final int first_visible_position = getListView().getFirstVisiblePosition();
+		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+		UserFavoritesLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
+		mIsStatusesSaved = true;
 	}
 
 }

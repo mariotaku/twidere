@@ -28,14 +28,12 @@ import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.parseInt;
-import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -65,10 +63,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -76,17 +77,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class TwitterLoginActivity extends BaseActivity implements OnClickListener, TextWatcher, LoaderCallbacks<TwitterLoginActivity.LoginResponse> {
+public class TwitterLoginActivity extends BaseActivity implements OnClickListener, TextWatcher,
+		LoaderCallbacks<TwitterLoginActivity.LoginResponse> {
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
@@ -105,7 +103,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	private Button mSignInButton, mSignUpButton;
 	private LinearLayout mSigninSignup, mUsernamePassword;
 	private ImageButton mSetColorButton;
-	
+
 	private TwidereApplication mApplication;
 	private SharedPreferences mPreferences;
 	private ContentResolver mResolver;
@@ -199,7 +197,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			case R.id.set_color: {
 				final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
 				final Bundle bundle = new Bundle();
-				if (mUserColor != null){			
+				if (mUserColor != null) {
 					bundle.putInt(Accounts.USER_COLOR, mUserColor);
 				}
 				intent.putExtras(bundle);
@@ -279,7 +277,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	@Override
-	public Loader<LoginResponse> onCreateLoader(int id, Bundle args) {
+	public Loader<LoginResponse> onCreateLoader(final int id, final Bundle args) {
 		setSupportProgressBarIndeterminateVisibility(true);
 		mEditPassword.setEnabled(false);
 		mEditUsername.setEnabled(false);
@@ -303,10 +301,14 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	@Override
-	public void onLoadFinished(Loader<LoginResponse> loader, TwitterLoginActivity.LoginResponse result) {
+	public void onLoaderReset(final Loader<LoginResponse> loader) {
+	}
+
+	@Override
+	public void onLoadFinished(final Loader<LoginResponse> loader, final TwitterLoginActivity.LoginResponse result) {
 		if (result.succeed) {
-			final ContentValues values = makeAccountContentValues(result.conf, result.basic_password, result.access_token,
-				  result.user, result.auth_type, result.color);
+			final ContentValues values = makeAccountContentValues(result.conf, result.basic_password,
+					result.access_token, result.user, result.auth_type, result.color);
 			if (values != null) {
 				mResolver.insert(Accounts.CONTENT_URI, values);
 			}
@@ -334,10 +336,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mSetColorButton.setEnabled(true);
 	}
 
-	@Override
-	public void onLoaderReset(Loader<LoginResponse> loader) {
-	}
-	
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
@@ -385,7 +383,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
 		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
 		outState.putString(Accounts.USERNAME, mUsername);
-		outState.putString(Accounts.PASSWORD, mPassword);	
+		outState.putString(Accounts.PASSWORD, mPassword);
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
 		if (mUserColor != null) {
 			outState.putInt(Accounts.USER_COLOR, mUserColor);
@@ -408,7 +406,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			mLoaderInitialized = true;
 		}
 	}
-	
+
 	private Configuration getConfiguration() {
 		final ConfigurationBuilder cb = new ConfigurationBuilder();
 		final boolean enable_gzip_compressing = mPreferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
@@ -487,12 +485,13 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		private final String username, password;
 		private final int auth_type;
 		private final Integer user_color;
-	
+
 		private final Context context;
 		private final ContentResolver resolver;
 		private final SharedPreferences preferences;
-		
-		public UserCredentialsLoader(Context context, Configuration conf, String username, String password, int auth_type, Integer user_color) {
+
+		public UserCredentialsLoader(final Context context, final Configuration conf, final String username,
+				final String password, final int auth_type, final Integer user_color) {
 			super(context);
 			resolver = context.getContentResolver();
 			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -503,7 +502,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			this.auth_type = auth_type;
 			this.user_color = user_color;
 		}
-		
+
 		@Override
 		public LoginResponse loadInBackground() {
 			try {
@@ -518,13 +517,13 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 						return authTwipOMode();
 				}
 				return authOAuth();
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return new LoginResponse(false, false, e);
-			} catch (CallbackURLException e) {
+			} catch (final CallbackURLException e) {
 				return new LoginResponse(false, false, e);
-			} catch (AuthenticationException e) {
+			} catch (final AuthenticationException e) {
 				return new LoginResponse(false, false, e);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				return new LoginResponse(false, false, e);
 			} catch (final NullPointerException e) {
 				return new LoginResponse(false, false, e);
@@ -546,12 +545,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final Bitmap bm = BitmapFactory.decodeStream(is);
 			return ColorAnalyser.analyse(bm);
 		}
-		
+
 		private LoginResponse authBasic() throws TwitterException, IOException {
-			final Twitter twitter = new TwitterFactory(conf).getInstance(new BasicAuthorization(username,
-					password));
+			final Twitter twitter = new TwitterFactory(conf).getInstance(new BasicAuthorization(username, password));
 			final User user = twitter.verifyCredentials();
-			final long user_id = user.getId();		
+			final long user_id = user.getId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
 			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
@@ -560,8 +558,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 		private LoginResponse authOAuth() throws AuthenticationException, TwitterException, IOException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance();
-			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(twitter,
-					getProxy(context), conf.getUserAgent());
+			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(twitter, getProxy(context),
+					conf.getUserAgent());
 			final AccessToken access_token = authenticator.getOAuthAccessToken(username, password);
 			final long user_id = access_token.getUserId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
@@ -574,11 +572,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		private LoginResponse authTwipOMode() throws TwitterException, IOException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance(new TwipOModeAuthorization());
 			final User user = twitter.verifyCredentials();
-			final long user_id = user.getId();		
+			final long user_id = user.getId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
 			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
-			return new LoginResponse(false, true, null, conf, null, null, user, Accounts.AUTH_TYPE_TWIP_O_MODE, color);	
+			return new LoginResponse(false, true, null, conf, null, null, user, Accounts.AUTH_TYPE_TWIP_O_MODE, color);
 		}
 
 		private LoginResponse authxAuth() throws TwitterException, IOException {
@@ -587,8 +585,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			final User user = twitter.showUser(access_token.getUserId());
 			final long user_id = user.getId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
-			if (isUserLoggedIn(context, user_id))
-				return new LoginResponse(true, false, null);
+			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
 			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
 			return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_XAUTH, color);
 		}
@@ -608,9 +605,10 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		public LoginResponse(final boolean already_logged_in, final boolean succeed, final Exception exception) {
 			this(already_logged_in, succeed, exception, null, null, null, null, 0, 0);
 		}
-		
-		public LoginResponse(final boolean already_logged_in, final boolean succeed, final Exception exception, final Configuration conf, final String basic_password, final AccessToken access_token,
-							 final User user, final int auth_type, final int color) {
+
+		public LoginResponse(final boolean already_logged_in, final boolean succeed, final Exception exception,
+				final Configuration conf, final String basic_password, final AccessToken access_token, final User user,
+				final int auth_type, final int color) {
 			this.already_logged_in = already_logged_in;
 			this.succeed = succeed;
 			this.exception = exception;

@@ -42,7 +42,7 @@ import android.view.ViewGroup;
 
 public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements DirectMessagesAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayName;
+	private boolean mDisplayProfileImage;
 	private final LazyImageLoader mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -131,14 +131,6 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			view.setTag(new DirectMessageConversationViewHolder(view));
 		}
 		return view;
-	}
-
-	@Override
-	public void setDisplayName(final boolean display) {
-		if (display != mDisplayName) {
-			mDisplayName = display;
-			notifyDataSetChanged();
-		}
 	}
 
 	@Override

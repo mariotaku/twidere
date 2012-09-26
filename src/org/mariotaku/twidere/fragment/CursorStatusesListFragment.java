@@ -76,11 +76,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public boolean isListLoadFinished() {
-		return false;
-	}
-
-	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mAdapter = new CursorStatusesAdapter(getActivity());
 		super.onActivityCreated(savedInstanceState);

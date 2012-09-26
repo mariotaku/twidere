@@ -115,7 +115,8 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		holder.setTextSize(mTextSize);
 		holder.name.setText(user.name);
 		holder.screen_name.setText("@" + user.screen_name);
-		holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(user.is_verified, user.is_protected), 0);
+		holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+				getUserTypeIconRes(user.is_verified, user.is_protected), 0);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {
@@ -143,11 +144,6 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 				add(user);
 			}
 		}
-	}
-
-	@Override
-	public void setDisplayName(final boolean display) {
-		
 	}
 
 	@Override

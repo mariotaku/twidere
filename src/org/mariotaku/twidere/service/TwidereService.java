@@ -3235,7 +3235,7 @@ public class TwidereService extends Service implements Constants {
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtras(extras));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) {
-				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);				
+				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
 				mNewMentionsCount += items_inserted;
 				if (items_inserted > 0) {
 					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);

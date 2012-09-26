@@ -29,6 +29,7 @@ import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGUR;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INSTAGRAM;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_MOBYPICTURE;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_PHOTOZOU;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_SINA_WEIBO_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITGOO;
@@ -36,6 +37,7 @@ import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITPIC;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_PROFILE_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_YFROG;
+import static org.mariotaku.twidere.util.TwidereLinkify.PHOTOZOU_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK;
 import static org.mariotaku.twidere.util.TwidereLinkify.SINA_WEIBO_IMAGES_AVAILABLE_SIZES;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITGOO_GROUP_ID;
@@ -522,6 +524,11 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static boolean equals(final Object object1, final Object object2) {
+		if (object1 == null || object2 == null) return object1 == object2;
+		return object1.equals(object2);
+	}
+
 	public static ParcelableDirectMessage findDirectMessageInDatabases(final Context context, final long account_id,
 			final long message_id) {
 		if (context == null) return null;
@@ -567,7 +574,7 @@ public final class Utils implements Constants {
 	public static UserList findUserList(final Twitter twitter, final long user_id, final String list_name)
 			throws TwitterException {
 		if (twitter == null || user_id <= 0 || list_name == null) return null;
-		final ResponseList<UserList> response = twitter.getUserLists(user_id, -1);
+		final ResponseList<UserList> response = twitter.getUserLists(user_id);
 		for (final UserList list : response) {
 			if (list_name.equals(list.getName())) return list;
 		}
@@ -585,11 +592,20 @@ public final class Utils implements Constants {
 	public static UserList findUserList(final Twitter twitter, final String screen_name, final String list_name)
 			throws TwitterException {
 		if (twitter == null || screen_name == null || list_name == null) return null;
-		final ResponseList<UserList> response = twitter.getUserLists(screen_name, -1);
+		final ResponseList<UserList> response = twitter.getUserLists(screen_name);
 		for (final UserList list : response) {
 			if (list_name.equals(list.getName())) return list;
 		}
 		return null;
+	}
+
+	public static String formatSameDayTime(final Context context, final long timestamp) {
+		if (context == null) return null;
+		if (DateUtils.isToday(timestamp))
+			return DateUtils.formatDateTime(context, timestamp,
+					DateFormat.is24HourFormat(context) ? DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_24HOUR
+							: DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_12HOUR);
+		return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE);
 	}
 
 	public static String formatStatusText(final Status status) {
@@ -599,15 +615,6 @@ public final class Utils implements Constants {
 		final HtmlBuilder builder = new HtmlBuilder(text, false);
 		parseEntities(builder, status);
 		return builder.build(true);
-	}
-	
-	public static String formatSameDayTime(final Context context, final long timestamp) {
-		if (context == null) return null;
-		if (DateUtils.isToday(timestamp)) {		
-			return DateUtils.formatDateTime(context, timestamp, DateFormat.is24HourFormat(context) ?
-				DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_24HOUR : DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_12HOUR);
-		}
-		return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE);
 	}
 
 	public static String formatTimeStampString(final Context context, final long timestamp) {
@@ -817,6 +824,8 @@ public final class Utils implements Constants {
 		if (m.matches()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID));
 		m = PATTERN_MOBYPICTURE.matcher(link);
 		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID));
+		m = PATTERN_PHOTOZOU.matcher(link);
+		if (m.matches()) return getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID));
 		return null;
 	}
 
@@ -1078,6 +1087,13 @@ public final class Utils implements Constants {
 		return url;
 	}
 
+	public static ImageSpec getPhotozouImage(final String id) {
+		if (isNullOrEmpty(id)) return null;
+		final String thumbnail_size = "http://photozou.jp/p/thumb/" + id;
+		final String full_size = "http://photozou.jp/p/img/" + id;
+		return new ImageSpec(thumbnail_size, full_size);
+	}
+
 	public static PreviewImage getPreviewImage(final String html, final boolean include_preview) {
 		if (html == null) return new PreviewImage(false, null, null);
 		if (!include_preview)
@@ -1087,7 +1103,7 @@ public final class Utils implements Constants {
 					|| html.contains("://img.ly/") || html.contains("://yfrog.com/")
 					|| html.contains("://twitgoo.com/") || html.contains("://moby.to/")
 					|| html.contains("://plixi.com/p/") || html.contains("://lockerz.com/s/")
-					|| html.contains(".sinaimg.cn/"), null, null);
+					|| html.contains(".sinaimg.cn/") || html.contains("://photozou.jp/"), null, null);
 		final Matcher m = PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML.matcher(html);
 		while (m.find()) {
 			final String image_url = m.group(PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK);
@@ -1119,6 +1135,9 @@ public final class Utils implements Constants {
 			url_m = PATTERN_MOBYPICTURE.matcher(image_url);
 			if (url_m.matches())
 				return new PreviewImage(getMobyPictureImage(matcherGroup(url_m, MOBYPICTURE_GROUP_ID)), image_url);
+			url_m = PATTERN_PHOTOZOU.matcher(image_url);
+			if (url_m.matches())
+				return new PreviewImage(getPhotozouImage(matcherGroup(url_m, PHOTOZOU_GROUP_ID)), image_url);
 		}
 		return new PreviewImage(false, null, null);
 	}
@@ -1549,8 +1568,8 @@ public final class Utils implements Constants {
 		return false;
 	}
 
-	public static ContentValues makeAccountContentValues(final Configuration conf, final String basic_password, final AccessToken access_token,
-			final User user, final int auth_type, final int color) {
+	public static ContentValues makeAccountContentValues(final Configuration conf, final String basic_password,
+			final AccessToken access_token, final User user, final int auth_type, final int color) {
 		if (user == null || user.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		switch (auth_type) {

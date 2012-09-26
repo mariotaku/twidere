@@ -25,20 +25,22 @@
 	android:orientation="horizontal"
 	android:padding="6dp">
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@android:id/text2"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_weight="0"
+		android:layerType="software"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@android:id/text1"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
 		android:ellipsize="marquee"
+		android:layerType="software"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceMedium"/>
 

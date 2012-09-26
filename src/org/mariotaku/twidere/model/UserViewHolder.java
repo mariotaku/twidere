@@ -31,15 +31,12 @@ public class UserViewHolder {
 
 	public final ImageView profile_image;
 	public final TextView name, screen_name, description;
-	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
-	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
 
 	public UserViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
-		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
@@ -47,30 +44,22 @@ public class UserViewHolder {
 	}
 
 	public void setAccountColor(final int color) {
-		content.drawRight(account_color_enabled && !show_as_gap ? color : Color.TRANSPARENT);
+		content.drawRight(account_color_enabled ? color : Color.TRANSPARENT);
 	}
 
 	public void setAccountColorEnabled(final boolean enabled) {
-		account_color_enabled = enabled && !show_as_gap;
+		account_color_enabled = enabled;
 		if (!account_color_enabled) {
 			content.drawRight(Color.TRANSPARENT);
 		}
 	}
 
 	public void setHighlightColor(final int color) {
-		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
+		content.drawBackground(color);
 	}
 
 	public void setSelected(final boolean selected) {
-		content.setBackgroundColor(selected && !show_as_gap ? 0x600099CC : Color.TRANSPARENT);
-	}
-
-	public void setShowAsGap(final boolean show_gap) {
-		show_as_gap = show_gap;
-		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		description.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
+		content.setBackgroundColor(selected ? 0x600099CC : Color.TRANSPARENT);
 	}
 
 	public void setTextSize(final float text_size) {
@@ -83,7 +72,7 @@ public class UserViewHolder {
 	}
 
 	public void setUserColor(final int color) {
-		content.drawLeft(show_as_gap ? Color.TRANSPARENT : color);
+		content.drawLeft(color);
 	}
 
 }

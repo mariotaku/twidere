@@ -29,25 +29,13 @@ public class UserListViewHolder {
 
 	public final ImageView profile_image;
 	public final TextView name, description, owner;
-	private final View gap_indicator;
-	public boolean show_as_gap;
 	private float text_size;
 
 	public UserListViewHolder(final View view) {
-		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		description = (TextView) view.findViewById(R.id.description);
 		owner = (TextView) view.findViewById(R.id.owner);
-	}
-
-	public void setShowAsGap(final boolean show_gap) {
-		show_as_gap = show_gap;
-		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		description.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		owner.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
 
 	public void setTextSize(final float text_size) {
