@@ -21,7 +21,6 @@ package org.mariotaku.twidere.model;
 
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
-import static org.mariotaku.twidere.util.Utils.formatTweetText;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
@@ -31,7 +30,6 @@ import java.util.Date;
 
 import twitter4j.MediaEntity;
 import twitter4j.Status;
-import twitter4j.Tweet;
 import twitter4j.User;
 import android.database.Cursor;
 import android.os.Parcel;
@@ -223,46 +221,6 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		is_favorite = status.isFavorited();
 		has_media = medias != null && medias.length > 0 || preview.has_image;
 		text = text_html != null ? Html.fromHtml(text_html) : null;
-		image_preview_url_string = preview.matched_url;
-		image_orig_url_string = preview.orig_url;
-		image_preview_url = parseURL(image_preview_url_string);
-		text_unescaped = unescape(text_html);
-	}
-
-	public ParcelableStatus(final Tweet tweet, final long account_id, final boolean is_gap) {
-		this.is_gap = is_gap;
-		status_id = tweet.getId();
-		this.account_id = account_id;
-		is_retweet = false;
-		retweet_id = -1;
-		retweeted_by_id = -1;
-		retweeted_by_name = null;
-		retweeted_by_screen_name = null;
-		user_id = tweet.getFromUserId();
-		name = tweet.getFromUserName();
-		screen_name = tweet.getFromUser();
-		profile_image_url_string = tweet.getProfileImageUrl();
-		profile_image_url = parseURL(profile_image_url_string);
-
-		is_protected = false;
-		is_verified = false;
-		final MediaEntity[] medias = tweet.getMediaEntities();
-
-		status_timestamp = getTime(tweet.getCreatedAt());
-		text_html = formatTweetText(tweet);
-		final PreviewImage preview = getPreviewImage(text_html, true);
-		text_plain = tweet.getText();
-		retweet_count = -1;
-		in_reply_to_screen_name = tweet.getToUser();
-		in_reply_to_status_id = tweet.getInReplyToStatusId();
-		source = tweet.getSource();
-		location = new ParcelableLocation(tweet.getGeoLocation());
-		location_string = location.toString();
-		is_favorite = false;
-		has_media = medias != null && medias.length > 0 || preview.has_image;
-
-		text = text_html != null ? Html.fromHtml(text_html) : null;
-
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);

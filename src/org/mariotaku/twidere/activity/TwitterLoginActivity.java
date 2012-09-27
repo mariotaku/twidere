@@ -244,12 +244,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		if (isNullOrEmpty(mOAuthBaseURL)) {
 			mOAuthBaseURL = DEFAULT_OAUTH_BASE_URL;
 		}
-		if (isNullOrEmpty(mSearchBaseURL)) {
-			mSearchBaseURL = DEFAULT_SEARCH_BASE_URL;
-		}
-		if (isNullOrEmpty(mUploadBaseURL)) {
-			mUploadBaseURL = DEFAULT_UPLOAD_BASE_URL;
-		}
 		if (isNullOrEmpty(mSigningRESTBaseURL)) {
 			mSigningRESTBaseURL = DEFAULT_SIGNING_REST_BASE_URL;
 		}
@@ -421,12 +415,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 		if (!isNullOrEmpty(mOAuthBaseURL)) {
 			cb.setOAuthBaseURL(mOAuthBaseURL);
-		}
-		if (!isNullOrEmpty(mSearchBaseURL)) {
-			cb.setSearchBaseURL(mSearchBaseURL);
-		}
-		if (!isNullOrEmpty(mUploadBaseURL)) {
-			cb.setUploadBaseURL(mUploadBaseURL);
 		}
 		if (!isNullOrEmpty(mSigningRESTBaseURL)) {
 			cb.setSigningRestBaseURL(mSigningRESTBaseURL);

@@ -138,7 +138,6 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Trend;
 import twitter4j.Trends;
-import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -655,15 +654,6 @@ public final class Utils implements Constants {
 		format_flags |= DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME;
 
 		return DateUtils.formatDateTime(context, timestamp, format_flags);
-	}
-
-	public static String formatTweetText(final Tweet tweet) {
-		if (tweet == null) return null;
-		final String text = tweet.getRawText();
-		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, false);
-		parseEntities(builder, tweet);
-		return builder.build(true);
 	}
 
 	public static int getAccountColor(final Context context, final long account_id) {
@@ -1410,19 +1400,11 @@ public final class Utils implements Constants {
 				final String rest_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_BASE_URL));
 				final String signing_rest_base_url = cur.getString(cur
 						.getColumnIndexOrThrow(Accounts.SIGNING_REST_BASE_URL));
-				final String search_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.SEARCH_BASE_URL));
-				final String upload_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.UPLOAD_BASE_URL));
 				final String oauth_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_BASE_URL));
 				final String signing_oauth_base_url = cur.getString(cur
 						.getColumnIndexOrThrow(Accounts.SIGNING_OAUTH_BASE_URL));
 				if (!isNullOrEmpty(rest_base_url)) {
 					cb.setRestBaseURL(rest_base_url);
-				}
-				if (!isNullOrEmpty(search_base_url)) {
-					cb.setSearchBaseURL(search_base_url);
-				}
-				if (!isNullOrEmpty(upload_base_url)) {
-					cb.setUploadBaseURL(upload_base_url);
 				}
 				if (!isNullOrEmpty(signing_rest_base_url)) {
 					cb.setSigningRestBaseURL(signing_rest_base_url);
@@ -1598,8 +1580,6 @@ public final class Utils implements Constants {
 		values.put(Accounts.IS_ACTIVATED, 1);
 		values.put(Accounts.REST_BASE_URL, conf.getRestBaseURL());
 		values.put(Accounts.SIGNING_REST_BASE_URL, conf.getSigningRestBaseURL());
-		values.put(Accounts.SEARCH_BASE_URL, conf.getSearchBaseURL());
-		values.put(Accounts.UPLOAD_BASE_URL, conf.getUploadBaseURL());
 		values.put(Accounts.OAUTH_BASE_URL, conf.getOAuthBaseURL());
 		values.put(Accounts.SIGNING_OAUTH_BASE_URL, conf.getSigningOAuthBaseURL());
 		return values;

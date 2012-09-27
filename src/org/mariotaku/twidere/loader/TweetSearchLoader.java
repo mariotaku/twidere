@@ -35,7 +35,7 @@ import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.NoDuplicatesStateSavedList;
 
 import twitter4j.Query;
-import twitter4j.Tweet;
+import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
@@ -88,7 +88,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		final long account_id = getAccountId();
 		final Twitter twitter = getTwitter();
 		if (twitter == null) return null;
-		List<Tweet> tweets = null;
+		Status[] statuses = null;
 		try {
 			final Query query = new Query(mQuery);
 			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
@@ -99,22 +99,13 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 			if (mMaxId > 0) {
 				query.setMaxId(mMaxId);
 			}
-			tweets = twitter != null ? twitter.search(query).getTweets() : null;
+			statuses = twitter.search(query).getStatuses();
 		} catch (final TwitterException e) {
 			e.printStackTrace();
 		}
-		if (tweets != null) {
-			try {
-				Collections.sort(tweets);
-			} catch (final ConcurrentModificationException e) {
-				// This shouldn't happen.
-				e.printStackTrace();
-			}
-			final int size = tweets.size();
-			for (int i = 0; i < size; i++) {
-				final Tweet tweet = tweets.get(i);
-				deleteStatus(tweet.getId());
-				data.add(new ParcelableStatus(tweet, account_id, false));
+		if (statuses != null) {
+			for (final Status status : statuses) {
+				data.add(new ParcelableStatus(status, account_id, false));
 			}
 		}
 		try {
