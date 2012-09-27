@@ -13,11 +13,21 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.AttributeSet;
 
-public class NotificationTypePreference extends Preference implements Constants, OnPreferenceClickListener,
-		OnMultiChoiceClickListener, OnClickListener {
+public class NotificationTypePreference extends MultiSelectListPreference implements Constants {
 
-	private boolean[] checked_items;
-	private SharedPreferences prefs;
+	protected String[] getNames() {
+		return getContext().getResources().getStringArray(R.array.entries_notification_type);
+	}
+
+	protected String[] getKeys() {
+		return new String[]{ PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND,
+			PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION,
+			PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS };
+	}
+
+	protected boolean[] getDefaults() {
+		return new boolean[]{ false, false, false };
+	}
 
 	public NotificationTypePreference(final Context context) {
 		this(context, null);
@@ -29,47 +39,6 @@ public class NotificationTypePreference extends Preference implements Constants,
 
 	public NotificationTypePreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		checked_items = new boolean[3];
-		setOnPreferenceClickListener(this);
-	}
-
-	@Override
-	public void onClick(final DialogInterface dialog, final int which) {
-		if (prefs == null) return;
-		switch (which) {
-			case DialogInterface.BUTTON_POSITIVE:
-				final SharedPreferences.Editor editor = prefs.edit();
-				editor.putBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, checked_items[0]);
-				editor.putBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, checked_items[1]);
-				editor.putBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, checked_items[2]);
-				editor.commit();
-				break;
-		}
-
-	}
-
-	@Override
-	public void onClick(final DialogInterface dialog, final int which, final boolean isChecked) {
-		checked_items[which] = isChecked;
-	}
-
-	@Override
-	public boolean onPreferenceClick(final Preference preference) {
-		prefs = getSharedPreferences();
-		if (prefs == null) return false;
-		checked_items = new boolean[] { prefs.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false),
-				prefs.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, false),
-				prefs.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false) };
-
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
-		builder.setTitle(getTitle());
-		builder.setPositiveButton(android.R.string.ok, this);
-		builder.setNegativeButton(android.R.string.cancel, this);
-		builder.setMultiChoiceItems(R.array.entries_notification_type, checked_items, this);
-		builder.show();
-
-		return true;
 	}
 
 }

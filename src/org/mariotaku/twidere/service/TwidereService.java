@@ -1425,8 +1425,7 @@ public class TwidereService extends Service implements Constants {
 			if (result == null) return;
 			if (result.data != null && result.data.getId() > 0) {
 				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
-				final String where = DirectMessages.MESSAGE_ID + " = " + result.data.getId();
-
+				final String where = DirectMessages.MESSAGE_ID + " = " + message_id;
 				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
 				mResolver.delete(DirectMessages.Outbox.CONTENT_URI, where, null);
 			} else {

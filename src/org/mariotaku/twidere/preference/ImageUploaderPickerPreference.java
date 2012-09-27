@@ -14,19 +14,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
-public class ImageUploaderPickerPreference extends Preference implements Constants, OnPreferenceClickListener,
-		OnClickListener {
+public class ImageUploaderPickerPreference extends DialogPreference implements Constants, OnClickListener {
 
 	private SharedPreferences mPreferences;
-
 	private final PackageManager mPackageManager;
-
 	private AlertDialog mDialog;
-
 	private ImageUploaderSpec[] mAvailableImageUploaders;
 
 	public ImageUploaderPickerPreference(final Context context) {
@@ -40,7 +35,6 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 	public ImageUploaderPickerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mPackageManager = context.getPackageManager();
-		setOnPreferenceClickListener(this);
 	}
 
 	@Override
@@ -58,9 +52,10 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 	}
 
 	@Override
-	public boolean onPreferenceClick(final Preference preference) {
+	public void onPrepareDialogBuilder(final AlertDialog.Builder builder) {
 		mPreferences = getSharedPreferences();
-		if (mPreferences == null) return false;
+		super.onPrepareDialogBuilder(builder);
+		if (mPreferences == null) return;
 		final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
 		final ArrayList<ImageUploaderSpec> specs = new ArrayList<ImageUploaderSpec>();
 		specs.add(new ImageUploaderSpec(getContext().getString(R.string.image_uploader_default), null));
@@ -71,13 +66,9 @@ public class ImageUploaderPickerPreference extends Preference implements Constan
 					+ "/" + info.serviceInfo.name));
 		}
 		mAvailableImageUploaders = specs.toArray(new ImageUploaderSpec[specs.size()]);
-		final AlertDialog.Builder selector_builder = new AlertDialog.Builder(getContext());
-		selector_builder.setTitle(getTitle());
-		selector_builder.setSingleChoiceItems(mAvailableImageUploaders, getIndex(component),
+		builder.setSingleChoiceItems(mAvailableImageUploaders, getIndex(component),
 				ImageUploaderPickerPreference.this);
-		selector_builder.setNegativeButton(android.R.string.cancel, null);
-		mDialog = selector_builder.show();
-		return true;
+		builder.setNegativeButton(android.R.string.cancel, null);
 	}
 
 	private int getIndex(final String cls) {
