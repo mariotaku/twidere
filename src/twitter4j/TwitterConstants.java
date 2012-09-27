@@ -1,0 +1,33 @@
+package twitter4j;
+
+public interface TwitterConstants {
+
+	public static final String DEFAULT_OAUTH_BASE_URL = "https://api.twitter.com/oauth/";
+	public static final String DEFAULT_SIGNING_OAUTH_BASE_URL = DEFAULT_OAUTH_BASE_URL;
+
+	public static final String PATH_SEGMENT_AUTHENTICATION = "authenticate";
+	public static final String PATH_SEGMENT_REQUEST_TOKEN = "request_token";
+	public static final String PATH_SEGMENT_ACCESS_TOKEN = "access_token";
+	public static final String PATH_SEGMENT_AUTHORIZATION = "authorize";
+
+	public static final String DEFAULT_OAUTH_REQUEST_TOKEN_URL = DEFAULT_OAUTH_BASE_URL + PATH_SEGMENT_REQUEST_TOKEN;
+	public static final String DEFAULT_OAUTH_AUTHORIZATION_URL = DEFAULT_OAUTH_BASE_URL + PATH_SEGMENT_AUTHORIZATION;
+	public static final String DEFAULT_OAUTH_ACCESS_TOKEN_URL = DEFAULT_OAUTH_BASE_URL + PATH_SEGMENT_ACCESS_TOKEN;
+	public static final String DEFAULT_OAUTH_AUTHENTICATION_URL = DEFAULT_OAUTH_BASE_URL + PATH_SEGMENT_AUTHENTICATION;
+
+	public static final String DEFAULT_SIGNING_OAUTH_REQUEST_TOKEN_URL = DEFAULT_SIGNING_OAUTH_BASE_URL
+			+ PATH_SEGMENT_REQUEST_TOKEN;
+	public static final String DEFAULT_SIGNING_OAUTH_AUTHORIZATION_URL = DEFAULT_SIGNING_OAUTH_BASE_URL
+			+ PATH_SEGMENT_AUTHORIZATION;
+	public static final String DEFAULT_SIGNING_OAUTH_ACCESS_TOKEN_URL = DEFAULT_SIGNING_OAUTH_BASE_URL
+			+ PATH_SEGMENT_ACCESS_TOKEN;
+	public static final String DEFAULT_SIGNING_OAUTH_AUTHENTICATION_URL = DEFAULT_SIGNING_OAUTH_BASE_URL
+			+ PATH_SEGMENT_AUTHENTICATION;
+
+	public static final String DEFAULT_REST_BASE_URL = "https://api.twitter.com/1.1/";
+	public static final String DEFAULT_SIGNING_REST_BASE_URL = DEFAULT_REST_BASE_URL;
+//	public static final String DEFAULT_SEARCH_BASE_URL = DEFAULT_REST_BASE_URL;
+//	public static final String DEFAULT_SIGNING_SEARCH_BASE_URL = DEFAULT_SEARCH_BASE_URL;
+//	public static final String DEFAULT_UPLOAD_BASE_URL = DEFAULT_REST_BASE_URL;
+//	public static final String DEFAULT_SIGNING_UPLOAD_BASE_URL = DEFAULT_UPLOAD_BASE_URL;
+}

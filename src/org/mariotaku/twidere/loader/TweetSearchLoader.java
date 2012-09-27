@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.mariotaku.twidere.model.SerializableStatus;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.NoDuplicatesStateSavedList;
 
+import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -42,16 +44,26 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-public class TweetSearchLoader extends ParcelableStatusesLoader {
+public class TweetSearchLoader extends Twitter4JStatusLoader {
+
+	public List<Status> getStatuses(Paging paging) throws TwitterException {
+		final Twitter twitter = getTwitter();
+		if (twitter == null) return null;
+		final Query query = new Query(mQuery);
+		query.setRpp(paging.getCount());
+		if (paging.getMaxId() > 0) {
+			query.setMaxId(paging.getMaxId());
+		}
+		return Arrays.asList(twitter.search(query).getStatuses());
+	}
+	
 
 	private final String mQuery;
-	private final long mMaxId;
 
 	public TweetSearchLoader(final Context context, final long account_id, final String query, final long max_id,
 			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
-		super(context, account_id, data, class_name, is_home_tab);
+		super(context, account_id, max_id, data, class_name, is_home_tab);
 		mQuery = query;
-		mMaxId = max_id;
 	}
 
 	@Override
@@ -84,37 +96,7 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 			} catch (final ClassCastException e) {
 			}
 		}
-		final List<ParcelableStatus> data = getData();
-		final long account_id = getAccountId();
-		final Twitter twitter = getTwitter();
-		if (twitter == null) return null;
-		Status[] statuses = null;
-		try {
-			final Query query = new Query(mQuery);
-			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
-					Context.MODE_PRIVATE);
-			final int load_item_limit = prefs
-					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-			query.setRpp(load_item_limit);
-			if (mMaxId > 0) {
-				query.setMaxId(mMaxId);
-			}
-			statuses = twitter.search(query).getStatuses();
-		} catch (final TwitterException e) {
-			e.printStackTrace();
-		}
-		if (statuses != null) {
-			for (final Status status : statuses) {
-				data.add(new ParcelableStatus(status, account_id, false));
-			}
-		}
-		try {
-			Collections.sort(data);
-		} catch (final ConcurrentModificationException e) {
-			// This shouldn't happen.
-			e.printStackTrace();
-		}
-		return data;
+		return super.loadInBackground();
 	}
 
 	public static void writeSerializableStatuses(final Object instance, final Context context,

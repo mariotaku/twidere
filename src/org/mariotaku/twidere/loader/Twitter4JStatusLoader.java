@@ -41,13 +41,13 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		mMaxId = max_id;
 	}
 
-	public abstract ResponseList<Status> getStatuses(Paging paging) throws TwitterException;
+	public abstract List<Status> getStatuses(Paging paging) throws TwitterException;
 
 	@Override
 	public synchronized List<ParcelableStatus> loadInBackground() {
 		final List<ParcelableStatus> data = getData();
 		final long account_id = getAccountId();
-		ResponseList<Status> statuses = null;
+		List<Status> statuses = null;
 		try {
 			final Paging paging = new Paging();
 			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
