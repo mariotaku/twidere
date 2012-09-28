@@ -2,10 +2,14 @@
 	android:id="@android:id/text1"
 	style="?android:attr/spinnerDropDownItemStyle"
 	android:layout_width="match_parent"
-	android:layout_height="42dp"
+	android:layout_height="48dp"
+	android:drawablePadding="16dp"
 	android:ellipsize="marquee"
-	android:paddingLeft="8dp"
-	android:paddingRight="8dp"
+	android:gravity="center_vertical"
+	android:paddingLeft="16dp"
+	android:paddingTop="6dp"
+	android:paddingRight="16dp"
+	android:paddingBottom="6dp"
 	android:singleLine="true"
 	android:textColor="#ffffff"/>
 

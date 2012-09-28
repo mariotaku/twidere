@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTimestampFromDate;
@@ -49,14 +50,20 @@ import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
+import static org.mariotaku.twidere.util.Utils.*;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -68,7 +75,9 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
+import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
+import twitter4j.HostAddressResolver;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -84,9 +93,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Shader;
+import android.graphics.Xfermode;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -107,6 +125,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -125,13 +144,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private LazyImageLoader mProfileImageLoader;
 
 	private ImageView mProfileImageView;
-	private View mFollowContainer;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowedYouIndicator, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
-			mTweetsContainer, mFollowersContainer, mFriendsContainer, mProfileNameContainer;
+	mTweetsContainer, mFollowersContainer, mFriendsContainer, mFollowContainer, mProfileNameBannerContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
+	private ColorLabelRelativeLayout mProfileNameContainer;
 	private ListActionAdapter mAdapter;
 
 	private ListView mListView;
@@ -189,13 +208,15 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private View mListContainer, mErrorRetryContainer;
 
 	private boolean mGetUserInfoLoaderInitialized;
+	private boolean mGetFriendShipLoaderInitialized;
+	private boolean mBannerImageLoaderInitialized;
 
 	private static final int LOADER_ID_USER = 1;
-
 	private static final int LOADER_ID_FRIENDSHIP = 2;
+	private static final int LOADER_ID_BANNER = 3;
 
-	private boolean mGetFriendShipLoaderInitialized;
 
+	
 	private final LoaderCallbacks<Response<User>> mUserInfoLoaderCallbacks = new LoaderCallbacks<Response<User>>() {
 
 		@Override
@@ -307,13 +328,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		updateUserColor();
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
 
-		mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account_nopadding : 0);
 		if (is_multiple_account_enabled) {
-			final Drawable d = mListView.getBackground();
-			if (d != null) {
-				d.mutate().setColorFilter(getAccountColor(getActivity(), account_id), PorterDuff.Mode.MULTIPLY);
-				mListView.invalidate();
-			}
+			mProfileNameContainer.drawRight(getAccountColor(getActivity(), account_id));
 		}
 
 		mNameView.setText(user.getName());
@@ -375,6 +391,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 		mAdapter.notifyDataSetChanged();
 		getFriendship();
+		getBannerImage();
 	}
 
 	public void getUserInfo(final long account_id, final long user_id, final String screen_name) {
@@ -403,6 +420,128 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
+	private final LoaderCallbacks<Bitmap> mBannerImageCallback = new LoaderCallbacks<Bitmap>(){
+
+		public Loader<Bitmap> onCreateLoader(int id, Bundle args) {
+			final LayoutParams lp = mProfileNameBannerContainer.getLayoutParams();
+			lp.height = LayoutParams.WRAP_CONTENT;
+			mProfileNameBannerContainer.setBackgroundDrawable(null);
+			mProfileNameBannerContainer.setLayoutParams(lp);
+			final boolean scale_down = mProfileNameBannerContainer.getWidth() < 320;
+			return new BannerImageLoader(getActivity(), mUser, scale_down);
+		}
+
+		public void onLoadFinished(Loader<Bitmap> loader, Bitmap data) {
+			if (data == null) return;
+			final Drawable d = new BitmapDrawable(getResources(), data);
+			final LayoutParams lp = mProfileNameBannerContainer.getLayoutParams();
+			lp.height = mProfileNameContainer.getWidth() / 2;
+			mProfileNameBannerContainer.setLayoutParams(lp);
+			mProfileNameBannerContainer.setBackgroundDrawable(d);
+		}
+
+		public void onLoaderReset(Loader<Bitmap> loader) {
+		}
+
+		
+	};
+
+	private void getBannerImage() {
+		final LoaderManager lm = getLoaderManager();
+		if (mBannerImageLoaderInitialized) {
+			lm.restartLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
+		} else {
+			lm.initLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
+			mBannerImageLoaderInitialized = true;
+		}
+	}
+	
+	static class BannerImageLoader extends AsyncTaskLoader<Bitmap> {
+
+		private static final String CACHE_DIR = "cached_images";
+		
+		private final User user;
+		private final Context context;
+		private final HostAddressResolver resolver;
+		private final boolean scale_down;
+		
+		public BannerImageLoader(Context context, User user, boolean scale_down){
+			super(context);
+			this.context = context;
+			this.user = user;
+			this.resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
+			this.scale_down = scale_down;
+		}
+		
+		private File getCacheDir() {
+			final File cache_dir;
+			if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+				final File app_cache_dir = 
+						Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(context)
+								: new File(getExternalStorageDirectory(), "/Android/data/" + context.getPackageName() + "/cache/");
+				cache_dir = new File(app_cache_dir, CACHE_DIR);
+			} else {
+				cache_dir = new File(context.getCacheDir(), CACHE_DIR);
+			}
+			if (cache_dir != null && !cache_dir.exists()) {
+				cache_dir.mkdirs();
+			}
+			return cache_dir;
+		}
+		
+		private String getURLFilename(final URL url) {
+			if (url == null) return null;
+			return url.toString().replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
+		}
+
+		public static Bitmap createAlphaGradientBitmap(Bitmap orig) {
+			final int width = orig.getWidth(), height = orig.getHeight();
+			final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+			final Canvas canvas = new Canvas(bitmap);	
+			final Paint paint = new Paint();
+			final LinearGradient shader = new LinearGradient(width / 2, 0, width / 2, height, 0xffffffff, 0x00ffffff, Shader.TileMode.CLAMP);
+			paint.setShader(shader);
+			paint.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
+			canvas.drawBitmap(orig,0, 0, null);
+			canvas.drawRect(0, 0, width, height, paint);
+			return bitmap;
+		}
+		
+		public Bitmap loadInBackground() {
+			if (user == null) return null;
+			try {
+				final URL url = new URL(user.getProfileBannerImageUrl() + "/mobile");
+				final File cache_dir = getCacheDir();
+				final File cache_file = cache_dir != null && cache_dir.isDirectory() ? new File(cache_dir, getURLFilename(url)) : null;
+				if (cache_file != null && cache_file.isFile()) {
+					final Bitmap cache_bitmap = BitmapFactory.decodeFile(cache_file.getPath());
+					if (cache_bitmap != null) {
+						return createAlphaGradientBitmap(cache_bitmap);
+					}
+				}
+				final HttpURLConnection conn = getConnection(url, true, getProxy(context), resolver);
+				if (cache_file != null) {
+					final FileOutputStream fos = new FileOutputStream(cache_file);
+					final InputStream is = conn.getInputStream();
+					copyStream(is, fos);
+					final Bitmap bitmap = BitmapFactory.decodeFile(cache_file.getPath());
+					return createAlphaGradientBitmap(bitmap);
+				} else {
+					final Bitmap bitmap = BitmapFactory.decodeStream(conn.getInputStream());
+					return createAlphaGradientBitmap(bitmap);
+				}
+			} catch (IOException e) {
+				return null;
+			}
+		}
+		
+
+		@Override
+		protected void onStartLoading() {
+			forceLoad();
+		}
+	}
+	
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mService = getApplication().getServiceInterface();
@@ -570,7 +709,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowersCount = (TextView) mHeaderView.findViewById(R.id.followers_count);
 		mFriendsContainer = mHeaderView.findViewById(R.id.friends_container);
 		mFriendsCount = (TextView) mHeaderView.findViewById(R.id.friends_count);
-		mProfileNameContainer = mHeaderView.findViewById(R.id.profile_name_container);
+		mProfileNameContainer = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile_name_container);
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mProfileImageContainer = mHeaderView.findViewById(R.id.profile_image_container);
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
@@ -582,6 +721,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
 		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
 		mFollowedYouIndicator = (TextView) mHeaderView.findViewById(R.id.followed_you_indicator);
+		mProfileNameBannerContainer = mHeaderView.findViewById(R.id.profile_name_banner_container);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);
 		((FrameLayout) container_view.findViewById(R.id.list_container)).addView(mListContainer);
@@ -841,11 +981,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private void updateUserColor() {
 		if (mProfileNameContainer != null) {
-			final Drawable d = mProfileNameContainer.getBackground();
-			if (d != null) {
-				d.mutate().setColorFilter(getUserColor(getActivity(), mUserId), Mode.MULTIPLY);
-				mProfileNameContainer.invalidate();
-			}
+			mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));	
 		}
 	}
 
