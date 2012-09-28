@@ -125,7 +125,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private LazyImageLoader mProfileImageLoader;
 
 	private ImageView mProfileImageView;
-	private View mFollowContainer, mMoreOptionsContainer;
+	private View mFollowContainer;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowedYouIndicator, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
@@ -237,7 +237,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mFollowContainer.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
 			mFollowButton.setVisibility(View.GONE);
 			mFollowProgress.setVisibility(View.VISIBLE);
-			mMoreOptionsContainer.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
 			mMoreOptionsButton.setVisibility(View.GONE);
 			mMoreOptionsProgress.setVisibility(View.VISIBLE);
 			return new GetFriendshipLoader(getActivity(), mAccountId, mUserId);
@@ -280,11 +279,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					}
 				}
 			}
-			if (!user_is_me) {
-				mFollowContainer.setVisibility(data.value == null ? View.GONE : View.VISIBLE);
-				mMoreOptionsContainer.setVisibility(data.value == null ? View.GONE : View.VISIBLE);
-				mMoreOptionsButton.setVisibility(data.value == null ? View.GONE : View.VISIBLE);
-			}
+			mFollowContainer.setVisibility(data.value == null || user_is_me ? View.GONE : View.VISIBLE);
+			mMoreOptionsButton.setVisibility(data.value != null || user_is_me ? View.VISIBLE : View.GONE);
 			mFollowProgress.setVisibility(View.GONE);
 			mMoreOptionsProgress.setVisibility(View.GONE);
 		}
@@ -520,25 +516,35 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case R.id.more_options: {
-				if (mUser == null || mFriendship == null || mAccountId == mUserId) return;
+				if (mUser == null) return;
 				mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 				mPopupMenu.inflate(R.menu.action_user_profile);
 				final Menu menu = mPopupMenu.getMenu();
-				final MenuItem blockItem = menu.findItem(MENU_BLOCK);
-				if (blockItem != null) {
-					final Drawable blockIcon = blockItem.getIcon();
-					if (mFriendship.isSourceBlockingTarget()) {
-						blockItem.setTitle(R.string.unblock);
-						blockIcon.mutate().setColorFilter(getResources().getColor(R.color.holo_blue_bright),
-								PorterDuff.Mode.MULTIPLY);
-					} else {
-						blockItem.setTitle(R.string.block);
-						blockIcon.clearColorFilter();
+				if (mUser.getId() != mAccountId) {
+					if (mFriendship == null) return;
+					final MenuItem blockItem = menu.findItem(MENU_BLOCK);
+					if (blockItem != null) {
+						final Drawable blockIcon = blockItem.getIcon();
+						if (mFriendship.isSourceBlockingTarget()) {
+							blockItem.setTitle(R.string.unblock);
+							blockIcon.mutate().setColorFilter(getResources().getColor(R.color.holo_blue_bright),
+															  PorterDuff.Mode.MULTIPLY);
+						} else {
+							blockItem.setTitle(R.string.block);
+							blockIcon.clearColorFilter();
+						}
 					}
-				}
-				final MenuItem sendDirectMessageItem = menu.findItem(MENU_SEND_DIRECT_MESSAGE);
-				if (sendDirectMessageItem != null) {
-					sendDirectMessageItem.setVisible(mFriendship.isTargetFollowingSource());
+					final MenuItem sendDirectMessageItem = menu.findItem(MENU_SEND_DIRECT_MESSAGE);
+					if (sendDirectMessageItem != null) {
+						sendDirectMessageItem.setVisible(mFriendship.isTargetFollowingSource());
+					}
+				} else {
+					final int size = menu.size();
+					for (int i = 0; i < size; i++) {
+						final MenuItem item = menu.getItem(i);
+						final int id = item.getItemId();
+						item.setVisible(id == R.id.set_color_submenu || id == MENU_EXTENSIONS);
+					}
 				}
 				mPopupMenu.setOnMenuItemClickListener(this);
 				mPopupMenu.show();
@@ -573,7 +579,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowContainer = mHeaderView.findViewById(R.id.follow_container);
 		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
 		mFollowProgress = (ProgressBar) mHeaderView.findViewById(R.id.follow_progress);
-		mMoreOptionsContainer = mHeaderView.findViewById(R.id.more_options_container);
 		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
 		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
 		mFollowedYouIndicator = (TextView) mHeaderView.findViewById(R.id.followed_you_indicator);

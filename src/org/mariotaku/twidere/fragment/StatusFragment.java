@@ -499,7 +499,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				startActivity(intent);
 				break;
 			}
-			case MENU_FAV: {
+			case MENU_FAVORITE: {
 				if (mStatus.is_favorite) {
 					mService.destroyFavorite(mAccountId, mStatusId);
 				} else {

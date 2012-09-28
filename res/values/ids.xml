@@ -19,7 +19,7 @@
 	<item name="pick_from_map" type="id"/>
 	<item name="reply" type="id"/>
 	<item name="retweet" type="id"/>
-	<item name="fav" type="id"/>
+	<item name="favorite" type="id"/>
 	<item name="share" type="id"/>
 	<item name="edit_api" type="id"/>
 	<item name="set_color" type="id"/>

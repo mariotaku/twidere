@@ -258,6 +258,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				startActivity(Intent.createChooser(intent, getString(R.string.share)));
 				break;
 			}
+			case R.id.direct_retweet:
 			case MENU_RETWEET: {
 				if (isMyRetweet(status)) {
 					mService.cancelRetweet(status.account_id, status.status_id);
@@ -268,6 +269,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				}
 				break;
 			}
+			case R.id.direct_quote:
 			case MENU_QUOTE: {
 				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 				final Bundle bundle = new Bundle();
@@ -296,7 +298,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				startActivity(intent);
 				break;
 			}
-			case MENU_FAV: {
+			case MENU_FAVORITE: {
 				if (mSelectedStatus.is_favorite) {
 					mService.destroyFavorite(status.account_id, status.status_id);
 				} else {
@@ -430,15 +432,29 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	private void openMenu(final View view, final ParcelableStatus status) {
+		if (view == null || status == null) return;
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);
 		final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
+		final boolean seprate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPRATE_RETWEET_ACTION, false);
 		final Menu menu = mPopupMenu.getMenu();
+		setMenuForStatus(getActivity(), menu, status);
 		final MenuItem itemView = menu.findItem(MENU_VIEW);
 		if (itemView != null) {
 			itemView.setVisible(click_to_open_menu);
 		}
-		setMenuForStatus(getActivity(), menu, status);
+		final MenuItem itemRetweetSubMenu = menu.findItem(R.id.retweet_submenu);
+		if (itemRetweetSubMenu != null) {
+			itemRetweetSubMenu.setVisible(!seprate_retweet_action);
+		}
+		final MenuItem itemDirectQuote = menu.findItem(R.id.direct_quote);
+		if (itemDirectQuote != null) {
+			itemDirectQuote.setVisible(seprate_retweet_action);
+		}
+		final MenuItem itemDirectRetweet = menu.findItem(R.id.direct_retweet);
+		if (itemDirectRetweet != null) {
+			itemDirectRetweet.setVisible(seprate_retweet_action && !status.is_protected);
+		}
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
 	}

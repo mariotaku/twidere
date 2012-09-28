@@ -491,7 +491,7 @@ public final class Utils implements Constants {
 			final StringBuilder where = new StringBuilder();
 			where.append(Statuses._ID + " NOT IN (");
 			where.append(" SELECT " + CachedUsers._ID + " FROM " + table);
-			where.append(" LIMIT " + (int) (Math.sqrt(item_limit) * 16) + ")");
+			where.append(" LIMIT " + (int) (Math.sqrt(item_limit) * 100) + ")");
 			resolver.delete(uri, where.toString(), null);
 		}
 	}
@@ -988,8 +988,8 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getImgurImage(final String id) {
 		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = "https://i.imgur.com/" + id + "s.jpg";
-		final String full_size = "https://i.imgur.com/" + id + ".jpg";
+		final String thumbnail_size = "http://i.imgur.com/" + id + "s.jpg";
+		final String full_size = "http://i.imgur.com/" + id + ".jpg";
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
@@ -2499,7 +2499,7 @@ public final class Utils implements Constants {
 				itemRetweet.setTitle(R.string.retweet);
 			}
 		}
-		final MenuItem itemFav = menu.findItem(MENU_FAV);
+		final MenuItem itemFav = menu.findItem(MENU_FAVORITE);
 		if (itemFav != null) {
 			final Drawable iconFav = itemFav.getIcon();
 			if (status.is_favorite) {

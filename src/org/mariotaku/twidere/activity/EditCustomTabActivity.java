@@ -251,7 +251,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 
 		public AccountPreference(final Context context) {
 			super(context);
-			final List<Account> accounts = Account.getAccounts(getContext(), true);
+			final List<Account> accounts = Account.getAccounts(getContext(), false);
 			mAccounts = accounts.toArray(new Account[accounts.size()]);
 			setTitle(R.string.account);
 			if (mAccountId > 0) {

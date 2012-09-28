@@ -132,6 +132,18 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		}
 		return result;
 	}
+	
+	@Override
+	public void onBackPressed() {
+		final FragmentManager fm = getSupportFragmentManager();
+		if (fm.getBackStackEntryCount() == 0 && 
+				!mPreferences.getBoolean(PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED, false) &&
+				mPreferences.getBoolean(PREFERENCE_KEY_KEEP_IN_BACKGROUND, false)) {
+			moveTaskToBack(true);
+			return;
+		}
+		super.onBackPressed();
+	}
 
 	@Override
 	public void onBackStackChanged() {

@@ -341,5 +341,9 @@
 	<string name="click_to_open_menu_summary">Click to open item menu, long-click to multi select.</string>
 	<string name="send_follow_request">Send follow request</string>
 	<string name="follow_request_sent">Follow request sent</string>
+	<string name="keep_in_background">Keep home activity in background</string>
+	<string name="keep_in_background_summary">Consumes more memory, but may faster to launch.</string>
+	<string name="seprate_retweet_action">Seprate retweet action</string>
+	<string name="seprate_retweet_action_summary">Show both retweet and quote action in tweet menu</string>
 
 </resources>
