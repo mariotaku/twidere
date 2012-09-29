@@ -261,7 +261,8 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 		updateUserColor();
 
-		mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account_nopadding : 0);
+		//TODO
+		//mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account_nopadding : 0);
 		if (is_multiple_account_enabled) {
 			final Drawable d = mContentScroller.getBackground();
 			if (d != null) {
@@ -272,8 +273,8 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 		mNameView.setText(status.name);
 		mScreenNameView.setText("@" + status.screen_name);
-		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(
-				getUserTypeIconRes(status.is_verified, status.is_protected), 0, 0, 0);
+		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+				getUserTypeIconRes(status.is_verified, status.is_protected), 0);
 		mTextView.setText(status.text);
 		final TwidereLinkify linkify = new TwidereLinkify(mTextView);
 		linkify.setOnLinkClickListener(new OnLinkClickHandler(getActivity(), mAccountId));

@@ -334,8 +334,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		mNameView.setText(user.getName());
 		mScreenNameView.setText("@" + user.getScreenName());
-		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(
-				getUserTypeIconRes(user.isVerified(), user.isProtected()), 0, 0, 0);
+		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 
+				getUserTypeIconRes(user.isVerified(), user.isProtected()), 0);
 		final String description = user.getDescription();
 		mDescriptionContainer.setVisibility(user_is_me || !isNullOrEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);

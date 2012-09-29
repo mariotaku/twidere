@@ -22,8 +22,7 @@
 				<FrameLayout
 					android:id="@+id/user_color_label"
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:background="@drawable/ic_label_user">
+					android:layout_height="wrap_content">
 
 					<RelativeLayout
 						android:id="@+id/profile"

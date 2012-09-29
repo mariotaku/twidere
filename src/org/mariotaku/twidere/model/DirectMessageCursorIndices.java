@@ -37,7 +37,6 @@ public class DirectMessageCursorIndices {
 		recipient_id = cursor.getColumnIndex(DirectMessages.RECIPIENT_ID);
 
 		is_gap = cursor.getColumnIndex(DirectMessages.IS_GAP);
-
 		text = cursor.getColumnIndex(DirectMessages.TEXT);
 		sender_name = cursor.getColumnIndex(DirectMessages.SENDER_NAME);
 		recipient_name = cursor.getColumnIndex(DirectMessages.RECIPIENT_NAME);
