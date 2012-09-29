@@ -43,7 +43,7 @@ import twitter4j.internal.util.z_T4JInternalParseUtil;
 	private long previousCursor = -1;
 	private long nextCursor = -1;
 
-	/* package */IDsJSONImpl(final HttpResponse res, final Configuration conf) throws TwitterException {
+	/* package */IDsJSONImpl(final HttpResponse res) throws TwitterException {
 		super(res);
 		final String json = res.asString();
 		init(json);

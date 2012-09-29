@@ -123,7 +123,7 @@ public class z_T4JInternalJSONImplFactory implements z_T4JInternalFactory {
 
 	@Override
 	public IDs createIDs(final HttpResponse res) throws TwitterException {
-		return new IDsJSONImpl(res, conf);
+		return new IDsJSONImpl(res);
 	}
 
 	@Override
