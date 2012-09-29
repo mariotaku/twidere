@@ -21,7 +21,6 @@ public class ImageUploaderPickerPreference extends DialogPreference implements C
 
 	private SharedPreferences mPreferences;
 	private final PackageManager mPackageManager;
-	private AlertDialog mDialog;
 	private ImageUploaderSpec[] mAvailableImageUploaders;
 
 	public ImageUploaderPickerPreference(final Context context) {
@@ -46,9 +45,7 @@ public class ImageUploaderPickerPreference extends DialogPreference implements C
 			editor.putString(PREFERENCE_KEY_IMAGE_UPLOADER, spec.cls);
 			editor.commit();
 		}
-		if (mDialog != null && mDialog.isShowing()) {
-			mDialog.dismiss();
-		}
+		dialog.dismiss();
 	}
 
 	@Override

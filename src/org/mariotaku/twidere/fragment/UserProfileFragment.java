@@ -435,7 +435,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (data == null) return;
 			final Drawable d = new BitmapDrawable(getResources(), data);
 			final LayoutParams lp = mProfileNameBannerContainer.getLayoutParams();
-			lp.height = mProfileNameContainer.getWidth() / 2;
+			final float ratio = (float) data.getHeight() / (float) data.getWidth();
+			lp.height = (int) (mProfileNameContainer.getWidth() * ratio);
 			mProfileNameBannerContainer.setLayoutParams(lp);
 			mProfileNameBannerContainer.setBackgroundDrawable(d);
 		}
