@@ -36,7 +36,6 @@ import twitter4j.ProfileImage;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.RateLimitStatus;
-import twitter4j.RelatedResults;
 import twitter4j.Relationship;
 import twitter4j.ResponseList;
 import twitter4j.SavedSearch;
@@ -183,11 +182,6 @@ public class z_T4JInternalJSONImplFactory implements z_T4JInternalFactory {
 	@Override
 	public RateLimitStatus createRateLimitStatus(final HttpResponse res) throws TwitterException {
 		return new RateLimitStatusJSONImpl(res, conf);
-	}
-
-	@Override
-	public RelatedResults createRelatedResults(final HttpResponse res) throws TwitterException {
-		return new RelatedResultsJSONImpl(res, conf);
 	}
 
 	@Override

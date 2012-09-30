@@ -86,9 +86,15 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public final long[] getLastStatusIds() {
+	final long[] getOldestStatusIds() {
 		final int last_idx = mAdapter.getCount() - 1;
 		final long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).status_id : -1;
+		return last_id > 0 ? new long[] { last_id } : null;
+	}
+	
+	@Override
+	final long[] getNewestStatusIds() {
+		final long last_id = mAdapter.getCount() > 0 ? mAdapter.getItem(0).status_id : -1;
 		return last_id > 0 ? new long[] { last_id } : null;
 	}
 
@@ -98,10 +104,12 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public final int getStatuses(final long[] account_ids, final long[] max_ids) {
+	public final int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		final long max_id = max_ids != null && max_ids.length == 1 ? max_ids[0] : -1;
+		final long since_id = since_ids != null && since_ids.length == 1 ? since_ids[0] : -1;
 		final Bundle args = getArguments();
 		args.putLong(INTENT_KEY_MAX_ID, max_id);
+		args.putLong(INTENT_KEY_SINCE_ID, since_id);
 		getLoaderManager().restartLoader(0, args, this);
 		return -1;
 	}
@@ -178,7 +186,11 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public void onPullDownToRefresh() {
-		getStatuses(null, null);
+		final int count = mAdapter.getCount();
+		final ParcelableStatus status = count > 0 ? mAdapter.getItem(0) : null;
+		if (status != null) {
+			getStatuses(new long[] { status.account_id }, null, new long[] { status.status_id });
+		}
 	}
 
 	@Override
@@ -186,7 +198,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		final int count = mAdapter.getCount();
 		final ParcelableStatus status = count > 0 ? mAdapter.getItem(count - 1) : null;
 		if (status != null) {
-			getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
+			getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
 		}
 	}
 

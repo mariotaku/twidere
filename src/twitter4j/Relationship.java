@@ -21,7 +21,7 @@ package twitter4j;
  * two users
  * 
  * @author Perry Sakkaris - psakkaris at gmail.com
- * @see <a href="https://dev.twitter.com/docs/api/1/get/friendships/show">GET
+ * @see <a href="https://dev.twitter.com/docs/api/1.1/get/friendships/show">GET
  *      friendships/show | Twitter Developers</a>
  * @since Twitter4J 2.1.0
  */

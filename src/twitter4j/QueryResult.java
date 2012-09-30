@@ -16,8 +16,6 @@
 
 package twitter4j;
 
-import java.util.List;
-
 /**
  * A data interface representing search API response
  * 

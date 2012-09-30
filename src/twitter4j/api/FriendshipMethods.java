@@ -34,13 +34,13 @@ public interface FriendshipMethods {
 	 * Returns the befriended user in the requested format when successful.
 	 * Returns a string describing the failure condition when unsuccessful. If
 	 * you are already friends with the user an HTTP 403 will be returned. <br>
-	 * This method calls http://api.twitter.com/1/friendships/create/[id].json
+	 * This method calls http://api.twitter.com/1.1/friendships/create/[id].json
 	 * 
 	 * @param userId the ID of the user to be befriended
 	 * @return the befriended user
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/friendships/create">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/friendships/create">POST
 	 *      friendships/create | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -52,7 +52,7 @@ public interface FriendshipMethods {
 	 * Returns the befriended user in the requested format when successful.
 	 * Returns a string describing the failure condition when unsuccessful. If
 	 * you are already friends with the user an HTTP 403 will be returned. <br>
-	 * This method calls http://api.twitter.com/1/friendships/create/[id].json
+	 * This method calls http://api.twitter.com/1.1/friendships/create/[id].json
 	 * 
 	 * @param userId the ID of the user to be befriended
 	 * @param follow Enable notifications for the target user in addition to
@@ -60,7 +60,7 @@ public interface FriendshipMethods {
 	 * @return the befriended user
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/friendships/create">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/friendships/create">POST
 	 *      friendships/create | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -72,14 +72,14 @@ public interface FriendshipMethods {
 	 * Returns the befriended user in the requested format when successful.
 	 * Returns a string describing the failure condition when unsuccessful. If
 	 * you are already friends with the user an HTTP 403 will be returned. <br>
-	 * This method calls http://api.twitter.com/1/friendships/create/[id].json
+	 * This method calls http://api.twitter.com/1.1/friendships/create/[id].json
 	 * 
 	 * @param screenName the screen name of the user to be befriended
 	 * @return the befriended user
 	 * @throws twitter4j.TwitterException when Twitter service or network is
 	 *             unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/friendships/create">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/friendships/create">POST
 	 *      friendships/create | Twitter Developers</a>
 	 * @since Twitter4J 2.0.1
 	 */
@@ -91,7 +91,7 @@ public interface FriendshipMethods {
 	 * Returns the befriended user in the requested format when successful.
 	 * Returns a string describing the failure condition when unsuccessful. If
 	 * you are already friends with the user an HTTP 403 will be returned. <br>
-	 * This method calls http://api.twitter.com/1/friendships/create/[id].json
+	 * This method calls http://api.twitter.com/1.1/friendships/create/[id].json
 	 * 
 	 * @param screenName the screen name of the user to be befriended
 	 * @param follow Enable notifications for the target user in addition to
@@ -99,7 +99,7 @@ public interface FriendshipMethods {
 	 * @return the befriended user
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/friendships/create">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/friendships/create">POST
 	 *      friendships/create | Twitter Developers</a>
 	 * @since Twitter4J 2.0.2
 	 */
@@ -110,13 +110,13 @@ public interface FriendshipMethods {
 	 * parameter.<br>
 	 * Returns the unfollowed user in the requested format when successful.
 	 * Returns a string describing the failure condition when unsuccessful. <br>
-	 * This method calls http://api.twitter.com/1/friendships/destroy/[id].json
+	 * This method calls http://api.twitter.com/1.1/friendships/destroy/[id].json
 	 * 
 	 * @param userId the ID of the user for whom to request a list of friends
 	 * @return User
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/friendships/destroy">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/friendships/destroy">POST
 	 *      friendships/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -127,14 +127,14 @@ public interface FriendshipMethods {
 	 * parameter.<br>
 	 * Returns the unfollowed user in the requested format when successful.
 	 * Returns a string describing the failure condition when unsuccessful. <br>
-	 * This method calls http://api.twitter.com/1/friendships/destroy/[id].json
+	 * This method calls http://api.twitter.com/1.1/friendships/destroy/[id].json
 	 * 
 	 * @param screenName the screen name of the user for whom to request a list
 	 *            of friends
 	 * @return User
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/friendships/destroy">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/friendships/destroy">POST
 	 *      friendships/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.0.1
 	 */
@@ -143,7 +143,7 @@ public interface FriendshipMethods {
 	/**
 	 * Tests for the existence of friendship between two users. Will return true
 	 * if user_a follows user_b, otherwise will return false. <br>
-	 * This method calls http://api.twitter.com/1/friendships/exists.json
+	 * This method calls http://api.twitter.com/1.1/friendships/exists.json
 	 * 
 	 * @param userA The ID or screen_name of the first user to test friendship
 	 *            for.
@@ -152,7 +152,7 @@ public interface FriendshipMethods {
 	 * @return if a friendship exists between two users.
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/friendships/exists">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/friendships/exists">GET
 	 *      friendships/exists | Twitter Developers</a>
 	 * @since Twitter4J 2.0.1
 	 */
@@ -161,7 +161,7 @@ public interface FriendshipMethods {
 	/**
 	 * Returns an array of numeric IDs for every user who has a pending request
 	 * to follow the authenticating user. <br>
-	 * This method calls http://api.twitter.com/1/friendships/incoming.json
+	 * This method calls http://api.twitter.com/1.1/friendships/incoming.json
 	 * 
 	 * @param cursor Breaks the results into pages. A single page contains 5000
 	 *            identifiers. Provide a value of -1 to begin paging.
@@ -169,7 +169,7 @@ public interface FriendshipMethods {
 	 *         to follow the authenticating user.
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/friendships/incoming">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/friendships/incoming">GET
 	 *      friendships/incoming | Twitter Developers</a>
 	 * @since Twitter4J 2.1.2
 	 */
@@ -180,7 +180,7 @@ public interface FriendshipMethods {
 	 * they do not want to receive retweets from when successful. <br>
 	 * Now the return value had no data for paging. <br>
 	 * This methos calls
-	 * http://api.twitter.com/1/friendships/no_retweet_ids.json
+	 * http://api.twitter.com/1.1/friendships/no_retweet_ids.json
 	 * 
 	 * @return IDs
 	 * @throws TwitterException when Twitter service or network is unavailable
@@ -194,7 +194,7 @@ public interface FriendshipMethods {
 	/**
 	 * Returns an array of numeric IDs for every protected user for whom the
 	 * authenticating user has a pending follow request. <br>
-	 * This method calls http://api.twitter.com/1/friendships/outgoing.json
+	 * This method calls http://api.twitter.com/1.1/friendships/outgoing.json
 	 * 
 	 * @param cursor Breaks the results into pages. A single page contains 5000
 	 *            identifiers. Provide a value of -1 to begin paging.
@@ -202,7 +202,7 @@ public interface FriendshipMethods {
 	 *         authenticating user has a pending follow request.
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/friendships/outgoing">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/friendships/outgoing">GET
 	 *      friendships/outgoing | Twitter Developers</a>
 	 * @since Twitter4J 2.1.2
 	 */
@@ -213,7 +213,7 @@ public interface FriendshipMethods {
 	 * users. <br>
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
-	 * This method calls http://api.twitter.com/1/friendships/lookup.json
+	 * This method calls http://api.twitter.com/1.1/friendships/lookup.json
 	 * 
 	 * @param ids array of the ids to lookup
 	 * @return list of Relationships
@@ -230,7 +230,7 @@ public interface FriendshipMethods {
 	 * users. <br>
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
-	 * This method calls http://api.twitter.com/1/friendships/lookup.json
+	 * This method calls http://api.twitter.com/1.1/friendships/lookup.json
 	 * 
 	 * @param screenNames array of the screen names to lookup
 	 * @return list of Relationships
@@ -244,14 +244,14 @@ public interface FriendshipMethods {
 
 	/**
 	 * Returns detailed information about the relationship between two users. <br>
-	 * This method calls http://api.twitter.com/1/friendships/show.json
+	 * This method calls http://api.twitter.com/1.1/friendships/show.json
 	 * 
 	 * @param sourceId the ID of the source user
 	 * @param targetId the ID of the target user
 	 * @return Relationship
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/friendships/show">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/friendships/show">GET
 	 *      friendships/show | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -259,14 +259,14 @@ public interface FriendshipMethods {
 
 	/**
 	 * Returns detailed information about the relationship between two users. <br>
-	 * This method calls http://api.twitter.com/1/friendships/show.json
+	 * This method calls http://api.twitter.com/1.1/friendships/show.json
 	 * 
 	 * @param sourceScreenName the screen name of the source user
 	 * @param targetScreenName the screen name of the target user
 	 * @return Relationship
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/friendships/show">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/friendships/show">GET
 	 *      friendships/show | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -277,7 +277,7 @@ public interface FriendshipMethods {
 	 * the specified user. <br>
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
-	 * This method calls http://api.twitter.com/1/friendships/update.json
+	 * This method calls http://api.twitter.com/1.1/friendships/update.json
 	 * 
 	 * @param userId user id to update
 	 * @param enableDeviceNotification set true to enable device notification
@@ -297,7 +297,7 @@ public interface FriendshipMethods {
 	 * the specified user. <br>
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
-	 * This method calls http://api.twitter.com/1/friendships/update.json
+	 * This method calls http://api.twitter.com/1.1/friendships/update.json
 	 * 
 	 * @param screenName screen name to update
 	 * @param enableDeviceNotification set true to enable device notification

@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
@@ -35,7 +34,6 @@ import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openConversation;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.openUserRetweetedStatus;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
@@ -59,6 +57,7 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -72,9 +71,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -115,8 +111,8 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			mRetweetedStatusView;
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
-	private View mStatusContent, mProfileView, mFollowIndicator, mImagesPreviewContainer, mContentScroller,
-			mUserColorLabel;
+	private View mStatusContent, mFollowIndicator, mImagesPreviewContainer;
+	private ColorLabelRelativeLayout mProfileView;
 	private MenuBar mMenuBar;
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
 
@@ -257,24 +253,13 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
 		mMenuBar.show();
 
-		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
-
 		updateUserColor();
-
-		//TODO
-		//mContentScroller.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account_nopadding : 0);
-		if (is_multiple_account_enabled) {
-			final Drawable d = mContentScroller.getBackground();
-			if (d != null) {
-				d.mutate().setColorFilter(getAccountColor(getActivity(), status.account_id), PorterDuff.Mode.MULTIPLY);
-				mContentScroller.invalidate();
-			}
-		}
+		mProfileView.drawRight(getAccountColor(getActivity(), status.account_id));
 
 		mNameView.setText(status.name);
-		mScreenNameView.setText("@" + status.screen_name);
-		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+		mNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 				getUserTypeIconRes(status.is_verified, status.is_protected), 0);
+		mScreenNameView.setText("@" + status.screen_name);
 		mTextView.setText(status.text);
 		final TwidereLinkify linkify = new TwidereLinkify(mTextView);
 		linkify.setOnLinkClickListener(new OnLinkClickHandler(getActivity(), mAccountId));
@@ -307,16 +292,11 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		if (mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false)) {
 			mImagesPreviewFragment.show();
 		}
-		mRetweetedStatusView.setVisibility(status.is_protected ? View.GONE : View.VISIBLE);
+		mRetweetedStatusView.setVisibility(status.retweet_id > 0 ? View.VISIBLE : View.GONE);
 		if (status.retweet_id > 0) {
-			// final boolean display_name =
-			// mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-			final boolean display_name = true;
-			final String retweeted_by = display_name ? status.retweeted_by_name : status.retweeted_by_screen_name;
 			mRetweetedStatusView.setText(status.retweet_count > 1 ? getString(R.string.retweeted_by_with_count,
-					retweeted_by, status.retweet_count - 1) : getString(R.string.retweeted_by, retweeted_by));
-		} else {
-			mRetweetedStatusView.setText(R.string.users_retweeted_this);
+					status.retweeted_by_name, status.retweet_count - 1) : getString(R.string.retweeted_by,
+					status.retweeted_by_name));
 		}
 		mLocationView.setVisibility(ParcelableLocation.isValidLocation(status.location) ? View.VISIBLE : View.GONE);
 
@@ -403,11 +383,6 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				break;
 			}
-			case R.id.retweet_view: {
-				openUserRetweetedStatus(getActivity(), mStatus.account_id, mStatus.retweet_id > 0 ? mStatus.retweet_id
-						: mStatus.status_id);
-				break;
-			}
 		}
 
 	}
@@ -417,8 +392,6 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		final View view = inflater.inflate(R.layout.view_status, container, false);
 		mStatusContent = view.findViewById(R.id.content);
 		mStatusLoadProgress = (ProgressBar) view.findViewById(R.id.status_load_progress);
-		mUserColorLabel = view.findViewById(R.id.user_color_label);
-		mContentScroller = view.findViewById(R.id.content_scroller);
 		mImagesPreviewContainer = view.findViewById(R.id.images_preview);
 		mLocationView = (TextView) view.findViewById(R.id.location_view);
 		mRetweetedStatusView = (TextView) view.findViewById(R.id.retweet_view);
@@ -431,7 +404,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		mFollowButton = (Button) view.findViewById(R.id.follow);
 		mFollowIndicator = view.findViewById(R.id.follow_indicator);
 		mFollowInfoProgress = (ProgressBar) view.findViewById(R.id.follow_info_progress);
-		mProfileView = view.findViewById(R.id.profile);
+		mProfileView = (ColorLabelRelativeLayout) view.findViewById(R.id.profile);
 		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
 		return view;
 	}
@@ -606,13 +579,8 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	}
 
 	private void updateUserColor() {
-		if (mUserColorLabel != null && mStatus != null) {
-			final Drawable d = mUserColorLabel.getBackground();
-			if (d != null) {
-				d.mutate().setColorFilter(getUserColor(getActivity(), mStatus.user_id), Mode.MULTIPLY);
-				mUserColorLabel.invalidate();
-			}
-		}
+		if (mStatus == null) return;
+		mProfileView.drawLeft(getUserColor(getActivity(), mStatus.user_id));
 	}
 
 	public static class LocationInfoLoader extends AsyncTaskLoader<String> {

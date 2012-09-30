@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.view;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -32,6 +33,7 @@ public class ColorLabelRelativeLayout extends RelativeLayout {
 	private final Paint mPaintLeft = new Paint(), mPaintRight = new Paint(), mPaintBackground = new Paint();
 	private final Rect mRectLeft = new Rect(), mRectRight = new Rect(), mRectBackground = new Rect();
 	private final float mDensity;
+	private final boolean mIsRTL;
 
 	public ColorLabelRelativeLayout(final Context context) {
 		this(context, null);
@@ -44,10 +46,13 @@ public class ColorLabelRelativeLayout extends RelativeLayout {
 	public ColorLabelRelativeLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setWillNotDraw(false);
-		mDensity = context.getResources().getDisplayMetrics().density;
+		final Resources res = context.getResources();
+		mDensity = res.getDisplayMetrics().density;
 		mPaintLeft.setColor(Color.TRANSPARENT);
 		mPaintRight.setColor(Color.TRANSPARENT);
 		mPaintBackground.setColor(Color.TRANSPARENT);
+		final String lang = res.getConfiguration().locale.getLanguage();
+		mIsRTL = "ar".equalsIgnoreCase(lang);
 	}
 
 	public void drawBackground(final int color) {
@@ -80,8 +85,13 @@ public class ColorLabelRelativeLayout extends RelativeLayout {
 	@Override
 	public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		mRectBackground.set(0, 0, w, h);
-		mRectLeft.set(0, 0, (int) (4 * mDensity), h);
-		mRectRight.set(w - (int) (4 * mDensity), 0, w, h);
+		if (mIsRTL) {
+			mRectRight.set(0, 0, (int) (4 * mDensity), h);
+			mRectLeft.set(w - (int) (4 * mDensity), 0, w, h);
+		} else {
+			mRectLeft.set(0, 0, (int) (4 * mDensity), h);
+			mRectRight.set(w - (int) (4 * mDensity), 0, w, h);
+		}
 		super.onSizeChanged(w, h, oldw, oldh);
 	}
 }

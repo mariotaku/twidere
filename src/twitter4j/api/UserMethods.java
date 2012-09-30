@@ -32,7 +32,7 @@ public interface UserMethods {
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
 	 * This method calls
-	 * http://api.twitter.com/1/users/suggestions/:slug/members.json
+	 * http://api.twitter.com/1.1/users/suggestions/:slug/members.json
 	 * 
 	 * @param categorySlug slug
 	 * @return list of suggested users
@@ -53,7 +53,7 @@ public interface UserMethods {
 	 * user. This method must not be used as the image source URL presented to
 	 * users of your application. <br>
 	 * This method calls
-	 * http://api.twitter.com/1/users/profile_image/:screen_name.json
+	 * http://api.twitter.com/1.1/users/profile_image/:screen_name.json
 	 * 
 	 * @param screenName The screen name of the user for whom to return results
 	 *            for.
@@ -64,7 +64,7 @@ public interface UserMethods {
 	 * @return profile image
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/users/profile_image/:screen_name">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/users/profile_image/:screen_name">GET
 	 *      users/profile_image/:screen_name | Twitter Developers</a>
 	 * @since Twitter4J 2.1.7
 	 */
@@ -74,12 +74,12 @@ public interface UserMethods {
 	 * Access to Twitter's suggested user list. This returns the list of
 	 * suggested user categories. The category can be used in the
 	 * users/suggestions/category endpoint to get the users in that category. <br>
-	 * This method calls http://api.twitter.com/1/users/suggestions/:slug.json
+	 * This method calls http://api.twitter.com/1.1/users/suggestions/:slug.json
 	 * 
 	 * @return list of suggested user categories.
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/users/suggestions/:slug">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/users/suggestions/:slug">GET
 	 *      users/suggestions/:slug | Twitter Developers</a>
 	 * @since Twitter4J 2.1.1
 	 */
@@ -89,13 +89,13 @@ public interface UserMethods {
 	 * Access the users in a given category of the Twitter suggested user list.<br>
 	 * It is recommended that end clients cache this data for no more than one
 	 * hour. <br>
-	 * This method calls http://api.twitter.com/1/users/suggestions/:slug.json
+	 * This method calls http://api.twitter.com/1.1/users/suggestions/:slug.json
 	 * 
 	 * @param categorySlug slug
 	 * @return list of suggested users
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/users/suggestions/slug">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/users/suggestions/slug">GET
 	 *      users/suggestions/slug | Twitter Developers</a>
 	 * @since Twitter4J 2.1.1
 	 */
@@ -106,12 +106,12 @@ public interface UserMethods {
 	 * ID, screen name, or combination of the two. The author's most recent
 	 * status (if the authenticating user has permission) will be returned
 	 * inline. <br>
-	 * This method calls http://api.twitter.com/1/users/lookup.json
+	 * This method calls http://api.twitter.com/1.1/users/lookup.json
 	 * 
 	 * @param ids Specifies the screen names of the users to return.
 	 * @return users
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/users/lookup">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/users/lookup">GET
 	 *      users/lookup | Twitter Developers</a>
 	 * @since Twitter4J 2.1.1
 	 */
@@ -122,12 +122,12 @@ public interface UserMethods {
 	 * ID, screen name, or combination of the two. The author's most recent
 	 * status (if the authenticating user has permission) will be returned
 	 * inline. <br>
-	 * This method calls http://api.twitter.com/1/users/lookup.json
+	 * This method calls http://api.twitter.com/1.1/users/lookup.json
 	 * 
 	 * @param screenNames Specifies the screen names of the users to return.
 	 * @return users
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/users/lookup">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/users/lookup">GET
 	 *      users/lookup | Twitter Developers</a>
 	 * @since Twitter4J 2.1.1
 	 */
@@ -139,14 +139,14 @@ public interface UserMethods {
 	 * returned by using this API.<br>
 	 * Usage note: It is only possible to retrieve the first 1000 matches from
 	 * this API. <br>
-	 * This method calls http://api.twitter.com/1/users/search.json
+	 * This method calls http://api.twitter.com/1.1/users/search.json
 	 * 
 	 * @param query The query to run against people search.
 	 * @param page Specifies the page of results to retrieve. Number of statuses
 	 *            per page is fixed to 20.
 	 * @return the list of Users matches the provided
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/users/search">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/users/search">GET
 	 *      users/search | Twitter Developers</a>
 	 */
 	ResponseList<User> searchUsers(String query, int page) throws TwitterException;
@@ -155,12 +155,12 @@ public interface UserMethods {
 	 * Returns extended information of a given user, specified by ID or screen
 	 * name as per the required id parameter. The author's most recent status
 	 * will be returned inline. <br>
-	 * This method calls http://api.twitter.com/1/users/show.json
+	 * This method calls http://api.twitter.com/1.1/users/show.json
 	 * 
 	 * @param userId the ID of the user for whom to request the detail
 	 * @return users
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/users/show">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/users/show">GET
 	 *      users/show | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -170,13 +170,13 @@ public interface UserMethods {
 	 * Returns extended information of a given user, specified by ID or screen
 	 * name as per the required id parameter. The author's most recent status
 	 * will be returned inline. <br>
-	 * This method calls http://api.twitter.com/1/users/show.json
+	 * This method calls http://api.twitter.com/1.1/users/show.json
 	 * 
 	 * @param screenName the screen name of the user for whom to request the
 	 *            detail
 	 * @return User
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/users/show">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/users/show">GET
 	 *      users/show | Twitter Developers</a>
 	 */
 	User showUser(String screenName) throws TwitterException;

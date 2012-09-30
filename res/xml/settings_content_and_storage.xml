@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:robobunny="http://robobunny.com"
 	android:key="settings_content_and_storage"
 	android:title="@string/content_and_storage">
 
@@ -9,17 +10,6 @@
 		<org.mariotaku.twidere.preference.ImageUploaderPickerPreference
 			android:key="image_uploader"
 			android:title="@string/image_uploader"/>
-
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="display_profile_image"
-			android:summary="@string/image_load_summary"
-			android:title="@string/display_profile_image"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="inline_image_preview"
-			android:summary="@string/image_load_summary"
-			android:title="@string/inline_image_preview"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_content"
@@ -56,24 +46,21 @@
 			android:summary="@string/load_more_automatically_summary"
 			android:title="@string/load_more_automatically"/>
 
-		<org.mariotaku.preference.SeekBarPreference
-			maxValue="200"
-			minValue="10"
+		<com.robobunny.SeekBarPreference
 			android:defaultValue="20"
 			android:key="load_item_limit"
+			android:max="200"
 			android:summary="@string/load_item_limit_summary"
-			android:title="@string/load_item_limit"/>
+			android:title="@string/load_item_limit"
+			robobunny:min="10"
+			robobunny:unitsLeft=""
+			robobunny:unitsRight=""/>
 
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="remember_position"
 			android:summary="@string/remember_position_summary"
 			android:title="@string/remember_position"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="show_absolute_time"
-			android:summary="@string/show_absolute_time_summary"
-			android:title="@string/show_absolute_time"/>
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="sort_timeline_by_time"
@@ -88,13 +75,15 @@
 	<PreferenceCategory
 		android:key="category_storage"
 		android:title="@string/storage">
-		<org.mariotaku.preference.SeekBarPreference
-			maxValue="300"
-			minValue="50"
+		<com.robobunny.SeekBarPreference
 			android:defaultValue="100"
 			android:key="database_item_limit"
+			android:max="300"
 			android:summary="@string/database_item_limit_summary"
-			android:title="@string/database_item_limit"/>
+			android:title="@string/database_item_limit"
+			robobunny:min="50"
+			robobunny:unitsLeft=""
+			robobunny:unitsRight=""/>
 
 		<org.mariotaku.twidere.preference.ClearCachePreference
 			android:key="clear_cache"

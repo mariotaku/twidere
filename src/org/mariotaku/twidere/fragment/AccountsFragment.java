@@ -20,14 +20,13 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.adapter.AccountsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -35,7 +34,6 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -47,20 +45,17 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 public class AccountsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemLongClickListener,
@@ -102,7 +97,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = getContentResolver();
-		mAdapter = new AccountsAdapter(getActivity());
+		mAdapter = new AccountsAdapter(getActivity(), false);
 		getLoaderManager().initLoader(0, null, this);
 		mListView = getListView();
 		mListView.setOnItemLongClickListener(this);
@@ -117,7 +112,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 					final int color = data.getIntExtra(Accounts.USER_COLOR, Color.WHITE);
 					final ContentValues values = new ContentValues();
 					values.put(Accounts.USER_COLOR, color);
-					final String where = Accounts.USER_ID + " = " + mSelectedUserId;
+					final String where = Accounts.ACCOUNT_ID + " = " + mSelectedUserId;
 					mResolver.update(Accounts.CONTENT_URI, values, where, null);
 					getLoaderManager().restartLoader(0, null, this);
 				}
@@ -158,7 +153,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		if (isDefaultAccountValid() && mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
 			mSelectedColor = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.USER_COLOR));
-			mSelectedUserId = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
+			mSelectedUserId = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
 			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_account);
 			mPopupMenu.setOnMenuItemClickListener(this);
@@ -173,7 +168,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		if (mApplication.isMultiSelectActive()) return;
 		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
-			final long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.USER_ID));
+			final long user_id = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
 			if (isDefaultAccountValid()) {
 				openUserProfile(getActivity(), user_id, user_id, null);
 			} else {
@@ -216,7 +211,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				break;
 			}
 			case MENU_DELETE: {
-				mResolver.delete(Accounts.CONTENT_URI, Accounts.USER_ID + " = " + mSelectedUserId, null);
+				mResolver.delete(Accounts.CONTENT_URI, Accounts.ACCOUNT_ID + " = " + mSelectedUserId, null);
 				// Also delete tweets related to the account we previously
 				// deleted.
 				mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + " = " + mSelectedUserId, null);
@@ -268,86 +263,6 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		mAdapter.notifyDataSetChanged();
 		if (getActivity() instanceof HomeActivity) {
 			((HomeActivity) getActivity()).checkDefaultAccountSet();
-		}
-	}
-
-	public static class ViewHolder {
-
-		public final ImageView profile_image;
-		private final View content, default_indicator;
-
-		public ViewHolder(final View view) {
-			content = view;
-			profile_image = (ImageView) view.findViewById(android.R.id.icon);
-			default_indicator = view.findViewById(android.R.id.text2);
-		}
-
-		public void setAccountColor(final int color) {
-			content.getBackground().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-			content.invalidate();
-		}
-
-		public void setIsDefault(final boolean is_default) {
-			default_indicator.setVisibility(is_default ? View.VISIBLE : View.GONE);
-		}
-	}
-
-	static class AccountsAdapter extends SimpleCursorAdapter {
-
-		private final LazyImageLoader mProfileImageLoader;
-		private final SharedPreferences mPreferences;
-		private int mUserColorIdx, mProfileImageIdx, mUserIdIdx;
-		private long mDefaultAccountId;
-		private final boolean mDisplayHiResProfileImage;
-
-		public AccountsAdapter(final Context context) {
-			super(context, R.layout.account_list_item, null, new String[] { Accounts.USERNAME },
-					new int[] { android.R.id.text1 }, 0);
-			final TwidereApplication application = TwidereApplication.getInstance(context);
-			mProfileImageLoader = application.getProfileImageLoader();
-			mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-		}
-
-		@Override
-		public void bindView(final View view, final Context context, final Cursor cursor) {
-			final int color = cursor.getInt(mUserColorIdx);
-			final ViewHolder holder = (ViewHolder) view.getTag();
-			holder.setAccountColor(color);
-			holder.setIsDefault(mDefaultAccountId != -1 && mDefaultAccountId == cursor.getLong(mUserIdIdx));
-			final String profile_image_url_string = cursor.getString(mProfileImageIdx);
-			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
-						holder.profile_image);
-			} else {
-				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
-			}
-			super.bindView(view, context, cursor);
-		}
-
-		@Override
-		public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {
-
-			final View view = super.newView(context, cursor, parent);
-			final ViewHolder viewholder = new ViewHolder(view);
-			view.setTag(viewholder);
-			return view;
-		}
-
-		@Override
-		public void notifyDataSetChanged() {
-			mDefaultAccountId = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
-			super.notifyDataSetChanged();
-		}
-
-		@Override
-		public Cursor swapCursor(final Cursor cursor) {
-			if (cursor != null) {
-				mUserColorIdx = cursor.getColumnIndex(Accounts.USER_COLOR);
-				mProfileImageIdx = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
-				mUserIdIdx = cursor.getColumnIndex(Accounts.USER_ID);
-			}
-			return super.swapCursor(cursor);
 		}
 	}
 }

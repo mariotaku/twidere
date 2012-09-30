@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<style name="Theme.Twidere" parent="Theme.Holo">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
@@ -7,6 +7,7 @@
 		<item name="tabBackground">@null</item>
 		<item name="switchStyle">@style/Widget.Holo.CompoundButton.Switch</item>
 		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
+		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
@@ -23,6 +24,7 @@
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="switchStyle">@style/Widget.Holo.Light.CompoundButton.Switch</item>
 		<item name="editTextStyle">@style/Widget.Holo.Light.EditText</item>
+		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
@@ -38,6 +40,7 @@
 		<item name="android:windowBackground">@drawable/image_viewer_background</item>
 		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
+		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 	</style>
 
 	<style name="Theme.Twidere.Dialog" parent="Theme.Holo.Dialog">
@@ -45,6 +48,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="switchStyle">@style/Widget.Holo.CompoundButton.Switch</item>
+		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
 		<!-- Button styles -->
@@ -59,6 +63,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="switchStyle">@style/Widget.Holo.Light.CompoundButton.Switch</item>
+		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
 		<!-- Button styles -->

@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:robobunny="http://robobunny.com"
 	android:key="category_appearance"
 	android:title="@string/look_and_feel">
-
-	<org.mariotaku.preference.TextSizePreference
-		maxValue="24.0"
-		minValue="12.0"
-		android:defaultValue="14.0"
-		android:key="text_size"
-		android:summary="@string/text_size_summary"
-		android:title="@string/text_size"/>
 
 	<CheckBoxPreference
 		android:defaultValue="false"
@@ -33,6 +26,39 @@
 		android:summary="@string/leftside_compose_button_summary"
 		android:title="@string/leftside_compose_button"/>
 
+	<PreferenceCategory
+		android:key="cat_tweet"
+		android:title="@string/tweet">
+		<org.mariotaku.twidere.preference.StatusPreviewPreference
+			android:key="status_preview"
+			android:title="@string/preview"/>
+
+		<com.robobunny.SeekBarPreference
+			android:defaultValue="14"
+			android:key="text_size_int"
+			android:max="24"
+			android:summary="@string/text_size_summary"
+			android:title="@string/text_size"
+			robobunny:min="12"
+			robobunny:unitsLeft=""
+			robobunny:unitsRight="sp"/>
+
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="display_profile_image"
+			android:summary="@string/image_load_summary"
+			android:title="@string/display_profile_image"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="inline_image_preview"
+			android:summary="@string/image_load_summary"
+			android:title="@string/inline_image_preview"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="show_absolute_time"
+			android:summary="@string/show_absolute_time_summary"
+			android:title="@string/show_absolute_time"/>
+	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="cat_dual_pane_layout"
 		android:title="@string/dual_pane_layout">

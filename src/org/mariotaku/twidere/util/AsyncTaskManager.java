@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.util;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import android.os.AsyncTask.Status;
 
@@ -78,7 +79,7 @@ public class AsyncTaskManager {
 
 	public boolean hasActivatedTask() {
 		final ArrayList<ManagedAsyncTask> tasks_to_remove = new ArrayList<ManagedAsyncTask>();
-		for (final ManagedAsyncTask task : mTasks) {
+		for (final ManagedAsyncTask task : getTaskList()) {
 			if (task.getStatus() != ManagedAsyncTask.Status.RUNNING) {
 				tasks_to_remove.add(task);
 			}
@@ -96,12 +97,20 @@ public class AsyncTaskManager {
 	}
 
 	public void remove(final int hashCode) {
-		mTasks.remove(findTask(hashCode));
+		try {
+			mTasks.remove(findTask(hashCode));
+		} catch (ConcurrentModificationException e) {
+			// Ignore.
+		}
 	}
 
 	private ManagedAsyncTask findTask(final int hashCode) {
-		for (final ManagedAsyncTask task : mTasks) {
-			if (hashCode == task.hashCode()) return task;
+		try {
+			for (final ManagedAsyncTask task : getTaskList()) {
+				if (hashCode == task.hashCode()) return task;
+			}
+		} catch (ConcurrentModificationException e) {
+
 		}
 		return null;
 	}

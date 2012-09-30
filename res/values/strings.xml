@@ -345,5 +345,7 @@
 	<string name="keep_in_background_summary">Consumes more memory, but may faster to launch.</string>
 	<string name="seprate_retweet_action">Seprate retweet action</string>
 	<string name="seprate_retweet_action_summary">Show both retweet and quote action in tweet menu</string>
+	<string name="tweet">Tweet</string>
+	<string name="preview">Preview</string>
 
 </resources>

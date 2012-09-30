@@ -29,14 +29,12 @@ import twitter4j.api.ListMembersMethods;
 import twitter4j.api.ListMethods;
 import twitter4j.api.ListSubscribersMethods;
 import twitter4j.api.LocalTrendsMethods;
-import twitter4j.api.NewTwitterMethods;
 import twitter4j.api.NotificationMethods;
 import twitter4j.api.SavedSearchesMethods;
 import twitter4j.api.SearchMethods;
 import twitter4j.api.SpamReportingMethods;
 import twitter4j.api.StatusMethods;
 import twitter4j.api.TimelineMethods;
-import twitter4j.api.TrendsMethods;
 import twitter4j.api.UserMethods;
 import twitter4j.auth.OAuthSupport;
 
@@ -44,9 +42,9 @@ import twitter4j.auth.OAuthSupport;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.2.0
  */
-public interface Twitter extends OAuthSupport, TwitterBase, SearchMethods, TrendsMethods, TimelineMethods,
+public interface Twitter extends OAuthSupport, TwitterBase, SearchMethods, TimelineMethods,
 		StatusMethods, UserMethods, ListMethods, ListMembersMethods, ListSubscribersMethods, DirectMessageMethods,
 		FriendshipMethods, FriendsFollowersMethods, AccountMethods, FavoriteMethods, NotificationMethods, BlockMethods,
-		SpamReportingMethods, SavedSearchesMethods, LocalTrendsMethods, GeoMethods, LegalResources, NewTwitterMethods,
+		SpamReportingMethods, SavedSearchesMethods, LocalTrendsMethods, GeoMethods, LegalResources,
 		HelpMethods, ActivityMethods {
 }

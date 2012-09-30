@@ -44,7 +44,7 @@ public final class Paging {
 	static final String COUNT = "count";
 	// somewhat GET list statuses requires "per_page" instead of "count"
 	// @see <a
-	// href="https://dev.twitter.com/docs/api/1/get/:user/lists/:id/statuses">GET
+	// href="https://dev.twitter.com/docs/api/1.1/get/:user/lists/:id/statuses">GET
 	// :user/lists/:id/statuses | Twitter Developers</a>
 	static final String PER_PAGE = "per_page";
 

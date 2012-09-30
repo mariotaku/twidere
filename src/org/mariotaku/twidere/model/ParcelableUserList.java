@@ -89,33 +89,7 @@ public class ParcelableUserList implements Parcelable, Comparable<ParcelableUser
 	}
 
 	@Override
-	public int describeContents() {
-		return hashCode();
-	}
-
-	@Override
-	public String toString() {
-		return description;
-	}
-
-	@Override
-	public void writeToParcel(final Parcel out, final int flags) {
-		out.writeLong(position);
-		out.writeLong(account_id);
-		out.writeInt(list_id);
-		out.writeInt(is_public ? 1 : 0);
-		out.writeInt(is_following ? 1 : 0);
-		out.writeString(name);
-		out.writeString(description);
-		out.writeLong(user_id);
-		out.writeString(user_name);
-		out.writeString(user_screen_name);
-		out.writeString(user_profile_image_url_string);
-
-	}
-
-	@Override
-	public int compareTo(ParcelableUserList another) {
+	public int compareTo(final ParcelableUserList another) {
 		if (another == null) return 0;
 		final long diff = position - another.position;
 		if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
@@ -124,31 +98,16 @@ public class ParcelableUserList implements Parcelable, Comparable<ParcelableUser
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (account_id ^ (account_id >>> 32));
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + (is_following ? 1231 : 1237);
-		result = prime * result + (is_public ? 1231 : 1237);
-		result = prime * result + list_id;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (int) (position ^ (position >>> 32));
-		result = prime * result + (int) (user_id ^ (user_id >>> 32));
-		result = prime * result + ((user_name == null) ? 0 : user_name.hashCode());
-		result = prime * result + ((user_profile_image_url == null) ? 0 : user_profile_image_url.hashCode());
-		result = prime * result
-				+ ((user_profile_image_url_string == null) ? 0 : user_profile_image_url_string.hashCode());
-		result = prime * result + ((user_screen_name == null) ? 0 : user_screen_name.hashCode());
-		return result;
+	public int describeContents() {
+		return hashCode();
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) return true;
 		if (obj == null) return false;
 		if (!(obj instanceof ParcelableUserList)) return false;
-		ParcelableUserList other = (ParcelableUserList) obj;
+		final ParcelableUserList other = (ParcelableUserList) obj;
 		if (account_id != other.account_id) return false;
 		if (description == null) {
 			if (other.description != null) return false;
@@ -174,6 +133,47 @@ public class ParcelableUserList implements Parcelable, Comparable<ParcelableUser
 			if (other.user_screen_name != null) return false;
 		} else if (!user_screen_name.equals(other.user_screen_name)) return false;
 		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (account_id ^ account_id >>> 32);
+		result = prime * result + (description == null ? 0 : description.hashCode());
+		result = prime * result + (is_following ? 1231 : 1237);
+		result = prime * result + (is_public ? 1231 : 1237);
+		result = prime * result + list_id;
+		result = prime * result + (name == null ? 0 : name.hashCode());
+		result = prime * result + (int) (position ^ position >>> 32);
+		result = prime * result + (int) (user_id ^ user_id >>> 32);
+		result = prime * result + (user_name == null ? 0 : user_name.hashCode());
+		result = prime * result + (user_profile_image_url == null ? 0 : user_profile_image_url.hashCode());
+		result = prime * result
+				+ (user_profile_image_url_string == null ? 0 : user_profile_image_url_string.hashCode());
+		result = prime * result + (user_screen_name == null ? 0 : user_screen_name.hashCode());
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return description;
+	}
+
+	@Override
+	public void writeToParcel(final Parcel out, final int flags) {
+		out.writeLong(position);
+		out.writeLong(account_id);
+		out.writeInt(list_id);
+		out.writeInt(is_public ? 1 : 0);
+		out.writeInt(is_following ? 1 : 0);
+		out.writeString(name);
+		out.writeString(description);
+		out.writeLong(user_id);
+		out.writeString(user_name);
+		out.writeString(user_screen_name);
+		out.writeString(user_profile_image_url_string);
+
 	}
 
 }

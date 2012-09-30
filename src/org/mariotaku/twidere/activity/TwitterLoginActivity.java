@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
 import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.getProxy;
@@ -89,14 +88,12 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
 
-	private String mRESTBaseURL, mSearchBaseURL, mUploadBaseURL, mSigningRESTBaseURL, mOAuthBaseURL,
-			mSigningOAuthBaseURL;
+	private String mRESTBaseURL, mSigningRESTBaseURL, mOAuthBaseURL, mSigningOAuthBaseURL;
 	private String mUsername, mPassword;
 	private int mAuthType;
 	private Integer mUserColor;
 	private long mLoggedId;
 	private boolean mBackPressed;
-	private String mBrowserUserAgent;
 	private boolean mLoaderInitialized;
 
 	private EditText mEditUsername, mEditPassword;
@@ -138,8 +135,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 					}
 					if (bundle != null) {
 						mRESTBaseURL = bundle.getString(Accounts.REST_BASE_URL);
-						mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
-						mUploadBaseURL = bundle.getString(Accounts.UPLOAD_BASE_URL);
 						mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
 						mOAuthBaseURL = bundle.getString(Accounts.OAUTH_BASE_URL);
 						mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
@@ -213,7 +208,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mResolver = getContentResolver();
-		mBrowserUserAgent = getBrowserUserAgent(this);
 		mApplication = TwidereApplication.getInstance(this);
 		setContentView(R.layout.twitter_login);
 		mEditUsername = (EditText) findViewById(R.id.username);
@@ -233,8 +227,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		}
 		mRESTBaseURL = bundle.getString(Accounts.REST_BASE_URL);
 		mOAuthBaseURL = bundle.getString(Accounts.OAUTH_BASE_URL);
-		mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
-		mUploadBaseURL = bundle.getString(Accounts.UPLOAD_BASE_URL);
 		mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
 		mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
 
@@ -251,7 +243,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			mSigningOAuthBaseURL = DEFAULT_SIGNING_OAUTH_BASE_URL;
 		}
 
-		mUsername = bundle.getString(Accounts.USERNAME);
+		mUsername = bundle.getString(Accounts.SCREEN_NAME);
 		mPassword = bundle.getString(Accounts.PASSWORD);
 		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
 		if (bundle.containsKey(Accounts.USER_COLOR)) {
@@ -353,8 +345,6 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 				intent = new Intent(INTENT_ACTION_EDIT_API);
 				final Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
-				bundle.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
-				bundle.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
 				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
 				bundle.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
 				bundle.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
@@ -372,11 +362,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		saveEditedText();
 		outState.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
 		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
-		outState.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
-		outState.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
 		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
 		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
-		outState.putString(Accounts.USERNAME, mUsername);
+		outState.putString(Accounts.SCREEN_NAME, mUsername);
 		outState.putString(Accounts.PASSWORD, mPassword);
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
 		if (mUserColor != null) {
@@ -475,13 +463,11 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		private final Integer user_color;
 
 		private final Context context;
-		private final ContentResolver resolver;
 		private final SharedPreferences preferences;
 
 		public UserCredentialsLoader(final Context context, final Configuration conf, final String username,
 				final String password, final int auth_type, final Integer user_color) {
 			super(context);
-			resolver = context.getContentResolver();
 			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			this.context = context;
 			this.conf = conf;

@@ -24,9 +24,11 @@ interface ITwidereService {
 	int getMentions(in long[] account_ids, in long[] max_ids);
 	int getReceivedDirectMessages(in long[] account_ids, in long[] max_ids);
 	int getSentDirectMessages(in long[] account_ids, in long[] max_ids);
+	int getHomeTimelineWithSinceIds(in long[] account_ids, in long[] max_ids, in long[] since_ids);
+	int getMentionsWithSinceIds(in long[] account_ids, in long[] max_ids, in long[] since_ids);
+	int getReceivedDirectMessagesWithSinceIds(in long[] account_ids, in long[] max_ids, in long[] since_ids);
+	int getSentDirectMessagesWithSinceIds(in long[] account_ids, in long[] max_ids, in long[] since_ids);
 	int refreshAll();
-	int getDailyTrends(long account_id);
-	int getWeeklyTrends(long account_id);
 	int getLocalTrends(long account_id, int woeid);
 	int updateStatus(in long[] account_ids, String content, in Location location, in Uri image_uri, long in_reply_to, boolean delete_image);
 	int destroyStatus(long account_id, long status_id);
@@ -44,9 +46,9 @@ interface ITwidereService {
 	int destroyUserList(long account_id, int list_id);
 	int createBlock(long account_id, long user_id);
 	int destroyBlock(long account_id, long user_id);
-	int reportSpam(long account_id, long max_id);
+	int reportSpam(long account_id, long user_id);
 	int createMultiBlock(long account_id, in long[] user_ids);
-	int reportMultiSpam(long account_id, in long[] max_ids);
+	int reportMultiSpam(long account_id, in long[] user_ids);
 	int addUserListMember(long account_id, int list_id, long user_id, String screen_name);
 	int deleteUserListMember(long account_id, int list_id, long user_id);
 	int updateProfile(long account_id, String name, String url, String location, String description);
@@ -57,8 +59,6 @@ interface ITwidereService {
 	boolean isReceivedDirectMessagesRefreshing();
 	boolean isSentDirectMessagesRefreshing();
 	boolean isLocalTrendsRefreshing();
-	boolean isDailyTrendsRefreshing();
-	boolean isWeeklyTrendsRefreshing();
 	boolean hasActivatedTask();
 	boolean test();
 	boolean startAutoRefresh();

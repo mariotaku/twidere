@@ -26,14 +26,14 @@ public interface NotificationMethods {
 	/**
 	 * Disables notifications for updates from the specified user to the
 	 * authenticating user. Returns the specified user when successful. <br>
-	 * This method calls http://api.twitter.com/1/notifications/leave.json
+	 * This method calls http://api.twitter.com/1.1/notifications/leave.json
 	 * 
 	 * @param userId Specifies the ID of the user to disable device
 	 *            notifications.
 	 * @return User
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/notifications/leave">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/notifications/leave">POST
 	 *      notifications/leave | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -42,14 +42,14 @@ public interface NotificationMethods {
 	/**
 	 * Disables notifications for updates from the specified user to the
 	 * authenticating user. Returns the specified user when successful. <br>
-	 * This method calls http://api.twitter.com/1/notifications/leave.json
+	 * This method calls http://api.twitter.com/1.1/notifications/leave.json
 	 * 
 	 * @param screenName Specifies the screen name of the user to disable device
 	 *            notifications.
 	 * @return User
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/notifications/leave">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/notifications/leave">POST
 	 *      notifications/leave | Twitter Developers</a>
 	 * @since Twitter4J 2.0.1
 	 */
@@ -58,13 +58,13 @@ public interface NotificationMethods {
 	/**
 	 * Enables notifications for updates from the specified user to the
 	 * authenticating user. Returns the specified user when successful. <br>
-	 * This method calls http://api.twitter.com/1/notifications/follow.json
+	 * This method calls http://api.twitter.com/1.1/notifications/follow.json
 	 * 
 	 * @param userId Specifies the ID of the user to follow with device updates.
 	 * @return User
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/notifications/follow">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/notifications/follow">POST
 	 *      notifications/follow | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -73,14 +73,14 @@ public interface NotificationMethods {
 	/**
 	 * Enables notifications for updates from the specified user to the
 	 * authenticating user. Returns the specified user when successful. <br>
-	 * This method calls http://api.twitter.com/1/notifications/follow.json
+	 * This method calls http://api.twitter.com/1.1/notifications/follow.json
 	 * 
 	 * @param screenName Specifies the screen name of the user to follow with
 	 *            device updates.
 	 * @return User
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/notifications/follow">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/notifications/follow">POST
 	 *      notifications/follow | Twitter Developers</a>
 	 * @since Twitter4J 2.0.1
 	 */

@@ -62,13 +62,15 @@ public final class TweetStore implements Constants {
 		 * Login name of the account<br>
 		 * Type: TEXT NOT NULL
 		 */
-		public static final String USERNAME = "username";
+		public static final String SCREEN_NAME = "screen_name";
+
+		public static final String NAME = "name";
 
 		/**
 		 * Unique ID of the account<br>
 		 * Type: INTEGER (long)
 		 */
-		public static final String USER_ID = "user_id";
+		public static final String ACCOUNT_ID = "account_id";
 
 		/**
 		 * Auth type of the account.</br> Type: INTEGER
@@ -107,13 +109,6 @@ public final class TweetStore implements Constants {
 
 		public static final String SIGNING_OAUTH_BASE_URL = "oauth_rest_base_url";
 
-		/**
-		 * Search Base URL of the account </br> Type: TEXT
-		 */
-		public static final String SEARCH_BASE_URL = "search_base_url";
-
-		public static final String UPLOAD_BASE_URL = "upload_base_url";
-
 		public static final String USER_COLOR = "user_color";
 
 		/**
@@ -128,13 +123,13 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
-		public static final String[] COLUMNS = new String[] { _ID, USERNAME, USER_ID, AUTH_TYPE, BASIC_AUTH_PASSWORD,
-				OAUTH_TOKEN, TOKEN_SECRET, REST_BASE_URL, SIGNING_REST_BASE_URL, SEARCH_BASE_URL, UPLOAD_BASE_URL,
-				OAUTH_BASE_URL, SIGNING_OAUTH_BASE_URL, PROFILE_IMAGE_URL, USER_COLOR, IS_ACTIVATED };
+		public static final String[] COLUMNS = new String[] { _ID, NAME, SCREEN_NAME, ACCOUNT_ID, AUTH_TYPE,
+				BASIC_AUTH_PASSWORD, OAUTH_TOKEN, TOKEN_SECRET, REST_BASE_URL, SIGNING_REST_BASE_URL, OAUTH_BASE_URL,
+				SIGNING_OAUTH_BASE_URL, PROFILE_IMAGE_URL, USER_COLOR, IS_ACTIVATED };
 
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_INT_UNIQUE,
-				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_TEXT_NOT_NULL,
+				TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
+				TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
 
 	}
 
@@ -146,26 +141,12 @@ public final class TweetStore implements Constants {
 		public static final String[] COLUMNS = new String[] { _ID, NAME, TIMESTAMP };
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT };
 
-		public static interface Daily extends CachedTrends {
-			public static final String CONTENT_PATH = "daily_trends";
-
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
-		}
-
 		public static interface Local extends CachedTrends {
 			public static final String CONTENT_PATH = "local_trends";
 
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 					CONTENT_PATH);
 
-		}
-
-		public static interface Weekly extends CachedTrends {
-			public static final String CONTENT_PATH = "weekly_trends";
-
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
 		}
 
 	}
@@ -221,6 +202,7 @@ public final class TweetStore implements Constants {
 		public static final String SENDER_ID = "sender_id";
 		public static final String RECIPIENT_ID = "recipient_id";
 
+		@Deprecated
 		public static final String IS_GAP = "is_gap";
 
 		public static final String TEXT = "text";

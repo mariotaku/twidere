@@ -36,13 +36,11 @@ import android.widget.TextView;
 
 public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener, OnClickListener {
 
-	private EditText mEditRestBaseURL, mEditSearchBaseURL, mEditUploadBaseURL, mEditSigningRESTBaseURL,
-			mEditOAuthBaseURL, mEditSigningOAuthBaseURL;
+	private EditText mEditRestBaseURL, mEditSigningRESTBaseURL, mEditOAuthBaseURL, mEditSigningOAuthBaseURL;
 	private RadioGroup mEditAuthType;
 	private RadioButton mButtonOAuth, mButtonxAuth, mButtonBasic, mButtonTwipOMode;
 	private Button mSaveButton;
-	private String mRestBaseURL, mSearchBaseURL, mUploadBaseURL, mSigningRESTBaseURL, mOAuthBaseURL,
-			mSigningOAuthBaseURL;
+	private String mRestBaseURL, mSigningRESTBaseURL, mOAuthBaseURL, mSigningOAuthBaseURL;
 	private TextView mAdvancedAPIConfigLabel;
 	private int mAuthType;
 
@@ -75,8 +73,6 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 				saveEditedText();
 				final Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
-				bundle.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
-				bundle.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
 				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
 				bundle.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
 				bundle.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
@@ -129,8 +125,6 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 			bundle = new Bundle();
 		}
 		mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
-		mSearchBaseURL = bundle.getString(Accounts.SEARCH_BASE_URL);
-		mUploadBaseURL = bundle.getString(Accounts.UPLOAD_BASE_URL);
 		mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
 		mOAuthBaseURL = bundle.getString(Accounts.OAUTH_BASE_URL);
 		mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
@@ -151,8 +145,6 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	public void onSaveInstanceState(final Bundle outState) {
 		saveEditedText();
 		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
-		outState.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);
-		outState.putString(Accounts.UPLOAD_BASE_URL, mUploadBaseURL);
 		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
 		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
 		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
@@ -165,18 +157,6 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 			final Editable ed = mEditRestBaseURL.getText();
 			if (ed != null) {
 				mRestBaseURL = ed.toString();
-			}
-		}
-		if (mEditSearchBaseURL != null) {
-			final Editable ed = mEditSearchBaseURL.getText();
-			if (ed != null) {
-				mSearchBaseURL = ed.toString();
-			}
-		}
-		if (mEditUploadBaseURL != null) {
-			final Editable ed = mEditUploadBaseURL.getText();
-			if (ed != null) {
-				mUploadBaseURL = ed.toString();
 			}
 		}
 		if (mEditSigningRESTBaseURL != null) {

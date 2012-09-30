@@ -256,17 +256,6 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int getDailyTrends(final long account_id) {
-		if (mService == null) return -1;
-		try {
-			return mService.getDailyTrends(account_id);
-		} catch (final RemoteException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
-
-	@Override
 	public int getHomeTimeline(final long[] account_ids, final long[] max_ids) {
 		if (mService == null) return -1;
 		try {
@@ -322,32 +311,10 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int getWeeklyTrends(final long account_id) {
-		if (mService == null) return -1;
-		try {
-			return mService.getWeeklyTrends(account_id);
-		} catch (final RemoteException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
-
-	@Override
 	public boolean hasActivatedTask() {
 		if (mService == null) return false;
 		try {
 			return mService.hasActivatedTask();
-		} catch (final RemoteException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	@Override
-	public boolean isDailyTrendsRefreshing() {
-		if (mService == null) return false;
-		try {
-			return mService.isDailyTrendsRefreshing();
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -403,17 +370,6 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		if (mService == null) return false;
 		try {
 			return mService.isSentDirectMessagesRefreshing();
-		} catch (final RemoteException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	@Override
-	public boolean isWeeklyTrendsRefreshing() {
-		if (mService == null) return false;
-		try {
-			return mService.isWeeklyTrendsRefreshing();
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -582,6 +538,50 @@ public final class ServiceInterface implements Constants, ITwidereService {
 			sInstance = new ServiceInterface(application);
 		}
 		return sInstance;
+	}
+
+	@Override
+	public int getHomeTimelineWithSinceIds(long[] account_ids, long[] max_ids, long[] since_ids) {
+		if (mService == null) return -1;
+		try {
+			return mService.getHomeTimelineWithSinceIds(account_ids, max_ids, since_ids);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int getMentionsWithSinceIds(long[] account_ids, long[] max_ids, long[] since_ids) {
+		if (mService == null) return -1;
+		try {
+			return mService.getMentionsWithSinceIds(account_ids, max_ids, since_ids);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int getReceivedDirectMessagesWithSinceIds(long[] account_ids, long[] max_ids, long[] since_ids) {
+		if (mService == null) return -1;
+		try {
+			return mService.getReceivedDirectMessagesWithSinceIds(account_ids, max_ids, since_ids);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public int getSentDirectMessagesWithSinceIds(long[] account_ids, long[] max_ids, long[] since_ids) {
+		if (mService == null) return -1;
+		try {
+			return mService.getSentDirectMessagesWithSinceIds(account_ids, max_ids, since_ids);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 
 }

@@ -38,7 +38,6 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.User;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -47,8 +46,6 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 	private final long mUserId;
 	private final String mUserScreenName;
 	private int mTotalItemsCount;
-
-	private long mLoadedUserId = -1;
 
 	public UserFavoritesLoader(final Context context, final long account_id, final long user_id,
 			final String user_screenname, final long max_id, final List<ParcelableStatus> data,
@@ -62,32 +59,14 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 	public ResponseList<Status> getStatuses(final Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
 		if (twitter == null) return null;
-		if (mUserId != -1) {
-			if (mTotalItemsCount == -1) {
-				try {
-					final User user = twitter.showUser(mUserId);
-					mLoadedUserId = user.getId();
-					mTotalItemsCount = user.getFavouritesCount();
-				} catch (final TwitterException e) {
-					mTotalItemsCount = -1;
-				}
-			}
-			return twitter.getFavorites(String.valueOf(mUserId), paging);
-		} else if (mUserScreenName != null) {
-			final User user = twitter.showUser(mUserScreenName);
-			mLoadedUserId = user.getId();
-			mTotalItemsCount = user.getFavouritesCount();
-			return twitter.getFavorites(mUserScreenName, paging);
-		}
+		if (mUserId != -1)
+			return twitter.getFavorites(mUserId, paging);
+		else if (mUserScreenName != null) return twitter.getFavorites(mUserScreenName, paging);
 		return null;
 	}
 
 	public int getTotalItemsCount() {
 		return mTotalItemsCount;
-	}
-
-	public long getUserId() {
-		return mLoadedUserId > 0 ? mLoadedUserId : mUserId;
 	}
 
 	@Override

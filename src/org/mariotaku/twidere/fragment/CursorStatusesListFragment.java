@@ -22,7 +22,8 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
 import static org.mariotaku.twidere.util.Utils.buildFilterWhereClause;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getLastStatusIdsFromDatabase;
+import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
+import static org.mariotaku.twidere.util.Utils.getOldestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 
 import org.mariotaku.twidere.activity.HomeActivity;
@@ -66,8 +67,13 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public long[] getLastStatusIds() {
-		return getLastStatusIdsFromDatabase(getActivity(), getContentUri());
+	long[] getOldestStatusIds() {
+		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
+	}
+	
+	@Override
+	long[] getNewestStatusIds() {
+		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
 
 	@Override
@@ -121,12 +127,12 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onPullDownToRefresh() {
-		getStatuses(getActivatedAccountIds(getActivity()), null);
+		getStatuses(getActivatedAccountIds(getActivity()), null, getNewestStatusIds());
 	}
 
 	@Override
 	public void onPullUpToRefresh() {
-		getStatuses(getActivatedAccountIds(getActivity()), getLastStatusIds());
+		getStatuses(getActivatedAccountIds(getActivity()), getOldestStatusIds(), null);
 	}
 
 	@Override

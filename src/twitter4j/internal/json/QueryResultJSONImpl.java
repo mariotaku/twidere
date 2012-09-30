@@ -23,8 +23,7 @@ import static twitter4j.internal.util.z_T4JInternalParseUtil.getRawString;
 import static twitter4j.internal.util.z_T4JInternalParseUtil.getURLDecodedString;
 import static twitter4j.internal.util.z_T4JInternalParseUtil.getUnescapedString;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,9 +33,7 @@ import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.TwitterException;
-import twitter4j.conf.Configuration;
 import twitter4j.internal.http.HttpResponse;
-import java.util.Arrays;
 
 /**
  * A data class representing search API response
@@ -73,7 +70,7 @@ import java.util.Arrays;
 			statuses = new Status[statuses_length];
 			for (int i = 0; i < statuses_length; i++) {
 				final JSONObject tweet = array.getJSONObject(i);
-				statuses[i] = (new StatusJSONImpl(tweet));
+				statuses[i] = new StatusJSONImpl(tweet);
 			}
 		} catch (final JSONException jsone) {
 			throw new TwitterException(jsone.getMessage() + ":" + json.toString(), jsone);

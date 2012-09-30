@@ -32,7 +32,6 @@ import twitter4j.ProfileImage;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.RateLimitStatus;
-import twitter4j.RelatedResults;
 import twitter4j.Relationship;
 import twitter4j.ResponseList;
 import twitter4j.SavedSearch;
@@ -92,8 +91,6 @@ public interface z_T4JInternalFactory {
 	QueryResult createQueryResult(HttpResponse res, Query query) throws TwitterException;
 
 	RateLimitStatus createRateLimitStatus(HttpResponse res) throws TwitterException;
-
-	RelatedResults createRelatedResults(HttpResponse res) throws TwitterException;
 
 	Relationship createRelationship(HttpResponse res) throws TwitterException;
 

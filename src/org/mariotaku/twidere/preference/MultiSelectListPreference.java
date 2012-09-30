@@ -1,8 +1,5 @@
 package org.mariotaku.twidere.preference;
 
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,12 +9,13 @@ import android.content.SharedPreferences;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
-abstract class MultiSelectListPreference extends DialogPreference implements OnMultiChoiceClickListener, OnClickListener {
+abstract class MultiSelectListPreference extends DialogPreference implements OnMultiChoiceClickListener,
+		OnClickListener {
 
 	private final boolean[] mValues, mDefaultValues;
 	private SharedPreferences prefs;
 	private final String[] mNames, mKeys;
-	
+
 	public MultiSelectListPreference(final Context context) {
 		this(context, null);
 	}
@@ -34,7 +32,7 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 		final int length = mNames.length;
 		if (length != mKeys.length || length != mDefaultValues.length) throw new IllegalArgumentException();
 		mValues = new boolean[length];
-		
+
 	}
 
 	@Override
@@ -71,11 +69,11 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 		builder.setNegativeButton(android.R.string.cancel, null);
 		builder.setMultiChoiceItems(mNames, mValues, this);
 	}
-	
-	protected abstract String[] getNames();
-	
-	protected abstract String[] getKeys();
-	
+
 	protected abstract boolean[] getDefaults();
+
+	protected abstract String[] getKeys();
+
+	protected abstract String[] getNames();
 
 }

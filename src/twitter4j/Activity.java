@@ -17,11 +17,11 @@ public interface Activity extends TwitterResponse, Comparable<Activity>, Seriali
 
 	public int getSourcesSize();
 
-	public Status[] getTargetObjectStatuses();
-	
-	public UserList[] getTargetObjectUserLists();
-
 	public int getTargetObjectsSize();
+
+	public Status[] getTargetObjectStatuses();
+
+	public UserList[] getTargetObjectUserLists();
 
 	public int getTargetsSize();
 

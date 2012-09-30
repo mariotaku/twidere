@@ -30,7 +30,7 @@ import twitter4j.TwitterException;
 public interface GeoMethods {
 	/**
 	 * Creates a new place at the given latitude and longitude. <br>
-	 * This method calls http://api.twitter.com/1/geo/place.json
+	 * This method calls http://api.twitter.com/1.1/geo/place.json
 	 * 
 	 * @param name The name a place is known as.
 	 * @param containedWithin The place_id within which the new place can be
@@ -46,7 +46,7 @@ public interface GeoMethods {
 	 *            Attributes.
 	 * @return the created place
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/post/geo/place">POST
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/geo/place">POST
 	 *      geo/place | Twitter Developers</a>
 	 * @since Twitter4J 2.1.7
 	 */
@@ -57,13 +57,13 @@ public interface GeoMethods {
 	 * Find out more details of a place that was returned from the
 	 * {@link twitter4j.api.GeoMethods#reverseGeoCode(twitter4j.GeoQuery)}
 	 * method. <br>
-	 * This method calls http://api.twitter.com/1/geo/id/:id.json
+	 * This method calls http://api.twitter.com/1.1/geo/id/:id.json
 	 * 
 	 * @param id The ID of the location to query about.
 	 * @return details of the specified place
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/geo/id/:place_id">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/geo/id/:place_id">GET
 	 *      geo/id/:place_id | Twitter Developers</a>
 	 * @since Twitter4J 2.1.1
 	 */
@@ -76,7 +76,7 @@ public interface GeoMethods {
 	 * request to post/geo/place to create a new one. <br>
 	 * The token contained in the response is the token needed to be able to
 	 * create a new place. <br>
-	 * This method calls http://api.twitter.com/1/geo/similar_places.json
+	 * This method calls http://api.twitter.com/1.1/geo/similar_places.json
 	 * 
 	 * @param location The latitude and longitude to search around.
 	 * @param name The name a place is known as.
@@ -108,14 +108,14 @@ public interface GeoMethods {
 	 * available through this method.<br>
 	 * This API call is meant to be an informative call and will deliver
 	 * generalized results about geography. <br>
-	 * This method calls http://api.twitter.com/1/geo/reverse_geocode.json
+	 * This method calls http://api.twitter.com/1.1/geo/reverse_geocode.json
 	 * 
 	 * @param query search query
 	 * @return places (cities and neighborhoods) that can be attached to a
 	 *         statuses/update
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/geo/reverse_geocode">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/geo/reverse_geocode">GET
 	 *      geo/reverse_geocode | Twitter Developers</a>
 	 * @since Twitter4J 2.1.1
 	 */
@@ -134,13 +134,13 @@ public interface GeoMethods {
 	 * access, this endpoint can potentially re-order places with regards to the
 	 * user who is authenticated. This approach is also preferred for
 	 * interactive place matching with the user. <br>
-	 * This method calls http://api.twitter.com/1/geo/search.json
+	 * This method calls http://api.twitter.com/1.1/geo/search.json
 	 * 
 	 * @param query search query
 	 * @return places (cities and neighborhoods) that can be attached to a
 	 *         statuses/update
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/geo/search">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/geo/search">GET
 	 *      geo/search | Twitter Developers</a>
 	 * @since Twitter4J 2.1.7
 	 */

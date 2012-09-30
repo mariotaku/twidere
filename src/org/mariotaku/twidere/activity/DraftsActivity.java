@@ -82,7 +82,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 		mResolver = getContentResolver();
 		mService = getTwidereApplication().getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mTextSize = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		mTextSize = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		setContentView(R.layout.base_list);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mAdapter = new DraftsAdapter(this);
@@ -183,7 +183,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	@Override
 	public void onResume() {
 		super.onResume();
-		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mAdapter.setTextSize(text_size);
 		if (mTextSize != text_size) {
 			mTextSize = text_size;

@@ -34,7 +34,7 @@ class ActivityJSONImpl extends TwitterResponseImpl implements Activity {
 	private User[] sources, targetUsers;
 
 	private Status[] targetObjectStatuses, targetStatuses;
-	
+
 	private UserList[] targetObjectUserLists;
 
 	private long maxPosition, minPosition;
@@ -85,13 +85,18 @@ class ActivityJSONImpl extends TwitterResponseImpl implements Activity {
 	}
 
 	@Override
+	public int getTargetObjectsSize() {
+		return targetObjectsSize;
+	}
+
+	@Override
 	public Status[] getTargetObjectStatuses() {
 		return targetObjectStatuses;
 	}
 
 	@Override
-	public int getTargetObjectsSize() {
-		return targetObjectsSize;
+	public UserList[] getTargetObjectUserLists() {
+		return targetObjectUserLists;
 	}
 
 	@Override
@@ -189,10 +194,5 @@ class ActivityJSONImpl extends TwitterResponseImpl implements Activity {
 		} catch (final TwitterException te) {
 			throw te;
 		}
-	}
-
-	@Override
-	public UserList[] getTargetObjectUserLists() {
-		return targetObjectUserLists;
 	}
 }

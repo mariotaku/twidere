@@ -133,11 +133,11 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) return true;
 		if (obj == null) return false;
 		if (!(obj instanceof ConfigurationBase)) return false;
-		ConfigurationBase other = (ConfigurationBase) obj;
+		final ConfigurationBase other = (ConfigurationBase) obj;
 		if (clientName == null) {
 			if (other.clientName != null) return false;
 		} else if (!clientName.equals(other.clientName)) return false;
@@ -418,18 +418,18 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((clientName == null) ? 0 : clientName.hashCode());
-		result = prime * result + ((clientURL == null) ? 0 : clientURL.hashCode());
-		result = prime * result + ((clientVersion == null) ? 0 : clientVersion.hashCode());
+		result = prime * result + (clientName == null ? 0 : clientName.hashCode());
+		result = prime * result + (clientURL == null ? 0 : clientURL.hashCode());
+		result = prime * result + (clientVersion == null ? 0 : clientVersion.hashCode());
 		result = prime * result + (debug ? 1231 : 1237);
 		result = prime * result + defaultMaxPerRoute;
 		result = prime * result + (gzipEnabled ? 1231 : 1237);
-		result = prime * result + ((hostAddressResolver == null) ? 0 : hostAddressResolver.hashCode());
+		result = prime * result + (hostAddressResolver == null ? 0 : hostAddressResolver.hashCode());
 		result = prime * result + httpConnectionTimeout;
-		result = prime * result + ((httpProxyHost == null) ? 0 : httpProxyHost.hashCode());
-		result = prime * result + ((httpProxyPassword == null) ? 0 : httpProxyPassword.hashCode());
+		result = prime * result + (httpProxyHost == null ? 0 : httpProxyHost.hashCode());
+		result = prime * result + (httpProxyPassword == null ? 0 : httpProxyPassword.hashCode());
 		result = prime * result + httpProxyPort;
-		result = prime * result + ((httpProxyUser == null) ? 0 : httpProxyUser.hashCode());
+		result = prime * result + (httpProxyUser == null ? 0 : httpProxyUser.hashCode());
 		result = prime * result + httpReadTimeout;
 		result = prime * result + httpRetryCount;
 		result = prime * result + httpRetryIntervalSeconds;
@@ -438,30 +438,29 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		result = prime * result + (includeEntitiesEnabled ? 1231 : 1237);
 		result = prime * result + (includeRTsEnabled ? 1231 : 1237);
 		result = prime * result + maxTotalConnections;
-		result = prime * result + ((oAuthAccessToken == null) ? 0 : oAuthAccessToken.hashCode());
-		result = prime * result + ((oAuthAccessTokenSecret == null) ? 0 : oAuthAccessTokenSecret.hashCode());
-		result = prime * result + ((oAuthAccessTokenURL == null) ? 0 : oAuthAccessTokenURL.hashCode());
-		result = prime * result + ((oAuthAuthenticationURL == null) ? 0 : oAuthAuthenticationURL.hashCode());
-		result = prime * result + ((oAuthAuthorizationURL == null) ? 0 : oAuthAuthorizationURL.hashCode());
-		result = prime * result + ((oAuthBaseURL == null) ? 0 : oAuthBaseURL.hashCode());
-		result = prime * result + ((oAuthConsumerKey == null) ? 0 : oAuthConsumerKey.hashCode());
-		result = prime * result + ((oAuthConsumerSecret == null) ? 0 : oAuthConsumerSecret.hashCode());
-		result = prime * result + ((oAuthRequestTokenURL == null) ? 0 : oAuthRequestTokenURL.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + (oAuthAccessToken == null ? 0 : oAuthAccessToken.hashCode());
+		result = prime * result + (oAuthAccessTokenSecret == null ? 0 : oAuthAccessTokenSecret.hashCode());
+		result = prime * result + (oAuthAccessTokenURL == null ? 0 : oAuthAccessTokenURL.hashCode());
+		result = prime * result + (oAuthAuthenticationURL == null ? 0 : oAuthAuthenticationURL.hashCode());
+		result = prime * result + (oAuthAuthorizationURL == null ? 0 : oAuthAuthorizationURL.hashCode());
+		result = prime * result + (oAuthBaseURL == null ? 0 : oAuthBaseURL.hashCode());
+		result = prime * result + (oAuthConsumerKey == null ? 0 : oAuthConsumerKey.hashCode());
+		result = prime * result + (oAuthConsumerSecret == null ? 0 : oAuthConsumerSecret.hashCode());
+		result = prime * result + (oAuthRequestTokenURL == null ? 0 : oAuthRequestTokenURL.hashCode());
+		result = prime * result + (password == null ? 0 : password.hashCode());
 		result = prime * result + (prettyDebug ? 1231 : 1237);
-		result = prime * result + ((requestHeaders == null) ? 0 : requestHeaders.hashCode());
-		result = prime * result + ((restBaseURL == null) ? 0 : restBaseURL.hashCode());
-		result = prime * result + ((signingOAuthAccessTokenURL == null) ? 0 : signingOAuthAccessTokenURL.hashCode());
+		result = prime * result + (requestHeaders == null ? 0 : requestHeaders.hashCode());
+		result = prime * result + (restBaseURL == null ? 0 : restBaseURL.hashCode());
+		result = prime * result + (signingOAuthAccessTokenURL == null ? 0 : signingOAuthAccessTokenURL.hashCode());
 		result = prime * result
-				+ ((signingOAuthAuthenticationURL == null) ? 0 : signingOAuthAuthenticationURL.hashCode());
-		result = prime * result
-				+ ((signingOAuthAuthorizationURL == null) ? 0 : signingOAuthAuthorizationURL.hashCode());
-		result = prime * result + ((signingOAuthBaseURL == null) ? 0 : signingOAuthBaseURL.hashCode());
-		result = prime * result + ((signingOAuthRequestTokenURL == null) ? 0 : signingOAuthRequestTokenURL.hashCode());
-		result = prime * result + ((signingRestBaseURL == null) ? 0 : signingRestBaseURL.hashCode());
+				+ (signingOAuthAuthenticationURL == null ? 0 : signingOAuthAuthenticationURL.hashCode());
+		result = prime * result + (signingOAuthAuthorizationURL == null ? 0 : signingOAuthAuthorizationURL.hashCode());
+		result = prime * result + (signingOAuthBaseURL == null ? 0 : signingOAuthBaseURL.hashCode());
+		result = prime * result + (signingOAuthRequestTokenURL == null ? 0 : signingOAuthRequestTokenURL.hashCode());
+		result = prime * result + (signingRestBaseURL == null ? 0 : signingRestBaseURL.hashCode());
 		result = prime * result + (useSSL ? 1231 : 1237);
-		result = prime * result + ((user == null) ? 0 : user.hashCode());
-		result = prime * result + ((userAgent == null) ? 0 : userAgent.hashCode());
+		result = prime * result + (user == null ? 0 : user.hashCode());
+		result = prime * result + (userAgent == null ? 0 : userAgent.hashCode());
 		return result;
 	}
 
@@ -527,10 +526,10 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 				+ signingOAuthAuthorizationURL + ", signingOAuthAccessTokenURL=" + signingOAuthAccessTokenURL
 				+ ", signingOAuthAuthenticationURL=" + signingOAuthAuthenticationURL + ", oAuthBaseURL=" + oAuthBaseURL
 				+ ", signingOAuthBaseURL=" + signingOAuthBaseURL + ", signingRestBaseURL=" + signingRestBaseURL
-				+ ", restBaseURL=" + restBaseURL + ", includeRTsEnabled=" + includeRTsEnabled + ", includeEntitiesEnabled="
-				+ includeEntitiesEnabled + ", clientVersion=" + clientVersion + ", clientURL=" + clientURL
-				+ ", clientName=" + clientName + ", hostAddressResolver=" + hostAddressResolver + ", requestHeaders="
-				+ requestHeaders + "}";
+				+ ", restBaseURL=" + restBaseURL + ", includeRTsEnabled=" + includeRTsEnabled
+				+ ", includeEntitiesEnabled=" + includeEntitiesEnabled + ", clientVersion=" + clientVersion
+				+ ", clientURL=" + clientURL + ", clientName=" + clientName + ", hostAddressResolver="
+				+ hostAddressResolver + ", requestHeaders=" + requestHeaders + "}";
 	}
 
 	protected void cacheInstance() {

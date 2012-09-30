@@ -251,7 +251,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		super.onResume();
 
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
-		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);

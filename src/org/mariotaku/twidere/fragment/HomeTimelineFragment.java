@@ -78,9 +78,9 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 	}
 
 	@Override
-	public int getStatuses(final long[] account_ids, final long[] max_ids) {
+	public int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		if (max_ids == null) return mService.refreshAll();
-		return mService.getHomeTimeline(account_ids, max_ids);
+		return mService.getHomeTimelineWithSinceIds(account_ids, max_ids, since_ids);
 	}
 
 	@Override

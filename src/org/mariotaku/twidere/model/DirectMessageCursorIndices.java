@@ -26,9 +26,12 @@ import android.database.Cursor;
 public class DirectMessageCursorIndices {
 
 	public final int account_id, message_id, message_timestamp, sender_name, sender_screen_name, text, recipient_name,
-			recipient_screen_name, is_gap, sender_profile_image_url, recipient_profile_image_url, sender_id,
+			recipient_screen_name, sender_profile_image_url, recipient_profile_image_url, sender_id,
 			recipient_id;
+	@Deprecated
+	public final int is_gap;
 
+	@SuppressWarnings("deprecation")
 	public DirectMessageCursorIndices(final Cursor cursor) {
 		account_id = cursor.getColumnIndex(DirectMessages.ACCOUNT_ID);
 		message_id = cursor.getColumnIndex(DirectMessages.MESSAGE_ID);

@@ -79,8 +79,8 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	}
 
 	@Override
-	public int getStatuses(final long[] account_ids, final long[] max_ids) {
-		return mService.getMentions(account_ids, max_ids);
+	public int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+		return mService.getMentionsWithSinceIds(account_ids, max_ids, since_ids);
 	}
 
 	@Override

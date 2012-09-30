@@ -30,7 +30,7 @@ public interface ListMethods {
 	/**
 	 * Creates a new list for the authenticated user. Accounts are limited to 20
 	 * lists. <br>
-	 * This method calls http://api.twitter.com/1/lists/create.json
+	 * This method calls http://api.twitter.com/1.1/lists/create.json
 	 * 
 	 * @param listName The name of the list you are creating. Required.
 	 * @param isPublicList set true if you wish to make a public list
@@ -40,7 +40,7 @@ public interface ListMethods {
 	 * @throws twitter4j.TwitterException when Twitter service or network is
 	 *             unavailable, or the authenticated user already has 20
 	 *             lists(TwitterException.getStatusCode() == 403).
-	 * @see <a href="https://dev.twitter.com/docs/api/1/post/lists/create ">POST
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/lists/create ">POST
 	 *      lists/create | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -48,12 +48,12 @@ public interface ListMethods {
 
 	/**
 	 * Deletes the specified list. Must be owned by the authenticated user. <br>
-	 * This method calls http://api.twitter.com/1/lists/destroy.json
+	 * This method calls http://api.twitter.com/1.1/lists/destroy.json
 	 * 
 	 * @param listId The id of the list to delete
 	 * @return the deleted list
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/post/lists/destroy">POST
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/lists/destroy">POST
 	 *      lists/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -64,7 +64,7 @@ public interface ListMethods {
 	 * including their own. <br>
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
-	 * This method calls http://api.twitter.com/1/lists/all.json
+	 * This method calls http://api.twitter.com/1.1/lists/all.json
 	 * 
 	 * @param userId user id to look up
 	 * @return list of lists
@@ -78,7 +78,7 @@ public interface ListMethods {
 	 * including their own. <br>
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
-	 * This method calls http://api.twitter.com/1/lists/all.json
+	 * This method calls http://api.twitter.com/1.1/lists/all.json
 	 * 
 	 * @param screenName screen name to look up
 	 * @return list of lists
@@ -89,7 +89,7 @@ public interface ListMethods {
 
 	/**
 	 * List the lists the authenticating user has been added to. <br>
-	 * This method calls http://api.twitter.com/1/lists/memberships.json
+	 * This method calls http://api.twitter.com/1.1/lists/memberships.json
 	 * 
 	 * @param cursor Breaks the results into pages. A single page contains 20
 	 *            lists. Provide a value of -1 to begin paging. Provide values
@@ -99,7 +99,7 @@ public interface ListMethods {
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @throws IllegalStateException when authorization is not enabled
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/lists/memberships">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/memberships">GET
 	 *      lists/memberships | Twitter Developers</a>
 	 * @since Twitter4J 2.2.4
 	 */
@@ -107,7 +107,7 @@ public interface ListMethods {
 
 	/**
 	 * List the lists the specified user has been added to. <br>
-	 * This method calls http://api.twitter.com/1/lists/memberships.json
+	 * This method calls http://api.twitter.com/1.1/lists/memberships.json
 	 * 
 	 * @param listMemberId The id of the list member
 	 * @param cursor Breaks the results into pages. A single page contains 20
@@ -117,7 +117,7 @@ public interface ListMethods {
 	 * @return the list of lists
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/lists/memberships">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/memberships">GET
 	 *      lists/memberships | Twitter Developers</a>
 	 * @since Twitter4J 2.2.4
 	 */
@@ -125,7 +125,7 @@ public interface ListMethods {
 
 	/**
 	 * List the lists the specified user has been added to. <br>
-	 * This method calls http://api.twitter.com/1/lists/memberships.json
+	 * This method calls http://api.twitter.com/1.1/lists/memberships.json
 	 * 
 	 * @param listMemberId The id of the list member
 	 * @param cursor Breaks the results into pages. A single page contains 20
@@ -140,7 +140,7 @@ public interface ListMethods {
 	 * @throws IllegalStateException when filerToOwnedLists is true but
 	 *             authorization is not enabled
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/lists/memberships">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/memberships">GET
 	 *      lists/memberships | Twitter Developers</a>
 	 * @since Twitter4J 2.2.4
 	 */
@@ -149,7 +149,7 @@ public interface ListMethods {
 
 	/**
 	 * List the lists the specified user has been added to. <br>
-	 * This method calls http://api.twitter.com/1/lists/memberships.json
+	 * This method calls http://api.twitter.com/1.1/lists/memberships.json
 	 * 
 	 * @param listMemberScreenName The screen name of the list member
 	 * @param cursor Breaks the results into pages. A single page contains 20
@@ -159,7 +159,7 @@ public interface ListMethods {
 	 * @return the list of lists
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/lists/memberships">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/memberships">GET
 	 *      lists/memberships | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -168,7 +168,7 @@ public interface ListMethods {
 
 	/**
 	 * List the lists the specified user has been added to. <br>
-	 * This method calls http://api.twitter.com/1/lists/memberships.json
+	 * This method calls http://api.twitter.com/1.1/lists/memberships.json
 	 * 
 	 * @param listMemberScreenName The screen name of the list member
 	 * @param cursor Breaks the results into pages. A single page contains 20
@@ -183,7 +183,7 @@ public interface ListMethods {
 	 * @throws IllegalStateException when filerToOwnedLists is true but
 	 *             authorization is not enabled
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/lists/memberships">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/memberships">GET
 	 *      lists/memberships | Twitter Developers</a>
 	 * @since Twitter4J 2.2.4
 	 */
@@ -194,12 +194,12 @@ public interface ListMethods {
 	 * List the lists of the specified user. Private lists will be included if
 	 * the authenticated users is the same as the user whose lists are being
 	 * returned. <br>
-	 * This method calls http://api.twitter.com/1/lists.json
+	 * This method calls http://api.twitter.com/1.1/lists.json
 	 * 
 	 * @param listOwnerUserId The id of the list owner
 	 * @return the list of lists
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/lists">GET lists |
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/lists">GET lists |
 	 *      Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
@@ -209,12 +209,12 @@ public interface ListMethods {
 	 * List the lists of the specified user. Private lists will be included if
 	 * the authenticated users is the same as the user whose lists are being
 	 * returned. <br>
-	 * This method calls http://api.twitter.com/1/lists.json
+	 * This method calls http://api.twitter.com/1.1/lists.json
 	 * 
 	 * @param listOwnerScreenName The screen name of the list owner
 	 * @return the list of lists
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/lists">GET lists |
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/lists">GET lists |
 	 *      Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -222,14 +222,14 @@ public interface ListMethods {
 
 	/**
 	 * Show tweet timeline for members of the specified list. <br>
-	 * http://api.twitter.com/1/user/lists/list_id/statuses.json
+	 * http://api.twitter.com/1.1/user/lists/list_id/statuses.json
 	 * 
 	 * @param listId The id of the list
 	 * @param paging controls pagination. Supports since_id, max_id, count and
 	 *            page parameters.
 	 * @return list of statuses for members of the specified list
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/lists/statuses">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/lists/statuses">GET
 	 *      lists/statuses | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
@@ -237,7 +237,7 @@ public interface ListMethods {
 
 	/**
 	 * List the lists the specified user follows. <br>
-	 * This method calls http://api.twitter.com/1/lists/subscriptions.json
+	 * This method calls http://api.twitter.com/1.1/lists/subscriptions.json
 	 * 
 	 * @param listOwnerScreenName The screen name of the list owner
 	 * @param cursor Breaks the results into pages. A single page contains 20
@@ -247,7 +247,7 @@ public interface ListMethods {
 	 * @return the list of lists
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/lists/subscriptions">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/subscriptions">GET
 	 *      lists/subscriptions | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -257,20 +257,20 @@ public interface ListMethods {
 	/**
 	 * Show the specified list. Private lists will only be shown if the
 	 * authenticated user owns the specified list. <br>
-	 * This method calls http://api.twitter.com/1/lists/show.json
+	 * This method calls http://api.twitter.com/1.1/lists/show.json
 	 * 
 	 * @param listId The id of the list to show
 	 * @return the specified list
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/lists/show">https://dev.twitter.com/docs/api/1/get/lists/show | Twitter Developers</a>
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/show">https://dev.twitter.com/docs/api/1.1/get/lists/show | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
 	UserList showUserList(int listId) throws TwitterException;
 
 	/**
 	 * Updates the specified list. <br>
-	 * This method calls http://api.twitter.com/1/lists/update.json
+	 * This method calls http://api.twitter.com/1.1/lists/update.json
 	 * 
 	 * @param listId The id of the list to update.
 	 * @param newListName What you'd like to change the list's name to.
@@ -280,7 +280,7 @@ public interface ListMethods {
 	 * @param newDescription What you'd like to change the list description to.
 	 * @return the updated list
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/post/lists/update ">POST
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/lists/update ">POST
 	 *      lists/update | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */

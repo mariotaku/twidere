@@ -22,6 +22,7 @@ package org.mariotaku.twidere.fragment;
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
+import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
@@ -29,6 +30,7 @@ import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.getTimestampFromDate;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -50,12 +52,11 @@ import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
-import static org.mariotaku.twidere.util.Utils.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -103,7 +104,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
-import android.graphics.Xfermode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -147,7 +147,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowedYouIndicator, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
-	mTweetsContainer, mFollowersContainer, mFriendsContainer, mFollowContainer, mProfileNameBannerContainer;
+			mTweetsContainer, mFollowersContainer, mFriendsContainer, mFollowContainer, mProfileNameBannerContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
 	private ColorLabelRelativeLayout mProfileNameContainer;
@@ -177,7 +177,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private PopupMenu mPopupMenu;
 
-	private SharedPreferences mPreferences;
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -215,8 +214,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private static final int LOADER_ID_FRIENDSHIP = 2;
 	private static final int LOADER_ID_BANNER = 3;
 
-
-	
 	private final LoaderCallbacks<Response<User>> mUserInfoLoaderCallbacks = new LoaderCallbacks<Response<User>>() {
 
 		@Override
@@ -260,7 +257,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mFollowProgress.setVisibility(View.VISIBLE);
 			mMoreOptionsButton.setVisibility(View.GONE);
 			mMoreOptionsProgress.setVisibility(View.VISIBLE);
-			return new GetFriendshipLoader(getActivity(), mAccountId, mUserId);
+			return new FriendshipLoader(getActivity(), mAccountId, mUserId);
 		}
 
 		@Override
@@ -308,6 +305,41 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	};
 
+	private final LoaderCallbacks<Bitmap> mBannerImageCallback = new LoaderCallbacks<Bitmap>() {
+
+		@Override
+		public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
+			final LayoutParams lp = mProfileNameBannerContainer.getLayoutParams();
+			lp.height = LayoutParams.WRAP_CONTENT;
+			mProfileNameBannerContainer.setBackgroundDrawable(null);
+			mProfileNameBannerContainer.setLayoutParams(lp);
+			final int screen_width = getResources().getDisplayMetrics().widthPixels;
+			final String type;
+			if (screen_width > 320) {
+				type = "web";
+			} else {
+				type = "mobile";
+			}
+			return new BannerImageLoader(getActivity(), mUser, type, screen_width < 320);
+		}
+
+		@Override
+		public void onLoaderReset(final Loader<Bitmap> loader) {
+		}
+
+		@Override
+		public void onLoadFinished(final Loader<Bitmap> loader, final Bitmap data) {
+			if (data == null) return;
+			final Drawable d = new BitmapDrawable(getResources(), data);
+			final LayoutParams lp = mProfileNameBannerContainer.getLayoutParams();
+			final float ratio = (float) data.getHeight() / (float) data.getWidth();
+			lp.height = (int) (mProfileNameContainer.getWidth() * ratio);
+			mProfileNameBannerContainer.setLayoutParams(lp);
+			mProfileNameBannerContainer.setBackgroundDrawable(d);
+		}
+
+	};
+
 	public void changeUser(final long account_id, final User user) {
 		mFriendship = null;
 		mUser = null;
@@ -333,9 +365,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		mNameView.setText(user.getName());
-		mScreenNameView.setText("@" + user.getScreenName());
-		mScreenNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 
+		mNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 				getUserTypeIconRes(user.isVerified(), user.isProtected()), 0);
+		mScreenNameView.setText("@" + user.getScreenName());
 		final String description = user.getDescription();
 		mDescriptionContainer.setVisibility(user_is_me || !isNullOrEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
@@ -375,8 +407,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (profile_image_url != null) {
 				values.put(Accounts.PROFILE_IMAGE_URL, profile_image_url.toString());
 			}
-			values.put(Accounts.USERNAME, user.getScreenName());
-			final String where = Accounts.USER_ID + " = " + user.getId();
+			values.put(Accounts.NAME, user.getName());
+			values.put(Accounts.SCREEN_NAME, user.getScreenName());
+			final String where = Accounts.ACCOUNT_ID + " = " + user.getId();
 			resolver.update(Accounts.CONTENT_URI, values, where, null);
 		}
 		mAdapter.add(new FavoritesAction());
@@ -420,133 +453,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
-	private final LoaderCallbacks<Bitmap> mBannerImageCallback = new LoaderCallbacks<Bitmap>(){
-
-		public Loader<Bitmap> onCreateLoader(int id, Bundle args) {
-			final LayoutParams lp = mProfileNameBannerContainer.getLayoutParams();
-			lp.height = LayoutParams.WRAP_CONTENT;
-			mProfileNameBannerContainer.setBackgroundDrawable(null);
-			mProfileNameBannerContainer.setLayoutParams(lp);
-			final boolean scale_down = mProfileNameBannerContainer.getWidth() < 320;
-			return new BannerImageLoader(getActivity(), mUser, scale_down);
-		}
-
-		public void onLoadFinished(Loader<Bitmap> loader, Bitmap data) {
-			if (data == null) return;
-			final Drawable d = new BitmapDrawable(getResources(), data);
-			final LayoutParams lp = mProfileNameBannerContainer.getLayoutParams();
-			final float ratio = (float) data.getHeight() / (float) data.getWidth();
-			lp.height = (int) (mProfileNameContainer.getWidth() * ratio);
-			mProfileNameBannerContainer.setLayoutParams(lp);
-			mProfileNameBannerContainer.setBackgroundDrawable(d);
-		}
-
-		public void onLoaderReset(Loader<Bitmap> loader) {
-		}
-
-		
-	};
-
-	private void getBannerImage() {
-		final LoaderManager lm = getLoaderManager();
-		if (mBannerImageLoaderInitialized) {
-			lm.restartLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
-		} else {
-			lm.initLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
-			mBannerImageLoaderInitialized = true;
-		}
-	}
-	
-	static class BannerImageLoader extends AsyncTaskLoader<Bitmap> {
-
-		private static final String CACHE_DIR = "cached_images";
-		
-		private final User user;
-		private final Context context;
-		private final HostAddressResolver resolver;
-		private final boolean scale_down;
-		
-		public BannerImageLoader(Context context, User user, boolean scale_down){
-			super(context);
-			this.context = context;
-			this.user = user;
-			this.resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
-			this.scale_down = scale_down;
-		}
-		
-		private File getCacheDir() {
-			final File cache_dir;
-			if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-				final File app_cache_dir = 
-						Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(context)
-								: new File(getExternalStorageDirectory(), "/Android/data/" + context.getPackageName() + "/cache/");
-				cache_dir = new File(app_cache_dir, CACHE_DIR);
-			} else {
-				cache_dir = new File(context.getCacheDir(), CACHE_DIR);
-			}
-			if (cache_dir != null && !cache_dir.exists()) {
-				cache_dir.mkdirs();
-			}
-			return cache_dir;
-		}
-		
-		private String getURLFilename(final URL url) {
-			if (url == null) return null;
-			return url.toString().replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
-		}
-
-		public static Bitmap createAlphaGradientBitmap(Bitmap orig) {
-			final int width = orig.getWidth(), height = orig.getHeight();
-			final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-			final Canvas canvas = new Canvas(bitmap);	
-			final Paint paint = new Paint();
-			final LinearGradient shader = new LinearGradient(width / 2, 0, width / 2, height, 0xffffffff, 0x00ffffff, Shader.TileMode.CLAMP);
-			paint.setShader(shader);
-			paint.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
-			canvas.drawBitmap(orig,0, 0, null);
-			canvas.drawRect(0, 0, width, height, paint);
-			return bitmap;
-		}
-		
-		public Bitmap loadInBackground() {
-			if (user == null) return null;
-			try {
-				final URL url = new URL(user.getProfileBannerImageUrl() + "/mobile");
-				final File cache_dir = getCacheDir();
-				final File cache_file = cache_dir != null && cache_dir.isDirectory() ? new File(cache_dir, getURLFilename(url)) : null;
-				if (cache_file != null && cache_file.isFile()) {
-					final Bitmap cache_bitmap = BitmapFactory.decodeFile(cache_file.getPath());
-					if (cache_bitmap != null) {
-						return createAlphaGradientBitmap(cache_bitmap);
-					}
-				}
-				final HttpURLConnection conn = getConnection(url, true, getProxy(context), resolver);
-				if (cache_file != null) {
-					final FileOutputStream fos = new FileOutputStream(cache_file);
-					final InputStream is = conn.getInputStream();
-					copyStream(is, fos);
-					final Bitmap bitmap = BitmapFactory.decodeFile(cache_file.getPath());
-					return createAlphaGradientBitmap(bitmap);
-				} else {
-					final Bitmap bitmap = BitmapFactory.decodeStream(conn.getInputStream());
-					return createAlphaGradientBitmap(bitmap);
-				}
-			} catch (IOException e) {
-				return null;
-			}
-		}
-		
-
-		@Override
-		protected void onStartLoading() {
-			forceLoad();
-		}
-	}
-	
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mService = getApplication().getServiceInterface();
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
@@ -668,7 +577,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 						if (mFriendship.isSourceBlockingTarget()) {
 							blockItem.setTitle(R.string.unblock);
 							blockIcon.mutate().setColorFilter(getResources().getColor(R.color.holo_blue_bright),
-															  PorterDuff.Mode.MULTIPLY);
+									PorterDuff.Mode.MULTIPLY);
 						} else {
 							blockItem.setTitle(R.string.block);
 							blockIcon.clearColorFilter();
@@ -947,6 +856,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		super.onStop();
 	}
 
+	private void getBannerImage() {
+		final LoaderManager lm = getLoaderManager();
+		if (mBannerImageLoaderInitialized) {
+			lm.restartLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
+		} else {
+			lm.initLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
+			mBannerImageLoaderInitialized = true;
+		}
+	}
+
 	private void getFriendship() {
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
@@ -982,7 +901,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private void updateUserColor() {
 		if (mProfileNameContainer != null) {
-			mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));	
+			mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
 		}
 	}
 
@@ -1076,12 +995,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	public static class GetFriendshipLoader extends AsyncTaskLoader<Response<Relationship>> {
+	static class FriendshipLoader extends AsyncTaskLoader<Response<Relationship>> {
 
 		private final Context context;
 		private final long account_id, user_id;
 
-		public GetFriendshipLoader(final Context context, final long account_id, final long user_id) {
+		public FriendshipLoader(final Context context, final long account_id, final long user_id) {
 			super(context);
 			this.context = context;
 			this.account_id = account_id;
@@ -1107,6 +1026,98 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			} catch (final TwitterException e) {
 				return new Response<Relationship>(null, e);
 			}
+		}
+	}
+
+	static class BannerImageLoader extends AsyncTaskLoader<Bitmap> {
+
+		private static final String CACHE_DIR = "cached_images";
+
+		private final User user;
+		private final String type;
+		private final Context context;
+		private final HostAddressResolver resolver;
+		private final boolean scale_down;
+
+		public BannerImageLoader(final Context context, final User user, final String type, final boolean scale_down) {
+			super(context);
+			this.context = context;
+			this.user = user;
+			this.type = type;
+			resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
+			this.scale_down = scale_down;
+		}
+
+		@Override
+		public Bitmap loadInBackground() {
+			if (user == null) return null;
+			try {
+				final URL url = new URL(user.getProfileBannerImageUrl() + "/" + type);
+				final File cache_dir = getCacheDir();
+				final File cache_file = cache_dir != null && cache_dir.isDirectory() ? new File(cache_dir,
+						getURLFilename(url)) : null;
+				if (cache_file != null && cache_file.isFile()) {
+					final BitmapFactory.Options o = new BitmapFactory.Options();
+					o.inSampleSize = scale_down ? 2 : 1;
+					final Bitmap cache_bitmap = BitmapFactory.decodeFile(cache_file.getPath(), o);
+					if (cache_bitmap != null) return createAlphaGradientBanner(cache_bitmap);
+				}
+				final HttpURLConnection conn = getConnection(url, true, getProxy(context), resolver);
+				if (cache_file != null) {
+					final FileOutputStream fos = new FileOutputStream(cache_file);
+					final InputStream is = conn.getInputStream();
+					copyStream(is, fos);
+					final BitmapFactory.Options o = new BitmapFactory.Options();
+					o.inSampleSize = scale_down ? 2 : 1;
+					final Bitmap bitmap = BitmapFactory.decodeFile(cache_file.getPath(), o);
+					return createAlphaGradientBanner(bitmap);
+				} else {
+					final Bitmap bitmap = BitmapFactory.decodeStream(conn.getInputStream());
+					return createAlphaGradientBanner(bitmap);
+				}
+			} catch (final IOException e) {
+				return null;
+			}
+		}
+
+		@Override
+		protected void onStartLoading() {
+			forceLoad();
+		}
+
+		private File getCacheDir() {
+			final File cache_dir;
+			if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+				final File app_cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
+						.getExternalCacheDir(context) : new File(getExternalStorageDirectory(), "/Android/data/"
+						+ context.getPackageName() + "/cache/");
+				cache_dir = new File(app_cache_dir, CACHE_DIR);
+			} else {
+				cache_dir = new File(context.getCacheDir(), CACHE_DIR);
+			}
+			if (cache_dir != null && !cache_dir.exists()) {
+				cache_dir.mkdirs();
+			}
+			return cache_dir;
+		}
+
+		private String getURLFilename(final URL url) {
+			if (url == null) return null;
+			return url.toString().replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
+		}
+
+		public static Bitmap createAlphaGradientBanner(final Bitmap orig) {
+			final int width = orig.getWidth(), height = orig.getHeight();
+			final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+			final Canvas canvas = new Canvas(bitmap);
+			final Paint paint = new Paint();
+			final LinearGradient shader = new LinearGradient(width / 2, 0, width / 2, height, 0xffffffff, 0x00ffffff,
+					Shader.TileMode.CLAMP);
+			paint.setShader(shader);
+			paint.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
+			canvas.drawBitmap(orig, 0, 0, null);
+			canvas.drawRect(0, 0, width, height, paint);
+			return bitmap;
 		}
 	}
 

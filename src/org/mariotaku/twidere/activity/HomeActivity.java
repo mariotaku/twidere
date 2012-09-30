@@ -22,6 +22,8 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
+import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getTabs;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
@@ -39,6 +41,9 @@ import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Inbox;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.SetHomeButtonEnabledAccessor;
@@ -132,13 +137,13 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		final FragmentManager fm = getSupportFragmentManager();
-		if (fm.getBackStackEntryCount() == 0 && 
-				!mPreferences.getBoolean(PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED, false) &&
-				mPreferences.getBoolean(PREFERENCE_KEY_KEEP_IN_BACKGROUND, false)) {
+		if (fm.getBackStackEntryCount() == 0
+				&& !mPreferences.getBoolean(PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED, false)
+				&& mPreferences.getBoolean(PREFERENCE_KEY_KEEP_IN_BACKGROUND, false)) {
 			moveTaskToBack(true);
 			return;
 		}
@@ -212,8 +217,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null && !refresh_on_start && savedInstanceState == null) {
-				mService.getHomeTimeline(refreshed_ids, null);
-				mService.getMentions(refreshed_ids, null);
+				mService.getHomeTimelineWithSinceIds(refreshed_ids, null, getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI));
+				mService.getMentionsWithSinceIds(refreshed_ids, null, getNewestStatusIdsFromDatabase(this, Mentions.CONTENT_URI));
 			}
 			initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			switch (initial_tab) {
@@ -265,12 +270,12 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 		}
 		if (refresh_on_start && savedInstanceState == null) {
-			mService.getHomeTimeline(activated_ids, null);
+			mService.getHomeTimelineWithSinceIds(activated_ids, null, getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI));
 			if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
-				mService.getMentions(account_ids, null);
+				mService.getMentionsWithSinceIds(account_ids, null, getNewestStatusIdsFromDatabase(this, Mentions.CONTENT_URI));
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
-				mService.getReceivedDirectMessages(account_ids, null);
+				mService.getReceivedDirectMessagesWithSinceIds(account_ids, null, getNewestMessageIdsFromDatabase(this, Inbox.CONTENT_URI));
 				// mService.getSentDirectMessages(account_ids, null);
 			}
 		}
@@ -413,7 +418,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 						values = new ContentValues();
 						values.put(Accounts.IS_ACTIVATED, 1);
 						for (final long account_id : account_ids) {
-							final String where = Accounts.USER_ID + " = " + account_id;
+							final String where = Accounts.ACCOUNT_ID + " = " + account_id;
 							resolver.update(Accounts.CONTENT_URI, values, where, null);
 						}
 					}
@@ -455,8 +460,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null) {
-				mService.getHomeTimeline(refreshed_ids, null);
-				mService.getMentions(refreshed_ids, null);
+				mService.getHomeTimelineWithSinceIds(refreshed_ids, null, getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI));
+				mService.getMentionsWithSinceIds(refreshed_ids, null, getNewestStatusIdsFromDatabase(this, Mentions.CONTENT_URI));
 			}
 			final int initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			if (initial_tab != -1 && mViewPager != null) {

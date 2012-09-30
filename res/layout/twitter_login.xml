@@ -27,9 +27,9 @@
 					android:layout_height="wrap_content"
 					android:ems="10"
 					android:hint="@string/username"
-					android:inputType="textPersonName"
+					android:inputType="textEmailAddress"
 					android:singleLine="true"
-					android:typeface="monospace"/>
+					android:typeface="normal"/>
 
 				<EditText
 					android:id="@+id/password"
@@ -41,7 +41,7 @@
 					android:hint="@string/password"
 					android:inputType="textPassword"
 					android:singleLine="true"
-					android:typeface="monospace"/>
+					android:typeface="normal"/>
 			</LinearLayout>
 
 			<LinearLayout

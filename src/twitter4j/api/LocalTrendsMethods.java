@@ -33,13 +33,13 @@ public interface LocalTrendsMethods {
 	 * href="http://developer.yahoo.com/geo/geoplanet/">Yahoo! Where On Earth
 	 * ID</a>) and some other human-readable information such as a canonical
 	 * name and country the location belongs in. <br>
-	 * This method calls http://api.twitter.com/1/trends/available.json
+	 * This method calls http://api.twitter.com/1.1/trends/available.json
 	 * 
 	 * @return the locations
 	 * @throws twitter4j.TwitterException when Twitter service or network is
 	 *             unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/trends/available">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/trends/available">GET
 	 *      trends/available | Twitter Developers</a>
 	 * @since Twitter4J 2.1.1
 	 */
@@ -52,7 +52,7 @@ public interface LocalTrendsMethods {
 	 * href="http://developer.yahoo.com/geo/geoplanet/">Yahoo! Where On Earth
 	 * ID</a>) and some other human-readable information such as a canonical
 	 * name and country the location belongs in. <br>
-	 * This method calls http://api.twitter.com/1/trends/available.json
+	 * This method calls http://api.twitter.com/1.1/trends/available.json
 	 * 
 	 * @param location the available trend locations will be sorted by distance
 	 *            to the lat and long passed in. The sort is nearest to
@@ -61,7 +61,7 @@ public interface LocalTrendsMethods {
 	 * @throws twitter4j.TwitterException when Twitter service or network is
 	 *             unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/trends/available">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/trends/available">GET
 	 *      trends/available | Twitter Developers</a>
 	 * @since Twitter4J 2.1.1
 	 */
@@ -76,13 +76,13 @@ public interface LocalTrendsMethods {
 	 * minutes, and therefore users are discouraged from querying these
 	 * endpoints faster than once every five minutes. Global trends information
 	 * is also available from this API by using a WOEID of 1. <br>
-	 * This method calls http://api.twitter.com/1/trends/:woeid.json
+	 * This method calls http://api.twitter.com/1.1/trends/:woeid.json
 	 * 
 	 * @param woeid The WOEID of the location to be querying for
 	 * @return trends
 	 * @throws twitter4j.TwitterException when Twitter service or network is
 	 *             unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/trends/:woeid">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/trends/:woeid">GET
 	 *      trends/:woeid | Twitter Developers</a>
 	 * @since Twitter4J 2.1.1
 	 */

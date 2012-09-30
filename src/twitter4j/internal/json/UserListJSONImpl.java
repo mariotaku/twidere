@@ -147,30 +147,6 @@ import twitter4j.internal.http.HttpResponse;
 			return null;
 		}
 	}
-	
-	static PagableResponseList<UserList> createPagableUserListList(HttpResponse res, Configuration conf)
-			throws TwitterException {
-		try {
-			final JSONObject json = res.asJSONObject();
-			final JSONArray list = json.getJSONArray("lists");
-			final int size = list.length();
-			@SuppressWarnings("unchecked")
-			final PagableResponseList<UserList> users = (PagableResponseList<UserList>) new PagableResponseListImpl<UserList>(size, json, res);
-			for (int i = 0; i < size; i++) {
-				final JSONObject userListJson = list.getJSONObject(i);
-				final UserList userList = new UserListJSONImpl(userListJson);
-				users.add(userList);
-			}
-			return users;
-		} catch (final JSONException jsone) {
-			throw new TwitterException(jsone);
-		} catch (final TwitterException te) {
-			throw te;
-		}
-	}
-
-	/* package */
-
 
 	/**
 	 * {@inheritDoc}
@@ -179,6 +155,8 @@ import twitter4j.internal.http.HttpResponse;
 	public User getUser() {
 		return user;
 	}
+
+	/* package */
 
 	@Override
 	public int hashCode() {
@@ -227,6 +205,27 @@ import twitter4j.internal.http.HttpResponse;
 			}
 		} catch (final JSONException jsone) {
 			throw new TwitterException(jsone.getMessage() + ":" + json.toString(), jsone);
+		}
+	}
+
+	static PagableResponseList<UserList> createPagableUserListList(final HttpResponse res, final Configuration conf)
+			throws TwitterException {
+		try {
+			final JSONObject json = res.asJSONObject();
+			final JSONArray list = json.getJSONArray("lists");
+			final int size = list.length();
+			@SuppressWarnings("unchecked")
+			final PagableResponseList<UserList> users = new PagableResponseListImpl<UserList>(size, json, res);
+			for (int i = 0; i < size; i++) {
+				final JSONObject userListJson = list.getJSONObject(i);
+				final UserList userList = new UserListJSONImpl(userListJson);
+				users.add(userList);
+			}
+			return users;
+		} catch (final JSONException jsone) {
+			throw new TwitterException(jsone);
+		} catch (final TwitterException te) {
+			throw te;
 		}
 	}
 

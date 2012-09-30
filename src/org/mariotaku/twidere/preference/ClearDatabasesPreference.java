@@ -66,8 +66,6 @@ public class ClearDatabasesPreference extends Preference implements Constants, O
 			resolver.delete(CachedUsers.CONTENT_URI, null, null);
 			resolver.delete(DirectMessages.Inbox.CONTENT_URI, null, null);
 			resolver.delete(DirectMessages.Outbox.CONTENT_URI, null, null);
-			resolver.delete(CachedTrends.Daily.CONTENT_URI, null, null);
-			resolver.delete(CachedTrends.Weekly.CONTENT_URI, null, null);
 			resolver.delete(CachedTrends.Local.CONTENT_URI, null, null);
 			suggestions.clearHistory();
 			return null;

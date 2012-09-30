@@ -25,7 +25,6 @@ import java.util.List;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
 import twitter4j.Paging;
-import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import android.content.Context;

@@ -95,7 +95,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					} else {
 						if (target_statuses != null && target_statuses.length > 0) {
 							final Status status = target_statuses[0];
-							Utils.openUserRetweetedStatus(getActivity(), mAccountId, status.getId());
+							Utils.openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
 						}
 					}
 					break;
@@ -130,7 +130,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					} else {
 						if (target_objects != null && target_objects.length > 0) {
 							final Status status = target_objects[0];
-							Utils.openUserRetweetedStatus(getActivity(), mAccountId, status.getId());
+							Utils.openStatus(getActivity(),  new ParcelableStatus(status, mAccountId, false));
 						}
 					}
 					break;
@@ -167,7 +167,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	@Override
 	public void onResume() {
 		super.onResume();
-		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		mAdapter.setDisplayProfileImage(display_profile_image);
@@ -177,7 +177,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 	static class ActivitiesAdapter extends BaseAdapter implements BaseAdapterInterface {
 
-		private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowAbsoluteTime;
+		private boolean mDisplayProfileImage, mDisplayName, mShowAbsoluteTime;
 		private final boolean mDisplayHiResProfileImage;
 		private float mTextSize;
 
@@ -325,10 +325,11 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					case Action.ACTION_LIST_MEMBER_ADDED: {
 						holder.text.setVisibility(View.GONE);
 						if (sources_length == 1) {
-							holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added, name));
+							holder.title
+									.setText(mContext.getString(R.string.activity_about_me_list_member_added, name));
 						} else {
-							holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added_multi, name,
-									sources_length - 1));
+							holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added_multi,
+									name, sources_length - 1));
 						}
 						holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
 								: View.GONE);

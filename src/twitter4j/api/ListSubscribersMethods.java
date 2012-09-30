@@ -27,13 +27,13 @@ import twitter4j.UserList;
 public interface ListSubscribersMethods {
 	/**
 	 * Make the authenticated user follow the specified list. <br>
-	 * This method calls http://api.twitter.com/1/list/subscribers/create.json
+	 * This method calls http://api.twitter.com/1.1/list/subscribers/create.json
 	 * 
 	 * @param listId The id of the list.
 	 * @return the updated list
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/lists/subscribers/create">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/lists/subscribers/create">POST
 	 *      lists/subscribers/create | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
@@ -41,13 +41,13 @@ public interface ListSubscribersMethods {
 
 	/**
 	 * Unsubscribes the authenticated user form the specified list. <br>
-	 * This method calls http://api.twitter.com/1/subscribers/destroy.json
+	 * This method calls http://api.twitter.com/1.1/subscribers/destroy.json
 	 * 
 	 * @param listId The id of the list.
 	 * @return the updated list
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/lists/subscribers/destroy">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/lists/subscribers/destroy">POST
 	 *      lists/subscribers/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
@@ -55,7 +55,7 @@ public interface ListSubscribersMethods {
 
 	/**
 	 * Returns the subscribers of the specified list. <br>
-	 * This method calls http://api.twitter.com/1/lists/subscribers.json
+	 * This method calls http://api.twitter.com/1.1/lists/subscribers.json
 	 * 
 	 * @param listId The id of the list
 	 * @param cursor Breaks the results into pages. A single page contains 20
@@ -66,7 +66,7 @@ public interface ListSubscribersMethods {
 	 * @throws twitter4j.TwitterException when Twitter service or network is
 	 *             unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/lists/subscribers">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/subscribers">GET
 	 *      lists/subscribers | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
@@ -74,7 +74,7 @@ public interface ListSubscribersMethods {
 
 	/**
 	 * Check if the specified user is a subscriber of the specified list. <br>
-	 * This method calls http://api.twitter.com/1/lists/subscribers/show.json
+	 * This method calls http://api.twitter.com/1.1/lists/subscribers/show.json
 	 * 
 	 * @param listId The id of the list.
 	 * @param userId The id of the user who you want to know is a member or not
@@ -85,7 +85,7 @@ public interface ListSubscribersMethods {
 	 *             list(TwitterException.getStatusCode() returns 404 in that
 	 *             case.)
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/lists/subscribers/show">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/subscribers/show">GET
 	 *      lists/subscribers/show | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */

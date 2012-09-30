@@ -24,7 +24,6 @@ import org.json.JSONObject;
 
 import twitter4j.IDs;
 import twitter4j.TwitterException;
-import twitter4j.conf.Configuration;
 import twitter4j.internal.http.HttpResponse;
 import twitter4j.internal.util.z_T4JInternalParseUtil;
 

@@ -43,7 +43,8 @@ public final class DatabaseUpgradeHelper {
 	private static final int FIELD_TYPE_BLOB = 4;
 
 	public static void safeUpgrade(final SQLiteDatabase db, final String table, final String[] new_cols,
-			final String[] new_types, final boolean fast_upgrade, final boolean drop_directly) {
+			final String[] new_types, final boolean fast_upgrade, final boolean drop_directly,
+			final HashMap<String, String> column_alias) {
 
 		if (new_cols == null || new_types == null || new_cols.length != new_types.length)
 			throw new IllegalArgumentException("Invalid parameters, length of columns and types not match.");
@@ -77,15 +78,18 @@ public final class DatabaseUpgradeHelper {
 				final int length = new_cols.length;
 				for (int i = 0; i < length; i++) {
 					final String new_col = new_cols[i];
+					final String col_alias = column_alias != null && column_alias.containsKey(new_col)
+							&& ArrayUtils.contains(old_cols, column_alias.get(new_col)) ? column_alias.get(new_col)
+							: new_col;
 					final String new_type = new_types[i];
 					if (BaseColumns._ID.equals(new_col)) {
 						continue;
 					}
 
-					final int idx = cur.getColumnIndex(new_col);
+					final int idx = cur.getColumnIndex(col_alias);
 
-					if (ArrayUtils.contains(old_cols, new_col)) {
-						final String old_type = getTypeString(db, table, new_col);
+					if (ArrayUtils.contains(old_cols, col_alias)) {
+						final String old_type = getTypeString(db, table, col_alias);
 						final boolean compatible = isTypeCompatible(old_type, new_type, false);
 						if (compatible && idx > -1) {
 							switch (getTypeInt(new_type)) {
@@ -107,7 +111,6 @@ public final class DatabaseUpgradeHelper {
 							}
 						}
 					}
-
 				}
 				values_list.add(values);
 				cur.moveToNext();

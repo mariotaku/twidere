@@ -149,8 +149,7 @@ import twitter4j.internal.http.HttpResponse;
 	}
 
 	/* package */
-	static ResponseList<Location> createLocationList(final JSONArray list)
-			throws TwitterException {
+	static ResponseList<Location> createLocationList(final JSONArray list) throws TwitterException {
 		try {
 			final int size = list.length();
 			final ResponseList<Location> locations = new ResponseListImpl<Location>(size, null);

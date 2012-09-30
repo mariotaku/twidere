@@ -21,7 +21,7 @@ public interface OAuthSupport {
 	 * @see <a href="http://oauth.net/core/1.0a/#auth_step2">OAuth Core 1.0a -
 	 *      6.2. Obtaining User Authorization</a>
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/oauth/access_token">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST
 	 *      oauth/access_token | Twitter Developers</a>
 	 * @since Twitter4J 2.0.0
 	 */
@@ -40,7 +40,7 @@ public interface OAuthSupport {
 	 * @see <a href="http://oauth.net/core/1.0a/#auth_step2">OAuth Core 1.0a -
 	 *      6.2. Obtaining User Authorization</a>
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/oauth/access_token">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST
 	 *      oauth/access_token | Twitter Developers</a>
 	 * @since Twitter4J 2.0.0
 	 */
@@ -58,7 +58,7 @@ public interface OAuthSupport {
 	 * @see <a href="http://oauth.net/core/1.0a/#auth_step2">OAuth Core 1.0a -
 	 *      6.2. Obtaining User Authorization</a>
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/oauth/access_token">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST
 	 *      oauth/access_token | Twitter Developers</a>
 	 * @since Twitter 2.1.1
 	 */
@@ -76,7 +76,7 @@ public interface OAuthSupport {
 	 * @see <a href="http://oauth.net/core/1.0a/#auth_step2">OAuth Core 1.0a -
 	 *      6.2. Obtaining User Authorization</a>
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/oauth/access_token">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST
 	 *      oauth/access_token | Twitter Developers</a>
 	 * @since Twitter4J 2.0.0
 	 */
@@ -106,7 +106,7 @@ public interface OAuthSupport {
 	 * @see <a href="https://dev.twitter.com/docs/oauth/xauth">xAuth | Twitter
 	 *      Developers</a>
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/oauth/access_token">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST
 	 *      oauth/access_token | Twitter Developers</a>
 	 * @since Twitter 2.1.1
 	 */
@@ -123,7 +123,7 @@ public interface OAuthSupport {
 	 * @see <a href="http://oauth.net/core/1.0a/#auth_step1">OAuth Core 1.0a -
 	 *      6.1. Obtaining an Unauthorized Request Token</a>
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/oauth/request_token">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/request_token">POST
 	 *      oauth/request_token | Twitter Developers</a>
 	 * @since Twitter4J 2.0.0
 	 */
@@ -141,7 +141,7 @@ public interface OAuthSupport {
 	 * @see <a href="http://oauth.net/core/1.0a/#auth_step1">OAuth Core 1.0a -
 	 *      6.1. Obtaining an Unauthorized Request Token</a>
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/oauth/request_token">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/request_token">POST
 	 *      oauth/request_token | Twitter Developers</a>
 	 * @since Twitter4J 2.0.0
 	 */
@@ -164,7 +164,7 @@ public interface OAuthSupport {
 	 * @see <a href="http://oauth.net/core/1.0a/#auth_step1">OAuth Core 1.0a -
 	 *      6.1. Obtaining an Unauthorized Request Token</a>
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/oauth/request_token">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/request_token">POST
 	 *      oauth/request_token | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */

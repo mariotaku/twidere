@@ -59,6 +59,7 @@ public class ParcelableDirectMessage implements Parcelable {
 	public final long account_id, message_id, message_timestamp;
 	public final long sender_id, recipient_id;
 
+	@Deprecated
 	public final boolean is_gap;
 
 	public final String text;
@@ -66,6 +67,7 @@ public class ParcelableDirectMessage implements Parcelable {
 
 	public final URL sender_profile_image_url, recipient_profile_image_url;
 
+	@SuppressWarnings("deprecation")
 	public ParcelableDirectMessage(final Cursor cursor, final DirectMessageCursorIndices indices) {
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
 		is_gap = indices.is_gap != -1 ? cursor.getShort(indices.is_gap) == 1 : null;

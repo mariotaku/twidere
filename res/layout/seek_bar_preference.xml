@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@android:id/widget_frame"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:descendantFocusability="blocksDescendants"
+	android:paddingBottom="8dp"
+	android:paddingLeft="@dimen/preference_horizontal_margin"
+	android:paddingRight="@dimen/preference_horizontal_margin"
+	android:paddingTop="8dp">
+
+	<TextView
+		android:id="@android:id/title"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:textAppearance="?preferenceTitleStyle"/>
+
+	<TextView
+		android:id="@android:id/summary"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@android:id/title"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_below="@android:id/title"
+		android:layout_toLeftOf="@+id/seekBarPrefUnitsLeft"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+	<TextView
+		android:id="@+id/seekBarPrefUnitsRight"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBottom="@android:id/summary"
+		android:layout_alignParentRight="true"/>
+
+	<TextView
+		android:id="@+id/seekBarPrefValue"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBottom="@android:id/summary"
+		android:layout_toLeftOf="@+id/seekBarPrefUnitsRight"
+		android:gravity="right"/>
+
+	<TextView
+		android:id="@+id/seekBarPrefUnitsLeft"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBottom="@android:id/summary"
+		android:layout_toLeftOf="@+id/seekBarPrefValue"/>
+
+	<LinearLayout
+		android:id="@+id/seekBarPrefBarContainer"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@android:id/summary"/>
+
+</RelativeLayout>

@@ -63,8 +63,7 @@ public class ImageUploaderPickerPreference extends DialogPreference implements C
 					+ "/" + info.serviceInfo.name));
 		}
 		mAvailableImageUploaders = specs.toArray(new ImageUploaderSpec[specs.size()]);
-		builder.setSingleChoiceItems(mAvailableImageUploaders, getIndex(component),
-				ImageUploaderPickerPreference.this);
+		builder.setSingleChoiceItems(mAvailableImageUploaders, getIndex(component), ImageUploaderPickerPreference.this);
 		builder.setNegativeButton(android.R.string.cancel, null);
 	}
 

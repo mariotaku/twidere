@@ -20,7 +20,8 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getLastMessageIdsFromDatabase;
+import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
+import static org.mariotaku.twidere.util.Utils.getOldestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
 import org.mariotaku.twidere.adapter.DirectMessagesEntryAdapter;
@@ -155,24 +156,26 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	public void onPullDownToRefresh() {
 		if (mService == null) return;
 		final long[] account_ids = getActivatedAccountIds(getActivity());
-		mService.getReceivedDirectMessages(account_ids, null);
-		mService.getSentDirectMessages(account_ids, null);
+		final long[] inbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
+		final long[] outbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(), DirectMessages.Outbox.CONTENT_URI);
+		mService.getReceivedDirectMessagesWithSinceIds(account_ids, null, inbox_since_ids);
+		mService.getSentDirectMessagesWithSinceIds(account_ids, null, outbox_since_ids);
 	}
 
 	@Override
 	public void onPullUpToRefresh() {
 		if (mService == null) return;
 		final long[] account_ids = getActivatedAccountIds(getActivity());
-		final long[] inbox_ids = getLastMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
-		final long[] outbox_ids = getLastMessageIdsFromDatabase(getActivity(), DirectMessages.Outbox.CONTENT_URI);
-		mService.getReceivedDirectMessages(account_ids, inbox_ids);
-		mService.getSentDirectMessages(account_ids, outbox_ids);
+		final long[] inbox_max_ids = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
+		final long[] outbox_max_ids = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Outbox.CONTENT_URI);
+		mService.getReceivedDirectMessagesWithSinceIds(account_ids, inbox_max_ids, null);
+		mService.getSentDirectMessagesWithSinceIds(account_ids, outbox_max_ids, null);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		mAdapter.setDisplayProfileImage(display_profile_image);

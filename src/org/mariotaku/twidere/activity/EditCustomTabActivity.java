@@ -234,9 +234,8 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		} else if (AUTHORITY_SEARCH_TWEETS.equals(type) || AUTHORITY_SEARCH_USERS.equals(type)) {
 			mText1Preference.setTitle(R.string.keywords);
 			mText1Preference.setShouldCompleteUserName(false);
-		} else if (AUTHORITY_SAVED_SEARCHES.equals(type) || AUTHORITY_RETWEETED_TO_ME.equals(type)
-				|| AUTHORITY_DIRECT_MESSAGES.equals(type) || AUTHORITY_TRENDS.equals(type)
-				|| AUTHORITY_ACTIVITIES_ABOUT_ME.equals(type)) {
+		} else if (AUTHORITY_SAVED_SEARCHES.equals(type) || AUTHORITY_DIRECT_MESSAGES.equals(type)
+				|| AUTHORITY_TRENDS.equals(type) || AUTHORITY_ACTIVITIES_ABOUT_ME.equals(type)) {
 			mText1Preference.setEnabled(false);
 			mText1Preference.setTitle(R.string.unused);
 			mText1Preference.setShouldCompleteUserName(false);

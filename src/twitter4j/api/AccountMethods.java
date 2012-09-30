@@ -34,12 +34,12 @@ public interface AccountMethods {
 	 * information for the authenticating user. <br>
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
-	 * This method calls http://api.twitter.com/1/account/settings.json
+	 * This method calls http://api.twitter.com/1.1/account/settings.json
 	 * 
 	 * @return the current trend, geo and sleep time information for the
 	 *         authenticating user.
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/account/totals">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/account/totals">GET
 	 *      account/settings | Twitter Developers</a>
 	 * @since Twitter4J 2.1.9
 	 */
@@ -50,12 +50,12 @@ public interface AccountMethods {
 	 * favorites of the authenticating user. <br>
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
-	 * This method calls http://api.twitter.com/1/account/totals.json
+	 * This method calls http://api.twitter.com/1.1/account/totals.json
 	 * 
 	 * @return the current count of friends, followers, updates (statuses) and
 	 *         favorites of the authenticating user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/account/totals">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/account/totals">GET
 	 *      account/totals | Twitter Developers</a>
 	 * @since Twitter4J 2.1.9
 	 */
@@ -69,12 +69,12 @@ public interface AccountMethods {
 	 * user is returned. Otherwise, the rate limit status for the requester's IP
 	 * address is returned.<br>
 	 * <br>
-	 * This method calls http://api.twitter.com/1/account/rate_limit_status.json
+	 * This method calls http://api.twitter.com/1.1/account/rate_limit_status.json
 	 * 
 	 * @return the rate limit status
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/account/rate_limit_status">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/account/rate_limit_status">GET
 	 *      account/rate_limit_status | Twitter Developers</a>
 	 * @since Twitter4J 1.1.4
 	 */
@@ -85,7 +85,7 @@ public interface AccountMethods {
 	 * information for the authenticating user. <br>
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
-	 * This method calls http://api.twitter.com/1/account/settings.json
+	 * This method calls http://api.twitter.com/1.1/account/settings.json
 	 * 
 	 * @param trendLocationWoeid Optional. The Yahoo! Where On Earth ID to use
 	 *            as the user's default trend location.
@@ -103,7 +103,7 @@ public interface AccountMethods {
 	 *         authenticating user.
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/account/settings">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/account/settings">POST
 	 *      account/settings | Twitter Developers</a>
 	 * @since Twitter4J 2.2.4
 	 */
@@ -113,7 +113,7 @@ public interface AccountMethods {
 	/**
 	 * Sets values that users are able to set under the "Account" tab of their
 	 * settings page. Only the parameters specified(non-null) will be updated. <br>
-	 * This method calls http://api.twitter.com/1/account/update_profile.json
+	 * This method calls http://api.twitter.com/1.1/account/update_profile.json
 	 * 
 	 * @param name Optional. Maximum of 20 characters.
 	 * @param url Optional. Maximum of 100 characters. Will be prepended with
@@ -124,7 +124,7 @@ public interface AccountMethods {
 	 * @return the updated user
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/account/update_profile">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/account/update_profile">POST
 	 *      account/update_profile | Twitter Developers</a>
 	 * @since Twitter4J 2.1.8
 	 */
@@ -133,7 +133,7 @@ public interface AccountMethods {
 	/**
 	 * Updates the authenticating user's profile background image. <br>
 	 * This method calls
-	 * http://api.twitter.com/1/account/update_profile_background_image.json
+	 * http://api.twitter.com/1.1/account/update_profile_background_image.json
 	 * 
 	 * @param image Must be a valid GIF, JPG, or PNG image of less than 800
 	 *            kilobytes in size. Images with width larger than 2048 pixels
@@ -147,7 +147,7 @@ public interface AccountMethods {
 	 *             file object in not representing a file (IOException will be
 	 *             nested)
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/account/update_profile_background_image">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/account/update_profile_background_image">POST
 	 *      account/update_profile_background_image | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -156,7 +156,7 @@ public interface AccountMethods {
 	/**
 	 * Updates the authenticating user's profile background image. <br>
 	 * This method calls
-	 * http://api.twitter.com/1/account/update_profile_background_image.json
+	 * http://api.twitter.com/1.1/account/update_profile_background_image.json
 	 * 
 	 * @param image Must be a valid GIF, JPG, or PNG image of less than 800
 	 *            kilobytes in size. Images with width larger than 2048 pixels
@@ -170,7 +170,7 @@ public interface AccountMethods {
 	 *             file object in not representing a file (IOException will be
 	 *             nested)
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/account/update_profile_background_image">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/account/update_profile_background_image">POST
 	 *      account/update_profile_background_image | Twitter Developers</a>
 	 * @since Twitter4J 2.1.11
 	 */
@@ -182,7 +182,7 @@ public interface AccountMethods {
 	 * must be a valid hexidecimal value, and may be either three or six
 	 * characters (ex: #fff or #ffffff). <br>
 	 * This method calls
-	 * http://api.twitter.com/1/account/update_profile_colors.json
+	 * http://api.twitter.com/1.1/account/update_profile_colors.json
 	 * 
 	 * @param profileBackgroundColor optional, can be null
 	 * @param profileTextColor optional, can be null
@@ -192,7 +192,7 @@ public interface AccountMethods {
 	 * @return the updated user
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/account/update_profile_colors">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/account/update_profile_colors">POST
 	 *      account/update_profile_colors | Twitter Developers</a>
 	 * @since Twitter4J 2.0.0
 	 */
@@ -202,7 +202,7 @@ public interface AccountMethods {
 	/**
 	 * Updates the authenticating user's profile image. <br>
 	 * This method calls
-	 * http://api.twitter.com/1/account/update_profile_image.json
+	 * http://api.twitter.com/1.1/account/update_profile_image.json
 	 * 
 	 * @param image Must be a valid GIF, JPG, or PNG image of less than 700
 	 *            kilobytes in size. Images with width larger than 500 pixels
@@ -214,7 +214,7 @@ public interface AccountMethods {
 	 *             file object in not representing a file (IOException will be
 	 *             nested)
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/account/update_profile_image">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/account/update_profile_image">POST
 	 *      account/update_profile_image | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -223,7 +223,7 @@ public interface AccountMethods {
 	/**
 	 * Updates the authenticating user's profile image. <br>
 	 * This method calls
-	 * http://api.twitter.com/1/account/update_profile_image.json
+	 * http://api.twitter.com/1.1/account/update_profile_image.json
 	 * 
 	 * @param image Must be a valid GIF, JPG, or PNG image of less than 700
 	 *            kilobytes in size. Images with width larger than 500 pixels
@@ -235,7 +235,7 @@ public interface AccountMethods {
 	 *             file object in not representing a file (IOException will be
 	 *             nested)
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/account/update_profile_image">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/account/update_profile_image">POST
 	 *      account/update_profile_image | Twitter Developers</a>
 	 * @since Twitter4J 2.1.11
 	 */
@@ -247,14 +247,14 @@ public interface AccountMethods {
 	 * code and an error message if not. Use this method to test if supplied
 	 * user credentials are valid. <br>
 	 * This method calls
-	 * http://api.twitter.com/1/account/verify_credentials.json
+	 * http://api.twitter.com/1.1/account/verify_credentials.json
 	 * 
 	 * @return user
 	 * @throws twitter4j.TwitterException when Twitter service or network is
 	 *             unavailable, or if supplied credential is wrong
 	 *             (TwitterException.getStatusCode() == 401)
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/account/verify_credentials">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/account/verify_credentials">GET
 	 *      account/verify_credentials | Twitter Developers</a>
 	 * @since Twitter4J 2.0.0
 	 */

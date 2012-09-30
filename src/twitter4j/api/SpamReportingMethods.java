@@ -27,12 +27,12 @@ public interface SpamReportingMethods {
 	/**
 	 * The user specified in the id is blocked by the authenticated user and
 	 * reported as a spammer. <br>
-	 * This method calls http://api.twitter.com/1/report_spam.json
+	 * This method calls http://api.twitter.com/1.1/report_spam.json
 	 * 
 	 * @param userId The ID of the user you want to report as a spammer.
 	 * @return The User reported as a spammer.
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/post/report_spam">POST
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/report_spam">POST
 	 *      report_spam | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -41,13 +41,13 @@ public interface SpamReportingMethods {
 	/**
 	 * The user specified in the id is blocked by the authenticated user and
 	 * reported as a spammer. <br>
-	 * This method calls http://api.twitter.com/1/report_spam.json
+	 * This method calls http://api.twitter.com/1.1/report_spam.json
 	 * 
 	 * @param screenName The screen name of the user you want to report as a
 	 *            spammer.
 	 * @return The User reported as a spammer.
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/post/report_spam">POST
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/report_spam">POST
 	 *      report_spam | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */

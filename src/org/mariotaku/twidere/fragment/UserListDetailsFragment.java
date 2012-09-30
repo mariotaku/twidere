@@ -21,7 +21,6 @@ package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.findUserList;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
@@ -47,6 +46,7 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
+import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -59,8 +59,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -92,16 +90,18 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		LoaderCallbacks<UserListDetailsFragment.Response<UserList>>, Panes.Right {
 
 	private LazyImageLoader mProfileImageLoader;
+	private ServiceInterface mService;
 
 	private ImageView mProfileImageView;
-
 	private TextView mListNameView, mUserNameView, mDescriptionView, mErrorMessageView;
-
+	private View mListContainer, mErrorRetryContainer;
+	private ColorLabelRelativeLayout mProfileContainer;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer;
 	private Button mFollowMoreButton, mRetryButton;
-	private ListActionAdapter mAdapter;
 	private ListView mListView;
 	private View mHeaderView;
+
+	private ListActionAdapter mAdapter;
 
 	private long mAccountId, mUserId;
 	private final DialogFragment mAddMemberDialogFragment = new AddMemberDialogFragment(),
@@ -109,8 +109,6 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	private UserList mUserList = null;
 	private int mUserListId;
 	private String mUserName, mUserScreenName, mListName;
-
-	private ServiceInterface mService;
 
 	private PopupMenu mPopupMenu;
 
@@ -132,7 +130,6 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			}
 		}
 	};
-	private View mListContainer, mErrorRetryContainer;
 
 	public void changeUserList(final long account_id, final UserList user_list) {
 		if (user_list == null || getActivity() == null || !isMyActivatedAccount(getActivity(), account_id)) return;
@@ -147,19 +144,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mUserId = user.getId();
 		mUserScreenName = user.getScreenName();
 		mListName = user_list.getName();
-
-		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
-
-		//TODO 
-		//mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account_nopadding : 0);
-		if (is_multiple_account_enabled) {
-			final Drawable d = mListView.getBackground();
-			if (d != null) {
-				d.mutate().setColorFilter(getAccountColor(getActivity(), account_id), PorterDuff.Mode.MULTIPLY);
-				mListView.invalidate();
-			}
-		}
-
+		mProfileContainer.drawRight(getAccountColor(getActivity(), account_id));
 		mListNameView.setText("@" + mUserScreenName + "/" + mListName);
 		mUserNameView.setText(mUserName);
 		final String description = user_list.getDescription();
@@ -310,6 +295,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		mHeaderView = inflater.inflate(R.layout.user_list_detail_header, null);
+		mProfileContainer = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile_name_container);
 		mNameContainer = mHeaderView.findViewById(R.id.name_container);
 		mListNameView = (TextView) mHeaderView.findViewById(R.id.list_name);
 		mUserNameView = (TextView) mHeaderView.findViewById(R.id.user_name);

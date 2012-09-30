@@ -41,12 +41,20 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 public class TweetSearchLoader extends Twitter4JStatusLoader {
 
-	public List<Status> getStatuses(Paging paging) throws TwitterException {
+	private final String mQuery;
+
+	public TweetSearchLoader(final Context context, final long account_id, final String query, final long max_id,
+			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
+		super(context, account_id, max_id, data, class_name, is_home_tab);
+		mQuery = query;
+	}
+
+	@Override
+	public List<Status> getStatuses(final Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
 		if (twitter == null) return null;
 		final Query query = new Query(mQuery);
@@ -55,15 +63,6 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 			query.setMaxId(paging.getMaxId());
 		}
 		return Arrays.asList(twitter.search(query).getStatuses());
-	}
-	
-
-	private final String mQuery;
-
-	public TweetSearchLoader(final Context context, final long account_id, final String query, final long max_id,
-			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
-		super(context, account_id, max_id, data, class_name, is_home_tab);
-		mQuery = query;
 	}
 
 	@Override

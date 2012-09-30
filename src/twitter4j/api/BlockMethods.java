@@ -28,12 +28,12 @@ public interface BlockMethods {
 	/**
 	 * Blocks the user specified in the ID parameter as the authenticating user.
 	 * Returns the blocked user in the requested format when successful. <br>
-	 * This method calls http://api.twitter.com/1/blocks/create/[id].json
+	 * This method calls http://api.twitter.com/1.1/blocks/create/[id].json
 	 * 
 	 * @param userId the ID of the user to block
 	 * @return the blocked user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/post/blocks/create">POST
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/blocks/create">POST
 	 *      blocks/create | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -42,12 +42,12 @@ public interface BlockMethods {
 	/**
 	 * Blocks the user specified in the ID parameter as the authenticating user.
 	 * Returns the blocked user in the requested format when successful. <br>
-	 * This method calls http://api.twitter.com/1/blocks/create/[id].json
+	 * This method calls http://api.twitter.com/1.1/blocks/create/[id].json
 	 * 
 	 * @param screenName the screen_name of the user to block
 	 * @return the blocked user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/post/blocks/create">POST
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/blocks/create">POST
 	 *      blocks/create | Twitter Developers</a>
 	 * @since Twitter4J 2.0.1
 	 */
@@ -57,13 +57,13 @@ public interface BlockMethods {
 	 * Un-blocks the user specified in the ID parameter as the authenticating
 	 * user. Returns the un-blocked user in the requested format when
 	 * successful. <br>
-	 * This method calls http://api.twitter.com/1/blocks/destroy/[id].json
+	 * This method calls http://api.twitter.com/1.1/blocks/destroy/[id].json
 	 * 
 	 * @param userId the ID of the user to block
 	 * @return the unblocked user
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/blocks/destroy">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/blocks/destroy">POST
 	 *      blocks/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.0.1
 	 */
@@ -73,13 +73,13 @@ public interface BlockMethods {
 	 * Un-blocks the user specified in the ID parameter as the authenticating
 	 * user. Returns the un-blocked user in the requested format when
 	 * successful. <br>
-	 * This method calls http://api.twitter.com/1/blocks/destroy/[id].json
+	 * This method calls http://api.twitter.com/1.1/blocks/destroy/[id].json
 	 * 
 	 * @param screen_name the screen_name of the user to block
 	 * @return the unblocked user
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/blocks/destroy">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/blocks/destroy">POST
 	 *      blocks/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.0.1
 	 */
@@ -89,12 +89,12 @@ public interface BlockMethods {
 	 * Returns if the authenticating user is blocking a target user. Will return
 	 * the blocked user's object if a block exists, and error with a HTTP 404
 	 * response code otherwise. <br>
-	 * This method calls http://api.twitter.com/1/blocks/exists/[id].json
+	 * This method calls http://api.twitter.com/1.1/blocks/exists/[id].json
 	 * 
 	 * @param userId The ID of the potentially blocked user.
 	 * @return if the authenticating user is blocking a target user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/blocks/exists">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/blocks/exists">GET
 	 *      blocks/exists | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -104,12 +104,12 @@ public interface BlockMethods {
 	 * Returns if the authenticating user is blocking a target user. Will return
 	 * the blocked user's object if a block exists, and error with a HTTP 404
 	 * response code otherwise. <br>
-	 * This method calls http://api.twitter.com/1/blocks/exists/[id].json
+	 * This method calls http://api.twitter.com/1.1/blocks/exists/[id].json
 	 * 
 	 * @param screenName The screen_name of the potentially blocked user.
 	 * @return if the authenticating user is blocking a target user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/blocks/exists">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/blocks/exists">GET
 	 *      blocks/exists | Twitter Developers</a>
 	 * @since Twitter4J 2.0.4
 	 */
@@ -117,11 +117,11 @@ public interface BlockMethods {
 
 	/**
 	 * Returns a list of user objects that the authenticating user is blocking. <br>
-	 * This method calls http://api.twitter.com/1/blocks/blocking.json
+	 * This method calls http://api.twitter.com/1.1/blocks/blocking.json
 	 * 
 	 * @return a list of user objects that the authenticating user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/blocks/blocking">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/blocks/blocking">GET
 	 *      blocks/blocking | Twitter Developers</a>
 	 * @since Twitter4J 2.0.4
 	 */
@@ -129,12 +129,12 @@ public interface BlockMethods {
 
 	/**
 	 * Returns a list of user objects that the authenticating user is blocking. <br>
-	 * This method calls http://api.twitter.com/1/blocks/blocking.json
+	 * This method calls http://api.twitter.com/1.1/blocks/blocking.json
 	 * 
 	 * @param page the number of page
 	 * @return a list of user objects that the authenticating user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/blocks/blocking">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/blocks/blocking">GET
 	 *      blocks/blocking | Twitter Developers</a>
 	 * @since Twitter4J 2.0.4
 	 */
@@ -142,13 +142,13 @@ public interface BlockMethods {
 
 	/**
 	 * Returns an array of numeric user ids the authenticating user is blocking. <br>
-	 * This method calls http://api.twitter.com/1/blocks/blocking/ids
+	 * This method calls http://api.twitter.com/1.1/blocks/blocking/ids
 	 * 
 	 * @return Returns an array of numeric user ids the authenticating user is
 	 *         blocking.
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/blocks/blocking/ids">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/blocks/blocking/ids">GET
 	 *      blocks/blocking/ids | Twitter Developers</a>
 	 * @since Twitter4J 2.0.4
 	 */

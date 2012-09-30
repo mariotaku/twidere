@@ -46,7 +46,7 @@ public interface Constants extends TwitterConstants {
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 23;
+	public static final int DATABASES_VERSION = 27;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -87,7 +87,6 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_LIST_MEMBERSHIPS = "list_memberships";
 	public static final String AUTHORITY_USERS_RETWEETED_STATUS = "users_retweeted_status";
 	public static final String AUTHORITY_SAVED_SEARCHES = "saved_searches";
-	public static final String AUTHORITY_RETWEETED_TO_ME = "retweeted_to_me";
 	public static final String AUTHORITY_SEARCH_USERS = "search_users";
 	public static final String AUTHORITY_SEARCH_TWEETS = "search_tweets";
 	public static final String AUTHORITY_DIRECT_MESSAGES = "direct_messages";
@@ -127,7 +126,7 @@ public interface Constants extends TwitterConstants {
 
 	public static final String PREFERENCE_KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
 	public static final String PREFERENCE_KEY_LOAD_ITEM_LIMIT = "load_item_limit";
-	public static final String PREFERENCE_KEY_TEXT_SIZE = "text_size";
+	public static final String PREFERENCE_KEY_TEXT_SIZE = "text_size_int";
 	public static final String PREFERENCE_KEY_DARK_THEME = "dark_theme";
 	public static final String PREFERENCE_KEY_SOLID_COLOR_BACKGROUND = "solid_color_background";
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
@@ -195,7 +194,7 @@ public interface Constants extends TwitterConstants {
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
-	public static final float PREFERENCE_DEFAULT_TEXT_SIZE = 14.0f;
+	public static final int PREFERENCE_DEFAULT_TEXT_SIZE = 14;
 
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 
@@ -290,6 +289,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_USER_ID = "user_id";
 	public static final String INTENT_KEY_LIST_ID = "list_id";
 	public static final String INTENT_KEY_MAX_ID = "max_id";
+	public static final String INTENT_KEY_SINCE_ID = "since_id";
 	public static final String INTENT_KEY_MIN_ID = "min_id";
 	public static final String INTENT_KEY_STATUS_ID = "status_id";
 	public static final String INTENT_KEY_SCREEN_NAME = "screen_name";
@@ -414,8 +414,6 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION = DirectMessages.Conversation.CONTENT_PATH;
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = DirectMessages.Conversation.CONTENT_PATH_SCREEN_NAME;
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = DirectMessages.ConversationsEntry.CONTENT_PATH;
-	public static final String TABLE_TRENDS_DAILY = CachedTrends.Daily.CONTENT_PATH;
-	public static final String TABLE_TRENDS_WEEKLY = CachedTrends.Weekly.CONTENT_PATH;
 	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.CONTENT_PATH;
 	public static final String TABLE_TABS = Tabs.CONTENT_PATH;
 
@@ -457,6 +455,10 @@ public interface Constants extends TwitterConstants {
 	public static final int LINK_ID_LIST_MEMBERSHIPS = 17;
 	public static final int LINK_ID_USERS_RETWEETED_STATUS = 18;
 	public static final int LINK_ID_SAVED_SEARCHES = 19;
+	/**
+	 * @deprecated Removed in API version 1.1
+	 */
+	@Deprecated
 	public static final int LINK_ID_RETWEETED_TO_ME = 20;
 	public static final int LINK_ID_USER_MENTIONS = 21;
 	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;

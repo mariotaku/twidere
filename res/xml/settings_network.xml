@@ -14,18 +14,18 @@
 
 		<EditTextPreference
 			android:dialogTitle="@string/consumer_key"
+			android:inputType="textVisiblePassword"
 			android:key="consumer_key"
 			android:singleLine="true"
 			android:summary="@string/consumer_key_summary"
-			android:title="@string/consumer_key"
-			android:typeface="monospace"/>
+			android:title="@string/consumer_key"/>
 		<EditTextPreference
 			android:dialogTitle="@string/consumer_secret"
+			android:inputType="textVisiblePassword"
 			android:key="consumer_secret"
 			android:singleLine="true"
 			android:summary="@string/consumer_secret_summary"
-			android:title="@string/consumer_secret"
-			android:typeface="monospace"/>
+			android:title="@string/consumer_secret"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_connectivity"
@@ -44,11 +44,11 @@
 		<EditTextPreference
 			android:defaultValue="8.8.8.8"
 			android:dialogTitle="@string/dns_server"
+			android:inputType="textVisiblePassword"
 			android:key="dns_server"
 			android:singleLine="true"
 			android:summary="@string/dns_server_summary"
-			android:title="@string/dns_server"
-			android:typeface="monospace"/>
+			android:title="@string/dns_server"/>
 
 		<Preference
 			android:key="custom_host_mapping"

@@ -5,7 +5,7 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical">
 
-	<RelativeLayout
+	<org.mariotaku.twidere.view.ColorLabelRelativeLayout
 		android:id="@+id/profile_name_container"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -45,17 +45,19 @@
 			android:paddingLeft="8dp"
 			android:paddingRight="8dp">
 
-			<TextView android:layerType="software"
+			<TextView
 				android:id="@+id/list_name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layerType="software"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-			<TextView android:layerType="software"
+			<TextView
 				android:id="@+id/user_name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layerType="software"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
@@ -78,7 +80,7 @@
 				android:layout_gravity="center"
 				android:text="@string/follow"/>
 		</FrameLayout>
-	</RelativeLayout>
+	</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
 
 	<LinearLayout
 		android:id="@+id/description_container"
@@ -88,18 +90,20 @@
 		android:orientation="vertical"
 		android:padding="4dp">
 
-		<TextView android:layerType="software"
+		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="right"
+			android:layerType="software"
 			android:text="@string/description"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-		<TextView android:layerType="software"
+		<TextView
 			android:id="@+id/description"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="right"
+			android:layerType="software"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
 	</LinearLayout>

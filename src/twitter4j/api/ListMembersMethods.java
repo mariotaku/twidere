@@ -28,14 +28,14 @@ public interface ListMembersMethods {
 	/**
 	 * Adds a member to a list. The authenticated user must own the list to be
 	 * able to add members to it. Lists are limited to having 500 members. <br>
-	 * This method calls http://api.twitter.com/1/lists/members/create.json
+	 * This method calls http://api.twitter.com/1.1/lists/members/create.json
 	 * 
 	 * @param listId The id of the list.
 	 * @param userId The id of the user to add as a member of the list.
 	 * @return the updated list
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/lists/members/create">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/lists/members/create">POST
 	 *      lists/members/create | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -47,13 +47,13 @@ public interface ListMembersMethods {
 	 * be able to add members to it. Lists are limited to having 500 members,
 	 * and you are limited to adding up to 100 members to a list at a time with
 	 * this method. <br>
-	 * This method calls http://api.twitter.com/1/lists/members/create_all.json
+	 * This method calls http://api.twitter.com/1.1/lists/members/create_all.json
 	 * 
 	 * @param listId The id of the list.
 	 * @param userIds The array of ids of the user to add as member of the list.
 	 *            up to 100 are allowed in a single request.
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/lists/members/create_all">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/lists/members/create_all">POST
 	 *      lists/members/create_all | Twitter Developers</a>
 	 * @since Twitter4J 2.1.7
 	 */
@@ -65,13 +65,13 @@ public interface ListMembersMethods {
 	 * be able to add members to it. Lists are limited to having 500 members,
 	 * and you are limited to adding up to 100 members to a list at a time with
 	 * this method. <br>
-	 * This method calls http://api.twitter.com/1/lists/members/create_all.json
+	 * This method calls http://api.twitter.com/1.1/lists/members/create_all.json
 	 * 
 	 * @param listId The id of the list.
 	 * @param screenNames The array of screen names of the user to add as member
 	 *            of the list. up to 100 are allowed in a single request.
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/lists/members/create_all">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/lists/members/create_all">POST
 	 *      lists/members/create_all | Twitter Developers</a>
 	 * @since Twitter4J 2.1.7
 	 */
@@ -80,7 +80,7 @@ public interface ListMembersMethods {
 	/**
 	 * Removes the specified member from the list. The authenticated user must
 	 * be the list's owner to remove members from the list. <br>
-	 * This method calls http://api.twitter.com/1/lists/members/destroy.json
+	 * This method calls http://api.twitter.com/1.1/lists/members/destroy.json
 	 * 
 	 * @param listId The id of the list.
 	 * @param userId The screen name of the member you wish to remove from the
@@ -88,7 +88,7 @@ public interface ListMembersMethods {
 	 * @return the updated list
 	 * @throws TwitterException when Twitter service or network is unavailable
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/post/lists/members/destroy">POST
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/lists/members/destroy">POST
 	 *      lists/members/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -96,7 +96,7 @@ public interface ListMembersMethods {
 
 	/**
 	 * Returns the members of the specified list. <br>
-	 * This method calls http://api.twitter.com/1/lists/members.json
+	 * This method calls http://api.twitter.com/1.1/lists/members.json
 	 * 
 	 * @param listId The id of the list
 	 * @param cursor Breaks the results into pages. A single page contains 20
@@ -105,7 +105,7 @@ public interface ListMembersMethods {
 	 *            previous_cursor attributes to page back and forth in the list.
 	 * @return the members of the specified list.
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1/get/lists/members">GET
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/lists/members">GET
 	 *      lists/members | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
@@ -114,7 +114,7 @@ public interface ListMembersMethods {
 	/**
 	 * Check if a user is a member of the specified list.<br>
 	 * <br>
-	 * This method calls http://api.twitter.com/1/lists/members/show.json
+	 * This method calls http://api.twitter.com/1.1/lists/members/show.json
 	 * 
 	 * @param listId The id of the list.
 	 * @param userId The id of the user who you want to know is a member or not
@@ -125,7 +125,7 @@ public interface ListMembersMethods {
 	 *             list(TwitterException.getStatusCode() returns 404 in that
 	 *             case.)
 	 * @see <a
-	 *      href="https://dev.twitter.com/docs/api/1/get/lists/members/show">GET
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/members/show">GET
 	 *      lists/members/show | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */

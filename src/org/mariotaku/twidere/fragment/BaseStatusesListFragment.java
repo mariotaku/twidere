@@ -111,7 +111,9 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		return mData;
 	}
 
-	public abstract long[] getLastStatusIds();
+	abstract long[] getOldestStatusIds();
+	
+	abstract long[] getNewestStatusIds();
 
 	@Override
 	public abstract StatusesAdapterInterface getListAdapter();
@@ -124,7 +126,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		return mPreferences;
 	}
 
-	public abstract int getStatuses(long[] account_ids, long[] max_ids);
+	public abstract int getStatuses(long[] account_ids, long[] max_ids, long[] since_ids);
 
 	public boolean isActivityFirstCreated() {
 		return mActivityFirstCreated;
@@ -176,7 +178,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) {
-				getStatuses(new long[] { status.account_id }, new long[] { status.status_id });
+				getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
 			} else {
 				if (mApplication.isMultiSelectActive()) {
 					final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
@@ -345,7 +347,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	public void onResume() {
 		super.onResume();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
-		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);

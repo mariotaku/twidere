@@ -90,7 +90,6 @@ import org.mariotaku.twidere.fragment.ActivitiesAboutMeFragment;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
-import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
@@ -110,7 +109,6 @@ import org.mariotaku.twidere.fragment.UserListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserListTypesFragment;
 import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
-import org.mariotaku.twidere.fragment.UserRetweetedStatusFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ImageSpec;
@@ -248,8 +246,6 @@ public final class Utils implements Constants {
 				+ "/#/*", URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY,
 				URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_DAILY, URI_TRENDS_DAILY);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_WEEKLY, URI_TRENDS_WEEKLY);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, URI_TRENDS_LOCAL);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TABS, URI_TABS);
 
@@ -273,7 +269,6 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERSHIPS, null, LINK_ID_LIST_MEMBERSHIPS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USERS_RETWEETED_STATUS, null, LINK_ID_USERS_RETWEETED_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SAVED_SEARCHES, null, LINK_ID_SAVED_SEARCHES);
-		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_RETWEETED_TO_ME, null, LINK_ID_RETWEETED_TO_ME);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_MENTIONS, null, LINK_ID_USER_MENTIONS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_INCOMING_FRIENDSHIPS, null, LINK_ID_INCOMING_FRIENDSHIPS);
 
@@ -283,7 +278,6 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_SUBSCRIBERS, UserListSubscribersFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_SUBSCRIPTIONS, UserListSubscriptionsFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_TIMELINE, UserListTimelineFragment.class);
-		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_RETWEETED_TO_ME, RetweetedToMeFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SAVED_SEARCHES, SavedSearchesListFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SEARCH_TWEETS, SearchTweetsFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SEARCH_USERS, SearchUsersFragment.class);
@@ -301,7 +295,6 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_SUBSCRIBERS, R.string.list_subscribers);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_SUBSCRIPTIONS, R.string.list_user_followed);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_TIMELINE, R.string.list_timeline);
-		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_RETWEETED_TO_ME, R.string.retweeted_to_me);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SAVED_SEARCHES, R.string.saved_searches);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SEARCH_TWEETS, R.string.search_tweets);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SEARCH_USERS, R.string.search_users);
@@ -661,7 +654,7 @@ public final class Utils implements Constants {
 		Integer color = sAccountColors.get(account_id);
 		if (color == null) {
 			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-					new String[] { Accounts.USER_COLOR }, Accounts.USER_ID + "=" + account_id, null, null);
+					new String[] { Accounts.USER_COLOR }, Accounts.ACCOUNT_ID + "=" + account_id, null, null);
 			if (cur == null) return Color.TRANSPARENT;
 			if (cur.getCount() <= 0) {
 				cur.close();
@@ -679,13 +672,13 @@ public final class Utils implements Constants {
 		if (context == null) return -1;
 		long user_id = -1;
 
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
-				Accounts.USERNAME + " = ?", new String[] { username }, null);
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.ACCOUNT_ID },
+				Accounts.SCREEN_NAME + " = ?", new String[] { username }, null);
 		if (cur == null) return user_id;
 
 		if (cur.getCount() > 0) {
 			cur.moveToFirst();
-			user_id = cur.getLong(cur.getColumnIndexOrThrow(Accounts.USER_ID));
+			user_id = cur.getLong(cur.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
 		}
 		cur.close();
 		return user_id;
@@ -694,10 +687,10 @@ public final class Utils implements Constants {
 	public static long[] getAccountIds(final Context context) {
 		long[] accounts = new long[0];
 		if (context == null) return accounts;
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.ACCOUNT_ID },
 				null, null, null);
 		if (cur != null) {
-			final int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			final int idx = cur.getColumnIndexOrThrow(Accounts.ACCOUNT_ID);
 			cur.moveToFirst();
 			accounts = new long[cur.getCount()];
 			int i = 0;
@@ -714,10 +707,10 @@ public final class Utils implements Constants {
 	public static String[] getAccountScreenNames(final Context context) {
 		String[] accounts = new String[0];
 		if (context == null) return accounts;
-		final String[] cols = new String[] { Accounts.USERNAME };
+		final String[] cols = new String[] { Accounts.SCREEN_NAME };
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, null, null, null);
 		if (cur != null) {
-			final int idx = cur.getColumnIndexOrThrow(Accounts.USERNAME);
+			final int idx = cur.getColumnIndexOrThrow(Accounts.SCREEN_NAME);
 			cur.moveToFirst();
 			accounts = new String[cur.getCount()];
 			int i = 0;
@@ -736,12 +729,12 @@ public final class Utils implements Constants {
 		String username = sAccountNames.get(account_id);
 		if (username == null) {
 			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-					new String[] { Accounts.USERNAME }, Accounts.USER_ID + " = " + account_id, null, null);
+					new String[] { Accounts.SCREEN_NAME }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
 			if (cur == null) return username;
 
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				username = cur.getString(cur.getColumnIndex(Accounts.USERNAME));
+				username = cur.getString(cur.getColumnIndex(Accounts.SCREEN_NAME));
 				sAccountNames.put(account_id, username);
 			}
 			cur.close();
@@ -752,11 +745,11 @@ public final class Utils implements Constants {
 	public static long[] getActivatedAccountIds(final Context context) {
 		long[] accounts = new long[0];
 		if (context == null) return accounts;
-		final String[] cols = new String[] { Accounts.USER_ID };
+		final String[] cols = new String[] { Accounts.ACCOUNT_ID };
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1",
-				null, Accounts.USER_ID);
+				null, Accounts.ACCOUNT_ID);
 		if (cur != null) {
-			final int idx = cur.getColumnIndexOrThrow(Accounts.USER_ID);
+			final int idx = cur.getColumnIndexOrThrow(Accounts.ACCOUNT_ID);
 			cur.moveToFirst();
 			accounts = new long[cur.getCount()];
 			int i = 0;
@@ -773,11 +766,11 @@ public final class Utils implements Constants {
 	public static String[] getActivatedAccountScreenNames(final Context context) {
 		String[] accounts = new String[0];
 		if (context == null) return accounts;
-		final String[] cols = new String[] { Accounts.USERNAME };
+		final String[] cols = new String[] { Accounts.SCREEN_NAME };
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1",
 				null, null);
 		if (cur != null) {
-			final int idx = cur.getColumnIndexOrThrow(Accounts.USERNAME);
+			final int idx = cur.getColumnIndexOrThrow(Accounts.SCREEN_NAME);
 			cur.moveToFirst();
 			accounts = new String[cur.getCount()];
 			int i = 0;
@@ -818,7 +811,7 @@ public final class Utils implements Constants {
 		if (m.matches()) return getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID));
 		return null;
 	}
-
+	
 	public static long[] getAllStatusesIds(final Context context, final Uri uri, final boolean filter_enabled) {
 		if (context == null) return new long[0];
 		final ContentResolver resolver = context.getContentResolver();
@@ -1000,7 +993,31 @@ public final class Utils implements Constants {
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
-	public static long[] getLastMessageIdsFromDatabase(final Context context, final Uri uri) {
+	public static long[] getNewestMessageIdsFromDatabase(final Context context, final Uri uri) {
+		if (context == null || uri == null) return null;
+		final long[] account_ids = getActivatedAccountIds(context);
+		final String[] cols = new String[] { DirectMessages.MESSAGE_ID };
+		final ContentResolver resolver = context.getContentResolver();
+		final long[] status_ids = new long[account_ids.length];
+		int idx = 0;
+		for (final long account_id : account_ids) {
+			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
+			final Cursor cur = resolver.query(uri, cols, where, null, DirectMessages.DEFAULT_SORT_ORDER);
+			if (cur == null) {
+				continue;
+			}
+
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(DirectMessages.MESSAGE_ID));
+			}
+			cur.close();
+			idx++;
+		}
+		return status_ids;
+	}
+	
+	public static long[] getOldestMessageIdsFromDatabase(final Context context, final Uri uri) {
 		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
 		final String[] cols = new String[] { DirectMessages.MESSAGE_ID };
@@ -1023,8 +1040,32 @@ public final class Utils implements Constants {
 		}
 		return status_ids;
 	}
+	
+	public static long[] getNewestStatusIdsFromDatabase(final Context context, final Uri uri) {
+		if (context == null || uri == null) return null;
+		final long[] account_ids = getActivatedAccountIds(context);
+		final String[] cols = new String[] { Statuses.STATUS_ID };
+		final ContentResolver resolver = context.getContentResolver();
+		final long[] status_ids = new long[account_ids.length];
+		int idx = 0;
+		for (final long account_id : account_ids) {
+			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
+			final Cursor cur = resolver.query(uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
+			if (cur == null) {
+				continue;
+			}
 
-	public static long[] getLastStatusIdsFromDatabase(final Context context, final Uri uri) {
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_ID));
+			}
+			cur.close();
+			idx++;
+		}
+		return status_ids;
+	}
+
+	public static long[] getOldestStatusIdsFromDatabase(final Context context, final Uri uri) {
 		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
 		final String[] cols = new String[] { Statuses.STATUS_ID };
@@ -1283,10 +1324,6 @@ public final class Utils implements Constants {
 				return TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME;
 			case URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
 				return TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY;
-			case URI_TRENDS_DAILY:
-				return TABLE_TRENDS_DAILY;
-			case URI_TRENDS_WEEKLY:
-				return TABLE_TRENDS_WEEKLY;
 			case URI_TRENDS_LOCAL:
 				return TABLE_TRENDS_LOCAL;
 			case URI_TABS:
@@ -1378,7 +1415,7 @@ public final class Utils implements Constants {
 
 		Twitter twitter = null;
 		final StringBuilder where = new StringBuilder();
-		where.append(Accounts.USER_ID + "=" + account_id);
+		where.append(Accounts.ACCOUNT_ID + "=" + account_id);
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS, where.toString(),
 				null, null);
 		if (cur != null) {
@@ -1434,7 +1471,7 @@ public final class Utils implements Constants {
 						break;
 					case Accounts.AUTH_TYPE_BASIC:
 						twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.USERNAME)), cur.getString(cur
+								.getColumnIndexOrThrow(Accounts.SCREEN_NAME)), cur.getString(cur
 								.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD))));
 						break;
 					case Accounts.AUTH_TYPE_TWIP_O_MODE:
@@ -1457,14 +1494,14 @@ public final class Utils implements Constants {
 			final boolean include_entities, final boolean include_rts) {
 		if (context == null) return null;
 		final StringBuilder where = new StringBuilder();
-		where.append(Accounts.USERNAME + " = " + account_username);
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.USER_ID },
+		where.append(Accounts.SCREEN_NAME + " = " + account_username);
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.ACCOUNT_ID },
 				where.toString(), null, null);
 		long account_id = -1;
 		if (cur != null) {
 			if (cur.getCount() == 1) {
 				cur.moveToFirst();
-				account_id = cur.getLong(cur.getColumnIndex(Accounts.USER_ID));
+				account_id = cur.getLong(cur.getColumnIndex(Accounts.ACCOUNT_ID));
 			}
 			cur.close();
 		}
@@ -1573,8 +1610,9 @@ public final class Utils implements Constants {
 			}
 		}
 		values.put(Accounts.AUTH_TYPE, auth_type);
-		values.put(Accounts.USER_ID, user.getId());
-		values.put(Accounts.USERNAME, user.getScreenName());
+		values.put(Accounts.ACCOUNT_ID, user.getId());
+		values.put(Accounts.SCREEN_NAME, user.getScreenName());
+		values.put(Accounts.NAME, user.getName());
 		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 		values.put(Accounts.USER_COLOR, color);
 		values.put(Accounts.IS_ACTIVATED, 1);
@@ -2306,30 +2344,6 @@ public final class Utils implements Constants {
 			}
 			if (screen_name != null) {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
-			}
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-
-	public static void openUserRetweetedStatus(final Activity activity, final long account_id, final long status_id) {
-		if (activity == null) return;
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new UserRetweetedStatusFragment();
-			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			if (status_id > 0) {
-				args.putLong(INTENT_KEY_STATUS_ID, status_id);
-			}
-			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_USERS_RETWEETED_STATUS);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (status_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
 			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}

@@ -47,6 +47,24 @@
 		<item name="android:listSelector">@drawable/list_selector_holo_light</item>
 	</style>
 
+	<style name="Widget.Holo.SeekBar" parent="android:Widget.SeekBar">
+		<item name="android:indeterminateOnly">false</item>
+		<item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_dark</item>
+		<item name="android:indeterminateDrawable">@drawable/scrubber_progress_horizontal_holo_dark</item>
+		<item name="android:minHeight">13dip</item>
+		<item name="android:maxHeight">13dip</item>
+		<item name="android:thumb">@drawable/scrubber_control_selector_holo</item>
+		<item name="android:thumbOffset">16dip</item>
+		<item name="android:focusable">true</item>
+		<item name="android:paddingLeft">16dip</item>
+		<item name="android:paddingRight">16dip</item>
+	</style>
+
+	<style name="Widget.Holo.Light.SeekBar" parent="Widget.Holo.SeekBar">
+		<item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
+		<item name="android:indeterminateDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
+	</style>
+
 	<style name="Widget.Holo.ProgressBar" parent="android:Widget.ProgressBar">
 		<item name="android:indeterminateDrawable">@drawable/progress_medium_holo</item>
 	</style>
@@ -57,6 +75,17 @@
 
 	<style name="Widget.Holo.ProgressBar.Large" parent="android:Widget.ProgressBar.Large">
 		<item name="android:indeterminateDrawable">@drawable/progress_large_holo</item>
+	</style>
+
+	<style name="Widget.Holo.ProgressBar.Horizontal" parent="android:Widget.ProgressBar.Horizontal">
+		<item name="android:progressDrawable">@drawable/progress_horizontal_holo_dark</item>
+		<item name="android:indeterminateDrawable">@drawable/progress_indeterminate_horizontal_holo</item>
+		<item name="android:minHeight">16dip</item>
+		<item name="android:maxHeight">16dip</item>
+	</style>
+
+	<style name="Widget.Holo.Light.ProgressBar.Horizontal" parent="Widget.Holo.ProgressBar.Horizontal">
+		<item name="android:progressDrawable">@drawable/progress_horizontal_holo_light</item>
 	</style>
 
 	<style name="Widget.Holo.Spinner" parent="android:Widget.Spinner">

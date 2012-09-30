@@ -31,7 +31,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
-import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
 import org.mariotaku.twidere.fragment.UserBlocksListFragment;
@@ -48,7 +47,6 @@ import org.mariotaku.twidere.fragment.UserListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserListTypesFragment;
 import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
-import org.mariotaku.twidere.fragment.UserRetweetedStatusFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 
 import android.content.Intent;
@@ -350,21 +348,9 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					break;
 				}
-				case LINK_ID_USERS_RETWEETED_STATUS: {
-					setTitle(R.string.users_retweeted_this);
-					fragment = new UserRetweetedStatusFragment();
-					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
-					break;
-				}
 				case LINK_ID_SAVED_SEARCHES: {
 					setTitle(R.string.saved_searches);
 					fragment = new SavedSearchesListFragment();
-					break;
-				}
-				case LINK_ID_RETWEETED_TO_ME: {
-					setTitle(R.string.retweeted_to_me);
-					fragment = new RetweetedToMeFragment();
 					break;
 				}
 				case LINK_ID_USER_MENTIONS: {

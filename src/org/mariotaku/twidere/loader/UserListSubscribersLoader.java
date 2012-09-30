@@ -41,8 +41,9 @@ public class UserListSubscribersLoader extends ParcelableUsersLoader {
 
 	private long mNextCursor = -2, mPrevCursor = -2;
 
-	public UserListSubscribersLoader(final Context context, final long account_id, final int list_id, final long user_id,
-			final String screen_name, final String list_name, final long cursor, final List<ParcelableUser> users_list) {
+	public UserListSubscribersLoader(final Context context, final long account_id, final int list_id,
+			final long user_id, final String screen_name, final String list_name, final long cursor,
+			final List<ParcelableUser> users_list) {
 		super(context, account_id, users_list);
 		mListId = list_id;
 		mCursor = cursor;
