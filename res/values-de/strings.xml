@@ -218,8 +218,8 @@
   <string name="list_members">Mitglieder anzeigen</string>
   <string name="list_subscribers">Abonnenten anzeigen</string>
   <string name="type_to_compose">Schreiben Sie etwas</string>
-  <string name="list_following_user">Liste diesem Benutzer folgend</string>
-  <string name="list_user_followed">Liste dieser Benutzer folgte</string>
+  <string name="list_following_user">Wird von diesen Benutzer gefolgt</string>
+  <string name="list_user_followed">Folgt diesen Benutzern</string>
   <string name="list_created_by_user">Liste erstellt von diesem Benutzer</string>
   <string name="Ntweets_quantity_one">Sie haben einen neuen Tweet.</string>
   <string name="Ntweets_quantity_other">Du hast <xliff:g id="items">%d</xliff:g> neue Tweets.</string>
@@ -238,7 +238,7 @@
   <string name="inline_image_preview">Eingebettete Bildvorschau</string>
   <string name="solid_color_background">Einfarbiger Hintergrund</string>
   <string name="solid_color_background_summary">Eventuell sinnvoll für Geräte mit AMOLED-Display.</string>
-  <string name="followed_you">Folgte Ihnen</string>
+  <string name="followed_you">Folgt Ihnen</string>
   <string name="user_list">Benutzerliste</string>
   <string name="trends_location">Standort für Trends</string>
   <string name="trends_location_summary">Standort für lokale Trends auswählen.</string>
