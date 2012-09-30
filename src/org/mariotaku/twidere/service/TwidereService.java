@@ -38,6 +38,7 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
@@ -116,10 +117,10 @@ public class TwidereService extends Service implements Constants {
 	private PendingIntent mPendingRefreshHomeTimelineIntent, mPendingRefreshMentionsIntent,
 			mPendingRefreshDirectMessagesIntent;
 
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				if (!mAsyncTaskManager.hasActivatedTask() && mShouldShutdown) {
@@ -156,17 +157,17 @@ public class TwidereService extends Service implements Constants {
 
 	};
 
-	public int addUserListMember(long account_id, int list_id, long user_id, String screen_name) {
+	public int addUserListMember(final long account_id, final int list_id, final long user_id, final String screen_name) {
 		final AddUserListMemberTask task = new AddUserListMemberTask(account_id, list_id, user_id, screen_name);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int cancelRetweet(long account_id, long status_id) {
+	public int cancelRetweet(final long account_id, final long status_id) {
 		final CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public void clearNotification(int id) {
+	public void clearNotification(final int id) {
 		switch (id) {
 			case NOTIFICATION_ID_HOME_TIMELINE: {
 				mNewStatusesCount = 0;
@@ -184,112 +185,113 @@ public class TwidereService extends Service implements Constants {
 		mNotificationManager.cancel(id);
 	}
 
-	public int createBlock(long account_id, long user_id) {
+	public int createBlock(final long account_id, final long user_id) {
 		final CreateBlockTask task = new CreateBlockTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int createFavorite(long account_id, long status_id) {
+	public int createFavorite(final long account_id, final long status_id) {
 		final CreateFavoriteTask task = new CreateFavoriteTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int createFriendship(long account_id, long user_id) {
+	public int createFriendship(final long account_id, final long user_id) {
 		final CreateFriendshipTask task = new CreateFriendshipTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int createMultiBlock(long account_id, long[] user_ids) {
+	public int createMultiBlock(final long account_id, final long[] user_ids) {
 		final CreateMultiBlockTask task = new CreateMultiBlockTask(account_id, user_ids);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int createUserList(long account_id, String list_name, boolean is_public, String description) {
+	public int createUserList(final long account_id, final String list_name, final boolean is_public,
+			final String description) {
 		final CreateUserListTask task = new CreateUserListTask(account_id, list_name, is_public, description);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int createUserListSubscription(long account_id, int list_id) {
+	public int createUserListSubscription(final long account_id, final int list_id) {
 		final CreateUserListSubscriptionTask task = new CreateUserListSubscriptionTask(account_id, list_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int deleteUserListMember(long account_id, int list_id, long user_id) {
+	public int deleteUserListMember(final long account_id, final int list_id, final long user_id) {
 		final DeleteUserListMemberTask task = new DeleteUserListMemberTask(account_id, list_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyBlock(long account_id, long user_id) {
+	public int destroyBlock(final long account_id, final long user_id) {
 		final DestroyBlockTask task = new DestroyBlockTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyDirectMessage(long account_id, long message_id) {
+	public int destroyDirectMessage(final long account_id, final long message_id) {
 		final DestroyDirectMessageTask task = new DestroyDirectMessageTask(account_id, message_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyFavorite(long account_id, long status_id) {
+	public int destroyFavorite(final long account_id, final long status_id) {
 		final DestroyFavoriteTask task = new DestroyFavoriteTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyFriendship(long account_id, long user_id) {
+	public int destroyFriendship(final long account_id, final long user_id) {
 		final DestroyFriendshipTask task = new DestroyFriendshipTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyStatus(long account_id, long status_id) {
+	public int destroyStatus(final long account_id, final long status_id) {
 		final DestroyStatusTask task = new DestroyStatusTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyUserList(long account_id, int list_id) {
+	public int destroyUserList(final long account_id, final int list_id) {
 		final DestroyUserListTask task = new DestroyUserListTask(account_id, list_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyUserListSubscription(long account_id, int list_id) {
+	public int destroyUserListSubscription(final long account_id, final int list_id) {
 		final DestroyUserListSubscriptionTask task = new DestroyUserListSubscriptionTask(account_id, list_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int getDailyTrends(long account_id) {
+	public int getDailyTrends(final long account_id) {
 		mAsyncTaskManager.cancel(mGetDailyTrendsTaskId);
 		final GetDailyTrendsTask task = new GetDailyTrendsTask(account_id);
 		return mGetDailyTrendsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	public int getHomeTimeline(long[] account_ids, long[] max_ids) {
+	public int getHomeTimeline(final long[] account_ids, final long[] max_ids) {
 		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false);
 		return getHomeTimeline(account_ids, max_ids, notification);
 	}
 
-	public int getLocalTrends(long account_id, int woeid) {
+	public int getLocalTrends(final long account_id, final int woeid) {
 		mAsyncTaskManager.cancel(mGetLocalTrendsTaskId);
 		final GetLocalTrendsTask task = new GetLocalTrendsTask(account_id, woeid);
 		return mGetLocalTrendsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	public int getMentions(long[] account_ids, long[] max_ids) {
+	public int getMentions(final long[] account_ids, final long[] max_ids) {
 		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)
 				&& max_ids == null;
 		return getMentions(account_ids, max_ids, notification);
 	}
 
-	public int getReceivedDirectMessages(long[] account_ids, long[] max_ids) {
+	public int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids) {
 		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)
 				&& max_ids == null;
 		return getReceivedDirectMessages(account_ids, max_ids, notification);
 	}
 
-	public int getSentDirectMessages(long[] account_ids, long[] max_ids) {
+	public int getSentDirectMessages(final long[] account_ids, final long[] max_ids) {
 		mAsyncTaskManager.cancel(mGetSentDirectMessagesTaskId);
 		final GetSentDirectMessagesTask task = new GetSentDirectMessagesTask(account_ids, max_ids);
 		return mGetSentDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	public int getWeeklyTrends(long account_id) {
+	public int getWeeklyTrends(final long account_id) {
 		mAsyncTaskManager.cancel(mGetWeeklyTrendsTaskId);
 		final GetWeeklyTrendsTask task = new GetWeeklyTrendsTask(account_id);
 		return mGetWeeklyTrendsTaskId = mAsyncTaskManager.add(task, true);
@@ -334,7 +336,7 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	@Override
-	public IBinder onBind(Intent intent) {
+	public IBinder onBind(final Intent intent) {
 		return mBinder;
 	}
 
@@ -373,22 +375,35 @@ public class TwidereService extends Service implements Constants {
 		super.onDestroy();
 	}
 
-	public int reportMultiSpam(long account_id, long[] user_ids) {
+	public int refreshAll() {
+		final long[] account_ids = getActivatedAccountIds(this);
+		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
+			getMentions(account_ids, null);
+		}
+		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
+			getReceivedDirectMessages(account_ids, null);
+			getSentDirectMessages(account_ids, null);
+		}
+		return getHomeTimeline(account_ids, null);
+	}
+
+	public int reportMultiSpam(final long account_id, final long[] user_ids) {
 		final ReportMultiSpamTask task = new ReportMultiSpamTask(account_id, user_ids);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int reportSpam(long account_id, long user_id) {
+	public int reportSpam(final long account_id, final long user_id) {
 		final ReportSpamTask task = new ReportSpamTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int retweetStatus(long account_id, long status_id) {
+	public int retweetStatus(final long account_id, final long status_id) {
 		final RetweetStatusTask task = new RetweetStatusTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int sendDirectMessage(long account_id, String screen_name, long user_id, String message) {
+	public int sendDirectMessage(final long account_id, final String screen_name, final long user_id,
+			final String message) {
 		final SendDirectMessageTask task = new SendDirectMessageTask(account_id, screen_name, user_id, message);
 		return mAsyncTaskManager.add(task, true);
 	}
@@ -433,31 +448,33 @@ public class TwidereService extends Service implements Constants {
 		}
 	}
 
-	public int updateProfile(long account_id, String name, String url, String location, String description) {
+	public int updateProfile(final long account_id, final String name, final String url, final String location,
+			final String description) {
 		final UpdateProfileTask task = new UpdateProfileTask(account_id, name, url, location, description);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int updateProfileImage(long account_id, Uri image_uri, boolean delete_image) {
+	public int updateProfileImage(final long account_id, final Uri image_uri, final boolean delete_image) {
 		final UpdateProfileImageTask task = new UpdateProfileImageTask(account_id, image_uri, delete_image);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to,
-			boolean delete_image) {
+	public int updateStatus(final long[] account_ids, final String content, final Location location,
+			final Uri image_uri, final long in_reply_to, final boolean delete_image) {
 		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to,
 				delete_image);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int updateUserListDetails(long account_id, int list_id, boolean is_public, String name, String description) {
+	public int updateUserListDetails(final long account_id, final int list_id, final boolean is_public,
+			final String name, final String description) {
 		final UpdateUserListProfileTask task = new UpdateUserListProfileTask(account_id, list_id, is_public, name,
 				description);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	private Notification buildNotification(String title, String message, int icon, Intent content_intent,
-			Intent delete_intent) {
+	private Notification buildNotification(final String title, final String message, final int icon,
+			final Intent content_intent, final Intent delete_intent) {
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 		builder.setTicker(message);
 		builder.setContentTitle(title);
@@ -465,8 +482,14 @@ public class TwidereService extends Service implements Constants {
 		builder.setAutoCancel(true);
 		builder.setWhen(System.currentTimeMillis());
 		builder.setSmallIcon(icon);
-		builder.setDeleteIntent(PendingIntent.getBroadcast(this, 0, delete_intent, PendingIntent.FLAG_UPDATE_CURRENT));
-		builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent, PendingIntent.FLAG_UPDATE_CURRENT));
+		if (delete_intent != null) {
+			builder.setDeleteIntent(PendingIntent.getBroadcast(this, 0, delete_intent,
+					PendingIntent.FLAG_UPDATE_CURRENT));
+		}
+		if (content_intent != null) {
+			builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent,
+					PendingIntent.FLAG_UPDATE_CURRENT));
+		}
 		int defaults = 0;
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
 			builder.setSound(Uri.parse(mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE,
@@ -484,26 +507,26 @@ public class TwidereService extends Service implements Constants {
 		return builder.getNotification();
 	}
 
-	private int getHomeTimeline(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
+	private int getHomeTimeline(final long[] account_ids, final long[] max_ids, final boolean is_auto_refresh) {
 		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
 		final GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids, is_auto_refresh);
 		return mGetHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	private int getMentions(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
+	private int getMentions(final long[] account_ids, final long[] max_ids, final boolean is_auto_refresh) {
 		mAsyncTaskManager.cancel(mGetMentionsTaskId);
 		final GetMentionsTask task = new GetMentionsTask(account_ids, max_ids, is_auto_refresh);
 		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	private int getReceivedDirectMessages(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
+	private int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final boolean is_auto_refresh) {
 		mAsyncTaskManager.cancel(mGetReceivedDirectMessagesTaskId);
 		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_ids, max_ids,
 				is_auto_refresh);
 		return mGetReceivedDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	private void showErrorToast(Exception e, boolean long_message) {
+	private void showErrorToast(final Exception e, final boolean long_message) {
 		Utils.showErrorToast(this, e, long_message);
 	}
 
@@ -513,7 +536,8 @@ public class TwidereService extends Service implements Constants {
 		private final int list_id;
 		private final String screen_name;
 
-		public AddUserListMemberTask(long account_id, int list_id, long user_id, String screen_name) {
+		public AddUserListMemberTask(final long account_id, final int list_id, final long user_id,
+				final String screen_name) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
@@ -522,7 +546,35 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof AddUserListMemberTask)) return false;
+			final AddUserListMemberTask other = (AddUserListMemberTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (list_id != other.list_id) return false;
+			if (screen_name == null) {
+				if (other.screen_name != null) return false;
+			} else if (!screen_name.equals(other.screen_name)) return false;
+			if (user_id != other.user_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + list_id;
+			result = prime * result + (screen_name == null ? 0 : screen_name.hashCode());
+			result = prime * result + (int) (user_id ^ user_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -545,7 +597,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<UserList> result) {
+		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
 				Toast.makeText(TwidereService.this, R.string.add_success, Toast.LENGTH_SHORT).show();
@@ -560,19 +612,45 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class CacheUsersTask extends ManagedAsyncTask<Void, Void, Void> {
 
 		private final List<ListResponse<twitter4j.Status>> responses;
 
-		public CacheUsersTask(List<ListResponse<twitter4j.Status>> result) {
+		public CacheUsersTask(final List<ListResponse<twitter4j.Status>> result) {
 			super(TwidereService.this, mAsyncTaskManager);
 			responses = result;
 		}
 
 		@Override
-		protected Void doInBackground(Void... args) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof CacheUsersTask)) return false;
+			final CacheUsersTask other = (CacheUsersTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (responses == null) {
+				if (other.responses != null) return false;
+			} else if (!responses.equals(other.responses)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (responses == null ? 0 : responses.hashCode());
+			return result;
+		}
+
+		@Override
+		protected Void doInBackground(final Void... args) {
 
 			for (final ListResponse<twitter4j.Status> response : responses) {
 				final List<twitter4j.Status> statuses = response.list;
@@ -605,20 +683,46 @@ public class TwidereService extends Service implements Constants {
 			return null;
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class CancelRetweetTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
 		private final long account_id, status_id;
 
-		public CancelRetweetTask(long account_id, long status_id) {
+		public CancelRetweetTask(final long account_id, final long status_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof CancelRetweetTask)) return false;
+			final CancelRetweetTask other = (CancelRetweetTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (status_id != other.status_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (status_id ^ status_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -633,7 +737,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
 			if (result != null && result.data != null) {
 				final twitter4j.Status retweeted_status = result.data.getRetweetedStatus();
 				if (retweeted_status != null) {
@@ -657,21 +761,46 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class CreateBlockTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
-		private long account_id;
-		private long user_id;
+		private final long account_id, user_id;
 
-		public CreateBlockTask(long account_id, long user_id) {
+		public CreateBlockTask(final long account_id, final long user_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
 		}
 
 		@Override
-		protected SingleResponse<User> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof CreateBlockTask)) return false;
+			final CreateBlockTask other = (CreateBlockTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (user_id != other.user_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (user_id ^ user_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<User> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -686,7 +815,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				for (final Uri uri : Utils.STATUSES_URIS) {
 					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = "
@@ -709,22 +838,46 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class CreateFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
-		private long account_id;
+		private final long account_id, status_id;
 
-		private long status_id;
-
-		public CreateFavoriteTask(long account_id, long status_id) {
+		public CreateFavoriteTask(final long account_id, final long status_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof CreateFavoriteTask)) return false;
+			final CreateFavoriteTask other = (CreateFavoriteTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (status_id != other.status_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (status_id ^ status_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
 
 			if (account_id < 0) return new SingleResponse<twitter4j.Status>(account_id, null, null);
 
@@ -741,7 +894,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
 
 			if (result.data != null) {
 				final long status_id = result.data.getId();
@@ -769,21 +922,47 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class CreateFriendshipTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
-		private long account_id;
-		private long user_id;
+		private final long account_id;
+		private final long user_id;
 
-		public CreateFriendshipTask(long account_id, long user_id) {
+		public CreateFriendshipTask(final long account_id, final long user_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
 		}
 
 		@Override
-		protected SingleResponse<User> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof CreateFriendshipTask)) return false;
+			final CreateFriendshipTask other = (CreateFriendshipTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (user_id != other.user_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (user_id ^ user_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<User> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -798,7 +977,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.follow_success, Toast.LENGTH_SHORT).show();
 			} else {
@@ -811,21 +990,47 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class CreateMultiBlockTask extends ManagedAsyncTask<Void, Void, ListResponse<Long>> {
 
-		private long account_id;
-		private long[] user_ids;
+		private final long account_id;
+		private final long[] user_ids;
 
-		public CreateMultiBlockTask(long account_id, long[] user_ids) {
+		public CreateMultiBlockTask(final long account_id, final long[] user_ids) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_ids = user_ids;
 		}
 
 		@Override
-		protected ListResponse<Long> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof CreateMultiBlockTask)) return false;
+			final CreateMultiBlockTask other = (CreateMultiBlockTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (!Arrays.equals(user_ids, other.user_ids)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + Arrays.hashCode(user_ids);
+			return result;
+		}
+
+		@Override
+		protected ListResponse<Long> doInBackground(final Void... params) {
 
 			final List<Long> blocked_users = new ArrayList<Long>();
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
@@ -846,7 +1051,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(ListResponse<Long> result) {
+		protected void onPostExecute(final ListResponse<Long> result) {
 			if (result != null) {
 				final String user_ids = ListUtils.toString(result.list, ',', false);
 				for (final Uri uri : Utils.STATUSES_URIS) {
@@ -867,6 +1072,10 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class CreateUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
@@ -874,14 +1083,36 @@ public class TwidereService extends Service implements Constants {
 		private final long account_id;
 		private final int list_id;
 
-		public CreateUserListSubscriptionTask(long account_id, int list_id) {
+		public CreateUserListSubscriptionTask(final long account_id, final int list_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof CreateUserListSubscriptionTask)) return false;
+			final CreateUserListSubscriptionTask other = (CreateUserListSubscriptionTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (list_id != other.list_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + list_id;
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -896,7 +1127,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<UserList> result) {
+		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
 				Toast.makeText(TwidereService.this, R.string.follow_success, Toast.LENGTH_SHORT).show();
@@ -910,6 +1141,10 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class CreateUserListTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
@@ -918,7 +1153,8 @@ public class TwidereService extends Service implements Constants {
 		private final String list_name, description;
 		private final boolean is_public;
 
-		public CreateUserListTask(long account_id, String list_name, boolean is_public, String description) {
+		public CreateUserListTask(final long account_id, final String list_name, final boolean is_public,
+				final String description) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_name = list_name;
@@ -927,7 +1163,37 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof CreateUserListTask)) return false;
+			final CreateUserListTask other = (CreateUserListTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (description == null) {
+				if (other.description != null) return false;
+			} else if (!description.equals(other.description)) return false;
+			if (is_public != other.is_public) return false;
+			if (list_name == null) {
+				if (other.list_name != null) return false;
+			} else if (!list_name.equals(other.list_name)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (description == null ? 0 : description.hashCode());
+			result = prime * result + (is_public ? 1231 : 1237);
+			result = prime * result + (list_name == null ? 0 : list_name.hashCode());
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -944,7 +1210,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<UserList> result) {
+		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
 				Toast.makeText(TwidereService.this, R.string.create_success, Toast.LENGTH_SHORT).show();
@@ -957,6 +1223,10 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class DeleteUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
@@ -964,7 +1234,7 @@ public class TwidereService extends Service implements Constants {
 		private final long account_id, user_id;
 		private final int list_id;
 
-		public DeleteUserListMemberTask(long account_id, int list_id, long user_id) {
+		public DeleteUserListMemberTask(final long account_id, final int list_id, final long user_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
@@ -972,7 +1242,31 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof DeleteUserListMemberTask)) return false;
+			final DeleteUserListMemberTask other = (DeleteUserListMemberTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (list_id != other.list_id) return false;
+			if (user_id != other.user_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + list_id;
+			result = prime * result + (int) (user_id ^ user_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -987,7 +1281,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<UserList> result) {
+		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
 				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
@@ -1002,21 +1296,47 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class DestroyBlockTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
-		private long account_id;
-		private long user_id;
+		private final long account_id;
+		private final long user_id;
 
-		public DestroyBlockTask(long account_id, long user_id) {
+		public DestroyBlockTask(final long account_id, final long user_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
 		}
 
 		@Override
-		protected SingleResponse<User> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof DestroyBlockTask)) return false;
+			final DestroyBlockTask other = (DestroyBlockTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (user_id != other.user_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (user_id ^ user_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<User> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -1031,7 +1351,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.user_unblocked, Toast.LENGTH_SHORT).show();
 			} else {
@@ -1044,6 +1364,10 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class DestroyDirectMessageTask extends ManagedAsyncTask<Void, Void, SingleResponse<DirectMessage>> {
@@ -1052,7 +1376,7 @@ public class TwidereService extends Service implements Constants {
 		private final long message_id;
 		private final long account_id;
 
-		public DestroyDirectMessageTask(long account_id, long message_id) {
+		public DestroyDirectMessageTask(final long account_id, final long message_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			this.account_id = account_id;
@@ -1060,7 +1384,33 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected SingleResponse<DirectMessage> doInBackground(Void... args) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof DestroyDirectMessageTask)) return false;
+			final DestroyDirectMessageTask other = (DestroyDirectMessageTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (message_id != other.message_id) return false;
+			if (twitter == null) {
+				if (other.twitter != null) return false;
+			} else if (!twitter.equals(other.twitter)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (message_id ^ message_id >>> 32);
+			result = prime * result + (twitter == null ? 0 : twitter.hashCode());
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<DirectMessage> doInBackground(final Void... args) {
 			if (twitter == null) return new SingleResponse<DirectMessage>(account_id, null, null);
 			try {
 				return new SingleResponse<DirectMessage>(account_id, twitter.destroyDirectMessage(message_id), null);
@@ -1070,13 +1420,12 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<DirectMessage> result) {
+		protected void onPostExecute(final SingleResponse<DirectMessage> result) {
 			super.onPostExecute(result);
 			if (result == null) return;
 			if (result.data != null && result.data.getId() > 0) {
 				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
-				final String where = DirectMessages.MESSAGE_ID + " = " + result.data.getId();
-
+				final String where = DirectMessages.MESSAGE_ID + " = " + message_id;
 				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
 				mResolver.delete(DirectMessages.Outbox.CONTENT_URI, where, null);
 			} else {
@@ -1084,22 +1433,48 @@ public class TwidereService extends Service implements Constants {
 			}
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class DestroyFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
-		private long account_id;
+		private final long account_id;
 
-		private long status_id;
+		private final long status_id;
 
-		public DestroyFavoriteTask(long account_id, long status_id) {
+		public DestroyFavoriteTask(final long account_id, final long status_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof DestroyFavoriteTask)) return false;
+			final DestroyFavoriteTask other = (DestroyFavoriteTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (status_id != other.status_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (status_id ^ status_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
 
 			if (account_id < 0) {
 				new SingleResponse<twitter4j.Status>(account_id, null, null);
@@ -1118,7 +1493,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
 
 			if (result.data != null) {
 				final long status_id = result.data.getId();
@@ -1148,21 +1523,47 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class DestroyFriendshipTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
-		private long account_id;
-		private long user_id;
+		private final long account_id;
+		private final long user_id;
 
-		public DestroyFriendshipTask(long account_id, long user_id) {
+		public DestroyFriendshipTask(final long account_id, final long user_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
 		}
 
 		@Override
-		protected SingleResponse<User> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof DestroyFriendshipTask)) return false;
+			final DestroyFriendshipTask other = (DestroyFriendshipTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (user_id != other.user_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (user_id ^ user_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<User> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -1177,7 +1578,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.unfollow_success, Toast.LENGTH_SHORT).show();
 			} else {
@@ -1190,22 +1591,48 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class DestroyStatusTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
-		private long account_id;
+		private final long account_id;
 
-		private long status_id;
+		private final long status_id;
 
-		public DestroyStatusTask(long account_id, long status_id) {
+		public DestroyStatusTask(final long account_id, final long status_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof DestroyStatusTask)) return false;
+			final DestroyStatusTask other = (DestroyStatusTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (status_id != other.status_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (status_id ^ status_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -1220,7 +1647,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
 			final Intent intent = new Intent(BROADCAST_STATUS_DESTROYED);
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				final long status_id = result.data.getId();
@@ -1241,6 +1668,10 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class DestroyUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
@@ -1248,14 +1679,36 @@ public class TwidereService extends Service implements Constants {
 		private final long account_id;
 		private final int list_id;
 
-		public DestroyUserListSubscriptionTask(long account_id, int list_id) {
+		public DestroyUserListSubscriptionTask(final long account_id, final int list_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof DestroyUserListSubscriptionTask)) return false;
+			final DestroyUserListSubscriptionTask other = (DestroyUserListSubscriptionTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (list_id != other.list_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + list_id;
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -1270,7 +1723,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<UserList> result) {
+		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
 				Toast.makeText(TwidereService.this, R.string.unfollow_success, Toast.LENGTH_SHORT).show();
@@ -1284,6 +1737,10 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class DestroyUserListTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
@@ -1291,14 +1748,36 @@ public class TwidereService extends Service implements Constants {
 		private final long account_id;
 		private final int list_id;
 
-		public DestroyUserListTask(long account_id, int list_id) {
+		public DestroyUserListTask(final long account_id, final int list_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof DestroyUserListTask)) return false;
+			final DestroyUserListTask other = (DestroyUserListTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (list_id != other.list_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + list_id;
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -1315,7 +1794,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<UserList> result) {
+		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
 				Toast.makeText(TwidereService.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
@@ -1329,22 +1808,26 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class GetDailyTrendsTask extends GetTrendsTask {
 
-		public GetDailyTrendsTask(long account_id) {
+		public GetDailyTrendsTask(final long account_id) {
 			super(account_id);
 		}
 
 		@Override
-		public ResponseList<Trends> getTrends(Twitter twitter) throws TwitterException {
+		public ResponseList<Trends> getTrends(final Twitter twitter) throws TwitterException {
 			if (twitter == null) return null;
 			return twitter.getDailyTrends();
 		}
 
 		@Override
-		protected void onPostExecute(ListResponse<Trends> result) {
+		protected void onPostExecute(final ListResponse<Trends> result) {
 			mStoreDailyTrendsTaskId = mAsyncTaskManager.add(new StoreDailyTrendsTask(result), true);
 			super.onPostExecute(result);
 
@@ -1356,17 +1839,39 @@ public class TwidereService extends Service implements Constants {
 
 		private final long[] account_ids, max_ids;
 
-		public GetDirectMessagesTask(long[] account_ids, long[] max_ids) {
+		public GetDirectMessagesTask(final long[] account_ids, final long[] max_ids) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof GetDirectMessagesTask)) return false;
+			final GetDirectMessagesTask other = (GetDirectMessagesTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (!Arrays.equals(account_ids, other.account_ids)) return false;
+			if (!Arrays.equals(max_ids, other.max_ids)) return false;
+			return true;
 		}
 
 		public abstract ResponseList<DirectMessage> getDirectMessages(Twitter twitter, Paging paging)
 				throws TwitterException;
 
 		@Override
-		protected List<ListResponse<DirectMessage>> doInBackground(Void... params) {
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + Arrays.hashCode(account_ids);
+			result = prime * result + Arrays.hashCode(max_ids);
+			return result;
+		}
+
+		@Override
+		protected List<ListResponse<DirectMessage>> doInBackground(final Void... params) {
 
 			final List<ListResponse<DirectMessage>> result = new ArrayList<ListResponse<DirectMessage>>();
 
@@ -1403,29 +1908,54 @@ public class TwidereService extends Service implements Constants {
 
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class GetHomeTimelineTask extends GetStatusesTask {
 
 		private final boolean is_auto_refresh;
 
-		public GetHomeTimelineTask(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
+		public GetHomeTimelineTask(final long[] account_ids, final long[] max_ids, final boolean is_auto_refresh) {
 			super(Statuses.CONTENT_URI, account_ids, max_ids);
 			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
-		public ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof GetHomeTimelineTask)) return false;
+			final GetHomeTimelineTask other = (GetHomeTimelineTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (is_auto_refresh != other.is_auto_refresh) return false;
+			return true;
+		}
+
+		@Override
+		public ResponseList<twitter4j.Status> getStatuses(final Twitter twitter, final Paging paging)
+				throws TwitterException {
 			return twitter.getHomeTimeline(paging);
 		}
 
 		@Override
-		public Twitter getTwitter(long account_id) {
+		public Twitter getTwitter(final long account_id) {
 			return getTwitterInstance(TwidereService.this, account_id, true, true);
 		}
 
 		@Override
-		protected void onPostExecute(List<ListResponse<twitter4j.Status>> responses) {
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (is_auto_refresh ? 1231 : 1237);
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final List<ListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
 			mStoreStatusesTaskId = mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, is_auto_refresh,
 					shouldSetMinId()), true);
@@ -1445,19 +1975,34 @@ public class TwidereService extends Service implements Constants {
 			super.onPreExecute();
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class GetLocalTrendsTask extends GetTrendsTask {
 
 		private final int woeid;
 
-		public GetLocalTrendsTask(long account_id, int woeid) {
+		public GetLocalTrendsTask(final long account_id, final int woeid) {
 			super(account_id);
 			this.woeid = woeid;
 		}
 
 		@Override
-		public List<Trends> getTrends(Twitter twitter) throws TwitterException {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof GetLocalTrendsTask)) return false;
+			final GetLocalTrendsTask other = (GetLocalTrendsTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (woeid != other.woeid) return false;
+			return true;
+		}
+
+		@Override
+		public List<Trends> getTrends(final Twitter twitter) throws TwitterException {
 			final ArrayList<Trends> trends_list = new ArrayList<Trends>();
 			if (twitter != null) {
 				trends_list.add(twitter.getLocationTrends(woeid));
@@ -1466,10 +2011,23 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(ListResponse<Trends> result) {
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + woeid;
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final ListResponse<Trends> result) {
 			mStoreLocalTrendsTaskId = mAsyncTaskManager.add(new StoreLocalTrendsTask(result), true);
 			super.onPostExecute(result);
 
+		}
+
+		private TwidereService getOuterType() {
+			return TwidereService.this;
 		}
 
 	}
@@ -1478,23 +2036,44 @@ public class TwidereService extends Service implements Constants {
 
 		private final boolean is_auto_refresh;
 
-		public GetMentionsTask(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
+		public GetMentionsTask(final long[] account_ids, final long[] max_ids, final boolean is_auto_refresh) {
 			super(Mentions.CONTENT_URI, account_ids, max_ids);
 			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
-		public ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof GetMentionsTask)) return false;
+			final GetMentionsTask other = (GetMentionsTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (is_auto_refresh != other.is_auto_refresh) return false;
+			return true;
+		}
+
+		@Override
+		public ResponseList<twitter4j.Status> getStatuses(final Twitter twitter, final Paging paging)
+				throws TwitterException {
 			return twitter.getMentions(paging);
 		}
 
 		@Override
-		public Twitter getTwitter(long account_id) {
+		public Twitter getTwitter(final long account_id) {
 			return getTwitterInstance(TwidereService.this, account_id, true, false);
 		}
 
 		@Override
-		protected void onPostExecute(List<ListResponse<twitter4j.Status>> responses) {
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (is_auto_refresh ? 1231 : 1237);
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final List<ListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
 			mStoreMentionsTaskId = mAsyncTaskManager.add(new StoreMentionsTask(responses, is_auto_refresh,
 					shouldSetMinId()), true);
@@ -1514,24 +2093,50 @@ public class TwidereService extends Service implements Constants {
 			super.onPreExecute();
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class GetReceivedDirectMessagesTask extends GetDirectMessagesTask {
 
 		private final boolean is_auto_refresh;
 
-		public GetReceivedDirectMessagesTask(long[] account_ids, long[] max_ids, boolean is_auto_refresh) {
+		public GetReceivedDirectMessagesTask(final long[] account_ids, final long[] max_ids,
+				final boolean is_auto_refresh) {
 			super(account_ids, max_ids);
 			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
-		public ResponseList<DirectMessage> getDirectMessages(Twitter twitter, Paging paging) throws TwitterException {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof GetReceivedDirectMessagesTask)) return false;
+			final GetReceivedDirectMessagesTask other = (GetReceivedDirectMessagesTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (is_auto_refresh != other.is_auto_refresh) return false;
+			return true;
+		}
+
+		@Override
+		public ResponseList<DirectMessage> getDirectMessages(final Twitter twitter, final Paging paging)
+				throws TwitterException {
 			return twitter.getDirectMessages(paging);
 		}
 
 		@Override
-		protected void onPostExecute(List<ListResponse<DirectMessage>> responses) {
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (is_auto_refresh ? 1231 : 1237);
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final List<ListResponse<DirectMessage>> responses) {
 			super.onPostExecute(responses);
 			mStoreReceivedDirectMessagesTaskId = mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses,
 					is_auto_refresh), true);
@@ -1551,21 +2156,26 @@ public class TwidereService extends Service implements Constants {
 			super.onPreExecute();
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class GetSentDirectMessagesTask extends GetDirectMessagesTask {
 
-		public GetSentDirectMessagesTask(long[] account_ids, long[] max_ids) {
+		public GetSentDirectMessagesTask(final long[] account_ids, final long[] max_ids) {
 			super(account_ids, max_ids);
 		}
 
 		@Override
-		public ResponseList<DirectMessage> getDirectMessages(Twitter twitter, Paging paging) throws TwitterException {
+		public ResponseList<DirectMessage> getDirectMessages(final Twitter twitter, final Paging paging)
+				throws TwitterException {
 			return twitter.getSentDirectMessages(paging);
 		}
 
 		@Override
-		protected void onPostExecute(List<ListResponse<DirectMessage>> responses) {
+		protected void onPostExecute(final List<ListResponse<DirectMessage>> responses) {
 			super.onPostExecute(responses);
 			mStoreSentDirectMessagesTaskId = mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses), true);
 			mGetSentDirectMessagesTaskId = -1;
@@ -1579,10 +2189,23 @@ public class TwidereService extends Service implements Constants {
 
 		private boolean should_set_min_id;
 
-		public GetStatusesTask(Uri uri, long[] account_ids, long[] max_ids) {
+		public GetStatusesTask(final Uri uri, final long[] account_ids, final long[] max_ids) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof GetStatusesTask)) return false;
+			final GetStatusesTask other = (GetStatusesTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (!Arrays.equals(account_ids, other.account_ids)) return false;
+			if (!Arrays.equals(max_ids, other.max_ids)) return false;
+			if (should_set_min_id != other.should_set_min_id) return false;
+			return true;
 		}
 
 		public abstract ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
@@ -1590,12 +2213,23 @@ public class TwidereService extends Service implements Constants {
 
 		public abstract Twitter getTwitter(long account_id);
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + Arrays.hashCode(account_ids);
+			result = prime * result + Arrays.hashCode(max_ids);
+			result = prime * result + (should_set_min_id ? 1231 : 1237);
+			return result;
+		}
+
 		public boolean shouldSetMinId() {
 			return should_set_min_id;
 		}
 
 		@Override
-		protected List<ListResponse<twitter4j.Status>> doInBackground(Void... params) {
+		protected List<ListResponse<twitter4j.Status>> doInBackground(final Void... params) {
 
 			final List<ListResponse<twitter4j.Status>> result = new ArrayList<ListResponse<twitter4j.Status>>();
 
@@ -1632,21 +2266,45 @@ public class TwidereService extends Service implements Constants {
 			return result;
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	abstract class GetTrendsTask extends ManagedAsyncTask<Void, Void, ListResponse<Trends>> {
 
 		private final long account_id;
 
-		public GetTrendsTask(long account_id) {
+		public GetTrendsTask(final long account_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof GetTrendsTask)) return false;
+			final GetTrendsTask other = (GetTrendsTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			return true;
 		}
 
 		public abstract List<Trends> getTrends(Twitter twitter) throws TwitterException;
 
 		@Override
-		protected ListResponse<Trends> doInBackground(Void... params) {
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected ListResponse<Trends> doInBackground(final Void... params) {
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
 				try {
@@ -1658,22 +2316,26 @@ public class TwidereService extends Service implements Constants {
 			return new ListResponse<Trends>(account_id, -1, null);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class GetWeeklyTrendsTask extends GetTrendsTask {
 
-		public GetWeeklyTrendsTask(long account_id) {
+		public GetWeeklyTrendsTask(final long account_id) {
 			super(account_id);
 		}
 
 		@Override
-		public ResponseList<Trends> getTrends(Twitter twitter) throws TwitterException {
+		public ResponseList<Trends> getTrends(final Twitter twitter) throws TwitterException {
 			if (twitter == null) return null;
 			return twitter.getWeeklyTrends();
 		}
 
 		@Override
-		protected void onPostExecute(ListResponse<Trends> result) {
+		protected void onPostExecute(final ListResponse<Trends> result) {
 			mStoreWeeklyTrendsTaskId = mAsyncTaskManager.add(new StoreWeeklyTrendsTask(result), true);
 			super.onPostExecute(result);
 
@@ -1686,26 +2348,72 @@ public class TwidereService extends Service implements Constants {
 		public final long account_id, max_id;
 		public final List<Data> list;
 
-		public ListResponse(long account_id, long max_id, List<Data> responselist) {
+		public ListResponse(final long account_id, final long max_id, final List<Data> responselist) {
 			this.account_id = account_id;
 			this.max_id = max_id;
 			this.list = responselist;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (!(obj instanceof ListResponse)) return false;
+			final ListResponse<?> other = (ListResponse<?>) obj;
+			if (account_id != other.account_id) return false;
+			if (list == null) {
+				if (other.list != null) return false;
+			} else if (!list.equals(other.list)) return false;
+			if (max_id != other.max_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (list == null ? 0 : list.hashCode());
+			result = prime * result + (int) (max_id ^ max_id >>> 32);
+			return result;
 		}
 	}
 
 	class ReportMultiSpamTask extends ManagedAsyncTask<Void, Void, ListResponse<Long>> {
 
-		private long account_id;
-		private long[] user_ids;
+		private final long account_id;
+		private final long[] user_ids;
 
-		public ReportMultiSpamTask(long account_id, long[] user_ids) {
+		public ReportMultiSpamTask(final long account_id, final long[] user_ids) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_ids = user_ids;
 		}
 
 		@Override
-		protected ListResponse<Long> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof ReportMultiSpamTask)) return false;
+			final ReportMultiSpamTask other = (ReportMultiSpamTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (!Arrays.equals(user_ids, other.user_ids)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + Arrays.hashCode(user_ids);
+			return result;
+		}
+
+		@Override
+		protected ListResponse<Long> doInBackground(final Void... params) {
 
 			final List<Long> reported_users = new ArrayList<Long>();
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
@@ -1726,7 +2434,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(ListResponse<Long> result) {
+		protected void onPostExecute(final ListResponse<Long> result) {
 			if (result != null) {
 				final String user_id_where = ListUtils.toString(result.list, ',', false);
 				for (final Uri uri : Utils.STATUSES_URIS) {
@@ -1743,21 +2451,47 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class ReportSpamTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
-		private long account_id;
-		private long user_id;
+		private final long account_id;
+		private final long user_id;
 
-		public ReportSpamTask(long account_id, long user_id) {
+		public ReportSpamTask(final long account_id, final long user_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
 		}
 
 		@Override
-		protected SingleResponse<User> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof ReportSpamTask)) return false;
+			final ReportSpamTask other = (ReportSpamTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (user_id != other.user_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (user_id ^ user_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<User> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -1772,7 +2506,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				for (final Uri uri : Utils.STATUSES_URIS) {
 					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = "
@@ -1790,22 +2524,48 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class RetweetStatusTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
 
-		private long account_id;
+		private final long account_id;
 
-		private long status_id;
+		private final long status_id;
 
-		public RetweetStatusTask(long account_id, long status_id) {
+		public RetweetStatusTask(final long account_id, final long status_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof RetweetStatusTask)) return false;
+			final RetweetStatusTask other = (RetweetStatusTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (status_id != other.status_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (int) (status_id ^ status_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
 
 			if (account_id < 0) return new SingleResponse<twitter4j.Status>(account_id, null, null);
 
@@ -1822,7 +2582,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
 
 			if (result.data != null && result.data.getId() > 0) {
 				Toast.makeText(TwidereService.this, R.string.retweet_success, Toast.LENGTH_SHORT).show();
@@ -1837,6 +2597,10 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class SendDirectMessageTask extends ManagedAsyncTask<Void, Void, SingleResponse<DirectMessage>> {
@@ -1847,7 +2611,8 @@ public class TwidereService extends Service implements Constants {
 		private final String message;
 		private final long account_id;
 
-		public SendDirectMessageTask(long account_id, String screen_name, long user_id, String message) {
+		public SendDirectMessageTask(final long account_id, final String screen_name, final long user_id,
+				final String message) {
 			super(TwidereService.this, mAsyncTaskManager);
 			twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			this.account_id = account_id;
@@ -1857,7 +2622,41 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected SingleResponse<DirectMessage> doInBackground(Void... args) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof SendDirectMessageTask)) return false;
+			final SendDirectMessageTask other = (SendDirectMessageTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (message == null) {
+				if (other.message != null) return false;
+			} else if (!message.equals(other.message)) return false;
+			if (screen_name == null) {
+				if (other.screen_name != null) return false;
+			} else if (!screen_name.equals(other.screen_name)) return false;
+			if (twitter == null) {
+				if (other.twitter != null) return false;
+			} else if (!twitter.equals(other.twitter)) return false;
+			if (user_id != other.user_id) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (message == null ? 0 : message.hashCode());
+			result = prime * result + (screen_name == null ? 0 : screen_name.hashCode());
+			result = prime * result + (twitter == null ? 0 : twitter.hashCode());
+			result = prime * result + (int) (user_id ^ user_id >>> 32);
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<DirectMessage> doInBackground(final Void... args) {
 			if (twitter == null) return new SingleResponse<DirectMessage>(account_id, null, null);
 			try {
 				if (user_id > 0)
@@ -1873,7 +2672,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<DirectMessage> result) {
+		protected void onPostExecute(final SingleResponse<DirectMessage> result) {
 			super.onPostExecute(result);
 			if (result == null) return;
 			if (result.data != null && result.data.getId() > 0) {
@@ -1887,6 +2686,10 @@ public class TwidereService extends Service implements Constants {
 			}
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	/*
@@ -1898,128 +2701,130 @@ public class TwidereService extends Service implements Constants {
 
 		final WeakReference<TwidereService> mService;
 
-		public ServiceStub(TwidereService service) {
+		public ServiceStub(final TwidereService service) {
 
 			mService = new WeakReference<TwidereService>(service);
 		}
 
 		@Override
-		public int addUserListMember(long account_id, int list_id, long user_id, String screen_name) {
+		public int addUserListMember(final long account_id, final int list_id, final long user_id,
+				final String screen_name) {
 			return mService.get().addUserListMember(account_id, list_id, user_id, screen_name);
 		}
 
 		@Override
-		public int cancelRetweet(long account_id, long status_id) {
+		public int cancelRetweet(final long account_id, final long status_id) {
 			return mService.get().cancelRetweet(account_id, status_id);
 		}
 
 		@Override
-		public void clearNotification(int id) {
+		public void clearNotification(final int id) {
 			mService.get().clearNotification(id);
 		}
 
 		@Override
-		public int createBlock(long account_id, long user_id) {
+		public int createBlock(final long account_id, final long user_id) {
 			return mService.get().createBlock(account_id, user_id);
 		}
 
 		@Override
-		public int createFavorite(long account_id, long status_id) {
+		public int createFavorite(final long account_id, final long status_id) {
 			return mService.get().createFavorite(account_id, status_id);
 		}
 
 		@Override
-		public int createFriendship(long account_id, long user_id) {
+		public int createFriendship(final long account_id, final long user_id) {
 			return mService.get().createFriendship(account_id, user_id);
 		}
 
 		@Override
-		public int createMultiBlock(long account_id, long[] user_ids) {
+		public int createMultiBlock(final long account_id, final long[] user_ids) {
 			return mService.get().createMultiBlock(account_id, user_ids);
 		}
 
 		@Override
-		public int createUserList(long account_id, String list_name, boolean is_public, String description) {
+		public int createUserList(final long account_id, final String list_name, final boolean is_public,
+				final String description) {
 			return mService.get().createUserList(account_id, list_name, is_public, description);
 		}
 
 		@Override
-		public int createUserListSubscription(long account_id, int list_id) {
+		public int createUserListSubscription(final long account_id, final int list_id) {
 			return mService.get().createUserListSubscription(account_id, list_id);
 		}
 
 		@Override
-		public int deleteUserListMember(long account_id, int list_id, long user_id) {
+		public int deleteUserListMember(final long account_id, final int list_id, final long user_id) {
 			return mService.get().deleteUserListMember(account_id, list_id, user_id);
 		}
 
 		@Override
-		public int destroyBlock(long account_id, long user_id) {
+		public int destroyBlock(final long account_id, final long user_id) {
 			return mService.get().destroyBlock(account_id, user_id);
 		}
 
 		@Override
-		public int destroyDirectMessage(long account_id, long message_id) {
+		public int destroyDirectMessage(final long account_id, final long message_id) {
 			return mService.get().destroyDirectMessage(account_id, message_id);
 		}
 
 		@Override
-		public int destroyFavorite(long account_id, long status_id) {
+		public int destroyFavorite(final long account_id, final long status_id) {
 			return mService.get().destroyFavorite(account_id, status_id);
 		}
 
 		@Override
-		public int destroyFriendship(long account_id, long user_id) {
+		public int destroyFriendship(final long account_id, final long user_id) {
 			return mService.get().destroyFriendship(account_id, user_id);
 		}
 
 		@Override
-		public int destroyStatus(long account_id, long status_id) {
+		public int destroyStatus(final long account_id, final long status_id) {
 			return mService.get().destroyStatus(account_id, status_id);
 		}
 
 		@Override
-		public int destroyUserList(long account_id, int list_id) {
+		public int destroyUserList(final long account_id, final int list_id) {
 			return mService.get().destroyUserList(account_id, list_id);
 		}
 
 		@Override
-		public int destroyUserListSubscription(long account_id, int list_id) {
+		public int destroyUserListSubscription(final long account_id, final int list_id) {
 			return mService.get().destroyUserListSubscription(account_id, list_id);
 		}
 
 		@Override
-		public int getDailyTrends(long account_id) {
+		public int getDailyTrends(final long account_id) {
 			return mService.get().getDailyTrends(account_id);
 		}
 
 		@Override
-		public int getHomeTimeline(long[] account_ids, long[] max_ids) {
+		public int getHomeTimeline(final long[] account_ids, final long[] max_ids) {
 			return mService.get().getHomeTimeline(account_ids, max_ids);
 		}
 
 		@Override
-		public int getLocalTrends(long account_id, int woeid) {
+		public int getLocalTrends(final long account_id, final int woeid) {
 			return mService.get().getLocalTrends(account_id, woeid);
 		}
 
 		@Override
-		public int getMentions(long[] account_ids, long[] max_ids) {
+		public int getMentions(final long[] account_ids, final long[] max_ids) {
 			return mService.get().getMentions(account_ids, max_ids);
 		}
 
 		@Override
-		public int getReceivedDirectMessages(long[] account_ids, long[] max_ids) {
+		public int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids) {
 			return mService.get().getReceivedDirectMessages(account_ids, max_ids);
 		}
 
 		@Override
-		public int getSentDirectMessages(long[] account_ids, long[] max_ids) {
+		public int getSentDirectMessages(final long[] account_ids, final long[] max_ids) {
 			return mService.get().getSentDirectMessages(account_ids, max_ids);
 		}
 
 		@Override
-		public int getWeeklyTrends(long account_id) {
+		public int getWeeklyTrends(final long account_id) {
 			return mService.get().getWeeklyTrends(account_id);
 		}
 
@@ -2064,22 +2869,29 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		public int reportMultiSpam(long account_id, long[] user_ids) {
+		public int refreshAll() {
+			return mService.get().refreshAll();
+
+		}
+
+		@Override
+		public int reportMultiSpam(final long account_id, final long[] user_ids) {
 			return mService.get().reportMultiSpam(account_id, user_ids);
 		}
 
 		@Override
-		public int reportSpam(long account_id, long user_id) {
+		public int reportSpam(final long account_id, final long user_id) {
 			return mService.get().reportSpam(account_id, user_id);
 		}
 
 		@Override
-		public int retweetStatus(long account_id, long status_id) {
+		public int retweetStatus(final long account_id, final long status_id) {
 			return mService.get().retweetStatus(account_id, status_id);
 		}
 
 		@Override
-		public int sendDirectMessage(long account_id, String screen_name, long user_id, String message) {
+		public int sendDirectMessage(final long account_id, final String screen_name, final long user_id,
+				final String message) {
 			return mService.get().sendDirectMessage(account_id, screen_name, user_id, message);
 		}
 
@@ -2104,25 +2916,26 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		public int updateProfile(long account_id, String name, String url, String location, String description) {
+		public int updateProfile(final long account_id, final String name, final String url, final String location,
+				final String description) {
 			return mService.get().updateProfile(account_id, name, url, location, description);
 		}
 
 		@Override
-		public int updateProfileImage(long account_id, Uri image_uri, boolean delete_image) {
+		public int updateProfileImage(final long account_id, final Uri image_uri, final boolean delete_image) {
 			return mService.get().updateProfileImage(account_id, image_uri, delete_image);
 		}
 
 		@Override
-		public int updateStatus(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to,
-				boolean delete_image) {
+		public int updateStatus(final long[] account_ids, final String content, final Location location,
+				final Uri image_uri, final long in_reply_to, final boolean delete_image) {
 			return mService.get().updateStatus(account_ids, content, location, image_uri, in_reply_to, delete_image);
 
 		}
 
 		@Override
-		public int updateUserListDetails(long account_id, int list_id, boolean is_public, String name,
-				String description) {
+		public int updateUserListDetails(final long account_id, final int list_id, final boolean is_public,
+				final String name, final String description) {
 			return mService.get().updateUserListDetails(account_id, list_id, is_public, name, description);
 		}
 	}
@@ -2132,16 +2945,42 @@ public class TwidereService extends Service implements Constants {
 		public final Data data;
 		public final long account_id;
 
-		public SingleResponse(long account_id, Data data, Exception exception) {
+		public SingleResponse(final long account_id, final Data data, final Exception exception) {
 			this.exception = exception;
 			this.data = data;
 			this.account_id = account_id;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (!(obj instanceof SingleResponse)) return false;
+			final SingleResponse<?> other = (SingleResponse<?>) obj;
+			if (account_id != other.account_id) return false;
+			if (data == null) {
+				if (other.data != null) return false;
+			} else if (!data.equals(other.data)) return false;
+			if (exception == null) {
+				if (other.exception != null) return false;
+			} else if (!exception.equals(other.exception)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (data == null ? 0 : data.hashCode());
+			result = prime * result + (exception == null ? 0 : exception.hashCode());
+			return result;
 		}
 	}
 
 	class StoreDailyTrendsTask extends StoreTrendsTask {
 
-		public StoreDailyTrendsTask(ListResponse<Trends> result) {
+		public StoreDailyTrendsTask(final ListResponse<Trends> result) {
 			super(result, CachedTrends.Daily.CONTENT_URI);
 		}
 
@@ -2152,14 +2991,40 @@ public class TwidereService extends Service implements Constants {
 		private final List<ListResponse<DirectMessage>> responses;
 		private final Uri uri;
 
-		public StoreDirectMessagesTask(List<ListResponse<DirectMessage>> result, Uri uri) {
+		public StoreDirectMessagesTask(final List<ListResponse<DirectMessage>> result, final Uri uri) {
 			super(TwidereService.this, mAsyncTaskManager);
 			responses = result;
 			this.uri = uri;
 		}
 
 		@Override
-		protected SingleResponse<Bundle> doInBackground(Void... args) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof StoreDirectMessagesTask)) return false;
+			final StoreDirectMessagesTask other = (StoreDirectMessagesTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (responses == null) {
+				if (other.responses != null) return false;
+			} else if (!responses.equals(other.responses)) return false;
+			if (uri == null) {
+				if (other.uri != null) return false;
+			} else if (!uri.equals(other.uri)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (responses == null ? 0 : responses.hashCode());
+			result = prime * result + (uri == null ? 0 : uri.hashCode());
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<Bundle> doInBackground(final Void... args) {
 
 			boolean succeed = false;
 			final Uri query_uri = buildQueryUri(uri, false);
@@ -2230,11 +3095,15 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<Bundle> response) {
+		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			if (response != null && response.data != null && response.data.getBoolean(INTENT_KEY_SUCCEED)) {
 				notifyForUpdatedUri(TwidereService.this, uri);
 			}
 			super.onPostExecute(response);
+		}
+
+		private TwidereService getOuterType() {
+			return TwidereService.this;
 		}
 
 	}
@@ -2243,14 +3112,34 @@ public class TwidereService extends Service implements Constants {
 
 		private final boolean is_auto_refresh;
 
-		public StoreHomeTimelineTask(List<ListResponse<twitter4j.Status>> result, boolean is_auto_refresh,
-				boolean should_set_min_id) {
+		public StoreHomeTimelineTask(final List<ListResponse<twitter4j.Status>> result, final boolean is_auto_refresh,
+				final boolean should_set_min_id) {
 			super(result, Statuses.CONTENT_URI, should_set_min_id);
 			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<Bundle> response) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof StoreHomeTimelineTask)) return false;
+			final StoreHomeTimelineTask other = (StoreHomeTimelineTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (is_auto_refresh != other.is_auto_refresh) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (is_auto_refresh ? 1231 : 1237);
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			mStoreStatusesTaskId = -1;
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
@@ -2263,8 +3152,9 @@ public class TwidereService extends Service implements Constants {
 			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtras(extras));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false)) {
-				mNewStatusesCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				if (mNewStatusesCount > 0) {
+				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				mNewStatusesCount += items_inserted;
+				if (items_inserted > 0) {
 					final String message = getResources().getQuantityString(R.plurals.Ntweets, mNewStatusesCount,
 							mNewStatusesCount);
 					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
@@ -2286,11 +3176,15 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(response);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class StoreLocalTrendsTask extends StoreTrendsTask {
 
-		public StoreLocalTrendsTask(ListResponse<Trends> result) {
+		public StoreLocalTrendsTask(final ListResponse<Trends> result) {
 			super(result, CachedTrends.Local.CONTENT_URI);
 		}
 
@@ -2300,14 +3194,34 @@ public class TwidereService extends Service implements Constants {
 
 		private final boolean is_auto_refresh;
 
-		public StoreMentionsTask(List<ListResponse<twitter4j.Status>> result, boolean is_auto_refresh,
-				boolean should_set_min_id) {
+		public StoreMentionsTask(final List<ListResponse<twitter4j.Status>> result, final boolean is_auto_refresh,
+				final boolean should_set_min_id) {
 			super(result, Mentions.CONTENT_URI, should_set_min_id);
 			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<Bundle> response) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof StoreMentionsTask)) return false;
+			final StoreMentionsTask other = (StoreMentionsTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (is_auto_refresh != other.is_auto_refresh) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (is_auto_refresh ? 1231 : 1237);
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			mStoreMentionsTaskId = -1;
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
@@ -2320,8 +3234,9 @@ public class TwidereService extends Service implements Constants {
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtras(extras));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) {
-				mNewMentionsCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				if (mNewMentionsCount > 0) {
+				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				mNewMentionsCount += items_inserted;
+				if (items_inserted > 0) {
 					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 					final Bundle delete_extras = new Bundle();
 					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
@@ -2343,19 +3258,44 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(response);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class StoreReceivedDirectMessagesTask extends StoreDirectMessagesTask {
 
 		private final boolean is_auto_refresh;
 
-		public StoreReceivedDirectMessagesTask(List<ListResponse<DirectMessage>> result, boolean is_auto_refresh) {
+		public StoreReceivedDirectMessagesTask(final List<ListResponse<DirectMessage>> result,
+				final boolean is_auto_refresh) {
 			super(result, DirectMessages.Inbox.CONTENT_URI);
 			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<Bundle> response) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof StoreReceivedDirectMessagesTask)) return false;
+			final StoreReceivedDirectMessagesTask other = (StoreReceivedDirectMessagesTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (is_auto_refresh != other.is_auto_refresh) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (is_auto_refresh ? 1231 : 1237);
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			mStoreReceivedDirectMessagesTaskId = -1;
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
@@ -2363,8 +3303,9 @@ public class TwidereService extends Service implements Constants {
 					.putExtra(INTENT_KEY_SUCCEED, succeed));
 			if (succeed && is_auto_refresh
 					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)) {
-				mNewMessagesCount += response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				if (mNewMessagesCount > 0) {
+				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
+				mNewMessagesCount += items_inserted;
+				if (items_inserted > 0) {
 					final String message = getResources().getQuantityString(R.plurals.Ndirect_messages,
 							mNewMessagesCount, mNewMessagesCount);
 					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
@@ -2386,16 +3327,20 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(response);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class StoreSentDirectMessagesTask extends StoreDirectMessagesTask {
 
-		public StoreSentDirectMessagesTask(List<ListResponse<DirectMessage>> result) {
+		public StoreSentDirectMessagesTask(final List<ListResponse<DirectMessage>> result) {
 			super(result, DirectMessages.Outbox.CONTENT_URI);
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<Bundle> response) {
+		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			mStoreSentDirectMessagesTaskId = -1;
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
@@ -2413,15 +3358,46 @@ public class TwidereService extends Service implements Constants {
 
 		int total_items_inserted = 0;
 
-		public StoreStatusesTask(List<ListResponse<twitter4j.Status>> result, Uri uri, boolean should_set_min_id) {
+		public StoreStatusesTask(final List<ListResponse<twitter4j.Status>> result, final Uri uri,
+				final boolean should_set_min_id) {
 			super(TwidereService.this, mAsyncTaskManager);
 			responses = result;
 			this.should_set_min_id = should_set_min_id;
 			this.uri = uri;
 		}
 
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof StoreStatusesTask)) return false;
+			final StoreStatusesTask other = (StoreStatusesTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (responses == null) {
+				if (other.responses != null) return false;
+			} else if (!responses.equals(other.responses)) return false;
+			if (should_set_min_id != other.should_set_min_id) return false;
+			if (total_items_inserted != other.total_items_inserted) return false;
+			if (uri == null) {
+				if (other.uri != null) return false;
+			} else if (!uri.equals(other.uri)) return false;
+			return true;
+		}
+
 		public int getTotalItemsInserted() {
 			return total_items_inserted;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (responses == null ? 0 : responses.hashCode());
+			result = prime * result + (should_set_min_id ? 1231 : 1237);
+			result = prime * result + total_items_inserted;
+			result = prime * result + (uri == null ? 0 : uri.hashCode());
+			return result;
 		}
 
 		public boolean shouldSetMinId() {
@@ -2429,7 +3405,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected SingleResponse<Bundle> doInBackground(Void... args) {
+		protected SingleResponse<Bundle> doInBackground(final Void... args) {
 
 			boolean succeed = false;
 			final Uri query_uri = buildQueryUri(uri, false);
@@ -2531,12 +3507,16 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<Bundle> response) {
+		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			if (response.data.getBoolean(INTENT_KEY_SUCCEED)) {
 				notifyForUpdatedUri(TwidereService.this, uri);
 			}
 			super.onPostExecute(response);
 			mAsyncTaskManager.add(new CacheUsersTask(responses), true);
+		}
+
+		private TwidereService getOuterType() {
+			return TwidereService.this;
 		}
 
 	}
@@ -2546,14 +3526,40 @@ public class TwidereService extends Service implements Constants {
 		private final ListResponse<Trends> response;
 		private final Uri uri;
 
-		public StoreTrendsTask(ListResponse<Trends> result, Uri uri) {
+		public StoreTrendsTask(final ListResponse<Trends> result, final Uri uri) {
 			super(TwidereService.this, mAsyncTaskManager);
 			response = result;
 			this.uri = uri;
 		}
 
 		@Override
-		protected SingleResponse<Bundle> doInBackground(Void... args) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof StoreTrendsTask)) return false;
+			final StoreTrendsTask other = (StoreTrendsTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (response == null) {
+				if (other.response != null) return false;
+			} else if (!response.equals(other.response)) return false;
+			if (uri == null) {
+				if (other.uri != null) return false;
+			} else if (!uri.equals(other.uri)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (response == null ? 0 : response.hashCode());
+			result = prime * result + (uri == null ? 0 : uri.hashCode());
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<Bundle> doInBackground(final Void... args) {
 			final Bundle bundle = new Bundle();
 			if (response != null) {
 
@@ -2571,7 +3577,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<Bundle> response) {
+		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			final Intent intent = new Intent(BROADCAST_TRENDS_UPDATED);
 			if (response != null && response.data != null && response.data.getBoolean(INTENT_KEY_SUCCEED)) {
 				notifyForUpdatedUri(TwidereService.this, uri);
@@ -2581,11 +3587,15 @@ public class TwidereService extends Service implements Constants {
 			sendBroadcast(intent);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class StoreWeeklyTrendsTask extends StoreTrendsTask {
 
-		public StoreWeeklyTrendsTask(ListResponse<Trends> result) {
+		public StoreWeeklyTrendsTask(final ListResponse<Trends> result) {
 			super(result, CachedTrends.Weekly.CONTENT_URI);
 		}
 
@@ -2597,7 +3607,7 @@ public class TwidereService extends Service implements Constants {
 		private final Uri image_uri;
 		private final boolean delete_image;
 
-		public UpdateProfileImageTask(long account_id, Uri image_uri, boolean delete_image) {
+		public UpdateProfileImageTask(final long account_id, final Uri image_uri, final boolean delete_image) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.image_uri = image_uri;
@@ -2605,7 +3615,33 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected SingleResponse<User> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof UpdateProfileImageTask)) return false;
+			final UpdateProfileImageTask other = (UpdateProfileImageTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (delete_image != other.delete_image) return false;
+			if (image_uri == null) {
+				if (other.image_uri != null) return false;
+			} else if (!image_uri.equals(other.image_uri)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (delete_image ? 1231 : 1237);
+			result = prime * result + (image_uri == null ? 0 : image_uri.hashCode());
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<User> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
@@ -2620,7 +3656,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.profile_image_update_success, Toast.LENGTH_SHORT).show();
 				if (delete_image) {
@@ -2636,6 +3672,10 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class UpdateProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
@@ -2643,7 +3683,8 @@ public class TwidereService extends Service implements Constants {
 		private final long account_id;
 		private final String name, url, location, description;
 
-		public UpdateProfileTask(long account_id, String name, String url, String location, String description) {
+		public UpdateProfileTask(final long account_id, final String name, final String url, final String location,
+				final String description) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.name = name;
@@ -2653,7 +3694,43 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected SingleResponse<User> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof UpdateProfileTask)) return false;
+			final UpdateProfileTask other = (UpdateProfileTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (description == null) {
+				if (other.description != null) return false;
+			} else if (!description.equals(other.description)) return false;
+			if (location == null) {
+				if (other.location != null) return false;
+			} else if (!location.equals(other.location)) return false;
+			if (name == null) {
+				if (other.name != null) return false;
+			} else if (!name.equals(other.name)) return false;
+			if (url == null) {
+				if (other.url != null) return false;
+			} else if (!url.equals(other.url)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (description == null ? 0 : description.hashCode());
+			result = prime * result + (location == null ? 0 : location.hashCode());
+			result = prime * result + (name == null ? 0 : name.hashCode());
+			result = prime * result + (url == null ? 0 : url.hashCode());
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<User> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -2668,7 +3745,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
 				Toast.makeText(TwidereService.this, R.string.profile_update_success, Toast.LENGTH_SHORT).show();
 			} else {
@@ -2681,23 +3758,29 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
 
 	class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<SingleResponse<twitter4j.Status>>> {
 
 		private final ImageUploaderInterface uploader;
+
 		private final TweetShortenerInterface shortener;
+
 		private final Validator validator = new Validator();
+		private final long[] account_ids;
+		private final String content;
 
-		private long[] account_ids;
-		private String content;
-		private Location location;
-		private Uri image_uri;
-		private long in_reply_to;
-		private boolean use_uploader, use_shortener, delete_image;
+		private final Location location;
+		private final Uri image_uri;
+		private final long in_reply_to;
+		private final boolean use_uploader, use_shortener, delete_image;
 
-		public UpdateStatusTask(long[] account_ids, String content, Location location, Uri image_uri, long in_reply_to,
-				boolean delete_image) {
+		public UpdateStatusTask(final long[] account_ids, final String content, final Location location,
+				final Uri image_uri, final long in_reply_to, final boolean delete_image) {
 			super(TwidereService.this, mAsyncTaskManager);
 			final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
 			final String shortener_component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
@@ -2715,7 +3798,59 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected List<SingleResponse<twitter4j.Status>> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof UpdateStatusTask)) return false;
+			final UpdateStatusTask other = (UpdateStatusTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (!Arrays.equals(account_ids, other.account_ids)) return false;
+			if (content == null) {
+				if (other.content != null) return false;
+			} else if (!content.equals(other.content)) return false;
+			if (delete_image != other.delete_image) return false;
+			if (image_uri == null) {
+				if (other.image_uri != null) return false;
+			} else if (!image_uri.equals(other.image_uri)) return false;
+			if (in_reply_to != other.in_reply_to) return false;
+			if (location == null) {
+				if (other.location != null) return false;
+			} else if (!location.equals(other.location)) return false;
+			if (shortener == null) {
+				if (other.shortener != null) return false;
+			} else if (!shortener.equals(other.shortener)) return false;
+			if (uploader == null) {
+				if (other.uploader != null) return false;
+			} else if (!uploader.equals(other.uploader)) return false;
+			if (use_shortener != other.use_shortener) return false;
+			if (use_uploader != other.use_uploader) return false;
+			if (validator == null) {
+				if (other.validator != null) return false;
+			} else if (!validator.equals(other.validator)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + Arrays.hashCode(account_ids);
+			result = prime * result + (content == null ? 0 : content.hashCode());
+			result = prime * result + (delete_image ? 1231 : 1237);
+			result = prime * result + (image_uri == null ? 0 : image_uri.hashCode());
+			result = prime * result + (int) (in_reply_to ^ in_reply_to >>> 32);
+			result = prime * result + (location == null ? 0 : location.hashCode());
+			result = prime * result + (shortener == null ? 0 : shortener.hashCode());
+			result = prime * result + (uploader == null ? 0 : uploader.hashCode());
+			result = prime * result + (use_shortener ? 1231 : 1237);
+			result = prime * result + (use_uploader ? 1231 : 1237);
+			result = prime * result + (validator == null ? 0 : validator.hashCode());
+			return result;
+		}
+
+		@Override
+		protected List<SingleResponse<twitter4j.Status>> doInBackground(final Void... params) {
 
 			final List<SingleResponse<twitter4j.Status>> result = new ArrayList<SingleResponse<twitter4j.Status>>();
 
@@ -2784,7 +3919,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(List<SingleResponse<twitter4j.Status>> result) {
+		protected void onPostExecute(final List<SingleResponse<twitter4j.Status>> result) {
 
 			boolean succeed = true;
 			Exception exception = null;
@@ -2819,13 +3954,29 @@ public class TwidereService extends Service implements Constants {
 					values.put(Drafts.IMAGE_URI, parseString(image_uri));
 				}
 				mResolver.insert(Drafts.CONTENT_URI, values);
+				final String title = getString(R.string.tweet_not_sent);
+				final String message = getString(R.string.tweet_not_sent_summary);
+				final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
+				final Notification notification = buildNotification(title, message, R.drawable.ic_stat_tweet, intent,
+						null);
+				mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
 			}
 			super.onPostExecute(result);
 			if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {
 				final long[] activated_ids = getActivatedAccountIds(TwidereService.this);
 				getHomeTimeline(activated_ids, null);
-				getMentions(activated_ids, null);
+				if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
+					getMentions(account_ids, null);
+				}
+				if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
+					getReceivedDirectMessages(account_ids, null);
+					// getSentDirectMessages(account_ids, null);
+				}
 			}
+		}
+
+		private TwidereService getOuterType() {
+			return TwidereService.this;
 		}
 
 		class ImageUploaderNotFoundException extends UpdateStatusException {
@@ -2871,7 +4022,7 @@ public class TwidereService extends Service implements Constants {
 		class UpdateStatusException extends Exception {
 			private static final long serialVersionUID = -1267218921727097910L;
 
-			public UpdateStatusException(int message) {
+			public UpdateStatusException(final int message) {
 				super(getString(message));
 			}
 		}
@@ -2880,12 +4031,14 @@ public class TwidereService extends Service implements Constants {
 	class UpdateUserListProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
 
 		private final long account_id;
+
 		private final int list_id;
+
 		private final boolean is_public;
 		private final String name, description;
 
-		public UpdateUserListProfileTask(long account_id, int list_id, boolean is_public, String name,
-				String description) {
+		public UpdateUserListProfileTask(final long account_id, final int list_id, final boolean is_public,
+				final String name, final String description) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.name = name;
@@ -2895,7 +4048,39 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(Void... params) {
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof UpdateUserListProfileTask)) return false;
+			final UpdateUserListProfileTask other = (UpdateUserListProfileTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (description == null) {
+				if (other.description != null) return false;
+			} else if (!description.equals(other.description)) return false;
+			if (is_public != other.is_public) return false;
+			if (list_id != other.list_id) return false;
+			if (name == null) {
+				if (other.name != null) return false;
+			} else if (!name.equals(other.name)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (description == null ? 0 : description.hashCode());
+			result = prime * result + (is_public ? 1231 : 1237);
+			result = prime * result + list_id;
+			result = prime * result + (name == null ? 0 : name.hashCode());
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(TwidereService.this, account_id, false);
 			if (twitter != null) {
@@ -2910,7 +4095,7 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(SingleResponse<UserList> result) {
+		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DETAILS_UPDATED);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
 			if (result != null && result.data != null && result.data.getId() > 0) {
@@ -2921,6 +4106,10 @@ public class TwidereService extends Service implements Constants {
 			}
 			sendBroadcast(intent);
 			super.onPostExecute(result);
+		}
+
+		private TwidereService getOuterType() {
+			return TwidereService.this;
 		}
 
 	}

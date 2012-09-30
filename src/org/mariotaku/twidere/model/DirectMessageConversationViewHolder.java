@@ -21,31 +21,34 @@ package org.mariotaku.twidere.model;
 
 import org.mariotaku.twidere.R;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class DirectMessageConversationViewHolder {
 
 	public final ImageView profile_image_left, profile_image_right;
-	public final TextView name, text, time;
+	public final TextView name, screen_name, text, time;
+	public final LinearLayout name_container;
 	private float text_size;
 
-	public DirectMessageConversationViewHolder(View view, Context context) {
+	public DirectMessageConversationViewHolder(final View view) {
 		profile_image_left = (ImageView) view.findViewById(R.id.profile_image_left);
 		profile_image_right = (ImageView) view.findViewById(R.id.profile_image_right);
 		name = (TextView) view.findViewById(R.id.name);
+		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
-
+		name_container = (LinearLayout) view.findViewById(R.id.name_container);
 	}
 
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
 			text.setTextSize(text_size);
-			name.setTextSize(text_size * 1.05f);
+			name.setTextSize(text_size);
+			screen_name.setTextSize(text_size * 0.75f);
 			time.setTextSize(text_size * 0.75f);
 		}
 	}

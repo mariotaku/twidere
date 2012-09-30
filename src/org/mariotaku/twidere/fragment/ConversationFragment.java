@@ -47,23 +47,18 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 	private ParcelableStatusesAdapter mAdapter;
 
 	@Override
-	public boolean isListLoadFinished() {
-		return true;
-	}
-
-	@Override
 	public boolean isLoaderUsed() {
 		return false;
 	}
 
 	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		return new DummyParcelableStatusesLoader(getActivity(), account_id, getData());
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setPullToRefreshEnabled(false);
 		mAdapter = getListAdapter();
@@ -87,7 +82,7 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
+	public void onDataLoaded(final Loader<List<ParcelableStatus>> loader, final ParcelableStatusesAdapter adapter) {
 
 	}
 
@@ -102,14 +97,14 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 		private final long mAccountId, mStatusId;
 		private final StatusHandler mHandler;
 
-		public ShowConversationTask(StatusHandler handler, long account_id, long status_id) {
+		public ShowConversationTask(final StatusHandler handler, final long account_id, final long status_id) {
 			mHandler = handler;
 			mAccountId = account_id;
 			mStatusId = status_id;
 		}
 
 		@Override
-		protected TwitterException doInBackground(Void... params) {
+		protected TwitterException doInBackground(final Void... params) {
 			final Twitter twitter = getTwitterInstance(getActivity(), mAccountId, true);
 			if (twitter == null) return null;
 			try {
@@ -144,7 +139,7 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 		}
 
 		@Override
-		protected void onPostExecute(TwitterException result) {
+		protected void onPostExecute(final TwitterException result) {
 			if (result != null) {
 				showErrorToast(getActivity(), result, true);
 			}
@@ -164,12 +159,12 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 
 		private final ParcelableStatusesAdapter mAdapter;
 
-		public StatusHandler(ParcelableStatusesAdapter adapter, long account_id) {
+		public StatusHandler(final ParcelableStatusesAdapter adapter, final long account_id) {
 			mAdapter = adapter;
 		}
 
 		@Override
-		public void handleMessage(Message msg) {
+		public void handleMessage(final Message msg) {
 			switch (msg.what) {
 				case ADD_STATUS:
 					final Object obj = msg.obj;

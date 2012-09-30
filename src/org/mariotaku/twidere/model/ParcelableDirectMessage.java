@@ -35,12 +35,12 @@ public class ParcelableDirectMessage implements Parcelable {
 
 	public static final Parcelable.Creator<ParcelableDirectMessage> CREATOR = new Parcelable.Creator<ParcelableDirectMessage>() {
 		@Override
-		public ParcelableDirectMessage createFromParcel(Parcel in) {
+		public ParcelableDirectMessage createFromParcel(final Parcel in) {
 			return new ParcelableDirectMessage(in);
 		}
 
 		@Override
-		public ParcelableDirectMessage[] newArray(int size) {
+		public ParcelableDirectMessage[] newArray(final int size) {
 			return new ParcelableDirectMessage[size];
 		}
 	};
@@ -48,7 +48,7 @@ public class ParcelableDirectMessage implements Parcelable {
 	public static final Comparator<ParcelableDirectMessage> MESSAGE_ID_COMPARATOR = new Comparator<ParcelableDirectMessage>() {
 
 		@Override
-		public int compare(ParcelableDirectMessage object1, ParcelableDirectMessage object2) {
+		public int compare(final ParcelableDirectMessage object1, final ParcelableDirectMessage object2) {
 			final long diff = object2.message_id - object1.message_id;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
@@ -66,7 +66,7 @@ public class ParcelableDirectMessage implements Parcelable {
 
 	public final URL sender_profile_image_url, recipient_profile_image_url;
 
-	public ParcelableDirectMessage(Cursor cursor, DirectMessageCursorIndices indices) {
+	public ParcelableDirectMessage(final Cursor cursor, final DirectMessageCursorIndices indices) {
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
 		is_gap = indices.is_gap != -1 ? cursor.getShort(indices.is_gap) == 1 : null;
 		message_id = indices.message_id != -1 ? cursor.getLong(indices.message_id) : -1;
@@ -85,7 +85,7 @@ public class ParcelableDirectMessage implements Parcelable {
 				.getString(indices.recipient_profile_image_url)) : null;
 	}
 
-	public ParcelableDirectMessage(DirectMessage message, long account_id, boolean is_gap) {
+	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_gap) {
 		this.account_id = account_id;
 		this.is_gap = is_gap;
 		final User sender = message.getSender(), recipient = message.getRecipient();
@@ -102,7 +102,7 @@ public class ParcelableDirectMessage implements Parcelable {
 		recipient_profile_image_url = recipient != null ? recipient.getProfileImageURL() : null;
 	}
 
-	public ParcelableDirectMessage(Parcel in) {
+	public ParcelableDirectMessage(final Parcel in) {
 		account_id = in.readLong();
 		message_id = in.readLong();
 		message_timestamp = in.readLong();
@@ -129,7 +129,7 @@ public class ParcelableDirectMessage implements Parcelable {
 	}
 
 	@Override
-	public void writeToParcel(Parcel out, int flags) {
+	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(account_id);
 		out.writeLong(message_id);
 		out.writeLong(message_timestamp);
@@ -145,7 +145,7 @@ public class ParcelableDirectMessage implements Parcelable {
 		out.writeSerializable(recipient_profile_image_url);
 	}
 
-	private long getTime(Date date) {
+	private long getTime(final Date date) {
 		return date != null ? date.getTime() : 0;
 	}
 }

@@ -35,18 +35,18 @@ public class HtmlBuilder {
 
 	private final List<LinkSpec> links = new ArrayList<LinkSpec>();
 
-	public HtmlBuilder(String string) {
+	public HtmlBuilder(final String string) {
 		this(string, false);
 	}
 
-	public HtmlBuilder(String string, boolean strict) {
+	public HtmlBuilder(final String string, final boolean strict) {
 		if (string == null) throw new NullPointerException();
 		this.string = string;
 		this.strict = strict;
 		string_length = string.length();
 	}
 
-	public boolean addLink(String link, String display, int start, int end) {
+	public boolean addLink(final String link, final String display, final int start, final int end) {
 		// if (start >= end) {
 		// if (strict) throw new
 		// IllegalArgumentException("start must lesser than end!");
@@ -67,7 +67,7 @@ public class HtmlBuilder {
 		return links.add(new LinkSpec(link, display, start, end));
 	}
 
-	public String build(boolean unescape) {
+	public String build(final boolean unescape) {
 		if (links.size() == 0) return escape(unescape ? unescape(string) : string);
 		Collections.sort(links, LinkSpec.COMPARATOR);
 		final StringBuilder builder = new StringBuilder();
@@ -108,7 +108,7 @@ public class HtmlBuilder {
 		private static final Comparator<LinkSpec> COMPARATOR = new Comparator<LinkSpec>() {
 
 			@Override
-			public int compare(LinkSpec lhs, LinkSpec rhs) {
+			public int compare(final LinkSpec lhs, final LinkSpec rhs) {
 				return lhs.start - rhs.start;
 			}
 		};
@@ -116,7 +116,7 @@ public class HtmlBuilder {
 		final String link, display;
 		final int start, end;
 
-		LinkSpec(String link, String display, int start, int end) {
+		LinkSpec(final String link, final String display, final int start, final int end) {
 			this.link = link;
 			this.display = display;
 			this.start = start;

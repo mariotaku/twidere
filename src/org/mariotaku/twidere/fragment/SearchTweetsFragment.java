@@ -21,7 +21,6 @@ package org.mariotaku.twidere.fragment;
 
 import java.util.List;
 
-import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.loader.TweetSearchLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
@@ -30,13 +29,10 @@ import android.support.v4.content.Loader;
 
 public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 
-	@Override
-	public boolean isListLoadFinished() {
-		return false;
-	}
+	private boolean mIsStatusesSaved = false;
 
 	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
 		long account_id = -1, max_id = -1;
 		String query = null;
 		boolean is_home_tab = false;
@@ -51,20 +47,23 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
-
-	}
-
-	@Override
 	public void onDestroy() {
-		TweetSearchLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		saveStatuses();
 		super.onDestroy();
 	}
 
 	@Override
 	public void onDestroyView() {
-		TweetSearchLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		saveStatuses();
 		super.onDestroyView();
+	}
+
+	private void saveStatuses() {
+		if (mIsStatusesSaved) return;
+		final int first_visible_position = getListView().getFirstVisiblePosition();
+		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+		TweetSearchLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
+		mIsStatusesSaved = true;
 	}
 
 }

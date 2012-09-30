@@ -19,11 +19,11 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static android.text.format.DateUtils.formatSameDayTime;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
+import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountUsername;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
@@ -37,7 +37,6 @@ import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 
 import org.mariotaku.twidere.R;
@@ -62,8 +61,8 @@ import android.view.ViewGroup;
 
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
 
-	private boolean mDisplayProfileImage, mDisplayImagePreview, mDisplayName, mShowAccountColor, mShowAbsoluteTime,
-			mGapDisallowed, mMultiSelectEnabled;
+	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
+			mMultiSelectEnabled, mMentionsHighlightDisabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -71,7 +70,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	private final ArrayList<Long> mSelectedStatusIds;
 	private final boolean mDisplayHiResProfileImage;
 
-	public CursorStatusesAdapter(Context context) {
+	public CursorStatusesAdapter(final Context context) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
@@ -82,7 +81,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
+	public void bindView(final View view, final Context context, final Cursor cursor) {
 		final int position = cursor.getPosition();
 		final StatusViewHolder holder = (StatusViewHolder) view.getTag();
 
@@ -94,11 +93,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 		if (!show_gap) {
 
-			final String retweeted_by = mDisplayName ? cursor.getString(mIndices.retweeted_by_name) : cursor
-					.getString(mIndices.retweeted_by_screen_name);
+			final String retweeted_by = cursor.getString(mIndices.retweeted_by_name);
 			final String text = cursor.getString(mIndices.text);
 			final String screen_name = cursor.getString(mIndices.screen_name);
-			final String name = mDisplayName ? cursor.getString(mIndices.name) : screen_name;
+			final String name = cursor.getString(mIndices.name);
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 
 			final long account_id = cursor.getLong(mIndices.account_id);
@@ -123,8 +121,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			}
 
 			holder.setUserColor(getUserColor(mContext, user_id));
-			holder.setHighlightColor(getStatusBackground(text.contains('@' + getAccountUsername(mContext, account_id)),
-					is_favorite, is_retweet));
+			if (text != null) {
+				holder.setHighlightColor(getStatusBackground(
+						mMentionsHighlightDisabled ? false : text.contains('@' + getAccountUsername(mContext,
+								account_id)), is_favorite, is_retweet));
+			}
 
 			holder.setAccountColorEnabled(mShowAccountColor);
 
@@ -132,17 +133,17 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				holder.setAccountColor(getAccountColor(mContext, account_id));
 			}
 
-			final PreviewImage preview = mDisplayImagePreview ? getPreviewImage(text, mDisplayImagePreview) : null;
+			final PreviewImage preview = getPreviewImage(text, mDisplayImagePreview);
 			final boolean has_media = preview != null ? preview.has_image : false;
 
 			holder.setTextSize(mTextSize);
 
 			holder.text.setText(unescape(text));
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(is_verified, is_protected), 0, 0, 0);
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(is_verified, is_protected), 0);
 			holder.name.setText(name);
+			holder.screen_name.setText("@" + screen_name);
 			if (mShowAbsoluteTime) {
-				holder.time.setText(formatSameDayTime(status_timestamp, System.currentTimeMillis(), DateFormat.MEDIUM,
-						DateFormat.SHORT));
+				holder.time.setText(formatSameDayTime(context, status_timestamp));
 			} else {
 				holder.time.setText(getRelativeTimeSpanString(status_timestamp));
 			}
@@ -183,12 +184,12 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		super.bindView(view, context, cursor);
 	}
 
-	public long findItemIdByPosition(int position) {
+	public long findItemIdByPosition(final int position) {
 		if (position >= 0 && position < getCount()) return getItem(position).getLong(mIndices.status_id);
 		return -1;
 	}
 
-	public int findItemPositionByStatusId(long status_id) {
+	public int findItemPositionByStatusId(final long status_id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItem(i).getLong(mIndices.status_id) == status_id) return i;
@@ -197,7 +198,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public ParcelableStatus findStatus(long id) {
+	public ParcelableStatus findStatus(final long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) {
@@ -211,11 +212,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public Cursor getItem(int position) {
+	public Cursor getItem(final int position) {
 		return (Cursor) super.getItem(position);
 	}
 
-	public ParcelableStatus getStatus(int position) {
+	public ParcelableStatus getStatus(final int position) {
 		final Cursor cur = getItem(position);
 		final long account_id = cur.getLong(mIndices.account_id);
 		final long status_id = cur.getLong(mIndices.status_id);
@@ -223,7 +224,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public View newView(Context context, Cursor cursor, ViewGroup parent) {
+	public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
 		if (!(tag instanceof StatusViewHolder)) {
@@ -236,7 +237,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		final Object tag = view.getTag();
 		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
 		if (status == null) return;
@@ -260,7 +261,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setDisplayImagePreview(boolean preview) {
+	public void setDisplayImagePreview(final boolean preview) {
 		if (preview != mDisplayImagePreview) {
 			mDisplayImagePreview = preview;
 			notifyDataSetChanged();
@@ -268,15 +269,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setDisplayName(boolean display) {
-		if (display != mDisplayName) {
-			mDisplayName = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setDisplayProfileImage(boolean display) {
+	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
@@ -284,7 +277,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setGapDisallowed(boolean disallowed) {
+	public void setGapDisallowed(final boolean disallowed) {
 		if (mGapDisallowed != disallowed) {
 			mGapDisallowed = disallowed;
 			notifyDataSetChanged();
@@ -293,7 +286,15 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setMultiSelectEnabled(boolean multi) {
+	public void setMentionsHightlightDisabled(final boolean disable) {
+		if (disable != mMentionsHighlightDisabled) {
+			mMentionsHighlightDisabled = disable;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setMultiSelectEnabled(final boolean multi) {
 		if (mMultiSelectEnabled != multi) {
 			mMultiSelectEnabled = multi;
 			notifyDataSetChanged();
@@ -301,7 +302,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setShowAbsoluteTime(boolean show) {
+	public void setShowAbsoluteTime(final boolean show) {
 		if (show != mShowAbsoluteTime) {
 			mShowAbsoluteTime = show;
 			notifyDataSetChanged();
@@ -309,7 +310,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setShowAccountColor(boolean show) {
+	public void setShowAccountColor(final boolean show) {
 		if (show != mShowAccountColor) {
 			mShowAccountColor = show;
 			notifyDataSetChanged();
@@ -317,7 +318,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
 			notifyDataSetChanged();
@@ -325,7 +326,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public Cursor swapCursor(Cursor cursor) {
+	public Cursor swapCursor(final Cursor cursor) {
 		if (cursor != null) {
 			mIndices = new StatusCursorIndices(cursor);
 		} else {

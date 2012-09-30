@@ -55,7 +55,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Intent intent = getIntent();
 		final String action = intent.getAction();
@@ -108,13 +108,13 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_edit_tab, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(final int keyCode, final KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_BACK: {
 				if (!backPressed()) return true;
@@ -125,7 +125,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				if (backPressed()) {
@@ -178,7 +178,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_PICK_FILE: {
 				if (resultCode == RESULT_OK) {
@@ -196,7 +196,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putString(INTENT_KEY_NAME, mName);
 		outState.putString(INTENT_KEY_TYPE, mType);
@@ -218,7 +218,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		return true;
 	}
 
-	private void setPreferencesByType(String type) {
+	private void setPreferencesByType(final String type) {
 		if (type == null || mText1Preference == null || mText2Preference == null) return;
 		mAccountPreference.setEnabled(true);
 		mAccountPreference.setTitle(R.string.account);
@@ -249,9 +249,9 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		private final Account[] mAccounts;
 		private int mSelectedPos = -1;
 
-		public AccountPreference(Context context) {
+		public AccountPreference(final Context context) {
 			super(context);
-			final List<Account> accounts = Account.getAccounts(getContext(), true);
+			final List<Account> accounts = Account.getAccounts(getContext(), false);
 			mAccounts = accounts.toArray(new Account[accounts.size()]);
 			setTitle(R.string.account);
 			if (mAccountId > 0) {
@@ -261,7 +261,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			mAccountId = mAccounts[which].account_id;
 			setSummary(mAccounts[which]);
 			if (mDialog != null && mDialog.isShowing()) {
@@ -271,7 +271,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public boolean onPreferenceClick(Preference preference) {
+		public boolean onPreferenceClick(final Preference preference) {
 			if (mDialog != null && mDialog.isShowing()) {
 				mDialog.dismiss();
 			}
@@ -298,7 +298,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 
 		private AutoCompleteTextView mEditText;
 
-		public AdditionalPreference(Context context, int title) {
+		public AdditionalPreference(final Context context, final int title) {
 			super(context);
 			setEnabled(false);
 			setTitle(title);
@@ -306,7 +306,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
 					final String text = parseString(mEditText.getText());
@@ -321,7 +321,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public boolean onPreferenceClick(Preference preference) {
+		public boolean onPreferenceClick(final Preference preference) {
 			if (mDialog != null && mDialog.isShowing()) {
 				mDialog.dismiss();
 			}
@@ -350,12 +350,12 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 
 		private final EditCustomTabActivity mActivity;
 
-		public BackPressedHandler(EditCustomTabActivity activity) {
+		public BackPressedHandler(final EditCustomTabActivity activity) {
 			mActivity = activity;
 		}
 
 		@Override
-		public void handleMessage(Message msg) {
+		public void handleMessage(final Message msg) {
 			mActivity.mBackPressed = false;
 		}
 
@@ -363,7 +363,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 
 	class NamePreference extends Text2Preference {
 
-		public NamePreference(Context context) {
+		public NamePreference(final Context context) {
 			super(context, R.string.name);
 			setEnabled(true);
 			setSummary(mName);
@@ -375,7 +375,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public void onTextSet(String text) {
+		public void onTextSet(final String text) {
 			mName = text;
 			mHasUnsavedChanges = true;
 		}
@@ -388,7 +388,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		private final String[] mKeys, mNames;
 		private int mSelectedPos = -1;
 
-		public TabIconPreference(Context context) {
+		public TabIconPreference(final Context context) {
 			super(context);
 			final Set<String> keys = CUSTOM_TABS_ICON_NAME_MAP.keySet();
 			mKeys = keys.toArray(new String[keys.size()]);
@@ -419,7 +419,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			mSelectedPos = which;
 			final String name = mNames[which];
 			final String key = mKeys[which];
@@ -441,7 +441,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public boolean onPreferenceClick(Preference preference) {
+		public boolean onPreferenceClick(final Preference preference) {
 			if (mDialog != null && mDialog.isShowing()) {
 				mDialog.dismiss();
 			}
@@ -459,7 +459,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		private final String[] mKeys, mNames;
 		private int mSelectedPos = -1;
 
-		public TabTypePreference(Context context) {
+		public TabTypePreference(final Context context) {
 			super(context);
 			final Set<String> keys = CUSTOM_TABS_TYPE_NAME_MAP.keySet();
 			mKeys = keys.toArray(new String[keys.size()]);
@@ -479,7 +479,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			mType = mKeys[which];
 			setPreferencesByType(mType);
 			final String name = mNames[which];
@@ -495,7 +495,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public boolean onPreferenceClick(Preference preference) {
+		public boolean onPreferenceClick(final Preference preference) {
 			if (mDialog != null && mDialog.isShowing()) {
 				mDialog.dismiss();
 			}
@@ -518,7 +518,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 
 		boolean mShouldCompleteUserName;
 
-		public Text1Preference(Context context, int title) {
+		public Text1Preference(final Context context, final int title) {
 			super(context, title);
 			setSummary(mText1);
 		}
@@ -529,12 +529,12 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public void onTextSet(String text) {
+		public void onTextSet(final String text) {
 			mText1 = text;
 			mHasUnsavedChanges = true;
 		}
 
-		public void setShouldCompleteUserName(boolean complete) {
+		public void setShouldCompleteUserName(final boolean complete) {
 			mShouldCompleteUserName = complete;
 		}
 
@@ -547,7 +547,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 
 	class Text2Preference extends AdditionalPreference {
 
-		public Text2Preference(Context context, int title) {
+		public Text2Preference(final Context context, final int title) {
 			super(context, title);
 			setSummary(mText2);
 		}
@@ -558,7 +558,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		}
 
 		@Override
-		public void onTextSet(String text) {
+		public void onTextSet(final String text) {
 			mText2 = text;
 			mHasUnsavedChanges = true;
 		}

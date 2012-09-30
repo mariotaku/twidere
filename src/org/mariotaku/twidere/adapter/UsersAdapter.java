@@ -43,13 +43,13 @@ import android.widget.ArrayAdapter;
 public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
 
 	private final LazyImageLoader mProfileImageLoader;
-	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mMultiSelectEnabled;
+	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
 	private final boolean mDisplayHiResProfileImage;
 	private float mTextSize;
 	private final ArrayList<Long> mSelectedUserIds;
 	private final Context mContext;
 
-	public UsersAdapter(Context context) {
+	public UsersAdapter(final Context context) {
 		super(context, R.layout.user_list_item, R.id.description);
 		mContext = context;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
@@ -59,7 +59,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		mSelectedUserIds = application.getSelectedUserIds();
 	}
 
-	public ParcelableUser findItem(long id) {
+	public ParcelableUser findItem(final long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) return getItem(i);
@@ -67,7 +67,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		return null;
 	}
 
-	public ParcelableUser findItemByUserId(long user_id) {
+	public ParcelableUser findItemByUserId(final long user_id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			final ParcelableUser item = getItem(i);
@@ -76,7 +76,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		return null;
 	}
 
-	public int findItemPositionByUserId(long user_id) {
+	public int findItemPositionByUserId(final long user_id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			final ParcelableUser item = getItem(i);
@@ -86,7 +86,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
 		final Object tag = view.getTag();
 		UserViewHolder holder = null;
@@ -113,9 +113,10 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		holder.setUserColor(getUserColor(mContext, user.user_id));
 
 		holder.setTextSize(mTextSize);
-		holder.name.setText(mDisplayName ? user.name : user.screen_name);
-		holder.name.setCompoundDrawablesWithIntrinsicBounds(getUserTypeIconRes(user.is_verified, user.is_protected), 0,
-				0, 0);
+		holder.name.setText(user.name);
+		holder.screen_name.setText("@" + user.screen_name);
+		holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+				getUserTypeIconRes(user.is_verified, user.is_protected), 0);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {
@@ -129,11 +130,11 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		return view;
 	}
 
-	public void setData(List<ParcelableUser> data) {
+	public void setData(final List<ParcelableUser> data) {
 		setData(data, false);
 	}
 
-	public void setData(List<ParcelableUser> data, boolean clear_old) {
+	public void setData(final List<ParcelableUser> data, final boolean clear_old) {
 		if (clear_old) {
 			clear();
 		}
@@ -146,29 +147,21 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	}
 
 	@Override
-	public void setDisplayName(boolean display) {
-		if (display != mDisplayName) {
-			mDisplayName = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setDisplayProfileImage(boolean display) {
+	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
 	}
 
-	public void setMultiSelectEnabled(boolean multi) {
+	public void setMultiSelectEnabled(final boolean multi) {
 		if (mMultiSelectEnabled != multi) {
 			mMultiSelectEnabled = multi;
 			notifyDataSetChanged();
 		}
 	}
 
-	public void setShowAccountColor(boolean show) {
+	public void setShowAccountColor(final boolean show) {
 		if (show != mShowAccountColor) {
 			mShowAccountColor = show;
 			notifyDataSetChanged();
@@ -176,7 +169,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	}
 
 	@Override
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
 			notifyDataSetChanged();

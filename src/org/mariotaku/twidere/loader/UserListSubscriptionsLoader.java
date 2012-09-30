@@ -16,8 +16,8 @@ public class UserListSubscriptionsLoader extends BaseUserListsLoader {
 	private final String mScreenName;
 	private final long mUserId;
 
-	public UserListSubscriptionsLoader(Context context, long account_id, long user_id, String screen_name, long cursor,
-			List<ParcelableUserList> data) {
+	public UserListSubscriptionsLoader(final Context context, final long account_id, final long user_id,
+			final String screen_name, final long cursor, final List<ParcelableUserList> data) {
 		super(context, account_id, cursor, data);
 		mScreenName = screen_name;
 		mUserId = user_id;

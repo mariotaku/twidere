@@ -40,17 +40,17 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 	private final ServiceConnection mConntecion = new ServiceConnection() {
 
 		@Override
-		public void onServiceConnected(ComponentName service, IBinder obj) {
+		public void onServiceConnected(final ComponentName service, final IBinder obj) {
 			mService = ITweetShortener.Stub.asInterface(obj);
 		}
 
 		@Override
-		public void onServiceDisconnected(ComponentName service) {
+		public void onServiceDisconnected(final ComponentName service) {
 			mService = null;
 		}
 	};
 
-	private TweetShortenerInterface(Context context, String shortener_name) {
+	private TweetShortenerInterface(final Context context, final String shortener_name) {
 		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
 		final ComponentName component = ComponentName.unflattenFromString(shortener_name);
 		intent.setComponent(component);
@@ -64,7 +64,7 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 	}
 
 	@Override
-	public String shorten(String text, String screen_name, long in_reply_to_status_id) {
+	public String shorten(final String text, final String screen_name, final long in_reply_to_status_id) {
 		if (mService == null) return null;
 		try {
 			return mService.shorten(text, screen_name, in_reply_to_status_id);
@@ -84,7 +84,7 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 		}
 	}
 
-	public static TweetShortenerInterface getInstance(Application application, String shortener_name) {
+	public static TweetShortenerInterface getInstance(final Application application, final String shortener_name) {
 		if (shortener_name == null) return null;
 		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
 		final ComponentName component = ComponentName.unflattenFromString(shortener_name);
@@ -97,7 +97,7 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 
 		ContextWrapper wrapped_context;
 
-		ServiceToken(ContextWrapper context) {
+		ServiceToken(final ContextWrapper context) {
 
 			wrapped_context = context;
 		}

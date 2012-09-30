@@ -38,6 +38,7 @@ import static org.mariotaku.twidere.util.Utils.showErrorToast;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
@@ -58,7 +59,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -78,7 +78,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -100,7 +99,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer;
 	private Button mFollowMoreButton, mRetryButton;
-	private UserProfileActionAdapter mAdapter;
+	private ListActionAdapter mAdapter;
 	private ListView mListView;
 	private View mHeaderView;
 
@@ -113,16 +112,12 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	private ServiceInterface mService;
 
-	private SharedPreferences mPreferences;
-
-	private boolean mDisplayName;
-
 	private PopupMenu mPopupMenu;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_USER_LIST_DETAILS_UPDATED.equals(action)) {
 				if (intent.getIntExtra(INTENT_KEY_LIST_ID, -1) == mUserListId
@@ -139,7 +134,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	};
 	private View mListContainer, mErrorRetryContainer;
 
-	public void changeUserList(long account_id, UserList user_list) {
+	public void changeUserList(final long account_id, final UserList user_list) {
 		if (user_list == null || getActivity() == null || !isMyActivatedAccount(getActivity(), account_id)) return;
 		getLoaderManager().destroyLoader(0);
 		final User user = user_list.getUser();
@@ -155,7 +150,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
 
-		mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account_nopadding : 0);
+		//TODO 
+		//mListView.setBackgroundResource(is_multiple_account_enabled ? R.drawable.ic_label_account_nopadding : 0);
 		if (is_multiple_account_enabled) {
 			final Drawable d = mListView.getBackground();
 			if (d != null) {
@@ -164,8 +160,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			}
 		}
 
-		mListNameView.setText(mListName);
-		mUserNameView.setText(mDisplayName ? mUserName : mUserScreenName);
+		mListNameView.setText("@" + mUserScreenName + "/" + mListName);
+		mUserNameView.setText(mUserName);
 		final String description = user_list.getDescription();
 		mDescriptionContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(description) ? View.VISIBLE
 				: View.GONE);
@@ -191,8 +187,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mAdapter.notifyDataSetChanged();
 	}
 
-	public void getUserListInfo(boolean init, long account_id, int list_id, String list_name, long user_id,
-			String screen_name) {
+	public void getUserListInfo(final boolean init, final long account_id, final int list_id, final String list_name,
+			final long user_id, final String screen_name) {
 		mAccountId = account_id;
 		mUserListId = list_id;
 		mUserName = screen_name;
@@ -223,9 +219,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		mService = getApplication().getServiceInterface();
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
@@ -239,7 +234,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		mProfileImageLoader = getApplication().getProfileImageLoader();
-		mAdapter = new UserProfileActionAdapter(getActivity());
+		mAdapter = new ListActionAdapter(getActivity());
 		mAdapter.add(new ListTimelineAction());
 		mAdapter.add(new ListMembersAction());
 		mAdapter.add(new ListSubscribersAction());
@@ -260,7 +255,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.follow_more: {
 				if (mUserList == null) return;
@@ -294,7 +289,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	@Override
-	public Loader<Response<UserList>> onCreateLoader(int id, Bundle args) {
+	public Loader<Response<UserList>> onCreateLoader(final int id, final Bundle args) {
 		mListContainer.setVisibility(View.VISIBLE);
 		mErrorRetryContainer.setVisibility(View.GONE);
 		setListShown(false);
@@ -309,11 +304,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			list_name = args.getString(INTENT_KEY_LIST_NAME);
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
-		return new ListInfoLoader(this, account_id, list_id, list_name, user_id, screen_name);
+		return new ListInfoLoader(getActivity(), account_id, list_id, list_name, user_id, screen_name);
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		mHeaderView = inflater.inflate(R.layout.user_list_detail_header, null);
 		mNameContainer = mHeaderView.findViewById(R.id.name_container);
 		mListNameView = (TextView) mHeaderView.findViewById(R.id.list_name);
@@ -340,7 +335,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final ListAction action = mAdapter.findItem(id);
 		if (action != null) {
 			action.onClick();
@@ -348,14 +343,14 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final ListAction action = mAdapter.findItem(id);
 		if (action != null) return action.onLongClick();
 		return false;
 	}
 
 	@Override
-	public void onLinkClick(String link, int type) {
+	public void onLinkClick(final String link, final int type) {
 		if (mUserList == null) return;
 		switch (type) {
 			case TwidereLinkify.LINK_TYPE_MENTION_LIST: {
@@ -388,12 +383,12 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Response<UserList>> loader) {
-		// TODO: Implement this method
+	public void onLoaderReset(final Loader<Response<UserList>> loader) {
+
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Response<UserList>> loader, Response<UserList> data) {
+	public void onLoadFinished(final Loader<Response<UserList>> loader, final Response<UserList> data) {
 		if (data == null) return;
 		if (getActivity() == null) return;
 		if (data.value != null) {
@@ -410,7 +405,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	@Override
-	public boolean onLongClick(View view) {
+	public boolean onLongClick(final View view) {
 		if (mUserList == null) return false;
 		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), mUserId);
 		if (!is_my_activated_account) return false;
@@ -432,7 +427,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_ADD: {
 				final Bundle args = new Bundle();
@@ -462,7 +457,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	@Override
 	public void onStart() {
-		mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
+		// mDisplayName = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME,
+		// true);
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_USER_LIST_DETAILS_UPDATED);
 		filter.addAction(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
@@ -489,7 +485,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			if (mListId <= 0 || mAccountId <= 0) return;
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
@@ -503,7 +499,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 
 		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			mService = getApplication().getServiceInterface();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
 			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
@@ -528,7 +524,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 
 		@Override
-		public void onSaveInstanceState(Bundle outState) {
+		public void onSaveInstanceState(final Bundle outState) {
 			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 			outState.putInt(INTENT_KEY_LIST_ID, mListId);
 			outState.putString(INTENT_KEY_TEXT, mText);
@@ -549,7 +545,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		private ServiceInterface mService;
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			if (mAccountId <= 0) return;
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
@@ -565,7 +561,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 
 		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			mService = getApplication().getServiceInterface();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
 			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
@@ -593,7 +589,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 
 		@Override
-		public void onSaveInstanceState(Bundle outState) {
+		public void onSaveInstanceState(final Bundle outState) {
 			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 			outState.putInt(INTENT_KEY_LIST_ID, mListId);
 			outState.putString(INTENT_KEY_LIST_NAME, mName);
@@ -610,19 +606,15 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		private final long user_id;
 		private final int list_id;
 		private final String screen_name, list_name;
-		private final UserListDetailsFragment fragment;
-		private final Context context;
 
-		private ListInfoLoader(UserListDetailsFragment fragment, long account_id, int list_id, String list_name,
-				long user_id, String screen_name) {
-			super(fragment.getActivity());
-			this.fragment = fragment;
-			context = fragment.getActivity();
-			twitter = getTwitterInstance(context, account_id, true);
+		private ListInfoLoader(final Context context, final long account_id, final int list_id, final String list_name,
+				final long user_id, final String screen_name) {
+			super(context);
 			this.user_id = user_id;
 			this.list_id = list_id;
 			this.screen_name = screen_name;
 			this.list_name = list_name;
+			twitter = getTwitterInstance(context, account_id, true);
 		}
 
 		@Override
@@ -647,6 +639,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	class ListMembersAction extends ListAction {
 
 		@Override
+		public long getId() {
+			return 2;
+		}
+
+		@Override
 		public String getName() {
 			return getString(R.string.list_members);
 		}
@@ -665,6 +662,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	class ListSubscribersAction extends ListAction {
+
+		@Override
+		public long getId() {
+			return 3;
+		}
 
 		@Override
 		public String getName() {
@@ -687,6 +689,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	class ListTimelineAction extends ListAction {
 
 		@Override
+		public long getId() {
+			return 1;
+		}
+
+		@Override
 		public String getName() {
 			return getString(R.string.list_timeline);
 		}
@@ -703,35 +710,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		public final T value;
 		public final TwitterException exception;
 
-		public Response(T value, TwitterException exception) {
+		public Response(final T value, final TwitterException exception) {
 			this.value = value;
 			this.exception = exception;
 		}
 	}
 
-	class UserProfileActionAdapter extends ArrayAdapter<ListAction> {
-
-		public UserProfileActionAdapter(Context context) {
-			super(context, R.layout.user_action_list_item, android.R.id.text1);
-		}
-
-		public ListAction findItem(long id) {
-			final int count = getCount();
-			for (int i = 0; i < count; i++) {
-				if (id == getItemId(i)) return getItem(i);
-			}
-			return null;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			final View view = super.getView(position, convertView, parent);
-			final TextView summary_view = (TextView) view.findViewById(android.R.id.text2);
-			final String summary = getItem(position).getSummary();
-			summary_view.setText(summary);
-			summary_view.setVisibility(!isNullOrEmpty(summary) ? View.VISIBLE : View.GONE);
-			return view;
-		}
-
-	}
 }

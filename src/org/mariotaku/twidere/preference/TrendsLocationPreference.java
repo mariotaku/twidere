@@ -45,7 +45,7 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 	private static final Comparator<Location> LOCATION_COMPATATOR = new Comparator<Location>() {
 
 		@Override
-		public int compare(Location object1, Location object2) {
+		public int compare(final Location object1, final Location object2) {
 			return object1.getWoeid() - object2.getWoeid();
 		}
 
@@ -53,22 +53,22 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 
 	private AlertDialog mDialog;
 
-	public TrendsLocationPreference(Context context) {
+	public TrendsLocationPreference(final Context context) {
 		this(context, null);
 	}
 
-	public TrendsLocationPreference(Context context, AttributeSet attrs) {
+	public TrendsLocationPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public TrendsLocationPreference(Context context, AttributeSet attrs, int defStyle) {
+	public TrendsLocationPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mAdapter = new AvailableTrendsAdapter(context);
 		setOnPreferenceClickListener(this);
 	}
 
 	@Override
-	public void onClick(DialogInterface dialog, int which) {
+	public void onClick(final DialogInterface dialog, final int which) {
 		final SharedPreferences.Editor editor = getEditor();
 		if (editor == null) return;
 		final Location item = mAdapter.getItem(which);
@@ -82,7 +82,7 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 	}
 
 	@Override
-	public boolean onPreferenceClick(Preference preference) {
+	public boolean onPreferenceClick(final Preference preference) {
 		mPreferences = getSharedPreferences();
 		if (mPreferences == null) return false;
 		mCheckedWoeId = mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1);
@@ -99,11 +99,11 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 		private final ArrayList<Location> mData = new ArrayList<Location>();
 		private final LayoutInflater mInflater;
 
-		public AvailableTrendsAdapter(Context context) {
+		public AvailableTrendsAdapter(final Context context) {
 			mInflater = LayoutInflater.from(context);
 		}
 
-		public int findItemPosition(int woeid) {
+		public int findItemPosition(final int woeid) {
 			final int count = getCount();
 			for (int i = 0; i < count; i++) {
 				final Location item = getItem(i);
@@ -118,17 +118,17 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 		}
 
 		@Override
-		public Location getItem(int position) {
+		public Location getItem(final int position) {
 			return mData.get(position);
 		}
 
 		@Override
-		public long getItemId(int position) {
+		public long getItemId(final int position) {
 			return getItem(position).hashCode();
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final View view = convertView != null ? convertView : mInflater.inflate(
 					android.R.layout.simple_list_item_single_choice, parent, false);
 			final TextView text = (TextView) (view instanceof TextView ? view : view.findViewById(android.R.id.text1));
@@ -140,7 +140,7 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 			return view;
 		}
 
-		public void setData(List<Location> data) {
+		public void setData(final List<Location> data) {
 			mData.clear();
 			if (data != null) {
 				mData.addAll(data);
@@ -155,17 +155,17 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 
 		private final ProgressDialog mProgress;
 
-		public GetAvailableTrendsTask(Context context) {
+		public GetAvailableTrendsTask(final Context context) {
 			mProgress = new ProgressDialog(context);
 		}
 
 		@Override
-		public void onCancel(DialogInterface dialog) {
+		public void onCancel(final DialogInterface dialog) {
 			cancel(true);
 		}
 
 		@Override
-		protected ResponseList<Location> doInBackground(Void... args) {
+		protected ResponseList<Location> doInBackground(final Void... args) {
 			final Twitter twitter = getDefaultTwitterInstance(getContext(), false);
 			if (twitter == null) return null;
 			try {
@@ -177,7 +177,7 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 		}
 
 		@Override
-		protected void onPostExecute(ResponseList<Location> result) {
+		protected void onPostExecute(final ResponseList<Location> result) {
 			if (mProgress != null && mProgress.isShowing()) {
 				mProgress.dismiss();
 			}

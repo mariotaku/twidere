@@ -70,10 +70,10 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 
 	private static final long TICKER_DURATION = 5000L;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				if (isAdded() && !isDetached()) {
@@ -90,7 +90,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	private TwidereApplication mApplication;
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getServiceInterface();
 		super.onActivityCreated(savedInstanceState);
@@ -111,7 +111,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final Uri uri = DirectMessages.ConversationsEntry.CONTENT_URI;
 		final String where = DirectMessages.ACCOUNT_ID + " IN ("
 				+ ArrayUtils.toString(getActivatedAccountIds(getActivity()), ',', false) + ")";
@@ -119,7 +119,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		if (mApplication.isMultiSelectActive()) return;
 		final long conversation_id = mAdapter.findConversationId(id);
 		final long account_id = mAdapter.findAccountId(id);
@@ -129,19 +129,19 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
+	public void onLoaderReset(final Loader<Cursor> loader) {
 		mAdapter.changeCursor(null);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.changeCursor(cursor);
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
 		setListShown(true);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_COMPOSE: {
 				openDMConversation();
@@ -174,16 +174,15 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		super.onResume();
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayName(display_name);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+			final int totalItemCount) {
 		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
 				&& totalItemCount >= visibleItemCount;
 
@@ -198,7 +197,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	}
 
 	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
 			case SCROLL_STATE_TOUCH_SCROLL:
@@ -250,7 +249,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	}
 
 	@Override
-	public boolean onTouch(View view, MotionEvent ev) {
+	public boolean onTouch(final View view, final MotionEvent ev) {
 		switch (ev.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
 				mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);

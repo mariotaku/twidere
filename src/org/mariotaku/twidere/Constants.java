@@ -54,8 +54,6 @@ public interface Constants extends TwitterConstants {
 	public static final String MAPS_API_KEY_RELEASE = "0kjPwJOe_zwYjzGc9uYak7vhm_Sf3eob-2L3Xzw";
 	public static final String MAPS_API_KEY_DEBUG = "0kjPwJOe_zwY9p6kT-kygu4mxwysyOOpfkaXqTA";
 
-	public static final String CRASH_REPORT_FORM_KEY = "dEo0SGZpWE5EMWpFakVTUVZlbzZhQ2c6MQ";
-
 	public static final String MAPS_API_KEY = DEBUG ? MAPS_API_KEY_DEBUG : MAPS_API_KEY_RELEASE;
 
 	public static final String SCHEME_HTTP = "http";
@@ -96,6 +94,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_TRENDS = "trends";
 	public static final String AUTHORITY_USER_MENTIONS = "user_mentions";
 	public static final String AUTHORITY_ACTIVITIES_ABOUT_ME = "activities_about_me";
+	public static final String AUTHORITY_INCOMING_FRIENDSHIPS = "incoming_friendships";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -135,7 +134,6 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_CLEAR_CACHE = "clear_cache";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
 	public static final String PREFERENCE_KEY_INLINE_IMAGE_PREVIEW = "inline_image_preview";
-	public static final String PREFERENCE_KEY_DISPLAY_NAME = "display_name";
 	public static final String PREFERENCE_KEY_COMPOSE_BUTTON = "bottom_compose_button";
 	public static final String PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON = "leftside_compose_button";
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
@@ -186,6 +184,9 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_HARDWARE_ACCELERATION = "hardware_acceleration";
 	public static final String PREFERENCE_KEY_TCP_DNS_QUERY = "tcp_dns_query";
 	public static final String PREFERENCE_KEY_DNS_SERVER = "dns_server";
+	public static final String PREFERENCE_KEY_CLICK_TO_OPEN_MENU = "click_to_open_menu";
+	public static final String PREFERENCE_KEY_KEEP_IN_BACKGROUND = "keep_in_background";
+	public static final String PREFERENCE_KEY_SEPRATE_RETWEET_ACTION = "seprate_retweet_action";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -356,7 +357,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_SET_COLOR = R.id.set_color;
 	public static final int MENU_ADD_ACCOUNT = R.id.add_account;
 	public static final int MENU_REPLY = R.id.reply;
-	public static final int MENU_FAV = R.id.fav;
+	public static final int MENU_FAVORITE = R.id.favorite;
 	public static final int MENU_RETWEET = R.id.retweet;
 	public static final int MENU_QUOTE = R.id.quote;
 	public static final int MENU_SHARE = R.id.share;
@@ -458,6 +459,7 @@ public interface Constants extends TwitterConstants {
 	public static final int LINK_ID_SAVED_SEARCHES = 19;
 	public static final int LINK_ID_RETWEETED_TO_ME = 20;
 	public static final int LINK_ID_USER_MENTIONS = 21;
+	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;
 
 	public static final String DIR_NAME_PROFILE_IMAGES = "profile_images";
 	public static final String DIR_NAME_CACHED_THUMBNAILS = "cached_thumbnails";
@@ -470,6 +472,7 @@ public interface Constants extends TwitterConstants {
 	public static final int NOTIFICATION_ID_HOME_TIMELINE = 1;
 	public static final int NOTIFICATION_ID_MENTIONS = 2;
 	public static final int NOTIFICATION_ID_DIRECT_MESSAGES = 3;
+	public static final int NOTIFICATION_ID_DRAFTS = 4;
 
 	public static final String ICON_SPECIAL_TYPE_CUSTOMIZE = "_customize";
 }

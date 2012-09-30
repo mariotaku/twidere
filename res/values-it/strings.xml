@@ -37,7 +37,7 @@
   <string name="error_already_logged_in">Hai già effettuato il login.</string>
   <string name="no_account_selected">È necessario selezionare almeno un account.</string>
   <string name="error_unknown_error">Errore: Errore sconosciuto, questo è probabilmente un bug.</string>
-  <string name="error_message">Errore: <xliff:g id="message"> %s </xliff:g></string>
+  <string name="error_message">Errore: <xliff:g id="message">%s</xliff:g></string>
   <string name="select_account">Seleziona account</string>
   <string name="username">Username</string>
   <string name="password">Password</string>
@@ -95,10 +95,10 @@
   <string name="dark_theme_summary">Usa il tema scuro per Twidere.</string>
   <string name="display_profile_image">Mostra immagine profilo</string>
   <string name="image_load_summary">Disabilitando questo sarà aumentata la velocità di scorrimento della lista e ridotto l\'uso di traffico.</string>
-  <string name="in_reply_to">Risposta a <xliff:g id="username"> %s </xliff:g></string>
+  <string name="in_reply_to">Risposta a <xliff:g id="username">%s</xliff:g></string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> Ha retwittato questo</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> e <xliff:g id="retweet_count">%2$d</xliff:g> altri hanno retwittato questo</string>
-  <string name="reply_to">Risposta a <xliff:g id="user_name"> %s </xliff:g></string>
+  <string name="reply_to">Risposta a <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">﻿Citazione di <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">via <xliff:g id="source">%s</xliff:g></string>
@@ -177,7 +177,7 @@
   <string name="overwrite_confirm">File esistente, sovrascrivere?</string>
   <string name="save_as">Salva come</string>
   <string name="please_wait">Attendere prego.</string>
-  <string name="file_saved_to">File salvato in <xliff:g id="filename"> %s </xliff:g>.</string>
+  <string name="file_saved_to">File salvato in <xliff:g id="filename">%s</xliff:g>.</string>
   <string name="proxy">Proxy</string>
   <string name="http_proxy">HTTP Proxy</string>
   <string name="http_proxy_summary">Utilizza il HTTP Proxy per tutte le richieste di rete.</string>
@@ -294,7 +294,7 @@
   <string name="multimedia_contents">Contenuti multimediali</string>
   <string name="show_absolute_time">Visualizza il tempo assoluto</string>
   <string name="show_absolute_time_summary">Visualizza il tempo assoluto nei tweets</string>
-  <string name="source_muted">Aggiunto \"<xliff:g id="source"> %s </xliff:g>\" all\'elenco dei filtri. Non vedrete i tweets da questa fonte nella timeline o tra le menzioni.</string>
+  <string name="source_muted">Aggiunto \"<xliff:g id="source">%s</xliff:g>\" all\'elenco dei filtri. Non vedrete i tweets da questa fonte nella timeline o tra le menzioni.</string>
   <string name="user_mentions">Menzioni utente</string>
   <string name="dual_pane_layout">Layout a doppio riquadro</string>
   <string name="landscape">Landscape</string>

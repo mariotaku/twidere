@@ -20,36 +20,34 @@
 package org.mariotaku.twidere.util;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.os.AsyncTask.Status;
-import android.util.SparseArray;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class AsyncTaskManager {
 
-	private SparseArray<ManagedAsyncTask> mTasks = new SparseArray<ManagedAsyncTask>();
+	private final ArrayList<ManagedAsyncTask> mTasks = new ArrayList<ManagedAsyncTask>();
 
 	private static AsyncTaskManager sInstance;
 
-	public <T> int add(ManagedAsyncTask task, boolean exec, T... params) {
+	public <T> int add(final ManagedAsyncTask task, final boolean exec, final T... params) {
 		final int hashCode = task.hashCode();
-		mTasks.put(hashCode, task);
+		mTasks.add(task);
 		if (exec) {
 			execute(hashCode);
 		}
 		return hashCode;
 	}
 
-	public boolean cancel(int hashCode) {
+	public boolean cancel(final int hashCode) {
 		return cancel(hashCode, true);
 	}
 
-	public boolean cancel(int hashCode, boolean mayInterruptIfRunning) {
-		final ManagedAsyncTask task = mTasks.get(hashCode);
+	public boolean cancel(final int hashCode, final boolean mayInterruptIfRunning) {
+		final ManagedAsyncTask task = findTask(hashCode);
 		if (task != null) {
 			task.cancel(mayInterruptIfRunning);
-			mTasks.remove(hashCode);
+			mTasks.remove(task);
 			return true;
 		}
 		return false;
@@ -59,15 +57,14 @@ public class AsyncTaskManager {
 	 * Cancel all tasks added, then clear all tasks.
 	 */
 	public void cancelAll() {
-		final int size = mTasks.size();
-		for (int i = 0; i < size; i++) {
-			cancel(mTasks.keyAt(i));
+		for (final ManagedAsyncTask task : mTasks) {
+			task.cancel(true);
 		}
 		mTasks.clear();
 	}
 
-	public <T> boolean execute(int hashCode, T... params) {
-		final ManagedAsyncTask task = mTasks.get(hashCode);
+	public <T> boolean execute(final int hashCode, final T... params) {
+		final ManagedAsyncTask task = findTask(hashCode);
 		if (task != null) {
 			task.execute(params == null || params.length == 0 ? null : params);
 			return true;
@@ -75,31 +72,38 @@ public class AsyncTaskManager {
 		return false;
 	}
 
-	public List<ManagedAsyncTask<?, ?, ?>> getTaskList() {
-		final List<ManagedAsyncTask<?, ?, ?>> list = new ArrayList<ManagedAsyncTask<?, ?, ?>>();
-
-		final int size = mTasks.size();
-		for (int i = 0; i < size; i++) {
-			final ManagedAsyncTask task = mTasks.valueAt(i);
-			if (task != null) {
-				list.add(task);
-			}
-		}
-		return list;
+	public ArrayList<ManagedAsyncTask<?, ?, ?>> getTaskList() {
+		return (ArrayList<ManagedAsyncTask<?, ?, ?>>) mTasks.clone();
 	}
 
 	public boolean hasActivatedTask() {
+		final ArrayList<ManagedAsyncTask> tasks_to_remove = new ArrayList<ManagedAsyncTask>();
+		for (final ManagedAsyncTask task : mTasks) {
+			if (task.getStatus() != ManagedAsyncTask.Status.RUNNING) {
+				tasks_to_remove.add(task);
+			}
+		}
+		for (final ManagedAsyncTask task : tasks_to_remove) {
+			remove(task.hashCode());
+		}
 		return mTasks.size() > 0;
 	}
 
-	public boolean isExcuting(int hashCode) {
-		final ManagedAsyncTask task = mTasks.get(hashCode);
+	public boolean isExcuting(final int hashCode) {
+		final ManagedAsyncTask task = findTask(hashCode);
 		if (task != null && task.getStatus() == Status.RUNNING) return true;
 		return false;
 	}
 
-	public void remove(int hashCode) {
-		mTasks.remove(hashCode);
+	public void remove(final int hashCode) {
+		mTasks.remove(findTask(hashCode));
+	}
+
+	private ManagedAsyncTask findTask(final int hashCode) {
+		for (final ManagedAsyncTask task : mTasks) {
+			if (hashCode == task.hashCode()) return task;
+		}
+		return null;
 	}
 
 	public static AsyncTaskManager getInstance() {

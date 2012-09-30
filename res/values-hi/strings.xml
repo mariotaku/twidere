@@ -92,12 +92,12 @@
   <string name="dark_theme_summary">ट्विदेर का अंधेरे थीम का प्रयोग करे |</string>
   <string name="display_profile_image">प्रोफ़ाइल छवि प्रदर्शित करें</string>
   <string name="in_reply_to">के विषय में उत्तर दें <xliff:g id="username">%s</xliff:g></string>
-  <string name="retweeted_by"><xliff:g id="user_name"> %s </xliff:g> यह रीट्वीट किया</string>
+  <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> यह रीट्वीट किया</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> और <xliff:g id="retweet_count">%2$d</xliff:g> दुसरो ने यह  रीट्वीट किया</string>
   <string name="reply_to">को उत्तर दें <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">उद्धरण <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, द्वारा <xliff:g id="source">%2$s</xliff:g></string>
-  <string name="source"><xliff:g id="source"> %s </xliff:g> के द्वारा</string>
+  <string name="source"><xliff:g id="source">%s</xliff:g> के द्वारा</string>
   <string name="filter">फ़िल्टर</string>
   <string name="users">उपयोगकर्ता</string>
   <string name="keywords">खोजशब्दों</string>

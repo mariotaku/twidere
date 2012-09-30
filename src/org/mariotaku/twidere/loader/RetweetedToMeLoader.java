@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.SerializableStatus;
+import org.mariotaku.twidere.util.NoDuplicatesStateSavedList;
 
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -42,13 +43,13 @@ import android.os.Bundle;
 
 public class RetweetedToMeLoader extends Twitter4JStatusLoader {
 
-	public RetweetedToMeLoader(Context context, long account_id, long max_id, List<ParcelableStatus> data,
-			String class_name, boolean is_home_tab) {
+	public RetweetedToMeLoader(final Context context, final long account_id, final long max_id,
+			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
 		super(context, account_id, max_id, data, class_name, is_home_tab);
 	}
 
 	@Override
-	public ResponseList<Status> getStatuses(Paging paging) throws TwitterException {
+	public ResponseList<Status> getStatuses(final Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
 		if (twitter == null) return null;
 		return twitter.getRetweetedToMe(paging);
@@ -62,7 +63,9 @@ public class RetweetedToMeLoader extends Twitter4JStatusLoader {
 				final FileInputStream fis = new FileInputStream(f);
 				final ObjectInputStream in = new ObjectInputStream(fis);
 				@SuppressWarnings("unchecked")
-				final ArrayList<SerializableStatus> statuses = (ArrayList<SerializableStatus>) in.readObject();
+				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) in
+						.readObject();
+				setLastViewedId(statuses.getState());
 				in.close();
 				fis.close();
 				final ArrayList<ParcelableStatus> result = new ArrayList<ParcelableStatus>();
@@ -82,14 +85,17 @@ public class RetweetedToMeLoader extends Twitter4JStatusLoader {
 		return super.loadInBackground();
 	}
 
-	public static void writeSerializableStatuses(Object instance, Context context, List<ParcelableStatus> data,
-			Bundle args) {
+	public static void writeSerializableStatuses(final Object instance, final Context context,
+			final List<ParcelableStatus> data, final long last_viewed_id, final Bundle args) {
 		if (instance == null || context == null || data == null || args == null) return;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final int items_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		try {
-			final ArrayList<SerializableStatus> statuses = new ArrayList<SerializableStatus>();
+			final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = new NoDuplicatesStateSavedList<SerializableStatus, Long>();
+			if (last_viewed_id > 0) {
+				statuses.setState(last_viewed_id);
+			}
 			final int count = data.size();
 			for (int i = 0; i < count; i++) {
 				if (i >= items_limit) {

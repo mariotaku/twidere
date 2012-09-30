@@ -52,13 +52,13 @@ public class LoadingLayout extends FrameLayout {
 	private String mRefreshingLabel;
 	private String mReleaseLabel;
 
-	private Mode mMode;
+	private final Mode mMode;
 
 	private final Animation mRotateAnimation;
 
 	private boolean mArrowRotated;
 
-	public LoadingLayout(Context context, final Mode mode, TypedArray attrs) {
+	public LoadingLayout(final Context context, final Mode mode, final TypedArray attrs) {
 		super(context);
 		final ViewGroup header = (ViewGroup) LayoutInflater.from(context)
 				.inflate(R.layout.pull_to_refresh_header, this);
@@ -105,7 +105,7 @@ public class LoadingLayout extends FrameLayout {
 		reset();
 	}
 
-	public LoadingLayout(Context context, TypedArray attrs, int defStyle) {
+	public LoadingLayout(final Context context, final TypedArray attrs, final int defStyle) {
 		this(context, Mode.PULL_DOWN_TO_REFRESH, attrs);
 	}
 
@@ -150,19 +150,19 @@ public class LoadingLayout extends FrameLayout {
 		}
 	}
 
-	public void setPullLabel(String pullLabel) {
+	public void setPullLabel(final String pullLabel) {
 		mPullLabel = pullLabel;
 	}
 
-	public void setRefreshingLabel(String refreshingLabel) {
+	public void setRefreshingLabel(final String refreshingLabel) {
 		mRefreshingLabel = refreshingLabel;
 	}
 
-	public void setReleaseLabel(String releaseLabel) {
+	public void setReleaseLabel(final String releaseLabel) {
 		mReleaseLabel = releaseLabel;
 	}
 
-	public void setSubHeaderText(CharSequence label) {
+	public void setSubHeaderText(final CharSequence label) {
 		if (TextUtils.isEmpty(label)) {
 			mSubHeaderText.setVisibility(View.GONE);
 		} else {
@@ -171,20 +171,20 @@ public class LoadingLayout extends FrameLayout {
 		}
 	}
 
-	public void setSubTextColor(ColorStateList color) {
+	public void setSubTextColor(final ColorStateList color) {
 		mSubHeaderText.setTextColor(color);
 	}
 
-	public void setSubTextColor(int color) {
+	public void setSubTextColor(final int color) {
 		setSubTextColor(ColorStateList.valueOf(color));
 	}
 
-	public void setTextColor(ColorStateList color) {
+	public void setTextColor(final ColorStateList color) {
 		mHeaderText.setTextColor(color);
 		mSubHeaderText.setTextColor(color);
 	}
 
-	public void setTextColor(int color) {
+	public void setTextColor(final int color) {
 		setTextColor(ColorStateList.valueOf(color));
 	}
 

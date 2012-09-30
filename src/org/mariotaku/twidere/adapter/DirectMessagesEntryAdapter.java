@@ -30,19 +30,19 @@ import android.view.ViewGroup;
 
 public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements BaseAdapterInterface {
 
-	private boolean mDisplayProfileImage, mDisplayName, mShowAccountColor, mShowAbsoluteTime, mFastProcessingEnabled;
+	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mFastProcessingEnabled;
 	private final LazyImageLoader mProfileImageLoader;
 	private float mTextSize;
 	private final boolean mDisplayHiResProfileImage;
 
-	public DirectMessagesEntryAdapter(Context context, LazyImageLoader loader) {
+	public DirectMessagesEntryAdapter(final Context context, final LazyImageLoader loader) {
 		super(context, R.layout.direct_messages_entry_item, null, new String[0], new int[0], 0);
 		mProfileImageLoader = loader;
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
+	public void bindView(final View view, final Context context, final Cursor cursor) {
 		final DirectMessageEntryViewHolder holder = (DirectMessageEntryViewHolder) view.getTag();
 
 		final long account_id = cursor.getLong(ConversationsEntry.IDX_ACCOUNT_ID);
@@ -50,7 +50,8 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		final long message_timestamp = cursor.getLong(ConversationsEntry.IDX_MESSAGE_TIMESTAMP);
 		final boolean is_outgoing = cursor.getInt(ConversationsEntry.IDX_IS_OUTGOING) == 1;
 
-		final String name = mDisplayName ? cursor.getString(IDX_NAME) : cursor.getString(IDX_SCREEN_NAME);
+		final String name = cursor.getString(IDX_NAME);
+		final String screen_name = cursor.getString(IDX_SCREEN_NAME);
 
 		holder.setAccountColorEnabled(mShowAccountColor);
 
@@ -66,6 +67,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 
 		holder.setTextSize(mTextSize);
 		holder.name.setText(name);
+		holder.screen_name.setText("@" + screen_name);
 		holder.text.setText(cursor.getString(IDX_TEXT));
 		if (mShowAbsoluteTime) {
 			holder.time.setText(formatSameDayTime(message_timestamp, System.currentTimeMillis(), DateFormat.MEDIUM,
@@ -89,7 +91,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		super.bindView(view, context, cursor);
 	}
 
-	public long findAccountId(long id) {
+	public long findAccountId(final long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) return ((Cursor) getItem(i)).getLong(IDX_ACCOUNT_ID);
@@ -97,7 +99,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		return -1;
 	}
 
-	public long findConversationId(long id) {
+	public long findConversationId(final long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
 			if (getItemId(i) == id) return ((Cursor) getItem(i)).getLong(IDX_CONVERSATION_ID);
@@ -106,46 +108,38 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	}
 
 	@Override
-	public View newView(Context context, Cursor cursor, ViewGroup parent) {
+	public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
 		if (!(tag instanceof DirectMessageEntryViewHolder)) {
-			view.setTag(new DirectMessageEntryViewHolder(view, context));
+			view.setTag(new DirectMessageEntryViewHolder(view));
 		}
 		return view;
 	}
 
 	@Override
-	public void setDisplayName(boolean display) {
-		if (display != mDisplayName) {
-			mDisplayName = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setDisplayProfileImage(boolean display) {
+	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
 	}
 
-	public void setFastProcessingEnabled(boolean enabled) {
+	public void setFastProcessingEnabled(final boolean enabled) {
 		if (enabled != mFastProcessingEnabled) {
 			mFastProcessingEnabled = enabled;
 			notifyDataSetChanged();
 		}
 	}
 
-	public void setShowAbsoluteTime(boolean show) {
+	public void setShowAbsoluteTime(final boolean show) {
 		if (show != mShowAbsoluteTime) {
 			mShowAbsoluteTime = show;
 			notifyDataSetChanged();
 		}
 	}
 
-	public void setShowAccountColor(boolean show) {
+	public void setShowAccountColor(final boolean show) {
 		if (show != mShowAccountColor) {
 			mShowAccountColor = show;
 			notifyDataSetChanged();
@@ -153,7 +147,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	}
 
 	@Override
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (text_size != mTextSize) {
 			mTextSize = text_size;
 			notifyDataSetChanged();

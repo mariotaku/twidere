@@ -33,15 +33,15 @@ public class ColorLabelRelativeLayout extends RelativeLayout {
 	private final Rect mRectLeft = new Rect(), mRectRight = new Rect(), mRectBackground = new Rect();
 	private final float mDensity;
 
-	public ColorLabelRelativeLayout(Context context) {
+	public ColorLabelRelativeLayout(final Context context) {
 		this(context, null);
 	}
 
-	public ColorLabelRelativeLayout(Context context, AttributeSet attrs) {
+	public ColorLabelRelativeLayout(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public ColorLabelRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
+	public ColorLabelRelativeLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setWillNotDraw(false);
 		mDensity = context.getResources().getDisplayMetrics().density;
@@ -50,27 +50,27 @@ public class ColorLabelRelativeLayout extends RelativeLayout {
 		mPaintBackground.setColor(Color.TRANSPARENT);
 	}
 
-	public void drawBackground(int color) {
+	public void drawBackground(final int color) {
 		drawLabel(mPaintLeft.getColor(), mPaintRight.getColor(), color);
 	}
 
-	public void drawLabel(int left, int right, int background) {
+	public void drawLabel(final int left, final int right, final int background) {
 		mPaintBackground.setColor(background);
 		mPaintLeft.setColor(left);
 		mPaintRight.setColor(right);
 		invalidate();
 	}
 
-	public void drawLeft(int color) {
+	public void drawLeft(final int color) {
 		drawLabel(color, mPaintRight.getColor(), mPaintBackground.getColor());
 	}
 
-	public void drawRight(int color) {
+	public void drawRight(final int color) {
 		drawLabel(mPaintLeft.getColor(), color, mPaintBackground.getColor());
 	}
 
 	@Override
-	public void onDraw(Canvas canvas) {
+	public void onDraw(final Canvas canvas) {
 		canvas.drawRect(mRectBackground, mPaintBackground);
 		canvas.drawRect(mRectLeft, mPaintLeft);
 		canvas.drawRect(mRectRight, mPaintRight);
@@ -78,7 +78,7 @@ public class ColorLabelRelativeLayout extends RelativeLayout {
 	}
 
 	@Override
-	public void onSizeChanged(int w, int h, int oldw, int oldh) {
+	public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		mRectBackground.set(0, 0, w, h);
 		mRectLeft.set(0, 0, (int) (4 * mDensity), h);
 		mRectRight.set(w - (int) (4 * mDensity), 0, w, h);

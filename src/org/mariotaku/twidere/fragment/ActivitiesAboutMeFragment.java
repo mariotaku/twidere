@@ -1,13 +1,12 @@
 package org.mariotaku.twidere.fragment;
 
-import static android.text.format.DateUtils.formatSameDayTime;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.net.URL;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,7 +46,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	private long mAccountId;
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mAdapter = new ActivitiesAdapter(getActivity());
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -57,7 +56,8 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public Loader<List<twitter4j.Activity>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<twitter4j.Activity>> onCreateLoader(final int id, final Bundle args) {
+		setProgressBarIndeterminateVisibility(true);
 		final long account_id = mAccountId = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		final boolean is_home_tab = args != null ? args.getBoolean(INTENT_KEY_IS_HOME_TAB) : false;
 		return new ActivitiesAboutMeLoader(getActivity(), account_id, mData, getClass().getSimpleName(), is_home_tab);
@@ -76,7 +76,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
+	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		if (mAccountId <= 0) return;
 		final int adapter_pos = position - l.getHeaderViewsCount();
 		final twitter4j.Activity item = mAdapter.getItem(adapter_pos);
@@ -86,7 +86,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		final Action action = item.getAction();
 		if (sources_length > 0) {
 			final User first_source = sources[0];
-			final Status[] target_objects = item.getTargetObjects();
+			final Status[] target_objects = item.getTargetObjectStatuses();
 			switch (action.getActionId()) {
 				case Action.ACTION_FAVORITE: {
 					if (sources_length == 1) {
@@ -140,13 +140,14 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<twitter4j.Activity>> loader) {
+	public void onLoaderReset(final Loader<List<twitter4j.Activity>> loader) {
 		mAdapter.setData(null);
 		mData = null;
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<twitter4j.Activity>> loader, List<twitter4j.Activity> data) {
+	public void onLoadFinished(final Loader<List<twitter4j.Activity>> loader, final List<twitter4j.Activity> data) {
+		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
 		mData = data;
 		onRefreshComplete();
@@ -168,10 +169,8 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		super.onResume();
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayName(display_name);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
@@ -187,7 +186,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		private final Context mContext;
 		private List<twitter4j.Activity> mData;
 
-		public ActivitiesAdapter(Context context) {
+		public ActivitiesAdapter(final Context context) {
 			mInflater = LayoutInflater.from(context);
 			mContext = context;
 			final TwidereApplication application = TwidereApplication.getInstance(context);
@@ -201,18 +200,18 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		}
 
 		@Override
-		public twitter4j.Activity getItem(int position) {
+		public twitter4j.Activity getItem(final int position) {
 			return mData.get(position);
 		}
 
 		@Override
-		public long getItemId(int position) {
+		public long getItemId(final int position) {
 			final Object obj = getItem(position);
 			return obj != null ? obj.hashCode() : 0;
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.activity_list_item, null);
 			final Object tag = view.getTag();
 			final ActivityViewHolder holder = tag instanceof ActivityViewHolder ? (ActivityViewHolder) tag
@@ -226,8 +225,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			final Date created_at = item.getCreatedAt();
 			if (created_at != null) {
 				if (mShowAbsoluteTime) {
-					holder.time.setText(formatSameDayTime(created_at.getTime(), System.currentTimeMillis(),
-							DateFormat.MEDIUM, DateFormat.SHORT));
+					holder.time.setText(formatSameDayTime(mContext, created_at.getTime()));
 				} else {
 					holder.time.setText(getRelativeTimeSpanString(created_at.getTime()));
 				}
@@ -240,7 +238,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (sources_length > 0) {
 				final User first_source = sources[0];
-				final Status[] target_objects = item.getTargetObjects();
+				final Status[] target_objects = item.getTargetObjectStatuses();
 				final String name = mDisplayName ? first_source.getName() : first_source.getScreenName();
 				switch (action.getActionId()) {
 					case Action.ACTION_FAVORITE: {
@@ -324,33 +322,38 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 						setUserProfileImages(sources, holder);
 						break;
 					}
+					case Action.ACTION_LIST_MEMBER_ADDED: {
+						holder.text.setVisibility(View.GONE);
+						if (sources_length == 1) {
+							holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added, name));
+						} else {
+							holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added_multi, name,
+									sources_length - 1));
+						}
+						holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
+								: View.GONE);
+						setUserProfileImages(sources, holder);
+						break;
+					}
 				}
 			}
 			return view;
 		}
 
-		public void setData(List<twitter4j.Activity> data) {
+		public void setData(final List<twitter4j.Activity> data) {
 			mData = data != null ? data : new ArrayList<twitter4j.Activity>();
 			notifyDataSetChanged();
 		}
 
 		@Override
-		public void setDisplayName(boolean display) {
-			if (display != mDisplayName) {
-				mDisplayName = display;
-				notifyDataSetChanged();
-			}
-		}
-
-		@Override
-		public void setDisplayProfileImage(boolean display) {
+		public void setDisplayProfileImage(final boolean display) {
 			if (display != mDisplayProfileImage) {
 				mDisplayProfileImage = display;
 				notifyDataSetChanged();
 			}
 		}
 
-		public void setShowAbsoluteTime(boolean show) {
+		public void setShowAbsoluteTime(final boolean show) {
 			if (show != mShowAbsoluteTime) {
 				mShowAbsoluteTime = show;
 				notifyDataSetChanged();
@@ -358,14 +361,14 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		}
 
 		@Override
-		public void setTextSize(float text_size) {
+		public void setTextSize(final float text_size) {
 			if (text_size != mTextSize) {
 				mTextSize = text_size;
 				notifyDataSetChanged();
 			}
 		}
 
-		private void setProfileImage(URL url, ActivityViewHolder holder) {
+		private void setProfileImage(final URL url, final ActivityViewHolder holder) {
 			if (!mDisplayProfileImage) return;
 			if (mDisplayHiResProfileImage) {
 				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(parseString(url))),
@@ -375,7 +378,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			}
 		}
 
-		private void setUserProfileImages(User[] users, ActivityViewHolder holder) {
+		private void setUserProfileImages(final User[] users, final ActivityViewHolder holder) {
 			if (!mDisplayProfileImage) return;
 			final int length = users.length;
 			for (int i = 0; i < length; i++) {

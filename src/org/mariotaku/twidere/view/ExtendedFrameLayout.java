@@ -10,20 +10,20 @@ public class ExtendedFrameLayout extends FrameLayout {
 	private TouchInterceptor mTouchInterceptor;
 	private OnSizeChangedListener mOnSizeChangedListener;
 
-	public ExtendedFrameLayout(Context context) {
+	public ExtendedFrameLayout(final Context context) {
 		super(context);
 	}
 
-	public ExtendedFrameLayout(Context context, AttributeSet attrs) {
+	public ExtendedFrameLayout(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public ExtendedFrameLayout(Context context, AttributeSet attrs, int defStyle) {
+	public ExtendedFrameLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
 	@Override
-	public boolean onInterceptTouchEvent(MotionEvent event) {
+	public boolean onInterceptTouchEvent(final MotionEvent event) {
 		if (mTouchInterceptor != null) {
 			mTouchInterceptor.onInterceptTouchEvent(event);
 		}
@@ -31,23 +31,23 @@ public class ExtendedFrameLayout extends FrameLayout {
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
+	public boolean onTouchEvent(final MotionEvent event) {
 		if (mTouchInterceptor != null) {
 			mTouchInterceptor.onInterceptTouchEvent(event);
 		}
 		return super.onTouchEvent(event);
 	}
 
-	public void setOnSizeChangedListener(OnSizeChangedListener listener) {
+	public void setOnSizeChangedListener(final OnSizeChangedListener listener) {
 		mOnSizeChangedListener = listener;
 	}
 
-	public void setTouchInterceptor(TouchInterceptor listener) {
+	public void setTouchInterceptor(final TouchInterceptor listener) {
 		mTouchInterceptor = listener;
 	}
 
 	@Override
-	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		if (mOnSizeChangedListener != null) {
 			mOnSizeChangedListener.onSizeChanged(this, w, h, oldw, oldh);

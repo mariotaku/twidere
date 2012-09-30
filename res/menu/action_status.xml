@@ -2,19 +2,38 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
+		android:id="@id/view"
+		android:icon="@drawable/ic_menu_view"
+		android:title="@string/view"/>
+	<item
 		android:id="@id/reply"
 		android:icon="@drawable/ic_menu_reply"
 		android:title="@string/reply"/>
 	<item
-		android:id="@id/retweet"
+		android:id="@+id/retweet_submenu"
+		android:icon="@drawable/ic_menu_retweet"
+		android:title="@string/retweet">
+		<menu>
+			<item
+				android:id="@id/retweet"
+				android:icon="@drawable/ic_menu_retweet"
+				android:title="@string/retweet"/>
+			<item
+				android:id="@id/quote"
+				android:icon="@drawable/ic_menu_quote"
+				android:title="@string/quote"/>
+		</menu>
+	</item>
+	<item
+		android:id="@+id/direct_retweet"
 		android:icon="@drawable/ic_menu_retweet"
 		android:title="@string/retweet"/>
 	<item
-		android:id="@id/quote"
+		android:id="@+id/direct_quote"
 		android:icon="@drawable/ic_menu_quote"
 		android:title="@string/quote"/>
 	<item
-		android:id="@id/fav"
+		android:id="@id/favorite"
 		android:icon="@drawable/ic_menu_star"
 		android:title="@string/fav"/>
 	<item

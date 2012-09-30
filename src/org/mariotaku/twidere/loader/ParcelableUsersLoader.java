@@ -38,7 +38,7 @@ public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<Parcela
 	private final List<ParcelableUser> mUsersList;
 	private final long mAccountId;
 
-	public ParcelableUsersLoader(Context context, long account_id, List<ParcelableUser> users_list) {
+	public ParcelableUsersLoader(final Context context, final long account_id, final List<ParcelableUser> users_list) {
 		super(context);
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mUsersList = users_list;
@@ -79,7 +79,7 @@ public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<Parcela
 		forceLoad();
 	}
 
-	private boolean hasId(long id) {
+	private boolean hasId(final long id) {
 		for (final ParcelableUser user : mUsersList) {
 			if (user.user_id == id) return true;
 		}

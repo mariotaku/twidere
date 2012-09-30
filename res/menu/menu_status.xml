@@ -21,7 +21,7 @@
 		</menu>
 	</item>
 	<item
-		android:id="@id/fav"
+		android:id="@id/favorite"
 		android:icon="@drawable/ic_menu_star"
 		android:title="@string/fav"/>
 	<item

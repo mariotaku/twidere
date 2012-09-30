@@ -65,10 +65,10 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	private DraftItem mDraftItem;
 	private long mSelectedId;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_DRAFTS_DATABASE_UPDATED.equals(action)) {
 				getSupportLoaderManager().restartLoader(0, null, DraftsActivity.this);
@@ -77,7 +77,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	};
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mResolver = getContentResolver();
 		mService = getTwidereApplication().getServiceInterface();
@@ -94,20 +94,20 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final Uri uri = Drafts.CONTENT_URI;
 		final String[] cols = Drafts.COLUMNS;
 		return new CursorLoader(this, uri, cols, null, null, null);
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_drafts, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		if (mCursor != null) {
 			mSelectedId = id;
 			final DraftItem draft = new DraftItem(mCursor, position);
@@ -116,7 +116,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mDraftItem = new DraftItem(mCursor, position);
 			mCursor.moveToPosition(position);
@@ -132,19 +132,19 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
+	public void onLoaderReset(final Loader<Cursor> loader) {
 		mAdapter.swapCursor(null);
 		mCursor = null;
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.swapCursor(cursor);
 		mCursor = cursor;
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_SEND: {
 				sendDraft(mDraftItem);
@@ -165,7 +165,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				onBackPressed();
@@ -195,6 +195,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 	public void onStart() {
 		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
+		mService.clearNotification(NOTIFICATION_ID_DRAFTS);
 		super.onStart();
 	}
 
@@ -207,7 +208,7 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 		super.onStop();
 	}
 
-	private void composeDraft(DraftItem draft) {
+	private void composeDraft(final DraftItem draft) {
 		final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 		final Bundle bundle = new Bundle();
 		final Uri image_uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
@@ -223,10 +224,9 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 		intent.putExtras(bundle);
 		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
 		startActivityForResult(intent, REQUEST_COMPOSE);
-
 	}
 
-	private void sendDraft(DraftItem draft) {
+	private void sendDraft(final DraftItem draft) {
 		if (draft == null) return;
 		final Uri uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
 		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
@@ -240,17 +240,17 @@ public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Curs
 		private static final int[] mTo = new int[] { R.id.text };
 		private float mTextSize;
 
-		public DraftsAdapter(Context context) {
+		public DraftsAdapter(final Context context) {
 			super(context, R.layout.draft_list_item, null, mFrom, mTo, 0);
 		}
 
 		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
+		public void bindView(final View view, final Context context, final Cursor cursor) {
 			((TextView) view.findViewById(R.id.text)).setTextSize(mTextSize);
 			super.bindView(view, context, cursor);
 		}
 
-		public void setTextSize(float text_size) {
+		public void setTextSize(final float text_size) {
 			mTextSize = text_size;
 		}
 

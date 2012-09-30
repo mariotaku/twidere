@@ -51,7 +51,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 	private FilterListAdapter mAdapter;
 
-	private AddItemFragment mFragment = new AddItemFragment();
+	private final AddItemFragment mFragment = new AddItemFragment();
 
 	private ContentResolver mResolver;
 
@@ -60,7 +60,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 	public abstract Uri getContentUri();
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		mResolver = getContentResolver();
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
@@ -71,14 +71,14 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final String[] cols = getContentColumns();
 		final Uri uri = getContentUri();
 		return new CursorLoader(getActivity(), uri, cols, null, null, null);
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final String where = Filters._ID + "=" + id;
 		mResolver.delete(getContentUri(), where, null);
 		getLoaderManager().restartLoader(0, null, this);
@@ -86,23 +86,23 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 	}
 
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
+	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		Toast.makeText(getActivity(), R.string.longclick_to_delete, Toast.LENGTH_SHORT).show();
 		super.onListItemClick(l, v, position, id);
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
+	public void onLoaderReset(final Loader<Cursor> loader) {
 		mAdapter.swapCursor(null);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		mAdapter.swapCursor(data);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_ADD:
 				mFragment.setFiltersFragment(this);
@@ -121,7 +121,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 		private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE:
 					if (mFragment == null) return;
@@ -137,7 +137,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 		}
 
 		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final Context context = getActivity();
 			final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 			final View view = LayoutInflater.from(context).inflate(R.layout.auto_complete_textview_default_style, null);
@@ -154,7 +154,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 			return builder.create();
 		}
 
-		public void setFiltersFragment(FiltersFragment fragment) {
+		public void setFiltersFragment(final FiltersFragment fragment) {
 			mFragment = fragment;
 		}
 	}
@@ -207,7 +207,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 		private static final int[] to = new int[] { android.R.id.text1 };
 
-		public FilterListAdapter(Context context) {
+		public FilterListAdapter(final Context context) {
 			super(context, android.R.layout.simple_list_item_1, null, from, to, 0);
 		}
 

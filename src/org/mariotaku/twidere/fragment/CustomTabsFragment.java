@@ -44,10 +44,10 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	private int mSelectedPos;
 	private Cursor mCursor;
 
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_TABS_UPDATED.equals(action)) {
 				mSelectedId = -1;
@@ -60,7 +60,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	private PopupMenu mPopupMenu;
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 		mResolver = getContentResolver();
@@ -73,7 +73,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
 		switch (requestCode) {
 			case REQUEST_ADD_TAB: {
 				if (resultCode == Activity.RESULT_OK) {
@@ -113,18 +113,18 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		return new CursorLoader(getActivity(), Tabs.CONTENT_URI, Tabs.COLUMNS, null, null, Tabs.DEFAULT_SORT_ORDER);
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_custom_tabs, menu);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		if (mCursor == null || mCursor.isClosed()) return;
 		final int _id_idx = mCursor.getColumnIndex(Tabs._ID);
 		final int icon_idx = mCursor.getColumnIndex(Tabs.ICON);
@@ -146,7 +146,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedId = id;
 		mSelectedPos = position;
 		if (mPopupMenu != null) {
@@ -170,19 +170,19 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
+	public void onLoaderReset(final Loader<Cursor> loader) {
 		mAdapter.changeCursor(null);
 		mCursor = null;
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.changeCursor(cursor);
 		mCursor = cursor;
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedPos < 0 || mSelectedId < 0 || mCursor == null || mCursor.isClosed()) return false;
 		final int _id_idx = mCursor.getColumnIndex(Tabs._ID);
 		final int icon_idx = mCursor.getColumnIndex(Tabs.ICON);
@@ -240,7 +240,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_ADD: {
 				final Intent intent = new Intent(INTENT_ACTION_NEW_CUSTOM_TAB);
@@ -275,13 +275,13 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 
 		private int mTypeNameIdx = -1, mIconIdx = -1;
 
-		public CustomTabsAdapter(Context context) {
+		public CustomTabsAdapter(final Context context) {
 			super(context, R.layout.two_line_with_icon_list_item, null, new String[] { Tabs.NAME },
 					new int[] { android.R.id.text1 }, 0);
 		}
 
 		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
+		public void bindView(final View view, final Context context, final Cursor cursor) {
 			super.bindView(view, context, cursor);
 			final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 			final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
@@ -295,7 +295,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		}
 
 		@Override
-		public void changeCursor(Cursor cursor) {
+		public void changeCursor(final Cursor cursor) {
 			super.changeCursor(cursor);
 			if (cursor != null) {
 				mTypeNameIdx = cursor.getColumnIndex(Tabs.TYPE);

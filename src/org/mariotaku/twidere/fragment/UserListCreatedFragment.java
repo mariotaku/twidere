@@ -6,7 +6,7 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.loader.UserListCreatedLoader;
+import org.mariotaku.twidere.loader.UserListsLoader;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.ServiceInterface;
 
@@ -30,24 +30,25 @@ public class UserListCreatedFragment extends BaseUserListsListFragment {
 	private DialogFragment mDialogFragment;
 
 	@Override
-	public Loader<List<ParcelableUserList>> newLoaderInstance(long account_id, long user_id, String screen_name) {
-		return new UserListCreatedLoader(getActivity(), account_id, user_id, screen_name, getCursor(), getData());
+	public Loader<List<ParcelableUserList>> newLoaderInstance(final long account_id, final long user_id,
+			final String screen_name) {
+		return new UserListsLoader(getActivity(), account_id, user_id, screen_name, getCursor(), getData());
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(getAccountId() == getUserId() || isMyActivatedUserName(getActivity(), getScreenName()));
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_user_list_created, menu);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.new_user_list: {
 				if (getAccountId() != getUserId() && !isMyActivatedUserName(getActivity(), getScreenName()))
@@ -82,7 +83,7 @@ public class UserListCreatedFragment extends BaseUserListsListFragment {
 		}
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			if (mAccountId <= 0) return;
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
@@ -98,7 +99,7 @@ public class UserListCreatedFragment extends BaseUserListsListFragment {
 		}
 
 		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			mService = getApplication().getServiceInterface();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
 			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
@@ -125,7 +126,7 @@ public class UserListCreatedFragment extends BaseUserListsListFragment {
 		}
 
 		@Override
-		public void onSaveInstanceState(Bundle outState) {
+		public void onSaveInstanceState(final Bundle outState) {
 			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 			outState.putString(INTENT_KEY_LIST_NAME, mName);
 			outState.putString(INTENT_KEY_DESCRIPTION, mDescription);

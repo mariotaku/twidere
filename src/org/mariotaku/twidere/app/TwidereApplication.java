@@ -97,7 +97,10 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	public ServiceInterface getServiceInterface() {
-		if (mServiceInterface != null) return mServiceInterface;
+		if (mServiceInterface != null) {
+			mServiceInterface.test();
+			return mServiceInterface;
+		}
 		return mServiceInterface = ServiceInterface.getInstance(this);
 	}
 
@@ -130,7 +133,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	@Override
-	public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
 		if (mServiceInterface != null
 				&& (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key))) {
 			mServiceInterface.stopAutoRefresh();
@@ -166,7 +169,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		sendBroadcast(intent);
 	}
 
-	public static TwidereApplication getInstance(Context context) {
+	public static TwidereApplication getInstance(final Context context) {
 		return context != null ? (TwidereApplication) context.getApplicationContext() : null;
 	}
 
@@ -174,7 +177,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public class ItemsList extends NoDuplicatesLinkedList<Object> {
 
 		@Override
-		public boolean add(Object object) {
+		public boolean add(final Object object) {
 			final boolean ret = super.add(object);
 			if (object instanceof ParcelableStatus) {
 				mSelectedStatusIds.add(((ParcelableStatus) object).status_id);
@@ -198,7 +201,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		}
 
 		@Override
-		public boolean remove(Object object) {
+		public boolean remove(final Object object) {
 			final boolean ret = super.remove(object);
 			if (object instanceof ParcelableStatus) {
 				mSelectedStatusIds.remove(((ParcelableStatus) object).status_id);

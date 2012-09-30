@@ -28,14 +28,14 @@ public final class ArrayUtils {
 		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
 	}
 
-	public static boolean contains(long[] array, long value) {
+	public static boolean contains(final long[] array, final long value) {
 		for (final long item : array) {
 			if (item == value) return true;
 		}
 		return false;
 	}
 
-	public static boolean contains(Object[] array, Object value) {
+	public static boolean contains(final Object[] array, final Object value) {
 		for (final Object item : array) {
 			if (item == null || value == null) {
 				if (item == value) return true;
@@ -46,7 +46,7 @@ public final class ArrayUtils {
 		return false;
 	}
 
-	public static boolean contentMatch(Object[] array1, Object[] array2) {
+	public static boolean contentMatch(final Object[] array1, final Object[] array2) {
 		if (array1 == null || array2 == null) return array1 == array2;
 		if (array1.length != array2.length) return false;
 		final int length = array1.length;
@@ -56,7 +56,7 @@ public final class ArrayUtils {
 		return true;
 	}
 
-	public static long[] fromList(List<Long> list) {
+	public static long[] fromList(final List<Long> list) {
 		if (list == null) return null;
 		final int count = list.size();
 		final long[] array = new long[count];
@@ -66,7 +66,7 @@ public final class ArrayUtils {
 		return array;
 	}
 
-	public static long[] fromString(String string, char token) {
+	public static long[] fromString(final String string, final char token) {
 		if (string == null) return new long[0];
 		final String[] items_string_array = string.split(String.valueOf(token));
 		final ArrayList<Long> items_list = new ArrayList<Long>();
@@ -85,7 +85,7 @@ public final class ArrayUtils {
 		return array;
 	}
 
-	public static int indexOf(long[] array, long value) {
+	public static int indexOf(final long[] array, final long value) {
 		final int length = array.length;
 		for (int i = 0; i < length; i++) {
 			if (array[i] == value) return i;
@@ -93,7 +93,7 @@ public final class ArrayUtils {
 		return -1;
 	}
 
-	public static int indexOf(Object[] array, Object value) {
+	public static int indexOf(final Object[] array, final Object value) {
 		final int length = array.length;
 		for (int i = 0; i < length; i++) {
 			if (array[i].equals(value)) return i;
@@ -101,7 +101,7 @@ public final class ArrayUtils {
 		return -1;
 	}
 
-	public static long[] intersection(long[] array1, long[] array2) {
+	public static long[] intersection(final long[] array1, final long[] array2) {
 		if (array1 == null || array2 == null) return new long[0];
 		final List<Long> list1 = new ArrayList<Long>();
 		for (final long item : array1) {
@@ -115,7 +115,7 @@ public final class ArrayUtils {
 		return fromList(list1);
 	}
 
-	public static String toString(long[] array, char token, boolean include_space) {
+	public static String toString(final long[] array, final char token, final boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
 		final int length = array.length;
 		for (int i = 0; i < length; i++) {
@@ -130,7 +130,7 @@ public final class ArrayUtils {
 		return builder.toString();
 	}
 
-	public static String toString(Object[] array, char token, boolean include_space) {
+	public static String toString(final Object[] array, final char token, final boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
 		final int length = array.length;
 		for (int i = 0; i < length; i++) {

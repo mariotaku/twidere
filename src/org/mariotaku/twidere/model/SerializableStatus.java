@@ -41,7 +41,7 @@ public class SerializableStatus implements Serializable {
 
 	public URL profile_image_url, image_preview_url;
 
-	public SerializableStatus(ParcelableStatus in) {
+	public SerializableStatus(final ParcelableStatus in) {
 		retweet_id = in.retweet_id;
 		retweeted_by_id = in.retweeted_by_id;
 		status_id = in.status_id;
@@ -77,7 +77,7 @@ public class SerializableStatus implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (!(o instanceof SerializableStatus)) return false;
 		final SerializableStatus that = (SerializableStatus) o;
 		return status_id == that.status_id;

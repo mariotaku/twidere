@@ -39,7 +39,7 @@ public class HitHighlighter {
 	 *            elements)
 	 * @return text with highlight HTML added
 	 */
-	public String highlight(String text, List<List<Integer>> hits) {
+	public String highlight(final String text, final List<List<Integer>> hits) {
 		if (hits == null || hits.isEmpty()) return text;
 
 		final StringBuilder sb = new StringBuilder(text.length());
@@ -86,7 +86,7 @@ public class HitHighlighter {
 	 * 
 	 * @param new HTML tag (without &lt; or >)
 	 */
-	public void setHighlightTag(String highlightTag) {
+	public void setHighlightTag(final String highlightTag) {
 		this.highlightTag = highlightTag;
 	}
 
@@ -97,7 +97,7 @@ public class HitHighlighter {
 	 * 
 	 * @param true if this is a closing tag, false otherwise
 	 */
-	protected String tag(boolean closeTag) {
+	protected String tag(final boolean closeTag) {
 		final StringBuilder sb = new StringBuilder(highlightTag.length() + 3);
 		sb.append("<");
 		if (closeTag) {

@@ -30,6 +30,7 @@ import static org.mariotaku.twidere.util.Utils.parseLong;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DMConversationFragment;
+import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.RetweetedToMeFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
@@ -64,7 +65,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 	private Fragment mFragment;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminateVisibility(false);
@@ -92,7 +93,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
 				onBackPressed();
@@ -115,7 +116,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 		super.onStart();
 	}
 
-	private boolean setFragment(Uri uri) {
+	private boolean setFragment(final Uri uri) {
 		final Bundle extras = getIntent().getExtras();
 		Fragment fragment = null;
 		if (uri != null) {
@@ -376,6 +377,11 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						finish();
 						return false;
 					}
+					break;
+				}
+				case LINK_ID_INCOMING_FRIENDSHIPS: {
+					setTitle(R.string.incoming_friendships);
+					fragment = new IncomingFriendshipsFragment();
 					break;
 				}
 				default: {

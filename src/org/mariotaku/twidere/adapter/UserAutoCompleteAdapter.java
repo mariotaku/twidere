@@ -37,6 +37,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Constants {
 
@@ -45,8 +46,8 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	private final ContentResolver mResolver;
 	private final LazyImageLoader mProfileImageLoader;
 	private final SharedPreferences mPreferences;
-	private static final String[] FROM = new String[] { CachedUsers.NAME, CachedUsers.SCREEN_NAME };
-	private static final int[] TO = new int[] { android.R.id.text1, android.R.id.text2 };
+	private static final String[] FROM = new String[] { CachedUsers.NAME };
+	private static final int[] TO = new int[] { android.R.id.text1 };
 
 	private int mProfileImageUrlIdx, mScreenNameIdx;
 
@@ -54,7 +55,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 
 	private final boolean mDisplayProfileImage, mDisplayHiResProfileImage;
 
-	public UserAutoCompleteAdapter(Context context) {
+	public UserAutoCompleteAdapter(final Context context) {
 		super(context, R.layout.user_autocomplete_list_item, null, FROM, TO, 0);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = context.getContentResolver();
@@ -64,30 +65,30 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 		mDisplayProfileImage = mPreferences != null ? mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE,
 				true) : true;
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-		;
 	}
 
 	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
+	public void bindView(final View view, final Context context, final Cursor cursor) {
 		if (mCursorClosed) return;
-
-		final ImageView image_view = (ImageView) view.findViewById(android.R.id.icon);
-		image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+		final TextView screen_name_view = (TextView) view.findViewById(android.R.id.text2);
+		screen_name_view.setText("@" + cursor.getString(mScreenNameIdx));
+		final ImageView profile_image_view = (ImageView) view.findViewById(android.R.id.icon);
+		profile_image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage && mProfileImageLoader != null) {
 			final String profile_image_url_string = cursor.getString(mProfileImageUrlIdx);
-			mProfileImageLoader.displayImage(parseURL(cursor.getString(mProfileImageUrlIdx)), image_view);
+			mProfileImageLoader.displayImage(parseURL(cursor.getString(mProfileImageUrlIdx)), profile_image_view);
 			if (mDisplayHiResProfileImage) {
 				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
-						image_view);
+						profile_image_view);
 			} else {
-				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), image_view);
+				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), profile_image_view);
 			}
 		}
 		super.bindView(view, context, cursor);
 	}
 
 	@Override
-	public void changeCursor(Cursor cursor) {
+	public void changeCursor(final Cursor cursor) {
 		if (mCursorClosed) return;
 		if (cursor != null) {
 			mProfileImageUrlIdx = cursor.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
@@ -106,7 +107,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	}
 
 	@Override
-	public CharSequence convertToString(Cursor cursor) {
+	public CharSequence convertToString(final Cursor cursor) {
 		if (mCursorClosed) return null;
 		return cursor.getString(mScreenNameIdx);
 	}

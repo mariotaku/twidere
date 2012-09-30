@@ -17,3 +17,8 @@ local.properties
 
 # For AIDE testing
 libs/maps.jar
+
+# Backup files
+*.bak
+*.old
+*.*~

@@ -51,8 +51,8 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 	private final boolean mIsFirstLoad, mIsHomeTab;
 	private final String mClassName;
 
-	public Twitter4JActivitiesLoader(Context context, long account_id, List<Activity> data, String class_name,
-			boolean is_home_tab) {
+	public Twitter4JActivitiesLoader(final Context context, final long account_id, final List<Activity> data,
+			final String class_name, final boolean is_home_tab) {
 		super(context);
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
@@ -115,7 +115,8 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 
 	abstract ResponseList<Activity> getActivities(Paging paging) throws TwitterException;
 
-	public static void writeSerializableStatuses(Object instance, Context context, List<Activity> data, Bundle args) {
+	public static void writeSerializableStatuses(final Object instance, final Context context,
+			final List<Activity> data, final Bundle args) {
 		if (instance == null || context == null || data == null || args == null) return;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		try {

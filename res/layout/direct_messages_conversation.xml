@@ -63,7 +63,7 @@
 		android:visibility="visible">
 
 		<AutoCompleteTextView
-			android:id="@+id/screen_name"
+			android:id="@+id/edit_screen_name"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_below="@+id/account_selector"

@@ -331,6 +331,19 @@
 	<string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others followed you.</string>
 	<string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> retweeted your tweet.</string>
 	<string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others retweeted your tweet.</string>
+	<string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> added you to list.</string>
+	<string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others added you to their lists.</string>
 	<string name="cannot_get_callback_url">Cannot get callback, please check your user name and password.</string>
+	<string name="tweet_not_sent">Tweet not sent.</string>
+	<string name="tweet_not_sent_summary">Tweet not sent, and saved to drafts.</string>
+	<string name="incoming_friendships">Pending follow requests</string>
+	<string name="click_to_open_menu">Click to open item menu</string>
+	<string name="click_to_open_menu_summary">Click to open item menu, long-click to multi select.</string>
+	<string name="send_follow_request">Send follow request</string>
+	<string name="follow_request_sent">Follow request sent</string>
+	<string name="keep_in_background">Keep home activity in background</string>
+	<string name="keep_in_background_summary">Consumes more memory, but may faster to launch.</string>
+	<string name="seprate_retweet_action">Seprate retweet action</string>
+	<string name="seprate_retweet_action_summary">Show both retweet and quote action in tweet menu</string>
 
 </resources>

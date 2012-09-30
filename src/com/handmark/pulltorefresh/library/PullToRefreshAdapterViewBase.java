@@ -41,17 +41,17 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	private View mEmptyView;
 	private FrameLayout mRefreshableViewHolder;
 
-	public PullToRefreshAdapterViewBase(Context context) {
+	public PullToRefreshAdapterViewBase(final Context context) {
 		super(context);
 		mRefreshableView.setOnScrollListener(this);
 	}
 
-	public PullToRefreshAdapterViewBase(Context context, AttributeSet attrs) {
+	public PullToRefreshAdapterViewBase(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		mRefreshableView.setOnScrollListener(this);
 	}
 
-	public PullToRefreshAdapterViewBase(Context context, Mode mode) {
+	public PullToRefreshAdapterViewBase(final Context context, final Mode mode) {
 		super(context, mode);
 		mRefreshableView.setOnScrollListener(this);
 	}
@@ -113,7 +113,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 * 
 	 * @param newEmptyView - Empty View to be used
 	 */
-	public final void setEmptyView(View newEmptyView) {
+	public final void setEmptyView(final View newEmptyView) {
 		// If we already have an Empty View, remove it
 		if (null != mEmptyView) {
 			mRefreshableViewHolder.removeView(mEmptyView);
@@ -140,16 +140,16 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		}
 	}
 
-	public final void setOnLastItemVisibleListener(OnLastItemVisibleListener listener) {
+	public final void setOnLastItemVisibleListener(final OnLastItemVisibleListener listener) {
 		mOnLastItemVisibleListener = listener;
 	}
 
-	public final void setOnScrollListener(OnScrollListener listener) {
+	public final void setOnScrollListener(final OnScrollListener listener) {
 		mOnScrollListener = listener;
 	};
 
 	@Override
-	protected void addRefreshableView(Context context, T refreshableView) {
+	protected void addRefreshableView(final Context context, final T refreshableView) {
 		mRefreshableViewHolder = new FrameLayout(context);
 		mRefreshableViewHolder.addView(refreshableView, ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT);
@@ -181,7 +181,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	}
 
 	@Override
-	protected void handleStyledAttributes(TypedArray a) {
+	protected void handleStyledAttributes(final TypedArray a) {
 		// Set Show Indicator to the XML value, or default value
 	}
 

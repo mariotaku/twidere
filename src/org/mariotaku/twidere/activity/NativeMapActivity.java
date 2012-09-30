@@ -46,7 +46,7 @@ public class NativeMapActivity extends MapActivity implements Constants {
 	}
 
 	@Override
-	protected void onCreate(Bundle icicle) {
+	protected void onCreate(final Bundle icicle) {
 		super.onCreate(icicle);
 		final Bundle bundle = getIntent().getExtras();
 		if (bundle == null || !bundle.containsKey(INTENT_KEY_LATITUDE) || !bundle.containsKey(INTENT_KEY_LONGITUDE)) {
@@ -75,13 +75,13 @@ public class NativeMapActivity extends MapActivity implements Constants {
 
 	static class Itemization extends ItemizedOverlay<OverlayItem> {
 
-		private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
+		private final ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 
-		public Itemization(Drawable defaultMarker) {
+		public Itemization(final Drawable defaultMarker) {
 			super(boundCenterBottom(defaultMarker));
 		}
 
-		public void addOverlay(OverlayItem overlay) {
+		public void addOverlay(final OverlayItem overlay) {
 			mOverlays.add(overlay);
 			populate();
 		}
@@ -92,11 +92,11 @@ public class NativeMapActivity extends MapActivity implements Constants {
 		}
 
 		@Override
-		protected OverlayItem createItem(int i) {
+		protected OverlayItem createItem(final int i) {
 			return mOverlays.get(i);
 		}
 
-		protected static Drawable boundCenterBottom(Drawable d) {
+		protected static Drawable boundCenterBottom(final Drawable d) {
 			d.setBounds(-d.getIntrinsicWidth() / 2, -d.getIntrinsicHeight(), d.getIntrinsicWidth() / 2, 0);
 			return d;
 		}

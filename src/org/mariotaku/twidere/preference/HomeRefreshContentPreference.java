@@ -13,61 +13,30 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.AttributeSet;
 
-public class HomeRefreshContentPreference extends Preference implements Constants, OnPreferenceClickListener,
-		OnMultiChoiceClickListener, OnClickListener {
+public class HomeRefreshContentPreference extends MultiSelectListPreference implements Constants {
 
-	private boolean[] checked_items;
-	private SharedPreferences prefs;
+	protected String[] getNames() {
+		return getContext().getResources().getStringArray(R.array.entries_home_refresh_content);
+	}
 
-	public HomeRefreshContentPreference(Context context) {
+	protected String[] getKeys() {
+		return new String[]{ PREFERENCE_KEY_HOME_REFRESH_MENTIONS, PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES };
+	}
+
+	protected boolean[] getDefaults() {
+		return new boolean[]{ false, false };
+	}
+
+	public HomeRefreshContentPreference(final Context context) {
 		this(context, null);
 	}
 
-	public HomeRefreshContentPreference(Context context, AttributeSet attrs) {
+	public HomeRefreshContentPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public HomeRefreshContentPreference(Context context, AttributeSet attrs, int defStyle) {
+	public HomeRefreshContentPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		checked_items = new boolean[2];
-		setOnPreferenceClickListener(this);
-	}
-
-	@Override
-	public void onClick(DialogInterface dialog, int which) {
-		if (prefs == null) return;
-		switch (which) {
-			case DialogInterface.BUTTON_POSITIVE:
-				final SharedPreferences.Editor editor = prefs.edit();
-				editor.putBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, checked_items[0]);
-				editor.putBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, checked_items[1]);
-				editor.commit();
-				break;
-		}
-
-	}
-
-	@Override
-	public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-		checked_items[which] = isChecked;
-	}
-
-	@Override
-	public boolean onPreferenceClick(Preference preference) {
-		prefs = getSharedPreferences();
-		if (prefs == null) return false;
-		checked_items = new boolean[] { prefs.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false),
-				prefs.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false) };
-
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
-		builder.setTitle(getTitle());
-		builder.setPositiveButton(android.R.string.ok, this);
-		builder.setNegativeButton(android.R.string.cancel, null);
-		builder.setMultiChoiceItems(R.array.entries_home_refresh_content, checked_items, this);
-		builder.show();
-
-		return true;
 	}
 
 }

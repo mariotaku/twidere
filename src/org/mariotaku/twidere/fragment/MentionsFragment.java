@@ -46,10 +46,10 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	private long mMinIdToRefresh;
 	private boolean mShouldRestorePosition = false;
 
-	private BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			final Bundle extras = intent.getExtras();
 			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
@@ -71,6 +71,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			}
 		}
 	};
+	private CursorStatusesAdapter mAdapter;
 
 	@Override
 	public Uri getContentUri() {
@@ -78,35 +79,36 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	}
 
 	@Override
-	public int getStatuses(long[] account_ids, long[] max_ids) {
+	public int getStatuses(final long[] account_ids, final long[] max_ids) {
 		return mService.getMentions(account_ids, max_ids);
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getServiceInterface();
 		mShouldRestorePosition = true;
 		super.onActivityCreated(savedInstanceState);
 		mListView = getListView();
 		mListView.setOnTouchListener(this);
+		mAdapter = getListAdapter();
+		mAdapter.setMentionsHightlightDisabled(true);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		final CursorStatusesAdapter adapter = getListAdapter();
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		long last_viewed_id = -1;
 		{
 			final int position = mListView.getFirstVisiblePosition();
 			if (position > 0) {
-				last_viewed_id = adapter.findItemIdByPosition(position);
+				last_viewed_id = mAdapter.findItemIdByPosition(position);
 			}
 		}
 		super.onLoadFinished(loader, data);
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		if (mShouldRestorePosition && remember_position) {
 			final long status_id = mPreferences.getLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, -1);
-			final int position = adapter.findItemPositionByStatusId(status_id);
+			final int position = mAdapter.findItemPositionByStatusId(status_id);
 			if (position > -1 && position < mListView.getCount()) {
 				mListView.setSelection(position);
 			}
@@ -114,7 +116,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			return;
 		}
 		if (mMinIdToRefresh > 0 && remember_position) {
-			final int position = adapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id
+			final int position = mAdapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id
 					: mMinIdToRefresh);
 			if (position >= 0 && position < mListView.getCount()) {
 				mListView.setSelection(position);
@@ -148,7 +150,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	}
 
 	@Override
-	public boolean onTouch(View view, MotionEvent ev) {
+	public boolean onTouch(final View view, final MotionEvent ev) {
 		switch (ev.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
 				mService.clearNotification(NOTIFICATION_ID_MENTIONS);

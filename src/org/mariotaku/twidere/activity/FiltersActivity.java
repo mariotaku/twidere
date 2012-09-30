@@ -50,13 +50,13 @@ public class FiltersActivity extends BaseActivity implements OnCheckedChangeList
 	private Spinner mSpinner;
 
 	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+	public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
 		mPrefs.edit().putBoolean(PREFERENCE_KEY_ENABLE_FILTER, isChecked).commit();
 
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mPrefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean filter_enabled = mPrefs.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false);
@@ -81,13 +81,13 @@ public class FiltersActivity extends BaseActivity implements OnCheckedChangeList
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_filter, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+	public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
 		final Fragment fragment = Fragment.instantiate(this, mAdapter.getItem(position).cls.getName());
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(android.R.id.content, fragment);
@@ -96,12 +96,12 @@ public class FiltersActivity extends BaseActivity implements OnCheckedChangeList
 	}
 
 	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
+	public void onNothingSelected(final AdapterView<?> parent) {
 
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
 				finish();
@@ -116,7 +116,7 @@ public class FiltersActivity extends BaseActivity implements OnCheckedChangeList
 		public final Class<? extends Fragment> cls;
 		public final String name;
 
-		public TabSpec(Class<? extends Fragment> cls, String name) {
+		public TabSpec(final Class<? extends Fragment> cls, final String name) {
 			this.cls = cls;
 			this.name = name;
 		}

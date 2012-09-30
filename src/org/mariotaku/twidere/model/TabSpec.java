@@ -13,7 +13,8 @@ public class TabSpec {
 	public final Bundle args;
 	public final int position;
 
-	public TabSpec(String name, Object icon, Class<? extends Fragment> cls, Bundle args, int position) {
+	public TabSpec(final String name, final Object icon, final Class<? extends Fragment> cls, final Bundle args,
+			final int position) {
 		if (cls == null) throw new IllegalArgumentException("Fragment cannot be null!");
 		if (name == null && icon == null)
 			throw new IllegalArgumentException("You must specify a name or icon for this tab!");
@@ -26,7 +27,7 @@ public class TabSpec {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (!(o instanceof TabSpec)) return false;
 		final TabSpec spec = (TabSpec) o;
 		return objectEquals(name, spec.name) && objectEquals(icon, spec.icon) && objectEquals(cls, spec.cls)

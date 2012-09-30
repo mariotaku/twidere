@@ -20,7 +20,7 @@ import android.content.SharedPreferences;
 public class BootCompletedReceiver extends BroadcastReceiver implements Constants {
 
 	@Override
-	public void onReceive(Context context, Intent intent) {
+	public void onReceive(final Context context, final Intent intent) {
 
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);

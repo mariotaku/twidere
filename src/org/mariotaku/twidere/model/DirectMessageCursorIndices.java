@@ -29,7 +29,7 @@ public class DirectMessageCursorIndices {
 			recipient_screen_name, is_gap, sender_profile_image_url, recipient_profile_image_url, sender_id,
 			recipient_id;
 
-	public DirectMessageCursorIndices(Cursor cursor) {
+	public DirectMessageCursorIndices(final Cursor cursor) {
 		account_id = cursor.getColumnIndex(DirectMessages.ACCOUNT_ID);
 		message_id = cursor.getColumnIndex(DirectMessages.MESSAGE_ID);
 		message_timestamp = cursor.getColumnIndex(DirectMessages.MESSAGE_TIMESTAMP);
@@ -37,7 +37,6 @@ public class DirectMessageCursorIndices {
 		recipient_id = cursor.getColumnIndex(DirectMessages.RECIPIENT_ID);
 
 		is_gap = cursor.getColumnIndex(DirectMessages.IS_GAP);
-
 		text = cursor.getColumnIndex(DirectMessages.TEXT);
 		sender_name = cursor.getColumnIndex(DirectMessages.SENDER_NAME);
 		recipient_name = cursor.getColumnIndex(DirectMessages.RECIPIENT_NAME);

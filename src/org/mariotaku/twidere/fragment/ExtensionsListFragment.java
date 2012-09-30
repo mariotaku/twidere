@@ -37,7 +37,7 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 	private PopupMenu mPopupMenu;
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPackageManager = getActivity().getPackageManager();
 		mAdapter = new ExtensionsAdapter(getActivity(), mPackageManager);
@@ -50,12 +50,12 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 	}
 
 	@Override
-	public Loader<List<ResolveInfo>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<ResolveInfo>> onCreateLoader(final int id, final Bundle args) {
 		return new ExtensionsListLoader(getActivity(), mPackageManager);
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		final ResolveInfo info = mAdapter.getItem(position);
 		if (info == null || info.activityInfo == null) return;
 		final Intent intent = new Intent(INTENT_ACTION_EXTENSIONS);
@@ -68,7 +68,7 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedResolveInfo = null;
 		mSelectedResolveInfo = mAdapter.getItem(position);
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
@@ -79,18 +79,18 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<ResolveInfo>> loader) {
+	public void onLoaderReset(final Loader<List<ResolveInfo>> loader) {
 		mAdapter.setData(null);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<ResolveInfo>> loader, List<ResolveInfo> data) {
+	public void onLoadFinished(final Loader<List<ResolveInfo>> loader, final List<ResolveInfo> data) {
 		mAdapter.setData(data);
 		setListShown(true);
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedResolveInfo == null) return false;
 		switch (item.getItemId()) {
 			case MENU_SETTINGS: {

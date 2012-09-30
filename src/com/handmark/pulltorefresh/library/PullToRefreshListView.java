@@ -37,17 +37,17 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	private FrameLayout mLvFooterLoadingFrame;
 
-	public PullToRefreshListView(Context context) {
+	public PullToRefreshListView(final Context context) {
 		super(context);
 		setDisableScrollingWhileRefreshing(false);
 	}
 
-	public PullToRefreshListView(Context context, AttributeSet attrs) {
+	public PullToRefreshListView(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		setDisableScrollingWhileRefreshing(false);
 	}
 
-	public PullToRefreshListView(Context context, Mode mode) {
+	public PullToRefreshListView(final Context context, final Mode mode) {
 		super(context, mode);
 		setDisableScrollingWhileRefreshing(false);
 	}
@@ -58,7 +58,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
-	public void setPullLabel(String pullLabel, Mode mode) {
+	public void setPullLabel(final String pullLabel, final Mode mode) {
 		super.setPullLabel(pullLabel, mode);
 
 		if (null != mHeaderLoadingView && mode.canPullDown()) {
@@ -70,7 +70,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
-	public void setRefreshingLabel(String refreshingLabel, Mode mode) {
+	public void setRefreshingLabel(final String refreshingLabel, final Mode mode) {
 		super.setRefreshingLabel(refreshingLabel, mode);
 
 		if (null != mHeaderLoadingView && mode.canPullDown()) {
@@ -82,7 +82,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
-	public void setReleaseLabel(String releaseLabel, Mode mode) {
+	public void setReleaseLabel(final String releaseLabel, final Mode mode) {
 		super.setReleaseLabel(releaseLabel, mode);
 
 		if (null != mHeaderLoadingView && mode.canPullDown()) {
@@ -94,7 +94,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
-	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
+	protected final ListView createRefreshableView(final Context context, final AttributeSet attrs) {
 		final ListView lv = new InternalListView(context, attrs);
 
 		// Get Styles from attrs
@@ -186,7 +186,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
-	protected void setRefreshingInternal(boolean doScroll) {
+	protected void setRefreshingInternal(final boolean doScroll) {
 
 		// If we're not showing the Refreshing view, or the list is empty, then
 		// the header/footer views won't show so we use the
@@ -245,12 +245,12 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		private boolean mAddedLvFooter = false;
 
-		public InternalListView(Context context, AttributeSet attrs) {
+		public InternalListView(final Context context, final AttributeSet attrs) {
 			super(context, attrs);
 		}
 
 		@Override
-		public void draw(Canvas canvas) {
+		public void draw(final Canvas canvas) {
 			/**
 			 * This is a bit hacky, but ListView has got a bug in it when using
 			 * Header/Footer Views and the list is empty. This masks the issue
@@ -269,7 +269,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 
 		@Override
-		public void setAdapter(ListAdapter adapter) {
+		public void setAdapter(final ListAdapter adapter) {
 			// Add the Footer View at the last possible moment
 			if (!mAddedLvFooter) {
 				addFooterView(mLvFooterLoadingFrame, null, false);
@@ -280,12 +280,12 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 
 		@Override
-		public void setEmptyView(View emptyView) {
+		public void setEmptyView(final View emptyView) {
 			PullToRefreshListView.this.setEmptyView(emptyView);
 		}
 
 		@Override
-		public void setEmptyViewInternal(View emptyView) {
+		public void setEmptyViewInternal(final View emptyView) {
 			super.setEmptyView(emptyView);
 		}
 	}

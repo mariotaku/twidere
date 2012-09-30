@@ -30,58 +30,49 @@ import android.widget.TextView;
 public class UserViewHolder {
 
 	public final ImageView profile_image;
-	public final TextView name, description;
-	private final View gap_indicator;
+	public final TextView name, screen_name, description;
 	private final ColorLabelRelativeLayout content;
-	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
 
-	public UserViewHolder(View view) {
+	public UserViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
-		gap_indicator = view.findViewById(R.id.list_gap_text);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
+		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		description = (TextView) view.findViewById(R.id.description);
 	}
 
-	public void setAccountColor(int color) {
-		content.drawRight(account_color_enabled && !show_as_gap ? color : Color.TRANSPARENT);
+	public void setAccountColor(final int color) {
+		content.drawRight(account_color_enabled ? color : Color.TRANSPARENT);
 	}
 
-	public void setAccountColorEnabled(boolean enabled) {
-		account_color_enabled = enabled && !show_as_gap;
+	public void setAccountColorEnabled(final boolean enabled) {
+		account_color_enabled = enabled;
 		if (!account_color_enabled) {
 			content.drawRight(Color.TRANSPARENT);
 		}
 	}
 
-	public void setHighlightColor(int color) {
-		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
+	public void setHighlightColor(final int color) {
+		content.drawBackground(color);
 	}
 
-	public void setSelected(boolean selected) {
-		content.setBackgroundColor(selected && !show_as_gap ? 0x600099CC : Color.TRANSPARENT);
+	public void setSelected(final boolean selected) {
+		content.setBackgroundColor(selected ? 0x600099CC : Color.TRANSPARENT);
 	}
 
-	public void setShowAsGap(boolean show_gap) {
-		show_as_gap = show_gap;
-		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		description.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
-	}
-
-	public void setTextSize(float text_size) {
+	public void setTextSize(final float text_size) {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
 			description.setTextSize(text_size);
-			name.setTextSize(text_size * 1.05f);
+			name.setTextSize(text_size);
+			screen_name.setTextSize(text_size * 0.75f);
 		}
 	}
 
-	public void setUserColor(int color) {
-		content.drawLeft(show_as_gap ? Color.TRANSPARENT : color);
+	public void setUserColor(final int color) {
+		content.drawLeft(color);
 	}
 
 }

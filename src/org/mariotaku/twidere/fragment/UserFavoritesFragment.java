@@ -21,7 +21,6 @@ package org.mariotaku.twidere.fragment;
 
 import java.util.List;
 
-import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.loader.UserFavoritesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
@@ -34,13 +33,12 @@ import android.support.v4.content.Loader;
 
 public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 
-	private boolean isAllItemsLoaded = false;
 	private long mUserId;
 
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_FAVORITE_CHANGED.equals(action)) {
 				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
@@ -53,13 +51,10 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 
 	};
 
-	@Override
-	public boolean isListLoadFinished() {
-		return isAllItemsLoaded;
-	}
+	private boolean mIsStatusesSaved = false;
 
 	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
 		long account_id = -1, user_id = -1, max_id = -1;
 		String screen_name = null;
 		boolean is_home_tab = false;
@@ -78,25 +73,14 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
-		if (loader instanceof UserFavoritesLoader) {
-			final int total = ((UserFavoritesLoader) loader).getTotalItemsCount();
-			if (mUserId <= 0) {
-				mUserId = ((UserFavoritesLoader) loader).getUserId();
-			}
-			isAllItemsLoaded = total != -1 && total == adapter.getCount();
-		}
-	}
-
-	@Override
 	public void onDestroy() {
-		UserFavoritesLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		saveStatuses();
 		super.onDestroy();
 	}
 
 	@Override
 	public void onDestroyView() {
-		UserFavoritesLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		saveStatuses();
 		super.onDestroyView();
 	}
 
@@ -111,6 +95,14 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	public void onStop() {
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
+	}
+
+	private void saveStatuses() {
+		if (mIsStatusesSaved) return;
+		final int first_visible_position = getListView().getFirstVisiblePosition();
+		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+		UserFavoritesLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
+		mIsStatusesSaved = true;
 	}
 
 }

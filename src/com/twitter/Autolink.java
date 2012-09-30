@@ -61,7 +61,7 @@ public class Autolink {
 	protected String urlTarget = null;
 	protected LinkAttributeModifier linkAttributeModifier = null;
 	protected LinkTextModifier linkTextModifier = null;
-	private Extractor extractor = new Extractor();
+	private final Extractor extractor = new Extractor();
 
 	/**
 	 * Fullwidth ellipsis: '...'
@@ -104,11 +104,11 @@ public class Autolink {
 	 * @param text of the Tweet to auto-link
 	 * @return text with auto-link HTML added
 	 */
-	public String autoLinkCashtags(String text) {
+	public String autoLinkCashtags(final String text) {
 		return autoLinkEntities(text, extractor.extractCashtagsWithIndices(text));
 	}
 
-	public String autoLinkEntities(String text, List<Entity> entities) {
+	public String autoLinkEntities(final String text, final List<Entity> entities) {
 		final StringBuilder builder = new StringBuilder(text.length() * 2);
 		int beginIndex = 0;
 
@@ -143,7 +143,7 @@ public class Autolink {
 	 * @param text of the Tweet to auto-link
 	 * @return text with auto-link HTML added
 	 */
-	public String autoLinkHashtags(String text) {
+	public String autoLinkHashtags(final String text) {
 		return autoLinkEntities(text, extractor.extractHashtagsWithIndices(text));
 	}
 
@@ -155,7 +155,7 @@ public class Autolink {
 	 * @param text of the Tweet to auto-link
 	 * @return text with auto-link HTML added
 	 */
-	public String autoLinkURLs(String text) {
+	public String autoLinkURLs(final String text) {
 		return autoLinkEntities(text, extractor.extractURLsWithIndices(text));
 	}
 
@@ -168,11 +168,11 @@ public class Autolink {
 	 * @param text of the Tweet to auto-link
 	 * @return text with auto-link HTML added
 	 */
-	public String autoLinkUsernamesAndLists(String text) {
+	public String autoLinkUsernamesAndLists(final String text) {
 		return autoLinkEntities(text, extractor.extractMentionsOrListsWithIndices(text));
 	}
 
-	public String escapeBrackets(String text) {
+	public String escapeBrackets(final String text) {
 		final int len = text.length();
 		if (len == 0) return text;
 
@@ -265,7 +265,7 @@ public class Autolink {
 		return noFollow;
 	}
 
-	public void linkToCashtag(Entity entity, String text, StringBuilder builder) {
+	public void linkToCashtag(final Entity entity, final String text, final StringBuilder builder) {
 		final CharSequence cashtag = entity.getValue();
 
 		final Map<String, String> attrs = new LinkedHashMap<String, String>();
@@ -276,7 +276,7 @@ public class Autolink {
 		linkToTextWithSymbol(entity, "$", cashtag, attrs, builder);
 	}
 
-	public void linkToHashtag(Entity entity, String text, StringBuilder builder) {
+	public void linkToHashtag(final Entity entity, final String text, final StringBuilder builder) {
 		// Get the original hash char from text as it could be a full-width
 		// char.
 		final CharSequence hashChar = text.subSequence(entity.getStart(), entity.getStart() + 1);
@@ -290,7 +290,7 @@ public class Autolink {
 		linkToTextWithSymbol(entity, hashChar, hashtag, attrs, builder);
 	}
 
-	public void linkToMentionAndList(Entity entity, String text, StringBuilder builder) {
+	public void linkToMentionAndList(final Entity entity, final String text, final StringBuilder builder) {
 		String mention = entity.getValue();
 		// Get the original at char from text as it could be a full-width char.
 		final CharSequence atChar = text.subSequence(entity.getStart(), entity.getStart() + 1);
@@ -308,7 +308,8 @@ public class Autolink {
 		linkToTextWithSymbol(entity, atChar, mention, attrs, builder);
 	}
 
-	public void linkToText(Entity entity, CharSequence text, Map<String, String> attributes, StringBuilder builder) {
+	public void linkToText(final Entity entity, CharSequence text, final Map<String, String> attributes,
+			final StringBuilder builder) {
 		if (noFollow) {
 			attributes.put("rel", "nofollow");
 		}
@@ -327,8 +328,8 @@ public class Autolink {
 		builder.append(">").append(text).append("</a>");
 	}
 
-	public void linkToTextWithSymbol(Entity entity, CharSequence symbol, CharSequence text,
-			Map<String, String> attributes, StringBuilder builder) {
+	public void linkToTextWithSymbol(final Entity entity, final CharSequence symbol, CharSequence text,
+			final Map<String, String> attributes, final StringBuilder builder) {
 		final CharSequence taggedSymbol = symbolTag == null || symbolTag.length() == 0 ? symbol : String.format(
 				"<%s>%s</%s>", symbolTag, symbol, symbolTag);
 		text = escapeHTML(text);
@@ -345,7 +346,7 @@ public class Autolink {
 		}
 	}
 
-	public void linkToURL(Entity entity, String text, StringBuilder builder) {
+	public void linkToURL(final Entity entity, final String text, final StringBuilder builder) {
 		final CharSequence url = entity.getValue();
 		CharSequence linkText = escapeHTML(url);
 
@@ -396,7 +397,7 @@ public class Autolink {
 	 * 
 	 * @param cashtagClass new CSS value.
 	 */
-	public void setCashtagClass(String cashtagClass) {
+	public void setCashtagClass(final String cashtagClass) {
 		this.cashtagClass = cashtagClass;
 	}
 
@@ -405,7 +406,7 @@ public class Autolink {
 	 * 
 	 * @param cashtagUrlBase new href base value
 	 */
-	public void setCashtagUrlBase(String cashtagUrlBase) {
+	public void setCashtagUrlBase(final String cashtagUrlBase) {
 		this.cashtagUrlBase = cashtagUrlBase;
 	}
 
@@ -414,7 +415,7 @@ public class Autolink {
 	 * 
 	 * @param hashtagClass new CSS value.
 	 */
-	public void setHashtagClass(String hashtagClass) {
+	public void setHashtagClass(final String hashtagClass) {
 		this.hashtagClass = hashtagClass;
 	}
 
@@ -423,7 +424,7 @@ public class Autolink {
 	 * 
 	 * @param hashtagUrlBase new href base value
 	 */
-	public void setHashtagUrlBase(String hashtagUrlBase) {
+	public void setHashtagUrlBase(final String hashtagUrlBase) {
 		this.hashtagUrlBase = hashtagUrlBase;
 	}
 
@@ -432,7 +433,7 @@ public class Autolink {
 	 * 
 	 * @param modifier LinkAttributeModifier instance
 	 */
-	public void setLinkAttributeModifier(LinkAttributeModifier modifier) {
+	public void setLinkAttributeModifier(final LinkAttributeModifier modifier) {
 		linkAttributeModifier = modifier;
 	}
 
@@ -441,7 +442,7 @@ public class Autolink {
 	 * 
 	 * @param modifier LinkTextModifier instance
 	 */
-	public void setLinkTextModifier(LinkTextModifier modifier) {
+	public void setLinkTextModifier(final LinkTextModifier modifier) {
 		linkTextModifier = modifier;
 	}
 
@@ -450,7 +451,7 @@ public class Autolink {
 	 * 
 	 * @param listClass new CSS value.
 	 */
-	public void setListClass(String listClass) {
+	public void setListClass(final String listClass) {
 		this.listClass = listClass;
 	}
 
@@ -459,7 +460,7 @@ public class Autolink {
 	 * 
 	 * @param listUrlBase new href base value
 	 */
-	public void setListUrlBase(String listUrlBase) {
+	public void setListUrlBase(final String listUrlBase) {
 		this.listUrlBase = listUrlBase;
 	}
 
@@ -469,7 +470,7 @@ public class Autolink {
 	 * 
 	 * @param noFollow new noFollow value
 	 */
-	public void setNoFollow(boolean noFollow) {
+	public void setNoFollow(final boolean noFollow) {
 		this.noFollow = noFollow;
 	}
 
@@ -479,7 +480,7 @@ public class Autolink {
 	 * 
 	 * @param tag HTML tag without bracket. e.g., "b" or "s"
 	 */
-	public void setSymbolTag(String tag) {
+	public void setSymbolTag(final String tag) {
 		symbolTag = tag;
 	}
 
@@ -489,7 +490,7 @@ public class Autolink {
 	 * 
 	 * @param tag HTML tag without bracket. e.g., "b" or "s"
 	 */
-	public void setTextWithSymbolTag(String tag) {
+	public void setTextWithSymbolTag(final String tag) {
 		textWithSymbolTag = tag;
 	}
 
@@ -498,7 +499,7 @@ public class Autolink {
 	 * 
 	 * @param urlClass new CSS value.
 	 */
-	public void setUrlClass(String urlClass) {
+	public void setUrlClass(final String urlClass) {
 		this.urlClass = urlClass;
 	}
 
@@ -507,7 +508,7 @@ public class Autolink {
 	 * 
 	 * @param target target value e.g., "_blank"
 	 */
-	public void setUrlTarget(String target) {
+	public void setUrlTarget(final String target) {
 		urlTarget = target;
 	}
 
@@ -516,7 +517,7 @@ public class Autolink {
 	 * 
 	 * @param usernameClass new CSS value.
 	 */
-	public void setUsernameClass(String usernameClass) {
+	public void setUsernameClass(final String usernameClass) {
 		this.usernameClass = usernameClass;
 	}
 
@@ -525,7 +526,7 @@ public class Autolink {
 	 * 
 	 * @param noFollow new noFollow value
 	 */
-	public void setUsernameIncludeSymbol(boolean usernameIncludeSymbol) {
+	public void setUsernameIncludeSymbol(final boolean usernameIncludeSymbol) {
 		this.usernameIncludeSymbol = usernameIncludeSymbol;
 	}
 
@@ -534,11 +535,11 @@ public class Autolink {
 	 * 
 	 * @param usernameUrlBase new href base value
 	 */
-	public void setUsernameUrlBase(String usernameUrlBase) {
+	public void setUsernameUrlBase(final String usernameUrlBase) {
 		this.usernameUrlBase = usernameUrlBase;
 	}
 
-	private static CharSequence escapeHTML(CharSequence text) {
+	private static CharSequence escapeHTML(final CharSequence text) {
 		final int length = text.length();
 		final StringBuilder builder = new StringBuilder(length * 2);
 		for (int i = 0; i < length; i++) {

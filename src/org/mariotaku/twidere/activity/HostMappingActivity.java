@@ -40,7 +40,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 	private DialogFragment mDialogFragment;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		setContentView(R.layout.base_list);
@@ -54,18 +54,18 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_host_mapping, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View v, final int position, final long id) {
 		Toast.makeText(this, R.string.longclick_to_delete, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final SharedPreferences.Editor editor = mPreferences.edit();
 		editor.remove(mAdapter.getItem(position));
 		final boolean ret = editor.commit();
@@ -74,7 +74,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
 				onBackPressed();
@@ -102,7 +102,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 		}
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
 					mHost = parseString(mEditHost.getText());
@@ -124,7 +124,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 		}
 
 		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
 			mHost = bundle != null ? bundle.getString(INTENT_KEY_TEXT1) : null;
 			mAddress = bundle != null ? bundle.getString(INTENT_KEY_TEXT2) : null;
@@ -146,7 +146,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 		}
 
 		@Override
-		public void onSaveInstanceState(Bundle outState) {
+		public void onSaveInstanceState(final Bundle outState) {
 			outState.putString(INTENT_KEY_TEXT1, mHost);
 			outState.putString(INTENT_KEY_TEXT2, mAddress);
 			super.onSaveInstanceState(outState);
@@ -161,7 +161,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 		private Map<String, ?> mData;
 		private String[] mKeys;
 
-		public HostMappingAdapter(Context context) {
+		public HostMappingAdapter(final Context context) {
 			mPreferences = context.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			mInflater = LayoutInflater.from(context);
 		}
@@ -172,18 +172,18 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 		}
 
 		@Override
-		public String getItem(int position) {
+		public String getItem(final int position) {
 			return mKeys.length > 0 && position < mKeys.length ? mKeys[position] : null;
 		}
 
 		@Override
-		public long getItemId(int position) {
+		public long getItemId(final int position) {
 			final Object obj = getItem(position);
 			return obj != null ? obj.hashCode() : 0;
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final View view = convertView != null ? convertView : mInflater.inflate(
 					android.R.layout.simple_list_item_2, null);
 			final TextView text1 = (TextView) view.findViewById(android.R.id.text1);

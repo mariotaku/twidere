@@ -39,19 +39,19 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	private final Context context;
 	private final Resources res;
 	private final View mAnchorView;
-	private PopupWindow mWindow;
-	private WindowManager mWindowManager;
+	private final PopupWindow mWindow;
+	private final WindowManager mWindowManager;
 
 	private boolean mDidAction;
 
 	private int rootWidth = 0, mPosX, mPosY;
 
-	private MenuAdapter mAdapter;
+	private final MenuAdapter mAdapter;
 
-	private OnTouchListener mViewTouchListener = new OnTouchListener() {
+	private final OnTouchListener mViewTouchListener = new OnTouchListener() {
 
 		@Override
-		public boolean onTouch(View v, MotionEvent event) {
+		public boolean onTouch(final View v, final MotionEvent event) {
 			return true;
 		}
 
@@ -64,7 +64,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	 * 
 	 * @param context Context
 	 */
-	public PopupMenuCompat(Context context, View view) {
+	public PopupMenuCompat(final Context context, final View view) {
 		this.context = context;
 		res = context.getResources();
 		mAnchorView = view;
@@ -98,7 +98,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	}
 
 	@Override
-	public void inflate(int menuRes) {
+	public void inflate(final int menuRes) {
 		new MenuInflater(context).inflate(menuRes, mMenu);
 	}
 
@@ -110,7 +110,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		mDidAction = true;
 		dismiss();
 
@@ -125,7 +125,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	}
 
 	@Override
-	public boolean onTouch(View v, MotionEvent event) {
+	public boolean onTouch(final View v, final MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
 			mWindow.dismiss();
 
@@ -135,12 +135,12 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 		return false;
 	}
 
-	public void setAnchorByTouch(boolean enabled) {
+	public void setAnchorByTouch(final boolean enabled) {
 		mAnchorView.setOnTouchListener(enabled ? mViewTouchListener : null);
 	}
 
 	@Override
-	public void setMenu(Menu menu) {
+	public void setMenu(final Menu menu) {
 		mMenu = menu;
 	}
 
@@ -150,7 +150,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	 * clicking on sticky item.
 	 */
 	@Override
-	public void setOnDismissListener(PopupMenu.OnDismissListener listener) {
+	public void setOnDismissListener(final PopupMenu.OnDismissListener listener) {
 		mWindow.setOnDismissListener(listener != null ? this : null);
 
 		mDismissListener = listener;
@@ -162,7 +162,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	 * @param listener Listener
 	 */
 	@Override
-	public void setOnMenuItemClickListener(OnMenuItemClickListener listener) {
+	public void setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
 		mItemClickListener = listener;
 	}
 
@@ -199,7 +199,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	}
 
 	@SuppressWarnings("deprecation")
-	private void setAnchor(View anchor) {
+	private void setAnchor(final View anchor) {
 
 		final int horizontal_gravity = Gravity.LEFT;
 		int vertical_gravity = 0;
@@ -272,7 +272,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	 * @param onTop flag to indicate where the popup should be displayed. Set
 	 *            TRUE if displayed on top of anchor view and vice versa
 	 */
-	private void setAnimationStyle(int screenWidth, int requestedX, boolean popUp) {
+	private void setAnimationStyle(final int screenWidth, final int requestedX, final boolean popUp) {
 
 		if (requestedX <= screenWidth / 4) {
 			mWindow.setAnimationStyle(popUp ? R.style.Animations_PopUpMenu_Left : R.style.Animations_PopDownMenu_Left);
@@ -298,7 +298,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 		mWindow.setContentView(mRootView);
 	}
 
-	private void showMenu(Menu menu, boolean set_anchor) {
+	private void showMenu(final Menu menu, final boolean set_anchor) {
 		mAdapter.setMenu(menu);
 		if (set_anchor) {
 			setAnchor(mAnchorView);

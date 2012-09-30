@@ -44,13 +44,13 @@ public class AlphaPatternDrawable extends Drawable {
 	 */
 	private Bitmap mBitmap;
 
-	public AlphaPatternDrawable(int rectangleSize) {
+	public AlphaPatternDrawable(final int rectangleSize) {
 
 		mRectangleSize = rectangleSize;
 	}
 
 	@Override
-	public void draw(Canvas canvas) {
+	public void draw(final Canvas canvas) {
 
 		canvas.drawBitmap(mBitmap, null, getBounds(), new Paint());
 	}
@@ -62,17 +62,17 @@ public class AlphaPatternDrawable extends Drawable {
 	}
 
 	@Override
-	public void setAlpha(int alpha) {
+	public void setAlpha(final int alpha) {
 
 	}
 
 	@Override
-	public void setColorFilter(ColorFilter cf) {
+	public void setColorFilter(final ColorFilter cf) {
 
 	}
 
 	@Override
-	protected void onBoundsChange(Rect bounds) {
+	protected void onBoundsChange(final Rect bounds) {
 
 		super.onBoundsChange(bounds);
 

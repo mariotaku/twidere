@@ -35,7 +35,7 @@ public class LocalActivityManagerFragment extends Fragment {
 	private LocalActivityManager mLocalActivityManager;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		Bundle state = null;
@@ -66,7 +66,7 @@ public class LocalActivityManagerFragment extends Fragment {
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putBundle(KEY_STATE_BUNDLE, mLocalActivityManager.saveInstanceState());
 	}

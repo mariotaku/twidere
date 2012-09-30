@@ -47,7 +47,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	private int mAuthType;
 
 	@Override
-	public void onCheckedChanged(RadioGroup group, int checkedId) {
+	public void onCheckedChanged(final RadioGroup group, final int checkedId) {
 		switch (checkedId) {
 			case R.id.oauth: {
 				mAuthType = Accounts.AUTH_TYPE_OAUTH;
@@ -69,7 +69,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	}
 
 	@Override
-	public void onClick(View v) {
+	public void onClick(final View v) {
 		switch (v.getId()) {
 			case R.id.save: {
 				saveEditedText();
@@ -92,10 +92,6 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 					stub_view.setVisibility(View.VISIBLE);
 					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_open_holo, 0,
 							0, 0);
-					mEditSearchBaseURL = (EditText) findViewById(R.id.search_base_url);
-					mEditSearchBaseURL.setText(mSearchBaseURL != null ? mSearchBaseURL : DEFAULT_SEARCH_BASE_URL);
-					mEditUploadBaseURL = (EditText) findViewById(R.id.upload_base_url);
-					mEditUploadBaseURL.setText(mUploadBaseURL != null ? mUploadBaseURL : DEFAULT_UPLOAD_BASE_URL);
 					mEditSigningRESTBaseURL = (EditText) findViewById(R.id.signing_rest_base_url);
 					mEditSigningRESTBaseURL.setText(mSigningRESTBaseURL != null ? mSigningRESTBaseURL
 							: DEFAULT_SIGNING_REST_BASE_URL);
@@ -117,7 +113,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_api);
 		mEditRestBaseURL = (EditText) findViewById(R.id.rest_base_url);
@@ -152,7 +148,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		saveEditedText();
 		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 		outState.putString(Accounts.SEARCH_BASE_URL, mSearchBaseURL);

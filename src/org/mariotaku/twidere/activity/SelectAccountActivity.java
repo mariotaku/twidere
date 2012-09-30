@@ -44,9 +44,9 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	private ListView mListView;
 	private SimpleCursorAdapter mAdapter;
 	private Cursor mCursor;
-	private List<Long> mActivatedUsersId = new ArrayList<Long>();
+	private final List<Long> mActivatedUsersId = new ArrayList<Long>();
 
-	public Cursor getAccountsCursor(boolean activated_only) {
+	public Cursor getAccountsCursor(final boolean activated_only) {
 		final Uri uri = Accounts.CONTENT_URI;
 		final String[] cols = new String[] { Accounts._ID, Accounts.USER_ID, Accounts.USERNAME, Accounts.IS_ACTIVATED };
 		final String where = activated_only ? Accounts.IS_ACTIVATED + " = " + 1 : null;
@@ -72,7 +72,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	}
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.save: {
 				onBackPressed();
@@ -82,7 +82,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		setContentView(R.layout.select_account);
@@ -137,7 +137,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		if (mCursor == null || mCursor.isClosed()) return;
 		final int choise_mode = mListView.getChoiceMode();
 		if (choise_mode == ListView.CHOICE_MODE_NONE) return;
@@ -156,7 +156,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements OnItemC
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		final int ids_size = mActivatedUsersId.size();
 		final long[] ids = new long[ids_size];
 		for (int i = 0; i < ids_size; i++) {

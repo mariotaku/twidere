@@ -23,23 +23,22 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.net.URL;
-import java.util.Comparator;
 
 import twitter4j.User;
 import twitter4j.UserList;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ParcelableUserList implements Parcelable {
+public class ParcelableUserList implements Parcelable, Comparable<ParcelableUserList> {
 
 	public static final Parcelable.Creator<ParcelableUserList> CREATOR = new Parcelable.Creator<ParcelableUserList>() {
 		@Override
-		public ParcelableUserList createFromParcel(Parcel in) {
+		public ParcelableUserList createFromParcel(final Parcel in) {
 			return new ParcelableUserList(in);
 		}
 
 		@Override
-		public ParcelableUserList[] newArray(int size) {
+		public ParcelableUserList[] newArray(final int size) {
 			return new ParcelableUserList[size];
 		}
 	};
@@ -52,20 +51,9 @@ public class ParcelableUserList implements Parcelable {
 
 	public final String description, name, user_screen_name, user_name, user_profile_image_url_string;
 
-	public URL user_profile_image_url;
+	public final URL user_profile_image_url;
 
-	public static final Comparator<ParcelableUserList> POSITION_COMPARATOR = new Comparator<ParcelableUserList>() {
-
-		@Override
-		public int compare(ParcelableUserList object1, ParcelableUserList object2) {
-			final long diff = object1.position - object2.position;
-			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
-			return (int) diff;
-		}
-	};
-
-	public ParcelableUserList(Parcel in) {
+	public ParcelableUserList(final Parcel in) {
 		position = in.readLong();
 		account_id = in.readLong();
 		list_id = in.readInt();
@@ -80,11 +68,11 @@ public class ParcelableUserList implements Parcelable {
 		user_profile_image_url = parseURL(user_profile_image_url_string);
 	}
 
-	public ParcelableUserList(UserList user, long account_id) {
+	public ParcelableUserList(final UserList user, final long account_id) {
 		this(user, account_id, 0);
 	}
 
-	public ParcelableUserList(UserList list, long account_id, long position) {
+	public ParcelableUserList(final UserList list, final long account_id, final long position) {
 		final User user = list.getUser();
 		this.position = position;
 		this.account_id = account_id;
@@ -111,7 +99,7 @@ public class ParcelableUserList implements Parcelable {
 	}
 
 	@Override
-	public void writeToParcel(Parcel out, int flags) {
+	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(position);
 		out.writeLong(account_id);
 		out.writeInt(list_id);
@@ -124,6 +112,68 @@ public class ParcelableUserList implements Parcelable {
 		out.writeString(user_screen_name);
 		out.writeString(user_profile_image_url_string);
 
+	}
+
+	@Override
+	public int compareTo(ParcelableUserList another) {
+		if (another == null) return 0;
+		final long diff = position - another.position;
+		if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+		if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+		return (int) diff;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (account_id ^ (account_id >>> 32));
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + (is_following ? 1231 : 1237);
+		result = prime * result + (is_public ? 1231 : 1237);
+		result = prime * result + list_id;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + (int) (position ^ (position >>> 32));
+		result = prime * result + (int) (user_id ^ (user_id >>> 32));
+		result = prime * result + ((user_name == null) ? 0 : user_name.hashCode());
+		result = prime * result + ((user_profile_image_url == null) ? 0 : user_profile_image_url.hashCode());
+		result = prime * result
+				+ ((user_profile_image_url_string == null) ? 0 : user_profile_image_url_string.hashCode());
+		result = prime * result + ((user_screen_name == null) ? 0 : user_screen_name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (!(obj instanceof ParcelableUserList)) return false;
+		ParcelableUserList other = (ParcelableUserList) obj;
+		if (account_id != other.account_id) return false;
+		if (description == null) {
+			if (other.description != null) return false;
+		} else if (!description.equals(other.description)) return false;
+		if (is_following != other.is_following) return false;
+		if (is_public != other.is_public) return false;
+		if (list_id != other.list_id) return false;
+		if (name == null) {
+			if (other.name != null) return false;
+		} else if (!name.equals(other.name)) return false;
+		if (position != other.position) return false;
+		if (user_id != other.user_id) return false;
+		if (user_name == null) {
+			if (other.user_name != null) return false;
+		} else if (!user_name.equals(other.user_name)) return false;
+		if (user_profile_image_url == null) {
+			if (other.user_profile_image_url != null) return false;
+		} else if (!user_profile_image_url.equals(other.user_profile_image_url)) return false;
+		if (user_profile_image_url_string == null) {
+			if (other.user_profile_image_url_string != null) return false;
+		} else if (!user_profile_image_url_string.equals(other.user_profile_image_url_string)) return false;
+		if (user_screen_name == null) {
+			if (other.user_screen_name != null) return false;
+		} else if (!user_screen_name.equals(other.user_screen_name)) return false;
+		return true;
 	}
 
 }

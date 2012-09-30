@@ -13,6 +13,16 @@
 
 	<CheckBoxPreference
 		android:defaultValue="false"
+		android:key="click_to_open_menu"
+		android:summary="@string/click_to_open_menu_summary"
+		android:title="@string/click_to_open_menu"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="seprate_retweet_action"
+		android:summary="@string/seprate_retweet_action_summary"
+		android:title="@string/seprate_retweet_action"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
 		android:key="bottom_compose_button"
 		android:summary="@string/bottom_compose_button_summary"
 		android:title="@string/bottom_compose_button"/>

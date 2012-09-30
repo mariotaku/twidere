@@ -21,7 +21,6 @@ package org.mariotaku.twidere.fragment;
 
 import java.util.List;
 
-import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.loader.UserTimelineLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
@@ -30,15 +29,10 @@ import android.support.v4.content.Loader;
 
 public class UserTimelineFragment extends ParcelableStatusesListFragment {
 
-	private boolean isAllItemsLoaded = false;
+	private boolean mIsStatusesSaved = false;
 
 	@Override
-	public boolean isListLoadFinished() {
-		return isAllItemsLoaded;
-	}
-
-	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
 		long account_id = -1, max_id = -1, user_id = -1;
 		String screen_name = null;
 		boolean is_home_tab = false;
@@ -54,24 +48,23 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
-		if (loader instanceof UserTimelineLoader) {
-			final int total = ((UserTimelineLoader) loader).getTotalItemsCount();
-			isAllItemsLoaded = total != -1 && total == adapter.getCount();
-		}
-
-	}
-
-	@Override
 	public void onDestroy() {
-		UserTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		saveStatuses();
 		super.onDestroy();
 	}
 
 	@Override
 	public void onDestroyView() {
-		UserTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		saveStatuses();
 		super.onDestroyView();
+	}
+
+	private void saveStatuses() {
+		if (mIsStatusesSaved) return;
+		final int first_visible_position = getListView().getFirstVisiblePosition();
+		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+		UserTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
+		mIsStatusesSaved = true;
 	}
 
 }

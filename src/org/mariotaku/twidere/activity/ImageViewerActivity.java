@@ -74,7 +74,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	private HostAddressResolver mResolver;
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		final Uri uri = getIntent().getData();
 		switch (view.getId()) {
 			case R.id.close: {
@@ -135,7 +135,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	}
 
 	@Override
-	public Loader<ImageLoader.Result> onCreateLoader(int id, Bundle args) {
+	public Loader<ImageLoader.Result> onCreateLoader(final int id, final Bundle args) {
 		mImageLoading = true;
 		mProgress.setVisibility(View.VISIBLE);
 		mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
@@ -144,13 +144,13 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	}
 
 	@Override
-	public void onLoaderReset(Loader<ImageLoader.Result> loader) {
+	public void onLoaderReset(final Loader<ImageLoader.Result> loader) {
 
 	}
 
 	@Override
-	public void onLoadFinished(Loader<ImageLoader.Result> loader, ImageLoader.Result data) {
-		if (data.bitmap != null) {
+	public void onLoadFinished(final Loader<ImageLoader.Result> loader, final ImageLoader.Result data) {
+		if (data != null && data.bitmap != null) {
 			mImageLoading = false;
 			mImageView.setBitmap(data.bitmap);
 			mImageFile = data.file;
@@ -161,13 +161,15 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			mImageFile = null;
 			mImageLoaded = false;
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
-			showErrorToast(this, data.exception, true);
+			if (data != null) {
+				showErrorToast(this, data.exception, true);
+			}
 		}
 		mProgress.setVisibility(View.GONE);
 	}
 
 	@Override
-	protected void onCreate(Bundle icicle) {
+	protected void onCreate(final Bundle icicle) {
 		mResolver = TwidereApplication.getInstance(this).getHostAddressResolver();
 		super.onCreate(icicle);
 		mUserAgent = getBrowserUserAgent(this);
@@ -183,13 +185,13 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	}
 
 	@Override
-	protected void onNewIntent(Intent intent) {
+	protected void onNewIntent(final Intent intent) {
 		super.onNewIntent(intent);
 		setIntent(intent);
 		loadImage(false);
 	}
 
-	private void loadImage(boolean init) {
+	private void loadImage(final boolean init) {
 		getSupportLoaderManager().destroyLoader(0);
 		final Uri uri = getIntent().getData();
 		if (uri == null) {
@@ -253,7 +255,8 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		private final HostAddressResolver resolver;
 		private File mCacheDir;
 
-		public ImageLoader(Context context, HostAddressResolver resolver, Uri uri, String user_agent) {
+		public ImageLoader(final Context context, final HostAddressResolver resolver, final Uri uri,
+				final String user_agent) {
 			super(context);
 			this.context = context;
 			this.resolver = resolver;
@@ -323,12 +326,14 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					init();
 				} catch (final IOException e) {
 					return new Result(null, null, e);
+				} catch (final NullPointerException e) {
+					return new Result(null, null, e);
 				}
 			} else if ("file".equals(scheme)) {
 				final File file = new File(uri.getPath());
 				return new Result(decodeFile(file), file, null);
 			}
-			return null;
+			return new Result(null, null, null);
 		}
 
 		@Override
@@ -336,7 +341,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			forceLoad();
 		}
 
-		private Bitmap decodeFile(File f) {
+		private Bitmap decodeFile(final File f) {
 			if (f == null) return null;
 			final BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inSampleSize = 1;
@@ -358,7 +363,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			return null;
 		}
 
-		private String getURLFilename(URL url) {
+		private String getURLFilename(final URL url) {
 			if (url == null) return null;
 			return url.toString().replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
 		}
@@ -383,7 +388,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			public final File file;
 			public final Exception exception;
 
-			public Result(Bitmap bitmap, File file, Exception exception) {
+			public Result(final Bitmap bitmap, final File file, final Exception exception) {
 				this.bitmap = bitmap;
 				this.file = file;
 				this.exception = exception;

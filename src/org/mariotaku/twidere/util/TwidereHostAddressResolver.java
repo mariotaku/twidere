@@ -29,11 +29,11 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 	private final LinkedHashMap<String, String> mHostCache = new LinkedHashMap<String, String>(512, 0.75f, false);
 	private static final String DEFAULT_DNS_SERVER = "8.8.8.8";
 
-	public TwidereHostAddressResolver(Context context) throws IOException {
+	public TwidereHostAddressResolver(final Context context) throws IOException {
 		this(context, false);
 	}
 
-	public TwidereHostAddressResolver(Context context, boolean local_only) throws IOException {
+	public TwidereHostAddressResolver(final Context context, final boolean local_only) throws IOException {
 		mHostMapping = context.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final String dns_address = mPreferences.getString(PREFERENCE_KEY_DNS_SERVER, DEFAULT_DNS_SERVER);
@@ -45,7 +45,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 	}
 
 	@Override
-	public String resolve(String host) throws IOException {
+	public String resolve(final String host) throws IOException {
 		if (host == null) return null;
 		// First, I'll try to load address cached.
 		if (mHostCache.containsKey(host)) return mHostCache.get(host);

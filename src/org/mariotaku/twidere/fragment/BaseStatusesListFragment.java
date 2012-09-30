@@ -50,6 +50,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
@@ -88,10 +89,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mActivityFirstCreated,
 			mNotReachedBottomBefore = true;
 
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
 				mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
@@ -129,10 +130,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		return mActivityFirstCreated;
 	}
 
-	public abstract boolean isListLoadFinished();
-
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
 		mAsyncTaskManager = getAsyncTaskManager();
@@ -150,7 +149,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mActivityFirstCreated = true;
 		// Tell the framework to try to keep this fragment around
@@ -168,10 +167,12 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
+		mSelectedStatus = null;
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			final ParcelableStatus status = getListAdapter().findStatus(id);
+			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
+			final ParcelableStatus status = mSelectedStatus = getListAdapter().findStatus(id);
 			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) {
@@ -186,18 +187,24 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 					}
 					return;
 				}
-				openStatus(getActivity(), status);
+				if (click_to_open_menu) {
+					openMenu(view, status);
+				} else {
+					openStatus(getActivity(), status);
+				}
 			}
 		}
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
+		mSelectedStatus = null;
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
+			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			mSelectedStatus = getListAdapter().findStatus(id);
+			final ParcelableStatus status = mSelectedStatus = getListAdapter().findStatus(id);
 			if (mApplication.isMultiSelectActive()) {
 				final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(mSelectedStatus)) {
@@ -207,34 +214,43 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				}
 				return true;
 			}
-			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-			mPopupMenu.inflate(R.menu.action_status);
-			setMenuForStatus(getActivity(), mPopupMenu.getMenu(), mSelectedStatus);
-			mPopupMenu.setOnMenuItemClickListener(this);
-			mPopupMenu.show();
-
+			if (click_to_open_menu) {
+				if (!mApplication.isMultiSelectActive()) {
+					mApplication.startMultiSelect();
+				}
+				final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
+				if (!list.contains(status)) {
+					list.add(status);
+				}
+			} else {
+				openMenu(view, status);
+			}
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Data> loader) {
+	public void onLoaderReset(final Loader<Data> loader) {
 		mData = null;
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Data> loader, Data data) {
+	public void onLoadFinished(final Loader<Data> loader, final Data data) {
 		mData = data;
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
 		setListShown(true);
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onMenuItemClick(final MenuItem item) {
 		final ParcelableStatus status = mSelectedStatus;
 		if (status == null) return false;
 		switch (item.getItemId()) {
+			case MENU_VIEW: {
+				openStatus(getActivity(), status);
+				break;
+			}
 			case MENU_SHARE: {
 				final Intent intent = new Intent(Intent.ACTION_SEND);
 				intent.setType("text/plain");
@@ -242,6 +258,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				startActivity(Intent.createChooser(intent, getString(R.string.share)));
 				break;
 			}
+			case R.id.direct_retweet:
 			case MENU_RETWEET: {
 				if (isMyRetweet(status)) {
 					mService.cancelRetweet(status.account_id, status.status_id);
@@ -252,6 +269,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				}
 				break;
 			}
+			case R.id.direct_quote:
 			case MENU_QUOTE: {
 				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 				final Bundle bundle = new Bundle();
@@ -280,7 +298,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				startActivity(intent);
 				break;
 			}
-			case MENU_FAV: {
+			case MENU_FAVORITE: {
 				if (mSelectedStatus.is_favorite) {
 					mService.destroyFavorite(status.account_id, status.status_id);
 				} else {
@@ -330,18 +348,17 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final float text_size = mPreferences.getFloat(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
-		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayImagePreview(display_image_preview);
-		mAdapter.setDisplayName(display_name);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+			final int totalItemCount) {
 		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
 				&& totalItemCount >= visibleItemCount;
 
@@ -361,7 +378,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
 			case SCROLL_STATE_TOUCH_SCROLL:
@@ -412,5 +429,33 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		}
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
+	}
+
+	private void openMenu(final View view, final ParcelableStatus status) {
+		if (view == null || status == null) return;
+		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+		mPopupMenu.inflate(R.menu.action_status);
+		final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
+		final boolean seprate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPRATE_RETWEET_ACTION, false);
+		final Menu menu = mPopupMenu.getMenu();
+		setMenuForStatus(getActivity(), menu, status);
+		final MenuItem itemView = menu.findItem(MENU_VIEW);
+		if (itemView != null) {
+			itemView.setVisible(click_to_open_menu);
+		}
+		final MenuItem itemRetweetSubMenu = menu.findItem(R.id.retweet_submenu);
+		if (itemRetweetSubMenu != null) {
+			itemRetweetSubMenu.setVisible(!seprate_retweet_action);
+		}
+		final MenuItem itemDirectQuote = menu.findItem(R.id.direct_quote);
+		if (itemDirectQuote != null) {
+			itemDirectQuote.setVisible(seprate_retweet_action);
+		}
+		final MenuItem itemDirectRetweet = menu.findItem(R.id.direct_retweet);
+		if (itemDirectRetweet != null) {
+			itemDirectRetweet.setVisible(seprate_retweet_action && !status.is_protected);
+		}
+		mPopupMenu.setOnMenuItemClickListener(this);
+		mPopupMenu.show();
 	}
 }

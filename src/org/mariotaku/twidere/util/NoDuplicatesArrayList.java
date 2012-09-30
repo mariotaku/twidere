@@ -8,7 +8,7 @@ public class NoDuplicatesArrayList<E> extends ArrayList<E> {
 	private static final long serialVersionUID = -7277301117508689125L;
 
 	@Override
-	public boolean add(E e) {
+	public boolean add(final E e) {
 		if (contains(e))
 			return false;
 		else
@@ -16,7 +16,7 @@ public class NoDuplicatesArrayList<E> extends ArrayList<E> {
 	}
 
 	@Override
-	public void add(int index, E element) {
+	public void add(final int index, final E element) {
 		if (contains(element))
 			return;
 		else {
@@ -25,14 +25,14 @@ public class NoDuplicatesArrayList<E> extends ArrayList<E> {
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends E> collection) {
+	public boolean addAll(final Collection<? extends E> collection) {
 		final Collection<E> copy = new ArrayList<E>(collection);
 		copy.removeAll(this);
 		return super.addAll(copy);
 	}
 
 	@Override
-	public boolean addAll(int index, Collection<? extends E> collection) {
+	public boolean addAll(final int index, final Collection<? extends E> collection) {
 		final Collection<E> copy = new ArrayList<E>(collection);
 		copy.removeAll(this);
 		return super.addAll(index, copy);

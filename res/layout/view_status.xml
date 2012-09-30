@@ -22,8 +22,7 @@
 				<FrameLayout
 					android:id="@+id/user_color_label"
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:background="@drawable/ic_label_user">
+					android:layout_height="wrap_content">
 
 					<RelativeLayout
 						android:id="@+id/profile"
@@ -50,17 +49,19 @@
 							android:paddingLeft="8dp"
 							android:paddingRight="4dp">
 
-							<TextView android:layerType="software"
+							<TextView
 								android:id="@+id/name"
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
+								android:layerType="software"
 								android:singleLine="true"
 								android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-							<TextView android:layerType="software"
+							<TextView
 								android:id="@+id/screen_name"
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
+								android:layerType="software"
 								android:singleLine="true"
 								android:textAppearance="?android:attr/textAppearanceSmall"
 								android:textColor="?android:attr/textColorSecondary"/>
@@ -93,7 +94,7 @@
 					</RelativeLayout>
 				</FrameLayout>
 
-				<TextView android:layerType="software"
+				<TextView
 					android:id="@+id/in_reply_to"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -101,16 +102,18 @@
 					android:drawableLeft="@drawable/ic_indicator_reply"
 					android:drawablePadding="4dp"
 					android:gravity="center_vertical"
+					android:layerType="software"
 					android:padding="8dp"
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:visibility="gone"/>
 
-				<TextView android:layerType="software"
+				<TextView
 					android:id="@+id/text"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_margin="8dp"
+					android:layerType="software"
 					android:singleLine="false"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -119,7 +122,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="144dp"/>
 
-				<TextView android:layerType="software"
+				<TextView
 					android:id="@+id/retweet_view"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -127,13 +130,14 @@
 					android:drawableLeft="@drawable/ic_indicator_retweet"
 					android:drawablePadding="4dp"
 					android:gravity="center_vertical"
+					android:layerType="software"
 					android:padding="8dp"
 					android:singleLine="true"
 					android:text="@string/users_retweeted_this"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:visibility="gone"/>
 
-				<TextView android:layerType="software"
+				<TextView
 					android:id="@+id/location_view"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -141,16 +145,18 @@
 					android:drawableLeft="@drawable/ic_indicator_has_location"
 					android:drawablePadding="4dp"
 					android:gravity="center_vertical"
+					android:layerType="software"
 					android:padding="8dp"
 					android:singleLine="true"
 					android:text="@string/view_map"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:visibility="gone"/>
 
-				<TextView android:layerType="software"
+				<TextView
 					android:id="@+id/time_source"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:layerType="software"
 					android:padding="8dp"
 					android:textAppearance="?android:attr/textAppearanceSmall"/>
 			</LinearLayout>

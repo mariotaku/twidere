@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
+import org.mariotaku.twidere.loader.ParcelableStatusesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.SerializableStatus;
 
@@ -34,20 +35,25 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.content.Loader;
+import android.widget.ListView;
 
 public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
-	private ParcelableStatusesAdapter mAdapter;
+	private SharedPreferences mPreferences;
 
 	private List<ParcelableStatus> mData;
 
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private ParcelableStatusesAdapter mAdapter;
+	private ListView mListView;
+
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_STATUS_DESTROYED.equals(action)) {
 				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
@@ -67,7 +73,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	};
 
-	public final void deleteStatus(long status_id) {
+	public final void deleteStatus(final long status_id) {
 		if (status_id <= 0 || mData == null) return;
 		final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
 		for (final ParcelableStatus status : mData) {
@@ -92,7 +98,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public final int getStatuses(long[] account_ids, long[] max_ids) {
+	public final int getStatuses(final long[] account_ids, final long[] max_ids) {
 		final long max_id = max_ids != null && max_ids.length == 1 ? max_ids[0] : -1;
 		final Bundle args = getArguments();
 		args.putLong(INTENT_KEY_MAX_ID, max_id);
@@ -107,7 +113,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public abstract Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args);
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		mData = getData();
 		if (savedInstanceState != null) {
 			mData = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
@@ -115,17 +121,29 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		mAdapter = new ParcelableStatusesAdapter(getActivity());
 		mAdapter.setData(mData);
 		super.onActivityCreated(savedInstanceState);
+		mListView = getListView();
+		mPreferences = getSharedPreferences();
 	}
 
 	@Override
-	public final Loader<List<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
+	public final Loader<List<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
 		if (isLoaderUsed()) {
 			setProgressBarIndeterminateVisibility(true);
 		}
 		return newLoaderInstance(args);
 	}
 
-	public abstract void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter);
+	public void onDataLoaded(final Loader<List<ParcelableStatus>> loader, final ParcelableStatusesAdapter adapter) {
+		if (loader instanceof ParcelableStatusesLoader) {
+			final Long last_viewed_id = ((ParcelableStatusesLoader) loader).getLastViewedId();
+			if (last_viewed_id != null && mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true)) {
+				final int position = adapter.findItemPositionByStatusId(last_viewed_id);
+				if (position > -1 && position < mListView.getCount()) {
+					mListView.setSelection(position);
+				}
+			}
+		}
+	}
 
 	@Override
 	public void onDestroyView() {
@@ -133,7 +151,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public final void onLoaderReset(Loader<List<ParcelableStatus>> loader) {
+	public final void onLoaderReset(final Loader<List<ParcelableStatus>> loader) {
 		super.onLoaderReset(loader);
 		if (!isLoaderUsed()) return;
 		onRefreshComplete();
@@ -141,7 +159,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public final void onLoadFinished(Loader<List<ParcelableStatus>> loader, List<ParcelableStatus> data) {
+	public final void onLoadFinished(final Loader<List<ParcelableStatus>> loader, final List<ParcelableStatus> data) {
 		super.onLoadFinished(loader, data);
 		if (!isLoaderUsed()) return;
 		mData = data;
@@ -173,7 +191,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		if (mData instanceof ArrayList) {
 			outState.putParcelableArrayList(INTENT_KEY_DATA, (ArrayList<? extends Parcelable>) mData);
 		}

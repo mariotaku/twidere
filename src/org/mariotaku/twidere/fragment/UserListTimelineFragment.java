@@ -21,8 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import java.util.List;
 
-import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
-import org.mariotaku.twidere.loader.ListTimelineLoader;
+import org.mariotaku.twidere.loader.UserListTimelineLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
 import android.os.Bundle;
@@ -30,13 +29,10 @@ import android.support.v4.content.Loader;
 
 public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 
-	@Override
-	public boolean isListLoadFinished() {
-		return false;
-	}
+	private boolean mIsStatusesSaved = false;
 
 	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(Bundle args) {
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
 		int list_id = -1;
 		long account_id = -1, max_id = -1, user_id = -1;
 		String screen_name = null, list_name = null;
@@ -50,25 +46,28 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 			list_name = args.getString(INTENT_KEY_LIST_NAME);
 			is_home_tab = args.getBoolean(INTENT_KEY_IS_HOME_TAB);
 		}
-		return new ListTimelineLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, max_id,
+		return new UserListTimelineLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, max_id,
 				getData(), getClass().getSimpleName(), is_home_tab);
 	}
 
 	@Override
-	public void onDataLoaded(Loader<List<ParcelableStatus>> loader, ParcelableStatusesAdapter adapter) {
-
-	}
-
-	@Override
 	public void onDestroy() {
-		ListTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		saveStatuses();
 		super.onDestroy();
 	}
 
 	@Override
 	public void onDestroyView() {
-		ListTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), getArguments());
+		saveStatuses();
 		super.onDestroyView();
+	}
+
+	private void saveStatuses() {
+		if (mIsStatusesSaved) return;
+		final int first_visible_position = getListView().getFirstVisiblePosition();
+		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+		UserListTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
+		mIsStatusesSaved = true;
 	}
 
 }

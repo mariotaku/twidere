@@ -51,7 +51,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 	private boolean mActionModeShowing;
 
-	public ActionBarCompatBase(Activity activity) {
+	public ActionBarCompatBase(final Activity activity) {
 		mActivity = activity;
 		mActionBarMenu = new MenuImpl(activity);
 		mRealMenu = new MenuImpl(mActivity);
@@ -80,7 +80,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	 * metadata on pre-Honeycomb devices.
 	 */
 	@Override
-	public MenuInflater getMenuInflater(MenuInflater superMenuInflater) {
+	public MenuInflater getMenuInflater(final MenuInflater superMenuInflater) {
 		return new SupportMenuInflater(mActivity, superMenuInflater);
 	}
 
@@ -97,19 +97,19 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	}
 
 	@Override
-	public void setBackgroundDrawable(Drawable d) {
+	public void setBackgroundDrawable(final Drawable d) {
 		if (mActionBarView != null) {
 			mActionBarView.setBackgroundDrawable(d);
 		}
 	}
 
 	@Override
-	public void setCustomView(int resId) {
+	public void setCustomView(final int resId) {
 		setCustomView(mActivity.getLayoutInflater().inflate(resId, null));
 	}
 
 	@Override
-	public void setCustomView(View view) {
+	public void setCustomView(final View view) {
 		if (mCustomViewContainer == null) return;
 		mCustomViewContainer.removeAllViews();
 		mCustomViewContainer.addView(view);
@@ -117,49 +117,49 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	}
 
 	@Override
-	public void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
+	public void setDisplayHomeAsUpEnabled(final boolean showHomeAsUp) {
 		if (mHomeAsUpIndicator == null) return;
 		mHomeAsUpIndicator.setVisibility(showHomeAsUp ? View.VISIBLE : View.INVISIBLE);
 	}
 
 	@Override
-	public void setDisplayShowCustomEnabled(boolean enabled) {
+	public void setDisplayShowCustomEnabled(final boolean enabled) {
 		if (mCustomViewContainer == null) return;
 		mCustomViewContainer.setVisibility(enabled ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
-	public void setDisplayShowHomeEnabled(boolean showHome) {
+	public void setDisplayShowHomeEnabled(final boolean showHome) {
 		if (mActionBarView == null) return;
 		mHomeView.setVisibility(showHome ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
-	public void setDisplayShowTitleEnabled(boolean enabled) {
+	public void setDisplayShowTitleEnabled(final boolean enabled) {
 		if (mTitleContainer == null) return;
 		mTitleContainer.setVisibility(enabled ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
-	public void setSubtitle(CharSequence subtitle) {
+	public void setSubtitle(final CharSequence subtitle) {
 		if (mSubtitleView == null) return;
 		mSubtitleView.setText(subtitle);
 		mSubtitleView.setVisibility(subtitle != null ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
-	public void setSubtitle(int resId) {
+	public void setSubtitle(final int resId) {
 		setSubtitle(mActivity.getString(resId));
 	}
 
 	@Override
-	public void setTitle(CharSequence title) {
+	public void setTitle(final CharSequence title) {
 		if (mTitleView == null) return;
 		mTitleView.setText(title);
 	}
 
 	@Override
-	public void setTitle(int resId) {
+	public void setTitle(final int resId) {
 		setTitle(mActivity.getString(resId));
 	}
 
@@ -190,14 +190,14 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		actionButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View view) {
+			public void onClick(final View view) {
 				if (!item.isEnabled()) return;
 				if (item.hasSubMenu()) {
 					final PopupMenu popup = PopupMenu.getInstance(mActivity, view);
 					popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
 						@Override
-						public boolean onMenuItemClick(MenuItem item) {
+						public boolean onMenuItemClick(final MenuItem item) {
 							return mActivity.onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL, item);
 						}
 
@@ -211,7 +211,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		actionButton.setOnLongClickListener(new View.OnLongClickListener() {
 
 			@Override
-			public boolean onLongClick(View v) {
+			public boolean onLongClick(final View v) {
 				if (item.getItemId() == android.R.id.home) return false;
 
 				final Toast t = Toast.makeText(mActivity, item.getTitle(), Toast.LENGTH_SHORT);
@@ -262,14 +262,14 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 			mHomeView.setOnClickListener(new View.OnClickListener() {
 
 				@Override
-				public void onClick(View view) {
+				public void onClick(final View view) {
 					mActivity.onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL, homeItem);
 				}
 			});
 		}
 	}
 
-	void hideInRealMenu(Menu menu) {
+	void hideInRealMenu(final Menu menu) {
 		if (menu instanceof MenuImpl || menu == null) return;
 		for (int i = 0; i < menu.size(); i++) {
 			final MenuItem realItem = menu.getItem(i);
@@ -326,12 +326,12 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		return true;
 	}
 
-	void setProgressBarIndeterminateEnabled(boolean enabled) {
+	void setProgressBarIndeterminateEnabled(final boolean enabled) {
 		mProgressBarIndeterminateEnabled = enabled;
 
 	}
 
-	void setProgressBarIndeterminateVisibility(boolean visible) {
+	void setProgressBarIndeterminateVisibility(final boolean visible) {
 		if (mProgressBarIndeterminateEnabled) {
 			mActionBarView.findViewById(R.id.actionbar_progress_indeterminate).setVisibility(
 					visible ? View.VISIBLE : View.GONE);
@@ -361,13 +361,13 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 		private final Context context;
 
-		public SupportMenu(Context context) {
+		public SupportMenu(final Context context) {
 			super(context);
 			this.context = context;
 		}
 
 		@Override
-		public MenuItem findItem(int id) {
+		public MenuItem findItem(final int id) {
 			for (final MenuItem item : ((MenuImpl) mRealMenu).getMenuItems()) {
 				if (item.getItemId() == id) return new SupportMenuItem(context, id);
 			}
@@ -383,13 +383,13 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 		final MenuInflater mInflater;
 
-		public SupportMenuInflater(Context context, MenuInflater inflater) {
+		public SupportMenuInflater(final Context context, final MenuInflater inflater) {
 			super(context);
 			mInflater = inflater;
 		}
 
 		@Override
-		public void inflate(int menuRes, Menu menu) {
+		public void inflate(final int menuRes, final Menu menu) {
 			mInflater.inflate(menuRes, menu);
 			// if (!(menu instanceof MenuImpl)) {
 			mActionBarMenu.clear();
@@ -406,7 +406,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		 * 
 		 * @param menuResId
 		 */
-		private void removeDuplicateMenuInActionBar(Menu menu, int menuResId) {
+		private void removeDuplicateMenuInActionBar(final Menu menu, final int menuResId) {
 			XmlResourceParser parser = null;
 			try {
 				parser = mActivity.getResources().getXml(menuResId);
@@ -474,13 +474,13 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 		private final int itemId;
 
-		public SupportMenuItem(Context context, int itemId) {
+		public SupportMenuItem(final Context context, final int itemId) {
 			super(context);
 			this.itemId = itemId;
 		}
 
 		@Override
-		public MenuItem setEnabled(boolean enabled) {
+		public MenuItem setEnabled(final boolean enabled) {
 			if (mActionBarMenu == null || mRealMenu == null) return this;
 			final MenuItem item = mActionBarMenu.findItem(itemId);
 			final MenuItem realItem = mRealMenu.findItem(itemId);
@@ -498,7 +498,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		}
 
 		@Override
-		public MenuItem setIcon(int iconRes) {
+		public MenuItem setIcon(final int iconRes) {
 			if (mActionBarMenu == null || mRealMenu == null) return this;
 			final MenuItem item = mActionBarMenu.findItem(itemId);
 			final MenuItem realItem = mRealMenu.findItem(itemId);
@@ -512,7 +512,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		}
 
 		@Override
-		public MenuItem setTitle(int titleRes) {
+		public MenuItem setTitle(final int titleRes) {
 			if (mActionBarMenu == null || mRealMenu == null) return this;
 			final MenuItem item = mActionBarMenu.findItem(itemId);
 			final MenuItem realItem = mRealMenu.findItem(itemId);
@@ -526,7 +526,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		}
 
 		@Override
-		public MenuItem setVisible(boolean visible) {
+		public MenuItem setVisible(final boolean visible) {
 			if (mActionBarMenu == null || mRealMenu == null || mActionMenuView == null) return this;
 			final MenuItem item = mActionBarMenu.findItem(itemId);
 			final MenuItem realItem = mRealMenu.findItem(itemId);

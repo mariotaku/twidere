@@ -74,7 +74,7 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		final String action = getIntent().getAction();
 		mCurrentDirectory = getExternalStorageDirectory();
 		if (!INTENT_ACTION_PICK_FILE.equals(action) || mCurrentDirectory == null) {
@@ -93,7 +93,7 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 	}
 
 	@Override
-	public Loader<List<File>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<File>> onCreateLoader(final int id, Bundle args) {
 		if (args == null) {
 			args = getIntent().getExtras();
 		}
@@ -102,13 +102,13 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_file_picker, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		final File file = mAdapter.getItem(position);
 		if (file == null) return;
 		if (file.isDirectory()) {
@@ -124,19 +124,19 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<File>> loader) {
+	public void onLoaderReset(final Loader<List<File>> loader) {
 		mAdapter.setData(null);
 
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<File>> loader, List<File> data) {
+	public void onLoadFinished(final Loader<List<File>> loader, final List<File> data) {
 		mAdapter.setData(data);
 
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				onBackPressed();
@@ -151,7 +151,7 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 	}
 
@@ -162,7 +162,7 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 
 		private final List<File> mData = new ArrayList<File>();
 
-		public FilesAdapter(Context context) {
+		public FilesAdapter(final Context context) {
 			mInflater = LayoutInflater.from(context);
 			mContext = context;
 		}
@@ -173,17 +173,17 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 		}
 
 		@Override
-		public File getItem(int position) {
+		public File getItem(final int position) {
 			return mData.get(position);
 		}
 
 		@Override
-		public long getItemId(int position) {
+		public long getItemId(final int position) {
 			return getItem(position).hashCode();
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final View view = convertView != null ? convertView : mInflater.inflate(
 					android.R.layout.simple_list_item_1, parent, false);
 			final TextView text = (TextView) (view instanceof TextView ? view : view.findViewById(android.R.id.text1));
@@ -199,7 +199,7 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 			return view;
 		}
 
-		public void setData(List<File> data) {
+		public void setData(final List<File> data) {
 			mData.clear();
 			if (data != null) {
 				mData.addAll(data);
@@ -216,12 +216,12 @@ public class FilePickerActivity extends BaseActivity implements Constants, OnIte
 
 		private static final Comparator<File> NAME_COMPARATOR = new Comparator<File>() {
 			@Override
-			public int compare(File file1, File file2) {
+			public int compare(final File file1, final File file2) {
 				return file1.getName().compareTo(file2.getName());
 			}
 		};
 
-		public FilesLoader(Context context, File path, String[] extensions) {
+		public FilesLoader(final Context context, final File path, final String[] extensions) {
 			super(context);
 			this.path = path;
 			extensions_regex = Pattern.compile(ArrayUtils.toString(extensions, '|', false), Pattern.CASE_INSENSITIVE);

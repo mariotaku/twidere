@@ -19,7 +19,7 @@ public class MenuItemImpl implements MenuItem {
 	private final Context context;
 	private boolean visible = true, enabled = true, checkable, checked;
 
-	public MenuItemImpl(Context context) {
+	public MenuItemImpl(final Context context) {
 		this.context = context;
 	}
 
@@ -132,110 +132,110 @@ public class MenuItemImpl implements MenuItem {
 
 	@TargetApi(14)
 	@Override
-	public MenuItem setActionProvider(ActionProvider actionProvider) {
+	public MenuItem setActionProvider(final ActionProvider actionProvider) {
 		return this;
 	}
 
 	@Override
-	public MenuItem setActionView(int resId) {
+	public MenuItem setActionView(final int resId) {
 		return this;
 	}
 
 	@Override
-	public MenuItem setActionView(View view) {
+	public MenuItem setActionView(final View view) {
 		return this;
 	}
 
 	@Override
-	public MenuItem setAlphabeticShortcut(char alphaChar) {
+	public MenuItem setAlphabeticShortcut(final char alphaChar) {
 		return this;
 	}
 
 	@Override
-	public MenuItem setCheckable(boolean checkable) {
+	public MenuItem setCheckable(final boolean checkable) {
 		this.checkable = checkable;
 		return this;
 	}
 
 	@Override
-	public MenuItem setChecked(boolean checked) {
+	public MenuItem setChecked(final boolean checked) {
 		this.checked = checked;
 		return this;
 	}
 
 	@Override
-	public MenuItem setEnabled(boolean enabled) {
+	public MenuItem setEnabled(final boolean enabled) {
 		this.enabled = enabled;
 		return this;
 	}
 
 	@Override
-	public MenuItem setIcon(Drawable icon) {
+	public MenuItem setIcon(final Drawable icon) {
 		this.icon = icon;
 		return this;
 	}
 
 	@Override
-	public MenuItem setIcon(int iconRes) {
+	public MenuItem setIcon(final int iconRes) {
 		icon = iconRes == 0 ? null : context.getResources().getDrawable(iconRes);
 		return this;
 	}
 
 	@Override
-	public MenuItem setIntent(Intent intent) {
+	public MenuItem setIntent(final Intent intent) {
 		return this;
 	}
 
 	@Override
-	public MenuItem setNumericShortcut(char numericChar) {
+	public MenuItem setNumericShortcut(final char numericChar) {
 		return this;
 	}
 
 	@TargetApi(14)
 	@Override
-	public MenuItem setOnActionExpandListener(OnActionExpandListener listener) {
+	public MenuItem setOnActionExpandListener(final OnActionExpandListener listener) {
 		return this;
 	}
 
 	@Override
-	public MenuItem setOnMenuItemClickListener(OnMenuItemClickListener menuItemClickListener) {
+	public MenuItem setOnMenuItemClickListener(final OnMenuItemClickListener menuItemClickListener) {
 		return this;
 	}
 
 	@Override
-	public MenuItem setShortcut(char numericChar, char alphaChar) {
+	public MenuItem setShortcut(final char numericChar, final char alphaChar) {
 		return this;
 	}
 
 	@Override
-	public void setShowAsAction(int actionEnum) {
+	public void setShowAsAction(final int actionEnum) {
 
 	}
 
 	@Override
-	public MenuItem setShowAsActionFlags(int actionEnum) {
+	public MenuItem setShowAsActionFlags(final int actionEnum) {
 		return this;
 	}
 
 	@Override
-	public MenuItem setTitle(CharSequence title) {
+	public MenuItem setTitle(final CharSequence title) {
 		this.title = title;
 		return this;
 	}
 
 	@Override
-	public MenuItem setTitle(int titleRes) {
+	public MenuItem setTitle(final int titleRes) {
 		title = context.getString(titleRes);
 		return this;
 	}
 
 	@Override
-	public MenuItem setTitleCondensed(CharSequence title) {
+	public MenuItem setTitleCondensed(final CharSequence title) {
 		return this;
 	}
 
 	@Override
-	public MenuItem setVisible(boolean visible) {
+	public MenuItem setVisible(final boolean visible) {
 		this.visible = visible;
 		return this;
 	}
@@ -245,28 +245,28 @@ public class MenuItemImpl implements MenuItem {
 		return getTitle() == null ? null : getTitle().toString();
 	}
 
-	MenuItemImpl setGroupId(int groupId) {
+	MenuItemImpl setGroupId(final int groupId) {
 		this.groupId = groupId;
 		return this;
 	}
 
-	MenuItemImpl setItemId(int itemId) {
+	MenuItemImpl setItemId(final int itemId) {
 		this.itemId = itemId;
 		return this;
 	}
 
-	MenuItemImpl setOrder(int order) {
+	MenuItemImpl setOrder(final int order) {
 		this.order = order;
 		return this;
 	}
 
-	MenuItemImpl setSubMenu(SubMenu subMenu) {
+	MenuItemImpl setSubMenu(final SubMenu subMenu) {
 		this.subMenu = subMenu;
 		this.subMenu.setHeaderTitle(getTitle());
 		return this;
 	}
 
-	public static MenuItem createItem(Context context, int id) {
+	public static MenuItem createItem(final Context context, final int id) {
 		return new MenuItemImpl(context).setItemId(id);
 	}
 

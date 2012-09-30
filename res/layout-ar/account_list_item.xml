@@ -15,11 +15,10 @@
      limitations under the License.
 -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.mariotaku.twidere.view.ColorLabelRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:layout_gravity="center_vertical"
-	android:background="@drawable/ic_label_account"
 	android:minHeight="?android:attr/listPreferredItemHeight"
 	android:padding="6dp">
 
@@ -55,4 +54,4 @@
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</LinearLayout>
 
-</RelativeLayout>
+</org.mariotaku.twidere.view.ColorLabelRelativeLayout>

@@ -53,14 +53,14 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 	ColorPickerDialogFragment mFragment = new ColorPickerDialogFragment();
 
 	@Override
-	public void onColorSelected(int color) {
+	public void onColorSelected(final int color) {
 		mCustomizedColor = color;
 		mColorsGrid.invalidateViews();
 		finishSelecting(color);
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.set_color);
 		mColorsGrid = (GridView) findViewById(R.id.colors_grid);
@@ -91,7 +91,7 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		if (position == adapter.getCount() - 1) {
 			showDialog();
 		} else {
@@ -101,12 +101,12 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(final Bundle outState) {
 		outState.putInt(Accounts.USER_COLOR, mCustomizedColor);
 		super.onSaveInstanceState(outState);
 	}
 
-	private void finishSelecting(int color) {
+	private void finishSelecting(final int color) {
 		final Intent intent = new Intent();
 		final Bundle bundle = new Bundle();
 		bundle.putInt(Accounts.USER_COLOR, color);
@@ -123,15 +123,15 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 
 	class ColorsAdapter extends ArrayAdapter<Integer> {
 
-		private Context mContext;
+		private final Context mContext;
 
-		public ColorsAdapter(Context context, List<Integer> objects) {
+		public ColorsAdapter(final Context context, final List<Integer> objects) {
 			super(context, 0, objects);
 			mContext = context;
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final View view = getLayoutInflater().inflate(R.layout.color_grid_item, parent, false);
 			final ImageView color = (ImageView) view.findViewById(R.id.color);
 			color.setImageBitmap(getColorPreviewBitmap(mContext, getItem(position)));

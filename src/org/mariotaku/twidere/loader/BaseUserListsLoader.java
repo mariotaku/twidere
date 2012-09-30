@@ -2,13 +2,15 @@ package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
+import twitter4j.CursorSupport;
 import twitter4j.PagableResponseList;
+import twitter4j.ResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.UserList;
@@ -17,13 +19,14 @@ import android.support.v4.content.AsyncTaskLoader;
 
 public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<ParcelableUserList>> {
 
-	final List<ParcelableUserList> mData = new ArrayList<ParcelableUserList>();
+	final NoDuplicatesArrayList<ParcelableUserList> mData = new NoDuplicatesArrayList<ParcelableUserList>();
 	final Twitter mTwitter;
 	private final long mAccountId, mCursor;
 
 	private long mNextCursor, mPrevCursor;
 
-	public BaseUserListsLoader(Context context, long account_id, long cursor, List<ParcelableUserList> data) {
+	public BaseUserListsLoader(final Context context, final long account_id, final long cursor,
+			final List<ParcelableUserList> data) {
 		super(context);
 		if (data != null) {
 			mData.addAll(data);
@@ -49,40 +52,36 @@ public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<Parcelabl
 		return mTwitter;
 	}
 
-	public abstract PagableResponseList<UserList> getUserLists() throws TwitterException;;
+	public abstract ResponseList<UserList> getUserLists() throws TwitterException;;
 
 	@Override
 	public List<ParcelableUserList> loadInBackground() {
-		PagableResponseList<UserList> list_loaded = null;
+		ResponseList<UserList> list_loaded = null;
 		try {
 			list_loaded = getUserLists();
 		} catch (final TwitterException e) {
 			e.printStackTrace();
 		}
 		if (list_loaded != null) {
-			mNextCursor = list_loaded.getNextCursor();
-			mPrevCursor = list_loaded.getPreviousCursor();
 			final int list_size = list_loaded.size();
-			for (int i = 0; i < list_size; i++) {
-				final UserList user = list_loaded.get(i);
-				if (!hasId(user.getId())) {
-					mData.add(new ParcelableUserList(user, mAccountId, (mCursor + 1) * 20 + i));
+			if (list_loaded instanceof PagableResponseList) {
+				mNextCursor = ((CursorSupport) list_loaded).getNextCursor();
+				mPrevCursor = ((CursorSupport) list_loaded).getPreviousCursor();
+				for (int i = 0; i < list_size; i++) {
+					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, (mCursor + 1) * 20 + i));
+				}
+			} else {
+				for (int i = 0; i < list_size; i++) {
+					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, i));
 				}
 			}
 		}
-		Collections.sort(mData, ParcelableUserList.POSITION_COMPARATOR);
+		Collections.sort(mData);
 		return mData;
 	}
 
 	@Override
 	public void onStartLoading() {
 		forceLoad();
-	}
-
-	private boolean hasId(int id) {
-		for (final ParcelableUserList user : mData) {
-			if (user.list_id == id) return true;
-		}
-		return false;
 	}
 }

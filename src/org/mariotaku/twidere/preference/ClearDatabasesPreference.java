@@ -23,21 +23,21 @@ public class ClearDatabasesPreference extends Preference implements Constants, O
 
 	private ClearCacheTask mClearCacheTask;
 
-	public ClearDatabasesPreference(Context context) {
+	public ClearDatabasesPreference(final Context context) {
 		this(context, null);
 	}
 
-	public ClearDatabasesPreference(Context context, AttributeSet attrs) {
+	public ClearDatabasesPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public ClearDatabasesPreference(Context context, AttributeSet attrs, int defStyle) {
+	public ClearDatabasesPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setOnPreferenceClickListener(this);
 	}
 
 	@Override
-	public boolean onPreferenceClick(Preference preference) {
+	public boolean onPreferenceClick(final Preference preference) {
 		if (mClearCacheTask == null || mClearCacheTask.getStatus() != Status.RUNNING) {
 			mClearCacheTask = new ClearCacheTask(getContext());
 			mClearCacheTask.execute();
@@ -50,13 +50,13 @@ public class ClearDatabasesPreference extends Preference implements Constants, O
 		private final Context context;
 		private final ProgressDialog mProgress;
 
-		public ClearCacheTask(Context context) {
+		public ClearCacheTask(final Context context) {
 			this.context = context;
 			mProgress = new ProgressDialog(context);
 		}
 
 		@Override
-		protected Void doInBackground(Void... args) {
+		protected Void doInBackground(final Void... args) {
 			if (context == null) return null;
 			final ContentResolver resolver = context.getContentResolver();
 			final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(context,
@@ -74,7 +74,7 @@ public class ClearDatabasesPreference extends Preference implements Constants, O
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {
+		protected void onPostExecute(final Void result) {
 			super.onPostExecute(result);
 			if (mProgress != null && mProgress.isShowing()) {
 				mProgress.dismiss();

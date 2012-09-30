@@ -55,32 +55,32 @@ public class BaseDialogFragment extends DialogFragment implements Constants {
 		return null;
 	}
 
-	public SharedPreferences getSharedPreferences(String name, int mode) {
+	public SharedPreferences getSharedPreferences(final String name, final int mode) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSharedPreferences(name, mode);
 		return null;
 	}
 
-	public Object getSystemService(String name) {
+	public Object getSystemService(final String name) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSystemService(name);
 		return null;
 	}
 
-	public void registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+	public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.registerReceiver(receiver, filter);
 	}
 
-	public void setProgressBarIndeterminateVisibility(boolean visible) {
+	public void setProgressBarIndeterminateVisibility(final boolean visible) {
 		final Activity activity = getActivity();
 		if (activity instanceof BaseActivity) {
 			((BaseActivity) activity).setSupportProgressBarIndeterminateVisibility(visible);
 		}
 	}
 
-	public void unregisterReceiver(BroadcastReceiver receiver) {
+	public void unregisterReceiver(final BroadcastReceiver receiver) {
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.unregisterReceiver(receiver);

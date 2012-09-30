@@ -84,8 +84,8 @@ public class LazyImageLoader implements Constants {
 	private final String mUserAgent;
 	private final HostAddressResolver mResolver;
 
-	public LazyImageLoader(Context context, String cache_dir_name, int fallback_image_res, int required_width,
-			int required_height, int mem_cache_capacity) {
+	public LazyImageLoader(final Context context, final String cache_dir_name, final int fallback_image_res,
+			final int required_width, final int required_height, final int mem_cache_capacity) {
 		mContext = context;
 		mMemoryCache = new MemoryCache(mem_cache_capacity);
 		mFileCache = new FileCache(context, cache_dir_name);
@@ -106,11 +106,11 @@ public class LazyImageLoader implements Constants {
 		mMemoryCache.clear();
 	}
 
-	public void displayImage(String url, ImageView imageview) {
+	public void displayImage(final String url, final ImageView imageview) {
 		displayImage(parseURL(url), imageview);
 	}
 
-	public void displayImage(URL url, ImageView imageview) {
+	public void displayImage(final URL url, final ImageView imageview) {
 		if (imageview == null) return;
 		if (url == null) {
 			imageview.setImageResource(mFallbackRes);
@@ -126,7 +126,7 @@ public class LazyImageLoader implements Constants {
 		}
 	}
 
-	public String getCachedImagePath(URL url) {
+	public String getCachedImagePath(final URL url) {
 		if (mFileCache == null) return null;
 		final File f = mFileCache.getFile(url);
 		if (f != null && f.exists())
@@ -142,7 +142,7 @@ public class LazyImageLoader implements Constants {
 	}
 
 	// decodes image and scales it to reduce memory consumption
-	private Bitmap decodeFile(File f) {
+	private Bitmap decodeFile(final File f) {
 		try {
 			// decode image size
 			final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -175,12 +175,12 @@ public class LazyImageLoader implements Constants {
 		return null;
 	}
 
-	private void queuePhoto(URL url, ImageView imageview) {
+	private void queuePhoto(final URL url, final ImageView imageview) {
 		final ImageToLoad p = new ImageToLoad(url, imageview);
 		mExecutorService.submit(new ImageLoader(p));
 	}
 
-	boolean imageViewReused(ImageToLoad imagetoload) {
+	boolean imageViewReused(final ImageToLoad imagetoload) {
 		final Object tag = mImageViews.get(imagetoload.imageview);
 		if (tag == null || !tag.equals(imagetoload.source)) return true;
 		return false;
@@ -192,7 +192,7 @@ public class LazyImageLoader implements Constants {
 		Bitmap bitmap;
 		ImageToLoad imagetoload;
 
-		public BitmapDisplayer(Bitmap b, ImageToLoad p) {
+		public BitmapDisplayer(final Bitmap b, final ImageToLoad p) {
 			bitmap = b;
 			imagetoload = p;
 		}
@@ -213,9 +213,9 @@ public class LazyImageLoader implements Constants {
 		private final String mCacheDirName;
 
 		private File mCacheDir;
-		private Context mContext;
+		private final Context mContext;
 
-		public FileCache(Context context, String cache_dir_name) {
+		public FileCache(final Context context, final String cache_dir_name) {
 			mContext = context;
 			mCacheDirName = cache_dir_name;
 			init();
@@ -230,7 +230,7 @@ public class LazyImageLoader implements Constants {
 			}
 		}
 
-		public File getFile(URL tag) {
+		public File getFile(final URL tag) {
 			if (mCacheDir == null) return null;
 			final String filename = getURLFilename(tag);
 			if (filename == null) return null;
@@ -253,7 +253,7 @@ public class LazyImageLoader implements Constants {
 			}
 		}
 
-		private String getURLFilename(URL url) {
+		private String getURLFilename(final URL url) {
 			if (url == null) return null;
 			return url.toString().replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
 		}
@@ -261,13 +261,13 @@ public class LazyImageLoader implements Constants {
 	}
 
 	class ImageLoader implements Runnable {
-		private ImageToLoad imagetoload;
+		private final ImageToLoad imagetoload;
 
-		public ImageLoader(ImageToLoad imagetoload) {
+		public ImageLoader(final ImageToLoad imagetoload) {
 			this.imagetoload = imagetoload;
 		}
 
-		public Bitmap getBitmap(URL url) {
+		public Bitmap getBitmap(final URL url) {
 			if (url == null) return null;
 			final File cache_file = mFileCache.getFile(url);
 
@@ -321,6 +321,8 @@ public class LazyImageLoader implements Constants {
 				mFileCache.init();
 			} catch (final IOException e) {
 				// e.printStackTrace();
+			} catch (final NullPointerException e) {
+
 			}
 			return null;
 		}
@@ -353,7 +355,7 @@ public class LazyImageLoader implements Constants {
 		private final Map<URL, SoftReference<Bitmap>> mSoftCache;
 		private final Map<URL, Bitmap> mHardCache;
 
-		public MemoryCache(int max_capacity) {
+		public MemoryCache(final int max_capacity) {
 			mMaxCapacity = max_capacity;
 			mSoftCache = new ConcurrentHashMap<URL, SoftReference<Bitmap>>();
 			mHardCache = new LinkedHashMap<URL, Bitmap>(mMaxCapacity / 3, 0.75f, true) {
@@ -361,7 +363,7 @@ public class LazyImageLoader implements Constants {
 				private static final long serialVersionUID = 1347795807259717646L;
 
 				@Override
-				protected boolean removeEldestEntry(LinkedHashMap.Entry<URL, Bitmap> eldest) {
+				protected boolean removeEldestEntry(final LinkedHashMap.Entry<URL, Bitmap> eldest) {
 					// Moves the last used item in the hard cache to the soft
 					// cache.
 					if (size() > mMaxCapacity) {
@@ -379,6 +381,7 @@ public class LazyImageLoader implements Constants {
 		}
 
 		public Bitmap get(final URL url) {
+			if (url == null) return null;
 			synchronized (mHardCache) {
 				final Bitmap bitmap = mHardCache.get(url);
 				if (bitmap != null) {

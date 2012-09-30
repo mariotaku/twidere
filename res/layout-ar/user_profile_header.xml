@@ -5,11 +5,18 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical">
 
-	<RelativeLayout
+	
+	<FrameLayout
+		android:id="@+id/profile_name_banner_container"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true">
+	<org.mariotaku.twidere.view.ColorLabelRelativeLayout
 		android:id="@+id/profile_name_container"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="center_vertical"
+		android:layout_gravity="bottom"
 		android:orientation="horizontal">
 
 		<FrameLayout
@@ -100,8 +107,9 @@
 				android:layout_marginLeft="8dp"
 				android:layout_marginRight="8dp"/>
 		</FrameLayout>
-	</RelativeLayout>
-
+	</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
+	</FrameLayout>
+	
 	<LinearLayout
 		android:id="@+id/description_container"
 		android:layout_width="match_parent"
@@ -192,8 +200,7 @@
 			android:layout_marginLeft="4dp"
 			android:layout_marginRight="4dp"
 			android:layout_weight="0"
-			android:minWidth="72dp"
-			android:visibility="gone">
+			android:minWidth="72dp">
 
 			<Button
 				android:id="@+id/more_options"

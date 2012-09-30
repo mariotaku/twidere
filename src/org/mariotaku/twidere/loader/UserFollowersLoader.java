@@ -33,8 +33,8 @@ public class UserFollowersLoader extends IDsUsersLoader {
 	private final long mUserId;
 	private final String mScreenName;
 
-	public UserFollowersLoader(Context context, long account_id, long user_id, String screen_name, long max_id,
-			List<ParcelableUser> users_list) {
+	public UserFollowersLoader(final Context context, final long account_id, final long user_id,
+			final String screen_name, final long max_id, final List<ParcelableUser> users_list) {
 		super(context, account_id, max_id, users_list);
 		mUserId = user_id;
 		mScreenName = screen_name;

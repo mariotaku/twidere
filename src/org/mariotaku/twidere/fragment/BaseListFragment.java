@@ -35,10 +35,10 @@ import android.support.v4.app.ListFragment;
 
 public class BaseListFragment extends ListFragment implements Constants {
 
-	private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if ((BaseListFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
 				if (getListView() != null) {
@@ -73,13 +73,13 @@ public class BaseListFragment extends ListFragment implements Constants {
 		return getApplication() != null ? getApplication().getServiceInterface() : null;
 	}
 
-	public SharedPreferences getSharedPreferences(String name, int mode) {
+	public SharedPreferences getSharedPreferences(final String name, final int mode) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSharedPreferences(name, mode);
 		return null;
 	}
 
-	public Object getSystemService(String name) {
+	public Object getSystemService(final String name) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSystemService(name);
 		return null;
@@ -98,20 +98,20 @@ public class BaseListFragment extends ListFragment implements Constants {
 		super.onStop();
 	}
 
-	public void registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+	public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.registerReceiver(receiver, filter);
 	}
 
-	public void setProgressBarIndeterminateVisibility(boolean visible) {
+	public void setProgressBarIndeterminateVisibility(final boolean visible) {
 		final Activity activity = getActivity();
 		if (activity instanceof ActionBarFragmentActivity) {
 			((ActionBarFragmentActivity) activity).setSupportProgressBarIndeterminateVisibility(visible);
 		}
 	}
 
-	public void unregisterReceiver(BroadcastReceiver receiver) {
+	public void unregisterReceiver(final BroadcastReceiver receiver) {
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.unregisterReceiver(receiver);

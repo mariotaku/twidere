@@ -12,7 +12,7 @@ public class DraftItem {
 	public final String text, media_uri, in_reply_to_name, in_reply_to_screen_name;
 	public final boolean is_quote, is_image_attached, is_photo_attached;
 
-	public DraftItem(Cursor cursor, int position) {
+	public DraftItem(final Cursor cursor, final int position) {
 		cursor.moveToPosition(position);
 		_id = cursor.getLong(cursor.getColumnIndex(Drafts._ID));
 		text = cursor.getString(cursor.getColumnIndex(Drafts.TEXT));

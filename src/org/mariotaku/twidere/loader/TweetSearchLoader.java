@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -33,25 +33,37 @@ import java.util.List;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.SerializableStatus;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.NoDuplicatesStateSavedList;
 
+import twitter4j.Paging;
 import twitter4j.Query;
-import twitter4j.Tweet;
+import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-public class TweetSearchLoader extends ParcelableStatusesLoader {
+public class TweetSearchLoader extends Twitter4JStatusLoader {
+
+	public List<Status> getStatuses(Paging paging) throws TwitterException {
+		final Twitter twitter = getTwitter();
+		if (twitter == null) return null;
+		final Query query = new Query(mQuery);
+		query.setRpp(paging.getCount());
+		if (paging.getMaxId() > 0) {
+			query.setMaxId(paging.getMaxId());
+		}
+		return Arrays.asList(twitter.search(query).getStatuses());
+	}
+	
 
 	private final String mQuery;
-	private final long mMaxId;
 
-	public TweetSearchLoader(Context context, long account_id, String query, long max_id, List<ParcelableStatus> data,
-			String class_name, boolean is_home_tab) {
-		super(context, account_id, data, class_name, is_home_tab);
+	public TweetSearchLoader(final Context context, final long account_id, final String query, final long max_id,
+			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
+		super(context, account_id, max_id, data, class_name, is_home_tab);
 		mQuery = query;
-		mMaxId = max_id;
 	}
 
 	@Override
@@ -63,7 +75,9 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 				final FileInputStream fis = new FileInputStream(f);
 				final ObjectInputStream in = new ObjectInputStream(fis);
 				@SuppressWarnings("unchecked")
-				final ArrayList<SerializableStatus> statuses = (ArrayList<SerializableStatus>) in.readObject();
+				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) in
+						.readObject();
+				setLastViewedId(statuses.getState());
 				in.close();
 				fis.close();
 				final NoDuplicatesArrayList<ParcelableStatus> result = new NoDuplicatesArrayList<ParcelableStatus>();
@@ -77,53 +91,16 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 				Collections.sort(data);
 				return data;
 			} catch (final IOException e) {
-			} catch (final ClassNotFoundException e) {
-			}
-		}
-		final List<ParcelableStatus> data = getData();
-		final long account_id = getAccountId();
-		final Twitter twitter = getTwitter();
-		if (twitter == null) return null;
-		List<Tweet> tweets = null;
-		try {
-			final Query query = new Query(mQuery);
-			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
-					Context.MODE_PRIVATE);
-			final int load_item_limit = prefs
-					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-			query.setRpp(load_item_limit);
-			if (mMaxId > 0) {
-				query.setMaxId(mMaxId);
-			}
-			tweets = twitter != null ? twitter.search(query).getTweets() : null;
-		} catch (final TwitterException e) {
-			e.printStackTrace();
-		}
-		if (tweets != null) {
-			try {
-				Collections.sort(tweets);
 			} catch (final ConcurrentModificationException e) {
-				// This shouldn't happen.
-				e.printStackTrace();
-			}
-			final int size = tweets.size();
-			for (int i = 0; i < size; i++) {
-				final Tweet tweet = tweets.get(i);
-				deleteStatus(tweet.getId());
-				data.add(new ParcelableStatus(tweet, account_id, false));
+			} catch (final ClassNotFoundException e) {
+			} catch (final ClassCastException e) {
 			}
 		}
-		try {
-			Collections.sort(data);
-		} catch (final ConcurrentModificationException e) {
-			// This shouldn't happen.
-			e.printStackTrace();
-		}
-		return data;
+		return super.loadInBackground();
 	}
 
-	public static void writeSerializableStatuses(Object instance, Context context, List<ParcelableStatus> data,
-			Bundle args) {
+	public static void writeSerializableStatuses(final Object instance, final Context context,
+			final List<ParcelableStatus> data, final long last_viewed_id, final Bundle args) {
 		if (instance == null || context == null || data == null || args == null) return;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
@@ -132,7 +109,10 @@ public class TweetSearchLoader extends ParcelableStatusesLoader {
 		final int items_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		try {
-			final NoDuplicatesArrayList<SerializableStatus> statuses = new NoDuplicatesArrayList<SerializableStatus>();
+			final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = new NoDuplicatesStateSavedList<SerializableStatus, Long>();
+			if (last_viewed_id > 0) {
+				statuses.setState(last_viewed_id);
+			}
 			int i = 0;
 			for (final ParcelableStatus status : data) {
 				if (i >= items_limit) {
