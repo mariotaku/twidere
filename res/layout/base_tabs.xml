@@ -19,21 +19,17 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/tab_container"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="horizontal">
 
 	<view
 		android:id="@android:id/tabs"
-		android:layout_width="wrap_content"
+		android:layout_width="0dp"
 		android:layout_height="match_parent"
-		android:layout_weight="0"
+		android:layout_weight="1"
 		class="org.mariotaku.twidere.view.TabPageIndicator"/>
-
-	<View
-		android:layout_width="wrap_content"
-		android:layout_height="match_parent"
-		android:layout_weight="1"/>
 
 	<ProgressBar
 		android:id="@android:id/progress"
@@ -41,6 +37,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
+		android:layout_margin="2dp"
 		android:layout_weight="0"/>
 
 </LinearLayout>

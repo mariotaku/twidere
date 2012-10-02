@@ -1,6 +1,6 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.getAccountUsername;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class UserMentionsFragment extends SearchTweetsFragment {
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		final boolean is_home_tab = args.getBoolean(INTENT_KEY_IS_HOME_TAB);
 		getListAdapter().setMentionsHightlightDisabled(
-				Utils.equals(getAccountUsername(getActivity(), account_id), screen_name));
+				Utils.equals(getAccountScreenName(getActivity(), account_id), screen_name));
 		if (screen_name == null) return new DummyParcelableStatusesLoader(getActivity(), account_id, getData());
 		return new TweetSearchLoader(getActivity(), account_id, screen_name.startsWith("@") ? screen_name : "@"
 				+ screen_name, max_id, getData(), getClass().getSimpleName(), is_home_tab);

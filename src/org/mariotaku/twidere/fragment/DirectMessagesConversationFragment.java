@@ -34,6 +34,7 @@ import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.DirectMessageConversationViewHolder;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
+import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -219,7 +220,8 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID)) return null;
+		if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID))
+			return new CursorLoader(getActivity(), TweetStore.NULL_CONTENT_URI, null, null, null, null);
 		final String[] cols = new String[] { DirectMessages._ID, DirectMessages.ACCOUNT_ID, DirectMessages.MESSAGE_ID,
 				DirectMessages.MESSAGE_TIMESTAMP, DirectMessages.SENDER_ID, DirectMessages.RECIPIENT_ID,
 				DirectMessages.IS_OUTGOING, DirectMessages.TEXT, DirectMessages.SENDER_NAME,

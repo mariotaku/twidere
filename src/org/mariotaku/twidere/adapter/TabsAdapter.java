@@ -118,7 +118,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	public void setDisplayLabel(final boolean display_label) {
 		mDisplayLabel = display_label;
-
+		notifyDataSetChanged();
 	}
 
 }

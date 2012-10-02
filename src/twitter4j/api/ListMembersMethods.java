@@ -47,7 +47,8 @@ public interface ListMembersMethods {
 	 * be able to add members to it. Lists are limited to having 500 members,
 	 * and you are limited to adding up to 100 members to a list at a time with
 	 * this method. <br>
-	 * This method calls http://api.twitter.com/1.1/lists/members/create_all.json
+	 * This method calls
+	 * http://api.twitter.com/1.1/lists/members/create_all.json
 	 * 
 	 * @param listId The id of the list.
 	 * @param userIds The array of ids of the user to add as member of the list.
@@ -65,7 +66,8 @@ public interface ListMembersMethods {
 	 * be able to add members to it. Lists are limited to having 500 members,
 	 * and you are limited to adding up to 100 members to a list at a time with
 	 * this method. <br>
-	 * This method calls http://api.twitter.com/1.1/lists/members/create_all.json
+	 * This method calls
+	 * http://api.twitter.com/1.1/lists/members/create_all.json
 	 * 
 	 * @param listId The id of the list.
 	 * @param screenNames The array of screen names of the user to add as member

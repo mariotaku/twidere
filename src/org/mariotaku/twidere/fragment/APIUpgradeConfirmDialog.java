@@ -12,7 +12,13 @@ import android.os.Bundle;
 public class APIUpgradeConfirmDialog extends BaseDialogFragment implements DialogInterface.OnClickListener {
 
 	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
+	public void onClick(final DialogInterface dialog, final int which) {
+		final SharedPreferences prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		prefs.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
+	}
+
+	@Override
+	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		setCancelable(false);
 		builder.setCancelable(false);
@@ -22,10 +28,4 @@ public class APIUpgradeConfirmDialog extends BaseDialogFragment implements Dialo
 		return builder.create();
 	}
 
-	@Override
-	public void onClick(DialogInterface dialog, int which) {
-		final SharedPreferences prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		prefs.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
-	}
-	
 }

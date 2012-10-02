@@ -130,7 +130,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					} else {
 						if (target_objects != null && target_objects.length > 0) {
 							final Status status = target_objects[0];
-							Utils.openStatus(getActivity(),  new ParcelableStatus(status, mAccountId, false));
+							Utils.openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
 						}
 					}
 					break;

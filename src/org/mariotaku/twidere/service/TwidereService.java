@@ -21,7 +21,7 @@ package org.mariotaku.twidere.service;
 
 import static org.mariotaku.twidere.util.Utils.STATUSES_URIS;
 import static org.mariotaku.twidere.util.Utils.buildQueryUri;
-import static org.mariotaku.twidere.util.Utils.getAccountUsername;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
@@ -2308,21 +2308,6 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	static final class StatusesListResponse<Data> extends ListResponse<Data> {
-
-		public final long max_id, since_id;
-		public final int load_item_limit;
-
-		public StatusesListResponse(final long account_id, final long max_id, final long since_id,
-				final int load_item_limit, final List<Data> list) {
-			super(account_id, list);
-			this.max_id = max_id;
-			this.since_id = since_id;
-			this.load_item_limit = load_item_limit;
-		}
-
-	}
-
 	static class ListResponse<Data> {
 
 		public final long account_id;
@@ -2750,6 +2735,11 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public int getHomeTimeline(final long[] account_ids, final long[] max_ids) {
+			return getHomeTimelineWithSinceIds(account_ids, max_ids, null);
+		}
+
+		@Override
 		public int getHomeTimelineWithSinceIds(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 			return mService.get().getHomeTimeline(account_ids, max_ids, since_ids);
 		}
@@ -2760,14 +2750,29 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public int getMentions(final long[] account_ids, final long[] max_ids) {
+			return getMentionsWithSinceIds(account_ids, max_ids, null);
+		}
+
+		@Override
 		public int getMentionsWithSinceIds(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 			return mService.get().getMentions(account_ids, max_ids, since_ids);
+		}
+
+		@Override
+		public int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids) {
+			return getReceivedDirectMessagesWithSinceIds(account_ids, max_ids, null);
 		}
 
 		@Override
 		public int getReceivedDirectMessagesWithSinceIds(final long[] account_ids, final long[] max_ids,
 				final long[] since_ids) {
 			return mService.get().getReceivedDirectMessages(account_ids, max_ids, since_ids);
+		}
+
+		@Override
+		public int getSentDirectMessages(final long[] account_ids, final long[] max_ids) {
+			return getSentDirectMessagesWithSinceIds(account_ids, max_ids, null);
 		}
 
 		@Override
@@ -2876,26 +2881,6 @@ public class TwidereService extends Service implements Constants {
 				final String name, final String description) {
 			return mService.get().updateUserListDetails(account_id, list_id, is_public, name, description);
 		}
-
-		@Override
-		public int getHomeTimeline(long[] account_ids, long[] max_ids) {
-			return getHomeTimelineWithSinceIds(account_ids, max_ids, null);
-		}
-
-		@Override
-		public int getMentions(long[] account_ids, long[] max_ids) {
-			return getMentionsWithSinceIds(account_ids, max_ids, null);
-		}
-
-		@Override
-		public int getReceivedDirectMessages(long[] account_ids, long[] max_ids) {
-			return getReceivedDirectMessagesWithSinceIds(account_ids, max_ids, null);
-		}
-
-		@Override
-		public int getSentDirectMessages(long[] account_ids, long[] max_ids) {
-			return getSentDirectMessagesWithSinceIds(account_ids, max_ids, null);
-		}
 	}
 
 	static final class SingleResponse<Data> {
@@ -2936,6 +2921,21 @@ public class TwidereService extends Service implements Constants {
 		}
 	}
 
+	static final class StatusesListResponse<Data> extends ListResponse<Data> {
+
+		public final long max_id, since_id;
+		public final int load_item_limit;
+
+		public StatusesListResponse(final long account_id, final long max_id, final long since_id,
+				final int load_item_limit, final List<Data> list) {
+			super(account_id, list);
+			this.max_id = max_id;
+			this.since_id = since_id;
+			this.load_item_limit = load_item_limit;
+		}
+
+	}
+
 	abstract class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
 		private final List<StatusesListResponse<DirectMessage>> responses;
@@ -2946,8 +2946,6 @@ public class TwidereService extends Service implements Constants {
 			responses = result;
 			this.uri = uri;
 		}
-
-		abstract boolean isOutgoing();
 
 		@Override
 		public boolean equals(final Object obj) {
@@ -3037,6 +3035,8 @@ public class TwidereService extends Service implements Constants {
 		private TwidereService getOuterType() {
 			return TwidereService.this;
 		}
+
+		abstract boolean isOutgoing();
 
 	}
 
@@ -3807,7 +3807,7 @@ public class TwidereService extends Service implements Constants {
 
 				final boolean should_shorten = unshortened_content != null && unshortened_content.length() > 0
 						&& !validator.isValidTweet(unshortened_content);
-				final String screen_name = getAccountUsername(TwidereService.this, account_ids[0]);
+				final String screen_name = getAccountScreenName(TwidereService.this, account_ids[0]);
 				if (shortener != null) {
 					shortener.waitForService();
 				}
@@ -3851,6 +3851,12 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		protected void onCancelled() {
+			saveDrafts(ListUtils.fromArray(account_ids));
+			super.onCancelled();
+		}
+
+		@Override
 		protected void onPostExecute(final List<SingleResponse<twitter4j.Status>> result) {
 
 			boolean succeed = true;
@@ -3884,6 +3890,10 @@ public class TwidereService extends Service implements Constants {
 			}
 		}
 
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 		private void saveDrafts(final List<Long> account_ids) {
 			final ContentValues values = new ContentValues();
 			values.put(Drafts.ACCOUNT_IDS, ListUtils.toString(account_ids, ';', false));
@@ -3900,10 +3910,6 @@ public class TwidereService extends Service implements Constants {
 			final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
 			final Notification notification = buildNotification(title, message, R.drawable.ic_stat_tweet, intent, null);
 			mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
-		}
-
-		private TwidereService getOuterType() {
-			return TwidereService.this;
 		}
 
 		class ImageUploaderNotFoundException extends UpdateStatusException {
@@ -3952,12 +3958,6 @@ public class TwidereService extends Service implements Constants {
 			public UpdateStatusException(final int message) {
 				super(getString(message));
 			}
-		}
-
-		@Override
-		protected void onCancelled() {
-			saveDrafts(ListUtils.fromArray(account_ids));
-			super.onCancelled();
 		}
 	}
 

@@ -47,18 +47,18 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 
 	private ListView mListView;
 	private AccountsAdapter mAdapter;
-	private final List<Long> mActivatedUserIds = new NoDuplicatesArrayList<Long>();
+	private final List<Long> mSelectedIds = new NoDuplicatesArrayList<Long>();
 
 	@Override
 	public void onBackPressed() {
-		if (mActivatedUserIds.size() <= 0) {
+		if (mSelectedIds.size() <= 0) {
 			Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
 			return;
 		}
 		final Bundle bundle = new Bundle();
-		final long[] ids = new long[mActivatedUserIds.size()];
+		final long[] ids = new long[mSelectedIds.size()];
 		int i = 0;
-		for (final Long id_long : mActivatedUserIds) {
+		for (final Long id_long : mSelectedIds) {
 			ids[i] = id_long;
 			i++;
 		}
@@ -87,14 +87,19 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
 		final long[] activated_ids = bundle != null ? bundle.getLongArray(Constants.INTENT_KEY_IDS) : null;
-		mActivatedUserIds.clear();
+		mSelectedIds.clear();
 		if (activated_ids != null) {
-			for (long id : activated_ids) {
-				mActivatedUserIds.add(id);
+			for (final long id : activated_ids) {
+				mSelectedIds.add(id);
 			}
 		}
 		getSupportLoaderManager().initLoader(0, null, this);
 
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
+		return new CursorLoader(this, Accounts.CONTENT_URI, Accounts.COLUMNS, null, null, null);
 	}
 
 	@Override
@@ -103,55 +108,48 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 		mAdapter.setItemChecked(position, !checked);
 		final long user_id = mAdapter.getAccountIdAt(position);
 		if (checked) {
-			mActivatedUserIds.remove(user_id);
+			mSelectedIds.remove(user_id);
 		} else {
-			mActivatedUserIds.add(user_id);
+			mSelectedIds.add(user_id);
 		}
 	}
 
 	@Override
-	public void onSaveInstanceState(final Bundle outState) {
-		outState.putLongArray(Constants.INTENT_KEY_IDS, ArrayUtils.fromList(mActivatedUserIds));
-		super.onSaveInstanceState(outState);
+	public void onLoaderReset(final Loader<Cursor> loader) {
+		mAdapter.swapCursor(null);
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(this, Accounts.CONTENT_URI, Accounts.COLUMNS, null, null, null);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.swapCursor(cursor);
 		final SparseBooleanArray checked = new SparseBooleanArray();
 		cursor.moveToFirst();
-		if (mActivatedUserIds.size() == 0) {
+		if (mSelectedIds.size() == 0) {
 			while (!cursor.isAfterLast()) {
 				final boolean is_activated = cursor.getInt(cursor.getColumnIndexOrThrow(Accounts.IS_ACTIVATED)) == 1;
 				final long user_id = cursor.getLong(cursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
 				if (is_activated) {
-					mActivatedUserIds.add(user_id);
+					mSelectedIds.add(user_id);
 				}
 				mAdapter.setItemChecked(cursor.getPosition(), is_activated);
 				cursor.moveToNext();
 			}
 		} else {
-			for (final long id : mActivatedUserIds) {
-				while (!cursor.isAfterLast()) {
-					final long user_id = cursor.getLong(cursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
-					if (id == user_id) {
-						checked.put(cursor.getPosition(), true);
-						mAdapter.setItemChecked(cursor.getPosition(), true);
-					}
-					cursor.moveToNext();
+			while (!cursor.isAfterLast()) {
+				final long user_id = cursor.getLong(cursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
+				if (mSelectedIds.contains(user_id)) {
+					checked.put(cursor.getPosition(), true);
+					mAdapter.setItemChecked(cursor.getPosition(), true);
 				}
+				cursor.moveToNext();
 			}
 		}
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		mAdapter.swapCursor(null);
+	public void onSaveInstanceState(final Bundle outState) {
+		outState.putLongArray(Constants.INTENT_KEY_IDS, ArrayUtils.fromList(mSelectedIds));
+		super.onSaveInstanceState(outState);
 	}
 
 }

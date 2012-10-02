@@ -10,6 +10,12 @@
 		android:layout_alignParentTop="true"
 		android:padding="8dp">
 
+		<org.mariotaku.twidere.view.ColorView
+			android:id="@+id/account_colors"
+			android:layout_width="3dp"
+			android:layout_height="match_parent"
+			android:layout_gravity="left"/>
+
 		<org.mariotaku.twidere.view.StatusComposeEditText
 			android:id="@+id/edit_text"
 			android:layout_width="match_parent"
@@ -38,12 +44,13 @@
 				android:scaleType="fitCenter"
 				android:visibility="gone"/>
 
-			<TextView android:layerType="software"
+			<TextView
 				android:id="@+id/text_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical|right"
 				android:gravity="center"
+				android:layerType="software"
 				android:paddingLeft="8dp"
 				android:paddingRight="8dp"
 				android:singleLine="true"

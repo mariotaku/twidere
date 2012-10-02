@@ -135,13 +135,6 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	}
 
 	@Override
-	public void onPostStart() {
-		if (!isActivityFirstCreated()) {
-			getLoaderManager().restartLoader(0, null, this);
-		}
-	}
-
-	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.changeCursor(cursor);
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
@@ -157,6 +150,13 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 			}
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onPostStart() {
+		if (!isActivityFirstCreated()) {
+			getLoaderManager().restartLoader(0, null, this);
+		}
 	}
 
 	@Override

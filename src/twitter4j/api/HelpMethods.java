@@ -48,7 +48,8 @@ public interface HelpMethods {
 	 * @return list of languages supported by Twitter
 	 * @throws twitter4j.TwitterException when Twitter service or network is
 	 *             unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/help/languages">GET
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/help/languages">GET
 	 *      help/languages | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */

@@ -53,7 +53,7 @@ public class NativeMapActivity extends MapActivity implements Constants {
 			finish();
 			return;
 		}
-		mMapView = new MapView(this, MAPS_API_KEY) {
+		mMapView = new MapView(this, GOOGLE_MAPS_API_KEY) {
 			{
 				setClickable(true);
 			}

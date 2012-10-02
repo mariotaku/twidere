@@ -83,7 +83,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	private ActionBar mActionBar;
 	private TabsAdapter mAdapter;
-	
+
 	private ExtendedViewPager mViewPager;
 	private ImageButton mComposeButton;
 	private TabPageIndicator mIndicator;
@@ -241,7 +241,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 		}
 		mActionBar = getSupportActionBar();
-		mActionBar.setCustomView(R.layout.home_tabs);
+		mActionBar.setCustomView(R.layout.base_tabs);
 		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		mActionBar.setDisplayShowHomeEnabled(mDisplayAppIcon);
@@ -252,7 +252,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		final boolean tab_display_label = getResources().getBoolean(R.bool.tab_display_label);
+		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
 		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mAdapter.setDisplayLabel(tab_display_label);
 		initTabs(getTabs(this));
@@ -274,23 +274,28 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 		}
 		if (refresh_on_start && savedInstanceState == null) {
-			mService.getHomeTimelineWithSinceIds(activated_ids, null, getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI));
+			mService.getHomeTimelineWithSinceIds(activated_ids, null,
+					getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI));
 			if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
-				mService.getMentionsWithSinceIds(account_ids, null, getNewestStatusIdsFromDatabase(this, Mentions.CONTENT_URI));
+				mService.getMentionsWithSinceIds(account_ids, null,
+						getNewestStatusIdsFromDatabase(this, Mentions.CONTENT_URI));
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
-				mService.getReceivedDirectMessagesWithSinceIds(account_ids, null, getNewestMessageIdsFromDatabase(this, Inbox.CONTENT_URI));
-				mService.getSentDirectMessagesWithSinceIds(account_ids, null, getNewestMessageIdsFromDatabase(this,Outbox.CONTENT_URI));
+				mService.getReceivedDirectMessagesWithSinceIds(account_ids, null,
+						getNewestMessageIdsFromDatabase(this, Inbox.CONTENT_URI));
+				mService.getSentDirectMessagesWithSinceIds(account_ids, null,
+						getNewestMessageIdsFromDatabase(this, Outbox.CONTENT_URI));
 			}
 		}
 		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
 			final FragmentManager fm = getSupportFragmentManager();
-			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null || !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
+			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null
+					|| !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
 				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), "api_upgrade_notice");
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_home, menu);
@@ -470,8 +475,10 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null) {
-				mService.getHomeTimelineWithSinceIds(refreshed_ids, null, getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI));
-				mService.getMentionsWithSinceIds(refreshed_ids, null, getNewestStatusIdsFromDatabase(this, Mentions.CONTENT_URI));
+				mService.getHomeTimelineWithSinceIds(refreshed_ids, null,
+						getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI));
+				mService.getMentionsWithSinceIds(refreshed_ids, null,
+						getNewestStatusIdsFromDatabase(this, Mentions.CONTENT_URI));
 			}
 			final int initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			if (initial_tab != -1 && mViewPager != null) {

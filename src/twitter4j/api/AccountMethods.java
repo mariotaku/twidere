@@ -39,7 +39,8 @@ public interface AccountMethods {
 	 * @return the current trend, geo and sleep time information for the
 	 *         authenticating user.
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/account/totals">GET
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/account/totals">GET
 	 *      account/settings | Twitter Developers</a>
 	 * @since Twitter4J 2.1.9
 	 */
@@ -55,7 +56,8 @@ public interface AccountMethods {
 	 * @return the current count of friends, followers, updates (statuses) and
 	 *         favorites of the authenticating user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/account/totals">GET
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/account/totals">GET
 	 *      account/totals | Twitter Developers</a>
 	 * @since Twitter4J 2.1.9
 	 */
@@ -69,7 +71,8 @@ public interface AccountMethods {
 	 * user is returned. Otherwise, the rate limit status for the requester's IP
 	 * address is returned.<br>
 	 * <br>
-	 * This method calls http://api.twitter.com/1.1/account/rate_limit_status.json
+	 * This method calls
+	 * http://api.twitter.com/1.1/account/rate_limit_status.json
 	 * 
 	 * @return the rate limit status
 	 * @throws TwitterException when Twitter service or network is unavailable

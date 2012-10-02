@@ -40,7 +40,8 @@ public interface ListMethods {
 	 * @throws twitter4j.TwitterException when Twitter service or network is
 	 *             unavailable, or the authenticated user already has 20
 	 *             lists(TwitterException.getStatusCode() == 403).
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/lists/create ">POST
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/lists/create ">POST
 	 *      lists/create | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -53,7 +54,8 @@ public interface ListMethods {
 	 * @param listId The id of the list to delete
 	 * @return the deleted list
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/lists/destroy">POST
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/lists/destroy">POST
 	 *      lists/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -229,7 +231,8 @@ public interface ListMethods {
 	 *            page parameters.
 	 * @return list of statuses for members of the specified list
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/lists/statuses">GET
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/statuses">GET
 	 *      lists/statuses | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
@@ -280,7 +283,8 @@ public interface ListMethods {
 	 * @param newDescription What you'd like to change the list description to.
 	 * @return the updated list
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/lists/update ">POST
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/lists/update ">POST
 	 *      lists/update | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */

@@ -42,7 +42,8 @@ public interface SavedSearchesMethods {
 	/**
 	 * Destroys a saved search for the authenticated user. The search specified
 	 * by id must be owned by the authenticating user. <br>
-	 * This method calls http://api.twitter.com/1.1/saved_searches/destroy/id.json
+	 * This method calls
+	 * http://api.twitter.com/1.1/saved_searches/destroy/id.json
 	 * 
 	 * @param id The id of the saved search to be deleted.
 	 * @return the data for a destroyed saved search
@@ -61,7 +62,8 @@ public interface SavedSearchesMethods {
 	 * @return Returns an array of numeric user ids the authenticating user is
 	 *         blocking.
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/saved_searches">GET
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/saved_searches">GET
 	 *      saved_searches | Twitter Developers</a>
 	 * @since Twitter4J 2.0.8
 	 */

@@ -3,7 +3,7 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.CUSTOM_TABS_ICON_NAME_MAP;
 import static org.mariotaku.twidere.util.Utils.CUSTOM_TABS_TYPE_NAME_MAP;
 import static org.mariotaku.twidere.util.Utils.buildArguments;
-import static org.mariotaku.twidere.util.Utils.getAccountUsername;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getTabTypeName;
 import static org.mariotaku.twidere.util.Utils.parseArguments;
 import static org.mariotaku.twidere.util.Utils.parseString;
@@ -254,7 +254,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			mAccounts = accounts.toArray(new Account[accounts.size()]);
 			setTitle(R.string.account);
 			if (mAccountId > 0) {
-				setSummary(getAccountUsername(getContext(), mAccountId));
+				setSummary(getAccountScreenName(getContext(), mAccountId));
 			}
 			setOnPreferenceClickListener(this);
 		}

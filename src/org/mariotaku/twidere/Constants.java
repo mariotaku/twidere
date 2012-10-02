@@ -48,13 +48,13 @@ public interface Constants extends TwitterConstants {
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 28;
 
-	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
-	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
+	// Following 4 consants are not included in source code.
+	public static final String TWITTER_CONSUMER_KEY = PrivateConstants.TWITTER_CONSUMER_KEY;
+	public static final String TWITTER_CONSUMER_SECRET = PrivateConstants.TWITTER_CONSUMER_SECRET;
+	public static final String GOOGLE_MAPS_API_KEY_RELEASE = PrivateConstants.MAPS_API_KEY_RELEASE;
+	public static final String GOOGLE_MAPS_API_KEY_DEBUG = PrivateConstants.MAPS_API_KEY_DEBUG;
 
-	public static final String MAPS_API_KEY_RELEASE = "0kjPwJOe_zwYjzGc9uYak7vhm_Sf3eob-2L3Xzw";
-	public static final String MAPS_API_KEY_DEBUG = "0kjPwJOe_zwY9p6kT-kygu4mxwysyOOpfkaXqTA";
-
-	public static final String MAPS_API_KEY = DEBUG ? MAPS_API_KEY_DEBUG : MAPS_API_KEY_RELEASE;
+	public static final String GOOGLE_MAPS_API_KEY = DEBUG ? GOOGLE_MAPS_API_KEY_DEBUG : GOOGLE_MAPS_API_KEY_RELEASE;
 
 	public static final String SCHEME_HTTP = "http";
 	public static final String SCHEME_HTTPS = "https";
@@ -479,6 +479,6 @@ public interface Constants extends TwitterConstants {
 	public static final int NOTIFICATION_ID_DRAFTS = 4;
 
 	public static final String ICON_SPECIAL_TYPE_CUSTOMIZE = "_customize";
-	
+
 	public static final String FRAGMENT_TAG_API_UPGRADE_NOTICE = "api_upgrade_notice";
 }

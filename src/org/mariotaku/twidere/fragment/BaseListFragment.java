@@ -37,7 +37,7 @@ import android.support.v4.app.ListFragment;
 public class BaseListFragment extends ListFragment implements Constants {
 
 	private boolean mActivityFirstCreated;
-	
+
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -52,10 +52,6 @@ public class BaseListFragment extends ListFragment implements Constants {
 
 	public BaseListFragment() {
 
-	}
-	
-	public boolean isActivityFirstCreated() {
-		return mActivityFirstCreated;
 	}
 
 	public ActionBarFragmentActivity getActionBarActivity() {
@@ -92,6 +88,25 @@ public class BaseListFragment extends ListFragment implements Constants {
 		return null;
 	}
 
+	public boolean isActivityFirstCreated() {
+		return mActivityFirstCreated;
+	}
+
+	@Override
+	public void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mActivityFirstCreated = true;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mActivityFirstCreated = true;
+	}
+
+	public void onPostStart() {
+	}
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -124,22 +139,5 @@ public class BaseListFragment extends ListFragment implements Constants {
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.unregisterReceiver(receiver);
-	}
-
-	public void onPostStart() {
-	}
-
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		mActivityFirstCreated = true;
-	}
-
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mActivityFirstCreated = true;
 	}
 }

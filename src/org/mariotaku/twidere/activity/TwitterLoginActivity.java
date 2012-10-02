@@ -106,7 +106,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	private TwidereApplication mApplication;
 	private SharedPreferences mPreferences;
 	private ContentResolver mResolver;
-	
+
 	private final Handler mBackPressedHandler = new Handler() {
 
 		@Override
@@ -263,7 +263,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		setUserColorButton();
 		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
 			final FragmentManager fm = getSupportFragmentManager();
-			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null || !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
+			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null
+					|| !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
 				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), "api_upgrade_notice");
 			}
 		}
@@ -402,8 +403,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		final boolean enable_gzip_compressing = mPreferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		final boolean ignore_ssl_error = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 		final boolean enable_proxy = mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
-		final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY, CONSUMER_KEY);
-		final String consumer_secret = mPreferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, CONSUMER_SECRET);
+		final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY);
+		final String consumer_secret = mPreferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
 		cb.setHostAddressResolver(mApplication.getHostAddressResolver());
 		setUserAgent(this, cb);
 		if (!isNullOrEmpty(mRESTBaseURL)) {
@@ -419,8 +420,8 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			cb.setSigningOAuthBaseURL(mSigningOAuthBaseURL);
 		}
 		if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
-			cb.setOAuthConsumerKey(CONSUMER_KEY);
-			cb.setOAuthConsumerSecret(CONSUMER_SECRET);
+			cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
+			cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
 		} else {
 			cb.setOAuthConsumerKey(consumer_key);
 			cb.setOAuthConsumerSecret(consumer_secret);

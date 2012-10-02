@@ -24,7 +24,7 @@ import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getAccountUsername;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
@@ -179,8 +179,8 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 
 			holder.setUserColor(getUserColor(mContext, status.user_id));
 			holder.setHighlightColor(getStatusBackground(
-					mMentionsHighlightDisabled ? false : status.text_plain.contains('@' + getAccountUsername(mContext,
-							status.account_id)), status.is_favorite, status.is_retweet));
+					mMentionsHighlightDisabled ? false : status.text_plain.contains('@' + getAccountScreenName(
+							mContext, status.account_id)), status.is_favorite, status.is_retweet));
 
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
@@ -203,8 +203,8 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
 			} else if (status.in_reply_to_status_id > 0 && !isNullOrEmpty(status.in_reply_to_screen_name)) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to,
-						status.in_reply_to_screen_name));
+				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to, "@"
+						+ status.in_reply_to_screen_name));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
 						0, 0);
 			}

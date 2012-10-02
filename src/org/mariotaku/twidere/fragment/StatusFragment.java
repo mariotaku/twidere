@@ -277,7 +277,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
 		mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
 		if (is_reply) {
-			mInReplyToView.setText(getString(R.string.in_reply_to, status.in_reply_to_screen_name));
+			mInReplyToView.setText(getString(R.string.in_reply_to, "@" + status.in_reply_to_screen_name));
 		}
 
 		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
@@ -536,11 +536,11 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mNameView.setTextSize(text_size * 1.25f);
 		mTextView.setTextSize(text_size * 1.25f);
-		mScreenNameView.setTextSize(text_size);
-		mTimeAndSourceView.setTextSize(text_size);
-		mInReplyToView.setTextSize(text_size);
-		mLocationView.setTextSize(text_size);
-		mRetweetedStatusView.setTextSize(text_size);
+		mScreenNameView.setTextSize(text_size * 0.85f);
+		mTimeAndSourceView.setTextSize(text_size * 0.85f);
+		mInReplyToView.setTextSize(text_size * 0.85f);
+		mLocationView.setTextSize(text_size * 0.85f);
+		mRetweetedStatusView.setTextSize(text_size * 0.85f);
 
 	}
 

@@ -21,8 +21,9 @@ package org.mariotaku.twidere.activity;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
-import static org.mariotaku.twidere.util.Utils.getAccountUsername;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
@@ -41,6 +42,7 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.view.ColorView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -51,7 +53,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -91,34 +92,34 @@ import com.twitter.Validator;
 public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
 		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener, OnEditorActionListener {
 
+	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
+
+	private ServiceInterface mService;
+	private LocationManager mLocationManager;
+	private SharedPreferences mPreferences;
+	private Location mRecentLocation;
+	private ContentResolver mResolver;
+	private final Validator mValidator = new Validator();
+	private AttachedImageThumbnailTask mAttachedImageThumbnailTask;
+
 	private ActionBar mActionBar;
+	private PopupMenu mPopupMenu;
 
 	private static final int THUMBNAIL_SIZE = 36;
 
-	private String mText;
-
-	private Uri mImageUri;
+	private ColorView mColorIndicator;
 	private EditText mEditText;
 	private TextView mTextCount;
 	private ImageView mImageThumbnailPreview;
 	private MenuBar mMenuBar;
+
 	private boolean mIsImageAttached, mIsPhotoAttached;
 	private long[] mAccountIds;
-	private ServiceInterface mService;
-	private Location mRecentLocation;
-	private LocationManager mLocationManager;
-	private SharedPreferences mPreferences;
-	private long mInReplyToStatusId = -1, mAccountId = -1;
+	private String mText;
+	private Uri mImageUri;
+	private long mInReplyToStatusId = -1;
 	private String mInReplyToScreenName, mInReplyToName;
 	private boolean mIsQuote, mUploadUseExtension;
-	private final Validator mValidator = new Validator();
-	private PopupMenu mPopupMenu;
-
-	private AttachedImageThumbnailTask mAttachedImageThumbnailTask;
-
-	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
-
-	private ContentResolver mResolver;
 
 	private DialogFragment mUnsavedTweetDialogFragment;
 
@@ -174,12 +175,13 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					if (bundle == null) {
 						break;
 					}
-					final long[] user_ids = bundle.getLongArray(INTENT_KEY_IDS);
-					if (user_ids != null) {
-						mAccountIds = user_ids;
+					final long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
+					if (account_ids != null) {
+						mAccountIds = account_ids;
 						final SharedPreferences.Editor editor = mPreferences.edit();
 						editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, ArrayUtils.toString(mAccountIds, ',', false));
 						editor.commit();
+						mColorIndicator.setColor(getAccountColors(this, account_ids));
 					}
 				}
 				break;
@@ -252,6 +254,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
+		mColorIndicator = (ColorView) findViewById(R.id.account_colors);
 		mEditText = (EditText) findViewById(R.id.edit_text);
 		mTextCount = (TextView) findViewById(R.id.text_count);
 		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
@@ -270,8 +273,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
+		final long account_id = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
 		mAccountIds = bundle != null ? bundle.getLongArray(INTENT_KEY_IDS) : null;
-		mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
 		mInReplyToStatusId = bundle != null ? bundle.getLong(INTENT_KEY_IN_REPLY_TO_ID) : -1;
 		mInReplyToScreenName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME) : null;
 		mInReplyToName = bundle != null ? bundle.getString(INTENT_KEY_IN_REPLY_TO_NAME) : null;
@@ -279,7 +282,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mIsPhotoAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_PHOTO_ATTACHED) : false;
 		mImageUri = bundle != null ? (Uri) bundle.getParcelable(INTENT_KEY_IMAGE_URI) : null;
 		final String[] mentions = bundle != null ? bundle.getStringArray(INTENT_KEY_MENTIONS) : null;
-		final String account_username = getAccountUsername(this, mAccountId);
+		final String account_screen_name = getAccountScreenName(this, account_id);
 		int text_selection_start = -1;
 		if (mInReplyToStatusId > 0) {
 			if (bundle != null && bundle.getString(INTENT_KEY_TEXT) != null
@@ -288,9 +291,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			} else if (mentions != null) {
 				final StringBuilder builder = new StringBuilder();
 				for (final String mention : mentions) {
-					if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_username)) {
-						builder.append('@' + account_username + ' ');
-					} else if (!mention.equalsIgnoreCase(account_username)) {
+					if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_screen_name)) {
+						builder.append('@' + account_screen_name + ' ');
+					} else if (!mention.equalsIgnoreCase(account_screen_name)) {
 						builder.append('@' + mention + ' ');
 					}
 				}
@@ -308,15 +311,15 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, name));
 			}
 			if (mAccountIds == null || mAccountIds.length == 0) {
-				mAccountIds = new long[] { mAccountId };
+				mAccountIds = new long[] { account_id };
 			}
 		} else {
 			if (mentions != null) {
 				final StringBuilder builder = new StringBuilder();
 				for (final String mention : mentions) {
-					if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_username)) {
-						builder.append('@' + account_username + ' ');
-					} else if (!mention.equalsIgnoreCase(account_username)) {
+					if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_screen_name)) {
+						builder.append('@' + account_screen_name + ' ');
+					} else if (!mention.equalsIgnoreCase(account_screen_name)) {
 						builder.append('@' + mention + ' ');
 					}
 				}
@@ -396,6 +399,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			}
 		}
 		invalidateSupportOptionsMenu();
+		mColorIndicator.setOrientation(ColorView.VERTICAL);
+		mColorIndicator.setColor(getAccountColors(this, mAccountIds));
 	}
 
 	@Override
@@ -494,15 +499,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			case MENU_EXTENSIONS: {
 				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
 				final Bundle extras = new Bundle();
+				final String screen_name = mAccountIds != null && mAccountIds.length > 0 ? getAccountScreenName(this,
+						mAccountIds[0]) : null;
 				extras.putString(INTENT_KEY_TEXT, parseString(mEditText.getText()));
 				extras.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mInReplyToScreenName);
 				extras.putString(INTENT_KEY_IN_REPLY_TO_NAME, mInReplyToName);
-				String screen_name = null;
-				if (mAccountId > 0) {
-					screen_name = getAccountUsername(this, mAccountId);
-				} else if (mAccountIds != null && mAccountIds.length > 0) {
-					screen_name = getAccountUsername(this, mAccountIds[0]);
-				}
 				extras.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 				extras.putLong(INTENT_KEY_IN_REPLY_TO_ID, mInReplyToStatusId);
 				intent.putExtras(extras);
@@ -568,7 +569,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mText = parseString(mEditText.getText());
 		outState.putLongArray(INTENT_KEY_IDS, mAccountIds);
 		outState.putString(INTENT_KEY_TEXT, mText);
-		outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 		outState.putLong(INTENT_KEY_IN_REPLY_TO_ID, mInReplyToStatusId);
 		outState.putString(INTENT_KEY_IN_REPLY_TO_NAME, mInReplyToName);
 		outState.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mInReplyToScreenName);
@@ -577,19 +577,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		outState.putBoolean(INTENT_KEY_IS_PHOTO_ATTACHED, mIsPhotoAttached);
 		outState.putParcelable(INTENT_KEY_IMAGE_URI, mImageUri);
 		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-		mUploadUseExtension = !isNullOrEmpty(uploader_component);
-		if (mMenuBar != null) {
-			setMenu(mMenuBar.getMenu());
-		}
-		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		mEditText.setTextSize(text_size * 1.25f);
-
 	}
 
 	@Override
@@ -617,6 +604,19 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			values.put(Drafts.IMAGE_URI, parseString(mImageUri));
 		}
 		mResolver.insert(Drafts.CONTENT_URI, values);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
+		mUploadUseExtension = !isNullOrEmpty(uploader_component);
+		if (mMenuBar != null) {
+			setMenu(mMenuBar.getMenu());
+		}
+		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		mEditText.setTextSize(text_size * 1.25f);
+
 	}
 
 	@Override

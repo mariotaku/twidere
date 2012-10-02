@@ -105,6 +105,16 @@ public class TrendsFragment extends PullToRefreshListFragment implements LoaderC
 	}
 
 	@Override
+	public void onPullDownToRefresh() {
+		mService.getLocalTrends(mAccountId, mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
+	}
+
+	@Override
+	public void onPullUpToRefresh() {
+
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_TRENDS_UPDATED);
@@ -126,16 +136,6 @@ public class TrendsFragment extends PullToRefreshListFragment implements LoaderC
 			super(context, android.R.layout.simple_list_item_1, null, new String[] { CachedTrends.NAME },
 					new int[] { android.R.id.text1 }, 0);
 		}
-
-	}
-
-	@Override
-	public void onPullDownToRefresh() {
-		mService.getLocalTrends(mAccountId, mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
-	}
-
-	@Override
-	public void onPullUpToRefresh() {
 
 	}
 

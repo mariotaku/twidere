@@ -31,8 +31,8 @@ public interface SearchMethods {
 	 * @param query - the search condition
 	 * @return the result
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/search">GET search |
-	 *      Twitter Developers</a>
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/search">GET search
+	 *      | Twitter Developers</a>
 	 * @see <a href="http://search.twitter.com/operators">Twitter API / Search
 	 *      Operators</a>
 	 * @since Twitter4J 1.1.7

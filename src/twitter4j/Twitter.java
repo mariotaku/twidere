@@ -42,9 +42,9 @@ import twitter4j.auth.OAuthSupport;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.2.0
  */
-public interface Twitter extends OAuthSupport, TwitterBase, SearchMethods, TimelineMethods,
-		StatusMethods, UserMethods, ListMethods, ListMembersMethods, ListSubscribersMethods, DirectMessageMethods,
-		FriendshipMethods, FriendsFollowersMethods, AccountMethods, FavoriteMethods, NotificationMethods, BlockMethods,
-		SpamReportingMethods, SavedSearchesMethods, LocalTrendsMethods, GeoMethods, LegalResources,
-		HelpMethods, ActivityMethods {
+public interface Twitter extends OAuthSupport, TwitterBase, SearchMethods, TimelineMethods, StatusMethods, UserMethods,
+		ListMethods, ListMembersMethods, ListSubscribersMethods, DirectMessageMethods, FriendshipMethods,
+		FriendsFollowersMethods, AccountMethods, FavoriteMethods, NotificationMethods, BlockMethods,
+		SpamReportingMethods, SavedSearchesMethods, LocalTrendsMethods, GeoMethods, LegalResources, HelpMethods,
+		ActivityMethods {
 }

@@ -60,8 +60,7 @@
 		android:name=".app.TwidereApplication"
 		android:hardwareAccelerated="false"
 		android:icon="@drawable/ic_launcher"
-		android:label="@string/app_name"
-		android:theme="@style/Theme.Twidere.Light">
+		android:label="@string/app_name">
 		<uses-library
 			android:name="com.google.android.maps"
 			android:required="false"/>
@@ -122,8 +121,7 @@
 		<activity
 			android:name=".activity.SettingsActivity"
 			android:label="@string/settings"
-			android:launchMode="singleTask"
-			android:theme="@style/Theme.Twidere.Light">
+			android:launchMode="singleTask">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="android.intent.action.MANAGE_NETWORK_USAGE"/>

@@ -7,13 +7,19 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_above="@+id/menu_bar"
-		android:layout_alignParentTop="true"
-		android:padding="8dp">
+		android:layout_alignParentTop="true">
+
+		<org.mariotaku.twidere.view.ColorView
+			android:id="@+id/account_colors"
+			android:layout_width="3dp"
+			android:layout_height="match_parent"
+			android:layout_gravity="right"/>
 
 		<org.mariotaku.twidere.view.StatusComposeEditText
 			android:id="@+id/edit_text"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
+			android:layout_margin="8dp"
 			android:completionThreshold="1"
 			android:gravity="top"
 			android:hint="@string/tweet_hint"
@@ -26,7 +32,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
-			android:padding="8dp">
+			android:layout_margin="16dp">
 
 			<org.mariotaku.twidere.view.RoundCorneredImageView
 				android:id="@+id/image_thumbnail_preview"
@@ -38,12 +44,13 @@
 				android:scaleType="fitCenter"
 				android:visibility="gone"/>
 
-			<TextView android:layerType="software"
+			<TextView
 				android:id="@+id/text_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical|right"
 				android:gravity="center"
+				android:layerType="software"
 				android:paddingLeft="8dp"
 				android:paddingRight="8dp"
 				android:singleLine="true"

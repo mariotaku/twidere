@@ -22,3 +22,6 @@ libs/maps.jar
 *.bak
 *.old
 *.*~
+
+# Private constants
+src/org/mariotaku/twidere/PrivateConstants.java

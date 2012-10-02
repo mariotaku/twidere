@@ -541,7 +541,7 @@ public final class Utils implements Constants {
 		}
 		return message;
 	}
-	
+
 	public static ParcelableStatus findStatusInDatabases(final Context context, final long account_id,
 			final long status_id) {
 		if (context == null) return null;
@@ -591,6 +591,15 @@ public final class Utils implements Constants {
 		return null;
 	}
 
+	public static String formatDirectMessageText(final DirectMessage message) {
+		if (message == null) return null;
+		final String text = message.getRawText();
+		if (text == null) return null;
+		final HtmlBuilder builder = new HtmlBuilder(text, false);
+		parseEntities(builder, message);
+		return builder.build(true);
+	}
+
 	public static String formatSameDayTime(final Context context, final long timestamp) {
 		if (context == null) return null;
 		if (DateUtils.isToday(timestamp))
@@ -606,15 +615,6 @@ public final class Utils implements Constants {
 		if (text == null) return null;
 		final HtmlBuilder builder = new HtmlBuilder(text, false);
 		parseEntities(builder, status);
-		return builder.build(true);
-	}
-	
-	public static String formatDirectMessageText(final DirectMessage message) {
-		if (message == null) return null;
-		final String text = message.getRawText();
-		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, false);
-		parseEntities(builder, message);
 		return builder.build(true);
 	}
 
@@ -677,12 +677,22 @@ public final class Utils implements Constants {
 		return color;
 	}
 
+	public static int[] getAccountColors(final Context context, final long[] account_ids) {
+		if (context == null || account_ids == null) return null;
+		final int length = account_ids.length;
+		final int[] colors = new int[length];
+		for (int i = 0; i < length; i++) {
+			colors[i] = getAccountColor(context, account_ids[i]);
+		}
+		return colors;
+	}
+
 	public static long getAccountId(final Context context, final String username) {
 		if (context == null) return -1;
 		long user_id = -1;
 
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.ACCOUNT_ID },
-				Accounts.SCREEN_NAME + " = ?", new String[] { username }, null);
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+				new String[] { Accounts.ACCOUNT_ID }, Accounts.SCREEN_NAME + " = ?", new String[] { username }, null);
 		if (cur == null) return user_id;
 
 		if (cur.getCount() > 0) {
@@ -696,8 +706,8 @@ public final class Utils implements Constants {
 	public static long[] getAccountIds(final Context context) {
 		long[] accounts = new long[0];
 		if (context == null) return accounts;
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.ACCOUNT_ID },
-				null, null, null);
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+				new String[] { Accounts.ACCOUNT_ID }, null, null, null);
 		if (cur != null) {
 			final int idx = cur.getColumnIndexOrThrow(Accounts.ACCOUNT_ID);
 			cur.moveToFirst();
@@ -711,6 +721,24 @@ public final class Utils implements Constants {
 			cur.close();
 		}
 		return accounts;
+	}
+
+	public static String getAccountScreenName(final Context context, final long account_id) {
+		if (context == null) return null;
+		String username = sAccountNames.get(account_id);
+		if (username == null) {
+			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+					new String[] { Accounts.SCREEN_NAME }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+			if (cur == null) return username;
+
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				username = cur.getString(cur.getColumnIndex(Accounts.SCREEN_NAME));
+				sAccountNames.put(account_id, username);
+			}
+			cur.close();
+		}
+		return username;
 	}
 
 	public static String[] getAccountScreenNames(final Context context) {
@@ -731,24 +759,6 @@ public final class Utils implements Constants {
 			cur.close();
 		}
 		return accounts;
-	}
-
-	public static String getAccountUsername(final Context context, final long account_id) {
-		if (context == null) return null;
-		String username = sAccountNames.get(account_id);
-		if (username == null) {
-			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-					new String[] { Accounts.SCREEN_NAME }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
-			if (cur == null) return username;
-
-			if (cur.getCount() > 0) {
-				cur.moveToFirst();
-				username = cur.getString(cur.getColumnIndex(Accounts.SCREEN_NAME));
-				sAccountNames.put(account_id, username);
-			}
-			cur.close();
-		}
-		return username;
 	}
 
 	public static long[] getActivatedAccountIds(final Context context) {
@@ -820,7 +830,7 @@ public final class Utils implements Constants {
 		if (m.matches()) return getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID));
 		return null;
 	}
-	
+
 	public static long[] getAllStatusesIds(final Context context, final Uri uri, final boolean filter_enabled) {
 		if (context == null) return new long[0];
 		final ContentResolver resolver = context.getContentResolver();
@@ -1002,6 +1012,21 @@ public final class Utils implements Constants {
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
+	public static ImageSpec getLockerzAndPlixiImage(final String url) {
+		if (isNullOrEmpty(url)) return null;
+		final String thumbnail_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
+		final String full_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
+		return new ImageSpec(thumbnail_size, full_size);
+
+	}
+
+	public static ImageSpec getMobyPictureImage(final String id) {
+		if (isNullOrEmpty(id)) return null;
+		final String thumbnail_size = "https://moby.to/" + id + ":thumb";
+		final String full_size = "https://moby.to/" + id + ":full";
+		return new ImageSpec(thumbnail_size, full_size);
+	}
+
 	public static long[] getNewestMessageIdsFromDatabase(final Context context, final Uri uri) {
 		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
@@ -1025,31 +1050,7 @@ public final class Utils implements Constants {
 		}
 		return status_ids;
 	}
-	
-	public static long[] getOldestMessageIdsFromDatabase(final Context context, final Uri uri) {
-		if (context == null || uri == null) return null;
-		final long[] account_ids = getActivatedAccountIds(context);
-		final String[] cols = new String[] { DirectMessages.MESSAGE_ID };
-		final ContentResolver resolver = context.getContentResolver();
-		final long[] status_ids = new long[account_ids.length];
-		int idx = 0;
-		for (final long account_id : account_ids) {
-			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			final Cursor cur = resolver.query(uri, cols, where, null, DirectMessages.MESSAGE_ID);
-			if (cur == null) {
-				continue;
-			}
 
-			if (cur.getCount() > 0) {
-				cur.moveToFirst();
-				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(DirectMessages.MESSAGE_ID));
-			}
-			cur.close();
-			idx++;
-		}
-		return status_ids;
-	}
-	
 	public static long[] getNewestStatusIdsFromDatabase(final Context context, final Uri uri) {
 		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
@@ -1067,6 +1068,37 @@ public final class Utils implements Constants {
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
 				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(Statuses.STATUS_ID));
+			}
+			cur.close();
+			idx++;
+		}
+		return status_ids;
+	}
+
+	public static String getNormalTwitterProfileImage(final String url) {
+		if (url == null) return null;
+		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
+			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_normal");
+		return url;
+	}
+
+	public static long[] getOldestMessageIdsFromDatabase(final Context context, final Uri uri) {
+		if (context == null || uri == null) return null;
+		final long[] account_ids = getActivatedAccountIds(context);
+		final String[] cols = new String[] { DirectMessages.MESSAGE_ID };
+		final ContentResolver resolver = context.getContentResolver();
+		final long[] status_ids = new long[account_ids.length];
+		int idx = 0;
+		for (final long account_id : account_ids) {
+			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
+			final Cursor cur = resolver.query(uri, cols, where, null, DirectMessages.MESSAGE_ID);
+			if (cur == null) {
+				continue;
+			}
+
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				status_ids[idx] = cur.getLong(cur.getColumnIndexOrThrow(DirectMessages.MESSAGE_ID));
 			}
 			cur.close();
 			idx++;
@@ -1096,28 +1128,6 @@ public final class Utils implements Constants {
 			idx++;
 		}
 		return status_ids;
-	}
-
-	public static ImageSpec getLockerzAndPlixiImage(final String url) {
-		if (isNullOrEmpty(url)) return null;
-		final String thumbnail_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
-		final String full_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
-		return new ImageSpec(thumbnail_size, full_size);
-
-	}
-
-	public static ImageSpec getMobyPictureImage(final String id) {
-		if (isNullOrEmpty(id)) return null;
-		final String thumbnail_size = "https://moby.to/" + id + ":thumb";
-		final String full_size = "https://moby.to/" + id + ":full";
-		return new ImageSpec(thumbnail_size, full_size);
-	}
-
-	public static String getNormalTwitterProfileImage(final String url) {
-		if (url == null) return null;
-		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
-			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_normal");
-		return url;
 	}
 
 	public static String getOriginalTwitterProfileImage(final String url) {
@@ -1418,9 +1428,9 @@ public final class Utils implements Constants {
 		final boolean enable_proxy = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false)
 				: false;
 		final String consumer_key = preferences != null ? preferences.getString(PREFERENCE_KEY_CONSUMER_KEY,
-				CONSUMER_KEY) : CONSUMER_KEY;
+				TWITTER_CONSUMER_KEY) : TWITTER_CONSUMER_KEY;
 		final String consumer_secret = preferences != null ? preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET,
-				CONSUMER_SECRET) : CONSUMER_SECRET;
+				TWITTER_CONSUMER_SECRET) : TWITTER_CONSUMER_SECRET;
 
 		Twitter twitter = null;
 		final StringBuilder where = new StringBuilder();
@@ -1468,8 +1478,8 @@ public final class Utils implements Constants {
 					case Accounts.AUTH_TYPE_OAUTH:
 					case Accounts.AUTH_TYPE_XAUTH:
 						if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
-							cb.setOAuthConsumerKey(CONSUMER_KEY);
-							cb.setOAuthConsumerSecret(CONSUMER_SECRET);
+							cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
+							cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
 						} else {
 							cb.setOAuthConsumerKey(consumer_key);
 							cb.setOAuthConsumerSecret(consumer_secret);
@@ -1504,8 +1514,8 @@ public final class Utils implements Constants {
 		if (context == null) return null;
 		final StringBuilder where = new StringBuilder();
 		where.append(Accounts.SCREEN_NAME + " = " + account_username);
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.ACCOUNT_ID },
-				where.toString(), null, null);
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+				new String[] { Accounts.ACCOUNT_ID }, where.toString(), null, null);
 		long account_id = -1;
 		if (cur != null) {
 			if (cur.getCount() == 1) {
@@ -1642,7 +1652,8 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues makeDirectMessageContentValues(final DirectMessage message, final long account_id, final boolean is_outgoing) {
+	public static ContentValues makeDirectMessageContentValues(final DirectMessage message, final long account_id,
+			final boolean is_outgoing) {
 		if (message == null || message.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		final User sender = message.getSender(), recipient = message.getRecipient();

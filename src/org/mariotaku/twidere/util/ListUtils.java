@@ -24,6 +24,15 @@ import java.util.List;
 
 public class ListUtils {
 
+	public static List<Long> fromArray(final long[] array) {
+		if (array == null) return null;
+		final List<Long> list = new ArrayList<Long>();
+		for (final long item : array) {
+			list.add(item);
+		}
+		return list;
+	}
+
 	public static long min(final List<Long> list) {
 		long min = -1;
 		for (final long item : list) {
@@ -65,14 +74,5 @@ public class ListUtils {
 			}
 		}
 		return builder.toString();
-	}
-
-	public static List<Long> fromArray(long[] array) {
-		if (array == null) return null;
-		final List<Long> list = new ArrayList<Long>();
-		for (long item : array) {
-			list.add(item);
-		}
-		return list;
 	}
 }

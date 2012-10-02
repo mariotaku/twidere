@@ -110,10 +110,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		return mData;
 	}
 
-	abstract long[] getOldestStatusIds();
-	
-	abstract long[] getNewestStatusIds();
-
 	@Override
 	public abstract StatusesAdapterInterface getListAdapter();
 
@@ -404,7 +400,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
 		registerReceiver(mStateReceiver, filter);
 
-
 	}
 
 	@Override
@@ -444,4 +439,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
 	}
+
+	abstract long[] getNewestStatusIds();
+
+	abstract long[] getOldestStatusIds();
 }

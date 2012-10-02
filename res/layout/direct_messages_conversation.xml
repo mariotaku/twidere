@@ -6,8 +6,7 @@
 	<RelativeLayout
 		android:id="@+id/conversation_container"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:visibility="gone">
+		android:layout_height="match_parent">
 
 		<ListView
 			android:id="@android:id/list"
@@ -37,6 +36,7 @@
 				android:completionThreshold="1"
 				android:gravity="left|bottom"
 				android:hint="@string/type_to_compose"
+				android:imeOptions="actionDone"
 				android:inputType="textMultiLine"
 				android:minHeight="64dp"
 				android:singleLine="false"/>
@@ -60,7 +60,7 @@
 		android:gravity="center"
 		android:orientation="horizontal"
 		android:padding="16dp"
-		android:visibility="visible">
+		android:visibility="gone">
 
 		<AutoCompleteTextView
 			android:id="@+id/edit_screen_name"
