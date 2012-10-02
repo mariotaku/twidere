@@ -67,16 +67,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	long[] getOldestStatusIds() {
-		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
-	}
-	
-	@Override
-	long[] getNewestStatusIds() {
-		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
-	}
-
-	@Override
 	public CursorStatusesAdapter getListAdapter() {
 		return mAdapter;
 	}
@@ -147,6 +137,16 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
+	}
+
+	@Override
+	long[] getNewestStatusIds() {
+		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
+	}
+
+	@Override
+	long[] getOldestStatusIds() {
+		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
 
 }

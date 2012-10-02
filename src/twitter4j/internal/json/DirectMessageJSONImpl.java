@@ -91,12 +91,30 @@ import twitter4j.internal.http.HttpResponse;
 		return createdAt;
 	}
 
+	@Override
+	public HashtagEntity[] getHashtagEntities() {
+		return hashtagEntities;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public long getId() {
 		return id;
+	}
+
+	/**
+	 * This will always return null in Direct Messages.
+	 */
+	@Override
+	public MediaEntity[] getMediaEntities() {
+		return null;
+	}
+
+	@Override
+	public String getRawText() {
+		return rawText;
 	}
 
 	/**
@@ -153,6 +171,16 @@ import twitter4j.internal.http.HttpResponse;
 	@Override
 	public String getText() {
 		return text;
+	}
+
+	@Override
+	public URLEntity[] getURLEntities() {
+		return urlEntities;
+	}
+
+	@Override
+	public UserMentionEntity[] getUserMentionEntities() {
+		return userMentionEntities;
 	}
 
 	@Override
@@ -236,31 +264,5 @@ import twitter4j.internal.http.HttpResponse;
 		} catch (final TwitterException te) {
 			throw te;
 		}
-	}
-
-	public UserMentionEntity[] getUserMentionEntities() {
-		return userMentionEntities;
-	}
-
-	public HashtagEntity[] getHashtagEntities() {
-		return hashtagEntities;
-	}
-
-	/**
-	 * This will always return null in Direct Messages.
-	 */
-	@Override
-	public MediaEntity[] getMediaEntities() {
-		return null;
-	}
-
-	@Override
-	public URLEntity[] getURLEntities() {
-		return urlEntities;
-	}
-
-	@Override
-	public String getRawText() {
-		return rawText;
 	}
 }

@@ -983,40 +983,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	static class FriendshipLoader extends AsyncTaskLoader<Response<Relationship>> {
-
-		private final Context context;
-		private final long account_id, user_id;
-
-		public FriendshipLoader(final Context context, final long account_id, final long user_id) {
-			super(context);
-			this.context = context;
-			this.account_id = account_id;
-			this.user_id = user_id;
-		}
-
-		@Override
-		public Response<Relationship> loadInBackground() {
-			return getFriendship();
-		}
-
-		@Override
-		protected void onStartLoading() {
-			forceLoad();
-		}
-
-		private Response<Relationship> getFriendship() {
-			if (account_id == user_id) return new Response<Relationship>(null, null);
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
-			try {
-				final Relationship result = twitter.showFriendship(account_id, user_id);
-				return new Response<Relationship>(result, null);
-			} catch (final TwitterException e) {
-				return new Response<Relationship>(null, e);
-			}
-		}
-	}
-
 	static class BannerImageLoader extends AsyncTaskLoader<Bitmap> {
 
 		private static final String CACHE_DIR = "cached_images";
@@ -1133,6 +1099,40 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			openUserFavorites(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
+	}
+
+	static class FriendshipLoader extends AsyncTaskLoader<Response<Relationship>> {
+
+		private final Context context;
+		private final long account_id, user_id;
+
+		public FriendshipLoader(final Context context, final long account_id, final long user_id) {
+			super(context);
+			this.context = context;
+			this.account_id = account_id;
+			this.user_id = user_id;
+		}
+
+		@Override
+		public Response<Relationship> loadInBackground() {
+			return getFriendship();
+		}
+
+		@Override
+		protected void onStartLoading() {
+			forceLoad();
+		}
+
+		private Response<Relationship> getFriendship() {
+			if (account_id == user_id) return new Response<Relationship>(null, null);
+			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			try {
+				final Relationship result = twitter.showFriendship(account_id, user_id);
+				return new Response<Relationship>(result, null);
+			} catch (final TwitterException e) {
+				return new Response<Relationship>(null, e);
+			}
+		}
 	}
 
 	final class IncomingFriendshipsAction extends ListAction {

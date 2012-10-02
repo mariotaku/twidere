@@ -901,21 +901,21 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ResponseList<Status> getRetweets(final long statusId, final int count) throws TwitterException {
+	public ResponseList<Status> getRetweets(final long statusId) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createStatusList(get(conf.getRestBaseURL() + "statuses/retweets/" + statusId + ".json",
-				conf.getSigningRestBaseURL() + "statuses/retweets/" + statusId + ".json", new HttpParameter("count",
-						count), INCLUDE_ENTITIES));
+				conf.getSigningRestBaseURL() + "statuses/retweets/" + statusId + ".json", INCLUDE_ENTITIES));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ResponseList<Status> getRetweets(final long statusId) throws TwitterException {
+	public ResponseList<Status> getRetweets(final long statusId, final int count) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createStatusList(get(conf.getRestBaseURL() + "statuses/retweets/" + statusId + ".json",
-				conf.getSigningRestBaseURL() + "statuses/retweets/" + statusId + ".json", INCLUDE_ENTITIES));
+				conf.getSigningRestBaseURL() + "statuses/retweets/" + statusId + ".json", new HttpParameter("count",
+						count), INCLUDE_ENTITIES));
 	}
 
 	/**

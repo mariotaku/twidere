@@ -110,7 +110,8 @@ public interface FriendshipMethods {
 	 * parameter.<br>
 	 * Returns the unfollowed user in the requested format when successful.
 	 * Returns a string describing the failure condition when unsuccessful. <br>
-	 * This method calls http://api.twitter.com/1.1/friendships/destroy/[id].json
+	 * This method calls
+	 * http://api.twitter.com/1.1/friendships/destroy/[id].json
 	 * 
 	 * @param userId the ID of the user for whom to request a list of friends
 	 * @return User
@@ -127,7 +128,8 @@ public interface FriendshipMethods {
 	 * parameter.<br>
 	 * Returns the unfollowed user in the requested format when successful.
 	 * Returns a string describing the failure condition when unsuccessful. <br>
-	 * This method calls http://api.twitter.com/1.1/friendships/destroy/[id].json
+	 * This method calls
+	 * http://api.twitter.com/1.1/friendships/destroy/[id].json
 	 * 
 	 * @param screenName the screen name of the user for whom to request a list
 	 *            of friends

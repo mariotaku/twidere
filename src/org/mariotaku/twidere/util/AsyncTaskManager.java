@@ -99,7 +99,7 @@ public class AsyncTaskManager {
 	public void remove(final int hashCode) {
 		try {
 			mTasks.remove(findTask(hashCode));
-		} catch (ConcurrentModificationException e) {
+		} catch (final ConcurrentModificationException e) {
 			// Ignore.
 		}
 	}
@@ -109,7 +109,7 @@ public class AsyncTaskManager {
 			for (final ManagedAsyncTask task : getTaskList()) {
 				if (hashCode == task.hashCode()) return task;
 			}
-		} catch (ConcurrentModificationException e) {
+		} catch (final ConcurrentModificationException e) {
 
 		}
 		return null;

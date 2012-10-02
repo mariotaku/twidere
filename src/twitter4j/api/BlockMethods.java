@@ -33,7 +33,8 @@ public interface BlockMethods {
 	 * @param userId the ID of the user to block
 	 * @return the blocked user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/blocks/create">POST
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/blocks/create">POST
 	 *      blocks/create | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
@@ -47,7 +48,8 @@ public interface BlockMethods {
 	 * @param screenName the screen_name of the user to block
 	 * @return the blocked user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/post/blocks/create">POST
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/post/blocks/create">POST
 	 *      blocks/create | Twitter Developers</a>
 	 * @since Twitter4J 2.0.1
 	 */
@@ -121,7 +123,8 @@ public interface BlockMethods {
 	 * 
 	 * @return a list of user objects that the authenticating user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/blocks/blocking">GET
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/blocks/blocking">GET
 	 *      blocks/blocking | Twitter Developers</a>
 	 * @since Twitter4J 2.0.4
 	 */
@@ -134,7 +137,8 @@ public interface BlockMethods {
 	 * @param page the number of page
 	 * @return a list of user objects that the authenticating user
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/blocks/blocking">GET
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/blocks/blocking">GET
 	 *      blocks/blocking | Twitter Developers</a>
 	 * @since Twitter4J 2.0.4
 	 */

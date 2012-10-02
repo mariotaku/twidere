@@ -33,6 +33,8 @@ public interface DirectMessage extends TwitterResponse, EntitySupport {
 
 	long getId();
 
+	String getRawText();
+
 	User getRecipient();
 
 	long getRecipientId();
@@ -46,7 +48,5 @@ public interface DirectMessage extends TwitterResponse, EntitySupport {
 	String getSenderScreenName();
 
 	String getText();
-	
-	String getRawText();
 
 }

@@ -47,7 +47,8 @@ public interface DirectMessageMethods {
 	 * 
 	 * @return List
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/direct_messages">GET
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/direct_messages">GET
 	 *      direct_messages | Twitter Developers</a>
 	 */
 	ResponseList<DirectMessage> getDirectMessages() throws TwitterException;
@@ -60,7 +61,8 @@ public interface DirectMessageMethods {
 	 *            page parameters.
 	 * @return List
 	 * @throws TwitterException when Twitter service or network is unavailable
-	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/direct_messages">GET
+	 * @see <a
+	 *      href="https://dev.twitter.com/docs/api/1.1/get/direct_messages">GET
 	 *      direct_messages | Twitter Developers</a>
 	 */
 	ResponseList<DirectMessage> getDirectMessages(Paging paging) throws TwitterException;
@@ -130,7 +132,8 @@ public interface DirectMessageMethods {
 	 * Returns a single direct message, specified by an id parameter. <br>
 	 * This method has not been finalized and the interface is subject to change
 	 * in incompatible ways. <br>
-	 * This method calls http://api.twitter.com/1.1/direct_messages/show/:id.json
+	 * This method calls
+	 * http://api.twitter.com/1.1/direct_messages/show/:id.json
 	 * 
 	 * @param id message id
 	 * @return DirectMessage

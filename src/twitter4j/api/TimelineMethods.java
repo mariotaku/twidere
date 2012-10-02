@@ -99,7 +99,6 @@ public interface TimelineMethods {
 	 */
 	ResponseList<Status> getMentions(Paging paging) throws TwitterException;
 
-
 	/**
 	 * Returns the 20 most recent statuses posted from the authenticating user.
 	 * It's also possible to request another user's timeline via the id

@@ -28,7 +28,9 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 	private int mAccountIdIdx;
 	private final boolean mMultiSelectEnabled;
 
-	public AccountsAdapter(final Context context, boolean multi_select) {
+	private final SparseBooleanArray mCheckedItems = new SparseBooleanArray();
+
+	public AccountsAdapter(final Context context, final boolean multi_select) {
 		super(context, R.layout.account_list_item, null, new String[] { Accounts.NAME },
 				new int[] { android.R.id.text1 }, 0);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
@@ -58,6 +60,22 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 		super.bindView(view, context, cursor);
 	}
 
+	public long getAccountIdAt(final int position) {
+		return ((Cursor) getItem(position)).getLong(mAccountIdIdx);
+	}
+
+	public int getPosition(final long account_id) {
+		final int count = getCount();
+		for (int i = 0; i < count; i++) {
+			if (getAccountIdAt(i) == account_id) return i;
+		}
+		return -1;
+	}
+
+	public boolean isChecked(final int position) {
+		return mCheckedItems.get(position);
+	}
+
 	@Override
 	public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {
 
@@ -73,28 +91,10 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 		super.notifyDataSetChanged();
 	}
 
-	public long getAccountIdAt(int position) {
-		return ((Cursor) getItem(position)).getLong(mAccountIdIdx);
-	}
-
-	public int getPosition(long account_id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getAccountIdAt(i) == account_id) return i;
-		}
-		return -1;
-	}
-
-	public void setItemChecked(int position, boolean checked) {
+	public void setItemChecked(final int position, final boolean checked) {
 		mCheckedItems.put(position, checked);
 		notifyDataSetChanged();
 	}
-
-	public boolean isChecked(int position) {
-		return mCheckedItems.get(position);
-	}
-
-	private final SparseBooleanArray mCheckedItems = new SparseBooleanArray();
 
 	@Override
 	public Cursor swapCursor(final Cursor cursor) {

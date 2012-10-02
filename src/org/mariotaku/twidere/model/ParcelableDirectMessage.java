@@ -87,7 +87,7 @@ public class ParcelableDirectMessage implements Parcelable {
 
 	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_outgoing) {
 		this.account_id = account_id;
-		this.is_out_going = is_outgoing;
+		is_out_going = is_outgoing;
 		final User sender = message.getSender(), recipient = message.getRecipient();
 		message_id = message.getId();
 		message_timestamp = getTime(message.getCreatedAt());

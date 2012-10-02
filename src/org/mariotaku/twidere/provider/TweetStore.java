@@ -215,34 +215,14 @@ public final class TweetStore implements Constants {
 		public static final String RECIPIENT_PROFILE_IMAGE_URL = "recipient_profile_image_url";
 
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, MESSAGE_ID, MESSAGE_TIMESTAMP,
-				SENDER_ID, RECIPIENT_ID, IS_OUTGOING, TEXT, TEXT_PLAIN, SENDER_NAME, RECIPIENT_NAME, SENDER_SCREEN_NAME,
-				RECIPIENT_SCREEN_NAME, SENDER_PROFILE_IMAGE_URL, RECIPIENT_PROFILE_IMAGE_URL };
+				SENDER_ID, RECIPIENT_ID, IS_OUTGOING, TEXT, TEXT_PLAIN, SENDER_NAME, RECIPIENT_NAME,
+				SENDER_SCREEN_NAME, RECIPIENT_SCREEN_NAME, SENDER_PROFILE_IMAGE_URL, RECIPIENT_PROFILE_IMAGE_URL };
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
-				TYPE_INT, TYPE_BOOLEAN, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
+				TYPE_INT, TYPE_BOOLEAN, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
+				TYPE_TEXT };
 
 		public static final String DEFAULT_SORT_ORDER = MESSAGE_ID + " DESC";
 
-		public static final class QueryBuilder {
-			public static final String build(final String[] projection, final String selection, final String sortOrder) {
-				final String projection_string = projection != null ? ArrayUtils.toString(projection, ',', false)
-						: "*";
-				final StringBuilder sql_builder = new StringBuilder();
-				sql_builder.append("SELECT " + projection_string);
-				sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
-				if (selection != null) {
-					sql_builder.append(" WHERE " + selection);
-				}
-				sql_builder.append(" UNION ");
-				sql_builder.append("SELECT " + projection_string);
-				sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
-				if (selection != null) {
-					sql_builder.append(" WHERE " + selection);
-				}
-				sql_builder.append(" ORDER BY " + (sortOrder != null ? sortOrder : DirectMessages.DEFAULT_SORT_ORDER));
-				return sql_builder.toString();
-			}
-		}
-		
 		public static interface Conversation extends DirectMessages {
 
 			public static final String DEFAULT_SORT_ORDER = MESSAGE_TIMESTAMP + " ASC";
@@ -283,7 +263,7 @@ public final class TweetStore implements Constants {
 							+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
 					return sql_builder.toString();
 				}
-				
+
 				public static final String buildByScreenName(final String[] projection, final long account_id,
 						final String screen_name, final String selection, final String sortOrder) {
 					final String projection_string = projection != null ? ArrayUtils.toString(projection, ',', false)
@@ -395,6 +375,26 @@ public final class TweetStore implements Constants {
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 					CONTENT_PATH);
 
+		}
+
+		public static final class QueryBuilder {
+			public static final String build(final String[] projection, final String selection, final String sortOrder) {
+				final String projection_string = projection != null ? ArrayUtils.toString(projection, ',', false) : "*";
+				final StringBuilder sql_builder = new StringBuilder();
+				sql_builder.append("SELECT " + projection_string);
+				sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
+				if (selection != null) {
+					sql_builder.append(" WHERE " + selection);
+				}
+				sql_builder.append(" UNION ");
+				sql_builder.append("SELECT " + projection_string);
+				sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
+				if (selection != null) {
+					sql_builder.append(" WHERE " + selection);
+				}
+				sql_builder.append(" ORDER BY " + (sortOrder != null ? sortOrder : DirectMessages.DEFAULT_SORT_ORDER));
+				return sql_builder.toString();
+			}
 		}
 
 	}

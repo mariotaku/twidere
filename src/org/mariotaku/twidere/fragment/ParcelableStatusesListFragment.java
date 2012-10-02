@@ -86,19 +86,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	final long[] getOldestStatusIds() {
-		final int last_idx = mAdapter.getCount() - 1;
-		final long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).status_id : -1;
-		return last_id > 0 ? new long[] { last_id } : null;
-	}
-	
-	@Override
-	final long[] getNewestStatusIds() {
-		final long last_id = mAdapter.getCount() > 0 ? mAdapter.getItem(0).status_id : -1;
-		return last_id > 0 ? new long[] { last_id } : null;
-	}
-
-	@Override
 	public final ParcelableStatusesAdapter getListAdapter() {
 		return mAdapter;
 	}
@@ -248,5 +235,18 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			}
 
 		}.start();
+	}
+
+	@Override
+	final long[] getNewestStatusIds() {
+		final long last_id = mAdapter.getCount() > 0 ? mAdapter.getItem(0).status_id : -1;
+		return last_id > 0 ? new long[] { last_id } : null;
+	}
+
+	@Override
+	final long[] getOldestStatusIds() {
+		final int last_idx = mAdapter.getCount() - 1;
+		final long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).status_id : -1;
+		return last_id > 0 ? new long[] { last_id } : null;
 	}
 }

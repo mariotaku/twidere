@@ -61,27 +61,27 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 	private static final String ATTR_DIALOGTITLE = "dialogTitle";
 	private static final String ATTR_TITLE = "title";
 
-	public ColorPickerPreference(Context context) {
+	public ColorPickerPreference(final Context context) {
 		super(context);
 		init(context, null);
 	}
 
-	public ColorPickerPreference(Context context, AttributeSet attrs) {
+	public ColorPickerPreference(final Context context, final AttributeSet attrs) {
 
 		super(context, attrs);
 		init(context, attrs);
 	}
 
-	public ColorPickerPreference(Context context, AttributeSet attrs, int defStyle) {
+	public ColorPickerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 
 		super(context, attrs, defStyle);
 		init(context, attrs);
 	}
 
 	@Override
-	public boolean onPreferenceClick(Preference preference) {
+	public boolean onPreferenceClick(final Preference preference) {
 
-		ColorPickerDialog dialog = new ColorPickerDialog(getContext(), getValue());
+		final ColorPickerDialog dialog = new ColorPickerDialog(getContext(), getValue());
 		if (mTitle != null) {
 			dialog.setTitle(mTitle);
 		}
@@ -98,13 +98,13 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 	 * 
 	 * @param enable
 	 */
-	public void setAlphaSliderEnabled(boolean enable) {
+	public void setAlphaSliderEnabled(final boolean enable) {
 
 		mAlphaSliderEnabled = enable;
 	}
 
 	@Override
-	protected void onBindView(View view) {
+	protected void onBindView(final View view) {
 
 		super.onBindView(view);
 		mView = view;
@@ -112,7 +112,7 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 	}
 
 	@Override
-	protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
+	protected void onSetInitialValue(final boolean restoreValue, final Object defaultValue) {
 
 		if (isPersistent()) {
 			persistInt(restoreValue ? getValue() : (Integer) defaultValue);
@@ -122,11 +122,11 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 
 	private Bitmap getPreviewBitmap() {
 
-		int d = (int) (mDensity * 31); // 30dip
-		int color = getValue();
-		Bitmap bm = Bitmap.createBitmap(d, d, Config.ARGB_8888);
-		int w = bm.getWidth();
-		int h = bm.getHeight();
+		final int d = (int) (mDensity * 31); // 30dip
+		final int color = getValue();
+		final Bitmap bm = Bitmap.createBitmap(d, d, Config.ARGB_8888);
+		final int w = bm.getWidth();
+		final int h = bm.getHeight();
 		int c = color;
 		for (int i = 0; i < w; i++) {
 			for (int j = i; j < h; j++) {
@@ -147,42 +147,42 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 			if (isPersistent()) {
 				mValue = getPersistedInt(mDefaultValue);
 			}
-		} catch (ClassCastException e) {
+		} catch (final ClassCastException e) {
 			mValue = mDefaultValue;
 		}
 
 		return mValue;
 	}
 
-	private void init(Context context, AttributeSet attrs) {
+	private void init(final Context context, final AttributeSet attrs) {
 
 		mDensity = getContext().getResources().getDisplayMetrics().density;
 		setOnPreferenceClickListener(this);
 		if (attrs != null) {
 			try {
 				mTitle = context.getString(attrs.getAttributeResourceValue(ANDROID_NS, ATTR_DIALOGTITLE, -1));
-			} catch (NotFoundException e) {
+			} catch (final NotFoundException e) {
 				mTitle = attrs.getAttributeValue(ANDROID_NS, ATTR_DIALOGTITLE);
 			}
 
 			if (mTitle == null) {
 				try {
 					mTitle = context.getString(attrs.getAttributeResourceValue(ANDROID_NS, ATTR_TITLE, -1));
-				} catch (NotFoundException e) {
+				} catch (final NotFoundException e) {
 					mTitle = attrs.getAttributeValue(ANDROID_NS, ATTR_TITLE);
 				}
 			}
 
-			String defaultValue = attrs.getAttributeValue(ANDROID_NS, ATTR_DEFAULTVALUE);
+			final String defaultValue = attrs.getAttributeValue(ANDROID_NS, ATTR_DEFAULTVALUE);
 			if (defaultValue != null && defaultValue.startsWith("#")) {
 				try {
 					mDefaultValue = Color.parseColor(defaultValue);
-				} catch (IllegalArgumentException e) {
+				} catch (final IllegalArgumentException e) {
 					Log.e("ColorPickerPreference", "Wrong color: " + defaultValue);
 					mDefaultValue = Color.WHITE;
 				}
 			} else {
-				int colorResourceId = attrs.getAttributeResourceValue(ANDROID_NS, ATTR_DEFAULTVALUE, 0);
+				final int colorResourceId = attrs.getAttributeResourceValue(ANDROID_NS, ATTR_DEFAULTVALUE, 0);
 				if (colorResourceId != 0) {
 					mDefaultValue = context.getResources().getColor(colorResourceId);
 				}
@@ -195,13 +195,13 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 	private void setPreviewColor() {
 
 		if (mView == null) return;
-		ImageView iView = new ImageView(getContext());
-		LinearLayout widgetFrameView = (LinearLayout) mView.findViewById(android.R.id.widget_frame);
+		final ImageView iView = new ImageView(getContext());
+		final LinearLayout widgetFrameView = (LinearLayout) mView.findViewById(android.R.id.widget_frame);
 		if (widgetFrameView == null) return;
 		widgetFrameView.setPadding(widgetFrameView.getPaddingLeft(), widgetFrameView.getPaddingTop(),
 				(int) (mDensity * 8), widgetFrameView.getPaddingBottom());
 		// remove already create preview image
-		int count = widgetFrameView.getChildCount();
+		final int count = widgetFrameView.getChildCount();
 		if (count > 0) {
 			widgetFrameView.removeViews(0, count);
 		}
@@ -229,13 +229,13 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 		 */
 		private Bitmap mBitmap;
 
-		public AlphaPatternDrawable(int rectangleSize) {
+		public AlphaPatternDrawable(final int rectangleSize) {
 
 			mRectangleSize = rectangleSize;
 		}
 
 		@Override
-		public void draw(Canvas canvas) {
+		public void draw(final Canvas canvas) {
 
 			canvas.drawBitmap(mBitmap, null, getBounds(), new Paint());
 		}
@@ -247,22 +247,22 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 		}
 
 		@Override
-		public void setAlpha(int alpha) {
+		public void setAlpha(final int alpha) {
 
 		}
 
 		@Override
-		public void setColorFilter(ColorFilter cf) {
+		public void setColorFilter(final ColorFilter cf) {
 
 		}
 
 		@Override
-		protected void onBoundsChange(Rect bounds) {
+		protected void onBoundsChange(final Rect bounds) {
 
 			super.onBoundsChange(bounds);
 
-			int height = bounds.height();
-			int width = bounds.width();
+			final int height = bounds.height();
+			final int width = bounds.width();
 
 			numRectanglesHorizontal = (int) Math.ceil(width / mRectangleSize);
 			numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
@@ -282,9 +282,9 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 			if (getBounds().width() <= 0 || getBounds().height() <= 0) return;
 
 			mBitmap = Bitmap.createBitmap(getBounds().width(), getBounds().height(), Config.ARGB_8888);
-			Canvas canvas = new Canvas(mBitmap);
+			final Canvas canvas = new Canvas(mBitmap);
 
-			Rect r = new Rect();
+			final Rect r = new Rect();
 			boolean verticalStartWhite = true;
 			for (int i = 0; i <= numRectanglesVertical; i++) {
 
@@ -296,7 +296,7 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 					r.bottom = r.top + mRectangleSize;
 					r.right = r.left + mRectangleSize;
 
-					Paint paint = new Paint();
+					final Paint paint = new Paint();
 					paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
 					canvas.drawRect(r, paint);
 
@@ -315,7 +315,7 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 
 		private ColorPickerView mColorPicker;
 
-		public ColorPickerDialog(Context context, int initialColor) {
+		public ColorPickerDialog(final Context context, final int initialColor) {
 
 			super(context);
 
@@ -328,10 +328,10 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 		}
 
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+		public void onClick(final DialogInterface dialog, final int which) {
 			switch (which) {
 				case BUTTON_POSITIVE:
-					int color = mColorPicker.getColor();
+					final int color = mColorPicker.getColor();
 					if (isPersistent()) {
 						persistInt(color);
 					}
@@ -346,29 +346,29 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 
 		}
 
-		public void onColorChanged(int color) {
+		public void onColorChanged(final int color) {
 
 			setIcon(new BitmapDrawable(getContext().getResources(), getPreviewBitmap(color)));
 
 		}
 
-		public void setAlphaSliderVisible(boolean visible) {
+		public void setAlphaSliderVisible(final boolean visible) {
 
 			mColorPicker.setAlphaSliderVisible(visible);
 		}
 
-		private Bitmap getPreviewBitmap(int color) {
+		private Bitmap getPreviewBitmap(final int color) {
 
-			float density = getContext().getResources().getDisplayMetrics().density;
-			int width = (int) (32 * density), height = (int) (32 * density);
+			final float density = getContext().getResources().getDisplayMetrics().density;
+			final int width = (int) (32 * density), height = (int) (32 * density);
 
-			Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-			Canvas canvas = new Canvas(bm);
+			final Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+			final Canvas canvas = new Canvas(bm);
 
-			int rectrangle_size = (int) (density * 5);
-			int numRectanglesHorizontal = (int) Math.ceil(width / rectrangle_size);
-			int numRectanglesVertical = (int) Math.ceil(height / rectrangle_size);
-			Rect r = new Rect();
+			final int rectrangle_size = (int) (density * 5);
+			final int numRectanglesHorizontal = (int) Math.ceil(width / rectrangle_size);
+			final int numRectanglesVertical = (int) Math.ceil(height / rectrangle_size);
+			final Rect r = new Rect();
 			boolean verticalStartWhite = true;
 			for (int i = 0; i <= numRectanglesVertical; i++) {
 
@@ -379,7 +379,7 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 					r.left = j * rectrangle_size;
 					r.bottom = r.top + rectrangle_size;
 					r.right = r.left + rectrangle_size;
-					Paint paint = new Paint();
+					final Paint paint = new Paint();
 					paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
 
 					canvas.drawRect(r, paint);
@@ -391,22 +391,22 @@ public class ColorPickerPreference extends Preference implements Preference.OnPr
 
 			}
 			canvas.drawColor(color);
-			Paint paint = new Paint();
+			final Paint paint = new Paint();
 			paint.setColor(Color.WHITE);
 			paint.setStrokeWidth(2.0f);
-			float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0, height, width,
-					height };
+			final float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0, height,
+					width, height };
 			canvas.drawLines(points, paint);
 
 			return bm;
 		}
 
-		private void init(Context context, int color) {
+		private void init(final Context context, final int color) {
 
 			// To fight color branding.
 			getWindow().setFormat(PixelFormat.RGBA_8888);
 
-			LinearLayout mContentView = new LinearLayout(context);
+			final LinearLayout mContentView = new LinearLayout(context);
 			mContentView.setOrientation(LinearLayout.VERTICAL);
 
 			mColorPicker = new ColorPickerView(context);
