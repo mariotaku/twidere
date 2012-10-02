@@ -17,8 +17,6 @@
 	<string name="sign_up">Sign up</string>
 	<string name="sign_in">Sign in</string>
 	<string name="rest_base_url">REST Base URL</string>
-	<string name="search_base_url">Search Base URL</string>
-	<string name="upload_base_url">Upload Base URL</string>
 	<string name="oauth_base_url">OAuth Base URL</string>
 	<string name="signing_oauth_base_url">Signing OAuth Base URL</string>
 	<string name="signing_rest_base_url">Signing REST Base URL</string>
@@ -135,9 +133,6 @@
 	<string name="unfollow_success">Unfollow success.</string>
 	<string name="profile_update_success">Profile update success.</string>
 	<string name="profile_image_update_success">Profile image update success.</string>
-	<string name="display_name">Display name</string>
-	<string name="display_name_summaryon">Display username of tweet.</string>
-	<string name="display_name_summaryoff">Display screen name of tweet</string>
 	<string name="text_size">Text size</string>
 	<string name="text_size_summary">Text size of statuses.</string>
 	<string name="cannot_get_location">Can\'t get your location.</string>
@@ -158,14 +153,10 @@
 	<string name="capital_off">OFF</string>
 	<string name="blocked_users">Blocked users</string>
 	<string name="set_as_default">Set as default</string>
-	<string name="default_account">Default account</string>
 	<string name="search_users">Search Users</string>
 	<string name="search_tweets">Search Tweets</string>
 	<string name="created_at">Created at</string>
 	<string name="set_default_account_hint">Please set a default account.</string>
-	<string name="daily_trends">Daily trends</string>
-	<string name="weekly_trends">Weekly trends</string>
-	<string name="local_trends">Local trends</string>
 	<string name="search_hint">Search tweets or users</string>
 	<string name="remember_position">Remember position</string>
 	<string name="remember_position_summary">Remember list/tab position before closing Twidere</string>
@@ -264,7 +255,6 @@
 	<string name="saved_searches">Saved searches</string>
 	<string name="add_saved_search">Add saved search</string>
 	<string name="custom_tabs">Custom tabs</string>
-	<string name="retweeted_to_me">Retweeted timeline</string>
 	<string name="add_tab">Add tab</string>
 	<string name="tab_type">Tab type</string>
 	<string name="unused">Unused</string>

@@ -276,6 +276,8 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_MULTI_SELECT_STATE_CHANGED = INTENT_PACKAGE_PREFIX
 			+ "MULTI_SELECT_STATE_CHANGED";
 	public static final String BROADCAST_MULTI_BLOCKSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "MULTI_BLOCKSTATE_CHANGED";
+	public static final String BROADCAST_APPLICATION_LAUNCHED = INTENT_PACKAGE_PREFIX + "APPLICATION_LAUNCHED";
+	public static final String BROADCAST_APPLICATION_QUITTED = INTENT_PACKAGE_PREFIX + "APPLICATION_QUITTED";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";

@@ -7,8 +7,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_above="@+id/menu_bar"
-		android:layout_alignParentTop="true"
-		android:padding="8dp">
+		android:layout_alignParentTop="true">
 
 		<org.mariotaku.twidere.view.ColorView
 			android:id="@+id/account_colors"
@@ -20,6 +19,7 @@
 			android:id="@+id/edit_text"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
+			android:layout_margin="8dp"
 			android:completionThreshold="1"
 			android:gravity="top|right"
 			android:hint="@string/tweet_hint"
@@ -32,7 +32,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
-			android:padding="8dp">
+			android:layout_margin="16dp">
 
 			<org.mariotaku.twidere.view.RoundCorneredImageView
 				android:id="@+id/image_thumbnail_preview"

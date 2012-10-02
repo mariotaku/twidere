@@ -205,6 +205,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mService = mApplication.getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
+		sendBroadcast(new Intent(BROADCAST_APPLICATION_LAUNCHED));
 		final Resources res = getResources();
 		mDisplayAppIcon = res.getBoolean(R.bool.home_display_icon);
 		final long[] account_ids = getAccountIds(this);
@@ -459,6 +460,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	protected void onDestroy() {
 		// Delete unused items in databases.
 		cleanDatabasesByItemLimit(this);
+		sendBroadcast(new Intent(BROADCAST_APPLICATION_QUITTED));
 		super.onDestroy();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED, false)) {
 			// What the f**k are you think about? Stop service causes twidere

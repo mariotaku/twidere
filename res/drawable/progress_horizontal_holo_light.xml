@@ -21,12 +21,12 @@
 
     <item android:id="@android:id/secondaryProgress">
         <scale android:scaleWidth="100%"
-               android:drawable="@drawable/progress_secondary_holo_light" />
+               android:drawable="@drawable/progress_secondary_holo" />
     </item>
 
     <item android:id="@android:id/progress">
         <scale android:scaleWidth="100%"
-               android:drawable="@drawable/progress_primary_holo_light" />
+               android:drawable="@drawable/progress_primary_holo" />
     </item>
 
 </layer-list>

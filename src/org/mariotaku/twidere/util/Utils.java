@@ -113,7 +113,6 @@ import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
-import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
@@ -130,6 +129,7 @@ import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
 import twitter4j.DirectMessage;
 import twitter4j.EntitySupport;
+import twitter4j.GeoLocation;
 import twitter4j.HostAddressResolver;
 import twitter4j.MediaEntity;
 import twitter4j.ResponseList;
@@ -687,12 +687,12 @@ public final class Utils implements Constants {
 		return colors;
 	}
 
-	public static long getAccountId(final Context context, final String username) {
+	public static long getAccountId(final Context context, final String screen_name) {
 		if (context == null) return -1;
 		long user_id = -1;
 
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.ACCOUNT_ID }, Accounts.SCREEN_NAME + " = ?", new String[] { username }, null);
+				new String[] { Accounts.ACCOUNT_ID }, Accounts.SCREEN_NAME + " = ?", new String[] { screen_name }, null);
 		if (cur == null) return user_id;
 
 		if (cur.getCount() > 0) {
@@ -1509,11 +1509,11 @@ public final class Utils implements Constants {
 		return getTwitterInstance(context, account_username, include_entities, true);
 	}
 
-	public static Twitter getTwitterInstance(final Context context, final String account_username,
+	public static Twitter getTwitterInstance(final Context context, final String screen_name,
 			final boolean include_entities, final boolean include_rts) {
 		if (context == null) return null;
 		final StringBuilder where = new StringBuilder();
-		where.append(Accounts.SCREEN_NAME + " = " + account_username);
+		where.append(Accounts.SCREEN_NAME + " = '" + screen_name + "'");
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
 				new String[] { Accounts.ACCOUNT_ID }, where.toString(), null, null);
 		long account_id = -1;
@@ -1717,7 +1717,10 @@ public final class Utils implements Constants {
 		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
 		values.put(Statuses.SOURCE, status.getSource());
-		values.put(Statuses.LOCATION, new ParcelableLocation(status.getGeoLocation()).toString());
+		final GeoLocation location = status.getGeoLocation();
+		if (location != null) {
+			values.put(Statuses.LOCATION, location.getLatitude() +","+ location.getLongitude());
+		}
 		values.put(Statuses.IS_RETWEET, is_retweet ? 1 : 0);
 		values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
 		return values;

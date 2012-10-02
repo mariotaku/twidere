@@ -22,7 +22,7 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 
 	private final LazyImageLoader mProfileImageLoader;
 	private final SharedPreferences mPreferences;
-	private int mUserColorIdx, mProfileImageIdx, mUserIdIdx, mScreenNameIdx;
+	private int mUserColorIdx, mProfileImageIdx, mScreenNameIdx;
 	private long mDefaultAccountId;
 	private final boolean mDisplayHiResProfileImage;
 	private int mAccountIdIdx;
@@ -49,7 +49,7 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 		holder.checkbox.setVisibility(mMultiSelectEnabled ? View.VISIBLE : View.GONE);
 		holder.checkbox.setChecked(mCheckedItems.get(position));
 		holder.setAccountColor(color);
-		holder.setIsDefault(mDefaultAccountId != -1 && mDefaultAccountId == cursor.getLong(mUserIdIdx));
+		holder.setIsDefault(mDefaultAccountId != -1 && mDefaultAccountId == cursor.getLong(mAccountIdIdx));
 		final String profile_image_url_string = cursor.getString(mProfileImageIdx);
 		if (mDisplayHiResProfileImage) {
 			mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
