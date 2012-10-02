@@ -24,9 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -264,9 +262,9 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public DirectMessage destroyDirectMessage(final long id) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createDirectMessage(post(conf.getRestBaseURL() + "direct_messages/destroy/" + id
-				+ ".json?include_entities=" + conf.isIncludeEntitiesEnabled(), conf.getSigningRestBaseURL()
-				+ "direct_messages/destroy/" + id + ".json?include_entities=" + conf.isIncludeEntitiesEnabled()));
+		return factory.createDirectMessage(post(conf.getRestBaseURL() + "direct_messages/destroy.json",
+				conf.getSigningRestBaseURL() + "direct_messages/destroy.json", new HttpParameter("id", id),
+				INCLUDE_ENTITIES));
 	}
 
 	/**
@@ -285,11 +283,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public User destroyFriendship(final long userId) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createUser(post(
-				conf.getRestBaseURL() + "friendships/destroy.json?include_entities=" + conf.isIncludeEntitiesEnabled()
-						+ "&user_id=" + userId, conf.getSigningRestBaseURL()
-						+ "friendships/destroy.json?include_entities=" + conf.isIncludeEntitiesEnabled() + "&user_id="
-						+ userId));
+		return factory.createUser(post(conf.getRestBaseURL() + "friendships/destroy.json", conf.getSigningRestBaseURL()
+				+ "friendships/destroy.json", new HttpParameter("user_id", userId)));
 	}
 
 	/**
@@ -298,11 +293,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public User destroyFriendship(final String screenName) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createUser(post(
-				conf.getRestBaseURL() + "friendships/destroy.json?include_entities=" + conf.isIncludeEntitiesEnabled()
-						+ "&screen_name=" + screenName, conf.getSigningRestBaseURL()
-						+ "friendships/destroy.json?include_entities=" + conf.isIncludeEntitiesEnabled()
-						+ "&screen_name=" + screenName));
+		return factory.createUser(post(conf.getRestBaseURL() + "friendships/destroy.json", conf.getSigningRestBaseURL()
+				+ "friendships/destroy.json", new HttpParameter("screen_name", screenName)));
 	}
 
 	/**
@@ -559,9 +551,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public ResponseList<User> getBlockingUsers() throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createUserList(get(
-				conf.getRestBaseURL() + "blocks/blocking.json" + conf.isIncludeEntitiesEnabled(),
-				conf.getSigningRestBaseURL() + "blocks/blocking.json", INCLUDE_ENTITIES));
+		return factory.createUserList(get(conf.getRestBaseURL() + "blocks/blocking.json", conf.getSigningRestBaseURL()
+				+ "blocks/blocking.json", INCLUDE_ENTITIES));
 	}
 
 	/**
@@ -775,11 +766,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public ResponseList<Status> getHomeTimeline() throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createStatusList(get(
-				conf.getRestBaseURL() + "statuses/home_timeline.json?include_my_retweet=1&include_entities="
-						+ conf.isIncludeEntitiesEnabled(),
-				conf.getSigningRestBaseURL() + "statuses/home_timeline.json?include_my_retweet=1&include_entities="
-						+ conf.isIncludeEntitiesEnabled()));
+		return factory.createStatusList(get(conf.getRestBaseURL() + "statuses/home_timeline.json",
+				conf.getSigningRestBaseURL() + "statuses/home_timeline.json", INCLUDE_MY_RETWEET, INCLUDE_ENTITIES));
 	}
 
 	/**
@@ -946,10 +934,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public ResponseList<DirectMessage> getSentDirectMessages() throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory
-				.createDirectMessageList(get(conf.getRestBaseURL() + "direct_messages/sent.json?include_entities="
-						+ conf.isIncludeEntitiesEnabled(), conf.getSigningRestBaseURL()
-						+ "direct_messages/sent.json?include_entities=" + conf.isIncludeEntitiesEnabled()));
+		return factory.createDirectMessageList(get(conf.getRestBaseURL() + "direct_messages/sent.json",
+				conf.getSigningRestBaseURL() + "direct_messages/sent.json", INCLUDE_ENTITIES));
 	}
 
 	/**
@@ -993,8 +979,6 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 				conf.getSigningRestBaseURL() + "users/suggestions.json"));
 	}
 
-	/* Social Graph Methods */
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -1013,11 +997,9 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	 */
 	@Override
 	public PagableResponseList<User> getUserListMembers(final int listId, final long cursor) throws TwitterException {
-		return factory.createPagableUserList(get(
-				conf.getRestBaseURL() + "lists/members.json?list_id=" + listId + "&include_entities="
-						+ conf.isIncludeEntitiesEnabled() + "&cursor=" + cursor,
-				conf.getSigningRestBaseURL() + "lists/members.json?list_id=" + listId + "&include_entities="
-						+ conf.isIncludeEntitiesEnabled() + "&cursor=" + cursor));
+		return factory.createPagableUserList(get(conf.getRestBaseURL() + "lists/members.json",
+				conf.getSigningRestBaseURL() + "lists/members.json", new HttpParameter("list_id", listId),
+				new HttpParameter("cursor", cursor), INCLUDE_ENTITIES));
 	}
 
 	/**
@@ -1026,8 +1008,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public PagableResponseList<UserList> getUserListMemberships(final long cursor) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createPagableUserListList(get(conf.getRestBaseURL() + "lists/memberships.json?cursor=" + cursor,
-				conf.getSigningRestBaseURL() + "lists/memberships.json?cursor=" + cursor));
+		return factory.createPagableUserListList(get(conf.getRestBaseURL() + "lists/memberships.json",
+				conf.getSigningRestBaseURL() + "lists/memberships.json", new HttpParameter("cursor", cursor)));
 
 	}
 
@@ -1049,10 +1031,9 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 		if (filterToOwnedLists) {
 			ensureAuthorizationEnabled();
 		}
-		return factory.createPagableUserListList(get(conf.getRestBaseURL() + "lists/memberships.json?user_id="
-				+ listMemberId + "&cursor=" + cursor + "&filter_to_owned_lists=" + filterToOwnedLists,
-				conf.getSigningRestBaseURL() + "lists/memberships.json?user_id=" + listMemberId + "&cursor=" + cursor
-						+ "&filter_to_owned_lists=" + filterToOwnedLists));
+		return factory.createPagableUserListList(get(conf.getRestBaseURL() + "lists/memberships.json",
+				conf.getSigningRestBaseURL() + "lists/memberships.json", new HttpParameter("user_id", listMemberId),
+				new HttpParameter("cursor", cursor), new HttpParameter("filter_to_owned_lists", filterToOwnedLists)));
 	}
 
 	/**
@@ -1064,8 +1045,6 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 		return getUserListMemberships(listMemberScreenName, cursor, false);
 	}
 
-	/* Social Graph Methods */
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -1075,10 +1054,10 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 		if (filterToOwnedLists) {
 			ensureAuthorizationEnabled();
 		}
-		return factory.createPagableUserListList(get(conf.getRestBaseURL() + "lists/memberships.json?screen_name="
-				+ listMemberScreenName + "&cursor=" + cursor + "&filter_to_owned_lists=" + filterToOwnedLists,
-				conf.getSigningRestBaseURL() + "lists/memberships.json?screen_name=" + listMemberScreenName
-						+ "&cursor=" + cursor + "&filter_to_owned_lists=" + filterToOwnedLists));
+		return factory.createPagableUserListList(get(conf.getRestBaseURL() + "lists/memberships.json",
+				conf.getSigningRestBaseURL() + "lists/memberships.json", new HttpParameter("screen_name",
+						listMemberScreenName), new HttpParameter("cursor", cursor), new HttpParameter(
+						"filter_to_owned_lists", filterToOwnedLists)));
 	}
 
 	/**
@@ -1117,11 +1096,9 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public PagableResponseList<User> getUserListSubscribers(final int listId, final long cursor)
 			throws TwitterException {
-		return factory.createPagableUserList(get(
-				conf.getRestBaseURL() + "lists/subscribers.json?list_id=" + listId + "&include_entities="
-						+ conf.isIncludeEntitiesEnabled() + "&cursor=" + cursor,
-				conf.getSigningRestBaseURL() + "lists/subscribers.json?list_id=" + listId + "&include_entities="
-						+ conf.isIncludeEntitiesEnabled() + "&cursor=" + cursor));
+		return factory.createPagableUserList(get(conf.getRestBaseURL() + "lists/subscribers.json",
+				conf.getSigningRestBaseURL() + "lists/subscribers.json", new HttpParameter("list_id", listId),
+				new HttpParameter("cursor", cursor), INCLUDE_ENTITIES));
 	}
 
 	/**
@@ -1130,9 +1107,9 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public PagableResponseList<UserList> getUserListSubscriptions(final String listOwnerScreenName, final long cursor)
 			throws TwitterException {
-		return factory.createPagableUserListList(get(conf.getRestBaseURL() + "lists/subscriptions.json?screen_name="
-				+ listOwnerScreenName + "&cursor=" + cursor, conf.getSigningRestBaseURL()
-				+ "lists/subscriptions.json?screen_name=" + listOwnerScreenName + "&cursor=" + cursor));
+		return factory.createPagableUserListList(get(conf.getRestBaseURL() + "lists/subscriptions.json",
+				conf.getSigningRestBaseURL() + "lists/subscriptions.json", new HttpParameter("screen_name",
+						listOwnerScreenName), new HttpParameter("cursor", cursor)));
 	}
 
 	/**
@@ -1284,9 +1261,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public Status retweetStatus(final long statusId) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createStatus(post(conf.getRestBaseURL() + "statuses/retweet/" + statusId
-				+ ".json?include_entities=" + conf.isIncludeEntitiesEnabled(), conf.getSigningRestBaseURL()
-				+ "statuses/retweet/" + statusId + ".json?include_entities=" + conf.isIncludeEntitiesEnabled()));
+		return factory.createStatus(post(conf.getRestBaseURL() + "statuses/retweet/" + statusId + ".json",
+				conf.getSigningRestBaseURL() + "statuses/retweet/" + statusId + ".json", INCLUDE_ENTITIES));
 	}
 
 	/**
@@ -1365,9 +1341,9 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public DirectMessage showDirectMessage(final long id) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createDirectMessage(get(conf.getRestBaseURL() + "direct_messages/show/" + id
-				+ ".json?include_entities=" + conf.isIncludeEntitiesEnabled(), conf.getSigningRestBaseURL()
-				+ "direct_messages/show/" + id + ".json?include_entities=" + conf.isIncludeEntitiesEnabled()));
+		return factory.createDirectMessage(get(conf.getRestBaseURL() + "direct_messages/show.json",
+				conf.getSigningRestBaseURL() + "direct_messages/show.json", new HttpParameter("id", id),
+				INCLUDE_ENTITIES));
 	}
 
 	/**
@@ -1406,9 +1382,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	 */
 	@Override
 	public Status showStatus(final long id) throws TwitterException {
-		return factory.createStatus(get(conf.getRestBaseURL() + "statuses/show/" + id + ".json?include_entities="
-				+ conf.isIncludeEntitiesEnabled(), conf.getSigningRestBaseURL() + "statuses/show/" + id
-				+ ".json?include_entities=" + conf.isIncludeEntitiesEnabled()));
+		return factory.createStatus(get(conf.getRestBaseURL() + "statuses/show.json", conf.getSigningRestBaseURL()
+				+ "statuses/show.json", new HttpParameter("id", id), INCLUDE_ENTITIES, INCLUDE_MY_RETWEET));
 	}
 
 	/**
@@ -1416,10 +1391,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	 */
 	@Override
 	public User showUser(final long userId) throws TwitterException {
-		return factory.createUser(get(
-				conf.getRestBaseURL() + "users/show.json?include_entities=" + conf.isIncludeEntitiesEnabled()
-						+ "&user_id=" + userId, conf.getSigningRestBaseURL() + "users/show.json?include_entities="
-						+ conf.isIncludeEntitiesEnabled() + "&user_id=" + userId));
+		return factory.createUser(get(conf.getRestBaseURL() + "users/show.json", conf.getSigningRestBaseURL()
+				+ "users/show.json", new HttpParameter("user_id", userId), INCLUDE_ENTITIES));
 	}
 
 	/**
@@ -1427,11 +1400,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	 */
 	@Override
 	public User showUser(final String screenName) throws TwitterException {
-		return factory.createUser(get(
-				conf.getRestBaseURL() + "users/show.json?include_entities=" + conf.isIncludeEntitiesEnabled()
-						+ "&screen_name=" + screenName, conf.getSigningRestBaseURL()
-						+ "users/show.json?include_entities=" + conf.isIncludeEntitiesEnabled() + "&screen_name="
-						+ screenName));
+		return factory.createUser(get(conf.getRestBaseURL() + "users/show.json", conf.getSigningRestBaseURL()
+				+ "users/show.json", new HttpParameter("screen_name", screenName), INCLUDE_ENTITIES));
 	}
 
 	/**
@@ -1755,11 +1725,4 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 		return response;
 	}
 
-	private String toDateStr(Date date) {
-		if (null == date) {
-			date = new Date();
-		}
-		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		return sdf.format(date);
-	}
 }

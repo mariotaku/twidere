@@ -46,7 +46,7 @@ public interface Constants extends TwitterConstants {
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 27;
+	public static final int DATABASES_VERSION = 28;
 
 	public static final String CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -186,6 +186,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_CLICK_TO_OPEN_MENU = "click_to_open_menu";
 	public static final String PREFERENCE_KEY_KEEP_IN_BACKGROUND = "keep_in_background";
 	public static final String PREFERENCE_KEY_SEPRATE_RETWEET_ACTION = "seprate_retweet_action";
+	public static final String PREFERENCE_KEY_API_UPGRADE_CONFIRMED = "api_upgrade_confirmed";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -194,7 +195,7 @@ public interface Constants extends TwitterConstants {
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
-	public static final int PREFERENCE_DEFAULT_TEXT_SIZE = 14;
+	public static final int PREFERENCE_DEFAULT_TEXT_SIZE = 15;
 
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 
@@ -332,6 +333,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_IS_IMAGE_ATTACHED = "is_image_attached";
 	public static final String INTENT_KEY_ACTIVATED_ONLY = "activated_only";
 	public static final String INTENT_KEY_IS_HOME_TAB = "is_home_tab";
+	public static final String INTENT_KEY_HAS_RUNNING_TASK = "has_running_task";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -477,4 +479,6 @@ public interface Constants extends TwitterConstants {
 	public static final int NOTIFICATION_ID_DRAFTS = 4;
 
 	public static final String ICON_SPECIAL_TYPE_CUSTOMIZE = "_customize";
+	
+	public static final String FRAGMENT_TAG_API_UPGRADE_NOTICE = "api_upgrade_notice";
 }

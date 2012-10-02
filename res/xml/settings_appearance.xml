@@ -34,7 +34,7 @@
 			android:title="@string/preview"/>
 
 		<com.robobunny.SeekBarPreference
-			android:defaultValue="14"
+			android:defaultValue="15"
 			android:key="text_size_int"
 			android:max="24"
 			android:summary="@string/text_size_summary"

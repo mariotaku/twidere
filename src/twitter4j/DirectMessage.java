@@ -23,7 +23,7 @@ import java.util.Date;
  * 
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public interface DirectMessage extends TwitterResponse {
+public interface DirectMessage extends TwitterResponse, EntitySupport {
 
 	/**
 	 * @return created_at
@@ -46,5 +46,7 @@ public interface DirectMessage extends TwitterResponse {
 	String getSenderScreenName();
 
 	String getText();
+	
+	String getRawText();
 
 }

@@ -18,6 +18,7 @@ package twitter4j.internal.json;
 
 import static twitter4j.internal.util.z_T4JInternalParseUtil.getDate;
 import static twitter4j.internal.util.z_T4JInternalParseUtil.getLong;
+import static twitter4j.internal.util.z_T4JInternalParseUtil.getRawString;
 import static twitter4j.internal.util.z_T4JInternalParseUtil.getUnescapedString;
 
 import java.util.Date;
@@ -27,9 +28,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import twitter4j.DirectMessage;
+import twitter4j.HashtagEntity;
+import twitter4j.MediaEntity;
 import twitter4j.ResponseList;
 import twitter4j.TwitterException;
+import twitter4j.URLEntity;
 import twitter4j.User;
+import twitter4j.UserMentionEntity;
 import twitter4j.conf.Configuration;
 import twitter4j.internal.http.HttpResponse;
 
@@ -46,11 +51,16 @@ import twitter4j.internal.http.HttpResponse;
 	private static final long serialVersionUID = 8809144846145143089L;
 	private long id;
 	private String text;
+	private String rawText;
 	private long senderId;
 	private long recipientId;
 	private Date createdAt;
 	private String senderScreenName;
 	private String recipientScreenName;
+
+	private UserMentionEntity[] userMentionEntities;
+	private URLEntity[] urlEntities;
+	private HashtagEntity[] hashtagEntities;
 
 	private User sender;
 
@@ -152,20 +162,54 @@ import twitter4j.internal.http.HttpResponse;
 
 	@Override
 	public String toString() {
-		return "DirectMessageJSONImpl{" + "id=" + id + ", text='" + text + '\'' + ", sender_id=" + senderId
-				+ ", recipient_id=" + recipientId + ", created_at=" + createdAt + ", sender_screen_name='"
-				+ senderScreenName + '\'' + ", recipient_screen_name='" + recipientScreenName + '\'' + ", sender="
-				+ sender + ", recipient=" + recipient + '}';
+		return "DirectMessageJSONImpl{id=" + id + ", text=" + text + ", rawText=" + rawText + ", senderId=" + senderId
+				+ ", recipientId=" + recipientId + ", createdAt=" + createdAt + ", senderScreenName="
+				+ senderScreenName + ", recipientScreenName=" + recipientScreenName + ", userMentionEntities="
+				+ userMentionEntities + ", urlEntities=" + urlEntities + ", hashtagEntities=" + hashtagEntities
+				+ ", sender=" + sender + ", recipient=" + recipient + "}";
 	}
 
 	private void init(final JSONObject json) throws TwitterException {
 		id = getLong("id", json);
 		text = getUnescapedString("text", json);
+		rawText = getRawString("text", json);
 		senderId = getLong("sender_id", json);
 		recipientId = getLong("recipient_id", json);
 		createdAt = getDate("created_at", json);
 		senderScreenName = getUnescapedString("sender_screen_name", json);
 		recipientScreenName = getUnescapedString("recipient_screen_name", json);
+		if (!json.isNull("entities")) {
+			try {
+				final JSONObject entities = json.getJSONObject("entities");
+				int len;
+				if (!entities.isNull("user_mentions")) {
+					final JSONArray userMentionsArray = entities.getJSONArray("user_mentions");
+					len = userMentionsArray.length();
+					userMentionEntities = new UserMentionEntity[len];
+					for (int i = 0; i < len; i++) {
+						userMentionEntities[i] = new UserMentionEntityJSONImpl(userMentionsArray.getJSONObject(i));
+					}
+				}
+				if (!entities.isNull("urls")) {
+					final JSONArray urlsArray = entities.getJSONArray("urls");
+					len = urlsArray.length();
+					urlEntities = new URLEntity[len];
+					for (int i = 0; i < len; i++) {
+						urlEntities[i] = new URLEntityJSONImpl(urlsArray.getJSONObject(i));
+					}
+				}
+				if (!entities.isNull("hashtags")) {
+					final JSONArray hashtagsArray = entities.getJSONArray("hashtags");
+					len = hashtagsArray.length();
+					hashtagEntities = new HashtagEntity[len];
+					for (int i = 0; i < len; i++) {
+						hashtagEntities[i] = new HashtagEntityJSONImpl(hashtagsArray.getJSONObject(i));
+					}
+				}
+			} catch (final JSONException jsone) {
+				throw new TwitterException(jsone);
+			}
+		}
 		try {
 			sender = new UserJSONImpl(json.getJSONObject("sender"));
 			recipient = new UserJSONImpl(json.getJSONObject("recipient"));
@@ -192,5 +236,31 @@ import twitter4j.internal.http.HttpResponse;
 		} catch (final TwitterException te) {
 			throw te;
 		}
+	}
+
+	public UserMentionEntity[] getUserMentionEntities() {
+		return userMentionEntities;
+	}
+
+	public HashtagEntity[] getHashtagEntities() {
+		return hashtagEntities;
+	}
+
+	/**
+	 * This will always return null in Direct Messages.
+	 */
+	@Override
+	public MediaEntity[] getMediaEntities() {
+		return null;
+	}
+
+	@Override
+	public URLEntity[] getURLEntities() {
+		return urlEntities;
+	}
+
+	@Override
+	public String getRawText() {
+		return rawText;
 	}
 }

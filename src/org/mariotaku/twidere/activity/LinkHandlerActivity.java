@@ -29,7 +29,7 @@ import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ConversationFragment;
-import org.mariotaku.twidere.fragment.DMConversationFragment;
+import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
@@ -209,7 +209,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 				}
 				case LINK_ID_DIRECT_MESSAGES_CONVERSATION: {
 					setTitle(R.string.direct_messages);
-					fragment = new DMConversationFragment();
+					fragment = new DirectMessagesConversationFragment();
 					final String param_conversation_id = uri.getQueryParameter(QUERY_PARAM_CONVERSATION_ID);
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final long conversation_id = parseLong(param_conversation_id);

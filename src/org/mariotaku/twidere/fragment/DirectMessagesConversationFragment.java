@@ -74,9 +74,9 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.twitter.Validator;
 
-public class DMConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>, OnItemClickListener,
-		OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener, Panes.Right,
-		OnItemSelectedListener, OnEditorActionListener {
+public class DirectMessagesConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>,
+		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener,
+		Panes.Right, OnItemSelectedListener, OnEditorActionListener {
 
 	private final Validator mValidator = new Validator();
 	private ServiceInterface mService;
@@ -107,7 +107,7 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 			final String action = intent.getAction();
 			if (BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)
 					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, mArguments, DMConversationFragment.this);
+				getLoaderManager().restartLoader(0, mArguments, DirectMessagesConversationFragment.this);
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				setProgressBarIndeterminateVisibility(mService.isReceivedDirectMessagesRefreshing()
 						|| mService.isSentDirectMessagesRefreshing());
@@ -220,7 +220,11 @@ public class DMConversationFragment extends BaseFragment implements LoaderCallba
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID)) return null;
-		final String[] cols = DirectMessages.COLUMNS;
+		final String[] cols = new String[] { DirectMessages._ID, DirectMessages.ACCOUNT_ID, DirectMessages.MESSAGE_ID,
+				DirectMessages.MESSAGE_TIMESTAMP, DirectMessages.SENDER_ID, DirectMessages.RECIPIENT_ID,
+				DirectMessages.IS_OUTGOING, DirectMessages.TEXT, DirectMessages.SENDER_NAME,
+				DirectMessages.RECIPIENT_NAME, DirectMessages.SENDER_SCREEN_NAME, DirectMessages.RECIPIENT_SCREEN_NAME,
+				DirectMessages.SENDER_PROFILE_IMAGE_URL, DirectMessages.RECIPIENT_PROFILE_IMAGE_URL };
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		final long conversation_id = args != null ? args.getLong(INTENT_KEY_CONVERSATION_ID, -1) : -1;
 		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;

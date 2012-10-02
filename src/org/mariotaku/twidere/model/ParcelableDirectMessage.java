@@ -59,18 +59,16 @@ public class ParcelableDirectMessage implements Parcelable {
 	public final long account_id, message_id, message_timestamp;
 	public final long sender_id, recipient_id;
 
-	@Deprecated
-	public final boolean is_gap;
+	public final boolean is_out_going;
 
 	public final String text;
 	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
 
 	public final URL sender_profile_image_url, recipient_profile_image_url;
 
-	@SuppressWarnings("deprecation")
 	public ParcelableDirectMessage(final Cursor cursor, final DirectMessageCursorIndices indices) {
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
-		is_gap = indices.is_gap != -1 ? cursor.getShort(indices.is_gap) == 1 : null;
+		is_out_going = indices.is_outgoing != -1 ? cursor.getShort(indices.is_outgoing) == 1 : null;
 		message_id = indices.message_id != -1 ? cursor.getLong(indices.message_id) : -1;
 		message_timestamp = indices.message_timestamp != -1 ? cursor.getLong(indices.message_timestamp) : -1;
 		sender_id = indices.sender_id != -1 ? cursor.getLong(indices.sender_id) : -1;
@@ -87,9 +85,9 @@ public class ParcelableDirectMessage implements Parcelable {
 				.getString(indices.recipient_profile_image_url)) : null;
 	}
 
-	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_gap) {
+	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_outgoing) {
 		this.account_id = account_id;
-		this.is_gap = is_gap;
+		this.is_out_going = is_outgoing;
 		final User sender = message.getSender(), recipient = message.getRecipient();
 		message_id = message.getId();
 		message_timestamp = getTime(message.getCreatedAt());
@@ -110,7 +108,7 @@ public class ParcelableDirectMessage implements Parcelable {
 		message_timestamp = in.readLong();
 		sender_id = in.readLong();
 		recipient_id = in.readLong();
-		is_gap = in.readInt() == 1;
+		is_out_going = in.readInt() == 1;
 		text = in.readString();
 		sender_name = in.readString();
 		recipient_name = in.readString();
@@ -137,7 +135,7 @@ public class ParcelableDirectMessage implements Parcelable {
 		out.writeLong(message_timestamp);
 		out.writeLong(sender_id);
 		out.writeLong(recipient_id);
-		out.writeInt(is_gap ? 1 : 0);
+		out.writeInt(is_out_going ? 1 : 0);
 		out.writeString(text);
 		out.writeString(sender_name);
 		out.writeString(recipient_name);

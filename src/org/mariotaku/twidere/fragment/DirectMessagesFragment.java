@@ -135,6 +135,13 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	}
 
 	@Override
+	public void onPostStart() {
+		if (!isActivityFirstCreated()) {
+			getLoaderManager().restartLoader(0, null, this);
+		}
+	}
+
+	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.changeCursor(cursor);
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
@@ -157,7 +164,8 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		if (mService == null) return;
 		final long[] account_ids = getActivatedAccountIds(getActivity());
 		final long[] inbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
-		final long[] outbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(), DirectMessages.Outbox.CONTENT_URI);
+		final long[] outbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(),
+				DirectMessages.Outbox.CONTENT_URI);
 		mService.getReceivedDirectMessagesWithSinceIds(account_ids, null, inbox_since_ids);
 		mService.getSentDirectMessagesWithSinceIds(account_ids, null, outbox_since_ids);
 	}

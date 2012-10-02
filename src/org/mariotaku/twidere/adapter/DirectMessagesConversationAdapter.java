@@ -32,13 +32,18 @@ import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.util.DirectMessagesAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.OnLinkClickHandler;
+import org.mariotaku.twidere.util.TwidereLinkify;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 
 public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements DirectMessagesAdapterInterface {
 
@@ -62,18 +67,20 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 		final long account_id = cursor.getLong(mIndices.account_id);
 		final long message_timestamp = cursor.getLong(mIndices.message_timestamp);
-		final long sender_id = cursor.getLong(mIndices.sender_id);
-
-		final boolean is_outgoing = account_id == sender_id;
-
+		final boolean is_outgoing = cursor.getInt(mIndices.is_outgoing) == 1;
 		final String name = cursor.getString(mIndices.sender_name);
 		final String screen_name = cursor.getString(mIndices.sender_screen_name);
 
 		holder.setTextSize(mTextSize);
 		holder.name.setText(name);
 		holder.screen_name.setText("@" + screen_name);
-		holder.name_container.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
-		holder.text.setText(cursor.getString(mIndices.text));
+		final FrameLayout.LayoutParams lp = (LayoutParams) holder.name_container.getLayoutParams();
+		lp.gravity = is_outgoing ? Gravity.LEFT : Gravity.RIGHT;
+		holder.name_container.setLayoutParams(lp);
+		holder.text.setText(Html.fromHtml(cursor.getString(mIndices.text)));
+		final TwidereLinkify linkify = new TwidereLinkify(holder.text);
+		linkify.setOnLinkClickListener(new OnLinkClickHandler(context, account_id));
+		linkify.addAllLinks();
 		holder.text.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
 		holder.time.setText(formatToLongTimeString(mContext, message_timestamp));
 		holder.time.setGravity(is_outgoing ? Gravity.RIGHT : Gravity.LEFT);

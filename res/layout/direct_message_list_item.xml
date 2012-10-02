@@ -21,8 +21,8 @@
 		android:layout_alignParentTop="true"
 		android:scaleType="fitCenter"/>
 
-	<LinearLayout
-		android:id="@+id/name_container"
+	<FrameLayout
+		android:id="@+id/name_frame"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
@@ -30,38 +30,47 @@
 		android:layout_marginLeft="6dp"
 		android:layout_marginRight="6dp"
 		android:layout_toLeftOf="@+id/profile_image_right"
-		android:layout_toRightOf="@+id/profile_image_left"
-		android:orientation="horizontal">
+		android:layout_toRightOf="@+id/profile_image_left">
 
-		<TextView android:layerType="software"
-			android:id="@+id/name"
+		<LinearLayout
+			android:id="@+id/name_container"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:singleLine="true"
-			
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorPrimary"
-			android:textStyle="bold"/>
+			android:layout_gravity="left"
+			android:orientation="horizontal">
 
-		<TextView android:layerType="software"
-			android:id="@+id/screen_name"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:singleLine="true"
-			android:paddingLeft="3dp"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorSecondary"/>	
-	</LinearLayout>
+			<TextView
+				android:id="@+id/name"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:layerType="software"
+				android:singleLine="true"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="?android:attr/textColorPrimary"
+				android:textStyle="bold"/>
+
+			<TextView
+				android:id="@+id/screen_name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layerType="software"
+				android:paddingLeft="3dp"
+				android:paddingRight="3dp"
+				android:singleLine="true"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="?android:attr/textColorSecondary"/>
+		</LinearLayout>
+	</FrameLayout>
 
 	<TextView
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/name_container"
-		android:layout_alignRight="@+id/name_container"
+		android:layout_alignLeft="@+id/name_frame"
+		android:layout_alignRight="@+id/name_frame"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/name_container"
-		android:autoLink="all"
+		android:layout_below="@+id/name_frame"
 		android:layerType="software"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>

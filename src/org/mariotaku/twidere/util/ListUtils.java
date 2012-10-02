@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListUtils {
@@ -64,5 +65,14 @@ public class ListUtils {
 			}
 		}
 		return builder.toString();
+	}
+
+	public static List<Long> fromArray(long[] array) {
+		if (array == null) return null;
+		final List<Long> list = new ArrayList<Long>();
+		for (long item : array) {
+			list.add(item);
+		}
+		return list;
 	}
 }

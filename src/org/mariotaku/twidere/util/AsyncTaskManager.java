@@ -77,7 +77,7 @@ public class AsyncTaskManager {
 		return (ArrayList<ManagedAsyncTask<?, ?, ?>>) mTasks.clone();
 	}
 
-	public boolean hasActivatedTask() {
+	public boolean hasRunningTask() {
 		final ArrayList<ManagedAsyncTask> tasks_to_remove = new ArrayList<ManagedAsyncTask>();
 		for (final ManagedAsyncTask task : getTaskList()) {
 			if (task.getStatus() != ManagedAsyncTask.Status.RUNNING) {

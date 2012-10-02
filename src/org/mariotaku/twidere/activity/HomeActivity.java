@@ -35,6 +35,7 @@ import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
 import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
@@ -42,6 +43,7 @@ import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Inbox;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Outbox;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
@@ -81,7 +83,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	private ActionBar mActionBar;
 	private TabsAdapter mAdapter;
-
+	
 	private ExtendedViewPager mViewPager;
 	private ImageButton mComposeButton;
 	private TabPageIndicator mIndicator;
@@ -217,8 +219,10 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null && !refresh_on_start && savedInstanceState == null) {
-				mService.getHomeTimelineWithSinceIds(refreshed_ids, null, getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI));
-				mService.getMentionsWithSinceIds(refreshed_ids, null, getNewestStatusIdsFromDatabase(this, Mentions.CONTENT_URI));
+				mService.getHomeTimeline(refreshed_ids, null);
+				mService.getMentions(refreshed_ids, null);
+				mService.getReceivedDirectMessages(account_ids, null);
+				mService.getSentDirectMessages(account_ids, null);
 			}
 			initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			switch (initial_tab) {
@@ -276,11 +280,17 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
 				mService.getReceivedDirectMessagesWithSinceIds(account_ids, null, getNewestMessageIdsFromDatabase(this, Inbox.CONTENT_URI));
-				// mService.getSentDirectMessages(account_ids, null);
+				mService.getSentDirectMessagesWithSinceIds(account_ids, null, getNewestMessageIdsFromDatabase(this,Outbox.CONTENT_URI));
+			}
+		}
+		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
+			final FragmentManager fm = getSupportFragmentManager();
+			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null || !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
+				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), "api_upgrade_notice");
 			}
 		}
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_home, menu);

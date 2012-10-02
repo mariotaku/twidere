@@ -310,6 +310,7 @@
 		</activity>
 		<activity
 			android:name=".activity.ImageViewerActivity"
+			android:hardwareAccelerated="true"
 			android:label="@string/view_image"
 			android:launchMode="singleTop"
 			android:theme="@style/Theme.Twidere.Viewer">

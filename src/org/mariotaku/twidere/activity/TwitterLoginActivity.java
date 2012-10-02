@@ -38,6 +38,7 @@ import java.net.URLConnection;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ColorAnalyser;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
@@ -65,6 +66,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
@@ -104,7 +106,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	private TwidereApplication mApplication;
 	private SharedPreferences mPreferences;
 	private ContentResolver mResolver;
-
+	
 	private final Handler mBackPressedHandler = new Handler() {
 
 		@Override
@@ -259,7 +261,12 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 		mEditPassword.addTextChangedListener(this);
 		setSignInButton();
 		setUserColorButton();
-
+		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
+			final FragmentManager fm = getSupportFragmentManager();
+			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null || !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
+				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), "api_upgrade_notice");
+			}
+		}
 	}
 
 	@Override
@@ -298,6 +305,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			if (values != null) {
 				mResolver.insert(Accounts.CONTENT_URI, values);
 			}
+			mPreferences.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
 			final Intent intent = new Intent(INTENT_ACTION_HOME);
 			final Bundle bundle = new Bundle();
 			bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });

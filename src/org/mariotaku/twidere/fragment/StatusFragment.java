@@ -533,6 +533,15 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		filter.addAction(BROADCAST_RETWEET_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 		updateUserColor();
+		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		mNameView.setTextSize(text_size * 1.25f);
+		mTextView.setTextSize(text_size * 1.25f);
+		mScreenNameView.setTextSize(text_size);
+		mTimeAndSourceView.setTextSize(text_size);
+		mInReplyToView.setTextSize(text_size);
+		mLocationView.setTextSize(text_size);
+		mRetweetedStatusView.setTextSize(text_size);
+
 	}
 
 	@Override

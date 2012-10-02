@@ -395,7 +395,6 @@ final class StatusJSONImpl extends TwitterResponseImpl implements Status {
 					for (int i = 0; i < len; i++) {
 						userMentionEntities[i] = new UserMentionEntityJSONImpl(userMentionsArray.getJSONObject(i));
 					}
-
 				}
 				if (!entities.isNull("urls")) {
 					final JSONArray urlsArray = entities.getJSONArray("urls");
@@ -405,7 +404,6 @@ final class StatusJSONImpl extends TwitterResponseImpl implements Status {
 						urlEntities[i] = new URLEntityJSONImpl(urlsArray.getJSONObject(i));
 					}
 				}
-
 				if (!entities.isNull("hashtags")) {
 					final JSONArray hashtagsArray = entities.getJSONArray("hashtags");
 					len = hashtagsArray.length();
@@ -414,7 +412,6 @@ final class StatusJSONImpl extends TwitterResponseImpl implements Status {
 						hashtagEntities[i] = new HashtagEntityJSONImpl(hashtagsArray.getJSONObject(i));
 					}
 				}
-
 				if (!entities.isNull("media")) {
 					final JSONArray mediaArray = entities.getJSONArray("media");
 					len = mediaArray.length();

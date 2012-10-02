@@ -86,8 +86,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	private boolean mLoadMoreAutomatically;
 
-	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mActivityFirstCreated,
-			mNotReachedBottomBefore = true;
+	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mNotReachedBottomBefore = true;
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -128,10 +127,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	public abstract int getStatuses(long[] account_ids, long[] max_ids, long[] since_ids);
 
-	public boolean isActivityFirstCreated() {
-		return mActivityFirstCreated;
-	}
-
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -153,7 +148,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mActivityFirstCreated = true;
 		// Tell the framework to try to keep this fragment around
 		// during a configuration change.
 		setRetainInstance(true);
@@ -161,12 +155,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	@Override
 	public abstract Loader<Data> onCreateLoader(int id, Bundle args);
-
-	@Override
-	public void onDestroy() {
-		mActivityFirstCreated = true;
-		super.onDestroy();
-	}
 
 	@Override
 	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
@@ -338,8 +326,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		return true;
 	}
 
-	public abstract void onPostStart();
-
 	@Override
 	public abstract void onPullDownToRefresh();
 
@@ -418,14 +404,12 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
 		registerReceiver(mStateReceiver, filter);
 
-		onPostStart();
 
 	}
 
 	@Override
 	public void onStop() {
 		mTickerStopped = true;
-		mActivityFirstCreated = false;
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}

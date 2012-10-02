@@ -347,5 +347,7 @@
 	<string name="seprate_retweet_action_summary">Show both retweet and quote action in tweet menu</string>
 	<string name="tweet">Tweet</string>
 	<string name="preview">Preview</string>
+	<string name="api_upgrade_notice_title">VERY IMPORTANT!</string>
+	<string name="api_upgrade_notice_message">  Twitter announced their new version (1.1) of API.\n\n  Since this version, Twidere uses their API version 1.1.\n\n  It\'s STRONGLY RECOMMAND to re-login, or you will have many problems using it.\n\n  What changed in API version 1.1?\n  *More strict rate limits, for instance, you\'re only able to get your home timeline 15 times per 15 minutes.\n  *You can\'t see who retweeted you, you can\'t see tweets retweeted to you either.\n  *If you use Twidere as your StatusNet client, many features will lost due to API changes.\n\n  Sorry for the inconvenience, but you know - Twitter is about to kill third-party clients, I can do nothing about this.</string>
 
 </resources>

@@ -25,7 +25,6 @@ import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
@@ -357,13 +356,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mUser = user;
 		mUserId = user.getId();
 		mScreenName = user.getScreenName();
-		updateUserColor();
-		final boolean is_multiple_account_enabled = getActivatedAccountIds(getActivity()).length > 1;
-
-		if (is_multiple_account_enabled) {
-			mProfileNameContainer.drawRight(getAccountColor(getActivity(), account_id));
-		}
-
+		mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
+		mProfileNameContainer.drawRight(getAccountColor(getActivity(), account_id));
 		mNameView.setText(user.getName());
 		mNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 				getUserTypeIconRes(user.isVerified(), user.isProtected()), 0);
@@ -516,7 +510,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				if (resultCode == Activity.RESULT_OK && intent != null) {
 					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mUserId, color);
-					updateUserColor();
+					mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
 				}
 				break;
 			}
@@ -833,7 +827,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			case MENU_CLEAR_COLOR: {
 				clearUserColor(getActivity(), mUserId);
-				updateUserColor();
+				mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
 				break;
 			}
 		}
@@ -847,7 +841,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		filter.addAction(BROADCAST_BLOCKSTATE_CHANGED);
 		filter.addAction(BROADCAST_PROFILE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
-		updateUserColor();
+		mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
 	}
 
 	@Override
@@ -896,12 +890,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mImageUri = Uri.fromFile(file);
 			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
 			startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-		}
-	}
-
-	private void updateUserColor() {
-		if (mProfileNameContainer != null) {
-			mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
 		}
 	}
 

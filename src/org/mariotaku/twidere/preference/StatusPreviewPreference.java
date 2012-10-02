@@ -88,6 +88,8 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		mHolder.name.setText("Twidere Project");
 		mHolder.screen_name.setText("@twidere_project");
 		mHolder.text.setText("Twidere is an open source twitter client for Android.");
+		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_has_media, 0);
+		mHolder.reply_retweet_status.setVisibility(View.GONE);
 		setImagePreview();
 		setProfileImage();
 		setTextSize();

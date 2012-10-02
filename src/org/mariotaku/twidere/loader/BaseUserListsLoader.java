@@ -10,7 +10,6 @@ import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
 import twitter4j.CursorSupport;
 import twitter4j.PagableResponseList;
-import twitter4j.ResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.UserList;
@@ -52,11 +51,11 @@ public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<Parcelabl
 		return mTwitter;
 	}
 
-	public abstract ResponseList<UserList> getUserLists() throws TwitterException;;
+	public abstract List<UserList> getUserLists() throws TwitterException;;
 
 	@Override
 	public List<ParcelableUserList> loadInBackground() {
-		ResponseList<UserList> list_loaded = null;
+		List<UserList> list_loaded = null;
 		try {
 			list_loaded = getUserLists();
 		} catch (final TwitterException e) {

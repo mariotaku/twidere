@@ -33,12 +33,13 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversation;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
-import org.mariotaku.twidere.util.ArrayUtils;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -118,71 +119,26 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			final String sortOrder) {
 		final String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
-		final String projection_string = projection != null ? ArrayUtils.toString(projection, ',', false) : "*";
 		if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table)) {
 			// read-only here.
 			final List<String> segments = uri.getPathSegments();
 			if (segments.size() != 3) return null;
-			final StringBuilder sql_builder = new StringBuilder();
-			sql_builder.append("SELECT " + projection_string);
-			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
-			sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + segments.get(1));
-			sql_builder.append(" AND " + DirectMessages.SENDER_ID + " = " + segments.get(2));
-			if (selection != null) {
-				sql_builder.append(" AND " + selection);
-			}
-			sql_builder.append(" UNION ");
-			sql_builder.append("SELECT " + projection_string);
-			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
-			sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + segments.get(1));
-			sql_builder.append(" AND " + DirectMessages.RECIPIENT_ID + " = " + segments.get(2));
-			if (selection != null) {
-				sql_builder.append(" AND " + selection);
-			}
-			sql_builder.append(" ORDER BY "
-					+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
-			return database.rawQuery(sql_builder.toString(), selectionArgs);
+			final String query = Conversation.QueryBuilder.buildByConversationId(projection,
+					Long.parseLong(segments.get(1)), Long.parseLong(segments.get(2)), selection, sortOrder);
+			return database.rawQuery(query, selectionArgs);
 		} else if (TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME.equals(table)) {
 			// read-only here.
 			final List<String> segments = uri.getPathSegments();
 			if (segments.size() != 3) return null;
-			final StringBuilder sql_builder = new StringBuilder();
-			sql_builder.append("SELECT " + projection_string);
-			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
-			sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + segments.get(1));
-			sql_builder.append(" AND " + DirectMessages.SENDER_SCREEN_NAME + " = '" + segments.get(2) + "'");
-			if (selection != null) {
-				sql_builder.append(" AND " + selection);
-			}
-			sql_builder.append(" UNION ");
-			sql_builder.append("SELECT " + projection_string);
-			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
-			sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + segments.get(1));
-			sql_builder.append(" AND " + DirectMessages.RECIPIENT_SCREEN_NAME + " = '" + segments.get(2) + "'");
-			if (selection != null) {
-				sql_builder.append(" AND " + selection);
-			}
-			sql_builder.append(" ORDER BY "
-					+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
-			return database.rawQuery(sql_builder.toString(), selectionArgs);
+			final String query = Conversation.QueryBuilder.buildByScreenName(projection,
+					Long.parseLong(segments.get(1)), segments.get(2), selection, sortOrder);
+			return database.rawQuery(query, selectionArgs);
 		} else if (TABLE_DIRECT_MESSAGES.equals(table)) {
 			// read-only here.
-			final StringBuilder sql_builder = new StringBuilder();
-			sql_builder.append("SELECT " + projection_string);
-			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
-			if (selection != null) {
-				sql_builder.append(" WHERE " + selection);
-			}
-			sql_builder.append(" UNION ");
-			sql_builder.append("SELECT " + projection_string);
-			sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
-			if (selection != null) {
-				sql_builder.append(" WHERE " + selection);
-			}
-			sql_builder.append(" ORDER BY " + (sortOrder != null ? sortOrder : DirectMessages.DEFAULT_SORT_ORDER));
-			return database.rawQuery(sql_builder.toString(), selectionArgs);
+			final String query = DirectMessages.QueryBuilder.build(projection, selection, sortOrder);
+			return database.rawQuery(query, selectionArgs);
 		} else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table))
-			return database.rawQuery(DirectMessages.ConversationsEntry.buildSQL(selection), null);
+			return database.rawQuery(ConversationsEntry.QueryBuilder.build(selection), null);
 		return database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
 	}
 
@@ -298,7 +254,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			db.execSQL(createTable(TABLE_DIRECT_MESSAGES_OUTBOX, DirectMessages.Outbox.COLUMNS,
 					DirectMessages.Outbox.TYPES, true));
 			db.execSQL(createTable(TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true));
-			db.execSQL(createTable(TABLE_TABS, Tabs.COLUMNS, Tabs.TYPES, false));
+			db.execSQL(createTable(TABLE_TABS, Tabs.COLUMNS, Tabs.TYPES, true));
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}
@@ -338,7 +294,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			account_db_table_alias.put(Accounts.SCREEN_NAME, "username");
 			account_db_table_alias.put(Accounts.NAME, "username");
 			account_db_table_alias.put(Accounts.ACCOUNT_ID, "user_id");
-			account_db_table_alias.put(Accounts.ACCOUNT_ID, "account_id_");
 			safeUpgrade(db, TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, true, false, account_db_table_alias);
 			safeUpgrade(db, TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, true, true, null);
 			safeUpgrade(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, true, true, null);

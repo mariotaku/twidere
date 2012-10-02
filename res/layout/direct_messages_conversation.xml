@@ -77,8 +77,11 @@
 			style="android:attr/buttonStyleLarge"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignBottom="@+id/screen_name"
+			android:layout_alignBottom="@+id/edit_screen_name"
 			android:layout_alignParentRight="true"
+			android:layout_alignTop="@+id/account_selector"
+			android:layout_marginBottom="16dp"
+			android:layout_marginTop="16dp"
 			android:minHeight="42dp"
 			android:minWidth="72dp"
 			android:text="@android:string/ok"
@@ -89,7 +92,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
-			android:layout_alignParentRight="true"
+			android:layout_toLeftOf="@+id/screen_name_confirm"
 			android:minHeight="42dp"/>
 	</RelativeLayout>
 

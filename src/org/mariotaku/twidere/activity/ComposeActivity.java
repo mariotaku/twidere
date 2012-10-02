@@ -51,6 +51,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -579,13 +580,16 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	@Override
-	public void onStart() {
+	protected void onStart() {
 		super.onStart();
-		final String component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-		mUploadUseExtension = !isNullOrEmpty(component);
+		final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
+		mUploadUseExtension = !isNullOrEmpty(uploader_component);
 		if (mMenuBar != null) {
 			setMenu(mMenuBar.getMenu());
 		}
+		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		mEditText.setTextSize(text_size * 1.25f);
+
 	}
 
 	@Override

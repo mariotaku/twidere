@@ -126,7 +126,7 @@ public class TwidereService extends Service implements Constants {
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
-				if (!mAsyncTaskManager.hasActivatedTask() && mShouldShutdown) {
+				if (!mAsyncTaskManager.hasRunningTask() && mShouldShutdown) {
 					stopSelf();
 				}
 			} else if (BROADCAST_NOTIFICATION_CLEARED.equals(action)) {
@@ -292,7 +292,7 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public boolean hasActivatedTask() {
-		return mAsyncTaskManager.hasActivatedTask();
+		return mAsyncTaskManager.hasRunningTask();
 	}
 
 	public boolean isHomeTimelineRefreshing() {
@@ -398,7 +398,7 @@ public class TwidereService extends Service implements Constants {
 	public void shutdownService() {
 		// Auto refresh is enabled, so this service cannot be shut down.
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) return;
-		if (!mAsyncTaskManager.hasActivatedTask()) {
+		if (!mAsyncTaskManager.hasRunningTask()) {
 			stopSelf();
 		} else {
 			mShouldShutdown = true;
@@ -1804,7 +1804,6 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-
 	abstract class GetDirectMessagesTask extends
 			ManagedAsyncTask<Void, Void, List<StatusesListResponse<DirectMessage>>> {
 
@@ -2309,7 +2308,6 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-
 	static final class StatusesListResponse<Data> extends ListResponse<Data> {
 
 		public final long max_id, since_id;
@@ -2636,7 +2634,7 @@ public class TwidereService extends Service implements Constants {
 			if (result.data != null && result.data.getId() > 0) {
 				final Uri.Builder builder = DirectMessages.Outbox.CONTENT_URI.buildUpon();
 				builder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(true));
-				final ContentValues values = makeDirectMessageContentValues(result.data, account_id);
+				final ContentValues values = makeDirectMessageContentValues(result.data, account_id, true);
 				getContentResolver().insert(builder.build(), values);
 				Toast.makeText(TwidereService.this, R.string.send_success, Toast.LENGTH_SHORT).show();
 			} else {
@@ -2938,7 +2936,7 @@ public class TwidereService extends Service implements Constants {
 		}
 	}
 
-	class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
+	abstract class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
 		private final List<StatusesListResponse<DirectMessage>> responses;
 		private final Uri uri;
@@ -2948,6 +2946,8 @@ public class TwidereService extends Service implements Constants {
 			responses = result;
 			this.uri = uri;
 		}
+
+		abstract boolean isOutgoing();
 
 		@Override
 		public boolean equals(final Object obj) {
@@ -2994,7 +2994,7 @@ public class TwidereService extends Service implements Constants {
 						}
 						message_ids.add(message.getId());
 
-						values_list.add(makeDirectMessageContentValues(message, account_id));
+						values_list.add(makeDirectMessageContentValues(message, account_id, isOutgoing()));
 
 					}
 
@@ -3263,6 +3263,11 @@ public class TwidereService extends Service implements Constants {
 			return TwidereService.this;
 		}
 
+		@Override
+		boolean isOutgoing() {
+			return false;
+		}
+
 	}
 
 	class StoreSentDirectMessagesTask extends StoreDirectMessagesTask {
@@ -3278,6 +3283,11 @@ public class TwidereService extends Service implements Constants {
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
 			sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed));
 			super.onPostExecute(response);
+		}
+
+		@Override
+		boolean isOutgoing() {
+			return true;
 		}
 
 	}
@@ -3411,9 +3421,7 @@ public class TwidereService extends Service implements Constants {
 				}
 
 				// Insert a gap.
-//				final boolean insert_gap = rows_deleted == 1 && status_ids.contains(response.max_id)
-//						|| rows_deleted == 0 && response.max_id == -1 && !no_items_before;
-				//TODO make sure it will not have bugs.
+				// TODO make sure it will not have bugs.
 				final boolean insert_gap = response.load_item_limit == response.list.size() && !no_items_before;
 				if (insert_gap) {
 					final ContentValues values = new ContentValues();
@@ -3692,7 +3700,6 @@ public class TwidereService extends Service implements Constants {
 	class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<SingleResponse<twitter4j.Status>>> {
 
 		private final ImageUploaderInterface uploader;
-
 		private final TweetShortenerInterface shortener;
 
 		private final Validator validator = new Validator();
@@ -3869,27 +3876,30 @@ public class TwidereService extends Service implements Constants {
 				}
 			} else {
 				showErrorToast(exception, true);
-				final ContentValues values = new ContentValues();
-				values.put(Drafts.ACCOUNT_IDS, ListUtils.toString(failed_account_ids, ';', false));
-				values.put(Drafts.IN_REPLY_TO_STATUS_ID, in_reply_to);
-				values.put(Drafts.TEXT, content);
-				if (image_uri != null) {
-					values.put(Drafts.IS_IMAGE_ATTACHED, !delete_image);
-					values.put(Drafts.IS_PHOTO_ATTACHED, delete_image);
-					values.put(Drafts.IMAGE_URI, parseString(image_uri));
-				}
-				mResolver.insert(Drafts.CONTENT_URI, values);
-				final String title = getString(R.string.tweet_not_sent);
-				final String message = getString(R.string.tweet_not_sent_summary);
-				final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
-				final Notification notification = buildNotification(title, message, R.drawable.ic_stat_tweet, intent,
-						null);
-				mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
+				saveDrafts(failed_account_ids);
 			}
 			super.onPostExecute(result);
 			if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {
 				refreshAll();
 			}
+		}
+
+		private void saveDrafts(final List<Long> account_ids) {
+			final ContentValues values = new ContentValues();
+			values.put(Drafts.ACCOUNT_IDS, ListUtils.toString(account_ids, ';', false));
+			values.put(Drafts.IN_REPLY_TO_STATUS_ID, in_reply_to);
+			values.put(Drafts.TEXT, content);
+			if (image_uri != null) {
+				values.put(Drafts.IS_IMAGE_ATTACHED, !delete_image);
+				values.put(Drafts.IS_PHOTO_ATTACHED, delete_image);
+				values.put(Drafts.IMAGE_URI, parseString(image_uri));
+			}
+			mResolver.insert(Drafts.CONTENT_URI, values);
+			final String title = getString(R.string.tweet_not_sent);
+			final String message = getString(R.string.tweet_not_sent_summary);
+			final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
+			final Notification notification = buildNotification(title, message, R.drawable.ic_stat_tweet, intent, null);
+			mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
 		}
 
 		private TwidereService getOuterType() {
@@ -3942,6 +3952,12 @@ public class TwidereService extends Service implements Constants {
 			public UpdateStatusException(final int message) {
 				super(getString(message));
 			}
+		}
+
+		@Override
+		protected void onCancelled() {
+			saveDrafts(ListUtils.fromArray(account_ids));
+			super.onCancelled();
 		}
 	}
 

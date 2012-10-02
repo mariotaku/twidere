@@ -31,10 +31,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 
 public class BaseListFragment extends ListFragment implements Constants {
 
+	private boolean mActivityFirstCreated;
+	
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -49,6 +52,10 @@ public class BaseListFragment extends ListFragment implements Constants {
 
 	public BaseListFragment() {
 
+	}
+	
+	public boolean isActivityFirstCreated() {
+		return mActivityFirstCreated;
 	}
 
 	public ActionBarFragmentActivity getActionBarActivity() {
@@ -90,10 +97,12 @@ public class BaseListFragment extends ListFragment implements Constants {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
 		registerReceiver(mStateReceiver, filter);
+		onPostStart();
 	}
 
 	@Override
 	public void onStop() {
+		mActivityFirstCreated = false;
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
 	}
@@ -115,5 +124,22 @@ public class BaseListFragment extends ListFragment implements Constants {
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.unregisterReceiver(receiver);
+	}
+
+	public void onPostStart() {
+	}
+
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mActivityFirstCreated = true;
+	}
+
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mActivityFirstCreated = true;
 	}
 }

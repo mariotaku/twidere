@@ -88,7 +88,7 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ActivitiesAboutMeFragment;
 import org.mariotaku.twidere.fragment.ConversationFragment;
-import org.mariotaku.twidere.fragment.DMConversationFragment;
+import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
@@ -541,7 +541,7 @@ public final class Utils implements Constants {
 		}
 		return message;
 	}
-
+	
 	public static ParcelableStatus findStatusInDatabases(final Context context, final long account_id,
 			final long status_id) {
 		if (context == null) return null;
@@ -606,6 +606,15 @@ public final class Utils implements Constants {
 		if (text == null) return null;
 		final HtmlBuilder builder = new HtmlBuilder(text, false);
 		parseEntities(builder, status);
+		return builder.build(true);
+	}
+	
+	public static String formatDirectMessageText(final DirectMessage message) {
+		if (message == null) return null;
+		final String text = message.getRawText();
+		if (text == null) return null;
+		final HtmlBuilder builder = new HtmlBuilder(text, false);
+		parseEntities(builder, message);
 		return builder.build(true);
 	}
 
@@ -1633,7 +1642,7 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues makeDirectMessageContentValues(final DirectMessage message, final long account_id) {
+	public static ContentValues makeDirectMessageContentValues(final DirectMessage message, final long account_id, final boolean is_outgoing) {
 		if (message == null || message.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		final User sender = message.getSender(), recipient = message.getRecipient();
@@ -1643,7 +1652,9 @@ public final class Utils implements Constants {
 		values.put(DirectMessages.MESSAGE_TIMESTAMP, message.getCreatedAt().getTime());
 		values.put(DirectMessages.SENDER_ID, sender.getId());
 		values.put(DirectMessages.RECIPIENT_ID, recipient.getId());
-		values.put(DirectMessages.TEXT, message.getText());
+		values.put(DirectMessages.TEXT, formatDirectMessageText(message));
+		values.put(DirectMessages.TEXT_PLAIN, message.getText());
+		values.put(DirectMessages.IS_OUTGOING, is_outgoing ? 1 : 0);
 		values.put(DirectMessages.SENDER_NAME, sender.getName());
 		values.put(DirectMessages.SENDER_SCREEN_NAME, sender.getScreenName());
 		values.put(DirectMessages.RECIPIENT_NAME, recipient.getName());
@@ -1811,10 +1822,10 @@ public final class Utils implements Constants {
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
-			if (details_fragment instanceof DMConversationFragment && details_fragment.isAdded()) {
-				((DMConversationFragment) details_fragment).showConversation(account_id, conversation_id);
+			if (details_fragment instanceof DirectMessagesConversationFragment && details_fragment.isAdded()) {
+				((DirectMessagesConversationFragment) details_fragment).showConversation(account_id, conversation_id);
 			} else {
-				final Fragment fragment = new DMConversationFragment();
+				final Fragment fragment = new DirectMessagesConversationFragment();
 				final Bundle args = new Bundle();
 				if (account_id > 0 && conversation_id > 0) {
 					args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
