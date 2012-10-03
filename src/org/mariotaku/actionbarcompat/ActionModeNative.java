@@ -2,11 +2,12 @@ package org.mariotaku.actionbarcompat;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-@TargetApi(11)
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ActionModeNative extends ActionMode {
 
 	private final Callback mCallbackProxy;

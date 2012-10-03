@@ -10,7 +10,7 @@ final class MethodsCompat {
 		throw new IllegalArgumentException("You cannot create instance for this class");
 	}
 
-	@TargetApi(11)
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static void invalidateOptionsMenu(final Activity activity) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			activity.invalidateOptionsMenu();

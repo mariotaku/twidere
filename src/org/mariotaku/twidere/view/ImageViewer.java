@@ -285,14 +285,14 @@ public class ImageViewer extends View {
 	}
 
 	static class GetPointerCountAccessor {
-		@TargetApi(5)
+		@TargetApi(Build.VERSION_CODES.ECLAIR)
 		public static int getPointerCount(final MotionEvent event) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) return event.getPointerCount();
 			return 1;
 		}
 	}
 
-	@TargetApi(5)
+	@TargetApi(Build.VERSION_CODES.ECLAIR)
 	static class OnMultiTouchEventCompat {
 
 		private static boolean onMultiTouchEvent(final ImageViewer viewer, final MotionEvent event) {

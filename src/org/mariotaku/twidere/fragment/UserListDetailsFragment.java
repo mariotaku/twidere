@@ -556,7 +556,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			mDescription = bundle != null ? bundle.getString(INTENT_KEY_DESCRIPTION) : null;
 			mIsPublic = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_PUBLIC, true) : true;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.user_list_detail_dialog_view, null);
+			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_user_list_detail, null);
 			builder.setView(view);
 			mEditName = (EditText) view.findViewById(R.id.name);
 			mEditDescription = (EditText) view.findViewById(R.id.description);

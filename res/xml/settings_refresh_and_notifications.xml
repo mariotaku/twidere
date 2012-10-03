@@ -57,8 +57,8 @@
 			android:showDefault="true"
 			android:title="@string/notification_ringtone"/>
 
-		<org.mariotaku.preference.ColorPickerPreference
-			android:defaultValue="@color/holo_blue_light"
+		<org.mariotaku.twidere.preference.ColorPickerPreference
+			android:defaultValue="@color/holo_blue_dark"
 			android:key="notification_light_color"
 			android:title="@string/notification_light_color"/>
 	</PreferenceCategory>

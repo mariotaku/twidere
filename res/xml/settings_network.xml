@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:robobunny="http://robobunny.com"
 	android:key="settings_network"
 	android:title="@string/network">
 
@@ -30,6 +31,15 @@
 	<PreferenceCategory
 		android:key="category_connectivity"
 		android:title="@string/connectivity">
+		<com.robobunny.SeekBarPreference
+			android:defaultValue="10"
+			android:key="connection_timeout"
+			android:max="30"
+			android:title="@string/connection_timeout"
+			robobunny:min="5"
+			robobunny:unitsLeft=""
+			robobunny:unitsRight="s"/>
+
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="ignore_ssl_error"

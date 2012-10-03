@@ -21,11 +21,12 @@ package org.mariotaku.twidere.util;
 
 import android.annotation.TargetApi;
 import android.graphics.Paint;
+import android.os.Build;
 import android.view.View;
 
 public class SetLayerTypeAccessor {
 
-	@TargetApi(11)
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static void setLayerType(final View view, final int layerType, final Paint paint) {
 		view.setLayerType(layerType, paint);
 	}

@@ -4,7 +4,6 @@ import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 
-import android.annotation.TargetApi;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-@TargetApi(11)
 public class ActionModeCompat extends ActionMode {
 
 	private final Callback mCallbackProxy;

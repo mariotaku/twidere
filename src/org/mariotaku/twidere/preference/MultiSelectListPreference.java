@@ -1,13 +1,22 @@
 package org.mariotaku.twidere.preference;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 abstract class MultiSelectListPreference extends DialogPreference implements OnMultiChoiceClickListener,
 		OnClickListener {
@@ -56,6 +65,41 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 		mValues[which] = isChecked;
 	}
 
+	private final Handler mDialogWorkaroundHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.obj instanceof Dialog) {
+				final Dialog dialog = (Dialog) msg.obj;
+				final View v = dialog.getWindow().getDecorView();
+				final ListView lv = findListView(v);
+				if (lv != null) {
+					final ListAdapter adapter = lv.getAdapter();
+				}
+			}
+			super.handleMessage(msg);
+		}
+		
+		private ListView findListView(View view) {
+			if (!(view instanceof ViewGroup)) return null;
+			if (view instanceof ListView) return (ListView) view;
+			final ViewGroup view_group = (ViewGroup) view;
+			final int child_count = view_group.getChildCount();
+			for (int i = 0; i < child_count; i++) {
+				final View child = view_group.getChildAt(i);
+				if (child instanceof ListView) return (ListView) child;
+				if (child instanceof ViewGroup) {
+					final ListView lv = findListView(child);
+					if (lv != null) return lv;
+				}
+			}
+			return null;
+		}
+
+	};
+	
+
+
 	@Override
 	public void onPrepareDialogBuilder(final AlertDialog.Builder builder) {
 		super.onPrepareDialogBuilder(builder);
@@ -68,6 +112,26 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);
 		builder.setMultiChoiceItems(mNames, mValues, this);
+		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.DONUT) {
+			new Thread() {
+				@Override
+				public void run() {
+					Dialog dialog = null;
+					while (dialog == null) {
+						dialog = getDialog();
+						if (dialog != null) {
+							final Message msg = new Message();
+							msg.obj = dialog;
+							mDialogWorkaroundHandler.sendMessage(msg);
+						}
+						try {
+							sleep(50L);
+						} catch (InterruptedException e) {
+						}
+					}
+				}
+			}.start();
+		}
 	}
 
 	protected abstract boolean[] getDefaults();

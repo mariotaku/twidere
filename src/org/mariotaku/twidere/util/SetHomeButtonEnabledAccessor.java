@@ -24,7 +24,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Build;
 
-@TargetApi(14)
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class SetHomeButtonEnabledAccessor {
 
 	public static void setHomeButtonEnabled(final Activity activity, final boolean enabled) {

@@ -21,10 +21,11 @@ package org.mariotaku.twidere.util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 
 public class OverridePendingTransitionAccessor {
 
-	@TargetApi(5)
+	@TargetApi(Build.VERSION_CODES.ECLAIR)
 	public static void overridePendingTransition(final Activity activity, final int enter_anim, final int exit_anim) {
 		activity.overridePendingTransition(enter_anim, exit_anim);
 	}

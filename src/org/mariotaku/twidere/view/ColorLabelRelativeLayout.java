@@ -30,6 +30,8 @@ import android.widget.RelativeLayout;
 
 public class ColorLabelRelativeLayout extends RelativeLayout {
 
+	private static final int LABEL_WIDTH = 3;
+
 	private final Paint mPaintLeft = new Paint(), mPaintRight = new Paint(), mPaintBackground = new Paint();
 	private final Rect mRectLeft = new Rect(), mRectRight = new Rect(), mRectBackground = new Rect();
 	private final float mDensity;
@@ -86,11 +88,11 @@ public class ColorLabelRelativeLayout extends RelativeLayout {
 	public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		mRectBackground.set(0, 0, w, h);
 		if (mIsRTL) {
-			mRectRight.set(0, 0, (int) (4 * mDensity), h);
-			mRectLeft.set(w - (int) (4 * mDensity), 0, w, h);
+			mRectRight.set(0, 0, (int) (LABEL_WIDTH * mDensity), h);
+			mRectLeft.set(w - (int) (LABEL_WIDTH * mDensity), 0, w, h);
 		} else {
-			mRectLeft.set(0, 0, (int) (4 * mDensity), h);
-			mRectRight.set(w - (int) (4 * mDensity), 0, w, h);
+			mRectLeft.set(0, 0, (int) (LABEL_WIDTH * mDensity), h);
+			mRectRight.set(w - (int) (LABEL_WIDTH * mDensity), 0, w, h);
 		}
 		super.onSizeChanged(w, h, oldw, oldh);
 	}

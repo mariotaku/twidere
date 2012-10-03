@@ -514,7 +514,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		registerReceiver(mStateReceiver, filter);
 
 		final List<TabSpec> tabs = getTabs(this);
-		if (tabsChanged(tabs)) {
+		if (isTabsChanged(tabs)) {
 			restart();
 		}
 	}
@@ -549,7 +549,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	}
 
-	private boolean tabsChanged(final List<TabSpec> tabs) {
+	private boolean isTabsChanged(final List<TabSpec> tabs) {
 		if (mCustomTabs.size() == 0 && tabs == null) return false;
 		if (mCustomTabs.size() != tabs.size()) return true;
 		final int size = mCustomTabs.size();

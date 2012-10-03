@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.model;
 
 import static org.mariotaku.twidere.util.Utils.bundleEquals;
+import static org.mariotaku.twidere.util.Utils.classEquals;
 import static org.mariotaku.twidere.util.Utils.objectEquals;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,7 +31,7 @@ public class TabSpec {
 	public boolean equals(final Object o) {
 		if (!(o instanceof TabSpec)) return false;
 		final TabSpec spec = (TabSpec) o;
-		return objectEquals(name, spec.name) && objectEquals(icon, spec.icon) && objectEquals(cls, spec.cls)
+		return objectEquals(name, spec.name) && objectEquals(icon, spec.icon) && classEquals(cls, spec.cls)
 				&& bundleEquals(args, spec.args) && position == spec.position;
 	}
 

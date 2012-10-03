@@ -23,10 +23,11 @@ import java.io.File;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 
 public class GetExternalCacheDirAccessor {
 
-	@TargetApi(8)
+	@TargetApi(Build.VERSION_CODES.FROYO)
 	public static File getExternalCacheDir(final Context context) {
 		return context.getExternalCacheDir();
 	}

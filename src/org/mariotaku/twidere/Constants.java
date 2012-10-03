@@ -187,6 +187,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_KEEP_IN_BACKGROUND = "keep_in_background";
 	public static final String PREFERENCE_KEY_SEPRATE_RETWEET_ACTION = "seprate_retweet_action";
 	public static final String PREFERENCE_KEY_API_UPGRADE_CONFIRMED = "api_upgrade_confirmed";
+	public static final String PREFERENCE_KEY_CONNECTION_TIMEOUT = "connection_timeout";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

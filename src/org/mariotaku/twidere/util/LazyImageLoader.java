@@ -81,6 +81,7 @@ public class LazyImageLoader implements Constants {
 	private final int mFallbackRes;
 	private final int mRequiredWidth, mRequiredHeight;
 	private Proxy mProxy;
+	private int mConnectionTimeout;
 	private final String mUserAgent;
 	private final HostAddressResolver mResolver;
 
@@ -93,9 +94,9 @@ public class LazyImageLoader implements Constants {
 		mFallbackRes = fallback_image_res;
 		mRequiredWidth = required_width % 2 == 0 ? required_width : required_width + 1;
 		mRequiredHeight = required_height % 2 == 0 ? required_height : required_height + 1;
-		mProxy = getProxy(context);
 		mUserAgent = getBrowserUserAgent(context);
 		mResolver = TwidereApplication.getInstance(context).getHostAddressResolver();
+		reloadConnectivitySettings();
 	}
 
 	public void clearFileCache() {
@@ -137,8 +138,10 @@ public class LazyImageLoader implements Constants {
 		return null;
 	}
 
-	public void reloadProxySettings() {
+	public void reloadConnectivitySettings() {
 		mProxy = getProxy(mContext);
+		mConnectionTimeout = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
+				PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
 	}
 
 	// decodes image and scales it to reduce memory consumption
@@ -285,7 +288,7 @@ public class LazyImageLoader implements Constants {
 				URL request_url = url;
 
 				while (retryCount < 5) {
-					conn = getConnection(request_url, true, mProxy, mResolver);
+					conn = getConnection(request_url, mConnectionTimeout, true, mProxy, mResolver);
 					conn.addRequestProperty("User-Agent", mUserAgent);
 					conn.setConnectTimeout(30000);
 					conn.setReadTimeout(30000);

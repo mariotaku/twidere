@@ -219,6 +219,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public Loader<Response<User>> onCreateLoader(final int id, final Bundle args) {
 			mListContainer.setVisibility(View.VISIBLE);
 			mErrorRetryContainer.setVisibility(View.GONE);
+			mErrorMessageView.setText(null);
+			mErrorMessageView.setVisibility(View.GONE);
 			setListShown(false);
 			setProgressBarIndeterminateVisibility(true);
 			return new UserInfoLoader(getActivity(), mAccountId, mUserId, mScreenName);
@@ -237,6 +239,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				changeUser(mAccountId, data.value);
 				mErrorRetryContainer.setVisibility(View.GONE);
 			} else {
+				if (data.exception != null) {
+					mErrorMessageView.setText(data.exception.getMessage());
+					mErrorMessageView.setVisibility(View.VISIBLE);
+				}
 				mListContainer.setVisibility(View.GONE);
 				mErrorRetryContainer.setVisibility(View.VISIBLE);
 			}
@@ -523,11 +529,28 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		switch (view.getId()) {
 			case R.id.follow: {
 				if (mUser == null || mAccountId == mUserId || mUser.isFollowRequestSent()) return;
-				mFollowProgress.setVisibility(View.VISIBLE);
-				mFollowButton.setVisibility(View.GONE);
 				if (mFriendship.isSourceFollowingTarget()) {
-					mService.destroyFriendship(mAccountId, mUser.getId());
+					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+					mPopupMenu.inflate(R.menu.action_user_profile_follow);
+					mPopupMenu.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+						@Override
+						public boolean onMenuItemClick(final MenuItem item) {
+							switch (item.getItemId()) {
+								case R.id.unfollow: {
+									mFollowProgress.setVisibility(View.VISIBLE);
+									mFollowButton.setVisibility(View.GONE);
+									mService.destroyFriendship(mAccountId, mUser.getId());
+									return true;
+								}
+							}
+							return false;
+						}
+					});
+					mPopupMenu.show();
 				} else {
+					mFollowProgress.setVisibility(View.VISIBLE);
+					mFollowButton.setVisibility(View.GONE);
 					mService.createFriendship(mAccountId, mUser.getId());
 				}
 				break;
@@ -992,6 +1015,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private final Context context;
 		private final HostAddressResolver resolver;
 		private final boolean scale_down;
+		private final int connection_timeout;
 
 		public BannerImageLoader(final Context context, final User user, final String type, final boolean scale_down) {
 			super(context);
@@ -999,6 +1023,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			this.user = user;
 			this.type = type;
 			resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
+			connection_timeout = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
+					PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
 			this.scale_down = scale_down;
 		}
 
@@ -1016,7 +1042,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					final Bitmap cache_bitmap = BitmapFactory.decodeFile(cache_file.getPath(), o);
 					if (cache_bitmap != null) return createAlphaGradientBanner(cache_bitmap);
 				}
-				final HttpURLConnection conn = getConnection(url, true, getProxy(context), resolver);
+				final HttpURLConnection conn = getConnection(url, connection_timeout, true, getProxy(context), resolver);
 				if (cache_file != null) {
 					final FileOutputStream fos = new FileOutputStream(cache_file);
 					final InputStream is = conn.getInputStream();

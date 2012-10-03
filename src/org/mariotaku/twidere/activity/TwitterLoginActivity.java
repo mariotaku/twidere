@@ -520,7 +520,9 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 
 		private int analyseUserProfileColor(final URL url) throws IOException {
 			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-			final URLConnection conn = getConnection(url, true, getProxy(context), conf.getHostAddressResolver());
+			final int connection_timeout = preferences.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
+			final URLConnection conn = getConnection(url, connection_timeout, true, getProxy(context),
+					conf.getHostAddressResolver());
 			final InputStream is = conn.getInputStream();
 			if (ignore_ssl_error) {
 				setIgnoreSSLError(conn);

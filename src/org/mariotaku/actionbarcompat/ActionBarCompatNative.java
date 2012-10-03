@@ -3,9 +3,10 @@ package org.mariotaku.actionbarcompat;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.View;
 
-@TargetApi(11)
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 class ActionBarCompatNative extends ActionBarCompat implements ActionBar {
 
 	private final Activity mActivity;

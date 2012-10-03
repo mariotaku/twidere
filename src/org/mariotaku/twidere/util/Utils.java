@@ -434,14 +434,19 @@ public final class Utils implements Constants {
 		return uribuilder.build();
 	}
 
-	public static boolean bundleEquals(final Bundle args1, final Bundle args2) {
-		if (args1 == null || args2 == null) return args1 == args2;
-		final Iterator<String> keys = args1.keySet().iterator();
+	public static boolean bundleEquals(final Bundle bundle1, final Bundle bundle2) {
+		if (bundle1 == null || bundle2 == null) return bundle1 == bundle2;
+		final Iterator<String> keys = bundle1.keySet().iterator();
 		while (keys.hasNext()) {
 			final String key = keys.next();
-			if (!objectEquals(args1.get(key), args2.get(key))) return false;
+			if (!objectEquals(bundle1.get(key), bundle2.get(key))) return false;
 		}
 		return true;
+	}
+
+	public static boolean classEquals(final Class<?> cls1, final Class<?> cls2) {
+		if (cls1 == null || cls2 == null) return cls1 == cls2;
+		return cls1.getName().equals(cls2.getName());
 	}
 
 	public static synchronized void cleanDatabasesByItemLimit(final Context context) {
@@ -691,8 +696,9 @@ public final class Utils implements Constants {
 		if (context == null) return -1;
 		long user_id = -1;
 
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.ACCOUNT_ID }, Accounts.SCREEN_NAME + " = ?", new String[] { screen_name }, null);
+		final Cursor cur = context.getContentResolver()
+				.query(Accounts.CONTENT_URI, new String[] { Accounts.ACCOUNT_ID }, Accounts.SCREEN_NAME + " = ?",
+						new String[] { screen_name }, null);
 		if (cur == null) return user_id;
 
 		if (cur.getCount() > 0) {
@@ -904,8 +910,8 @@ public final class Utils implements Constants {
 		return bm;
 	}
 
-	public static HttpURLConnection getConnection(final URL url_orig, final boolean ignore_ssl_error,
-			final Proxy proxy, final HostAddressResolver resolver) throws IOException {
+	public static HttpURLConnection getConnection(final URL url_orig, final int timeout_millis,
+			final boolean ignore_ssl_error, final Proxy proxy, final HostAddressResolver resolver) throws IOException {
 		if (url_orig == null) return null;
 		final HttpURLConnection con;
 		final String url_string = url_orig.toString();
@@ -913,6 +919,7 @@ public final class Utils implements Constants {
 		final String resolved_host = resolver != null ? resolver.resolve(host) : null;
 		con = (HttpURLConnection) new URL(resolved_host != null ? url_string.replace("://" + host, "://"
 				+ resolved_host) : url_string).openConnection(proxy);
+		con.setConnectTimeout(timeout_millis);
 		if (resolved_host != null) {
 			con.setRequestProperty("Host", host);
 		}
@@ -1421,6 +1428,7 @@ public final class Utils implements Constants {
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
+		final int connection_timeout = preferences.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
 		final boolean enable_gzip_compressing = preferences != null ? preferences.getBoolean(
 				PREFERENCE_KEY_GZIP_COMPRESSING, true) : true;
 		final boolean ignore_ssl_error = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR,
@@ -1442,6 +1450,7 @@ public final class Utils implements Constants {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setHostAddressResolver(app.getHostAddressResolver());
+				cb.setHttpConnectionTimeout(connection_timeout);
 				setUserAgent(context, cb);
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
@@ -1502,30 +1511,6 @@ public final class Utils implements Constants {
 			cur.close();
 		}
 		return twitter;
-	}
-
-	public static Twitter getTwitterInstance(final Context context, final String account_username,
-			final boolean include_entities) {
-		return getTwitterInstance(context, account_username, include_entities, true);
-	}
-
-	public static Twitter getTwitterInstance(final Context context, final String screen_name,
-			final boolean include_entities, final boolean include_rts) {
-		if (context == null) return null;
-		final StringBuilder where = new StringBuilder();
-		where.append(Accounts.SCREEN_NAME + " = '" + screen_name + "'");
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.ACCOUNT_ID }, where.toString(), null, null);
-		long account_id = -1;
-		if (cur != null) {
-			if (cur.getCount() == 1) {
-				cur.moveToFirst();
-				account_id = cur.getLong(cur.getColumnIndex(Accounts.ACCOUNT_ID));
-			}
-			cur.close();
-		}
-		if (account_id > 0) return getTwitterInstance(context, account_id, include_entities, include_rts);
-		return null;
 	}
 
 	public static int getUserColor(final Context context, final long user_id) {
@@ -1719,7 +1704,7 @@ public final class Utils implements Constants {
 		values.put(Statuses.SOURCE, status.getSource());
 		final GeoLocation location = status.getGeoLocation();
 		if (location != null) {
-			values.put(Statuses.LOCATION, location.getLatitude() +","+ location.getLongitude());
+			values.put(Statuses.LOCATION, location.getLatitude() + "," + location.getLongitude());
 		}
 		values.put(Statuses.IS_RETWEET, is_retweet ? 1 : 0);
 		values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);

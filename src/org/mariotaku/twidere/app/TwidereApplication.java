@@ -140,17 +140,17 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
 				mServiceInterface.startAutoRefresh();
 			}
-		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key)) {
+		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_CONNECTION_TIMEOUT.equals(key)) {
 			reloadConnectivitySettings();
 		}
 	}
 
 	public void reloadConnectivitySettings() {
 		if (mPreviewImageLoader != null) {
-			mPreviewImageLoader.reloadProxySettings();
+			mPreviewImageLoader.reloadConnectivitySettings();
 		}
 		if (mProfileImageLoader != null) {
-			mProfileImageLoader.reloadProxySettings();
+			mProfileImageLoader.reloadConnectivitySettings();
 		}
 	}
 

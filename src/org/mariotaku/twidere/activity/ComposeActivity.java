@@ -40,6 +40,7 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.BitmapDecodeHelper;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.view.ColorView;
@@ -65,7 +66,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -73,6 +73,10 @@ import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -90,7 +94,8 @@ import android.widget.Toast;
 import com.twitter.Validator;
 
 public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
-		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener, OnEditorActionListener {
+		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener, OnEditorActionListener,
+		LoaderCallbacks<Bitmap> {
 
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
 
@@ -100,7 +105,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private Location mRecentLocation;
 	private ContentResolver mResolver;
 	private final Validator mValidator = new Validator();
-	private AttachedImageThumbnailTask mAttachedImageThumbnailTask;
 
 	private ActionBar mActionBar;
 	private PopupMenu mPopupMenu;
@@ -122,6 +126,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private boolean mIsQuote, mUploadUseExtension;
 
 	private DialogFragment mUnsavedTweetDialogFragment;
+
+	private boolean mLoaderInitialized;
 
 	@Override
 	public void afterTextChanged(final Editable s) {
@@ -149,6 +155,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 						mIsPhotoAttached = false;
 					}
 					setMenu(mMenuBar.getMenu());
+				} else {
+					mImageUri = null;
 				}
 				break;
 			}
@@ -225,7 +233,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public void onBackPressed() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-		if (!isNullOrEmpty(text) || mImageUri != null) {
+		final String path = getImagePathFromUri(this, mImageUri);
+		if (!isNullOrEmpty(text) || path != null && new File(path).exists()) {
 			mUnsavedTweetDialogFragment = (DialogFragment) Fragment.instantiate(this,
 					UnsavedTweetDialogFragment.class.getName());
 			mUnsavedTweetDialogFragment.show(getSupportFragmentManager(), "unsaved_tweet");
@@ -404,6 +413,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	@Override
+	public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
+		return new AttachedImageThumbnailLoader(this, args.getString(INTENT_KEY_FILENAME));
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_compose_actionbar, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -419,6 +433,19 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void onLoaderReset(final Loader<Bitmap> loader) {
+		mImageThumbnailPreview.setVisibility(View.GONE);
+		mImageThumbnailPreview.setImageBitmap(null);
+	}
+
+	@Override
+	public void onLoadFinished(final Loader<Bitmap> loader, final Bitmap data) {
+		mImageThumbnailPreview.setVisibility(data != null ? View.VISIBLE : View.GONE);
+		mImageThumbnailPreview.setImageBitmap(data);
+
 	}
 
 	/** Sets the mRecentLocation object to the current location of the device **/
@@ -655,11 +682,17 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	private void reloadAttachedImageThumbnail(final File file) {
-		if (mAttachedImageThumbnailTask != null && mAttachedImageThumbnailTask.getStatus() == AsyncTask.Status.RUNNING) {
-			mAttachedImageThumbnailTask.cancel(true);
+		if (file == null) return;
+		final LoaderManager lm = getSupportLoaderManager();
+		lm.destroyLoader(0);
+		final Bundle args = new Bundle();
+		args.putString(INTENT_KEY_FILENAME, file.getPath());
+		if (mLoaderInitialized) {
+			lm.restartLoader(0, args, this);
+		} else {
+			lm.initLoader(0, args, this);
+			mLoaderInitialized = true;
 		}
-		mAttachedImageThumbnailTask = new AttachedImageThumbnailTask(file);
-		mAttachedImageThumbnailTask.execute();
 	}
 
 	private void send() {
@@ -739,6 +772,38 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		}
 	}
 
+	public static final class AttachedImageThumbnailLoader extends AsyncTaskLoader<Bitmap> {
+
+		private final File file;
+
+		public AttachedImageThumbnailLoader(final Context context, final String path) {
+			super(context);
+			file = path != null ? new File(path) : null;
+		}
+
+		@Override
+		public Bitmap loadInBackground() {
+			if (file != null && file.exists()) {
+				final int thumbnail_size_px = (int) (THUMBNAIL_SIZE * getContext().getResources().getDisplayMetrics().density);
+				final BitmapFactory.Options o = new BitmapFactory.Options();
+				o.inJustDecodeBounds = true;
+				BitmapFactory.decodeFile(file.getPath(), o);
+				final int tmp_width = o.outWidth;
+				final int tmp_height = o.outHeight;
+				if (tmp_width == 0 || tmp_height == 0) return null;
+				final BitmapFactory.Options o2 = new BitmapFactory.Options();
+				o2.inSampleSize = Math.round(Math.max(tmp_width, tmp_height) / thumbnail_size_px);
+				return BitmapDecodeHelper.decode(file.getPath(), o2);
+			}
+			return null;
+		}
+
+		@Override
+		protected void onStartLoading() {
+			forceLoad();
+		}
+	}
+
 	public static class UnsavedTweetDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
 
 		@Override
@@ -768,40 +833,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			builder.setNeutralButton(android.R.string.cancel, null);
 			builder.setNegativeButton(R.string.discard, this);
 			return builder.create();
-		}
-
-	}
-
-	class AttachedImageThumbnailTask extends AsyncTask<Void, Void, Bitmap> {
-
-		private final File file;
-
-		public AttachedImageThumbnailTask(final File file) {
-			this.file = file;
-		}
-
-		@Override
-		protected Bitmap doInBackground(final Void... args) {
-			if (file != null && file.exists()) {
-				final int thumbnail_size_px = (int) (THUMBNAIL_SIZE * getResources().getDisplayMetrics().density);
-				final BitmapFactory.Options o = new BitmapFactory.Options();
-				o.inJustDecodeBounds = true;
-				BitmapFactory.decodeFile(file.getPath(), o);
-				final int tmp_width = o.outWidth;
-				final int tmp_height = o.outHeight;
-				if (tmp_width == 0 || tmp_height == 0) return null;
-				final BitmapFactory.Options o2 = new BitmapFactory.Options();
-				o2.inSampleSize = Math.round(Math.max(tmp_width, tmp_height) / thumbnail_size_px);
-				return BitmapFactory.decodeFile(file.getPath(), o2);
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(final Bitmap result) {
-			mImageThumbnailPreview.setVisibility(result != null ? View.VISIBLE : View.GONE);
-			mImageThumbnailPreview.setImageBitmap(result);
-			super.onPostExecute(result);
 		}
 
 	}

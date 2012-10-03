@@ -33,6 +33,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -105,7 +106,7 @@ public class WebViewFragment extends BaseFragment {
 			}
 		}
 
-		@TargetApi(8)
+		@TargetApi(Build.VERSION_CODES.FROYO)
 		@Override
 		public void onReceivedSslError(final WebView view, final SslErrorHandler handler, final SslError error) {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false)) {

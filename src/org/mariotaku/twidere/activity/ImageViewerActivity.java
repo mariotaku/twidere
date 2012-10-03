@@ -40,6 +40,7 @@ import java.net.URL;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.BitmapDecodeHelper;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.view.ImageViewer;
 
@@ -249,6 +250,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		private static final String CACHE_DIR_NAME = "cached_images";
 
 		private final Uri uri;
+		private final int connection_timeout;
 
 		private final Context context;
 		private final String user_agent;
@@ -261,6 +263,8 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			this.context = context;
 			this.resolver = resolver;
 			this.uri = uri;
+			connection_timeout = context.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE).getInt(
+					PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
 			this.user_agent = user_agent;
 			init();
 		}
@@ -291,7 +295,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					URL request_url = url;
 
 					while (retryCount < 5) {
-						conn = getConnection(request_url, true, getProxy(context), resolver);
+						conn = getConnection(request_url, connection_timeout, true, getProxy(context), resolver);
 						conn.addRequestProperty("User-Agent", user_agent);
 						conn.setConnectTimeout(30000);
 						conn.setReadTimeout(30000);
@@ -350,7 +354,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				try {
 					final BitmapFactory.Options o2 = new BitmapFactory.Options();
 					o2.inSampleSize = o.inSampleSize;
-					bitmap = BitmapFactory.decodeFile(f.getPath(), o2);
+					bitmap = BitmapDecodeHelper.decode(f.getPath(), o2);
 				} catch (final OutOfMemoryError e) {
 					o.inSampleSize++;
 					continue;

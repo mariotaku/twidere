@@ -40,6 +40,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 	private final Twitter twitter;
 	private final String user_agent;
 	private final Proxy proxy;
+	private final int connection_timeout;
 
 	private String authenticity_token, callback_url;
 
@@ -81,6 +82,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 		this.proxy = proxy;
 		resolver = conf.getHostAddressResolver();
 		ignore_ssl_error = conf.isSSLErrorIgnored();
+		connection_timeout = conf.getHttpConnectionTimeout();
 	}
 
 	public AccessToken getOAuthAccessToken(final String username, final String password)
@@ -120,7 +122,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 	private InputStream getHTTPContent(final String url_string, final boolean post, final HttpParameter[] params)
 			throws IOException {
 		final URL url = parseURL(url_string);
-		final HttpURLConnection conn = getConnection(url, ignore_ssl_error, proxy, resolver);
+		final HttpURLConnection conn = getConnection(url, connection_timeout, ignore_ssl_error, proxy, resolver);
 		if (conn == null) return null;
 		conn.addRequestProperty("User-Agent", user_agent);
 		conn.setRequestMethod(post ? "POST" : "GET");

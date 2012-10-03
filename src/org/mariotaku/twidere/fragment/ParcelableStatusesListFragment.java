@@ -94,7 +94,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public final int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		final long max_id = max_ids != null && max_ids.length == 1 ? max_ids[0] : -1;
 		final long since_id = since_ids != null && since_ids.length == 1 ? since_ids[0] : -1;
-		final Bundle args = getArguments();
+		final Bundle args = (Bundle) getArguments().clone();
 		args.putLong(INTENT_KEY_MAX_ID, max_id);
 		args.putLong(INTENT_KEY_SINCE_ID, since_id);
 		getLoaderManager().restartLoader(0, args, this);

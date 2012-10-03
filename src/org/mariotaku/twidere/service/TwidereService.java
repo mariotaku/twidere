@@ -486,7 +486,7 @@ public class TwidereService extends Service implements Constants {
 			defaults |= Notification.DEFAULT_VIBRATE;
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false)) {
-			final int color_def = getResources().getColor(R.color.holo_blue_light);
+			final int color_def = getResources().getColor(R.color.holo_blue_dark);
 			final int color = mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR, color_def);
 			builder.setLights(color, 1000, 2000);
 		}
