@@ -93,7 +93,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 			final RequestToken request_token = twitter.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
 			final String oauth_token = request_token.getToken();
 			readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), false, null));
-			if (authenticity_token == null) throw new IOException("Cannot get authenticity token.");
+			if (authenticity_token == null) throw new AuthenticationException("Cannot get authenticity token.");
 			final Configuration conf = twitter.getConfiguration();
 			final HttpParameter[] params = new HttpParameter[4];
 			params[0] = new HttpParameter("authenticity_token", authenticity_token);
@@ -106,7 +106,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 				throw new IOException("Wrong OAuth callback URL " + callback_url);
 			final String oauth_verifier = parseParameters(callback_url.substring(callback_url.indexOf("?") + 1)).get(
 					OAUTH_VERIFIER);
-			if (isNullOrEmpty(oauth_verifier)) throw new IOException("Cannot get OAuth verifier.");
+			if (isNullOrEmpty(oauth_verifier)) throw new AuthenticationException("Cannot get OAuth verifier.");
 			return twitter.getOAuthAccessToken(request_token, oauth_verifier);
 		} catch (final IOException e) {
 			throw new AuthenticationException(e);

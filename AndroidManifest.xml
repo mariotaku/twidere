@@ -259,13 +259,7 @@
 					android:host="list_memberships"
 					android:scheme="twidere"/>
 				<data
-					android:host="users_retweeted_status"
-					android:scheme="twidere"/>
-				<data
 					android:host="saved_searches"
-					android:scheme="twidere"/>
-				<data
-					android:host="retweeted_to_me"
 					android:scheme="twidere"/>
 				<data
 					android:host="user_mentions"

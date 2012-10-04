@@ -177,7 +177,9 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 				if (mViewPager == null) return;
 				final int position = mViewPager.getCurrentItem();
 				if (position == mAdapter.getCount() - 1) {
-					startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
+					final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
+					intent.setClass(this, TwitterLoginActivity.class);
+					startActivity(intent);
 				} else {
 					switch (position) {
 						case TAB_POSITION_MESSAGES:
@@ -210,7 +212,9 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mDisplayAppIcon = res.getBoolean(R.bool.home_display_icon);
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length <= 0) {
-			startActivity(new Intent(INTENT_ACTION_TWITTER_LOGIN));
+			final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
+			intent.setClass(this, TwitterLoginActivity.class);
+			startActivity(intent);
 			finish();
 			return;
 		}

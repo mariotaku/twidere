@@ -55,6 +55,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -68,7 +69,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	private ImageViewer mImageView;
 	private View mProgress;
 	private ImageButton mRefreshStopSaveButton;
-	private boolean mImageLoading, mImageLoaded;
+	private boolean mImageLoaded;
 	private File mImageFile;
 	private String mUserAgent;
 
@@ -83,9 +84,10 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				break;
 			}
 			case R.id.refresh_stop_save: {
-				if (!mImageLoaded && !mImageLoading) {
+				final LoaderManager lm = getSupportLoaderManager();
+				if (!mImageLoaded && !lm.hasRunningLoaders()) {
 					loadImage(false);
-				} else if (!mImageLoaded && mImageLoading) {
+				} else if (!mImageLoaded && lm.hasRunningLoaders()) {
 					stopLoading();
 				} else if (mImageLoaded) {
 					saveImage();
@@ -97,10 +99,9 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					break;
 				}
 				final Intent intent = new Intent(Intent.ACTION_SEND);
-				final String scheme = uri.getScheme();
-				if ("file".equals(scheme)) {
+				if (mImageFile != null && mImageFile.exists()) {
 					intent.setType("image/*");
-					intent.putExtra(Intent.EXTRA_STREAM, uri);
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mImageFile));
 				} else {
 					intent.setType("text/plain");
 					intent.putExtra(Intent.EXTRA_TEXT, uri.toString());
@@ -137,7 +138,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 	@Override
 	public Loader<ImageLoader.Result> onCreateLoader(final int id, final Bundle args) {
-		mImageLoading = true;
 		mProgress.setVisibility(View.VISIBLE);
 		mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
 		final Uri uri = (Uri) (args != null ? args.getParcelable(INTENT_KEY_URI) : null);
@@ -152,7 +152,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	@Override
 	public void onLoadFinished(final Loader<ImageLoader.Result> loader, final ImageLoader.Result data) {
 		if (data != null && data.bitmap != null) {
-			mImageLoading = false;
 			mImageView.setBitmap(data.bitmap);
 			mImageFile = data.file;
 			mImageLoaded = true;
@@ -237,7 +236,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 	private void stopLoading() {
 		getSupportLoaderManager().destroyLoader(0);
-		mImageLoading = false;
 		if (!mImageLoaded) {
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
 			mImageView.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.refresh_image));

@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.SharedPreferences;
+import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -24,6 +26,132 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 	private final boolean[] mValues, mDefaultValues;
 	private SharedPreferences prefs;
 	private final String[] mNames, mKeys;
+
+	private final Handler mDialogWorkaroundHandler = new Handler() {
+
+		@Override
+		public void handleMessage(final Message msg) {
+			if (msg.obj instanceof Dialog) {
+				final Dialog dialog = (Dialog) msg.obj;
+				final View v = dialog.getWindow().getDecorView();
+				final ListView lv = findListView(v);
+				if (lv != null && lv.getAdapter() != null) {
+					lv.setAdapter(new WrapperAdapter(lv.getAdapter()));
+				}
+			}
+			super.handleMessage(msg);
+		}
+
+		private ListView findListView(final View view) {
+			if (!(view instanceof ViewGroup)) return null;
+			if (view instanceof ListView) return (ListView) view;
+			final ViewGroup view_group = (ViewGroup) view;
+			final int child_count = view_group.getChildCount();
+			for (int i = 0; i < child_count; i++) {
+				final View child = view_group.getChildAt(i);
+				if (child instanceof ListView) return (ListView) child;
+				if (child instanceof ViewGroup) {
+					final ListView lv = findListView(child);
+					if (lv != null) return lv;
+				}
+			}
+			return null;
+		}
+
+		class WrapperAdapter implements ListAdapter {
+
+			private final ListAdapter wrapped;
+
+			public WrapperAdapter(final ListAdapter adapter) {
+				wrapped = adapter;
+			}
+
+			@Override
+			public boolean areAllItemsEnabled() {
+				return wrapped.areAllItemsEnabled();
+			}
+
+			@Override
+			public int getCount() {
+				return wrapped.getCount();
+			}
+
+			@Override
+			public Object getItem(final int position) {
+				return wrapped.getItem(position);
+			}
+
+			@Override
+			public long getItemId(final int position) {
+				return wrapped.getItemId(position);
+			}
+
+			@Override
+			public int getItemViewType(final int position) {
+				return wrapped.getItemViewType(position);
+			}
+
+			@Override
+			public View getView(final int position, final View convertView, final ViewGroup parent) {
+				final View view = wrapped.getView(position, convertView, parent);
+				final TextView tv = findTextView(view);
+				if (tv != null) {
+					tv.setTextColor(Color.BLACK);
+				}
+				return view;
+			}
+
+			@Override
+			public int getViewTypeCount() {
+				return wrapped.getViewTypeCount();
+			}
+
+			@Override
+			public boolean hasStableIds() {
+				return wrapped.hasStableIds();
+			}
+
+			@Override
+			public boolean isEmpty() {
+				return wrapped.isEmpty();
+			}
+
+			@Override
+			public boolean isEnabled(final int position) {
+				return wrapped.isEnabled(position);
+			}
+
+			@Override
+			public void registerDataSetObserver(final DataSetObserver observer) {
+				wrapped.registerDataSetObserver(observer);
+
+			}
+
+			@Override
+			public void unregisterDataSetObserver(final DataSetObserver observer) {
+				wrapped.unregisterDataSetObserver(observer);
+
+			}
+
+			private TextView findTextView(final View view) {
+				if (view instanceof TextView) return (TextView) view;
+				if (!(view instanceof ViewGroup)) return null;
+				final ViewGroup view_group = (ViewGroup) view;
+				final int child_count = view_group.getChildCount();
+				for (int i = 0; i < child_count; i++) {
+					final View child = view_group.getChildAt(i);
+					if (child instanceof TextView) return (TextView) child;
+					if (child instanceof ViewGroup) {
+						final TextView tv = findTextView(child);
+						if (tv != null) return tv;
+					}
+				}
+				return null;
+			}
+
+		}
+
+	};
 
 	public MultiSelectListPreference(final Context context) {
 		this(context, null);
@@ -65,41 +193,6 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 		mValues[which] = isChecked;
 	}
 
-	private final Handler mDialogWorkaroundHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			if (msg.obj instanceof Dialog) {
-				final Dialog dialog = (Dialog) msg.obj;
-				final View v = dialog.getWindow().getDecorView();
-				final ListView lv = findListView(v);
-				if (lv != null) {
-					final ListAdapter adapter = lv.getAdapter();
-				}
-			}
-			super.handleMessage(msg);
-		}
-		
-		private ListView findListView(View view) {
-			if (!(view instanceof ViewGroup)) return null;
-			if (view instanceof ListView) return (ListView) view;
-			final ViewGroup view_group = (ViewGroup) view;
-			final int child_count = view_group.getChildCount();
-			for (int i = 0; i < child_count; i++) {
-				final View child = view_group.getChildAt(i);
-				if (child instanceof ListView) return (ListView) child;
-				if (child instanceof ViewGroup) {
-					final ListView lv = findListView(child);
-					if (lv != null) return lv;
-				}
-			}
-			return null;
-		}
-
-	};
-	
-
-
 	@Override
 	public void onPrepareDialogBuilder(final AlertDialog.Builder builder) {
 		super.onPrepareDialogBuilder(builder);
@@ -126,7 +219,7 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 						}
 						try {
 							sleep(50L);
-						} catch (InterruptedException e) {
+						} catch (final InterruptedException e) {
 						}
 					}
 				}

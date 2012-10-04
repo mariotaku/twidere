@@ -3,13 +3,12 @@ package org.mariotaku.twidere.view;
 import android.content.Context;
 import android.text.Layout;
 import android.text.Selection;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.TextView;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.widget.Toast;
 
 public class HandleSpanClickTextView extends TextView {
 
@@ -29,8 +28,7 @@ public class HandleSpanClickTextView extends TextView {
 	public boolean onTouchEvent(final MotionEvent event) {
 		final Spannable buffer = SpannableString.valueOf(getText());
 		final int action = event.getAction();
-		if (action == MotionEvent.ACTION_UP ||
-			action == MotionEvent.ACTION_DOWN) {
+		if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_DOWN) {
 			int x = (int) event.getX();
 			int y = (int) event.getY();
 
@@ -52,8 +50,7 @@ public class HandleSpanClickTextView extends TextView {
 					setClickable(false);
 					return true;
 				} else if (action == MotionEvent.ACTION_DOWN) {
-					Selection.setSelection(buffer, buffer.getSpanStart(link[0]),
-										   buffer.getSpanEnd(link[0]));
+					Selection.setSelection(buffer, buffer.getSpanStart(link[0]), buffer.getSpanEnd(link[0]));
 					setClickable(true);
 				}
 			} else {

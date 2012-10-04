@@ -267,7 +267,6 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_CREATED, null, LINK_ID_LIST_CREATED);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIPTIONS, null, LINK_ID_LIST_SUBSCRIPTIONS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERSHIPS, null, LINK_ID_LIST_MEMBERSHIPS);
-		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USERS_RETWEETED_STATUS, null, LINK_ID_USERS_RETWEETED_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SAVED_SEARCHES, null, LINK_ID_SAVED_SEARCHES);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_MENTIONS, null, LINK_ID_USER_MENTIONS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_INCOMING_FRIENDSHIPS, null, LINK_ID_INCOMING_FRIENDSHIPS);
@@ -1446,7 +1445,7 @@ public final class Utils implements Constants {
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS, where.toString(),
 				null, null);
 		if (cur != null) {
-			if (cur.getCount() == 1) {
+			if (cur.getCount() > 0) {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setHostAddressResolver(app.getHostAddressResolver());
@@ -1485,7 +1484,7 @@ public final class Utils implements Constants {
 
 				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
-					case Accounts.AUTH_TYPE_XAUTH:
+					case Accounts.AUTH_TYPE_XAUTH: {
 						if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
 							cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
 							cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
@@ -1496,17 +1495,24 @@ public final class Utils implements Constants {
 						final String oauth_token = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN));
 						final String token_secret = cur.getString(cur.getColumnIndexOrThrow(Accounts.TOKEN_SECRET));
 						if (!isNullOrEmpty(oauth_token) && !isNullOrEmpty(token_secret)) {
-							twitter = new TwitterFactory(cb.build()).getInstance(new AccessToken(oauth_token, token_secret));
+							twitter = new TwitterFactory(cb.build()).getInstance(new AccessToken(oauth_token,
+									token_secret));
 						}
 						break;
-					case Accounts.AUTH_TYPE_BASIC:
-						twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.SCREEN_NAME)), cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD))));
+					}
+					case Accounts.AUTH_TYPE_BASIC: {
+						final String screen_name = cur.getString(cur.getColumnIndexOrThrow(Accounts.SCREEN_NAME));
+						final String password = cur.getString(cur.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD));
+						if (!isNullOrEmpty(screen_name) && !isNullOrEmpty(password)) {
+							twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(screen_name,
+									password));
+						}
 						break;
-					case Accounts.AUTH_TYPE_TWIP_O_MODE:
+					}
+					case Accounts.AUTH_TYPE_TWIP_O_MODE: {
 						twitter = new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
 						break;
+					}
 					default:
 				}
 			}

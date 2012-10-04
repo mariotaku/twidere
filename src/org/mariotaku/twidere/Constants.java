@@ -376,7 +376,6 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_MUTE_SOURCE = R.id.mute_source;
 	public static final int MENU_MUTE_USER = R.id.mute_user;
 	public static final int MENU_REFRESH = R.id.refresh;
-	public static final int MENU_LOAD_MORE = R.id.load_more;
 	public static final int MENU_CONVERSATION = R.id.conversation;
 	public static final int MENU_MENTION = R.id.mention;
 	public static final int MENU_SEND_DIRECT_MESSAGE = R.id.send_direct_message;
@@ -399,11 +398,6 @@ public interface Constants extends TwitterConstants {
 	public static final int REQUEST_ADD_TAB = 11;
 	public static final int REQUEST_EDIT_TAB = 12;
 	public static final int REQUEST_PICK_FILE = 13;
-
-	public static final int RESULT_UNKNOWN_ERROR = -1;
-	public static final int RESULT_SUCCESS = 0;
-	public static final int RESULT_ALREADY_LOGGED_IN = 1;
-	public static final int RESULT_OPEN_BROWSER = 2;
 
 	public static final String TABLE_ACCOUNTS = Accounts.CONTENT_PATH;
 	public static final String TABLE_STATUSES = Statuses.CONTENT_PATH;
@@ -458,13 +452,7 @@ public interface Constants extends TwitterConstants {
 	public static final int LINK_ID_LIST_CREATED = 15;
 	public static final int LINK_ID_LIST_SUBSCRIPTIONS = 16;
 	public static final int LINK_ID_LIST_MEMBERSHIPS = 17;
-	public static final int LINK_ID_USERS_RETWEETED_STATUS = 18;
 	public static final int LINK_ID_SAVED_SEARCHES = 19;
-	/**
-	 * @deprecated Removed in API version 1.1
-	 */
-	@Deprecated
-	public static final int LINK_ID_RETWEETED_TO_ME = 20;
 	public static final int LINK_ID_USER_MENTIONS = 21;
 	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;
 
