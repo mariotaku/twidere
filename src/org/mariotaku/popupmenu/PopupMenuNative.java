@@ -20,7 +20,7 @@ import android.widget.ListPopupWindow;
 import android.widget.PopupWindow.OnDismissListener;
 
 @TargetApi(11)
-public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnItemClickListener, OnTouchListener {
+class PopupMenuNative extends PopupMenu implements OnDismissListener, OnItemClickListener, OnTouchListener {
 
 	private OnMenuItemClickListener mItemClickListener;
 	private OnDismissListener mDismissListener;
@@ -39,7 +39,7 @@ public class PopupMenuNative extends PopupMenu implements OnDismissListener, OnI
 	 * 
 	 * @param context Context
 	 */
-	public PopupMenuNative(final Context context, final View view) {
+	PopupMenuNative(final Context context, final View view) {
 		mContext = context;
 		mView = view;
 		mAdapter = new MenuAdapter(context);

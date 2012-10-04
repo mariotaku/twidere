@@ -22,6 +22,7 @@ package org.mariotaku.twidere.adapter;
 import static org.mariotaku.twidere.util.Utils.findDirectMessageInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.net.URL;
@@ -35,17 +36,20 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 
-public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements DirectMessagesAdapterInterface {
+public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements DirectMessagesAdapterInterface,
+		OnClickListener {
 
 	private boolean mDisplayProfileImage;
 	private final LazyImageLoader mImageLoader;
@@ -63,6 +67,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 	@Override
 	public void bindView(final View view, final Context context, final Cursor cursor) {
+		final int position = cursor.getPosition();
 		final DirectMessageConversationViewHolder holder = (DirectMessageConversationViewHolder) view.getTag();
 
 		final long account_id = cursor.getLong(mIndices.account_id);
@@ -93,6 +98,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_left);
 			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_right);
+			holder.profile_image_left.setTag(position);
+			holder.profile_image_right.setTag(position);
 		}
 
 		super.bindView(view, context, cursor);
@@ -102,27 +109,16 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	public ParcelableDirectMessage findItem(final long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) {
-				final Cursor item = getItem(i);
-				final long account_id = item.getLong(mIndices.account_id);
-				final long message_id = item.getLong(mIndices.message_id);
-				return findDirectMessageInDatabases(mContext, account_id, message_id);
-			}
+			if (getItemId(i) == id) return getDirectMessage(i);
 		}
 		return null;
 	}
 
-	public long findItemIdByPosition(final int position) {
-		if (position >= 0 && position < getCount()) return getItem(position).getLong(mIndices.message_id);
-		return -1;
-	}
-
-	public int findItemPositionByStatusId(final long status_id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getItem(i).getLong(mIndices.message_id) == status_id) return i;
-		}
-		return -1;
+	public ParcelableDirectMessage getDirectMessage(final int position) {
+		final Cursor item = getItem(position);
+		final long account_id = item.getLong(mIndices.account_id);
+		final long message_id = item.getLong(mIndices.message_id);
+		return findDirectMessageInDatabases(mContext, account_id, message_id);
 	}
 
 	@Override
@@ -135,9 +131,28 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
 		if (!(tag instanceof DirectMessageConversationViewHolder)) {
-			view.setTag(new DirectMessageConversationViewHolder(view));
+			final DirectMessageConversationViewHolder holder = new DirectMessageConversationViewHolder(view);
+			view.setTag(holder);
+			holder.profile_image_left.setOnClickListener(this);
+			holder.profile_image_right.setOnClickListener(this);
 		}
 		return view;
+	}
+
+	@Override
+	public void onClick(final View view) {
+		final Object tag = view.getTag();
+		final ParcelableDirectMessage status = tag instanceof Integer ? getDirectMessage((Integer) tag) : null;
+		if (status == null) return;
+		switch (view.getId()) {
+			case R.id.profile_image_left:
+			case R.id.profile_image_right: {
+				if (mContext instanceof Activity) {
+					openUserProfile((Activity) mContext, status.account_id, status.sender_id, status.sender_screen_name);
+				}
+				break;
+			}
+		}
 	}
 
 	@Override

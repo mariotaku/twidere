@@ -64,14 +64,6 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 		return ((Cursor) getItem(position)).getLong(mAccountIdIdx);
 	}
 
-	public int getPosition(final long account_id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getAccountIdAt(i) == account_id) return i;
-		}
-		return -1;
-	}
-
 	public boolean isChecked(final int position) {
 		return mCheckedItems.get(position);
 	}

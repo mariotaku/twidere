@@ -27,7 +27,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.PopupWindow.OnDismissListener;
 
-public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnItemClickListener, OnTouchListener {
+class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnItemClickListener, OnTouchListener {
 
 	private FrameLayout mRootView;
 	private ListView mListView;
@@ -64,7 +64,7 @@ public class PopupMenuCompat extends PopupMenu implements OnDismissListener, OnI
 	 * 
 	 * @param context Context
 	 */
-	public PopupMenuCompat(final Context context, final View view) {
+	PopupMenuCompat(final Context context, final View view) {
 		this.context = context;
 		res = context.getResources();
 		mAnchorView = view;

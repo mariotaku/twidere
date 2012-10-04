@@ -40,7 +40,7 @@ public final class MenuAdapter extends ArrayAdapter<MenuItem> {
 		setMenuItems();
 	}
 
-	public void setMenuItems() {
+	void setMenuItems() {
 		clear();
 		final List<MenuItem> items = mMenu == null ? null : ((MenuImpl) mMenu).getMenuItems();
 		if (items == null) return;

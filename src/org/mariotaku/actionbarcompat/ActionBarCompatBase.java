@@ -361,7 +361,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 		private final Context context;
 
-		public SupportMenu(final Context context) {
+		SupportMenu(final Context context) {
 			super(context);
 			this.context = context;
 		}
@@ -383,7 +383,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 		final MenuInflater mInflater;
 
-		public SupportMenuInflater(final Context context, final MenuInflater inflater) {
+		SupportMenuInflater(final Context context, final MenuInflater inflater) {
 			super(context);
 			mInflater = inflater;
 		}
@@ -474,7 +474,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 		private final int itemId;
 
-		public SupportMenuItem(final Context context, final int itemId) {
+		SupportMenuItem(final Context context, final int itemId) {
 			super(context);
 			this.itemId = itemId;
 		}

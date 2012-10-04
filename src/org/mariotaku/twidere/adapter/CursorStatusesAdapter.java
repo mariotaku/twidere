@@ -202,12 +202,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	public ParcelableStatus findStatus(final long id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) {
-				final Cursor cur = getItem(i);
-				final long account_id = cur.getLong(mIndices.account_id);
-				final long status_id = cur.getLong(mIndices.status_id);
-				return findStatusInDatabases(mContext, account_id, status_id);
-			}
+			if (getItemId(i) == id) return getStatus(i);
 		}
 		return null;
 	}
@@ -215,13 +210,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	@Override
 	public Cursor getItem(final int position) {
 		return (Cursor) super.getItem(position);
-	}
-
-	public ParcelableStatus getStatus(final int position) {
-		final Cursor cur = getItem(position);
-		final long account_id = cur.getLong(mIndices.account_id);
-		final long status_id = cur.getLong(mIndices.status_id);
-		return findStatusInDatabases(mContext, account_id, status_id);
 	}
 
 	@Override
@@ -334,5 +322,12 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			mIndices = null;
 		}
 		return super.swapCursor(cursor);
+	}
+
+	private ParcelableStatus getStatus(final int position) {
+		final Cursor cur = getItem(position);
+		final long account_id = cur.getLong(mIndices.account_id);
+		final long status_id = cur.getLong(mIndices.status_id);
+		return findStatusInDatabases(mContext, account_id, status_id);
 	}
 }

@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-public class ActionModeCompat extends ActionMode {
+class ActionModeCompat extends ActionMode {
 
 	private final Callback mCallbackProxy;
 	private final View mActionModeContainer;

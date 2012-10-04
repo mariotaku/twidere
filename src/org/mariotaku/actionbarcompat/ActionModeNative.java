@@ -8,7 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class ActionModeNative extends ActionMode {
+class ActionModeNative extends ActionMode {
 
 	private final Callback mCallbackProxy;
 	private final android.view.ActionMode mActionMode;

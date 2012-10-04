@@ -12,14 +12,14 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 
-public final class SubMenuImpl extends MenuImpl implements SubMenu {
+final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	private final List<MenuItem> mMenuItems;
 	private final MenuAdapter mAdapter;
 	private final MenuItem menuItem;
 	private final Context mContext;
 
-	public SubMenuImpl(final Context context, final MenuItem menuItem) {
+	SubMenuImpl(final Context context, final MenuItem menuItem) {
 		super(context);
 		mContext = context;
 		mAdapter = new MenuAdapter(context);

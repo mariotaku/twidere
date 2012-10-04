@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.view.MenuInflater;
 
-public abstract class ActionBarCompat {
+abstract class ActionBarCompat {
 
 	ActionBar getActionBar() {
 		if (this instanceof ActionBar) return (ActionBar) this;
@@ -21,7 +21,7 @@ public abstract class ActionBarCompat {
 		return inflater;
 	}
 
-	public static ActionBarCompat getInstance(final Activity activity) {
+	static ActionBarCompat getInstance(final Activity activity) {
 		if (activity == null) return null;
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
