@@ -51,8 +51,8 @@ public interface Constants extends TwitterConstants {
 	// Following 4 consants are not included in source code.
 	public static final String TWITTER_CONSUMER_KEY = PrivateConstants.TWITTER_CONSUMER_KEY;
 	public static final String TWITTER_CONSUMER_SECRET = PrivateConstants.TWITTER_CONSUMER_SECRET;
-	public static final String GOOGLE_MAPS_API_KEY_RELEASE = PrivateConstants.MAPS_API_KEY_RELEASE;
-	public static final String GOOGLE_MAPS_API_KEY_DEBUG = PrivateConstants.MAPS_API_KEY_DEBUG;
+	public static final String GOOGLE_MAPS_API_KEY_RELEASE = PrivateConstants.GOOGLE_MAPS_API_KEY_RELEASE;
+	public static final String GOOGLE_MAPS_API_KEY_DEBUG = PrivateConstants.GOOGLE_MAPS_API_KEY_DEBUG;
 
 	public static final String GOOGLE_MAPS_API_KEY = DEBUG ? GOOGLE_MAPS_API_KEY_DEBUG : GOOGLE_MAPS_API_KEY_RELEASE;
 

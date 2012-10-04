@@ -1493,9 +1493,11 @@ public final class Utils implements Constants {
 							cb.setOAuthConsumerKey(consumer_key);
 							cb.setOAuthConsumerSecret(consumer_secret);
 						}
-						twitter = new TwitterFactory(cb.build()).getInstance(new AccessToken(cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN)), cur.getString(cur
-								.getColumnIndexOrThrow(Accounts.TOKEN_SECRET))));
+						final String oauth_token = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN));
+						final String token_secret = cur.getString(cur.getColumnIndexOrThrow(Accounts.TOKEN_SECRET));
+						if (!isNullOrEmpty(oauth_token) && !isNullOrEmpty(token_secret)) {
+							twitter = new TwitterFactory(cb.build()).getInstance(new AccessToken(oauth_token, token_secret));
+						}
 						break;
 					case Accounts.AUTH_TYPE_BASIC:
 						twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(cur.getString(cur

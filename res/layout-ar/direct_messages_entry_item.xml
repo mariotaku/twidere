@@ -52,7 +52,7 @@
 		</LinearLayout>
 	</FrameLayout>
 
-	<TextView
+	<org.mariotaku.twidere.view.HandleSpanClickTextView
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

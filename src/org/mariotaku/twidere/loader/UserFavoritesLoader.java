@@ -95,6 +95,7 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 				return data;
 			} catch (final IOException e) {
 			} catch (final ClassNotFoundException e) {
+			} catch (final ClassCastException e) {		
 			}
 		}
 		return super.loadInBackground();

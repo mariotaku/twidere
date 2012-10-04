@@ -70,7 +70,6 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		final boolean is_outgoing = cursor.getInt(mIndices.is_outgoing) == 1;
 		final String name = cursor.getString(mIndices.sender_name);
 		final String screen_name = cursor.getString(mIndices.sender_screen_name);
-
 		holder.setTextSize(mTextSize);
 		holder.name.setText(name);
 		holder.screen_name.setText("@" + screen_name);
@@ -81,6 +80,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		final TwidereLinkify linkify = new TwidereLinkify(holder.text);
 		linkify.setOnLinkClickListener(new OnLinkClickHandler(context, account_id));
 		linkify.addAllLinks();
+		holder.text.setMovementMethod(null);
 		holder.text.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
 		holder.time.setText(formatToLongTimeString(mContext, message_timestamp));
 		holder.time.setGravity(is_outgoing ? Gravity.RIGHT : Gravity.LEFT);

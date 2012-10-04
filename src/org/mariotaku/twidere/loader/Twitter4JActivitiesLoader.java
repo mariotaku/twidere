@@ -88,6 +88,7 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 				return cached_activities;
 			} catch (final IOException e) {
 			} catch (final ClassNotFoundException e) {
+			} catch (final ClassCastException e) {		
 			}
 		}
 		ResponseList<Activity> activities = null;
