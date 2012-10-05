@@ -79,17 +79,6 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int cancelRetweet(final long account_id, final long status_id) {
-		if (mService == null) return -1;
-		try {
-			return mService.cancelRetweet(account_id, status_id);
-		} catch (final RemoteException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
-
-	@Override
 	public void clearNotification(final int id) {
 		if (mService == null) return;
 		try {

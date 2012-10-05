@@ -247,7 +247,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			case R.id.direct_retweet:
 			case MENU_RETWEET: {
 				if (isMyRetweet(status)) {
-					mService.cancelRetweet(status.account_id, status.status_id);
+					mService.destroyStatus(status.account_id, status.status_id);
 				} else {
 					final long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
 							: mSelectedStatus.status_id;

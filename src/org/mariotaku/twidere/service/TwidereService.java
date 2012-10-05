@@ -168,11 +168,6 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int cancelRetweet(final long account_id, final long status_id) {
-		final CancelRetweetTask task = new CancelRetweetTask(account_id, status_id);
-		return mAsyncTaskManager.add(task, true);
-	}
-
 	public void clearNotification(final int id) {
 		switch (id) {
 			case NOTIFICATION_ID_HOME_TIMELINE: {
@@ -671,84 +666,6 @@ public class TwidereService extends Service implements Constants {
 
 			}
 			return null;
-		}
-
-		private TwidereService getOuterType() {
-			return TwidereService.this;
-		}
-
-	}
-
-	class CancelRetweetTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
-
-		private final long account_id, status_id;
-
-		public CancelRetweetTask(final long account_id, final long status_id) {
-			super(TwidereService.this, mAsyncTaskManager);
-			this.account_id = account_id;
-			this.status_id = status_id;
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) return true;
-			if (!super.equals(obj)) return false;
-			if (!(obj instanceof CancelRetweetTask)) return false;
-			final CancelRetweetTask other = (CancelRetweetTask) obj;
-			if (!getOuterType().equals(other.getOuterType())) return false;
-			if (account_id != other.account_id) return false;
-			if (status_id != other.status_id) return false;
-			return true;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = super.hashCode();
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + (int) (account_id ^ account_id >>> 32);
-			result = prime * result + (int) (status_id ^ status_id >>> 32);
-			return result;
-		}
-
-		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
-
-			final Twitter twitter = getTwitterInstance(getOuterType(), account_id, false);
-			if (twitter != null) {
-				try {
-					final twitter4j.Status status = twitter.destroyStatus(status_id);
-					return new SingleResponse<twitter4j.Status>(account_id, status, null);
-				} catch (final TwitterException e) {
-					return new SingleResponse<twitter4j.Status>(account_id, null, e);
-				}
-			}
-			return new SingleResponse<twitter4j.Status>(account_id, null, null);
-		}
-
-		@Override
-		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
-			if (result != null && result.data != null) {
-				final twitter4j.Status retweeted_status = result.data.getRetweetedStatus();
-				if (retweeted_status != null) {
-					final ContentValues values = makeStatusContentValues(result.data, account_id);
-					// final String status_where = Statuses.STATUS_ID + " = " +
-					// result.data.getId();
-					final String retweet_where = Statuses.STATUS_ID + " = " + retweeted_status.getId();
-					for (final Uri uri : TweetStore.STATUSES_URIS) {
-						// mResolver.delete(uri, status_where, null);
-						mResolver.update(uri, values, retweet_where, null);
-					}
-				}
-				Toast.makeText(getOuterType(), R.string.cancel_retweet_success, Toast.LENGTH_SHORT).show();
-				final Intent intent = new Intent(BROADCAST_RETWEET_CHANGED);
-				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
-				intent.putExtra(INTENT_KEY_RETWEETED, false);
-				sendBroadcast(intent);
-			} else {
-				showErrorToast(result.exception, true);
-			}
-			super.onPostExecute(result);
 		}
 
 		private TwidereService getOuterType() {
@@ -2676,11 +2593,6 @@ public class TwidereService extends Service implements Constants {
 		public int addUserListMember(final long account_id, final int list_id, final long user_id,
 				final String screen_name) {
 			return mService.get().addUserListMember(account_id, list_id, user_id, screen_name);
-		}
-
-		@Override
-		public int cancelRetweet(final long account_id, final long status_id) {
-			return mService.get().cancelRetweet(account_id, status_id);
 		}
 
 		@Override

@@ -35,7 +35,6 @@ interface ITwidereService {
 	int sendDirectMessage(long account_id, String screen_name, long user_id, String message);
 	int destroyDirectMessage(long account_id, long message_id);
 	int retweetStatus(long account_ids, long status_id);
-	int cancelRetweet(long account_id, long status_id);
 	int createFavorite(long account_ids, long status_id);
 	int destroyFavorite(long account_id, long status_id);
 	int createFriendship(long account_id, long user_id);
