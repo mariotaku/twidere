@@ -188,6 +188,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_SEPRATE_RETWEET_ACTION = "seprate_retweet_action";
 	public static final String PREFERENCE_KEY_API_UPGRADE_CONFIRMED = "api_upgrade_confirmed";
 	public static final String PREFERENCE_KEY_CONNECTION_TIMEOUT = "connection_timeout";
+	public static final String PREFERENCE_KEY_NAME_DISPLAY_OPTION = "name_display_option";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -197,7 +198,13 @@ public interface Constants extends TwitterConstants {
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final int PREFERENCE_DEFAULT_TEXT_SIZE = 15;
-
+	
+ 	public static final String NAME_DISPLAY_OPTION_BOTH = "both";
+ 	public static final String NAME_DISPLAY_OPTION_NAME = "name";
+ 	public static final String NAME_DISPLAY_OPTION_SCREEN_NAME = "screen_name";
+ 	public static final int NAME_DISPLAY_OPTION_CODE_NAME = 1;
+ 	public static final int NAME_DISPLAY_OPTION_CODE_SCREEN_NAME = 2;
+	
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 
 	public static final String INTENT_ACTION_SERVICE = INTENT_PACKAGE_PREFIX + "SERVICE";

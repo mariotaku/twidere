@@ -3,6 +3,7 @@
 
 	<string-array name="entries_refresh_interval">
 		<item>@string/item_1_minute</item>
+		<item>@string/item_3_minutes</item>
 		<item>@string/item_5_minutes</item>
 		<item>@string/item_10_minutes</item>
 		<item>@string/item_15_minutes</item>
@@ -13,6 +14,7 @@
 	</string-array>
 	<string-array name="values_refresh_interval">
 		<item>1</item>
+		<item>3</item>
 		<item>5</item>
 		<item>10</item>
 		<item>15</item>
@@ -34,6 +36,16 @@
 		<item>@string/sound</item>
 		<item>@string/vibration</item>
 		<item>@string/lights</item>
+	</string-array>
+	<string-array name="entries_name_display_option">
+		<item>@string/both</item>
+		<item>@string/name</item>
+		<item>@string/screen_name</item>
+	</string-array>
+	<string-array name="values_name_display_option">
+		<item>both</item>
+		<item>name</item>
+		<item>screen_name</item>
 	</string-array>
 
 </resources>

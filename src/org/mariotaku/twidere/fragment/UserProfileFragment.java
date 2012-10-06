@@ -1087,6 +1087,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		public static Bitmap createAlphaGradientBanner(final Bitmap orig) {
+			if (orig == null) return null;
 			final int width = orig.getWidth(), height = orig.getHeight();
 			final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 			final Canvas canvas = new Canvas(bitmap);

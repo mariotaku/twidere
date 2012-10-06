@@ -49,6 +49,18 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	private final ArrayList<Long> mSelectedUserIds;
 	private final Context mContext;
 
+	private int mNameDisplayOption;
+
+	public void setNameDisplayOption(String option) {
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		} else {
+			mNameDisplayOption = 0;
+		}
+	}
+	
 	public UsersAdapter(final Context context) {
 		super(context, R.layout.user_list_item, R.id.description);
 		mContext = context;
@@ -113,10 +125,28 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		holder.setUserColor(getUserColor(mContext, user.user_id));
 
 		holder.setTextSize(mTextSize);
-		holder.name.setText(user.name);
-		holder.screen_name.setText("@" + user.screen_name);
 		holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 				getUserTypeIconRes(user.is_verified, user.is_protected), 0);
+		switch (mNameDisplayOption) {
+			case NAME_DISPLAY_OPTION_CODE_NAME: {
+				holder.name.setText(user.name);
+				holder.screen_name.setText(null);
+				holder.screen_name.setVisibility(View.GONE);
+				break;
+			}
+			case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
+				holder.name.setText("@" + user.screen_name);
+				holder.screen_name.setText(null);
+				holder.screen_name.setVisibility(View.GONE);
+				break;
+			}
+			default: {
+				holder.name.setText(user.name);
+				holder.screen_name.setText("@" + user.screen_name);
+				holder.screen_name.setVisibility(View.VISIBLE);
+				break;
+			}
+		}
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {

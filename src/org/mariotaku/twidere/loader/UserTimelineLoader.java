@@ -40,6 +40,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.os.Bundle;
+import org.mariotaku.twidere.util.SerializationUtil;
 
 public class UserTimelineLoader extends Twitter4JStatusLoader {
 
@@ -82,14 +83,10 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 			try {
 				final File f = new File(getContext().getCacheDir(), getClassName() + "." + getAccountId() + "."
 						+ mUserId + "." + mUserScreenName);
-				final FileInputStream fis = new FileInputStream(f);
-				final ObjectInputStream in = new ObjectInputStream(fis);
 				@SuppressWarnings("unchecked")
-				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) in
-						.readObject();
+				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) 
+						SerializationUtil.read(f.getPath());
 				setLastViewedId(statuses.getState());
-				in.close();
-				fis.close();
 				final ArrayList<ParcelableStatus> result = new ArrayList<ParcelableStatus>();
 				for (final SerializableStatus status : statuses) {
 					result.add(new ParcelableStatus(status));
@@ -126,12 +123,9 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 				}
 				statuses.add(new SerializableStatus(data.get(i)));
 			}
-			final FileOutputStream fos = new FileOutputStream(new File(context.getCacheDir(), instance.getClass()
-					.getSimpleName() + "." + account_id + "." + user_id + "." + screen_name));
-			final ObjectOutputStream os = new ObjectOutputStream(fos);
-			os.writeObject(statuses);
-			os.close();
-			fos.close();
+			final File f = new File(context.getCacheDir(), instance.getClass().getSimpleName() 
+					+ "." + account_id + "." + user_id + "." + screen_name);
+			SerializationUtil.write(statuses,f.getPath());
 		} catch (final IOException e) {
 		}
 	}

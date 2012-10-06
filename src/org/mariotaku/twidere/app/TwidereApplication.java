@@ -97,8 +97,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	public ServiceInterface getServiceInterface() {
-		if (mServiceInterface != null) {
-			mServiceInterface.test();
+		if (mServiceInterface != null && mServiceInterface.test()) {
 			return mServiceInterface;
 		}
 		return mServiceInterface = ServiceInterface.getInstance(this);

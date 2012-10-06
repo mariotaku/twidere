@@ -38,6 +38,11 @@ import android.widget.ArrayAdapter;
 
 public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements BaseAdapterInterface {
 
+	public void setNameDisplayOption(String option) {
+		// TODO: Implement this method
+	}
+
+
 	private final LazyImageLoader mProfileImageLoader;
 	private boolean mDisplayProfileImage;
 	private final boolean mDisplayHiResProfileImage;

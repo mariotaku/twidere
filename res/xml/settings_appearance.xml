@@ -43,6 +43,13 @@
 			robobunny:unitsLeft=""
 			robobunny:unitsRight="sp"/>
 
+		<ListPreference
+			android:defaultValue="both"
+			android:entries="@array/entries_name_display_option"
+			android:entryValues="@array/values_name_display_option"
+			android:key="name_display_option"
+			android:title="@string/name_display_option"/>
+			
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="display_profile_image"

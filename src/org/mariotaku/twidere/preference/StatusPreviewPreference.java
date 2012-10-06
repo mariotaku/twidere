@@ -47,7 +47,9 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		} else if (PREFERENCE_KEY_INLINE_IMAGE_PREVIEW.equals(key)) {
 			setImagePreview();
 		} else if (PREFERENCE_KEY_SHOW_ABSOLUTE_TIME.equals(key)) {
-			showTime();
+			setTime();
+		} else if (PREFERENCE_KEY_NAME_DISPLAY_OPTION.equals(key)) {
+			setName();
 		}
 	}
 
@@ -56,15 +58,14 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		mHolder = new StatusViewHolder(view);
 		mHolder.profile_image.setImageResource(R.drawable.ic_launcher);
 		mHolder.image_preview.setImageResource(R.drawable.twidere_promotional_graphic);
-		mHolder.name.setText("Twidere Project");
-		mHolder.screen_name.setText("@twidere_project");
 		mHolder.text.setText("Twidere is an open source twitter client for Android.");
 		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_has_media, 0);
 		mHolder.reply_retweet_status.setVisibility(View.GONE);
+		setName();
 		setImagePreview();
 		setProfileImage();
 		setTextSize();
-		showTime();
+		setTime();
 		super.onBindView(view);
 	}
 
@@ -79,6 +80,23 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 				.setVisibility(mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false) ? View.VISIBLE
 						: View.GONE);
 	}
+	
+	private void setName() {
+		final String option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mHolder.name.setText("Twidere Project");
+			mHolder.screen_name.setText(null);
+			mHolder.screen_name.setVisibility(View.GONE);
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mHolder.name.setText("@twidere_project");
+			mHolder.screen_name.setText(null);
+			mHolder.screen_name.setVisibility(View.GONE);			
+		} else {
+			mHolder.name.setText("Twidere Project");
+			mHolder.screen_name.setText("@twidere_project");
+			mHolder.screen_name.setVisibility(View.VISIBLE);
+		}
+	}
 
 	private void setProfileImage() {
 		if (mHolder == null) return;
@@ -92,7 +110,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		mHolder.setTextSize(mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE));
 	}
 
-	private void showTime() {
+	private void setTime() {
 		if (mHolder == null) return;
 		if (mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false)) {
 			mHolder.time.setText(formatSameDayTime(getContext(), System.currentTimeMillis() - 360000));

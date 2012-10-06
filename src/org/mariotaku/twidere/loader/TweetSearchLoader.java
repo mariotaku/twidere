@@ -42,6 +42,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.os.Bundle;
+import org.mariotaku.twidere.util.SerializationUtil;
 
 public class TweetSearchLoader extends Twitter4JStatusLoader {
 
@@ -71,14 +72,10 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 			try {
 				final File f = new File(getContext().getCacheDir(), getClassName() + "." + getAccountId() + "."
 						+ mQuery);
-				final FileInputStream fis = new FileInputStream(f);
-				final ObjectInputStream in = new ObjectInputStream(fis);
 				@SuppressWarnings("unchecked")
-				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) in
-						.readObject();
+				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) 
+						SerializationUtil.read(f.getPath());
 				setLastViewedId(statuses.getState());
-				in.close();
-				fis.close();
 				final NoDuplicatesArrayList<ParcelableStatus> result = new NoDuplicatesArrayList<ParcelableStatus>();
 				for (final SerializableStatus status : statuses) {
 					result.add(new ParcelableStatus(status));
@@ -120,12 +117,9 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 				statuses.add(new SerializableStatus(status));
 				i++;
 			}
-			final FileOutputStream fos = new FileOutputStream(new File(context.getCacheDir(), instance.getClass()
-					.getSimpleName() + "." + account_id + "." + query));
-			final ObjectOutputStream os = new ObjectOutputStream(fos);
-			os.writeObject(statuses);
-			os.close();
-			fos.close();
+			final File f = new File(context.getCacheDir(), instance.getClass().getSimpleName()
+					+ "." + account_id + "." + query);
+			SerializationUtil.write(statuses, f.getPath());
 		} catch (final IOException e) {
 		} catch (final ArrayIndexOutOfBoundsException e) {
 		}

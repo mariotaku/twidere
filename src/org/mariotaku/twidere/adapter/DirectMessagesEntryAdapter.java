@@ -36,6 +36,18 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	private float mTextSize;
 	private final boolean mDisplayHiResProfileImage;
 
+	private int mNameDisplayOption;
+
+	public void setNameDisplayOption(String option) {
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		} else {
+			mNameDisplayOption = 0;
+		}
+	}
+	
 	public DirectMessagesEntryAdapter(final Context context, final LazyImageLoader loader) {
 		super(context, R.layout.direct_messages_entry_item, null, new String[0], new int[0], 0);
 		mProfileImageLoader = loader;
@@ -67,8 +79,26 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		}
 
 		holder.setTextSize(mTextSize);
-		holder.name.setText(name);
-		holder.screen_name.setText("@" + screen_name);
+		switch (mNameDisplayOption) {
+			case NAME_DISPLAY_OPTION_CODE_NAME: {
+				holder.name.setText(name);
+				holder.screen_name.setText(null);
+				holder.screen_name.setVisibility(View.GONE);
+				break;
+			}
+			case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
+				holder.name.setText("@" + screen_name);
+				holder.screen_name.setText(null);
+				holder.screen_name.setVisibility(View.GONE);
+				break;
+			}
+			default: {
+				holder.name.setText(name);
+				holder.screen_name.setText("@" + screen_name);
+				holder.screen_name.setVisibility(View.VISIBLE);
+				break;
+			}
+		}
 		holder.text.setText(unescape(cursor.getString(IDX_TEXT)));
 		if (mShowAbsoluteTime) {
 			holder.time.setText(formatSameDayTime(message_timestamp, System.currentTimeMillis(), DateFormat.MEDIUM,
@@ -92,20 +122,12 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		super.bindView(view, context, cursor);
 	}
 
-	public long findAccountId(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) return ((Cursor) getItem(i)).getLong(IDX_ACCOUNT_ID);
-		}
-		return -1;
+	public long getAccountId(final int position) {
+		return ((Cursor) getItem(position)).getLong(IDX_ACCOUNT_ID);
 	}
 
-	public long findConversationId(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) return ((Cursor) getItem(i)).getLong(IDX_CONVERSATION_ID);
-		}
-		return -1;
+	public long getConversationId(final int position) {
+		return ((Cursor) getItem(position)).getLong(IDX_CONVERSATION_ID);
 	}
 
 	@Override

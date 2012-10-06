@@ -57,7 +57,7 @@ import android.widget.ListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 public class DirectMessagesFragment extends PullToRefreshListFragment implements LoaderCallbacks<Cursor>,
-		OnScrollListener, OnItemClickListener, OnTouchListener {
+		OnScrollListener, OnTouchListener {
 	private ServiceInterface mService;
 
 	private SharedPreferences mPreferences;
@@ -104,7 +104,6 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		mListView = getListView();
 		mListView.setOnTouchListener(this);
 		mListView.setOnScrollListener(this);
-		mListView.setOnItemClickListener(this);
 		setMode(Mode.BOTH);
 
 		getLoaderManager().initLoader(0, null, this);
@@ -120,10 +119,10 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	}
 
 	@Override
-	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
+	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		if (mApplication.isMultiSelectActive()) return;
-		final long conversation_id = mAdapter.findConversationId(id);
-		final long account_id = mAdapter.findAccountId(id);
+		final long conversation_id = mAdapter.getConversationId(position - l.getHeaderViewsCount());
+		final long account_id = mAdapter.getAccountId(position - l.getHeaderViewsCount());
 		if (conversation_id > 0 && account_id > 0) {
 			openDirectMessagesConversation(getActivity(), account_id, conversation_id);
 		}
@@ -145,7 +144,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_COMPOSE: {
-				openDMConversation();
+				openDirectMessagesConversation(getActivity(), -1, -1);
 				break;
 			}
 		}
@@ -186,9 +185,11 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
+		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
+		mAdapter.setNameDisplayOption(name_display_option);
 	}
 
 	@Override
@@ -270,7 +271,4 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		return false;
 	}
 
-	public void openDMConversation() {
-		openDirectMessagesConversation(getActivity(), -1, -1);
-	}
 }

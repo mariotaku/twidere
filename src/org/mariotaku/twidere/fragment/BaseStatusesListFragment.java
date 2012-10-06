@@ -64,7 +64,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
 
 abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
-		OnScrollListener, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left {
+		OnScrollListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left {
 
 	private static final long TICKER_DURATION = 5000L;
 
@@ -134,7 +134,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView.setOnScrollListener(this);
-		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		setMode(Mode.BOTH);
 		getLoaderManager().initLoader(0, getArguments(), this);
@@ -153,44 +152,14 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	public abstract Loader<Data> onCreateLoader(int id, Bundle args);
 
 	@Override
-	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		mSelectedStatus = null;
-		final Object tag = view.getTag();
-		if (tag instanceof StatusViewHolder) {
-			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
-			final ParcelableStatus status = mSelectedStatus = getListAdapter().findStatus(id);
-			if (status == null) return;
-			final StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder.show_as_gap) {
-				getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
-			} else {
-				if (mApplication.isMultiSelectActive()) {
-					final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
-					if (!list.contains(status)) {
-						list.add(status);
-					} else {
-						list.remove(status);
-					}
-					return;
-				}
-				if (click_to_open_menu) {
-					openMenu(view, status);
-				} else {
-					openStatus(getActivity(), status);
-				}
-			}
-		}
-	}
-
-	@Override
-	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
+	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedStatus = null;
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
 			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			final ParcelableStatus status = mSelectedStatus = getListAdapter().findStatus(id);
+			final ParcelableStatus status = mSelectedStatus = getListAdapter().getStatus(position - getListView().getHeaderViewsCount());
 			if (mApplication.isMultiSelectActive()) {
 				final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(mSelectedStatus)) {
@@ -216,6 +185,36 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		return false;
 	}
 
+	@Override
+	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
+		mSelectedStatus = null;
+		final Object tag = v.getTag();
+		if (tag instanceof StatusViewHolder) {
+			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
+			final ParcelableStatus status = mSelectedStatus = getListAdapter().getStatus(position - l.getHeaderViewsCount());
+			if (status == null) return;
+			final StatusViewHolder holder = (StatusViewHolder) tag;
+			if (holder.show_as_gap) {
+				getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
+			} else {
+				if (mApplication.isMultiSelectActive()) {
+					final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
+					if (!list.contains(status)) {
+						list.add(status);
+					} else {
+						list.remove(status);
+					}
+					return;
+				}
+				if (click_to_open_menu) {
+					openMenu(v, status);
+				} else {
+					openStatus(getActivity(), status);
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void onLoaderReset(final Loader<Data> loader) {
 		mData = null;
@@ -333,11 +332,13 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
+		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
 		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayImagePreview(display_image_preview);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
+		mAdapter.setNameDisplayOption(name_display_option);
 	}
 
 	@Override

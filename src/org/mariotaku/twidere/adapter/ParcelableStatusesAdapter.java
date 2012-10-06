@@ -68,7 +68,18 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	private final ArrayList<Long> mSelectedStatusIds;
 	private final boolean mDisplayHiResProfileImage;
 	private final NoDuplicatesArrayList<ParcelableStatus> mData = new NoDuplicatesArrayList<ParcelableStatus>();
+	private int mNameDisplayOption;
 
+	public void setNameDisplayOption(String option) {
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		} else {
+			mNameDisplayOption = 0;
+		}
+	}
+	
 	public ParcelableStatusesAdapter(final Context context) {
 		super();
 		mContext = context;
@@ -111,14 +122,6 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		return -1;
 	}
 
-	@Override
-	public ParcelableStatus findStatus(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) return getItem(i);
-		}
-		return null;
-	}
 
 	@Override
 	public int getCount() {
@@ -135,6 +138,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		return mData.get(position).status_id;
 	}
 
+	@Override
 	public ParcelableStatus getStatus(final int position) {
 		return getItem(position);
 	}
@@ -185,8 +189,26 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getUserTypeIconRes(status.is_verified, status.is_protected), 0);
-			holder.name.setText(status.name);
-			holder.screen_name.setText("@" + status.screen_name);
+			switch (mNameDisplayOption) {
+				case NAME_DISPLAY_OPTION_CODE_NAME: {
+					holder.name.setText(status.name);
+					holder.screen_name.setText(null);
+					holder.screen_name.setVisibility(View.GONE);
+					break;
+				}
+				case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
+					holder.name.setText("@" + status.screen_name);
+					holder.screen_name.setText(null);
+					holder.screen_name.setVisibility(View.GONE);
+					break;
+				}
+				default: {
+					holder.name.setText(status.name);
+					holder.screen_name.setText("@" + status.screen_name);
+					holder.screen_name.setVisibility(View.VISIBLE);
+					break;
+				}
+			}
 			if (mShowAbsoluteTime) {
 				holder.time.setText(formatSameDayTime(mContext, status.status_timestamp));
 			} else {

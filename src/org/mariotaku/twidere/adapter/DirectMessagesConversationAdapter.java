@@ -57,7 +57,18 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	private final Context mContext;
 	private DirectMessageCursorIndices mIndices;
 	private final boolean mDisplayHiResProfileImage;
+	private int mNameDisplayOption;
 
+	public void setNameDisplayOption(String option) {
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		} else {
+			mNameDisplayOption = 0;
+		}
+	}
+	
 	public DirectMessagesConversationAdapter(final Context context, final LazyImageLoader loader) {
 		super(context, R.layout.direct_message_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
@@ -76,8 +87,26 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		final String name = cursor.getString(mIndices.sender_name);
 		final String screen_name = cursor.getString(mIndices.sender_screen_name);
 		holder.setTextSize(mTextSize);
-		holder.name.setText(name);
-		holder.screen_name.setText("@" + screen_name);
+		switch (mNameDisplayOption) {
+			case NAME_DISPLAY_OPTION_CODE_NAME: {
+				holder.name.setText(name);
+				holder.screen_name.setText(null);
+				holder.screen_name.setVisibility(View.GONE);
+				break;
+			}
+			case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
+				holder.name.setText("@" + screen_name);
+				holder.screen_name.setText(null);
+				holder.screen_name.setVisibility(View.GONE);
+				break;
+			}
+			default: {
+				holder.name.setText(name);
+				holder.screen_name.setText("@" + screen_name);
+				holder.screen_name.setVisibility(View.VISIBLE);
+				break;
+			}
+		}
 		final FrameLayout.LayoutParams lp = (LayoutParams) holder.name_container.getLayoutParams();
 		lp.gravity = is_outgoing ? Gravity.LEFT : Gravity.RIGHT;
 		holder.name_container.setLayoutParams(lp);

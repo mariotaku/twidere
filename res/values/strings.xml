@@ -220,6 +220,7 @@
 	<string name="Ndirect_messages_quantity_one">You have a new direct message.</string>
 	<string name="Ndirect_messages_quantity_other">You have <xliff:g id="items">%d</xliff:g> direct messages.</string>
 	<string name="item_1_minute">1 minute</string>
+	<string name="item_3_minutes">3 minutes</string>
 	<string name="item_5_minutes">5 minutes</string>
 	<string name="item_10_minutes">10 minutes</string>
 	<string name="item_15_minutes">15 minutes</string>
@@ -340,5 +341,7 @@
 	<string name="api_upgrade_notice_title">VERY IMPORTANT!</string>
 	<string name="api_upgrade_notice_message">  Twitter announced their new version (1.1) of API.\n\n  Since this version, Twidere uses their API version 1.1.\n\n  It\'s STRONGLY RECOMMAND to re-login, or you will have many problems using it.\n\n  What changed in API version 1.1?\n  *More strict rate limits, for instance, you\'re only able to get your home timeline 15 times per 15 minutes.\n  *You can\'t see who retweeted you, you can\'t see tweets retweeted to you either.\n  *If you use Twidere as your StatusNet client, many features will lost due to API changes.\n\n  Sorry for the inconvenience, but you know - Twitter is about to kill third-party clients, I can do nothing about this.</string>
 	<string name="connection_timeout">Connection timeout</string>
+	<string name="name_display_option">Name display option</string>
+	<string name="both">Both</string>
 
 </resources>

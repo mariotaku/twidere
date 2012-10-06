@@ -68,7 +68,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	private final Context mContext;
 	private StatusCursorIndices mIndices;
 	private final ArrayList<Long> mSelectedStatusIds;
-	private final boolean mDisplayHiResProfileImage;
+	private final boolean mDisplayHiResProfileImage;	
+	private int mNameDisplayOption;
 
 	public CursorStatusesAdapter(final Context context) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
@@ -140,8 +141,26 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 			holder.text.setText(unescape(text));
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(is_verified, is_protected), 0);
-			holder.name.setText(name);
-			holder.screen_name.setText("@" + screen_name);
+			switch (mNameDisplayOption) {
+				case NAME_DISPLAY_OPTION_CODE_NAME: {
+					holder.name.setText(name);
+					holder.screen_name.setText(null);
+					holder.screen_name.setVisibility(View.GONE);
+					break;
+				}
+				case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
+					holder.name.setText("@" + screen_name);
+					holder.screen_name.setText(null);
+					holder.screen_name.setVisibility(View.GONE);
+					break;
+				}
+				default: {
+					holder.name.setText(name);
+					holder.screen_name.setText("@" + screen_name);
+					holder.screen_name.setVisibility(View.VISIBLE);
+					break;
+				}
+			}
 			if (mShowAbsoluteTime) {
 				holder.time.setText(formatSameDayTime(context, status_timestamp));
 			} else {
@@ -199,12 +218,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public ParcelableStatus findStatus(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) return getStatus(i);
-		}
-		return null;
+	public ParcelableStatus getStatus(final int position) {
+		final Cursor cur = getItem(position);
+		final long account_id = cur.getLong(mIndices.account_id);
+		final long status_id = cur.getLong(mIndices.status_id);
+		return findStatusInDatabases(mContext, account_id, status_id);
 	}
 
 	@Override
@@ -291,6 +309,17 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
+	public void setNameDisplayOption(String option) {
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		} else {
+			mNameDisplayOption = 0;
+		}
+	}
+	
+	@Override
 	public void setShowAbsoluteTime(final boolean show) {
 		if (show != mShowAbsoluteTime) {
 			mShowAbsoluteTime = show;
@@ -324,10 +353,4 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		return super.swapCursor(cursor);
 	}
 
-	private ParcelableStatus getStatus(final int position) {
-		final Cursor cur = getItem(position);
-		final long account_id = cur.getLong(mIndices.account_id);
-		final long status_id = cur.getLong(mIndices.status_id);
-		return findStatusInDatabases(mContext, account_id, status_id);
-	}
 }

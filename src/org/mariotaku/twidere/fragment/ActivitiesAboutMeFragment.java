@@ -177,6 +177,11 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 	static class ActivitiesAdapter extends BaseAdapter implements BaseAdapterInterface {
 
+		public void setNameDisplayOption(String option) {
+			// TODO: Implement this method
+		}
+
+
 		private boolean mDisplayProfileImage, mDisplayName, mShowAbsoluteTime;
 		private final boolean mDisplayHiResProfileImage;
 		private float mTextSize;

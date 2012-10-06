@@ -42,6 +42,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
+import org.mariotaku.twidere.util.SerializationUtil;
 
 public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Activity>> implements Constants {
 
@@ -79,12 +80,8 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 		if (mIsFirstLoad && mIsHomeTab && mClassName != null) {
 			try {
 				final File f = new File(getContext().getCacheDir(), mClassName + "." + getAccountId());
-				final FileInputStream fis = new FileInputStream(f);
-				final ObjectInputStream in = new ObjectInputStream(fis);
 				@SuppressWarnings("unchecked")
-				final List<Activity> cached_activities = (List<Activity>) in.readObject();
-				in.close();
-				fis.close();
+				final List<Activity> cached_activities = (List<Activity>) SerializationUtil.read(f.getPath());
 				return cached_activities;
 			} catch (final IOException e) {
 			} catch (final ClassNotFoundException e) {
