@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Twip 4 - Configuration</title>
+<link rel="stylesheet" type="text/css" href="style.css" media="all" />
+<meta name="robots" content="noindex,nofollow">
+</head>
+<body>
+	<h1><a href="index.html">Twip<sup title="Version 4">4</sup></a></h1>
+	<h2>Twitter API Proxy, redefined.</h2>
+	<div>
+	
+		<h3>Twip 使用说明</h3>
+		
+			<h4>什么是 Twip？</h4>
+            <p>Twip 是一个运行在 LAMP 主机上的 PHP 程序，用于绕过GFW的限制在各种<a href="http://twitter.com">Twitter</a>客户端里访问<a href="http://twitter.com">Twitter</a>。</p>
+			
+			<h4>什么是 T 模式？</h4>
+			<p>T模式 ( Transparent ) 会透明转发客户端的HTTP请求，能完整保留客户端的Source信息。</p>
+			
+			<h4>什么是 O 模式？</h4>
+			<p>O模式 ( Override ) 会使用自定义OAuth Consumer Key/Secret重新对客户端HTTP请求进行签名，无法保留客户端Source信息。</p>
+		
+		<h3>开始使用 Twip</h3>
+		<p class="clearfix">
+            <a class="button" href="getapi.php">使用 T 模式</a>
+			<a class="last button" href="oauth.php">使用 O 模式</a>
+		</p>
+		
+		<h3>FAQ 及反馈</h3>
+		<p>
+			更多安装说明和问题解决，请访问项目 Wiki：<br /><a target="_blank" href="https://github.com/yegle/twip/wiki">https://github.com/yegle/twip/wiki</a>
+		</p>
+		<p>
+			反馈 BUG 请在此提交：<br />
+			<a target="_blank" href="https://github.com/yegle/twip/issues">https://github.com/yegle/twip/issues</a>
+		</p>
+		
+	</div>		
+	<div id="footer">
+		2012 &copy; <a href="https://github.com/yegle/twip">Twip Project</a>
+	</div>
+</body>
+</html>

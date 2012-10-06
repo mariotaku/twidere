@@ -1,0 +1,38 @@
+/* 
+  Styles for Twip 4
+  Author: disinfeqt
+  Website: www.zdxia.com
+  E-mail: disinfeqt@gmail.com
+*/
+*{margin:0;padding:0;font-size:1em;border:0;outline:none;list-style:none;text-decoration:none;}
+.clear{clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0;}
+.clearfix:after{clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0;}
+* html .clearfix,:first-child+html .clearfix{zoom:1;}
+body{background:#5B686A;background:rgba(0,24,26,0.7);color:#143C3F;font:13px/1.8 "Helvetica Neue",Helvetica,Arial,sans-serif;}
+a:link,a:visited{color:#043034;border-bottom:1px dotted #334648;}
+a:hover,a:focus{border-bottom:1px solid #334648;color:#334648;}
+a:active,input[type=submit]:active{position:relative;bottom:-1px;}
+p{margin:0 0 10px;}
+small{font-size:12px;}
+div{margin:0 auto;width:100%;text-align:left;background:#eee;width:340px;padding:5px 20px 20px;}
+div#footer{margin-top:10px;background:none;text-align:center;padding:0;color:#DDD;font-size:10px;font-weight:100;letter-spacing:1px;text-shadow:0 1px 0 #314446;text-transform:uppercase;}
+div#footer a{color:#ddd;border:none;}
+div#footer a:hover{color:#fff;}
+h1,h2{width:100%;text-align:center;color:#fff;}
+h1{font-size:40px;text-transform:lowercase;margin-top:20px;line-height:1.2;}
+h1 sup{font-size:20px;}
+h1 a{color:#fff!important;border:none!important;}
+h1 a:hover{color:#eee!important;}
+h2{margin-bottom:20px;}
+h3{border-left:5px solid #B4BABB;font-size:20px;line-height:1;padding-left:10px;margin:15px 0;text-transform:uppercase;font-weight:100;}
+h4{font-size:14px;font-weight:700;}
+a.button{background:#143C3F;border:medium none;color:#FFF;display:block;float:left;padding:4px 5px;text-align:center;width:150px;}
+a.last{margin-left:20px;}
+input[type=text],input[type=password]{border:1px solid #B4BABB;font-family:Helvetica;font-size:13px;padding:5px;width:328px;}
+input.half {width:156px;}
+input[type=text]:focus,input[type=password]:focus{border:1px solid #143C3F;}
+input[type=submit]{background:none repeat scroll 0 0 #143C3F;border:1px solid #143C3F;color:#FFF;font-family:Helvetica;font-size:13px;padding:5px;cursor:pointer;}
+label{display:block}
+div ul{border-bottom:2px solid #143C3F;margin-bottom:10px;}
+ul li a{display:block;float:left;background:#B4BABB;color:#fff!important;border:none!important;padding:2px 10px;text-align:center;width:150px;}
+ul li a.active{background:#143C3F;color:#fff;}

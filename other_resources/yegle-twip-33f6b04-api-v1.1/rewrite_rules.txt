@@ -1,0 +1,27 @@
+For NGINX users, please use the following rules:
+if (!-e $request_filename){rewrite ^/(.*)$ /index.php last;}
+(Provided by @imsoff)
+For lightTPD users, please use the following rules:
+url.rewrite-if-not-file += ( "^/(.*)$" => "/index.php/$1" )
+(Provided by kk198)
+
+If your TWIP installation have a prefix of /twip/, then you should use
+
+^/twip/(.*)$
+
+instead of 
+
+^/(.*)$.
+
+Just a reminder, please specify the index-file to "index.php"
+
+lighTPD:
+
+index-file.names   = ( "index.php", "index.html",
+                       "index.htm", "default.htm" )
+
+nginx:
+
+location / { # it can be /twip as well
+  index-file index.php;
+}
