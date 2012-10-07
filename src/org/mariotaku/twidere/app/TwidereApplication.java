@@ -128,6 +128,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		if (mProfileImageLoader != null) {
 			mProfileImageLoader.clearMemoryCache();
 		}
+		if (mPreviewImageLoader != null) {			
+			mPreviewImageLoader.clearMemoryCache();
+		}
 		super.onLowMemory();
 	}
 

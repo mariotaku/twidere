@@ -123,7 +123,7 @@
 	<string name="quote">引用</string>
 	<string name="add_rule">添加规则</string>
 	<string name="longclick_to_delete">长按以删除。</string>
-	<string name="retweet_success">转推成功</string>
+	<string name="retweet_successfully">转推成功</string>
 	<string name="cancel_retweet_success">取消转推成功</string>
 	<string name="delete_success">删除成功</string>
 	<string name="send_success">发送成功</string>

@@ -585,7 +585,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(getOuterType(), R.string.add_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.add_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -822,7 +822,7 @@ public class TwidereService extends Service implements Constants {
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_FAVORITED, true);
 				sendBroadcast(intent);
-				Toast.makeText(getOuterType(), R.string.favorite_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.favorite_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -886,7 +886,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
-				Toast.makeText(getOuterType(), R.string.follow_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.follow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -1039,7 +1039,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(getOuterType(), R.string.follow_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.follow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -1122,7 +1122,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(getOuterType(), R.string.create_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.create_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -1193,7 +1193,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(getOuterType(), R.string.delete_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -1333,7 +1333,7 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 			if (result == null) return;
 			if (result.data != null && result.data.getId() > 0) {
-				Toast.makeText(getOuterType(), R.string.delete_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 				final String where = DirectMessages.MESSAGE_ID + " = " + message_id;
 				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
 				mResolver.delete(DirectMessages.Outbox.CONTENT_URI, where, null);
@@ -1424,7 +1424,7 @@ public class TwidereService extends Service implements Constants {
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_FAVORITED, false);
 				sendBroadcast(intent);
-				Toast.makeText(getOuterType(), R.string.unfavorite_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.unfavorite_successfully, Toast.LENGTH_SHORT).show();
 
 			} else {
 				showErrorToast(result.exception, true);
@@ -1489,7 +1489,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
-				Toast.makeText(getOuterType(), R.string.unfollow_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.unfollow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -1569,7 +1569,7 @@ public class TwidereService extends Service implements Constants {
 				}
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
-				Toast.makeText(getOuterType(), R.string.delete_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -1635,7 +1635,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(getOuterType(), R.string.unfollow_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.unfollow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -1706,7 +1706,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(getOuterType(), R.string.delete_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -2468,7 +2468,7 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
 
 			if (result.data != null && result.data.getId() > 0) {
-				Toast.makeText(getOuterType(), R.string.retweet_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.retweet_successfully, Toast.LENGTH_SHORT).show();
 				final Intent intent = new Intent(BROADCAST_RETWEET_CHANGED);
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_RETWEETED, true);
@@ -2497,7 +2497,7 @@ public class TwidereService extends Service implements Constants {
 		public SendDirectMessageTask(final long account_id, final String screen_name, final long user_id,
 				final String message) {
 			super(TwidereService.this, mAsyncTaskManager);
-			twitter = getTwitterInstance(getOuterType(), account_id, false);
+			twitter = getTwitterInstance(getOuterType(), account_id, true);
 			this.account_id = account_id;
 			this.user_id = user_id;
 			this.screen_name = screen_name;
@@ -2563,7 +2563,7 @@ public class TwidereService extends Service implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(true));
 				final ContentValues values = makeDirectMessageContentValues(result.data, account_id, true);
 				getContentResolver().insert(builder.build(), values);
-				Toast.makeText(getOuterType(), R.string.send_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.send_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -3528,7 +3528,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
-				Toast.makeText(getOuterType(), R.string.profile_image_update_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.profile_image_update_successfully, Toast.LENGTH_SHORT).show();
 				if (delete_image) {
 					new File(image_uri.getPath()).delete();
 				}
@@ -3617,7 +3617,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
-				Toast.makeText(getOuterType(), R.string.profile_update_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.profile_update_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
 			}
@@ -3810,7 +3810,7 @@ public class TwidereService extends Service implements Constants {
 				}
 			}
 			if (succeed) {
-				Toast.makeText(getOuterType(), R.string.send_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.send_successfully, Toast.LENGTH_SHORT).show();
 				if (image_uri != null && delete_image) {
 					final String path = getImagePathFromUri(getOuterType(), image_uri);
 					if (path != null) {
@@ -3969,7 +3969,7 @@ public class TwidereService extends Service implements Constants {
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DETAILS_UPDATED);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
 			if (result != null && result.data != null && result.data.getId() > 0) {
-				Toast.makeText(getOuterType(), R.string.profile_update_success, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getOuterType(), R.string.profile_update_successfully, Toast.LENGTH_SHORT).show();
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
 			} else {
 				showErrorToast(result.exception, true);

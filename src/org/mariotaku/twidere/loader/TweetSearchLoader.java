@@ -70,11 +70,10 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 	public synchronized List<ParcelableStatus> loadInBackground() {
 		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
-				final File f = new File(getContext().getCacheDir(), getClassName() + "." + getAccountId() + "."
-						+ mQuery);
+				final String path = SerializationUtil.getSerializationFilePath(getContext(), getClassName(), getAccountId(), mQuery);						
 				@SuppressWarnings("unchecked")
 				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) 
-						SerializationUtil.read(f.getPath());
+						SerializationUtil.read(path);
 				setLastViewedId(statuses.getState());
 				final NoDuplicatesArrayList<ParcelableStatus> result = new NoDuplicatesArrayList<ParcelableStatus>();
 				for (final SerializableStatus status : statuses) {
@@ -117,9 +116,8 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 				statuses.add(new SerializableStatus(status));
 				i++;
 			}
-			final File f = new File(context.getCacheDir(), instance.getClass().getSimpleName()
-					+ "." + account_id + "." + query);
-			SerializationUtil.write(statuses, f.getPath());
+			final String path = SerializationUtil.getSerializationFilePath(context, instance.getClass().getSimpleName(), account_id, query);
+			SerializationUtil.write(statuses, path);
 		} catch (final IOException e) {
 		} catch (final ArrayIndexOutOfBoundsException e) {
 		}

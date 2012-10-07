@@ -81,11 +81,10 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 	public synchronized List<ParcelableStatus> loadInBackground() {
 		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
-				final File f = new File(getContext().getCacheDir(), getClassName() + "." + getAccountId() + "."
-						+ mUserId + "." + mUserScreenName);
+				final String path = SerializationUtil.getSerializationFilePath(getContext(), getClassName(), getAccountId(), mUserId, mUserScreenName);
 				@SuppressWarnings("unchecked")
 				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) 
-						SerializationUtil.read(f.getPath());
+						SerializationUtil.read(path);
 				setLastViewedId(statuses.getState());
 				final ArrayList<ParcelableStatus> result = new ArrayList<ParcelableStatus>();
 				for (final SerializableStatus status : statuses) {
@@ -123,9 +122,8 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 				}
 				statuses.add(new SerializableStatus(data.get(i)));
 			}
-			final File f = new File(context.getCacheDir(), instance.getClass().getSimpleName() 
-					+ "." + account_id + "." + user_id + "." + screen_name);
-			SerializationUtil.write(statuses,f.getPath());
+			final String path = SerializationUtil.getSerializationFilePath(context, instance.getClass().getSimpleName() ,account_id, user_id, screen_name);
+			SerializationUtil.write(statuses, path);
 		} catch (final IOException e) {
 		}
 	}

@@ -173,7 +173,8 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 
 		if (!show_gap) {
 
-			final CharSequence retweeted_by = status.retweeted_by_name;
+			final String retweeted_by_name = status.retweeted_by_name;
+			final String retweeted_by_screen_name = status.retweeted_by_screen_name;
 
 			if (mMultiSelectEnabled) {
 				holder.setSelected(mSelectedStatusIds.contains(status.status_id));
@@ -218,10 +219,19 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 					getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media), 0);
 			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
-			if (status.is_retweet && !isNullOrEmpty(retweeted_by)) {
+			if (status.is_retweet && !isNullOrEmpty(retweeted_by_name) && !isNullOrEmpty(retweeted_by_screen_name)) {
+				if (mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
+					holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
+							R.string.retweeted_by_with_count, "@" + retweeted_by_screen_name, status.retweet_count - 1) : mContext.getString(
+							R.string.retweeted_by, "@" + retweeted_by_screen_name));
+				} else {
+					holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
+							R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : mContext.getString(
+							R.string.retweeted_by, retweeted_by_name));
+				}
 				holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
-						R.string.retweeted_by_with_count, retweeted_by, status.retweet_count - 1) : mContext.getString(
-						R.string.retweeted_by, retweeted_by));
+						R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : mContext.getString(
+						R.string.retweeted_by, retweeted_by_name));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
 			} else if (status.in_reply_to_status_id > 0 && !isNullOrEmpty(status.in_reply_to_screen_name)) {

@@ -94,7 +94,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 		if (!show_gap) {
 
-			final String retweeted_by = cursor.getString(mIndices.retweeted_by_name);
+			final String retweeted_by_name = cursor.getString(mIndices.retweeted_by_name);
+			final String retweeted_by_screen_name = cursor.getString(mIndices.retweeted_by_screen_name);
 			final String text = cursor.getString(mIndices.text);
 			final String screen_name = cursor.getString(mIndices.screen_name);
 			final String name = cursor.getString(mIndices.name);
@@ -111,7 +112,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			final boolean is_verified = cursor.getShort(mIndices.is_verified) == 1;
 
 			final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
-			final boolean is_retweet = !isNullOrEmpty(retweeted_by) && cursor.getShort(mIndices.is_retweet) == 1;
+			final boolean is_retweet = !isNullOrEmpty(retweeted_by_name) && cursor.getShort(mIndices.is_retweet) == 1;
 			final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name)
 					&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
 
@@ -171,9 +172,15 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 			holder.reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
 			if (is_retweet) {
-				holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
-						R.string.retweeted_by_with_count, retweeted_by, retweet_count - 1) : mContext.getString(
-						R.string.retweeted_by, retweeted_by));
+				if (mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
+					holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
+							R.string.retweeted_by_with_count, "@" + retweeted_by_screen_name, retweet_count - 1) : mContext.getString(
+							R.string.retweeted_by, "@" + retweeted_by_screen_name));
+				} else {
+					holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
+							R.string.retweeted_by_with_count, retweeted_by_name, retweet_count - 1) : mContext.getString(
+							R.string.retweeted_by, retweeted_by_name));
+				}
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
 			} else if (is_reply) {

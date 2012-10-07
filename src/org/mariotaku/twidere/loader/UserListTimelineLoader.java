@@ -43,6 +43,7 @@ import twitter4j.TwitterException;
 import twitter4j.UserList;
 import android.content.Context;
 import android.os.Bundle;
+import org.mariotaku.twidere.util.SerializationUtil;
 
 public class UserListTimelineLoader extends Twitter4JStatusLoader {
 
@@ -79,16 +80,11 @@ public class UserListTimelineLoader extends Twitter4JStatusLoader {
 	public synchronized List<ParcelableStatus> loadInBackground() {
 		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
-				final File f = new File(mContext.getCacheDir(), getClassName() + "." + getAccountId() + "." + mListId
-						+ "." + mUserId + "." + mScreenName + "." + mListName);
-				final FileInputStream fis = new FileInputStream(f);
-				final ObjectInputStream in = new ObjectInputStream(fis);
+				final String path = SerializationUtil.getSerializationFilePath(mContext, getClassName(), getAccountId(), mListId, mUserId, mScreenName, mListName);
 				@SuppressWarnings("unchecked")
-				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) in
-						.readObject();
+				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>)
+						SerializationUtil.read(path);
 				setLastViewedId(statuses.getState());
-				in.close();
-				fis.close();
 				final ArrayList<ParcelableStatus> result = new ArrayList<ParcelableStatus>();
 				for (final SerializableStatus status : statuses) {
 					result.add(new ParcelableStatus(status));
@@ -129,22 +125,9 @@ public class UserListTimelineLoader extends Twitter4JStatusLoader {
 				}
 				statuses.add(new SerializableStatus(data.get(i)));
 			}
-			final FileOutputStream fos = new FileOutputStream(new File(context.getCacheDir(), instance.getClass()
-					.getSimpleName()
-					+ "."
-					+ account_id
-					+ "."
-					+ list_id
-					+ "."
-					+ user_id
-					+ "."
-					+ screen_name
-					+ "."
-					+ list_name));
-			final ObjectOutputStream os = new ObjectOutputStream(fos);
-			os.writeObject(statuses);
-			os.close();
-			fos.close();
+			final String path = SerializationUtil.getSerializationFilePath(context, instance.getClass().getSimpleName(),
+					account_id, list_id, user_id, screen_name, list_name);
+			SerializationUtil.write(statuses, path);
 		} catch (final IOException e) {
 		}
 	}
