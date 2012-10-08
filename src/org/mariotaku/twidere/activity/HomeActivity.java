@@ -178,7 +178,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 				final int position = mViewPager.getCurrentItem();
 				if (position == mAdapter.getCount() - 1) {
 					final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
-					intent.setClass(this, TwitterLoginActivity.class);
+					intent.setClass(this, SignInActivity.class);
 					startActivity(intent);
 				} else {
 					switch (position) {
@@ -213,7 +213,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length <= 0) {
 			final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
-			intent.setClass(this, TwitterLoginActivity.class);
+			intent.setClass(this, SignInActivity.class);
 			startActivity(intent);
 			finish();
 			return;

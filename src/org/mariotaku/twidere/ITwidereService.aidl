@@ -63,5 +63,6 @@ interface ITwidereService {
 	boolean startAutoRefresh();
 	void stopAutoRefresh();
 	void shutdownService();
+	void cancelShutdown();
 	void clearNotification(int id);
 }

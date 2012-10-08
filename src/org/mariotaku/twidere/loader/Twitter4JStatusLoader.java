@@ -32,12 +32,13 @@ import android.content.SharedPreferences;
 
 public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
-	private final long mMaxId;
+	private final long mMaxId, mSinceId;
 
-	public Twitter4JStatusLoader(final Context context, final long account_id, final long max_id,
+	public Twitter4JStatusLoader(final Context context, final long account_id, final long max_id, final long since_id,
 			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
 		super(context, account_id, data, class_name, is_home_tab);
 		mMaxId = max_id;
+		mSinceId = since_id;
 	}
 
 	public abstract List<Status> getStatuses(Paging paging) throws TwitterException;
@@ -47,23 +48,29 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		final List<ParcelableStatus> data = getData();
 		final long account_id = getAccountId();
 		List<Status> statuses = null;
+		final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
+				Context.MODE_PRIVATE);
+		final int load_item_limit = prefs
+				.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 		try {
 			final Paging paging = new Paging();
-			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
-					Context.MODE_PRIVATE);
-			final int load_item_limit = prefs
-					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 			paging.setCount(load_item_limit);
-			if (mMaxId != -1) {
+			if (mMaxId > 0) {
 				paging.setMaxId(mMaxId);
+			}
+			if (mSinceId > 0) {
+				paging.setSinceId(mSinceId);
 			}
 			statuses = getStatuses(paging);
 		} catch (final TwitterException e) {
 			e.printStackTrace();
 		}
 		if (statuses != null) {
-			for (final Status status : statuses) {
-				data.add(new ParcelableStatus(status, account_id, false));
+			final boolean insert_gap = load_item_limit == statuses.size() && data.size() > 0;
+			Collections.sort(statuses);
+			final int size = statuses.size();
+			for (int i = 0; i < size; i++) {
+				data.add(new ParcelableStatus(statuses.get(i), account_id, i == size - 1 && insert_gap));
 			}
 		}
 		Collections.sort(data);

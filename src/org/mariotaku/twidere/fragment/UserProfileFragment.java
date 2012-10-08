@@ -375,7 +375,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView);
 		linkify.setOnLinkClickListener(this);
 		linkify.addAllLinks();
-		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
+		mDescriptionView.setMovementMethod(null);
 		final String location = user.getLocation();
 		mLocationContainer.setVisibility(user_is_me || !isNullOrEmpty(location) ? View.VISIBLE : View.GONE);
 		mLocationContainer.setOnLongClickListener(this);
@@ -384,6 +384,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mURLContainer.setVisibility(user_is_me || !isNullOrEmpty(url) ? View.VISIBLE : View.GONE);
 		mURLContainer.setOnLongClickListener(this);
 		mURLView.setText(url);
+		mURLView.setMovementMethod(null);
 		mCreatedAtView.setText(formatToLongTimeString(getActivity(), getTimestampFromDate(user.getCreatedAt())));
 		mTweetCount.setText(String.valueOf(user.getStatusesCount()));
 		mFollowersCount.setText(String.valueOf(user.getFollowersCount()));

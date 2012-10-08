@@ -53,9 +53,9 @@ public class UserListTimelineLoader extends Twitter4JStatusLoader {
 	private final Context mContext;
 
 	public UserListTimelineLoader(final Context context, final long account_id, final int list_id, final long user_id,
-			final String screen_name, final String list_name, final long max_id, final List<ParcelableStatus> data,
+			final String screen_name, final String list_name, final long max_id, final long since_id, final List<ParcelableStatus> data,
 			final String class_name, final boolean is_home_tab) {
-		super(context, account_id, max_id, data, class_name, is_home_tab);
+		super(context, account_id, max_id, since_id, data, class_name, is_home_tab);
 		mContext = context;
 		mListId = list_id;
 		mUserId = user_id;

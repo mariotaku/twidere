@@ -84,8 +84,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class TwitterLoginActivity extends BaseActivity implements OnClickListener, TextWatcher,
-		LoaderCallbacks<TwitterLoginActivity.LoginResponse> {
+public class SignInActivity extends BaseActivity implements OnClickListener, TextWatcher,
+		LoaderCallbacks<SignInActivity.LoginResponse> {
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
@@ -299,7 +299,7 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 	}
 
 	@Override
-	public void onLoadFinished(final Loader<LoginResponse> loader, final TwitterLoginActivity.LoginResponse result) {
+	public void onLoadFinished(final Loader<LoginResponse> loader, final SignInActivity.LoginResponse result) {
 		if (result.succeed) {
 			final ContentValues values = makeAccountContentValues(result.conf, result.basic_password,
 					result.access_token, result.user, result.auth_type, result.color);
@@ -315,12 +315,12 @@ public class TwitterLoginActivity extends BaseActivity implements OnClickListene
 			startActivity(intent);
 			finish();
 		} else if (result.already_logged_in) {
-			Toast.makeText(TwitterLoginActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
+			Toast.makeText(SignInActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
 		} else {
 			if (result.exception instanceof CallbackURLException) {
-				showErrorToast(TwitterLoginActivity.this, getString(R.string.cannot_get_callback_url), true);
+				showErrorToast(SignInActivity.this, getString(R.string.cannot_get_callback_url), true);
 			} else {
-				showErrorToast(TwitterLoginActivity.this, result.exception, true);
+				showErrorToast(SignInActivity.this, result.exception, true);
 			}
 		}
 		setSupportProgressBarIndeterminateVisibility(false);

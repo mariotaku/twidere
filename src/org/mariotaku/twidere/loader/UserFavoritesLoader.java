@@ -49,9 +49,9 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 	private int mTotalItemsCount;
 
 	public UserFavoritesLoader(final Context context, final long account_id, final long user_id,
-			final String user_screenname, final long max_id, final List<ParcelableStatus> data,
+			final String user_screenname, final long max_id, final long since_id, final List<ParcelableStatus> data,
 			final String class_name, final boolean is_home_tab) {
-		super(context, account_id, max_id, data, class_name, is_home_tab);
+		super(context, account_id, max_id, since_id, data, class_name, is_home_tab);
 		mUserId = user_id;
 		mUserScreenName = user_screenname;
 	}

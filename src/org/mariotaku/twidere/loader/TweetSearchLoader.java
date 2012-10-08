@@ -48,9 +48,9 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 
 	private final String mQuery;
 
-	public TweetSearchLoader(final Context context, final long account_id, final String query, final long max_id,
+	public TweetSearchLoader(final Context context, final long account_id, final String query, final long max_id, final long since_id,
 			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
-		super(context, account_id, max_id, data, class_name, is_home_tab);
+		super(context, account_id, max_id, since_id, data, class_name, is_home_tab);
 		mQuery = query;
 	}
 

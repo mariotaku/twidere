@@ -36,6 +36,16 @@ import android.os.RemoteException;
 
 public final class ServiceInterface implements Constants, ITwidereService {
 
+	public void cancelShutdown() {
+		if (mService == null) return;
+		try {
+			mService.cancelShutdown();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
+
 	private ITwidereService mService;
 
 	private final ServiceConnection mConntecion = new ServiceConnection() {
@@ -43,6 +53,9 @@ public final class ServiceInterface implements Constants, ITwidereService {
 		@Override
 		public void onServiceConnected(final ComponentName service, final IBinder obj) {
 			mService = ITwidereService.Stub.asInterface(obj);
+			if (mService != null) {
+				cancelShutdown();
+			}
 		}
 
 		@Override

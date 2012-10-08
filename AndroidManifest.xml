@@ -108,7 +108,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.TwitterLoginActivity"
+			android:name=".activity.SignInActivity"
 			android:label="@string/login_to_twitter"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>

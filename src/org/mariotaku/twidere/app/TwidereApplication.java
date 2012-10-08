@@ -53,35 +53,34 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private final ArrayList<Long> mSelectedStatusIds = new ArrayList<Long>();
 	private final ArrayList<Long> mSelectedUserIds = new ArrayList<Long>();
 
-	private TwidereHostAddressResolver mResolver;
+	private HostAddressResolver mResolver;
 
 	public AsyncTaskManager getAsyncTaskManager() {
-		if (mAsyncTaskManager == null) {
-			mAsyncTaskManager = AsyncTaskManager.getInstance();
-		}
-		return mAsyncTaskManager;
+		if (mAsyncTaskManager != null) return mAsyncTaskManager;
+		return mAsyncTaskManager = AsyncTaskManager.getInstance();
 	}
 
 	public HostAddressResolver getHostAddressResolver() {
+		if (mResolver != null) return mResolver;
+		try {
+			return mResolver = new TwidereHostAddressResolver(this);
+		} catch (final IOException e) {
+		}
 		return mResolver;
 	}
 
 	public LazyImageLoader getPreviewImageLoader() {
-		if (mPreviewImageLoader == null) {
-			final int preview_image_size = getResources().getDimensionPixelSize(R.dimen.preview_image_size);
-			mPreviewImageLoader = new LazyImageLoader(this, DIR_NAME_CACHED_THUMBNAILS,
-					R.drawable.image_preview_fallback, preview_image_size, preview_image_size, 10);
-		}
-		return mPreviewImageLoader;
+		if (mPreviewImageLoader != null) return mPreviewImageLoader;
+		final int preview_image_size = getResources().getDimensionPixelSize(R.dimen.preview_image_size);
+		return mPreviewImageLoader = new LazyImageLoader(this, DIR_NAME_CACHED_THUMBNAILS,
+				R.drawable.image_preview_fallback, preview_image_size, preview_image_size, 10);
 	}
 
 	public LazyImageLoader getProfileImageLoader() {
-		if (mProfileImageLoader == null) {
-			final int profile_image_size = getResources().getDimensionPixelSize(R.dimen.profile_image_size);
-			mProfileImageLoader = new LazyImageLoader(this, DIR_NAME_PROFILE_IMAGES,
-					R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, 60);
-		}
-		return mProfileImageLoader;
+		if (mProfileImageLoader != null) return mProfileImageLoader;
+		final int profile_image_size = getResources().getDimensionPixelSize(R.dimen.profile_image_size);
+		return mProfileImageLoader = new LazyImageLoader(this, DIR_NAME_PROFILE_IMAGES,
+				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, 60);
 	}
 
 	public ItemsList getSelectedItems() {
@@ -98,6 +97,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public ServiceInterface getServiceInterface() {
 		if (mServiceInterface != null && mServiceInterface.test()) {
+			mServiceInterface.cancelShutdown();
 			return mServiceInterface;
 		}
 		return mServiceInterface = ServiceInterface.getInstance(this);
@@ -117,10 +117,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		super.onCreate();
 		mServiceInterface = ServiceInterface.getInstance(this);
-		try {
-			mResolver = new TwidereHostAddressResolver(this);
-		} catch (final IOException e) {
-		}
 	}
 
 	@Override

@@ -186,9 +186,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					final long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
 					if (account_ids != null) {
 						mAccountIds = account_ids;
-						final SharedPreferences.Editor editor = mPreferences.edit();
-						editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, ArrayUtils.toString(mAccountIds, ',', false));
-						editor.commit();
+						if (mInReplyToStatusId <= 0) {
+							final SharedPreferences.Editor editor = mPreferences.edit();
+							editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, ArrayUtils.toString(mAccountIds, ',', false));
+							editor.commit();
+						}
 						mColorIndicator.setColor(getAccountColors(this, account_ids));
 					}
 				}
@@ -312,12 +314,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 			mIsQuote = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false;
 
-			// final boolean display_name =
-			// mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_NAME, true);
-			final boolean display_name = true;
-			final String name = display_name ? mInReplyToName : "@" + mInReplyToScreenName;
-			if (name != null) {
-				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, name));
+			final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(
+					mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
+			if (mInReplyToScreenName != null && mInReplyToName != null) {
+				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, display_screen_name ?
+						"@" + mInReplyToScreenName : mInReplyToName));
 			}
 			if (mAccountIds == null || mAccountIds.length == 0) {
 				mAccountIds = new long[] { account_id };
@@ -371,7 +372,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					}
 				}
 			} else if (bundle != null) {
-
 				if (bundle.getString(INTENT_KEY_TEXT) != null) {
 					mText = bundle.getString(INTENT_KEY_TEXT);
 				}

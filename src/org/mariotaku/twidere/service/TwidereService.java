@@ -163,6 +163,10 @@ public class TwidereService extends Service implements Constants {
 
 	};
 
+	public void cancelShutdown() {
+		mShouldShutdown = false;
+	}
+
 	public int addUserListMember(final long account_id, final int list_id, final long user_id, final String screen_name) {
 		final AddUserListMemberTask task = new AddUserListMemberTask(account_id, list_id, user_id, screen_name);
 		return mAsyncTaskManager.add(task, true);
@@ -2581,6 +2585,11 @@ public class TwidereService extends Service implements Constants {
 	 * a remote reference to the stub.
 	 */
 	static final class ServiceStub extends ITwidereService.Stub {
+
+		public void cancelShutdown() {
+			mService.get().cancelShutdown();
+		}
+
 
 		final WeakReference<TwidereService> mService;
 
