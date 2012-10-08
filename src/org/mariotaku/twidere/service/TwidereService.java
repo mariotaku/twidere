@@ -95,6 +95,9 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.twitter.Validator;
+import android.net.ConnectivityManager;
+import android.os.PowerManager;
+import android.telephony.TelephonyManager;
 
 public class TwidereService extends Service implements Constants {
 
@@ -105,6 +108,8 @@ public class TwidereService extends Service implements Constants {
 	private NotificationManager mNotificationManager;
 	private AlarmManager mAlarmManager;
 	private ContentResolver mResolver;
+	private ConnectivityManager mConnectivityManager;
+	private TelephonyManager mTelephonyManager;
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 	private int mStoreStatusesTaskId, mStoreMentionsTaskId;
@@ -134,7 +139,8 @@ public class TwidereService extends Service implements Constants {
 				if (extras != null && extras.containsKey(INTENT_KEY_NOTIFICATION_ID)) {
 					clearNotification(extras.getInt(INTENT_KEY_NOTIFICATION_ID));
 				}
-			} else if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
+			} else if (mConnectivityManager.isActiveNetworkMetered()){ 
+			if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
 				final long[] activated_ids = getActivatedAccountIds(context);
 				final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
 				if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
@@ -159,9 +165,11 @@ public class TwidereService extends Service implements Constants {
 					}
 				}
 			}
+			}
 		}
 
 	};
+
 
 	public void cancelShutdown() {
 		mShouldShutdown = false;
@@ -326,9 +334,11 @@ public class TwidereService extends Service implements Constants {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
+		mConnectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+		mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mResolver = getContentResolver();
 		mPendingRefreshHomeTimelineIntent = PendingIntent.getBroadcast(this, 0, new Intent(
