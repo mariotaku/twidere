@@ -241,8 +241,8 @@
 	<string name="signing_in_please_wait">Signing in, please wait or press BACK again to quit.</string>
 	<string name="connectivity">Connectivity</string>
 	<string name="add_member">Add member</string>
-	<string name="add_successfully">Add successfully</string>
-	<string name="create_successfully">Create successfully</string>
+	<string name="add_successfully">Add successfully.</string>
+	<string name="create_successfully">Create successfully.</string>
 	<string name="new_user_list">New user list</string>
 	<string name="is_public">Public</string>
 	<string name="send_direct_message">Send DM</string>
@@ -342,5 +342,7 @@
 	<string name="connection_timeout">Connection timeout</string>
 	<string name="name_display_option">Name display option</string>
 	<string name="both">Both</string>
+	<string name="browser_sign_in">Browser sign in</string>
+	<string name="stop_auto_refresh_when_battery_low">Stop auto refresh when battery low</string>
 
 </resources>

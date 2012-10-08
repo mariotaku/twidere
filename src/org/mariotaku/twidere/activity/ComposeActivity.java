@@ -75,6 +75,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
@@ -188,7 +189,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 						mAccountIds = account_ids;
 						if (mInReplyToStatusId <= 0) {
 							final SharedPreferences.Editor editor = mPreferences.edit();
-							editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, ArrayUtils.toString(mAccountIds, ',', false));
+							editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS,
+									ArrayUtils.toString(mAccountIds, ',', false));
 							editor.commit();
 						}
 						mColorIndicator.setColor(getAccountColors(this, account_ids));
@@ -279,6 +281,14 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mService = getTwidereApplication().getServiceInterface();
 		mResolver = getContentResolver();
 		super.onCreate(savedInstanceState);
+		final long[] account_ids = getAccountIds(this);
+		if (account_ids.length <= 0) {
+			final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
+			intent.setClass(this, SignInActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
 		setContentView(R.layout.compose);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -314,11 +324,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 			mIsQuote = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_QUOTE, false) : false;
 
-			final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(
-					mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
+			final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
+					PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
 			if (mInReplyToScreenName != null && mInReplyToName != null) {
-				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, display_screen_name ?
-						"@" + mInReplyToScreenName : mInReplyToName));
+				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, display_screen_name ? "@"
+						+ mInReplyToScreenName : mInReplyToName));
 			}
 			if (mAccountIds == null || mAccountIds.length == 0) {
 				mAccountIds = new long[] { account_id };
@@ -338,7 +348,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			if (mAccountIds == null || mAccountIds.length == 0) {
 				final long[] ids_in_prefs = ArrayUtils.fromString(
 						mPreferences.getString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, null), ',');
-				final long[] account_ids = getAccountIds(this);
 				final long[] intersection = ArrayUtils.intersection(ids_in_prefs, account_ids);
 				mAccountIds = intersection.length > 0 ? intersection : account_ids;
 			}
@@ -546,7 +555,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				onBackPressed();
+				NavUtils.navigateUpFromSameTask(this);
 				break;
 			}
 			case MENU_SEND: {

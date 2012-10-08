@@ -19,12 +19,7 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +27,7 @@ import java.util.List;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.SerializableStatus;
 import org.mariotaku.twidere.util.NoDuplicatesStateSavedList;
+import org.mariotaku.twidere.util.SerializationUtil;
 
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -40,7 +36,6 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.os.Bundle;
-import org.mariotaku.twidere.util.SerializationUtil;
 
 public class UserTimelineLoader extends Twitter4JStatusLoader {
 
@@ -81,10 +76,11 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 	public synchronized List<ParcelableStatus> loadInBackground() {
 		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
-				final String path = SerializationUtil.getSerializationFilePath(getContext(), getClassName(), getAccountId(), mUserId, mUserScreenName);
+				final String path = SerializationUtil.getSerializationFilePath(getContext(), getClassName(),
+						getAccountId(), mUserId, mUserScreenName);
 				@SuppressWarnings("unchecked")
-				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) 
-						SerializationUtil.read(path);
+				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) SerializationUtil
+						.read(path);
 				setLastViewedId(statuses.getState());
 				final ArrayList<ParcelableStatus> result = new ArrayList<ParcelableStatus>();
 				for (final SerializableStatus status : statuses) {
@@ -122,7 +118,8 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 				}
 				statuses.add(new SerializableStatus(data.get(i)));
 			}
-			final String path = SerializationUtil.getSerializationFilePath(context, instance.getClass().getSimpleName() ,account_id, user_id, screen_name);
+			final String path = SerializationUtil.getSerializationFilePath(context,
+					instance.getClass().getSimpleName(), account_id, user_id, screen_name);
 			SerializationUtil.write(statuses, path);
 		} catch (final IOException e) {
 		}

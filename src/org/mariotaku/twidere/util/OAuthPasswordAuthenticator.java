@@ -105,7 +105,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 			if (!callback_url.startsWith(DEFAULT_OAUTH_CALLBACK))
 				throw new IOException("Wrong OAuth callback URL " + callback_url);
 			final String oauth_verifier = parseParameters(callback_url.substring(callback_url.indexOf("?") + 1)).get(
-					OAUTH_VERIFIER);
+					INTENT_KEY_OAUTH_VERIFIER);
 			if (isNullOrEmpty(oauth_verifier)) throw new AuthenticationException("Cannot get OAuth verifier.");
 			return twitter.getOAuthAccessToken(request_token, oauth_verifier);
 		} catch (final IOException e) {

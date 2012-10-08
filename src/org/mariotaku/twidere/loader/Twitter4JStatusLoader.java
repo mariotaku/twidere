@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.loader;
 
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -48,10 +49,9 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		final List<ParcelableStatus> data = getData();
 		final long account_id = getAccountId();
 		List<Status> statuses = null;
-		final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
-				Context.MODE_PRIVATE);
-		final int load_item_limit = prefs
-				.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
+		final SharedPreferences prefs = getContext()
+				.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 		try {
 			final Paging paging = new Paging();
 			paging.setCount(load_item_limit);
@@ -73,7 +73,11 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 				data.add(new ParcelableStatus(statuses.get(i), account_id, i == size - 1 && insert_gap));
 			}
 		}
-		Collections.sort(data);
+		try {
+			Collections.sort(data);
+		} catch (ConcurrentModificationException e) {
+			e.printStackTrace();
+		}
 		return data;
 	}
 

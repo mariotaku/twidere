@@ -30,6 +30,7 @@ import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getStatusIdsInDatabase;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
@@ -95,9 +96,6 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.twitter.Validator;
-import android.net.ConnectivityManager;
-import android.os.PowerManager;
-import android.telephony.TelephonyManager;
 
 public class TwidereService extends Service implements Constants {
 
@@ -108,8 +106,6 @@ public class TwidereService extends Service implements Constants {
 	private NotificationManager mNotificationManager;
 	private AlarmManager mAlarmManager;
 	private ContentResolver mResolver;
-	private ConnectivityManager mConnectivityManager;
-	private TelephonyManager mTelephonyManager;
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 	private int mStoreStatusesTaskId, mStoreMentionsTaskId;
@@ -119,6 +115,7 @@ public class TwidereService extends Service implements Constants {
 	private int mStoreLocalTrendsTaskId;
 
 	private boolean mShouldShutdown = false;
+	private boolean mBatteryLow = false;
 
 	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
 
@@ -139,45 +136,48 @@ public class TwidereService extends Service implements Constants {
 				if (extras != null && extras.containsKey(INTENT_KEY_NOTIFICATION_ID)) {
 					clearNotification(extras.getInt(INTENT_KEY_NOTIFICATION_ID));
 				}
-			} else if (mConnectivityManager.isActiveNetworkMetered()){ 
-			if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
-				final long[] activated_ids = getActivatedAccountIds(context);
-				final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
-				if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
-					if (!isHomeTimelineRefreshing()) {
-						getHomeTimeline(activated_ids, null, since_ids);
+			} else if (Intent.ACTION_BATTERY_LOW.equals(action)) {
+				mBatteryLow = true;
+			} else if (Intent.ACTION_BATTERY_OKAY.equals(action)) {
+				mBatteryLow = false;
+			} else if (hasActiveConnection(context) && !(mBatteryLow && mPreferences.getBoolean(PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true))) {
+				if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
+					final long[] activated_ids = getActivatedAccountIds(context);
+					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
+						if (!isHomeTimelineRefreshing()) {
+							getHomeTimeline(activated_ids, null, since_ids);
+						}
+					}
+				} else if (BROADCAST_REFRESH_MENTIONS.equals(action)) {
+					final long[] activated_ids = getActivatedAccountIds(context);
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
+						if (!isMentionsRefreshing()) {
+							final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
+							getMentions(activated_ids, null, since_ids, true);
+						}
+					}
+				} else if (BROADCAST_REFRESH_DIRECT_MESSAGES.equals(action)) {
+					final long[] activated_ids = getActivatedAccountIds(context);
+					final long[] since_ids = getNewestMessageIdsFromDatabase(context, DirectMessages.Inbox.CONTENT_URI);
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
+						if (!isReceivedDirectMessagesRefreshing()) {
+							getReceivedDirectMessages(activated_ids, null, since_ids, true);
+						}
 					}
 				}
-			} else if (BROADCAST_REFRESH_MENTIONS.equals(action)) {
-				final long[] activated_ids = getActivatedAccountIds(context);
-				if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
-					if (!isMentionsRefreshing()) {
-						final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
-						getMentions(activated_ids, null, since_ids, true);
-					}
-				}
-			} else if (BROADCAST_REFRESH_DIRECT_MESSAGES.equals(action)) {
-				final long[] activated_ids = getActivatedAccountIds(context);
-				final long[] since_ids = getNewestMessageIdsFromDatabase(context, DirectMessages.Inbox.CONTENT_URI);
-				if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
-					if (!isReceivedDirectMessagesRefreshing()) {
-						getReceivedDirectMessages(activated_ids, null, since_ids, true);
-					}
-				}
-			}
 			}
 		}
 
 	};
 
-
-	public void cancelShutdown() {
-		mShouldShutdown = false;
-	}
-
 	public int addUserListMember(final long account_id, final int list_id, final long user_id, final String screen_name) {
 		final AddUserListMemberTask task = new AddUserListMemberTask(account_id, list_id, user_id, screen_name);
 		return mAsyncTaskManager.add(task, true);
+	}
+
+	public void cancelShutdown() {
+		mShouldShutdown = false;
 	}
 
 	public void clearNotification(final int id) {
@@ -337,8 +337,6 @@ public class TwidereService extends Service implements Constants {
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
-		mConnectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-		mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mResolver = getContentResolver();
 		mPendingRefreshHomeTimelineIntent = PendingIntent.getBroadcast(this, 0, new Intent(
@@ -351,6 +349,8 @@ public class TwidereService extends Service implements Constants {
 		filter.addAction(BROADCAST_REFRESH_HOME_TIMELINE);
 		filter.addAction(BROADCAST_REFRESH_MENTIONS);
 		filter.addAction(BROADCAST_REFRESH_DIRECT_MESSAGES);
+		filter.addAction(Intent.ACTION_BATTERY_LOW);
+		filter.addAction(Intent.ACTION_BATTERY_OKAY);
 		registerReceiver(mStateReceiver, filter);
 
 		startAutoRefresh();
@@ -2596,11 +2596,6 @@ public class TwidereService extends Service implements Constants {
 	 */
 	static final class ServiceStub extends ITwidereService.Stub {
 
-		public void cancelShutdown() {
-			mService.get().cancelShutdown();
-		}
-
-
 		final WeakReference<TwidereService> mService;
 
 		public ServiceStub(final TwidereService service) {
@@ -2612,6 +2607,11 @@ public class TwidereService extends Service implements Constants {
 		public int addUserListMember(final long account_id, final int list_id, final long user_id,
 				final String screen_name) {
 			return mService.get().addUserListMember(account_id, list_id, user_id, screen_name);
+		}
+
+		@Override
+		public void cancelShutdown() {
+			mService.get().cancelShutdown();
 		}
 
 		@Override

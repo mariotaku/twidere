@@ -22,16 +22,15 @@ package org.mariotaku.twidere.loader;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.SerializationUtil;
 
 import twitter4j.Activity;
 import twitter4j.Paging;
@@ -42,7 +41,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
-import org.mariotaku.twidere.util.SerializationUtil;
 
 public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Activity>> implements Constants {
 

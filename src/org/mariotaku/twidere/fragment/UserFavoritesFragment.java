@@ -69,8 +69,8 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 			is_home_tab = args.getBoolean(INTENT_KEY_IS_HOME_TAB);
 		}
-		return new UserFavoritesLoader(getActivity(), account_id, user_id, screen_name, max_id, since_id, getData(), getClass()
-				.getSimpleName(), is_home_tab);
+		return new UserFavoritesLoader(getActivity(), account_id, user_id, screen_name, max_id, since_id, getData(),
+				getClass().getSimpleName(), is_home_tab);
 	}
 
 	@Override

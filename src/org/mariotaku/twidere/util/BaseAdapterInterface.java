@@ -20,18 +20,17 @@
 package org.mariotaku.twidere.util;
 
 import org.mariotaku.twidere.Constants;
- 
+
 import android.widget.ListAdapter;
 
 public interface BaseAdapterInterface extends Constants, ListAdapter {
 
- 
 	public void notifyDataSetChanged();
 
 	public void setDisplayProfileImage(boolean display);
 
 	public void setNameDisplayOption(String option);
-	
+
 	public void setTextSize(float text_size);
 
 }

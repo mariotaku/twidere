@@ -168,6 +168,8 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -1546,6 +1548,14 @@ public final class Utils implements Constants {
 		final String full_size = "https://yfrog.com/" + id + ":medium";
 		return new ImageSpec(thumbnail_size, full_size);
 
+	}
+
+	public static boolean hasActiveConnection(final Context context) {
+		if (context == null) return false;
+		final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		final NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		if (netInfo != null && netInfo.isConnectedOrConnecting()) return true;
+		return false;
 	}
 
 	public static boolean isMyAccount(final Context context, final long account_id) {

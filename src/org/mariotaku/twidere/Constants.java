@@ -117,8 +117,6 @@ public interface Constants extends TwitterConstants {
 
 	public static final String SHUFFIX_SCROLL_TO_TOP = ".SCROLL_TO_TOP";
 
-	public static final String OAUTH_VERIFIER = "oauth_verifier";
-
 	public static final String FORMAT_PATTERN_TITLE = "[TITLE]";
 	public static final String FORMAT_PATTERN_TEXT = "[TEXT]";
 	public static final String FORMAT_PATTERN_NAME = "[NAME]";
@@ -189,6 +187,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_API_UPGRADE_CONFIRMED = "api_upgrade_confirmed";
 	public static final String PREFERENCE_KEY_CONNECTION_TIMEOUT = "connection_timeout";
 	public static final String PREFERENCE_KEY_NAME_DISPLAY_OPTION = "name_display_option";
+	public static final String PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW = "stop_auto_refresh_when_battery_low";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -198,13 +197,13 @@ public interface Constants extends TwitterConstants {
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final int PREFERENCE_DEFAULT_TEXT_SIZE = 15;
-	
- 	public static final String NAME_DISPLAY_OPTION_BOTH = "both";
- 	public static final String NAME_DISPLAY_OPTION_NAME = "name";
- 	public static final String NAME_DISPLAY_OPTION_SCREEN_NAME = "screen_name";
- 	public static final int NAME_DISPLAY_OPTION_CODE_NAME = 1;
- 	public static final int NAME_DISPLAY_OPTION_CODE_SCREEN_NAME = 2;
-	
+
+	public static final String NAME_DISPLAY_OPTION_BOTH = "both";
+	public static final String NAME_DISPLAY_OPTION_NAME = "name";
+	public static final String NAME_DISPLAY_OPTION_SCREEN_NAME = "screen_name";
+	public static final int NAME_DISPLAY_OPTION_CODE_NAME = 1;
+	public static final int NAME_DISPLAY_OPTION_CODE_SCREEN_NAME = 2;
+
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 
 	public static final String INTENT_ACTION_SERVICE = INTENT_PACKAGE_PREFIX + "SERVICE";
@@ -215,8 +214,6 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_VIEW_IMAGE = INTENT_PACKAGE_PREFIX + "VIEW_IMAGE";
 	public static final String INTENT_ACTION_FILTERS = INTENT_PACKAGE_PREFIX + "FILTERS";
 	public static final String INTENT_ACTION_ABOUT = INTENT_PACKAGE_PREFIX + "ABOUT";
-	public static final String INTENT_ACTION_EDIT_API = INTENT_PACKAGE_PREFIX + "EDIT_API";
-	public static final String INTENT_ACTION_SET_COLOR = INTENT_PACKAGE_PREFIX + "SET_COLOR";
 	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_PACKAGE_PREFIX + "TWITTER_LOGIN";
 	public static final String INTENT_ACTION_DRAFTS = INTENT_PACKAGE_PREFIX + "DRAFTS";
 	public static final String INTENT_ACTION_SAVE_FILE = INTENT_PACKAGE_PREFIX + "SAVE_FILE";
@@ -344,6 +341,9 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_ACTIVATED_ONLY = "activated_only";
 	public static final String INTENT_KEY_IS_HOME_TAB = "is_home_tab";
 	public static final String INTENT_KEY_HAS_RUNNING_TASK = "has_running_task";
+	public static final String INTENT_KEY_OAUTH_VERIFIER = "oauth_verifier";
+	public static final String INTENT_KEY_REQUEST_TOKEN = "request_token";
+	public static final String INTENT_KEY_REQUEST_TOKEN_SECRET = "request_token_secret";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -398,6 +398,7 @@ public interface Constants extends TwitterConstants {
 	public static final int REQUEST_SELECT_ACCOUNT = 3;
 	public static final int REQUEST_COMPOSE = 4;
 	public static final int REQUEST_EDIT_API = 5;
+	public static final int REQUEST_BROWSER_SIGN_IN = 6;
 	public static final int REQUEST_SET_COLOR = 7;
 	public static final int REQUEST_SAVE_FILE = 8;
 	public static final int REQUEST_EDIT_IMAGE = 9;

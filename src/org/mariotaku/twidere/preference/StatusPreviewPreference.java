@@ -80,7 +80,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 				.setVisibility(mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false) ? View.VISIBLE
 						: View.GONE);
 	}
-	
+
 	private void setName() {
 		final String option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
 		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
@@ -90,7 +90,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
 			mHolder.name.setText("@twidere_project");
 			mHolder.screen_name.setText(null);
-			mHolder.screen_name.setVisibility(View.GONE);			
+			mHolder.screen_name.setVisibility(View.GONE);
 		} else {
 			mHolder.name.setText("Twidere Project");
 			mHolder.screen_name.setText("@twidere_project");

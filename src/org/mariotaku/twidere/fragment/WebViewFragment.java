@@ -21,7 +21,6 @@ package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
-import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.BaseActivity;
 
 import android.annotation.SuppressLint;
@@ -59,7 +58,6 @@ public class WebViewFragment extends BaseFragment {
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mWebView = (WebView) getView().findViewById(R.id.webview);
 		mWebView.setWebViewClient(new DefaultWebViewClient(getActivity()));
 		mWebView.getSettings().setBuiltInZoomControls(true);
 		mWebView.getSettings().setJavaScriptEnabled(true);
@@ -72,7 +70,7 @@ public class WebViewFragment extends BaseFragment {
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.webview, container, false);
+		return mWebView = new WebView(getActivity());
 	}
 
 	public final void setWebViewClient(final WebViewClient client) {

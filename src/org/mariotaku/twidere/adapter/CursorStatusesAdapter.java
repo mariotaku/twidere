@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.adapter;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
-import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
@@ -68,7 +67,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	private final Context mContext;
 	private StatusCursorIndices mIndices;
 	private final ArrayList<Long> mSelectedStatusIds;
-	private final boolean mDisplayHiResProfileImage;	
+	private final boolean mDisplayHiResProfileImage;
 	private int mNameDisplayOption;
 
 	public CursorStatusesAdapter(final Context context) {
@@ -174,12 +173,12 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			if (is_retweet) {
 				if (mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
 					holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, "@" + retweeted_by_screen_name, retweet_count - 1) : mContext.getString(
-							R.string.retweeted_by, "@" + retweeted_by_screen_name));
+							R.string.retweeted_by_with_count, "@" + retweeted_by_screen_name, retweet_count - 1)
+							: mContext.getString(R.string.retweeted_by, "@" + retweeted_by_screen_name));
 				} else {
 					holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, retweeted_by_name, retweet_count - 1) : mContext.getString(
-							R.string.retweeted_by, retweeted_by_name));
+							R.string.retweeted_by_with_count, retweeted_by_name, retweet_count - 1) : mContext
+							.getString(R.string.retweeted_by, retweeted_by_name));
 				}
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
@@ -225,16 +224,16 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
+	public Cursor getItem(final int position) {
+		return (Cursor) super.getItem(position);
+	}
+
+	@Override
 	public ParcelableStatus getStatus(final int position) {
 		final Cursor cur = getItem(position);
 		final long account_id = cur.getLong(mIndices.account_id);
 		final long status_id = cur.getLong(mIndices.status_id);
 		return findStatusInDatabases(mContext, account_id, status_id);
-	}
-
-	@Override
-	public Cursor getItem(final int position) {
-		return (Cursor) super.getItem(position);
 	}
 
 	@Override
@@ -316,7 +315,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	}
 
 	@Override
-	public void setNameDisplayOption(String option) {
+	public void setNameDisplayOption(final String option) {
 		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
 			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
 		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
@@ -325,7 +324,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			mNameDisplayOption = 0;
 		}
 	}
-	
+
 	@Override
 	public void setShowAbsoluteTime(final boolean show) {
 		if (show != mShowAbsoluteTime) {

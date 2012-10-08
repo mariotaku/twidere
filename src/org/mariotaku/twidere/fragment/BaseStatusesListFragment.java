@@ -56,7 +56,6 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
@@ -159,7 +158,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			final ParcelableStatus status = mSelectedStatus = getListAdapter().getStatus(position - getListView().getHeaderViewsCount());
+			final ParcelableStatus status = mSelectedStatus = getListAdapter().getStatus(
+					position - getListView().getHeaderViewsCount());
 			if (mApplication.isMultiSelectActive()) {
 				final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(mSelectedStatus)) {
@@ -191,7 +191,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final Object tag = v.getTag();
 		if (tag instanceof StatusViewHolder) {
 			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
-			final ParcelableStatus status = mSelectedStatus = getListAdapter().getStatus(position - l.getHeaderViewsCount());
+			final ParcelableStatus status = mSelectedStatus = getListAdapter().getStatus(
+					position - l.getHeaderViewsCount());
 			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) {
@@ -214,7 +215,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 		}
 	}
-	
+
 	@Override
 	public void onLoaderReset(final Loader<Data> loader) {
 		mData = null;
@@ -332,7 +333,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
-		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
+		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION,
+				NAME_DISPLAY_OPTION_BOTH);
 		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setDisplayImagePreview(display_image_preview);

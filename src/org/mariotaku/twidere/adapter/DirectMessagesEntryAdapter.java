@@ -38,16 +38,6 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 
 	private int mNameDisplayOption;
 
-	public void setNameDisplayOption(String option) {
-		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
-			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
-		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
-			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		} else {
-			mNameDisplayOption = 0;
-		}
-	}
-	
 	public DirectMessagesEntryAdapter(final Context context, final LazyImageLoader loader) {
 		super(context, R.layout.direct_messages_entry_item, null, new String[0], new int[0], 0);
 		mProfileImageLoader = loader;
@@ -152,6 +142,17 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		if (enabled != mFastProcessingEnabled) {
 			mFastProcessingEnabled = enabled;
 			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setNameDisplayOption(final String option) {
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		} else {
+			mNameDisplayOption = 0;
 		}
 	}
 

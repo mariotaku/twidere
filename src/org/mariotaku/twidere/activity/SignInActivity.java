@@ -51,6 +51,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
+import twitter4j.auth.RequestToken;
 import twitter4j.auth.TwipOModeAuthorization;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
@@ -89,6 +90,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
+	private static final String INTENT_KEY_IS_BROWSER_SIGN_IN = "is_browser_sign_in";
 
 	private String mRESTBaseURL, mSigningRESTBaseURL, mOAuthBaseURL, mSigningOAuthBaseURL;
 	private String mUsername, mPassword;
@@ -99,7 +101,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 	private boolean mLoaderInitialized;
 
 	private EditText mEditUsername, mEditPassword;
-	private Button mSignInButton, mSignUpButton;
+	private Button mSignInButton, mSignUpButton, mBrowserSignInButton;
 	private LinearLayout mSigninSignup, mUsernamePassword;
 	private ImageButton mSetColorButton;
 
@@ -154,10 +156,16 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				break;
 			}
 			case REQUEST_SET_COLOR: {
-				if (resultCode == BaseActivity.RESULT_OK) if (data != null && data.getExtras() != null) {
+				if (resultCode == BaseActivity.RESULT_OK) if (data != null) {
 					mUserColor = data.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
 				}
 				setUserColorButton();
+				break;
+			}
+			case REQUEST_BROWSER_SIGN_IN: {
+				if (resultCode == BaseActivity.RESULT_OK) if (data != null && data.getExtras() != null) {
+					doLogin(true, data.getExtras());
+				}
 				break;
 			}
 		}
@@ -188,17 +196,28 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				break;
 			}
 			case R.id.sign_in: {
-				doLogin();
+				doLogin(false, null);
 				break;
 			}
 			case R.id.set_color: {
-				final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
+				final Intent intent = new Intent(this, SetColorActivity.class);
 				final Bundle bundle = new Bundle();
 				if (mUserColor != null) {
 					bundle.putInt(Accounts.USER_COLOR, mUserColor);
 				}
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
+				break;
+			}
+			case R.id.browser_sign_in: {
+				final Intent intent = new Intent(this, AuthorizeActivity.class);
+				final Bundle extras = new Bundle();
+				extras.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
+				extras.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
+				extras.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
+				extras.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
+				intent.putExtras(extras);
+				startActivityForResult(intent, REQUEST_BROWSER_SIGN_IN);
 				break;
 			}
 		}
@@ -211,14 +230,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mResolver = getContentResolver();
 		mApplication = TwidereApplication.getInstance(this);
-		setContentView(R.layout.twitter_login);
-		mEditUsername = (EditText) findViewById(R.id.username);
-		mEditPassword = (EditText) findViewById(R.id.password);
-		mSignInButton = (Button) findViewById(R.id.sign_in);
-		mSignUpButton = (Button) findViewById(R.id.sign_up);
-		mSigninSignup = (LinearLayout) findViewById(R.id.sign_in_sign_up);
-		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
-		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
+		setContentView(R.layout.sign_in);
 		setSupportProgressBarIndeterminateVisibility(false);
 		final long[] account_ids = getActivatedAccountIds(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0);
@@ -277,9 +289,16 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		mEditUsername.setEnabled(false);
 		mSignInButton.setEnabled(false);
 		mSignUpButton.setEnabled(false);
+		mBrowserSignInButton.setEnabled(false);
 		mSetColorButton.setEnabled(false);
 		saveEditedText();
-		return new UserCredentialsLoader(this, getConfiguration(), mUsername, mPassword, mAuthType, mUserColor);
+		final Configuration conf = getConfiguration();
+		if (args.getBoolean(INTENT_KEY_IS_BROWSER_SIGN_IN)) {
+			return new BrowserSigninUserCredentialsLoader(this, conf, args.getString(INTENT_KEY_REQUEST_TOKEN),
+					args.getString(INTENT_KEY_REQUEST_TOKEN_SECRET), args.getString(INTENT_KEY_OAUTH_VERIFIER),
+					mUserColor);
+		}
+		return new UserCredentialsLoader(this, conf, mUsername, mPassword, mAuthType, mUserColor);
 	}
 
 	@Override
@@ -328,7 +347,9 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		mEditUsername.setEnabled(true);
 		mSignInButton.setEnabled(true);
 		mSignUpButton.setEnabled(true);
+		mBrowserSignInButton.setEnabled(true);
 		mSetColorButton.setEnabled(true);
+		setSignInButton();
 	}
 
 	@Override
@@ -351,7 +372,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			}
 			case MENU_EDIT_API: {
 				if (getSupportLoaderManager().hasRunningLoaders()) return false;
-				intent = new Intent(INTENT_ACTION_EDIT_API);
+				intent = new Intent(this, EditAPIActivity.class);
 				final Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
 				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
@@ -387,13 +408,18 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		setSignInButton();
 	}
 
-	private void doLogin() {
+	private void doLogin(boolean is_browser_sign_in, Bundle extras) {
 		final LoaderManager lm = getSupportLoaderManager();
+		final Bundle args = new Bundle();
+		if (extras != null) {
+			args.putAll(extras);
+		}
+		args.putBoolean(INTENT_KEY_IS_BROWSER_SIGN_IN, is_browser_sign_in);
 		lm.destroyLoader(0);
 		if (mLoaderInitialized) {
-			lm.restartLoader(0, null, this);
+			lm.restartLoader(0, args, this);
 		} else {
-			lm.initLoader(0, null, this);
+			lm.initLoader(0, args, this);
 			mLoaderInitialized = true;
 		}
 	}
@@ -464,7 +490,82 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 	}
 
-	public static class UserCredentialsLoader extends AsyncTaskLoader<LoginResponse> {
+	public static class BrowserSigninUserCredentialsLoader extends AbstractUserCredentialsLoader {
+
+		private final Configuration conf;
+		private final String request_token, request_token_secret, oauth_verifier;
+		private final Integer user_color;
+
+		private final Context context;
+
+		public BrowserSigninUserCredentialsLoader(final Context context, final Configuration conf,
+				final String request_token, final String request_token_secret, final String oauth_verifier,
+				final Integer user_color) {
+			super(context, conf);
+			this.context = context;
+			this.conf = conf;
+			this.request_token = request_token;
+			this.request_token_secret = request_token_secret;
+			this.oauth_verifier = oauth_verifier;
+			this.user_color = user_color;
+		}
+
+		@Override
+		protected void onStartLoading() {
+			forceLoad();
+		}
+
+		@Override
+		public LoginResponse loadInBackground() {
+			try {
+				final Twitter twitter = new TwitterFactory(conf).getInstance();
+				final AccessToken access_token = twitter.getOAuthAccessToken(new RequestToken(conf, request_token,
+						request_token_secret), oauth_verifier);
+				final long user_id = access_token.getUserId();
+				if (user_id <= 0) return new LoginResponse(false, false, null);
+				final User user = twitter.showUser(user_id);
+				if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
+				final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+				return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH,
+						color);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (TwitterException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+
+	public static abstract class AbstractUserCredentialsLoader extends AsyncTaskLoader<LoginResponse> {
+
+		private final Configuration conf;
+		private final Context context;
+		private final SharedPreferences preferences;
+
+		public AbstractUserCredentialsLoader(Context context, final Configuration conf) {
+			super(context);
+			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			this.context = context;
+			this.conf = conf;
+		}
+
+		int analyseUserProfileColor(final URL url) throws IOException {
+			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+			final int connection_timeout = preferences.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
+			final URLConnection conn = getConnection(url, connection_timeout, true, getProxy(context),
+					conf.getHostAddressResolver());
+			final InputStream is = conn.getInputStream();
+			if (ignore_ssl_error) {
+				setIgnoreSSLError(conn);
+			}
+			final Bitmap bm = BitmapFactory.decodeStream(is);
+			return ColorAnalyser.analyse(bm);
+		}
+
+	}
+
+	public static class UserCredentialsLoader extends AbstractUserCredentialsLoader {
 
 		private final Configuration conf;
 		private final String username, password;
@@ -472,12 +573,10 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		private final Integer user_color;
 
 		private final Context context;
-		private final SharedPreferences preferences;
 
 		public UserCredentialsLoader(final Context context, final Configuration conf, final String username,
 				final String password, final int auth_type, final Integer user_color) {
-			super(context);
-			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			super(context, conf);
 			this.context = context;
 			this.conf = conf;
 			this.username = username;
@@ -518,19 +617,6 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			forceLoad();
 		}
 
-		private int analyseUserProfileColor(final URL url) throws IOException {
-			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-			final int connection_timeout = preferences.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-			final URLConnection conn = getConnection(url, connection_timeout, true, getProxy(context),
-					conf.getHostAddressResolver());
-			final InputStream is = conn.getInputStream();
-			if (ignore_ssl_error) {
-				setIgnoreSSLError(conn);
-			}
-			final Bitmap bm = BitmapFactory.decodeStream(is);
-			return ColorAnalyser.analyse(bm);
-		}
-
 		private LoginResponse authBasic() throws TwitterException, IOException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance(new BasicAuthorization(username, password));
 			final User user = twitter.verifyCredentials();
@@ -548,7 +634,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			final AccessToken access_token = authenticator.getOAuthAccessToken(username, password);
 			final long user_id = access_token.getUserId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
-			final User user = twitter.showUser(access_token.getUserId());
+			final User user = twitter.showUser(user_id);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
 			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
 			return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH, color);
@@ -604,5 +690,18 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			this.auth_type = auth_type;
 			this.color = color;
 		}
+	}
+
+	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mEditUsername = (EditText) findViewById(R.id.username);
+		mEditPassword = (EditText) findViewById(R.id.password);
+		mSignInButton = (Button) findViewById(R.id.sign_in);
+		mSignUpButton = (Button) findViewById(R.id.sign_up);
+		mBrowserSignInButton = (Button) findViewById(R.id.browser_sign_in);
+		mSigninSignup = (LinearLayout) findViewById(R.id.sign_in_sign_up);
+		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
+		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
 	}
 }

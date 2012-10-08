@@ -45,6 +45,7 @@ import java.util.List;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.SetColorActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.Panes;
@@ -509,7 +510,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				break;
 			}
 			case MENU_SET_COLOR: {
-				final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
+				final Intent intent = new Intent(getActivity(), SetColorActivity.class);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}

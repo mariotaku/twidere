@@ -177,16 +177,12 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 	static class ActivitiesAdapter extends BaseAdapter implements BaseAdapterInterface {
 
-		public void setNameDisplayOption(String option) {
-			// TODO: Implement this method
-		}
-
-
 		private boolean mDisplayProfileImage, mDisplayName, mShowAbsoluteTime;
+
 		private final boolean mDisplayHiResProfileImage;
 		private float mTextSize;
-
 		private final LazyImageLoader mProfileImageLoader;
+
 		private final LayoutInflater mInflater;
 		private final Context mContext;
 		private List<twitter4j.Activity> mData;
@@ -357,6 +353,11 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 				mDisplayProfileImage = display;
 				notifyDataSetChanged();
 			}
+		}
+
+		@Override
+		public void setNameDisplayOption(final String option) {
+			// TODO: Implement this method
 		}
 
 		public void setShowAbsoluteTime(final boolean show) {

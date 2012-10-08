@@ -106,6 +106,10 @@
 				<data android:mimeType="image/*"/>
 				<data android:mimeType="text/plain"/>
 			</intent-filter>
+
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".activity.HomeActivity"/>
 		</activity>
 		<activity
 			android:name=".activity.SignInActivity"
@@ -133,14 +137,7 @@
 		<activity
 			android:name=".activity.EditAPIActivity"
 			android:label="@string/edit_api"
-			android:theme="@style/Theme.Twidere.Light.Dialog">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<action android:name="org.mariotaku.twidere.EDIT_API"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
+			android:theme="@style/Theme.Twidere.Light.Dialog"/>
 		<activity
 			android:name=".activity.SelectAccountActivity"
 			android:label="@string/select_account"
@@ -190,14 +187,7 @@
 		<activity
 			android:name=".activity.SetColorActivity"
 			android:label="@string/set_color"
-			android:theme="@style/Theme.Twidere.Light.Dialog">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<action android:name="org.mariotaku.twidere.SET_COLOR"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
+			android:theme="@style/Theme.Twidere.Light.Dialog"/>
 		<activity
 			android:name=".activity.LinkHandlerActivity"
 			android:windowSoftInputMode="adjustResize">
@@ -299,6 +289,10 @@
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
+
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".activity.HomeActivity"/>
 		</activity>
 		<activity
 			android:name=".activity.ImageViewerActivity"
@@ -407,6 +401,9 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".activity.AuthorizeActivity"
+			android:label="@string/sign_in"/>
 
 		<service
 			android:name=".service.TwidereService"

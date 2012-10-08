@@ -59,16 +59,6 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	private final boolean mDisplayHiResProfileImage;
 	private int mNameDisplayOption;
 
-	public void setNameDisplayOption(String option) {
-		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
-			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
-		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
-			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		} else {
-			mNameDisplayOption = 0;
-		}
-	}
-	
 	public DirectMessagesConversationAdapter(final Context context, final LazyImageLoader loader) {
 		super(context, R.layout.direct_message_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
@@ -189,6 +179,17 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setNameDisplayOption(final String option) {
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		} else {
+			mNameDisplayOption = 0;
 		}
 	}
 

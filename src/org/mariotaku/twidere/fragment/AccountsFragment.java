@@ -26,6 +26,8 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.activity.SetColorActivity;
+import org.mariotaku.twidere.activity.SignInActivity;
 import org.mariotaku.twidere.adapter.AccountsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
@@ -199,7 +201,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				break;
 			}
 			case MENU_SET_COLOR: {
-				final Intent intent = new Intent(INTENT_ACTION_SET_COLOR);
+				final Intent intent = new Intent(getActivity(), SetColorActivity.class);
 				final Bundle bundle = new Bundle();
 				bundle.putInt(Accounts.USER_COLOR, mSelectedColor);
 				intent.putExtras(bundle);
@@ -223,6 +225,9 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				if (getActivatedAccountIds(getActivity()).length > 0) {
 					getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 				} else {
+					final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
+					intent.setClass(getActivity(), SignInActivity.class);
+					startActivity(intent);
 					getActivity().finish();
 				}
 				break;

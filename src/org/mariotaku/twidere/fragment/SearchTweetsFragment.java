@@ -43,8 +43,8 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 			query = args.getString(INTENT_KEY_QUERY);
 			is_home_tab = args.getBoolean(INTENT_KEY_IS_HOME_TAB);
 		}
-		return new TweetSearchLoader(getActivity(), account_id, query, max_id, since_id, getData(), getClass().getSimpleName(),
-				is_home_tab);
+		return new TweetSearchLoader(getActivity(), account_id, query, max_id, since_id, getData(), getClass()
+				.getSimpleName(), is_home_tab);
 	}
 
 	@Override

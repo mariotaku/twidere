@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.adapter;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
-import static org.mariotaku.twidere.Constants.INTENT_ACTION_VIEW_IMAGE;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -70,16 +69,6 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	private final NoDuplicatesArrayList<ParcelableStatus> mData = new NoDuplicatesArrayList<ParcelableStatus>();
 	private int mNameDisplayOption;
 
-	public void setNameDisplayOption(String option) {
-		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
-			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
-		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
-			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		} else {
-			mNameDisplayOption = 0;
-		}
-	}
-	
 	public ParcelableStatusesAdapter(final Context context) {
 		super();
 		mContext = context;
@@ -121,7 +110,6 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		}
 		return -1;
 	}
-
 
 	@Override
 	public int getCount() {
@@ -222,16 +210,16 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			if (status.is_retweet && !isNullOrEmpty(retweeted_by_name) && !isNullOrEmpty(retweeted_by_screen_name)) {
 				if (mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
 					holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, "@" + retweeted_by_screen_name, status.retweet_count - 1) : mContext.getString(
-							R.string.retweeted_by, "@" + retweeted_by_screen_name));
+							R.string.retweeted_by_with_count, "@" + retweeted_by_screen_name, status.retweet_count - 1)
+							: mContext.getString(R.string.retweeted_by, "@" + retweeted_by_screen_name));
 				} else {
 					holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : mContext.getString(
-							R.string.retweeted_by, retweeted_by_name));
+							R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : mContext
+							.getString(R.string.retweeted_by, retweeted_by_name));
 				}
 				holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
-						R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : mContext.getString(
-						R.string.retweeted_by, retweeted_by_name));
+						R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : mContext
+						.getString(R.string.retweeted_by, retweeted_by_name));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
 			} else if (status.in_reply_to_status_id > 0 && !isNullOrEmpty(status.in_reply_to_screen_name)) {
@@ -332,6 +320,17 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		if (mMultiSelectEnabled != multi) {
 			mMultiSelectEnabled = multi;
 			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setNameDisplayOption(final String option) {
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		} else {
+			mNameDisplayOption = 0;
 		}
 	}
 

@@ -51,16 +51,6 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 
 	private int mNameDisplayOption;
 
-	public void setNameDisplayOption(String option) {
-		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
-			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
-		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
-			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		} else {
-			mNameDisplayOption = 0;
-		}
-	}
-	
 	public UsersAdapter(final Context context) {
 		super(context, R.layout.user_list_item, R.id.description);
 		mContext = context;
@@ -188,6 +178,17 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		if (mMultiSelectEnabled != multi) {
 			mMultiSelectEnabled = multi;
 			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setNameDisplayOption(final String option) {
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		} else {
+			mNameDisplayOption = 0;
 		}
 	}
 
