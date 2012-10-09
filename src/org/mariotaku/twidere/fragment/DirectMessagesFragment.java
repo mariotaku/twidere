@@ -82,7 +82,12 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
 				onRefreshComplete();
-			}
+		   } else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+			   if (mService.isReceivedDirectMessagesRefreshing() 
+				   || mService.isSentDirectMessagesRefreshing()) {
+				   setRefreshing(false);
+			   }
+		   }
 		}
 	};
 
@@ -242,6 +247,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 		if (mService.isReceivedDirectMessagesRefreshing() || mService.isSentDirectMessagesRefreshing()) {
 			setRefreshing(false);

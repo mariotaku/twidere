@@ -16,12 +16,6 @@
 		android:title="@string/quick_send"/>		
 	<CheckBoxPreference
 		android:defaultValue="false"
-		android:dependency="stop_service_after_closed"
-		android:key="keep_in_background"
-		android:summary="@string/keep_in_background_summary"
-		android:title="@string/keep_in_background"/>
-	<CheckBoxPreference
-		android:defaultValue="false"
 		android:disableDependentsState="true"
 		android:key="stop_service_after_closed"
 		android:summary="@string/stop_service_after_closed_summary"

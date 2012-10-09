@@ -53,6 +53,16 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			mViewPager.setCurrentItem(mCurrentItem);
 		}
 	};
+	
+	private final OnLongClickListener mTabLongClickListener = new OnLongClickListener() {
+
+		@Override
+		public boolean onLongClick(final View view) {
+			if (!mPagingEnabled) return false;
+			final TabView tabView = (TabView) view;
+			return mAdapter.onTabLongClick(tabView.getIndex());
+		}
+	};
 
 	private LinearLayout mTabLayout;
 	private ExtendedViewPager mViewPager;
@@ -225,6 +235,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		tabView.init(this, text, icon, index);
 		tabView.setFocusable(true);
 		tabView.setOnClickListener(mTabClickListener);
+		tabView.setOnLongClickListener(mTabLongClickListener);
 
 		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
 	}
@@ -320,5 +331,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		public void onPageReselected(int position);
 
 		public void onPageSelected(int position);
+		
+		public boolean onTabLongClick(int position);
 	}
 }

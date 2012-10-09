@@ -36,8 +36,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import org.mariotaku.twidere.Constants;
 
-public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider {
+public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider, Constants {
 
 	private final ArrayList<TabSpec> mTabs = new ArrayList<TabSpec>();
 
@@ -105,12 +106,21 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	@Override
 	public void onPageReselected(final int position) {
-		final String action = mTabs.get(position).cls.getName() + HomeActivity.SHUFFIX_SCROLL_TO_TOP;
+		final String action = mTabs.get(position).cls.getName() + SHUFFIX_SCROLL_TO_TOP;
 		final Intent intent = new Intent(action);
 		intent.setPackage(mContext.getPackageName());
 		mContext.sendBroadcast(intent);
 	}
 
+	@Override
+	public boolean onTabLongClick(final int position) {
+		final String action = mTabs.get(position).cls.getName() + SHUFFIX_REFRESH_TAB;
+		final Intent intent = new Intent(action);
+		intent.setPackage(mContext.getPackageName());
+		mContext.sendBroadcast(intent);
+		return true;
+	}
+	
 	@Override
 	public void onPageSelected(final int position) {
 

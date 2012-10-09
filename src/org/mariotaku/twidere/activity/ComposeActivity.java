@@ -93,12 +93,15 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.twitter.Validator;
+import org.mariotaku.twidere.fragment.BaseDialogFragment;
 
 public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
 		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener, OnEditorActionListener,
 		LoaderCallbacks<Bitmap> {
 
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
+	private static final String INTENT_KEY_CONTENT_MODIFIED = "content_modified";
+	private static final String INTENT_KEY_IS_NAVIGATE_UP = "is_navigate_up";
 
 	private ServiceInterface mService;
 	private LocationManager mLocationManager;
@@ -124,7 +127,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private Uri mImageUri;
 	private long mInReplyToStatusId = -1;
 	private String mInReplyToScreenName, mInReplyToName;
-	private boolean mIsQuote, mUploadUseExtension;
+	private boolean mIsQuote, mUploadUseExtension, mContentModified;
 
 	private DialogFragment mUnsavedTweetDialogFragment;
 
@@ -237,10 +240,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public void onBackPressed() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-		final String path = getImagePathFromUri(this, mImageUri);
-		if (!isNullOrEmpty(text) || path != null && new File(path).exists()) {
+		if (mContentModified && !isNullOrEmpty(text)) {
 			mUnsavedTweetDialogFragment = (DialogFragment) Fragment.instantiate(this,
 					UnsavedTweetDialogFragment.class.getName());
+			final Bundle args = new Bundle();
+			args.putBoolean(INTENT_KEY_IS_NAVIGATE_UP, false);
+			mUnsavedTweetDialogFragment.setArguments(args);
 			mUnsavedTweetDialogFragment.show(getSupportFragmentManager(), "unsaved_tweet");
 			return;
 		}
@@ -419,6 +424,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		invalidateSupportOptionsMenu();
 		mColorIndicator.setOrientation(ColorView.VERTICAL);
 		mColorIndicator.setColor(getAccountColors(this, mAccountIds));
+		mContentModified = savedInstanceState != null ? savedInstanceState.getBoolean(
+				INTENT_KEY_CONTENT_MODIFIED) : false;
 	}
 
 	@Override
@@ -555,7 +562,17 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				NavUtils.navigateUpFromSameTask(this);
+				final String text = mEditText != null ? parseString(mEditText.getText()) : null;
+				if (mContentModified && !isNullOrEmpty(text)) {
+					mUnsavedTweetDialogFragment = (DialogFragment) Fragment.instantiate(this,
+							UnsavedTweetDialogFragment.class.getName());
+					final Bundle args = new Bundle();
+					args.putBoolean(INTENT_KEY_IS_NAVIGATE_UP, true);
+					mUnsavedTweetDialogFragment.setArguments(args);
+					mUnsavedTweetDialogFragment.show(getSupportFragmentManager(), "unsaved_tweet");		
+				} else {
+					NavUtils.navigateUpFromSameTask(this);
+				}
 				break;
 			}
 			case MENU_SEND: {
@@ -612,6 +629,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		outState.putBoolean(INTENT_KEY_IS_IMAGE_ATTACHED, mIsImageAttached);
 		outState.putBoolean(INTENT_KEY_IS_PHOTO_ATTACHED, mIsPhotoAttached);
 		outState.putParcelable(INTENT_KEY_IMAGE_URI, mImageUri);
+		outState.putBoolean(INTENT_KEY_CONTENT_MODIFIED, mContentModified);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -623,6 +641,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
 		invalidateSupportOptionsMenu();
+		mContentModified = true;
 	}
 
 	public void saveToDrafts() {
@@ -813,8 +832,19 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		}
 	}
 
-	public static class UnsavedTweetDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
+	public static class UnsavedTweetDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
 
+		private boolean mIsNavigateUp;
+		
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			final Bundle args = getArguments();
+			if (args != null) {
+				mIsNavigateUp = args.getBoolean(INTENT_KEY_IS_NAVIGATE_UP);
+			}
+		}
+		
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
 			final FragmentActivity activity = getActivity();
@@ -822,12 +852,20 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				case DialogInterface.BUTTON_POSITIVE: {
 					if (activity instanceof ComposeActivity) {
 						((ComposeActivity) activity).saveToDrafts();
-						activity.finish();
+						if (mIsNavigateUp) {
+							NavUtils.navigateUpFromSameTask(activity);	
+						} else {
+							activity.finish();
+						}
 					}
 					break;
 				}
 				case DialogInterface.BUTTON_NEGATIVE: {
-					activity.finish();
+					if (mIsNavigateUp) {
+						NavUtils.navigateUpFromSameTask(activity);	
+					} else {
+						activity.finish();
+					}
 					break;
 				}
 			}

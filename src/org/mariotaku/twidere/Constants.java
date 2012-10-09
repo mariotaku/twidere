@@ -116,6 +116,7 @@ public interface Constants extends TwitterConstants {
 	public static final String DEFAULT_OAUTH_CALLBACK = PROTOCOL_TWIDERE + "com.twitter.oauth/";
 
 	public static final String SHUFFIX_SCROLL_TO_TOP = ".SCROLL_TO_TOP";
+	public static final String SHUFFIX_REFRESH_TAB = ".REFRESH_TAB";
 
 	public static final String FORMAT_PATTERN_TITLE = "[TITLE]";
 	public static final String FORMAT_PATTERN_TEXT = "[TEXT]";
@@ -182,7 +183,6 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_TCP_DNS_QUERY = "tcp_dns_query";
 	public static final String PREFERENCE_KEY_DNS_SERVER = "dns_server";
 	public static final String PREFERENCE_KEY_CLICK_TO_OPEN_MENU = "click_to_open_menu";
-	public static final String PREFERENCE_KEY_KEEP_IN_BACKGROUND = "keep_in_background";
 	public static final String PREFERENCE_KEY_SEPRATE_RETWEET_ACTION = "seprate_retweet_action";
 	public static final String PREFERENCE_KEY_API_UPGRADE_CONFIRMED = "api_upgrade_confirmed";
 	public static final String PREFERENCE_KEY_CONNECTION_TIMEOUT = "connection_timeout";

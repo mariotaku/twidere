@@ -22,7 +22,10 @@ package org.mariotaku.twidere.fragment;
 import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
 import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
 import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -40,6 +43,17 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public abstract class PullToRefreshListFragment extends BaseListFragment implements OnRefreshListener2 {
 
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			final String action = intent.getAction();
+			if ((PullToRefreshListFragment.this.getClass().getName() + SHUFFIX_REFRESH_TAB).equals(action)) {
+				onPullDownToRefresh();
+			}
+		}
+	};
+ 
 	private PullToRefreshListView mPullToRefreshListView;
 
 	public final PullToRefreshListView getPullToRefreshListView() {
@@ -131,6 +145,20 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	public final void onRefreshComplete() {
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.onRefreshComplete();
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(getClass().getName() + SHUFFIX_REFRESH_TAB);
+		registerReceiver(mStateReceiver, filter);
+		onPostStart();
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
 	}
 
 	/**
