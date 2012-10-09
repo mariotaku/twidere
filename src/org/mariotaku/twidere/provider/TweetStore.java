@@ -299,9 +299,6 @@ public final class TweetStore implements Constants {
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 					CONTENT_PATH);
 
-			public static final String MAX_TIMESTAMP_TEMP = "max_timestamp_temp";
-			public static final String MAX_TIMESTAMP = "max_timestamp";
-			public static final String MAX_STATUS_ID = "max_status_id";
 			public static final String MESSAGE_TIMESTAMP = "message_timestamp";
 			public static final String NAME = "name";
 			public static final String SCREEN_NAME = "screen_name";
@@ -310,8 +307,8 @@ public final class TweetStore implements Constants {
 			public static final String CONVERSATION_ID = "conversation_id";
 
 			public static final int IDX__ID = 0;
-			public static final int IDX_MAX_TIMESTAMP = 1;
-			public static final int IDX_MAX_STATUS_ID = 2;
+			public static final int IDX_MESSAGE_TIMESTAMP = 1;
+			public static final int IDX_MESSAGE_ID = 2;
 			public static final int IDX_ACCOUNT_ID = 3;
 			public static final int IDX_IS_OUTGOING = 4;
 			public static final int IDX_NAME = 5;
@@ -319,41 +316,47 @@ public final class TweetStore implements Constants {
 			public static final int IDX_PROFILE_IMAGE_URL = 7;
 			public static final int IDX_TEXT = 8;
 			public static final int IDX_CONVERSATION_ID = 9;
-			public static final int IDX_MESSAGE_TIMESTAMP = 10;
 
 			public static class QueryBuilder {
 				public static String build(final String where) {
 					final StringBuilder builder = new StringBuilder();
-					builder.append("SELECT " + _ID + ", MAX(" + MAX_TIMESTAMP_TEMP + ") AS" + MAX_TIMESTAMP + ", "
-							+ MAX_STATUS_ID + ", " + ACCOUNT_ID + ", " + IS_OUTGOING + ", " + NAME + ", " + SCREEN_NAME
-							+ ", " + PROFILE_IMAGE_URL + ", " + TEXT + ", " + CONVERSATION_ID + ", "
-							+ MESSAGE_TIMESTAMP);
+					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID
+							+ ", " + IS_OUTGOING + ", " + NAME + ", " + SCREEN_NAME + ", " + PROFILE_IMAGE_URL + ", "
+							+ TEXT + ", " + CONVERSATION_ID);
 					builder.append(" FROM(");
-					builder.append("SELECT " + _ID + ", MAX(" + MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP_TEMP
-							+ ", MAX(" + MESSAGE_ID + ") AS " + MAX_STATUS_ID + ", " + ACCOUNT_ID + ", " + "0 AS "
-							+ IS_OUTGOING + ", " + SENDER_NAME + " AS " + NAME + ", " + SENDER_SCREEN_NAME + " AS "
-							+ SCREEN_NAME + ", " + SENDER_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL + ", " + TEXT
-							+ ", " + SENDER_ID + " AS " + CONVERSATION_ID + ", " + MESSAGE_TIMESTAMP);
+					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID 
+							+ ", " + "0 AS " + IS_OUTGOING + ", " + SENDER_NAME + " AS " + NAME + ", " 
+							+ SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + SENDER_PROFILE_IMAGE_URL + " AS " 
+							+ PROFILE_IMAGE_URL + ", " + TEXT + ", " + SENDER_ID + " AS " + CONVERSATION_ID);
 					builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
-					builder.append(" GROUP BY " + CONVERSATION_ID);
-					builder.append(" HAVING " + MAX_TIMESTAMP_TEMP + " NOT NULL" + " AND " + MAX_STATUS_ID
-							+ " NOT NULL");
+					//builder.append(" GROUP BY " + CONVERSATION_ID);
+					//builder.append(" HAVING " + MAX_TIMESTAMP_TEMP + " NOT NULL" + " AND " + MAX_STATUS_ID
+					//		+ " NOT NULL");
 					builder.append(" UNION ");
-					builder.append("SELECT " + _ID + ", MAX(" + MESSAGE_TIMESTAMP + ") AS " + MAX_TIMESTAMP_TEMP
-							+ ", MAX(" + MESSAGE_ID + ") AS " + MAX_STATUS_ID + ", " + ACCOUNT_ID + ", " + "1 AS "
-							+ IS_OUTGOING + ", " + RECIPIENT_NAME + " AS " + NAME + ", " + RECIPIENT_SCREEN_NAME
-							+ " AS " + SCREEN_NAME + ", " + RECIPIENT_PROFILE_IMAGE_URL + " AS " + PROFILE_IMAGE_URL
-							+ ", " + TEXT + ", " + RECIPIENT_ID + " AS " + CONVERSATION_ID + ", " + MESSAGE_TIMESTAMP);
+					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID 
+							+ ", " + "1 AS " + IS_OUTGOING + ", " + RECIPIENT_NAME + " AS " + NAME + ", "
+							+ RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + RECIPIENT_PROFILE_IMAGE_URL 
+							+ " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", " + RECIPIENT_ID + " AS " + CONVERSATION_ID);
 					builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
-					builder.append(" GROUP BY " + CONVERSATION_ID);
-					builder.append(" HAVING " + MAX_TIMESTAMP_TEMP + " NOT NULL" + " AND " + MAX_STATUS_ID
-							+ " NOT NULL");
+					//builder.append(" GROUP BY " + CONVERSATION_ID);
+					//builder.append(" HAVING " + MAX_TIMESTAMP_TEMP + " NOT NULL" + " AND " + MAX_STATUS_ID
+					//		+ " NOT NULL");
+					builder.append(")");
+					builder.append(" WHERE ");
+					builder.append(MESSAGE_ID + " IN(");
+					builder.append("SELECT " + MESSAGE_ID + " FROM (" + " SELECT " + MESSAGE_ID + ", " + SENDER_ID + " AS " 
+							+ CONVERSATION_ID + " FROM " + TABLE_DIRECT_MESSAGES_INBOX + " WHERE " + MESSAGE_ID + " IN (SELECT " 
+							+ "MAX(" + MESSAGE_ID + ") FROM " + TABLE_DIRECT_MESSAGES_INBOX + " GROUP BY " + SENDER_ID + ")"
+							+ " UNION " + " SELECT " + MESSAGE_ID + ", " + RECIPIENT_ID + " AS " + CONVERSATION_ID + " FROM " 
+							+ TABLE_DIRECT_MESSAGES_OUTBOX + " WHERE " + MESSAGE_ID + " IN (" + " SELECT " + "MAX(" + MESSAGE_ID 
+							+ ") FROM " + TABLE_DIRECT_MESSAGES_OUTBOX + " GROUP BY " +  RECIPIENT_ID + ")) " + " GROUP BY " 
+							+ CONVERSATION_ID);
 					builder.append(")");
 					if (where != null) {
-						builder.append(" WHERE " + where);
+						builder.append(" AND " + where);
 					}
 					builder.append(" GROUP BY " + CONVERSATION_ID);
-					builder.append(" ORDER BY " + MAX_TIMESTAMP_TEMP + " DESC, " + MAX_STATUS_ID + " DESC");
+					builder.append(" ORDER BY " + MESSAGE_TIMESTAMP + " DESC");
 					return builder.toString();
 				}
 			}

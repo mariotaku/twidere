@@ -161,10 +161,8 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		if (mService == null) return;
 		final long[] account_ids = getActivatedAccountIds(getActivity());
 		final long[] inbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
-		final long[] outbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(),
-				DirectMessages.Outbox.CONTENT_URI);
 		mService.getReceivedDirectMessagesWithSinceIds(account_ids, null, inbox_since_ids);
-		mService.getSentDirectMessagesWithSinceIds(account_ids, null, outbox_since_ids);
+		mService.getSentDirectMessagesWithSinceIds(account_ids, null, null);
 	}
 
 	@Override

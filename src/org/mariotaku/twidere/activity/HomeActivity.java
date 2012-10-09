@@ -64,6 +64,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.Menu;
@@ -161,9 +162,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		final boolean left_pane_used = left_pane_fragment != null && left_pane_fragment.isAdded();
 		setPagingEnabled(!left_pane_used);
 		final int count = fm.getBackStackEntryCount();
-		if (mActionBar != null && mDisplayAppIcon) {
-			mActionBar.setDisplayHomeAsUpEnabled(count > 0);
-		}
 		if (count == 0) {
 			bringLeftPaneToFront();
 		}
@@ -311,7 +309,14 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				getSupportFragmentManager().popBackStack();
+				final FragmentManager fm = getSupportFragmentManager();
+				if (isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
+					final int count = fm.getBackStackEntryCount();
+					for (int i = 0; i < count; i++) {
+						fm.popBackStackImmediate();
+					}
+					setSupportProgressBarIndeterminateVisibility(false);
+				}
 				break;
 			}
 			case MENU_COMPOSE: {
