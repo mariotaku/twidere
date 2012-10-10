@@ -48,6 +48,9 @@ public final class TweetStore implements Constants {
 	public static final Uri NULL_CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 			NULL_CONTENT_PATH);
 
+	public static final Uri NOTOFICATIONS_CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+			"notifications");
+
 	public static interface Accounts extends BaseColumns {
 
 		public static final int AUTH_TYPE_OAUTH = 0;

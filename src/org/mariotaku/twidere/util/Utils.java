@@ -183,6 +183,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
+import android.database.sqlite.SQLiteDatabase;
 
 public final class Utils implements Constants {
 
@@ -250,6 +251,7 @@ public final class Utils implements Constants {
 				URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, URI_TRENDS_LOCAL);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TABS, URI_TABS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#" , URI_NOTIFICATIONS);
 
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER, null, LINK_ID_USER);
@@ -396,7 +398,7 @@ public final class Utils implements Constants {
 		return builder.build();
 	}
 
-	public static String buildFilterWhereClause(final String table, final String selection) {
+	public static String buildStatusFilterWhereClause(final String table, final String selection) {
 		if (table == null) return null;
 		final StringBuilder builder = new StringBuilder();
 		if (selection != null) {
@@ -428,6 +430,36 @@ public final class Utils implements Constants {
 		return builder.toString();
 	}
 
+	public static boolean isFiltered(final SQLiteDatabase database, final String screen_name, final String source,
+			final String text_plain) {
+		if (database == null) return false;
+		final StringBuilder builder = new StringBuilder();
+		builder.append("SELECT ");
+		builder.append("(SELECT '" + text_plain + "' LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." 
+				+ Filters.TEXT + "||'%' FROM " + TABLE_FILTERED_KEYWORDS + ")");
+		if (screen_name != null) {
+			builder.append(" OR ");
+			builder.append("(SELECT '" + screen_name + "' IN (SELECT " + Filters.TEXT + " FROM " 
+					+ TABLE_FILTERED_USERS + "))");
+		}
+		if (source != null) {
+			builder.append(" OR ");
+			builder.append("(SELECT '" + source + "' LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." 
+					+ Filters.TEXT + "||'</a>%' FROM " + TABLE_FILTERED_KEYWORDS + ")");
+		}
+		final Cursor cur = database.rawQuery(builder.toString(), null);
+		if (cur == null) return false;
+		if (cur.getCount() > 0) {
+			cur.moveToFirst();
+			if (cur.getInt(0) == 1) {
+				cur.close();
+				return true;
+			}
+		}
+		cur.close();
+		return false;
+	}
+
 	public static boolean bundleEquals(final Bundle bundle1, final Bundle bundle2) {
 		if (bundle1 == null || bundle2 == null) return bundle1 == bundle2;
 		final Iterator<String> keys = bundle1.keySet().iterator();
@@ -443,6 +475,7 @@ public final class Utils implements Constants {
 		return cls1.getName().equals(cls2.getName());
 	}
 
+	
 	public static synchronized void cleanDatabasesByItemLimit(final Context context) {
 		if (context == null) return;
 		final ContentResolver resolver = context.getContentResolver();
@@ -831,20 +864,33 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static long[] getAllStatusesIds(final Context context, final Uri uri, final boolean filter_enabled) {
+	public static int getAllStatusesCount(final Context context, final Uri uri) {
+		if (context == null) return 0;
+		final ContentResolver resolver = context.getContentResolver();
+		final Cursor cur = resolver.query(uri, new String[] { Statuses.STATUS_ID },
+				buildStatusFilterWhereClause(getTableNameForContentUri(uri), null), null, null);
+		if (cur == null) return 0;
+		final int count = cur.getCount();
+		cur.close();
+		return count;
+	}
+	
+	public static long[] getAllStatusesIds(final Context context, final Uri uri) {
 		if (context == null) return new long[0];
 		final ContentResolver resolver = context.getContentResolver();
-		final ArrayList<Long> ids_list = new ArrayList<Long>();
 		final Cursor cur = resolver.query(uri, new String[] { Statuses.STATUS_ID },
-				filter_enabled ? buildFilterWhereClause(getTableNameForContentUri(uri), null) : null, null, null);
+				buildStatusFilterWhereClause(getTableNameForContentUri(uri), null), null, null);
 		if (cur == null) return new long[0];
+		final long[] ids = new long[cur.getCount()];
 		cur.moveToFirst();
+		int i = 0;
 		while (!cur.isAfterLast()) {
-			ids_list.add(cur.getLong(0));
+			ids[i] = cur.getLong(0);
 			cur.moveToNext();
+			i++;
 		}
 		cur.close();
-		return ArrayUtils.fromList(ids_list);
+		return ids;
 	}
 
 	public static String getBiggerTwitterProfileImage(final String url) {

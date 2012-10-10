@@ -342,5 +342,7 @@
 	<string name="both">Both</string>
 	<string name="browser_sign_in">Browser sign in</string>
 	<string name="stop_auto_refresh_when_battery_low">Stop auto refresh when battery low</string>
+	<string name="notification_mention"><xliff:g id="user">%s</xliff:g> mentioned you.</string>
+	<string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> sent you a direct message.</string>
 
 </resources>

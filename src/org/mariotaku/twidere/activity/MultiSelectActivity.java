@@ -101,8 +101,6 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 			case MENU_MUTE_USER: {
 				final ContentResolver resolver = getContentResolver();
 				final Uri uri = Filters.Users.CONTENT_URI;
-				final SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME,
-						Context.MODE_PRIVATE).edit();
 				final ArrayList<ContentValues> values_list = new ArrayList<ContentValues>();
 				final NoDuplicatesLinkedList<String> names_list = new NoDuplicatesLinkedList<String>();
 				for (final Object object : selected_items) {
@@ -123,7 +121,6 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 					values_list.add(values);
 				}
 				resolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
-				editor.putBoolean(PREFERENCE_KEY_ENABLE_FILTER, true).commit();
 				Toast.makeText(this, R.string.users_muted, Toast.LENGTH_SHORT).show();
 				mode.finish();
 				break;

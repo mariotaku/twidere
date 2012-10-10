@@ -193,7 +193,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mService = mApplication.getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
-		sendBroadcast(new Intent(BROADCAST_APPLICATION_LAUNCHED));
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final Resources res = getResources();
 		mDisplayAppIcon = res.getBoolean(R.bool.home_display_icon);
 		final long[] account_ids = getAccountIds(this);
@@ -457,15 +457,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	protected void onDestroy() {
 		// Delete unused items in databases.
 		cleanDatabasesByItemLimit(this);
-		sendBroadcast(new Intent(BROADCAST_APPLICATION_QUITTED));
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONDESTROY));
 		super.onDestroy();
-		if (mPreferences.getBoolean(PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED, false)) {
-			// What the f**k are you think about? Stop service causes twidere
-			// slow and unstable!
-			// Well, all right... If you still want to enable this option, I
-			// take no responsibility for any problems occurred.
-			mService.shutdownService();
-		}
 	}
 
 	@Override
@@ -506,6 +499,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	@Override
 	protected void onStart() {
 		super.onStart();
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTART));
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
@@ -520,6 +514,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	protected void onStop() {
 		unregisterReceiver(mStateReceiver);
 		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTOP));
 		super.onStop();
 	}
 

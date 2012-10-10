@@ -116,8 +116,6 @@ public class TwidereService extends Service implements Constants {
 	private boolean mShouldShutdown = false;
 	private boolean mBatteryLow = false;
 
-	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
-
 	private PendingIntent mPendingRefreshHomeTimelineIntent, mPendingRefreshMentionsIntent,
 			mPendingRefreshDirectMessagesIntent;
 
@@ -153,7 +151,7 @@ public class TwidereService extends Service implements Constants {
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
 						if (!isMentionsRefreshing()) {
 							final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
-							getMentions(activated_ids, null, since_ids, true);
+							getMentions(activated_ids, null, since_ids);
 						}
 					}
 				} else if (BROADCAST_REFRESH_DIRECT_MESSAGES.equals(action)) {
@@ -161,7 +159,7 @@ public class TwidereService extends Service implements Constants {
 					final long[] since_ids = getNewestMessageIdsFromDatabase(context, DirectMessages.Inbox.CONTENT_URI);
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
 						if (!isReceivedDirectMessagesRefreshing()) {
-							getReceivedDirectMessages(activated_ids, null, since_ids, true);
+							getReceivedDirectMessages(activated_ids, null, since_ids);
 						}
 					}
 				}
@@ -180,21 +178,8 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public void clearNotification(final int id) {
-		switch (id) {
-			case NOTIFICATION_ID_HOME_TIMELINE: {
-				mNewStatusesCount = 0;
-				break;
-			}
-			case NOTIFICATION_ID_MENTIONS: {
-				mNewMentionsCount = 0;
-				break;
-			}
-			case NOTIFICATION_ID_DIRECT_MESSAGES: {
-				mNewMessagesCount = 0;
-				break;
-			}
-		}
-		mNotificationManager.cancel(id);
+		final Uri uri = TweetStore.NOTOFICATIONS_CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+		mResolver.delete(uri, null, null);
 	}
 
 	public int createBlock(final long account_id, final long user_id) {
@@ -269,26 +254,15 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public int getHomeTimeline(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false);
-		return getHomeTimeline(account_ids, max_ids, since_ids, notification);
+		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
+		final GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids, since_ids);
+		return mGetHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public int getLocalTrends(final long account_id, final int woeid) {
 		mAsyncTaskManager.cancel(mGetLocalTrendsTaskId);
 		final GetLocalTrendsTask task = new GetLocalTrendsTask(account_id, woeid);
 		return mGetLocalTrendsTaskId = mAsyncTaskManager.add(task, true);
-	}
-
-	public int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)
-				&& max_ids == null;
-		return getMentions(account_ids, max_ids, since_ids, notification);
-	}
-
-	public int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		final boolean notification = mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)
-				&& max_ids == null;
-		return getReceivedDirectMessages(account_ids, max_ids, since_ids, notification);
 	}
 
 	public int getSentDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
@@ -502,25 +476,15 @@ public class TwidereService extends Service implements Constants {
 		return builder.getNotification();
 	}
 
-	private int getHomeTimeline(final long[] account_ids, final long[] max_ids, final long[] since_ids,
-			final boolean is_auto_refresh) {
-		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
-		final GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids, since_ids, is_auto_refresh);
-		return mGetHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
-	}
-
-	private int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids,
-			final boolean is_auto_refresh) {
+	private int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		mAsyncTaskManager.cancel(mGetMentionsTaskId);
-		final GetMentionsTask task = new GetMentionsTask(account_ids, max_ids, since_ids, is_auto_refresh);
+		final GetMentionsTask task = new GetMentionsTask(account_ids, max_ids, since_ids);
 		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	private int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids,
-			final boolean is_auto_refresh) {
+	private int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		mAsyncTaskManager.cancel(mGetReceivedDirectMessagesTaskId);
-		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_ids, max_ids, since_ids,
-				is_auto_refresh);
+		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_ids, max_ids, since_ids);
 		return mGetReceivedDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
@@ -1793,11 +1757,11 @@ public class TwidereService extends Service implements Constants {
 						final Paging paging = new Paging();
 						paging.setCount(load_item_limit);
 						long max_id = -1, since_id = -1;
-						if (max_ids_valid && max_ids[idx] > 0) {
+						if (isMaxIdsValid() && max_ids[idx] > 0) {
 							max_id = max_ids[idx];
 							paging.setMaxId(max_id);
 						}
-						if (since_ids_valid && since_ids[idx] > 0) {
+						if (isSinceIdsValid() && since_ids[idx] > 0) {
 							since_id = since_ids[idx];
 							paging.setSinceId(since_id);
 						}
@@ -1827,6 +1791,14 @@ public class TwidereService extends Service implements Constants {
 			}
 		}
 
+		final boolean isMaxIdsValid() {
+			return max_ids != null && max_ids.length == account_ids.length;
+		}
+
+		final boolean isSinceIdsValid() {
+			return since_ids != null && since_ids.length == account_ids.length;
+		}
+
 		private TwidereService getOuterType() {
 			return TwidereService.this;
 		}
@@ -1835,12 +1807,9 @@ public class TwidereService extends Service implements Constants {
 
 	class GetHomeTimelineTask extends GetStatusesTask {
 
-		private final boolean is_auto_refresh;
 
-		public GetHomeTimelineTask(final long[] account_ids, final long[] max_ids, final long[] since_ids,
-				final boolean is_auto_refresh) {
-			super(Statuses.CONTENT_URI, account_ids, max_ids, since_ids);
-			this.is_auto_refresh = is_auto_refresh;
+		public GetHomeTimelineTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+			super(account_ids, max_ids, since_ids);
 		}
 
 		@Override
@@ -1850,7 +1819,6 @@ public class TwidereService extends Service implements Constants {
 			if (!(obj instanceof GetHomeTimelineTask)) return false;
 			final GetHomeTimelineTask other = (GetHomeTimelineTask) obj;
 			if (!getOuterType().equals(other.getOuterType())) return false;
-			if (is_auto_refresh != other.is_auto_refresh) return false;
 			return true;
 		}
 
@@ -1870,15 +1838,13 @@ public class TwidereService extends Service implements Constants {
 			final int prime = 31;
 			int result = super.hashCode();
 			result = prime * result + getOuterType().hashCode();
-			result = prime * result + (is_auto_refresh ? 1231 : 1237);
 			return result;
 		}
 
 		@Override
 		protected void onPostExecute(final List<StatusesListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
-			mStoreStatusesTaskId = mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, is_auto_refresh,
-					shouldSetMinId()), true);
+			mStoreStatusesTaskId = mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, shouldSetMinId(), !isMaxIdsValid()), true);
 			mGetHomeTimelineTaskId = -1;
 		}
 
@@ -1954,12 +1920,8 @@ public class TwidereService extends Service implements Constants {
 
 	class GetMentionsTask extends GetStatusesTask {
 
-		private final boolean is_auto_refresh;
-
-		public GetMentionsTask(final long[] account_ids, final long[] max_ids, final long[] since_ids,
-				final boolean is_auto_refresh) {
-			super(Mentions.CONTENT_URI, account_ids, max_ids, since_ids);
-			this.is_auto_refresh = is_auto_refresh;
+		public GetMentionsTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+			super(account_ids, max_ids, since_ids);
 		}
 
 		@Override
@@ -1969,7 +1931,6 @@ public class TwidereService extends Service implements Constants {
 			if (!(obj instanceof GetMentionsTask)) return false;
 			final GetMentionsTask other = (GetMentionsTask) obj;
 			if (!getOuterType().equals(other.getOuterType())) return false;
-			if (is_auto_refresh != other.is_auto_refresh) return false;
 			return true;
 		}
 
@@ -1989,15 +1950,13 @@ public class TwidereService extends Service implements Constants {
 			final int prime = 31;
 			int result = super.hashCode();
 			result = prime * result + getOuterType().hashCode();
-			result = prime * result + (is_auto_refresh ? 1231 : 1237);
 			return result;
 		}
 
 		@Override
 		protected void onPostExecute(final List<StatusesListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
-			mStoreMentionsTaskId = mAsyncTaskManager.add(new StoreMentionsTask(responses, is_auto_refresh,
-					shouldSetMinId()), true);
+			mStoreMentionsTaskId = mAsyncTaskManager.add(new StoreMentionsTask(responses, shouldSetMinId(), !isMaxIdsValid()), true);
 			mGetMentionsTaskId = -1;
 		}
 
@@ -2022,12 +1981,8 @@ public class TwidereService extends Service implements Constants {
 
 	class GetReceivedDirectMessagesTask extends GetDirectMessagesTask {
 
-		private final boolean is_auto_refresh;
-
-		public GetReceivedDirectMessagesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids,
-				final boolean is_auto_refresh) {
+		public GetReceivedDirectMessagesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 			super(account_ids, max_ids, since_ids);
-			this.is_auto_refresh = is_auto_refresh;
 		}
 
 		@Override
@@ -2037,7 +1992,6 @@ public class TwidereService extends Service implements Constants {
 			if (!(obj instanceof GetReceivedDirectMessagesTask)) return false;
 			final GetReceivedDirectMessagesTask other = (GetReceivedDirectMessagesTask) obj;
 			if (!getOuterType().equals(other.getOuterType())) return false;
-			if (is_auto_refresh != other.is_auto_refresh) return false;
 			return true;
 		}
 
@@ -2052,15 +2006,13 @@ public class TwidereService extends Service implements Constants {
 			final int prime = 31;
 			int result = super.hashCode();
 			result = prime * result + getOuterType().hashCode();
-			result = prime * result + (is_auto_refresh ? 1231 : 1237);
 			return result;
 		}
 
 		@Override
 		protected void onPostExecute(final List<StatusesListResponse<DirectMessage>> responses) {
 			super.onPostExecute(responses);
-			mStoreReceivedDirectMessagesTaskId = mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses,
-					is_auto_refresh), true);
+			mStoreReceivedDirectMessagesTaskId = mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses, !isMaxIdsValid()), true);
 			mGetReceivedDirectMessagesTaskId = -1;
 		}
 
@@ -2098,7 +2050,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(final List<StatusesListResponse<DirectMessage>> responses) {
 			super.onPostExecute(responses);
-			mStoreSentDirectMessagesTaskId = mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses), true);
+			mStoreSentDirectMessagesTaskId = mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses, !isMaxIdsValid()), true);
 			mGetSentDirectMessagesTaskId = -1;
 		}
 
@@ -2108,9 +2060,7 @@ public class TwidereService extends Service implements Constants {
 
 		private final long[] account_ids, max_ids, since_ids;
 
-		private boolean should_set_min_id;
-
-		public GetStatusesTask(final Uri uri, final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+		public GetStatusesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 			super(TwidereService.this, mAsyncTaskManager);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
@@ -2126,7 +2076,6 @@ public class TwidereService extends Service implements Constants {
 			if (!getOuterType().equals(other.getOuterType())) return false;
 			if (!Arrays.equals(account_ids, other.account_ids)) return false;
 			if (!Arrays.equals(max_ids, other.max_ids)) return false;
-			if (should_set_min_id != other.should_set_min_id) return false;
 			return true;
 		}
 
@@ -2142,25 +2091,28 @@ public class TwidereService extends Service implements Constants {
 			result = prime * result + getOuterType().hashCode();
 			result = prime * result + Arrays.hashCode(account_ids);
 			result = prime * result + Arrays.hashCode(max_ids);
-			result = prime * result + (should_set_min_id ? 1231 : 1237);
 			return result;
 		}
 
-		public boolean shouldSetMinId() {
-			return should_set_min_id;
+		final boolean shouldSetMinId() {
+			return !isMaxIdsValid();
+		}
+		
+		final boolean isMaxIdsValid() {
+			return max_ids != null && max_ids.length == account_ids.length;
 		}
 
+		final boolean isSinceIdsValid() {
+			return since_ids != null && since_ids.length == account_ids.length;
+		}
+		
 		@Override
 		protected List<StatusesListResponse<twitter4j.Status>> doInBackground(final Void... params) {
 
 			final List<StatusesListResponse<twitter4j.Status>> result = new ArrayList<StatusesListResponse<twitter4j.Status>>();
 
 			if (account_ids == null) return result;
-
-			final boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
-			final boolean since_ids_valid = since_ids != null && since_ids.length == account_ids.length;
-			should_set_min_id = !max_ids_valid;
-
+		
 			int idx = 0;
 			final int load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
 					PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
@@ -2171,11 +2123,11 @@ public class TwidereService extends Service implements Constants {
 						final Paging paging = new Paging();
 						paging.setCount(load_item_limit);
 						long max_id = -1, since_id = -1;
-						if (max_ids_valid && max_ids[idx] > 0) {
+						if (isMaxIdsValid() && max_ids[idx] > 0) {
 							max_id = max_ids[idx];
 							paging.setMaxId(max_id);
 						}
-						if (since_ids_valid && since_ids[idx] > 0) {
+						if (isSinceIdsValid() && since_ids[idx] > 0) {
 							since_id = since_ids[idx];
 							paging.setSinceId(since_id);
 						}
@@ -2894,10 +2846,10 @@ public class TwidereService extends Service implements Constants {
 		private final List<StatusesListResponse<DirectMessage>> responses;
 		private final Uri uri;
 
-		public StoreDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result, final Uri uri) {
+		public StoreDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result, final Uri uri, final boolean notify) {
 			super(TwidereService.this, mAsyncTaskManager);
 			responses = result;
-			this.uri = uri;
+			this.uri = uri.buildUpon().appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify)).build();
 		}
 
 		@Override
@@ -2930,7 +2882,6 @@ public class TwidereService extends Service implements Constants {
 		protected SingleResponse<Bundle> doInBackground(final Void... args) {
 
 			boolean succeed = false;
-			int total_items_inserted = 0;
 			for (final ListResponse<DirectMessage> response : responses) {
 				final long account_id = response.account_id;
 				final List<DirectMessage> messages = response.list;
@@ -2946,7 +2897,6 @@ public class TwidereService extends Service implements Constants {
 						values_list.add(makeDirectMessageContentValues(message, account_id, isOutgoing()));
 					}
 
-					int rows_deleted = -1;
 					// Delete all rows conflicting before new data inserted.
 					{
 						final StringBuilder where = new StringBuilder();
@@ -2954,22 +2904,17 @@ public class TwidereService extends Service implements Constants {
 						where.append(" AND ");
 						where.append(DirectMessages.MESSAGE_ID + " IN ( " + ListUtils.toString(message_ids, ',', true)
 								+ " ) ");
-						rows_deleted = mResolver.delete(uri, where.toString(), null);
+						mResolver.delete(uri, where.toString(), null);
 					}
 
 					// Insert previously fetched items.
 					mResolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
 
-					final int actual_items_inserted = values_list.size() - rows_deleted;
-					if (actual_items_inserted > 0) {
-						total_items_inserted += actual_items_inserted;
-					}
 				}
 				succeed = true;
 			}
 			final Bundle bundle = new Bundle();
 			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
-			bundle.putInt(INTENT_KEY_ITEMS_INSERTED, total_items_inserted);
 			return new SingleResponse<Bundle>(-1, bundle, null);
 		}
 
@@ -2991,12 +2936,9 @@ public class TwidereService extends Service implements Constants {
 
 	class StoreHomeTimelineTask extends StoreStatusesTask {
 
-		private final boolean is_auto_refresh;
-
 		public StoreHomeTimelineTask(final List<StatusesListResponse<twitter4j.Status>> result,
-				final boolean is_auto_refresh, final boolean should_set_min_id) {
-			super(result, Statuses.CONTENT_URI, should_set_min_id);
-			this.is_auto_refresh = is_auto_refresh;
+				final boolean should_set_min_id, final boolean notify) {
+			super(result, Statuses.CONTENT_URI, should_set_min_id, notify);
 		}
 
 		@Override
@@ -3006,7 +2948,6 @@ public class TwidereService extends Service implements Constants {
 			if (!(obj instanceof StoreHomeTimelineTask)) return false;
 			final StoreHomeTimelineTask other = (StoreHomeTimelineTask) obj;
 			if (!getOuterType().equals(other.getOuterType())) return false;
-			if (is_auto_refresh != other.is_auto_refresh) return false;
 			return true;
 		}
 
@@ -3015,7 +2956,6 @@ public class TwidereService extends Service implements Constants {
 			final int prime = 31;
 			int result = super.hashCode();
 			result = prime * result + getOuterType().hashCode();
-			result = prime * result + (is_auto_refresh ? 1231 : 1237);
 			return result;
 		}
 
@@ -3026,34 +2966,11 @@ public class TwidereService extends Service implements Constants {
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
 			final Bundle extras = new Bundle();
 			extras.putBoolean(INTENT_KEY_SUCCEED, succeed);
-			if (shouldSetMinId() && getTotalItemsInserted() > 0) {
+			if (shouldSetMinId()) {
 				extras.putLong(INTENT_KEY_MIN_ID,
 						response != null && response.data != null ? response.data.getLong(INTENT_KEY_MIN_ID, -1) : -1);
 			}
 			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtras(extras));
-			if (succeed && is_auto_refresh
-					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false)) {
-				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				mNewStatusesCount += items_inserted;
-				if (items_inserted > 0) {
-					final String message = getResources().getQuantityString(R.plurals.Ntweets, mNewStatusesCount,
-							mNewStatusesCount);
-					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
-					final Bundle delete_extras = new Bundle();
-					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_HOME_TIMELINE);
-					delete_intent.putExtras(delete_extras);
-					final Intent content_intent = new Intent(getOuterType(), HomeActivity.class);
-					content_intent.setAction(Intent.ACTION_MAIN);
-					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-					final Bundle content_extras = new Bundle();
-					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_HOME);
-					content_intent.putExtras(content_extras);
-					mNotificationManager.notify(
-							NOTIFICATION_ID_HOME_TIMELINE,
-							buildNotification(getString(R.string.new_notifications), message, R.drawable.ic_stat_tweet,
-									content_intent, delete_intent));
-				}
-			}
 			super.onPostExecute(response);
 		}
 
@@ -3073,12 +2990,9 @@ public class TwidereService extends Service implements Constants {
 
 	class StoreMentionsTask extends StoreStatusesTask {
 
-		private final boolean is_auto_refresh;
-
 		public StoreMentionsTask(final List<StatusesListResponse<twitter4j.Status>> result,
-				final boolean is_auto_refresh, final boolean should_set_min_id) {
-			super(result, Mentions.CONTENT_URI, should_set_min_id);
-			this.is_auto_refresh = is_auto_refresh;
+				final boolean should_set_min_id, final boolean notify) {
+			super(result, Mentions.CONTENT_URI, should_set_min_id, notify);
 		}
 
 		@Override
@@ -3088,7 +3002,6 @@ public class TwidereService extends Service implements Constants {
 			if (!(obj instanceof StoreMentionsTask)) return false;
 			final StoreMentionsTask other = (StoreMentionsTask) obj;
 			if (!getOuterType().equals(other.getOuterType())) return false;
-			if (is_auto_refresh != other.is_auto_refresh) return false;
 			return true;
 		}
 
@@ -3097,7 +3010,6 @@ public class TwidereService extends Service implements Constants {
 			final int prime = 31;
 			int result = super.hashCode();
 			result = prime * result + getOuterType().hashCode();
-			result = prime * result + (is_auto_refresh ? 1231 : 1237);
 			return result;
 		}
 
@@ -3108,34 +3020,11 @@ public class TwidereService extends Service implements Constants {
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
 			final Bundle extras = new Bundle();
 			extras.putBoolean(INTENT_KEY_SUCCEED, succeed);
-			if (shouldSetMinId() && getTotalItemsInserted() > 0) {
+			if (shouldSetMinId()) {
 				extras.putLong(INTENT_KEY_MIN_ID,
 						response != null && response.data != null ? response.data.getLong(INTENT_KEY_MIN_ID, -1) : -1);
 			}
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtras(extras));
-			if (succeed && is_auto_refresh
-					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) {
-				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				mNewMentionsCount += items_inserted;
-				if (items_inserted > 0) {
-					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
-					final Bundle delete_extras = new Bundle();
-					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
-					delete_intent.putExtras(delete_extras);
-					final Intent content_intent = new Intent(getOuterType(), HomeActivity.class);
-					content_intent.setAction(Intent.ACTION_MAIN);
-					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-					final Bundle content_extras = new Bundle();
-					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
-					content_intent.putExtras(content_extras);
-					final String title = getString(R.string.mentions);
-					final String message = getResources().getQuantityString(R.plurals.Nmentions, mNewMentionsCount,
-							mNewMentionsCount);
-					final Notification notification = buildNotification(title, message, R.drawable.ic_stat_mention,
-							content_intent, delete_intent);
-					mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, notification);
-				}
-			}
 			super.onPostExecute(response);
 		}
 
@@ -3147,12 +3036,8 @@ public class TwidereService extends Service implements Constants {
 
 	class StoreReceivedDirectMessagesTask extends StoreDirectMessagesTask {
 
-		private final boolean is_auto_refresh;
-
-		public StoreReceivedDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result,
-				final boolean is_auto_refresh) {
-			super(result, DirectMessages.Inbox.CONTENT_URI);
-			this.is_auto_refresh = is_auto_refresh;
+		public StoreReceivedDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result, final boolean notify) {
+			super(result, DirectMessages.Inbox.CONTENT_URI, notify);
 		}
 
 		@Override
@@ -3162,7 +3047,6 @@ public class TwidereService extends Service implements Constants {
 			if (!(obj instanceof StoreReceivedDirectMessagesTask)) return false;
 			final StoreReceivedDirectMessagesTask other = (StoreReceivedDirectMessagesTask) obj;
 			if (!getOuterType().equals(other.getOuterType())) return false;
-			if (is_auto_refresh != other.is_auto_refresh) return false;
 			return true;
 		}
 
@@ -3171,7 +3055,6 @@ public class TwidereService extends Service implements Constants {
 			final int prime = 31;
 			int result = super.hashCode();
 			result = prime * result + getOuterType().hashCode();
-			result = prime * result + (is_auto_refresh ? 1231 : 1237);
 			return result;
 		}
 
@@ -3182,29 +3065,6 @@ public class TwidereService extends Service implements Constants {
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
 			sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED)
 					.putExtra(INTENT_KEY_SUCCEED, succeed));
-			if (succeed && is_auto_refresh
-					&& mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)) {
-				final int items_inserted = response.data.getInt(INTENT_KEY_ITEMS_INSERTED);
-				mNewMessagesCount += items_inserted;
-				if (items_inserted > 0) {
-					final String message = getResources().getQuantityString(R.plurals.Ndirect_messages,
-							mNewMessagesCount, mNewMessagesCount);
-					final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
-					final Bundle delete_extras = new Bundle();
-					delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
-					delete_intent.putExtras(delete_extras);
-					final Intent content_intent = new Intent(getOuterType(), HomeActivity.class);
-					content_intent.setAction(Intent.ACTION_MAIN);
-					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-					final Bundle content_extras = new Bundle();
-					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MESSAGES);
-					content_intent.putExtras(content_extras);
-					mNotificationManager.notify(
-							NOTIFICATION_ID_DIRECT_MESSAGES,
-							buildNotification(getString(R.string.new_notifications), message,
-									R.drawable.ic_stat_direct_message, content_intent, delete_intent));
-				}
-			}
 			super.onPostExecute(response);
 		}
 
@@ -3221,8 +3081,8 @@ public class TwidereService extends Service implements Constants {
 
 	class StoreSentDirectMessagesTask extends StoreDirectMessagesTask {
 
-		public StoreSentDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result) {
-			super(result, DirectMessages.Outbox.CONTENT_URI);
+		public StoreSentDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result, final boolean notify) {
+			super(result, DirectMessages.Outbox.CONTENT_URI, notify);
 		}
 
 		@Override
@@ -3247,14 +3107,12 @@ public class TwidereService extends Service implements Constants {
 		private final Uri uri;
 		private final boolean should_set_min_id;
 
-		int total_items_inserted = 0;
-
 		public StoreStatusesTask(final List<StatusesListResponse<twitter4j.Status>> result, final Uri uri,
-				final boolean should_set_min_id) {
+				final boolean should_set_min_id, final boolean notify) {
 			super(TwidereService.this, mAsyncTaskManager);
 			responses = result;
 			this.should_set_min_id = should_set_min_id;
-			this.uri = uri;
+			this.uri = uri.buildUpon().appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify)).build();
 		}
 
 		@Override
@@ -3268,15 +3126,10 @@ public class TwidereService extends Service implements Constants {
 				if (other.responses != null) return false;
 			} else if (!responses.equals(other.responses)) return false;
 			if (should_set_min_id != other.should_set_min_id) return false;
-			if (total_items_inserted != other.total_items_inserted) return false;
 			if (uri == null) {
 				if (other.uri != null) return false;
 			} else if (!uri.equals(other.uri)) return false;
 			return true;
-		}
-
-		public int getTotalItemsInserted() {
-			return total_items_inserted;
 		}
 
 		@Override
@@ -3286,7 +3139,6 @@ public class TwidereService extends Service implements Constants {
 			result = prime * result + getOuterType().hashCode();
 			result = prime * result + (responses == null ? 0 : responses.hashCode());
 			result = prime * result + (should_set_min_id ? 1231 : 1237);
-			result = prime * result + total_items_inserted;
 			result = prime * result + (uri == null ? 0 : uri.hashCode());
 			return result;
 		}
@@ -3300,8 +3152,6 @@ public class TwidereService extends Service implements Constants {
 			boolean succeed = false;
 		
 			final ArrayList<Long> newly_inserted_ids = new ArrayList<Long>();
-			final long[] old_ids = getAllStatusesIds(getOuterType(), uri,
-					mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false));
 			for (final StatusesListResponse<twitter4j.Status> response : responses) {
 				final long account_id = response.account_id;
 				final List<twitter4j.Status> statuses = response.list;
@@ -3335,8 +3185,6 @@ public class TwidereService extends Service implements Constants {
 
 				}
 
-				int rows_deleted = -1;
-
 				// Delete all rows conflicting before new data inserted.
 				{
 
@@ -3353,17 +3201,11 @@ public class TwidereService extends Service implements Constants {
 					where.append(" OR ");
 					where.append(Statuses.RETWEET_ID + " IN ( " + ids_string + " ) ");
 					where.append(")");
-					rows_deleted = mResolver.delete(uri, where.toString(), null);
+					mResolver.delete(uri, where.toString(), null);
 				}
 
 				// Insert previously fetched items.
 				mResolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
-
-				final int actual_items_inserted = values_list.size() - rows_deleted;
-
-				if (actual_items_inserted > 0) {
-					total_items_inserted += actual_items_inserted;
-				}
 
 				// Insert a gap.
 				// TODO make sure it will not have bugs.
@@ -3380,13 +3222,10 @@ public class TwidereService extends Service implements Constants {
 				}
 				succeed = true;
 			}
-			final long[] new_ids = getAllStatusesIds(getOuterType(), uri,
-					mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false));
 			final Bundle bundle = new Bundle();
 			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
-			getAllStatusesIds(getOuterType(), uri, mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false));
-			bundle.putInt(INTENT_KEY_ITEMS_INSERTED, new_ids.length - old_ids.length);
-			if (should_set_min_id && total_items_inserted > 0) {
+			getAllStatusesIds(getOuterType(), uri);
+			if (should_set_min_id) {
 				bundle.putLong(INTENT_KEY_MIN_ID, ListUtils.min(newly_inserted_ids));
 			}
 			return new SingleResponse<Bundle>(-1, bundle, null);

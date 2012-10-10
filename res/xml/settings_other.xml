@@ -13,12 +13,6 @@
 		android:defaultValue="false"
 		android:key="quick_send"
 		android:summary="@string/quick_send_summary"
-		android:title="@string/quick_send"/>		
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:disableDependentsState="true"
-		android:key="stop_service_after_closed"
-		android:summary="@string/stop_service_after_closed_summary"
-		android:title="@string/stop_service_after_closed"/>
+		android:title="@string/quick_send"/>
 
 </PreferenceScreen>
