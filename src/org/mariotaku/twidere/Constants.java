@@ -438,8 +438,6 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_DIRECT_MESSAGES_CONVERSATION = 12;
 	public static final int URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = 13;
 	public static final int URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = 14;
-	public static final int URI_TRENDS_DAILY = 15;
-	public static final int URI_TRENDS_WEEKLY = 16;
 	public static final int URI_TRENDS_LOCAL = 17;
 	public static final int URI_TABS = 18;
 

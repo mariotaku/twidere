@@ -68,7 +68,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			database.endTransaction();
 		}
 		if (result > 0) {
-			onDatabaseUpdated(uri, false);
+			onDatabaseUpdated(uri);
 		}
 		return result;
 	};
@@ -81,7 +81,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			result = database.delete(table, selection, selectionArgs);
 		}
 		if (result > 0) {
-			onDatabaseUpdated(uri, false);
+			onDatabaseUpdated(uri);
 		}
 		return result;
 	}
@@ -104,7 +104,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 																			// here.
 			return null;
 		final long row_id = database.insert(table, null, values);
-		onDatabaseUpdated(uri, true);
+		onDatabaseUpdated(uri);
 		return Uri.withAppendedPath(uri, String.valueOf(row_id));
 	}
 
@@ -148,23 +148,21 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		int result = 0;
 		if (table != null) {
 			if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table))
-				// read-only here.
 				return 0;
-			else if (TABLE_DIRECT_MESSAGES.equals(table)) // read-only here.
+			else if (TABLE_DIRECT_MESSAGES.equals(table))
 				return 0;
-			else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) // read-only
-																				// here.
+			else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table))
 				return 0;
 			result = database.update(table, values, selection, selectionArgs);
 		}
 		if (result > 0) {
-			onDatabaseUpdated(uri, false);
+			onDatabaseUpdated(uri);
 		}
 		return result;
 	}
 
-	private void onDatabaseUpdated(final Uri uri, final boolean is_insert) {
-		if (uri == null || "false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) return;
+	private void onDatabaseUpdated(final Uri uri) {
+		if (uri == null) return;
 		final Context context = getContext();
 		switch (getTableId(uri)) {
 			case URI_ACCOUNTS: {
@@ -178,53 +176,35 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				break;
 			}
 			case URI_STATUSES: {
-				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
-					context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(
-							INTENT_KEY_SUCCEED, true));
-				}
+				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED));
 				break;
 			}
 			case URI_MENTIONS: {
-				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
-					context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
-							true));
-				}
+				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED));
 				break;
 			}
 			case URI_DIRECT_MESSAGES_INBOX: {
-				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
-					context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
-							INTENT_KEY_SUCCEED, true));
-				}
+				context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED));
 				break;
 			}
 			case URI_DIRECT_MESSAGES_OUTBOX: {
-				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
-					context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
-							INTENT_KEY_SUCCEED, true));
-				}
+				context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED));
 				break;
 			}
-			case URI_TRENDS_DAILY:
-			case URI_TRENDS_WEEKLY:
-			case URI_TRENDS_LOCAL:
-				if (!is_insert || "true".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
-					context.sendBroadcast(new Intent(BROADCAST_TRENDS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
-				}
+			case URI_TRENDS_LOCAL: {
+				context.sendBroadcast(new Intent(BROADCAST_TRENDS_UPDATED));
 				break;
+			}
 			case URI_TABS: {
-				if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
-					context.sendBroadcast(new Intent(BROADCAST_TABS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
-				}
+				context.sendBroadcast(new Intent(BROADCAST_TABS_UPDATED));		
 				break;
 			}
 			case URI_FILTERED_USERS:
 			case URI_FILTERED_KEYWORDS:
-			case URI_FILTERED_SOURCES:
-				if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
-					context.sendBroadcast(new Intent(BROADCAST_FILTERS_UPDATED).putExtra(INTENT_KEY_SUCCEED, true));
-				}
+			case URI_FILTERED_SOURCES: {
+				context.sendBroadcast(new Intent(BROADCAST_FILTERS_UPDATED));
 				break;
+			}
 			default:
 				return;
 		}

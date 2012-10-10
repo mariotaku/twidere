@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.service;
 
 import static org.mariotaku.twidere.util.Utils.STATUSES_URIS;
-import static org.mariotaku.twidere.util.Utils.buildQueryUri;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
@@ -2573,10 +2572,8 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 			if (result == null) return;
 			if (result.data != null && result.data.getId() > 0) {
-				final Uri.Builder builder = DirectMessages.Outbox.CONTENT_URI.buildUpon();
-				builder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(true));
 				final ContentValues values = makeDirectMessageContentValues(result.data, account_id, true);
-				getContentResolver().insert(builder.build(), values);
+				getContentResolver().insert(DirectMessages.Outbox.CONTENT_URI, values);
 				Toast.makeText(getOuterType(), R.string.send_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(result.exception, true);
@@ -2933,7 +2930,6 @@ public class TwidereService extends Service implements Constants {
 		protected SingleResponse<Bundle> doInBackground(final Void... args) {
 
 			boolean succeed = false;
-			final Uri query_uri = buildQueryUri(uri, false);
 			int total_items_inserted = 0;
 			for (final ListResponse<DirectMessage> response : responses) {
 				final long account_id = response.account_id;
@@ -2947,13 +2943,10 @@ public class TwidereService extends Service implements Constants {
 							continue;
 						}
 						message_ids.add(message.getId());
-
 						values_list.add(makeDirectMessageContentValues(message, account_id, isOutgoing()));
-
 					}
 
 					int rows_deleted = -1;
-
 					// Delete all rows conflicting before new data inserted.
 					{
 						final StringBuilder where = new StringBuilder();
@@ -2961,11 +2954,11 @@ public class TwidereService extends Service implements Constants {
 						where.append(" AND ");
 						where.append(DirectMessages.MESSAGE_ID + " IN ( " + ListUtils.toString(message_ids, ',', true)
 								+ " ) ");
-						rows_deleted = mResolver.delete(query_uri, where.toString(), null);
+						rows_deleted = mResolver.delete(uri, where.toString(), null);
 					}
 
 					// Insert previously fetched items.
-					mResolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
+					mResolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 					final int actual_items_inserted = values_list.size() - rows_deleted;
 					if (actual_items_inserted > 0) {
@@ -3304,10 +3297,8 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected SingleResponse<Bundle> doInBackground(final Void... args) {
-
 			boolean succeed = false;
-			final Uri query_uri = buildQueryUri(uri, false);
-
+		
 			final ArrayList<Long> newly_inserted_ids = new ArrayList<Long>();
 			final long[] old_ids = getAllStatusesIds(getOuterType(), uri,
 					mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false));
@@ -3317,13 +3308,11 @@ public class TwidereService extends Service implements Constants {
 				if (statuses == null || statuses.size() <= 0) {
 					continue;
 				}
-				final ArrayList<Long> ids_in_db = getStatusIdsInDatabase(getOuterType(), query_uri, account_id);
+				final ArrayList<Long> ids_in_db = getStatusIdsInDatabase(getOuterType(), uri, account_id);
 				final boolean no_items_before = ids_in_db.size() <= 0;
 				final List<ContentValues> values_list = new ArrayList<ContentValues>();
 				final List<Long> status_ids = new ArrayList<Long>(), retweet_ids = new ArrayList<Long>();
-
 				long min_id = -1;
-
 				for (final twitter4j.Status status : statuses) {
 					if (status == null) {
 						continue;
@@ -3364,11 +3353,11 @@ public class TwidereService extends Service implements Constants {
 					where.append(" OR ");
 					where.append(Statuses.RETWEET_ID + " IN ( " + ids_string + " ) ");
 					where.append(")");
-					rows_deleted = mResolver.delete(query_uri, where.toString(), null);
+					rows_deleted = mResolver.delete(uri, where.toString(), null);
 				}
 
 				// Insert previously fetched items.
-				mResolver.bulkInsert(query_uri, values_list.toArray(new ContentValues[values_list.size()]));
+				mResolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 				final int actual_items_inserted = values_list.size() - rows_deleted;
 
@@ -3385,7 +3374,7 @@ public class TwidereService extends Service implements Constants {
 					final StringBuilder where = new StringBuilder();
 					where.append(Statuses.ACCOUNT_ID + "=" + account_id);
 					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
-					mResolver.update(query_uri, values, where.toString(), null);
+					mResolver.update(uri, values, where.toString(), null);
 					// Ignore gaps
 					newly_inserted_ids.remove(min_id);
 				}
@@ -3460,13 +3449,11 @@ public class TwidereService extends Service implements Constants {
 			final Bundle bundle = new Bundle();
 			if (response != null) {
 
-				final Uri query_uri = buildQueryUri(uri, false);
 				final List<Trends> messages = response.list;
 				if (messages != null && messages.size() > 0) {
 					final ContentValues[] values_array = makeTrendsContentValues(messages);
-					mResolver.delete(query_uri, null, null);
-					mResolver.bulkInsert(query_uri, values_array);
-
+					mResolver.delete(uri, null, null);
+					mResolver.bulkInsert(uri, values_array);
 					bundle.putBoolean(INTENT_KEY_SUCCEED, true);
 				}
 			}

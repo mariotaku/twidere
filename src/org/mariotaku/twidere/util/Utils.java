@@ -428,13 +428,6 @@ public final class Utils implements Constants {
 		return builder.toString();
 	}
 
-	public static Uri buildQueryUri(final Uri uri, final boolean notify) {
-		if (uri == null) return null;
-		final Uri.Builder uribuilder = uri.buildUpon();
-		uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify));
-		return uribuilder.build();
-	}
-
 	public static boolean bundleEquals(final Bundle bundle1, final Bundle bundle2) {
 		if (bundle1 == null || bundle2 == null) return bundle1 == bundle2;
 		final Iterator<String> keys = bundle1.keySet().iterator();
