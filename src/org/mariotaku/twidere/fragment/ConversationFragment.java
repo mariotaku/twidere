@@ -36,6 +36,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.Loader;
+import org.mariotaku.twidere.R;
 
 public class ConversationFragment extends ParcelableStatusesListFragment {
 
@@ -141,7 +142,7 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 		@Override
 		protected void onPostExecute(final TwitterException result) {
 			if (result != null) {
-				showErrorToast(getActivity(), result, true);
+				showErrorToast(getActivity(), getString(R.string.get_status), result, true);
 			}
 			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);

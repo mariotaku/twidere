@@ -268,7 +268,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 				final Bundle content_extras = new Bundle();
 				content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_HOME);
-				content_intent.putExtras(content_extras);				
+				content_intent.putExtras(content_extras);
+				builder.setOnlyAlertOnce(true);
 				final Notification notification = buildNotification(builder, res.getString(R.string.new_notifications),
 						message, message, R.drawable.ic_stat_tweet, null, content_intent, delete_intent);
 				mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE, notification);

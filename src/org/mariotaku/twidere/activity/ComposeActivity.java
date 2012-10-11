@@ -705,7 +705,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		try {
 			startActivityForResult(i, REQUEST_PICK_IMAGE);
 		} catch (final ActivityNotFoundException e) {
-			showErrorToast(this, e, false);
+			showErrorToast(this, null, e, false);
 		}
 	}
 
@@ -795,7 +795,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			try {
 				startActivityForResult(intent, REQUEST_TAKE_PHOTO);
 			} catch (final ActivityNotFoundException e) {
-				showErrorToast(this, e, false);
+				showErrorToast(this, null, e, false);
 			}
 		}
 	}

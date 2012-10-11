@@ -276,6 +276,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	@Override
 	public Loader<Response<UserList>> onCreateLoader(final int id, final Bundle args) {
 		mListContainer.setVisibility(View.VISIBLE);
+		mErrorMessageView.setText(null);
+		mErrorMessageView.setVisibility(View.GONE);
 		mErrorRetryContainer.setVisibility(View.GONE);
 		setListShown(false);
 		setProgressBarIndeterminateVisibility(true);
@@ -383,7 +385,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			changeUserList(mAccountId, user);
 			mErrorRetryContainer.setVisibility(View.GONE);
 		} else {
-			showErrorToast(getActivity(), data.exception, false);
+			if (data.exception != null) {
+				mErrorMessageView.setText(data.exception.getMessage());
+				mErrorMessageView.setVisibility(View.VISIBLE);
+			}
 			mListContainer.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.VISIBLE);
 		}

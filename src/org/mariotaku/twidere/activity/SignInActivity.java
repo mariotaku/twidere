@@ -337,9 +337,9 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			Toast.makeText(SignInActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
 		} else {
 			if (result.exception instanceof CallbackURLException) {
-				showErrorToast(SignInActivity.this, getString(R.string.cannot_get_callback_url), true);
+				showErrorToast(this, getString(R.string.cannot_get_callback_url), true);
 			} else {
-				showErrorToast(SignInActivity.this, result.exception, true);
+				showErrorToast(this, getString(R.string.sign_in), result.exception, true);
 			}
 		}
 		setSupportProgressBarIndeterminateVisibility(false);

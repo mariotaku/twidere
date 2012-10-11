@@ -63,7 +63,7 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 		try {
 			startActivity(intent);
 		} catch (final ActivityNotFoundException e) {
-			showErrorToast(getActivity(), e, false);
+			showErrorToast(getActivity(), null, e, false);
 		}
 	}
 
@@ -100,7 +100,7 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 				try {
 					startActivity(intent);
 				} catch (final ActivityNotFoundException e) {
-					showErrorToast(getActivity(), e, false);
+					showErrorToast(getActivity(), null, e, false);
 				}
 				break;
 			}

@@ -184,6 +184,7 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
 import android.database.sqlite.SQLiteDatabase;
+import twitter4j.RateLimitStatus;
 
 public final class Utils implements Constants {
 
@@ -2585,10 +2586,10 @@ public final class Utils implements Constants {
 			final Drawable iconFav = itemFav.getIcon();
 			if (status.is_favorite) {
 				iconFav.mutate().setColorFilter(activated_color, Mode.MULTIPLY);
-				itemFav.setTitle(R.string.unfav);
+				itemFav.setTitle(R.string.unfavorite);
 			} else {
 				iconFav.clearColorFilter();
-				itemFav.setTitle(R.string.fav);
+				itemFav.setTitle(R.string.favorite);
 			}
 		}
 		final MenuItem itemConversation = menu.findItem(MENU_CONVERSATION);
@@ -2623,12 +2624,34 @@ public final class Utils implements Constants {
 		sUserColors.put(user_id, color);
 	}
 
-	public static void showErrorToast(final Context context, final Object e, final boolean long_message) {
+	public static void showErrorToast(final Context context, final String message, final boolean long_message) {
+		if (context == null) return;
+		final String text;
+		if (message != null) {
+			text = context.getString(R.string.error_message, message);
+		} else {
+			text = context.getString(R.string.error_unknown_error);
+		}
+		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
+		final Toast toast = Toast.makeText(context, text, length);
+		toast.show();
+	}
+
+	public static void showErrorToast(final Context context, final String action, final Throwable t, final boolean long_message) {
 		if (context == null) return;
 		final String message;
-		if (e != null) {
-			message = context.getString(R.string.error_message,
-					e instanceof Throwable ? trimLineBreak(unescape(((Throwable) e).getMessage())) : parseString(e));
+		if (t != null) {
+			final String t_message = trimLineBreak(unescape(t.getMessage()));
+			if (action != null) {
+				if (t instanceof TwitterException && ((TwitterException) t).exceededRateLimitation()) {
+					final RateLimitStatus status = ((TwitterException) t).getRateLimitStatus();						
+					message = context.getString(R.string.error_message_rate_limit, action, status.getResetTime());
+				} else {
+					message = context.getString(R.string.error_message_with_action, action, t_message);
+				}
+			} else {
+				message = context.getString(R.string.error_message, t_message);
+			}
 		} else {
 			message = context.getString(R.string.error_unknown_error);
 		}

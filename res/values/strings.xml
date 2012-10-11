@@ -37,6 +37,8 @@
 	<string name="no_account_selected">You must select at least one account.</string>
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
 	<string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
+	<string name="error_message_with_action">Error while trying to \"<xliff:g id="action">%1$s</xliff:g>\": <xliff:g id="message">%2$s</xliff:g></string>
+	<string name="error_message_rate_limit">Twitter\'s rate limit exceeded while trying to \"<xliff:g id="action">%1$s</xliff:g>\", please retry after <xliff:g id="time">%2$s</xliff:g></string>
 	<string name="select_account">Select account</string>
 	<string name="username">Username</string>
 	<string name="password">Password</string>
@@ -54,8 +56,8 @@
 	<string name="delete">Delete</string>
 	<string name="retweet">Retweet</string>
 	<string name="cancel_retweet">Cancel retweet</string>
-	<string name="fav">Favorite</string>
-	<string name="unfav">Unfavorite</string>
+	<string name="favorite">Favorite</string>
+	<string name="unfavorite">Unfavorite</string>
 	<string name="reply">Reply</string>
 	<string name="share">Share</string>
 	<string name="share_via_twidere">Share via Twidere</string>
@@ -344,5 +346,8 @@
 	<string name="stop_auto_refresh_when_battery_low">Stop auto refresh when battery low</string>
 	<string name="notification_mention"><xliff:g id="user">%s</xliff:g> mentioned you.</string>
 	<string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> sent you a direct message.</string>
+	<string name="update">Update</string>
+	<string name="create">Create</string>
+	<string name="get_status">Get tweet</string>
 
 </resources>

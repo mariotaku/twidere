@@ -488,8 +488,8 @@ public class TwidereService extends Service implements Constants {
 		return mGetReceivedDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	private void showErrorToast(final Exception e, final boolean long_message) {
-		Utils.showErrorToast(this, e, long_message);
+	private void showErrorToast(final int action_res, final Exception e, final boolean long_message) {
+		Utils.showErrorToast(this, getString(action_res), e, long_message);
 	}
 
 	class AddUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
@@ -564,7 +564,7 @@ public class TwidereService extends Service implements Constants {
 			if (succeed) {
 				Toast.makeText(getOuterType(), R.string.add_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.add_member, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_MEMBER_DELETED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
@@ -713,7 +713,7 @@ public class TwidereService extends Service implements Constants {
 				mResolver.delete(CachedUsers.CONTENT_URI, where, null);
 				Toast.makeText(getOuterType(), R.string.user_blocked, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.block, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
@@ -801,7 +801,7 @@ public class TwidereService extends Service implements Constants {
 				sendBroadcast(intent);
 				Toast.makeText(getOuterType(), R.string.favorite_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.favorite, result.exception, true);
 			}
 			super.onPostExecute(result);
 		}
@@ -865,7 +865,7 @@ public class TwidereService extends Service implements Constants {
 			if (result != null && result.data != null) {
 				Toast.makeText(getOuterType(), R.string.follow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.follow, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
@@ -949,7 +949,7 @@ public class TwidereService extends Service implements Constants {
 				mResolver.delete(CachedUsers.CONTENT_URI, where, null);
 				Toast.makeText(getOuterType(), R.string.users_blocked, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.block, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_ids);
@@ -1018,7 +1018,7 @@ public class TwidereService extends Service implements Constants {
 			if (succeed) {
 				Toast.makeText(getOuterType(), R.string.follow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.follow, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
@@ -1101,7 +1101,7 @@ public class TwidereService extends Service implements Constants {
 			if (succeed) {
 				Toast.makeText(getOuterType(), R.string.create_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.create, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_CREATED);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
@@ -1172,7 +1172,7 @@ public class TwidereService extends Service implements Constants {
 			if (succeed) {
 				Toast.makeText(getOuterType(), R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.delete, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_MEMBER_DELETED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
@@ -1241,7 +1241,7 @@ public class TwidereService extends Service implements Constants {
 			if (result != null && result.data != null) {
 				Toast.makeText(getOuterType(), R.string.user_unblocked, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.unblock, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
@@ -1315,7 +1315,7 @@ public class TwidereService extends Service implements Constants {
 				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
 				mResolver.delete(DirectMessages.Outbox.CONTENT_URI, where, null);
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.delete, result.exception, true);
 			}
 		}
 
@@ -1404,7 +1404,7 @@ public class TwidereService extends Service implements Constants {
 				Toast.makeText(getOuterType(), R.string.unfavorite_successfully, Toast.LENGTH_SHORT).show();
 
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.unfavorite, result.exception, true);
 			}
 			super.onPostExecute(result);
 		}
@@ -1468,7 +1468,7 @@ public class TwidereService extends Service implements Constants {
 			if (result != null && result.data != null) {
 				Toast.makeText(getOuterType(), R.string.unfollow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.unfollow, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
@@ -1548,7 +1548,7 @@ public class TwidereService extends Service implements Constants {
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
 				Toast.makeText(getOuterType(), R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.delete, result.exception, true);
 			}
 			sendBroadcast(intent);
 			super.onPostExecute(result);
@@ -1614,7 +1614,7 @@ public class TwidereService extends Service implements Constants {
 			if (succeed) {
 				Toast.makeText(getOuterType(), R.string.unfollow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.delete, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
@@ -1685,7 +1685,7 @@ public class TwidereService extends Service implements Constants {
 			if (succeed) {
 				Toast.makeText(getOuterType(), R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.delete, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DELETED);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
@@ -1743,10 +1743,7 @@ public class TwidereService extends Service implements Constants {
 			final List<StatusesListResponse<DirectMessage>> result = new ArrayList<StatusesListResponse<DirectMessage>>();
 
 			if (account_ids == null) return result;
-
-			final boolean max_ids_valid = max_ids != null && max_ids.length == account_ids.length;
-			final boolean since_ids_valid = since_ids != null && since_ids.length == account_ids.length;
-
+			
 			int idx = 0;
 			final int load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
 					PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
@@ -1786,7 +1783,7 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 			for (final StatusesListResponse<DirectMessage> response : result) {
 				if (response.list == null) {
-					showErrorToast(response.exception, true);
+					showErrorToast(R.string.refresh, response.exception, true);
 				}
 			}
 		}
@@ -2152,7 +2149,7 @@ public class TwidereService extends Service implements Constants {
 			super.onPostExecute(result);
 			for (final StatusesListResponse<twitter4j.Status> response : result) {
 				if (response.list == null) {
-					showErrorToast(response.exception, true);
+					showErrorToast(R.string.refresh, response.exception, true);
 				}
 			}
 		}
@@ -2363,7 +2360,7 @@ public class TwidereService extends Service implements Constants {
 				}
 				Toast.makeText(getOuterType(), R.string.reported_user_for_spam, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.report_for_spam, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
@@ -2439,7 +2436,7 @@ public class TwidereService extends Service implements Constants {
 				intent.putExtra(INTENT_KEY_RETWEETED, true);
 				sendBroadcast(intent);
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.retweet, result.exception, true);
 			}
 
 			super.onPostExecute(result);
@@ -2528,7 +2525,7 @@ public class TwidereService extends Service implements Constants {
 				getContentResolver().insert(DirectMessages.Outbox.CONTENT_URI, values);
 				Toast.makeText(getOuterType(), R.string.send_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.send, result.exception, true);
 			}
 		}
 
@@ -3378,7 +3375,7 @@ public class TwidereService extends Service implements Constants {
 					new File(image_uri.getPath()).delete();
 				}
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.update, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);
@@ -3464,7 +3461,7 @@ public class TwidereService extends Service implements Constants {
 			if (result != null && result.data != null) {
 				Toast.makeText(getOuterType(), R.string.profile_update_successfully, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.update, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);
@@ -3663,7 +3660,7 @@ public class TwidereService extends Service implements Constants {
 					}
 				}
 			} else {
-				showErrorToast(exception, true);
+				showErrorToast(R.string.send, exception, true);
 				saveDrafts(failed_account_ids);
 			}
 			super.onPostExecute(result);
@@ -3817,7 +3814,7 @@ public class TwidereService extends Service implements Constants {
 				Toast.makeText(getOuterType(), R.string.profile_update_successfully, Toast.LENGTH_SHORT).show();
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
 			} else {
-				showErrorToast(result.exception, true);
+				showErrorToast(R.string.update, result.exception, true);
 			}
 			sendBroadcast(intent);
 			super.onPostExecute(result);

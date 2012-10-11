@@ -170,7 +170,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		public void onLoadFinished(final Loader<Response<ParcelableStatus>> loader,
 				final Response<ParcelableStatus> data) {
 			if (data.value == null) {
-				showErrorToast(getActivity(), data.exception, true);
+				showErrorToast(getActivity(), getString(R.string.get_status), data.exception, true);
 			} else {
 				displayStatus(data.value);
 				mStatusLoadProgress.setVisibility(View.GONE);
