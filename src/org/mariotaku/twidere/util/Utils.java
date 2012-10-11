@@ -2644,8 +2644,11 @@ public final class Utils implements Constants {
 			final String t_message = trimLineBreak(unescape(t.getMessage()));
 			if (action != null) {
 				if (t instanceof TwitterException && ((TwitterException) t).exceededRateLimitation()) {
-					final RateLimitStatus status = ((TwitterException) t).getRateLimitStatus();						
-					message = context.getString(R.string.error_message_rate_limit, action, status.getResetTime());
+					final RateLimitStatus status = ((TwitterException) t).getRateLimitStatus();
+					final String next_reset_time_string = DateUtils.formatDateTime(context, status.getResetTime().getTime(),
+					DateFormat.is24HourFormat(context) ? DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_24HOUR
+							: DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_12HOUR);
+					message = context.getString(R.string.error_message_rate_limit, action, next_reset_time_string);
 				} else {
 					message = context.getString(R.string.error_message_with_action, action, t_message);
 				}
