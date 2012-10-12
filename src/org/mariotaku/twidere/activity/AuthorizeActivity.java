@@ -90,26 +90,16 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 		getRequestToken();
 	}
 
-	public void onDestroy() {
-		getSupportLoaderManager().destroyLoader(0);
-		super.onDestroy();
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME: {
-				finish();
-				return true;
-			}
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
 	@Override
 	public Loader<RequestToken> onCreateLoader(final int id, final Bundle args) {
 		setSupportProgressBarIndeterminateVisibility(true);
 		return new RequestTokenLoader(this, args);
+	}
+
+	@Override
+	public void onDestroy() {
+		getSupportLoaderManager().destroyLoader(0);
+		super.onDestroy();
 	}
 
 	@Override
@@ -126,6 +116,17 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 			finish();
 		}
 		mWebView.loadUrl(mAuthUrl = data.getAuthorizationURL());
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME: {
+				finish();
+				return true;
+			}
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	private void getRequestToken() {

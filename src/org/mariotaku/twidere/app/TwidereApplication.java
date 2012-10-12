@@ -32,7 +32,7 @@ import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
 
-import twitter4j.HostAddressResolver;
+import twitter4j.http.HostAddressResolver;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;

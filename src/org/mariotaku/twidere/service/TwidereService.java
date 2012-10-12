@@ -140,7 +140,9 @@ public class TwidereService extends Service implements Constants {
 				mBatteryLow = true;
 			} else if (Intent.ACTION_BATTERY_OKAY.equals(action)) {
 				mBatteryLow = false;
-			} else if (hasActiveConnection(context) && !(mBatteryLow && mPreferences.getBoolean(PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true))) {
+			} else if (hasActiveConnection(context)
+					&& !(mBatteryLow && mPreferences
+							.getBoolean(PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true))) {
 				if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
 					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
@@ -3838,7 +3840,14 @@ public class TwidereService extends Service implements Constants {
 				}
 			} else {
 				showErrorToast(exception, true);
-				saveDrafts(failed_account_ids);
+				// If the status is a duplicate, there's no need to save it to
+				// drafts.
+				if (!(exception instanceof TwitterException)
+						|| ((TwitterException) exception).getErrorMessages() == null
+						|| ((TwitterException) exception).getErrorMessages().length == 0
+						|| ((TwitterException) exception).getErrorMessages()[0].getCode() != 187) {
+					saveDrafts(failed_account_ids);
+				}
 			}
 			super.onPostExecute(result);
 			if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {

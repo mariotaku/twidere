@@ -44,7 +44,7 @@ import org.mariotaku.twidere.util.BitmapDecodeHelper;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.view.ImageViewer;
 
-import twitter4j.HostAddressResolver;
+import twitter4j.http.HostAddressResolver;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;

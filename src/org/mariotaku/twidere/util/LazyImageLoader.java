@@ -49,7 +49,7 @@ import java.util.concurrent.Executors;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
 
-import twitter4j.HostAddressResolver;
+import twitter4j.http.HostAddressResolver;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;

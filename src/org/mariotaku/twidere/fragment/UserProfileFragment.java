@@ -78,11 +78,11 @@ import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
-import twitter4j.HostAddressResolver;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import twitter4j.http.HostAddressResolver;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;

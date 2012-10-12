@@ -18,7 +18,7 @@ import org.xbill.DNS.Section;
 import org.xbill.DNS.SimpleResolver;
 import org.xbill.DNS.Type;
 
-import twitter4j.HostAddressResolver;
+import twitter4j.http.HostAddressResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 

@@ -59,7 +59,7 @@ public class SerializationUtil {
 		String filename = null;
 		try {
 			filename = URLEncoder.encode(ArrayUtils.toString(args, '.', false), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
+		} catch (final UnsupportedEncodingException e) {
 			return null;
 		}
 		final File cache_file = new File(cache_dir, filename);

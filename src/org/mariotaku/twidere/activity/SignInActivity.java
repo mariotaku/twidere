@@ -224,6 +224,19 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 	}
 
 	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mEditUsername = (EditText) findViewById(R.id.username);
+		mEditPassword = (EditText) findViewById(R.id.password);
+		mSignInButton = (Button) findViewById(R.id.sign_in);
+		mSignUpButton = (Button) findViewById(R.id.sign_up);
+		mBrowserSignInButton = (Button) findViewById(R.id.browser_sign_in);
+		mSigninSignup = (LinearLayout) findViewById(R.id.sign_in_sign_up);
+		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
+		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
+	}
+
+	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
@@ -293,11 +306,10 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		mSetColorButton.setEnabled(false);
 		saveEditedText();
 		final Configuration conf = getConfiguration();
-		if (args.getBoolean(INTENT_KEY_IS_BROWSER_SIGN_IN)) {
+		if (args.getBoolean(INTENT_KEY_IS_BROWSER_SIGN_IN))
 			return new BrowserSigninUserCredentialsLoader(this, conf, args.getString(INTENT_KEY_REQUEST_TOKEN),
 					args.getString(INTENT_KEY_REQUEST_TOKEN_SECRET), args.getString(INTENT_KEY_OAUTH_VERIFIER),
 					mUserColor);
-		}
 		return new UserCredentialsLoader(this, conf, mUsername, mPassword, mAuthType, mUserColor);
 	}
 
@@ -408,7 +420,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		setSignInButton();
 	}
 
-	private void doLogin(boolean is_browser_sign_in, Bundle extras) {
+	private void doLogin(final boolean is_browser_sign_in, final Bundle extras) {
 		final LoaderManager lm = getSupportLoaderManager();
 		final Bundle args = new Bundle();
 		if (extras != null) {
@@ -490,6 +502,34 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 	}
 
+	public static abstract class AbstractUserCredentialsLoader extends AsyncTaskLoader<LoginResponse> {
+
+		private final Configuration conf;
+		private final Context context;
+		private final SharedPreferences preferences;
+
+		public AbstractUserCredentialsLoader(final Context context, final Configuration conf) {
+			super(context);
+			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			this.context = context;
+			this.conf = conf;
+		}
+
+		int analyseUserProfileColor(final URL url) throws IOException {
+			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+			final int connection_timeout = preferences.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
+			final URLConnection conn = getConnection(url, connection_timeout, true, getProxy(context),
+					conf.getHostAddressResolver());
+			final InputStream is = conn.getInputStream();
+			if (ignore_ssl_error) {
+				setIgnoreSSLError(conn);
+			}
+			final Bitmap bm = BitmapFactory.decodeStream(is);
+			return ColorAnalyser.analyse(bm);
+		}
+
+	}
+
 	public static class BrowserSigninUserCredentialsLoader extends AbstractUserCredentialsLoader {
 
 		private final Configuration conf;
@@ -511,11 +551,6 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		}
 
 		@Override
-		protected void onStartLoading() {
-			forceLoad();
-		}
-
-		@Override
 		public LoginResponse loadInBackground() {
 			try {
 				final Twitter twitter = new TwitterFactory(conf).getInstance();
@@ -528,41 +563,18 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
 				return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH,
 						color);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				e.printStackTrace();
 			}
 			return null;
 		}
-	}
 
-	public static abstract class AbstractUserCredentialsLoader extends AsyncTaskLoader<LoginResponse> {
-
-		private final Configuration conf;
-		private final Context context;
-		private final SharedPreferences preferences;
-
-		public AbstractUserCredentialsLoader(Context context, final Configuration conf) {
-			super(context);
-			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			this.context = context;
-			this.conf = conf;
+		@Override
+		protected void onStartLoading() {
+			forceLoad();
 		}
-
-		int analyseUserProfileColor(final URL url) throws IOException {
-			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-			final int connection_timeout = preferences.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-			final URLConnection conn = getConnection(url, connection_timeout, true, getProxy(context),
-					conf.getHostAddressResolver());
-			final InputStream is = conn.getInputStream();
-			if (ignore_ssl_error) {
-				setIgnoreSSLError(conn);
-			}
-			final Bitmap bm = BitmapFactory.decodeStream(is);
-			return ColorAnalyser.analyse(bm);
-		}
-
 	}
 
 	public static class UserCredentialsLoader extends AbstractUserCredentialsLoader {
@@ -690,18 +702,5 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			this.auth_type = auth_type;
 			this.color = color;
 		}
-	}
-
-	@Override
-	public void onContentChanged() {
-		super.onContentChanged();
-		mEditUsername = (EditText) findViewById(R.id.username);
-		mEditPassword = (EditText) findViewById(R.id.password);
-		mSignInButton = (Button) findViewById(R.id.sign_in);
-		mSignUpButton = (Button) findViewById(R.id.sign_up);
-		mBrowserSignInButton = (Button) findViewById(R.id.browser_sign_in);
-		mSigninSignup = (LinearLayout) findViewById(R.id.sign_in_sign_up);
-		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
-		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
 	}
 }

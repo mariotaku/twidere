@@ -26,12 +26,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import twitter4j.HostAddressResolver;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
+import twitter4j.http.HostAddressResolver;
 
 public class OAuthPasswordAuthenticator implements Constants {
 

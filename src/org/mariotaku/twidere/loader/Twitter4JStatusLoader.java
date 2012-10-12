@@ -75,7 +75,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		}
 		try {
 			Collections.sort(data);
-		} catch (ConcurrentModificationException e) {
+		} catch (final ConcurrentModificationException e) {
 			e.printStackTrace();
 		}
 		return data;
