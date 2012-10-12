@@ -134,6 +134,7 @@ public class SearchActivity extends MultiSelectActivity {
 		mAdapter.addTab(SearchUsersFragment.class, mArguments, getString(R.string.search_users),
 				R.drawable.ic_tab_person, 1);
 		mViewPager.setAdapter(mAdapter);
+		mViewPager.setOffscreenPageLimit(1);
 		mIndicator.setViewPager(mViewPager);
 		mViewPager.setCurrentItem(is_search_user ? 1 : 0);
 	}

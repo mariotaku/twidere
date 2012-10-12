@@ -2568,33 +2568,36 @@ public final class Utils implements Constants {
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {
 		if (context == null || menu == null || status == null) return;
 		final int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
-		final MenuItem itemDelete = menu.findItem(R.id.delete_submenu);
-		if (itemDelete != null) {
-			itemDelete.setVisible(status.account_id == status.user_id && status.account_id != status.retweeted_by_id);
+		final MenuItem delete = menu.findItem(R.id.delete_submenu);
+		if (delete != null) {
+			delete.setVisible(status.account_id == status.user_id && !isMyRetweet(status));
 		}
-		final MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
-		if (itemRetweet != null) {
-			itemRetweet.setVisible(!status.is_protected && status.account_id != status.user_id);
+		final MenuItem retweet = menu.findItem(MENU_RETWEET);
+		if (retweet != null) {
+			final Drawable icon = retweet.getIcon().mutate();
+			retweet.setVisible((!status.is_protected && status.account_id != status.user_id) || isMyRetweet(status));
 			if (isMyRetweet(status)) {
-				itemRetweet.setTitle(R.string.cancel_retweet);
+				icon.setColorFilter(activated_color, Mode.MULTIPLY);
+				retweet.setTitle(R.string.cancel_retweet);
 			} else {
-				itemRetweet.setTitle(R.string.retweet);
+				icon.clearColorFilter();
+				retweet.setTitle(R.string.retweet);
 			}
 		}
-		final MenuItem itemFav = menu.findItem(MENU_FAVORITE);
-		if (itemFav != null) {
-			final Drawable iconFav = itemFav.getIcon();
+		final MenuItem favorite = menu.findItem(MENU_FAVORITE);
+		if (favorite != null) {
+			final Drawable icon = favorite.getIcon().mutate();
 			if (status.is_favorite) {
-				iconFav.mutate().setColorFilter(activated_color, Mode.MULTIPLY);
-				itemFav.setTitle(R.string.unfavorite);
+				icon.setColorFilter(activated_color, Mode.MULTIPLY);
+				favorite.setTitle(R.string.unfavorite);
 			} else {
-				iconFav.clearColorFilter();
-				itemFav.setTitle(R.string.favorite);
+				icon.clearColorFilter();
+				favorite.setTitle(R.string.favorite);
 			}
 		}
-		final MenuItem itemConversation = menu.findItem(MENU_CONVERSATION);
-		if (itemConversation != null) {
-			itemConversation.setVisible(status.in_reply_to_status_id > 0 && status.in_reply_to_screen_name != null);
+		final MenuItem conversation = menu.findItem(MENU_CONVERSATION);
+		if (conversation != null) {
+			conversation.setVisible(status.in_reply_to_status_id > 0);
 		}
 	}
 

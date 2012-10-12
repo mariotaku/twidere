@@ -305,7 +305,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
 					content_intent.putExtras(content_extras);
 					final String title = res.getString(R.string.notification_mention, display_screen_name ? 
-							values[0].getAsString(Statuses.SCREEN_NAME) : values[0].getAsString(Statuses.NAME));
+							"@" + values[0].getAsString(Statuses.SCREEN_NAME) : values[0].getAsString(Statuses.NAME));
 					final String message = values[0].getAsString(Statuses.TEXT_PLAIN);
 					notification = buildNotification(builder, title, title, message, R.drawable.ic_stat_mention, null, 
 							content_intent, delete_intent);
@@ -319,7 +319,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 					builder.setNumber(mNewMessagesCount);
 				}
 				final String title = res.getString(R.string.notification_direct_message, display_screen_name ? 
-						   values[0].getAsString(DirectMessages.SENDER_SCREEN_NAME) : values[0].getAsString(DirectMessages.SENDER_NAME));
+						   "@" + values[0].getAsString(DirectMessages.SENDER_SCREEN_NAME) : values[0].getAsString(DirectMessages.SENDER_NAME));
 				final String message = values[0].getAsString(DirectMessages.TEXT_PLAIN);
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();

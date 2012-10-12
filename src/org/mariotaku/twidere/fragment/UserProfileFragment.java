@@ -1246,6 +1246,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public Response<User> loadInBackground() {
+			if (twitter == null) return new Response<User>(null, null);
 			try {
 				if (user_id != -1)
 					return new Response<User>(twitter.showUser(user_id), null);
