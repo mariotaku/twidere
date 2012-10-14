@@ -54,6 +54,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.Window;
@@ -93,9 +94,23 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-			case MENU_HOME:
-				onBackPressed();
+			case MENU_HOME: {
+				final FragmentManager fm = getSupportFragmentManager();
+				if (isDualPaneMode()) {
+					final int count = fm.getBackStackEntryCount();
+					if (count == 0) {
+						onBackPressed();
+					} else if (!FragmentManagerTrojan.isStateSaved(fm)) {
+						for (int i = 0; i < count; i++) {
+							fm.popBackStackImmediate();
+						}
+						setSupportProgressBarIndeterminateVisibility(false);
+					}
+				} else {
+					onBackPressed();
+				}
 				break;
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}

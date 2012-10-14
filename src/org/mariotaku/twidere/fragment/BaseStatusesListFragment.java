@@ -45,6 +45,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -417,27 +419,37 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	private void openMenu(final View view, final ParcelableStatus status) {
 		if (view == null || status == null) return;
+		final int activated_color = getResources().getColor(R.color.holo_blue_bright);
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);
 		final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
 		final boolean seprate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPRATE_RETWEET_ACTION, false);
 		final Menu menu = mPopupMenu.getMenu();
 		setMenuForStatus(getActivity(), menu, status);
-		final MenuItem itemView = menu.findItem(MENU_VIEW);
-		if (itemView != null) {
-			itemView.setVisible(click_to_open_menu);
+		final MenuItem view_status = menu.findItem(MENU_VIEW);
+		if (view_status != null) {
+			view_status.setVisible(click_to_open_menu);
 		}
-		final MenuItem itemRetweetSubMenu = menu.findItem(R.id.retweet_submenu);
-		if (itemRetweetSubMenu != null) {
-			itemRetweetSubMenu.setVisible(!seprate_retweet_action);
+		final MenuItem retweet_submenu = menu.findItem(R.id.retweet_submenu);
+		if (retweet_submenu != null) {
+			retweet_submenu.setVisible(!seprate_retweet_action);
 		}
-		final MenuItem itemDirectQuote = menu.findItem(R.id.direct_quote);
-		if (itemDirectQuote != null) {
-			itemDirectQuote.setVisible(seprate_retweet_action);
+		final MenuItem direct_quote = menu.findItem(R.id.direct_quote);
+		if (direct_quote != null) {
+			direct_quote.setVisible(seprate_retweet_action);
 		}
-		final MenuItem itemDirectRetweet = menu.findItem(R.id.direct_retweet);
-		if (itemDirectRetweet != null) {
-			itemDirectRetweet.setVisible(seprate_retweet_action && !status.is_protected);
+		final MenuItem direct_retweet = menu.findItem(R.id.direct_retweet);
+		if (direct_retweet != null) {
+			final Drawable icon = direct_retweet.getIcon().mutate();
+			direct_retweet.setVisible(seprate_retweet_action && !status.is_protected
+					&& status.account_id != status.user_id || isMyRetweet(status));
+			if (isMyRetweet(status)) {
+				icon.setColorFilter(activated_color, PorterDuff.Mode.MULTIPLY);
+				direct_retweet.setTitle(R.string.cancel_retweet);
+			} else {
+				icon.clearColorFilter();
+				direct_retweet.setTitle(R.string.retweet);
+			}
 		}
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();

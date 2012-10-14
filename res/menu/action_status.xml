@@ -35,7 +35,7 @@
 	<item
 		android:id="@id/favorite"
 		android:icon="@drawable/ic_menu_star"
-		android:title="@string/fav"/>
+		android:title="@string/favorite"/>
 	<item
 		android:id="@id/conversation"
 		android:icon="@drawable/ic_menu_conversation"

@@ -20,7 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
-import static org.mariotaku.twidere.util.Utils.buildFilterWhereClause;
+import static org.mariotaku.twidere.util.Utils.buildStatusFilterWhereClause;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getOldestStatusIdsFromDatabase;
@@ -88,12 +88,9 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		final Uri uri = getContentUri();
 		final String sort_by = getSharedPreferences().getBoolean(PREFERENCE_KEY_SORT_TIMELINE_BY_TIME, false) ? Statuses.SORT_ORDER_TIMESTAMP_DESC
 				: Statuses.SORT_ORDER_STATUS_ID_DESC;
-		String where = buildActivatedStatsWhereClause(getActivity(), null);
-		if (getSharedPreferences().getBoolean(PREFERENCE_KEY_ENABLE_FILTER, false)) {
-			final String table = getTableNameForContentUri(uri);
-			where = buildFilterWhereClause(table, where);
-		}
-		return new CursorLoader(getActivity(), uri, cols, where, null, sort_by);
+		final String where = buildActivatedStatsWhereClause(getActivity(), null);
+		final String table = getTableNameForContentUri(uri);
+		return new CursorLoader(getActivity(), uri, cols, buildStatusFilterWhereClause(table, where), null, sort_by);
 	}
 
 	@Override

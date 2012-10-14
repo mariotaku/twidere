@@ -119,7 +119,7 @@ public class WebViewFragment extends BaseFragment {
 			try {
 				mActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 			} catch (final ActivityNotFoundException e) {
-				showErrorToast(mActivity, e, false);
+				showErrorToast(mActivity, null, e, false);
 			}
 			return true;
 		}

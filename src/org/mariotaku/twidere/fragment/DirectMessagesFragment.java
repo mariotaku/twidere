@@ -82,6 +82,10 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
 				onRefreshComplete();
+			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+				if (mService.isReceivedDirectMessagesRefreshing() || mService.isSentDirectMessagesRefreshing()) {
+					setRefreshing(false);
+				}
 			}
 		}
 	};
@@ -161,10 +165,8 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		if (mService == null) return;
 		final long[] account_ids = getActivatedAccountIds(getActivity());
 		final long[] inbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
-		final long[] outbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(),
-				DirectMessages.Outbox.CONTENT_URI);
 		mService.getReceivedDirectMessagesWithSinceIds(account_ids, null, inbox_since_ids);
-		mService.getSentDirectMessagesWithSinceIds(account_ids, null, outbox_since_ids);
+		mService.getSentDirectMessagesWithSinceIds(account_ids, null, null);
 	}
 
 	@Override
@@ -244,6 +246,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 		if (mService.isReceivedDirectMessagesRefreshing() || mService.isSentDirectMessagesRefreshing()) {
 			setRefreshing(false);

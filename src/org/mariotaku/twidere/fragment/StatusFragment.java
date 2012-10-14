@@ -170,7 +170,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		public void onLoadFinished(final Loader<Response<ParcelableStatus>> loader,
 				final Response<ParcelableStatus> data) {
 			if (data.value == null) {
-				showErrorToast(getActivity(), data.exception, true);
+				showErrorToast(getActivity(), getString(R.string.getting_status), data.exception, true);
 			} else {
 				displayStatus(data.value);
 				mStatusLoadProgress.setVisibility(View.GONE);
@@ -499,13 +499,10 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 				if (source == null) return false;
 				final Uri uri = Filters.Sources.CONTENT_URI;
 				final ContentValues values = new ContentValues();
-				final SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME,
-						Context.MODE_PRIVATE).edit();
 				final ContentResolver resolver = getContentResolver();
 				values.put(Filters.TEXT, source);
 				resolver.delete(uri, Filters.TEXT + " = '" + source + "'", null);
 				resolver.insert(uri, values);
-				editor.putBoolean(PREFERENCE_KEY_ENABLE_FILTER, true).commit();
 				Toast.makeText(getActivity(), getString(R.string.source_muted, source), Toast.LENGTH_SHORT).show();
 				break;
 			}

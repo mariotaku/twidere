@@ -93,7 +93,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -804,13 +803,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				final String screen_name = mUser.getScreenName();
 				final Uri uri = Filters.Users.CONTENT_URI;
 				final ContentValues values = new ContentValues();
-				final SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME,
-						Context.MODE_PRIVATE).edit();
 				final ContentResolver resolver = getContentResolver();
 				values.put(Filters.Users.TEXT, screen_name);
 				resolver.delete(uri, Filters.Users.TEXT + " = '" + screen_name + "'", null);
 				resolver.insert(uri, values);
-				editor.putBoolean(PREFERENCE_KEY_ENABLE_FILTER, true).commit();
 				Toast.makeText(getActivity(), R.string.user_muted, Toast.LENGTH_SHORT).show();
 				break;
 			}
@@ -1249,6 +1245,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public Response<User> loadInBackground() {
+			if (twitter == null) return new Response<User>(null, null);
 			try {
 				if (user_id != -1)
 					return new Response<User>(twitter.showUser(user_id), null);

@@ -131,7 +131,11 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 
 	private void getRequestToken() {
 		final Bundle extras = getIntent().getExtras();
-		if (extras == null) return;
+		if (extras == null) {
+			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+			finish();
+			return;
+		}
 		final LoaderManager lm = getSupportLoaderManager();
 		lm.destroyLoader(0);
 		if (mLoaderInitialized) {

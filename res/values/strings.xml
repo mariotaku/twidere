@@ -37,6 +37,8 @@
 	<string name="no_account_selected">You must select at least one account.</string>
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
 	<string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
+	<string name="error_message_with_action">Error while \"<xliff:g id="action">%1$s</xliff:g>\": <xliff:g id="message">%2$s</xliff:g></string>
+	<string name="error_message_rate_limit">Twitter\'s rate limit exceeded while \"<xliff:g id="action">%1$s</xliff:g>\", please retry after <xliff:g id="time">%2$s</xliff:g></string>
 	<string name="select_account">Select account</string>
 	<string name="username">Username</string>
 	<string name="password">Password</string>
@@ -54,8 +56,8 @@
 	<string name="delete">Delete</string>
 	<string name="retweet">Retweet</string>
 	<string name="cancel_retweet">Cancel retweet</string>
-	<string name="fav">Favorite</string>
-	<string name="unfav">Unfavorite</string>
+	<string name="favorite">Favorite</string>
+	<string name="unfavorite">Unfavorite</string>
 	<string name="reply">Reply</string>
 	<string name="share">Share</string>
 	<string name="share_via_twidere">Share via Twidere</string>
@@ -68,7 +70,7 @@
 	<string name="pick_from_gallery">Pick from gallery</string>
 	<string name="tweets">Tweets</string>
 	<string name="followers">Followers</string>
-	<string name="following">Following</string>
+	<string name="friends">Friends</string>
 	<string name="about">About</string>
 	<string name="about_summary">About Twidere</string>
 	<string name="license">Open source license</string>
@@ -182,8 +184,6 @@
 	<string name="users_muted">Added users to filter list. You will not see tweets from these users in your home timeline/mentions list.</string>
 	<string name="inbox">Inbox</string>
 	<string name="load_images">Load images</string>
-	<string name="stop_service_after_closed">Stop service after twidere closed.</string>
-	<string name="stop_service_after_closed_summary">I don\'t know why you\'d like to enable this, but if you got any problems after enabling this, remember, it\'s all your fault.</string>
 	<string name="other_settings">Other settings</string>
 	<string name="refresh_and_notifications">Refresh &amp; Notifications</string>
 	<string name="auto_refresh">Auto refresh</string>
@@ -331,8 +331,6 @@
 	<string name="click_to_open_menu_summary">Click to open item menu, long-click to multi select.</string>
 	<string name="send_follow_request">Send follow request</string>
 	<string name="follow_request_sent">Follow request sent</string>
-	<string name="keep_in_background">Keep home activity in background</string>
-	<string name="keep_in_background_summary">Consumes more memory, but may faster to launch.</string>
 	<string name="seprate_retweet_action">Seprate retweet action</string>
 	<string name="seprate_retweet_action_summary">Show both retweet and quote action in tweet menu</string>
 	<string name="tweet">Tweet</string>
@@ -344,5 +342,27 @@
 	<string name="both">Both</string>
 	<string name="browser_sign_in">Browser sign in</string>
 	<string name="stop_auto_refresh_when_battery_low">Stop auto refresh when battery low</string>
+	<string name="notification_mention"><xliff:g id="user">%s</xliff:g> mentioned you.</string>
+	<string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> sent you a direct message.</string>
+	<string name="getting_status">getting tweet</string>
+	<string name="sending_status">sending tweet</string>
+	<string name="sending_direct_message">sending direct message</string>
+	<string name="refreshing_timelines">refreshing timelines</string>
+	<string name="refreshing_direct_messages">refreshing direct messages</string>
+	<string name="favoriting">favoriting</string>
+	<string name="unfavoriting">unfavoriting</string>
+	<string name="deleting">deleting</string>
+	<string name="updating_profile">updating profile</string>
+	<string name="updating_details">updating details</string>
+	<string name="blocking">blocking</string>
+	<string name="unblocking">unblocking</string>
+	<string name="following">following</string>
+	<string name="unfollowing">unfollowing</string>
+	<string name="status_is_duplicate">Your tweet is duplicate.</string>
+	<string name="creating_list">creating list</string>
+	<string name="adding_member">adding member</string>
+	<string name="signing_in">signing in</string>
+	<string name="retweeting">retweeting</string>
+	<string name="reporting_for_spam">reporting for spam</string>
 
 </resources>

@@ -162,7 +162,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			mImageLoaded = false;
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
 			if (data != null) {
-				showErrorToast(this, data.exception, true);
+				showErrorToast(this, null, data.exception, true);
 			}
 		}
 		mProgress.setVisibility(View.GONE);

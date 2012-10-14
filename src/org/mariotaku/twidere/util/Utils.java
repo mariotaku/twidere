@@ -131,6 +131,7 @@ import twitter4j.DirectMessage;
 import twitter4j.EntitySupport;
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
+import twitter4j.RateLimitStatus;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Trend;
@@ -158,6 +159,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -250,6 +252,7 @@ public final class Utils implements Constants {
 				URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, URI_TRENDS_LOCAL);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TABS, URI_TABS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#", URI_NOTIFICATIONS);
 
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER, null, LINK_ID_USER);
@@ -396,7 +399,7 @@ public final class Utils implements Constants {
 		return builder.build();
 	}
 
-	public static String buildFilterWhereClause(final String table, final String selection) {
+	public static String buildStatusFilterWhereClause(final String table, final String selection) {
 		if (table == null) return null;
 		final StringBuilder builder = new StringBuilder();
 		if (selection != null) {
@@ -426,13 +429,6 @@ public final class Utils implements Constants {
 		builder.append(" )");
 
 		return builder.toString();
-	}
-
-	public static Uri buildQueryUri(final Uri uri, final boolean notify) {
-		if (uri == null) return null;
-		final Uri.Builder uribuilder = uri.buildUpon();
-		uribuilder.appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify));
-		return uribuilder.build();
 	}
 
 	public static boolean bundleEquals(final Bundle bundle1, final Bundle bundle2) {
@@ -838,20 +834,33 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static long[] getAllStatusesIds(final Context context, final Uri uri, final boolean filter_enabled) {
+	public static int getAllStatusesCount(final Context context, final Uri uri) {
+		if (context == null) return 0;
+		final ContentResolver resolver = context.getContentResolver();
+		final Cursor cur = resolver.query(uri, new String[] { Statuses.STATUS_ID },
+				buildStatusFilterWhereClause(getTableNameForContentUri(uri), null), null, null);
+		if (cur == null) return 0;
+		final int count = cur.getCount();
+		cur.close();
+		return count;
+	}
+
+	public static long[] getAllStatusesIds(final Context context, final Uri uri) {
 		if (context == null) return new long[0];
 		final ContentResolver resolver = context.getContentResolver();
-		final ArrayList<Long> ids_list = new ArrayList<Long>();
 		final Cursor cur = resolver.query(uri, new String[] { Statuses.STATUS_ID },
-				filter_enabled ? buildFilterWhereClause(getTableNameForContentUri(uri), null) : null, null, null);
+				buildStatusFilterWhereClause(getTableNameForContentUri(uri), null), null, null);
 		if (cur == null) return new long[0];
+		final long[] ids = new long[cur.getCount()];
 		cur.moveToFirst();
+		int i = 0;
 		while (!cur.isAfterLast()) {
-			ids_list.add(cur.getLong(0));
+			ids[i] = cur.getLong(0);
 			cur.moveToNext();
+			i++;
 		}
 		cur.close();
-		return ArrayUtils.fromList(ids_list);
+		return ids;
 	}
 
 	public static String getBiggerTwitterProfileImage(final String url) {
@@ -1555,6 +1564,36 @@ public final class Utils implements Constants {
 		final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnectedOrConnecting()) return true;
+		return false;
+	}
+
+	public static boolean isFiltered(final SQLiteDatabase database, final String screen_name, final String source,
+			final String text_plain) {
+		if (database == null) return false;
+		final StringBuilder builder = new StringBuilder();
+		builder.append("SELECT ");
+		builder.append("(SELECT '" + text_plain + "' LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT
+				+ "||'%' FROM " + TABLE_FILTERED_KEYWORDS + ")");
+		if (screen_name != null) {
+			builder.append(" OR ");
+			builder.append("(SELECT '" + screen_name + "' IN (SELECT " + Filters.TEXT + " FROM " + TABLE_FILTERED_USERS
+					+ "))");
+		}
+		if (source != null) {
+			builder.append(" OR ");
+			builder.append("(SELECT '" + source + "' LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.TEXT
+					+ "||'</a>%' FROM " + TABLE_FILTERED_KEYWORDS + ")");
+		}
+		final Cursor cur = database.rawQuery(builder.toString(), null);
+		if (cur == null) return false;
+		if (cur.getCount() > 0) {
+			cur.moveToFirst();
+			if (cur.getInt(0) == 1) {
+				cur.close();
+				return true;
+			}
+		}
+		cur.close();
 		return false;
 	}
 
@@ -2528,33 +2567,36 @@ public final class Utils implements Constants {
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {
 		if (context == null || menu == null || status == null) return;
 		final int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
-		final MenuItem itemDelete = menu.findItem(R.id.delete_submenu);
-		if (itemDelete != null) {
-			itemDelete.setVisible(status.account_id == status.user_id && status.account_id != status.retweeted_by_id);
+		final MenuItem delete = menu.findItem(R.id.delete_submenu);
+		if (delete != null) {
+			delete.setVisible(status.account_id == status.user_id && !isMyRetweet(status));
 		}
-		final MenuItem itemRetweet = menu.findItem(MENU_RETWEET);
-		if (itemRetweet != null) {
-			itemRetweet.setVisible(!status.is_protected && status.account_id != status.user_id);
+		final MenuItem retweet = menu.findItem(MENU_RETWEET);
+		if (retweet != null) {
+			final Drawable icon = retweet.getIcon().mutate();
+			retweet.setVisible(!status.is_protected && status.account_id != status.user_id || isMyRetweet(status));
 			if (isMyRetweet(status)) {
-				itemRetweet.setTitle(R.string.cancel_retweet);
+				icon.setColorFilter(activated_color, Mode.MULTIPLY);
+				retweet.setTitle(R.string.cancel_retweet);
 			} else {
-				itemRetweet.setTitle(R.string.retweet);
+				icon.clearColorFilter();
+				retweet.setTitle(R.string.retweet);
 			}
 		}
-		final MenuItem itemFav = menu.findItem(MENU_FAVORITE);
-		if (itemFav != null) {
-			final Drawable iconFav = itemFav.getIcon();
+		final MenuItem favorite = menu.findItem(MENU_FAVORITE);
+		if (favorite != null) {
+			final Drawable icon = favorite.getIcon().mutate();
 			if (status.is_favorite) {
-				iconFav.mutate().setColorFilter(activated_color, Mode.MULTIPLY);
-				itemFav.setTitle(R.string.unfav);
+				icon.setColorFilter(activated_color, Mode.MULTIPLY);
+				favorite.setTitle(R.string.unfavorite);
 			} else {
-				iconFav.clearColorFilter();
-				itemFav.setTitle(R.string.fav);
+				icon.clearColorFilter();
+				favorite.setTitle(R.string.favorite);
 			}
 		}
-		final MenuItem itemConversation = menu.findItem(MENU_CONVERSATION);
-		if (itemConversation != null) {
-			itemConversation.setVisible(status.in_reply_to_status_id > 0 && status.in_reply_to_screen_name != null);
+		final MenuItem conversation = menu.findItem(MENU_CONVERSATION);
+		if (conversation != null) {
+			conversation.setVisible(status.in_reply_to_status_id > 0);
 		}
 	}
 
@@ -2584,12 +2626,38 @@ public final class Utils implements Constants {
 		sUserColors.put(user_id, color);
 	}
 
-	public static void showErrorToast(final Context context, final Object e, final boolean long_message) {
+	public static void showErrorToast(final Context context, final String message, final boolean long_message) {
+		if (context == null) return;
+		final String text;
+		if (message != null) {
+			text = context.getString(R.string.error_message, message);
+		} else {
+			text = context.getString(R.string.error_unknown_error);
+		}
+		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
+		final Toast toast = Toast.makeText(context, text, length);
+		toast.show();
+	}
+
+	public static void showErrorToast(final Context context, final String action, final Throwable t,
+			final boolean long_message) {
 		if (context == null) return;
 		final String message;
-		if (e != null) {
-			message = context.getString(R.string.error_message,
-					e instanceof Throwable ? trimLineBreak(unescape(((Throwable) e).getMessage())) : parseString(e));
+		if (t != null) {
+			final String t_message = trimLineBreak(unescape(t.getMessage()));
+			if (action != null) {
+				if (t instanceof TwitterException && ((TwitterException) t).exceededRateLimitation()) {
+					final RateLimitStatus status = ((TwitterException) t).getRateLimitStatus();
+					final String next_reset_time_string = DateUtils.formatDateTime(context, status.getResetTime()
+							.getTime(), DateFormat.is24HourFormat(context) ? DateUtils.FORMAT_SHOW_TIME
+							| DateUtils.FORMAT_24HOUR : DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_12HOUR);
+					message = context.getString(R.string.error_message_rate_limit, action, next_reset_time_string);
+				} else {
+					message = context.getString(R.string.error_message_with_action, action, t_message);
+				}
+			} else {
+				message = context.getString(R.string.error_message, t_message);
+			}
 		} else {
 			message = context.getString(R.string.error_unknown_error);
 		}

@@ -68,9 +68,13 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		if (statuses != null) {
 			final boolean insert_gap = load_item_limit == statuses.size() && data.size() > 0;
 			Collections.sort(statuses);
-			final int size = statuses.size();
-			for (int i = 0; i < size; i++) {
-				data.add(new ParcelableStatus(statuses.get(i), account_id, i == size - 1 && insert_gap));
+			final Status min_status = Collections.min(statuses);
+			final long min_status_id = min_status != null ? min_status.getId() : -1;
+			for (final Status status : statuses) {
+				final long id = status.getId();
+				deleteStatus(id);
+				data.add(new ParcelableStatus(status, account_id, min_status_id > 0 && min_status_id == id
+						&& insert_gap));
 			}
 		}
 		try {

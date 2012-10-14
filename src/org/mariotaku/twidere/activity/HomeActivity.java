@@ -64,6 +64,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.Menu;
@@ -141,18 +142,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	}
 
 	@Override
-	public void onBackPressed() {
-		final FragmentManager fm = getSupportFragmentManager();
-		if (fm.getBackStackEntryCount() == 0
-				&& !mPreferences.getBoolean(PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED, false)
-				&& mPreferences.getBoolean(PREFERENCE_KEY_KEEP_IN_BACKGROUND, false)) {
-			moveTaskToBack(true);
-			return;
-		}
-		super.onBackPressed();
-	}
-
-	@Override
 	public void onBackStackChanged() {
 		super.onBackStackChanged();
 		if (!isDualPaneMode()) return;
@@ -161,9 +150,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		final boolean left_pane_used = left_pane_fragment != null && left_pane_fragment.isAdded();
 		setPagingEnabled(!left_pane_used);
 		final int count = fm.getBackStackEntryCount();
-		if (mActionBar != null && mDisplayAppIcon) {
-			mActionBar.setDisplayHomeAsUpEnabled(count > 0);
-		}
 		if (count == 0) {
 			bringLeftPaneToFront();
 		}
@@ -207,7 +193,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mService = mApplication.getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
-		sendBroadcast(new Intent(BROADCAST_APPLICATION_LAUNCHED));
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final Resources res = getResources();
 		mDisplayAppIcon = res.getBoolean(R.bool.home_display_icon);
 		final long[] account_ids = getAccountIds(this);
@@ -311,7 +297,14 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				getSupportFragmentManager().popBackStack();
+				final FragmentManager fm = getSupportFragmentManager();
+				if (isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
+					final int count = fm.getBackStackEntryCount();
+					for (int i = 0; i < count; i++) {
+						fm.popBackStackImmediate();
+					}
+					setSupportProgressBarIndeterminateVisibility(false);
+				}
 				break;
 			}
 			case MENU_COMPOSE: {
@@ -464,15 +457,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	protected void onDestroy() {
 		// Delete unused items in databases.
 		cleanDatabasesByItemLimit(this);
-		sendBroadcast(new Intent(BROADCAST_APPLICATION_QUITTED));
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONDESTROY));
 		super.onDestroy();
-		if (mPreferences.getBoolean(PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED, false)) {
-			// What the f**k are you think about? Stop service causes twidere
-			// slow and unstable!
-			// Well, all right... If you still want to enable this option, I
-			// take no responsibility for any problems occurred.
-			mService.shutdownService();
-		}
 	}
 
 	@Override
@@ -513,6 +499,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	@Override
 	protected void onStart() {
 		super.onStart();
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTART));
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
@@ -527,6 +514,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	protected void onStop() {
 		unregisterReceiver(mStateReceiver);
 		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTOP));
 		super.onStop();
 	}
 

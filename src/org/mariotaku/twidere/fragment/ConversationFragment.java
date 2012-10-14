@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.util.List;
 
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -141,7 +142,7 @@ public class ConversationFragment extends ParcelableStatusesListFragment {
 		@Override
 		protected void onPostExecute(final TwitterException result) {
 			if (result != null) {
-				showErrorToast(getActivity(), result, true);
+				showErrorToast(getActivity(), getString(R.string.getting_status), result, true);
 			}
 			setProgressBarIndeterminateVisibility(false);
 			super.onPostExecute(result);

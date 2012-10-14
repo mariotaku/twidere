@@ -359,7 +359,7 @@
 				android:layout_height="wrap_content"
 				android:layerType="software"
 				android:singleLine="true"
-				android:text="@string/following"
+				android:text="@string/friends"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
 		</LinearLayout>

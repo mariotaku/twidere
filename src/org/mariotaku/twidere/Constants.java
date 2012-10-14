@@ -116,6 +116,7 @@ public interface Constants extends TwitterConstants {
 	public static final String DEFAULT_OAUTH_CALLBACK = PROTOCOL_TWIDERE + "com.twitter.oauth/";
 
 	public static final String SHUFFIX_SCROLL_TO_TOP = ".SCROLL_TO_TOP";
+	public static final String SHUFFIX_REFRESH_TAB = ".REFRESH_TAB";
 
 	public static final String FORMAT_PATTERN_TITLE = "[TITLE]";
 	public static final String FORMAT_PATTERN_TEXT = "[TEXT]";
@@ -134,7 +135,6 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_COMPOSE_BUTTON = "bottom_compose_button";
 	public static final String PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON = "leftside_compose_button";
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
-	public static final String PREFERENCE_KEY_ENABLE_FILTER = "enable_filter";
 	public static final String PREFERENCE_KEY_GZIP_COMPRESSING = "gzip_compressing";
 	public static final String PREFERENCE_KEY_IGNORE_SSL_ERROR = "ignore_ssl_error";
 	public static final String PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY = "load_more_automatically";
@@ -149,7 +149,6 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_ENABLE_PROXY = "enable_proxy";
 	public static final String PREFERENCE_KEY_PROXY_HOST = "proxy_host";
 	public static final String PREFERENCE_KEY_PROXY_PORT = "proxy_port";
-	public static final String PREFERENCE_KEY_STOP_SERVICE_AFTER_CLOSED = "stop_service_after_closed";
 	public static final String PREFERENCE_KEY_SORT_TIMELINE_BY_TIME = "sort_timeline_by_time";
 	public static final String PREFERENCE_KEY_REFRESH_ON_START = "refresh_on_start";
 	public static final String PREFERENCE_KEY_REFRESH_AFTER_TWEET = "refresh_after_tweet";
@@ -182,7 +181,6 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_TCP_DNS_QUERY = "tcp_dns_query";
 	public static final String PREFERENCE_KEY_DNS_SERVER = "dns_server";
 	public static final String PREFERENCE_KEY_CLICK_TO_OPEN_MENU = "click_to_open_menu";
-	public static final String PREFERENCE_KEY_KEEP_IN_BACKGROUND = "keep_in_background";
 	public static final String PREFERENCE_KEY_SEPRATE_RETWEET_ACTION = "seprate_retweet_action";
 	public static final String PREFERENCE_KEY_API_UPGRADE_CONFIRMED = "api_upgrade_confirmed";
 	public static final String PREFERENCE_KEY_CONNECTION_TIMEOUT = "connection_timeout";
@@ -281,8 +279,10 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_MULTI_SELECT_STATE_CHANGED = INTENT_PACKAGE_PREFIX
 			+ "MULTI_SELECT_STATE_CHANGED";
 	public static final String BROADCAST_MULTI_BLOCKSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "MULTI_BLOCKSTATE_CHANGED";
-	public static final String BROADCAST_APPLICATION_LAUNCHED = INTENT_PACKAGE_PREFIX + "APPLICATION_LAUNCHED";
-	public static final String BROADCAST_APPLICATION_QUITTED = INTENT_PACKAGE_PREFIX + "APPLICATION_QUITTED";
+	public static final String BROADCAST_HOME_ACTIVITY_ONCREATE = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONCREATE";
+	public static final String BROADCAST_HOME_ACTIVITY_ONSTART = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONSTART";
+	public static final String BROADCAST_HOME_ACTIVITY_ONSTOP = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONSTOP";
+	public static final String BROADCAST_HOME_ACTIVITY_ONDESTROY = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONDESTROY";
 
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
@@ -423,6 +423,7 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = DirectMessages.ConversationsEntry.CONTENT_PATH;
 	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.CONTENT_PATH;
 	public static final String TABLE_TABS = Tabs.CONTENT_PATH;
+	public static final String TABLE_NOTIFICATIONS = "notifications";
 
 	public static final int URI_ACCOUNTS = 1;
 	public static final int URI_STATUSES = 2;
@@ -438,10 +439,9 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_DIRECT_MESSAGES_CONVERSATION = 12;
 	public static final int URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = 13;
 	public static final int URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = 14;
-	public static final int URI_TRENDS_DAILY = 15;
-	public static final int URI_TRENDS_WEEKLY = 16;
 	public static final int URI_TRENDS_LOCAL = 17;
 	public static final int URI_TABS = 18;
+	public static final int URI_NOTIFICATIONS = 19;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;

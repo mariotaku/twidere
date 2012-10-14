@@ -40,6 +40,7 @@
 		<item name="android:spinnerStyle">@style/Widget.Holo.Spinner</item>
 		<item name="android:spinnerItemStyle">@style/Widget.Holo.TextView.SpinnerItem</item>
 		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Widget.DropDownHint</item>
+		<item name="android:dropDownListViewStyle">@android:style/Widget.Holo.ListView.DropDown</item>
 	</style>
 
 	<style name="Theme.Holo.Light.DarkActionBar" parent="Theme.ActionBar.Light.DarkActionBar">
@@ -80,6 +81,7 @@
 		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>
 		<item name="android:spinnerItemStyle">@style/Widget.Holo.Light.TextView.SpinnerItem</item>
 		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Light.Widget.DropDownHint</item>
+		<item name="android:dropDownListViewStyle">@android:style/Widget.Holo.Light.ListView.DropDown</item>
 	</style>
 
 	<style name="Theme.Holo.Dialog" parent="Theme.ActionBar.Dialog">
@@ -117,7 +119,8 @@
 		<item name="android:seekBarStyle">@style/Widget.Holo.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Spinner</item>
 		<item name="android:spinnerItemStyle">@style/Widget.Holo.TextView.SpinnerItem</item>
-		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Light.Widget.DropDownHint</item>
+		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Widget.DropDownHint</item>
+		<item name="android:dropDownListViewStyle">@android:style/Widget.Holo.ListView.DropDown</item>
 	</style>
 
 	<style name="Theme.Holo.Light.Dialog" parent="Theme.ActionBar.Light.Dialog">
@@ -156,6 +159,7 @@
 		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>
 		<item name="android:spinnerItemStyle">@style/Widget.Holo.Light.TextView.SpinnerItem</item>
 		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Light.Widget.DropDownHint</item>
+		<item name="android:dropDownListViewStyle">@android:style/Widget.Holo.Light.ListView.DropDown</item>
 	</style>
 
 </resources>

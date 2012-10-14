@@ -24,7 +24,7 @@ import static org.mariotaku.twidere.util.Utils.getTabIconDrawable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.view.TabPageIndicator;
 import org.mariotaku.twidere.view.TabPageIndicator.TitleProvider;
@@ -37,7 +37,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider {
+public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider, Constants {
 
 	private final ArrayList<TabSpec> mTabs = new ArrayList<TabSpec>();
 
@@ -105,7 +105,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	@Override
 	public void onPageReselected(final int position) {
-		final String action = mTabs.get(position).cls.getName() + HomeActivity.SHUFFIX_SCROLL_TO_TOP;
+		final String action = mTabs.get(position).cls.getName() + SHUFFIX_SCROLL_TO_TOP;
 		final Intent intent = new Intent(action);
 		intent.setPackage(mContext.getPackageName());
 		mContext.sendBroadcast(intent);
@@ -114,6 +114,15 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	@Override
 	public void onPageSelected(final int position) {
 
+	}
+
+	@Override
+	public boolean onTabLongClick(final int position) {
+		final String action = mTabs.get(position).cls.getName() + SHUFFIX_REFRESH_TAB;
+		final Intent intent = new Intent(action);
+		intent.setPackage(mContext.getPackageName());
+		mContext.sendBroadcast(intent);
+		return true;
 	}
 
 	public void setDisplayLabel(final boolean display_label) {

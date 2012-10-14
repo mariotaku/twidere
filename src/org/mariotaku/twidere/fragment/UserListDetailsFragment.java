@@ -32,7 +32,6 @@ import static org.mariotaku.twidere.util.Utils.openUserListTimeline;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
-import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -276,6 +275,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	@Override
 	public Loader<Response<UserList>> onCreateLoader(final int id, final Bundle args) {
 		mListContainer.setVisibility(View.VISIBLE);
+		mErrorMessageView.setText(null);
+		mErrorMessageView.setVisibility(View.GONE);
 		mErrorRetryContainer.setVisibility(View.GONE);
 		setListShown(false);
 		setProgressBarIndeterminateVisibility(true);
@@ -383,7 +384,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			changeUserList(mAccountId, user);
 			mErrorRetryContainer.setVisibility(View.GONE);
 		} else {
-			showErrorToast(getActivity(), data.exception, false);
+			if (data.exception != null) {
+				mErrorMessageView.setText(data.exception.getMessage());
+				mErrorMessageView.setVisibility(View.VISIBLE);
+			}
 			mListContainer.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.VISIBLE);
 		}
