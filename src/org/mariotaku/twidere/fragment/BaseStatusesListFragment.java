@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
@@ -249,7 +250,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			case R.id.direct_retweet:
 			case MENU_RETWEET: {
 				if (isMyRetweet(status)) {
-					mService.destroyStatus(status.account_id, status.status_id);
+					cancelRetweet(mService, status);
 				} else {
 					final long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
 							: mSelectedStatus.status_id;
@@ -441,8 +442,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final MenuItem direct_retweet = menu.findItem(R.id.direct_retweet);
 		if (direct_retweet != null) {
 			final Drawable icon = direct_retweet.getIcon().mutate();
-			direct_retweet.setVisible(seprate_retweet_action && !status.is_protected
-					&& status.account_id != status.user_id || isMyRetweet(status));
+			direct_retweet.setVisible(seprate_retweet_action
+					&& (!status.is_protected || isMyRetweet(status)));
 			if (isMyRetweet(status)) {
 				icon.setColorFilter(activated_color, PorterDuff.Mode.MULTIPLY);
 				direct_retweet.setTitle(R.string.cancel_retweet);

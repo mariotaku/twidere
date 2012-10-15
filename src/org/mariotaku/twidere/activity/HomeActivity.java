@@ -75,6 +75,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class HomeActivity extends MultiSelectActivity implements OnClickListener, OnPageChangeListener {
 
@@ -508,6 +509,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (isTabsChanged(tabs)) {
 			restart();
 		}
+		// UCD 
+		ProfilingUtil.profiling(this, ProfilingUtil.FILE_NAME_APP, "App onStart");
 	}
 
 	@Override
@@ -515,6 +518,9 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		unregisterReceiver(mStateReceiver);
 		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTOP));
+		
+		//UCD 
+		ProfilingUtil.profiling(this, ProfilingUtil.FILE_NAME_APP, "App onStop");
 		super.onStop();
 	}
 

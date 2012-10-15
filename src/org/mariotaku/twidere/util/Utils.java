@@ -1563,7 +1563,7 @@ public final class Utils implements Constants {
 		if (context == null) return false;
 		final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) return true;
+		if (netInfo != null && netInfo.isConnected()) return true;
 		return false;
 	}
 
@@ -1623,7 +1623,16 @@ public final class Utils implements Constants {
 
 	public static boolean isMyRetweet(final ParcelableStatus status) {
 		if (status == null) return false;
-		return status.retweeted_by_id == status.account_id;
+		return status.retweeted_by_id == status.account_id || status.my_retweet_id > 0;
+	}
+	
+	public static int cancelRetweet(final ServiceInterface service, final ParcelableStatus status) {
+		if (service == null || status == null) return -1;
+		if (status.my_retweet_id > 0)
+			return service.destroyStatus(status.account_id, status.my_retweet_id);
+		else if (status.retweeted_by_id == status.account_id)
+			return service.destroyStatus(status.account_id, status.retweet_id);
+		return -1;
 	}
 
 	public static boolean isMyUserName(final Context context, final String screen_name) {
@@ -2574,7 +2583,7 @@ public final class Utils implements Constants {
 		final MenuItem retweet = menu.findItem(MENU_RETWEET);
 		if (retweet != null) {
 			final Drawable icon = retweet.getIcon().mutate();
-			retweet.setVisible(!status.is_protected && status.account_id != status.user_id || isMyRetweet(status));
+			retweet.setVisible(!status.is_protected || isMyRetweet(status));
 			if (isMyRetweet(status)) {
 				icon.setColorFilter(activated_color, Mode.MULTIPLY);
 				retweet.setTitle(R.string.cancel_retweet);

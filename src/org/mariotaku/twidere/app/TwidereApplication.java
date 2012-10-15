@@ -38,6 +38,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import edu.ucdavis.earlybird.UCDService;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
@@ -117,6 +118,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		super.onCreate();
 		mServiceInterface = ServiceInterface.getInstance(this);
+		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
+			startService(new Intent(this, UCDService.class));
+		}
 	}
 
 	@Override
@@ -140,6 +144,13 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			}
 		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_CONNECTION_TIMEOUT.equals(key)) {
 			reloadConnectivitySettings();
+		} else if (PREFERENCE_KEY_UCD_DATA_PROFILING.equals(key)) {
+			final Intent intent = new Intent(this, UCDService.class);
+			if (preferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
+				startService(intent);
+			} else {
+				stopService(intent);
+			}
 		}
 	}
 

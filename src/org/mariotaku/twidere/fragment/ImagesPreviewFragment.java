@@ -28,6 +28,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class ImagesPreviewFragment extends BaseFragment implements OnItemClickListener, OnClickListener,
 		OnTouchListener {
@@ -39,6 +40,8 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	private View mLoadImagesIndicator;
 	private Handler mHandler;
 	private Runnable mTicker;
+	
+	private long mAccountId, mStatusId;
 
 	private volatile boolean mBusy, mTickerStopped;
 
@@ -67,6 +70,9 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		mGallery.setAdapter(mAdapter);
 		mGallery.setOnItemClickListener(this);
 		mLoadImagesIndicator.setOnClickListener(this);
+		
+		mAccountId = getArguments().getLong("account");
+		mStatusId = getArguments().getLong("status");
 	}
 
 	@Override
@@ -74,6 +80,9 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 		switch (v.getId()) {
 			case R.id.load_images: {
 				show();
+				// UCD 
+				ProfilingUtil.profiling(getActivity(), mAccountId,
+						"Thumbnail click, " + mStatusId);
 				break;
 			}
 		}
@@ -92,6 +101,8 @@ public class ImagesPreviewFragment extends BaseFragment implements OnItemClickLi
 	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		final ImageSpec spec = mAdapter.getItem(position);
 		if (spec == null) return;
+		// UCD 
+		ProfilingUtil.profiling(getActivity(), mAccountId, "Large image click, " + mStatusId+", "+spec.image_link);
 		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
 		intent.setPackage(getActivity().getPackageName());
 		startActivity(intent);

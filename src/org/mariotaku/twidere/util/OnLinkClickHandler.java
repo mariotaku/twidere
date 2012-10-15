@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class OnLinkClickHandler implements OnLinkClickListener {
 
@@ -24,6 +25,11 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 
 	@Override
 	public void onLinkClick(final String link, final int type) {
+		
+		
+		// UCD 		
+		ProfilingUtil.profiling(activity, account_id, "Click, "+link + ", " + type);
+		
 		if (activity == null) return;
 		switch (type) {
 			case TwidereLinkify.LINK_TYPE_MENTION_LIST: {

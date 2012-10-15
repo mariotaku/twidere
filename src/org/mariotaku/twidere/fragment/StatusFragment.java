@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
@@ -97,6 +98,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.twitter.Extractor;
+import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class StatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener, Panes.Right {
 
@@ -245,10 +247,18 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 	private boolean mFollowInfoLoaderInitialized;
 
 	public void displayStatus(final ParcelableStatus status) {
-		mStatus = null;
+
+		//UCD
+		if (mStatus != null) {
+			ProfilingUtil.profiling(getActivity(), mAccountId, "End, " + mStatus.status_id);
+		}
+		mStatus = status;
+		//UCD
+		if (mStatus != null) {
+			ProfilingUtil.profiling(getActivity(), mAccountId, "Start, " + mStatus.status_id);
+		}
 		mImagesPreviewFragment.clear();
 		if (status == null || getActivity() == null) return;
-		mStatus = status;
 
 		mMenuBar.inflate(R.menu.menu_status);
 		setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
@@ -315,8 +325,6 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 		final TwidereApplication application = getApplication();
 		mService = application.getServiceInterface();
 		mProfileImageLoader = application.getProfileImageLoader();
-		mImagesPreviewFragment = (ImagesPreviewFragment) Fragment.instantiate(getActivity(),
-				ImagesPreviewFragment.class.getName());
 		super.onActivityCreated(savedInstanceState);
 		setRetainInstance(true);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
@@ -326,6 +334,11 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
 			mStatus = bundle.getParcelable(INTENT_KEY_STATUS);
 		}
+		Bundle b = new Bundle();
+		b.putLong("account", mAccountId);
+		b.putLong("status", mStatusId);
+		mImagesPreviewFragment = (ImagesPreviewFragment) Fragment.instantiate(getActivity(),
+				ImagesPreviewFragment.class.getName(),b);
 		mInReplyToView.setOnClickListener(this);
 		mFollowButton.setOnClickListener(this);
 		mProfileView.setOnClickListener(this);
@@ -412,6 +425,10 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 	@Override
 	public void onDestroyView() {
+		//UCD
+		if (mStatus != null) {
+			ProfilingUtil.profiling(getActivity(), mAccountId, "End, " + mStatus.status_id);
+		}
 		mStatus = null;
 		mAccountId = -1;
 		mStatusId = -1;
@@ -438,7 +455,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			}
 			case MENU_RETWEET: {
 				if (isMyRetweet(mStatus)) {
-					mService.destroyStatus(mAccountId, mStatus.retweet_id);
+					cancelRetweet(mService, mStatus);
 				} else {
 					final long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
 							: mStatus.status_id;
@@ -544,7 +561,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 	@Override
 	public void onStop() {
-		unregisterReceiver(mStatusReceiver);
+		unregisterReceiver(mStatusReceiver);	
 		super.onStop();
 	}
 

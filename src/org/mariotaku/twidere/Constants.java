@@ -46,7 +46,7 @@ public interface Constants extends TwitterConstants {
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 28;
+	public static final int DATABASES_VERSION = 29;
 
 	// Following 4 consants are not included in source code.
 	public static final String TWITTER_CONSUMER_KEY = PrivateConstants.TWITTER_CONSUMER_KEY;
@@ -186,6 +186,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_CONNECTION_TIMEOUT = "connection_timeout";
 	public static final String PREFERENCE_KEY_NAME_DISPLAY_OPTION = "name_display_option";
 	public static final String PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW = "stop_auto_refresh_when_battery_low";
+	public static final String PREFERENCE_KEY_UCD_DATA_PROFILING = "ucd_data_profiling";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

@@ -52,7 +52,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 	};
 
 	public final long retweet_id, retweeted_by_id, status_id, account_id, user_id, status_timestamp, retweet_count,
-			in_reply_to_status_id;
+			in_reply_to_status_id, my_retweet_id;
 
 	public final boolean is_gap, is_retweet, is_favorite, is_protected, is_verified, has_media;
 
@@ -113,6 +113,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
 		text_unescaped = unescape(text_html);
+		my_retweet_id = indices.my_retweet_id != -1 ? cursor.getLong(indices.my_retweet_id) : -1;
 	}
 
 	public ParcelableStatus(final Parcel in) {
@@ -147,6 +148,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		profile_image_url = parseURL(profile_image_url_string);
 		text = text_html != null ? Html.fromHtml(text_html) : null;
 		text_unescaped = unescape(text_html);
+		my_retweet_id = in.readLong();
 	}
 
 	public ParcelableStatus(final SerializableStatus in) {
@@ -181,6 +183,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		profile_image_url = in.profile_image_url;
 		text = text_html != null ? Html.fromHtml(text_html) : null;
 		text_unescaped = unescape(text_html);
+		my_retweet_id = in.my_retweet_id;
 	}
 
 	public ParcelableStatus(Status status, final long account_id, final boolean is_gap) {
@@ -225,6 +228,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
 		text_unescaped = unescape(text_html);
+		my_retweet_id = retweeted_by_id == account_id ? status_id : -1;
 	}
 
 	@Override
@@ -280,6 +284,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		out.writeString(image_preview_url_string);
 		out.writeString(image_orig_url_string);
 		out.writeString(location_string);
+		out.writeLong(my_retweet_id);
 	}
 
 	private static long getTime(final Date date) {

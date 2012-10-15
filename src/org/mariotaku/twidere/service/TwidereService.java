@@ -93,6 +93,7 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.twitter.Validator;
+import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class TwidereService extends Service implements Constants {
 
@@ -1537,12 +1538,11 @@ public class TwidereService extends Service implements Constants {
 			final Intent intent = new Intent(BROADCAST_STATUS_DESTROYED);
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				final long status_id = result.data.getId();
-
-				final StringBuilder where = new StringBuilder();
-				where.append(Statuses.STATUS_ID + " = " + status_id);
-				where.append(" OR " + Statuses.RETWEET_ID + " = " + status_id);
+				final ContentValues values = new ContentValues();
+				values.put(Statuses.MY_RETWEET_ID, -1);
 				for (final Uri uri : TweetStore.STATUSES_URIS) {
-					mResolver.delete(uri, where.toString(), null);
+					mResolver.delete(uri, Statuses.STATUS_ID + " = " + status_id, null);
+					mResolver.update(uri, values, Statuses.MY_RETWEET_ID + " = " + status_id, null);
 				}
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
@@ -2433,11 +2433,16 @@ public class TwidereService extends Service implements Constants {
 		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
 
 			if (result.data != null && result.data.getId() > 0) {
-				Toast.makeText(getOuterType(), R.string.retweet_successfully, Toast.LENGTH_SHORT).show();
+				final ContentValues values = new ContentValues();
+				values.put(Statuses.MY_RETWEET_ID, result.data.getId());
+				for (final Uri uri : STATUSES_URIS) {
+					mResolver.update(uri, values, Statuses.STATUS_ID + " = " + status_id, null);
+				}
 				final Intent intent = new Intent(BROADCAST_RETWEET_CHANGED);
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_RETWEETED, true);
 				sendBroadcast(intent);
+				Toast.makeText(getOuterType(), R.string.retweet_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.retweeting, result.exception, true);
 			}
@@ -3196,6 +3201,16 @@ public class TwidereService extends Service implements Constants {
 					where.append(Statuses.RETWEET_ID + " IN ( " + ids_string + " ) ");
 					where.append(")");
 					mResolver.delete(uri, where.toString(), null);
+					
+					/**
+					 * UCD
+					 */
+					final String UCD_new_status_ids = ListUtils.toString(
+							account_newly_inserted, ',', true);
+					ProfilingUtil.profiling(getOuterType(), account_id, "Download tweets, "+UCD_new_status_ids);
+					/*
+					 *
+					 **/
 				}
 
 				// Insert previously fetched items.
