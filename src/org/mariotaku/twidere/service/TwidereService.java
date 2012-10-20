@@ -3218,7 +3218,7 @@ public class TwidereService extends Service implements Constants {
 
 				// Insert a gap.
 				// TODO make sure it will not have bugs.
-				final boolean insert_gap = response.load_item_limit == response.list.size() && !no_items_before;
+				final boolean insert_gap = response.load_item_limit <= response.list.size() && !no_items_before;
 				if (insert_gap) {
 					final ContentValues values = new ContentValues();
 					values.put(Statuses.IS_GAP, 1);
