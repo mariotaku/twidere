@@ -19,11 +19,15 @@
 
 package org.mariotaku.twidere.view;
 
-import org.mariotaku.twidere.util.SetLayerTypeAccessor;
-
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Path;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -32,7 +36,9 @@ import android.widget.ImageView;
 
 public class RoundCorneredImageView extends ImageView {
 
-	private final Path mPath = new Path();
+	private final float mRadius;
+	private Bitmap mRounder;
+	private Paint mPaint;
 
 	public RoundCorneredImageView(final Context context) {
 		this(context, null);
@@ -44,36 +50,40 @@ public class RoundCorneredImageView extends ImageView {
 
 	public RoundCorneredImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		init();
-		createPath();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			SetLayerTypeAccessor.setLayerType(this, View.LAYER_TYPE_SOFTWARE, null);
+		}
+		final TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.radius });
+		mRadius = a.getDimensionPixelSize(0, 0);
+		a.recycle();
 	}
 
 	@Override
 	public void onDraw(final Canvas canvas) {
-		try {
-			canvas.clipPath(mPath);
-		} catch (final UnsupportedOperationException e) {
-			// This shouldn't happen, but in order to keep app running, I simply
-			// ignore this Exception.
-		}
 		super.onDraw(canvas);
+		if (mRounder != null && mPaint != null) {
+			canvas.drawBitmap(mRounder, 0, 0, mPaint);
+		}
 	}
 
 	@Override
 	public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
-		createPath();
+		if (w > 0 && h > 0) {
+			mRounder = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+			final Canvas canvas = new Canvas(mRounder);
+			mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+			mPaint.setColor(Color.BLACK);
+			canvas.drawRoundRect(new RectF(0, 0, w, h), mRadius, mRadius, mPaint);
+			mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+		}
 		super.onSizeChanged(w, h, oldw, oldh);
 	}
 
-	private void createPath() {
-		final float density = getResources().getDisplayMetrics().density;
-		mPath.reset();
-		mPath.addRoundRect(new RectF(0, 0, getWidth(), getHeight()), 4 * density, 4 * density, Path.Direction.CW);
-	}
+	static class SetLayerTypeAccessor {
 
-	private void init() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			SetLayerTypeAccessor.setLayerType(this, View.LAYER_TYPE_SOFTWARE, null);
+		@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+		public static void setLayerType(final View view, final int layerType, final Paint paint) {
+			view.setLayerType(layerType, paint);
 		}
 	}
 }

@@ -93,6 +93,7 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.twitter.Validator;
+
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class TwidereService extends Service implements Constants {
@@ -3201,13 +3202,12 @@ public class TwidereService extends Service implements Constants {
 					where.append(Statuses.RETWEET_ID + " IN ( " + ids_string + " ) ");
 					where.append(")");
 					mResolver.delete(uri, where.toString(), null);
-					
+
 					/**
 					 * UCD
 					 */
-					final String UCD_new_status_ids = ListUtils.toString(
-							account_newly_inserted, ',', true);
-					ProfilingUtil.profiling(getOuterType(), account_id, "Download tweets, "+UCD_new_status_ids);
+					final String UCD_new_status_ids = ListUtils.toString(account_newly_inserted, ',', true);
+					ProfilingUtil.profiling(getOuterType(), account_id, "Download tweets, " + UCD_new_status_ids);
 					/*
 					 *
 					 **/
@@ -3669,7 +3669,6 @@ public class TwidereService extends Service implements Constants {
 					}
 				}
 			} else {
-				showErrorToast(R.string.sending_status, exception, true);
 				// If the status is a duplicate, there's no need to save it to
 				// drafts.
 				if (!(exception instanceof TwitterException)
@@ -3677,6 +3676,9 @@ public class TwidereService extends Service implements Constants {
 						|| ((TwitterException) exception).getErrorMessages().length == 0
 						|| ((TwitterException) exception).getErrorMessages()[0].getCode() != 187) {
 					saveDrafts(failed_account_ids);
+					Utils.showErrorToast(getOuterType(), getString(R.string.status_is_duplicate), false);
+				} else {
+					showErrorToast(R.string.sending_status, exception, true);
 				}
 			}
 			super.onPostExecute(result);

@@ -67,6 +67,11 @@
 			android:defaultValue="@color/holo_blue_dark"
 			android:key="notification_light_color"
 			android:title="@string/notification_light_color"/>
+
+		<org.mariotaku.twidere.preference.SlientNotificationsPreference
+			android:key="slient_notifications"
+			android:summary="@string/slient_notifications_summary"
+			android:title="@string/slient_notifications"/>
 	</PreferenceCategory>
 
 </PreferenceScreen>

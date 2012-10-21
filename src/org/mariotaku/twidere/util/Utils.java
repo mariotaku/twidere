@@ -99,14 +99,11 @@ import org.mariotaku.twidere.fragment.UserBlocksListFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
 import org.mariotaku.twidere.fragment.UserFriendsFragment;
-import org.mariotaku.twidere.fragment.UserListCreatedFragment;
 import org.mariotaku.twidere.fragment.UserListDetailsFragment;
 import org.mariotaku.twidere.fragment.UserListMembersFragment;
-import org.mariotaku.twidere.fragment.UserListMembershipsFragment;
 import org.mariotaku.twidere.fragment.UserListSubscribersFragment;
-import org.mariotaku.twidere.fragment.UserListSubscriptionsFragment;
 import org.mariotaku.twidere.fragment.UserListTimelineFragment;
-import org.mariotaku.twidere.fragment.UserListTypesFragment;
+import org.mariotaku.twidere.fragment.UserListsListFragment;
 import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
@@ -265,22 +262,17 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_DIRECT_MESSAGES_CONVERSATION, null,
 				LINK_ID_DIRECT_MESSAGES_CONVERSATION);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_DETAILS, null, LINK_ID_LIST_DETAILS);
-		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_TYPES, null, LINK_ID_LIST_TYPES);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_TYPES, null, LINK_ID_LISTS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_TIMELINE, null, LINK_ID_LIST_TIMELINE);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERS, null, LINK_ID_LIST_MEMBERS);
-		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIBERS, null, LINK_ID_LIST_SUBSCRIBERS);
-		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_CREATED, null, LINK_ID_LIST_CREATED);
-		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_SUBSCRIPTIONS, null, LINK_ID_LIST_SUBSCRIPTIONS);
-		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERSHIPS, null, LINK_ID_LIST_MEMBERSHIPS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LISTS, null, LINK_ID_LISTS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SAVED_SEARCHES, null, LINK_ID_SAVED_SEARCHES);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_MENTIONS, null, LINK_ID_USER_MENTIONS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_INCOMING_FRIENDSHIPS, null, LINK_ID_INCOMING_FRIENDSHIPS);
 
-		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_CREATED, UserListCreatedFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LISTS, UserListsListFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERS, UserListMembersFragment.class);
-		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERSHIPS, UserListMembershipsFragment.class);
-		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_SUBSCRIBERS, UserListSubscribersFragment.class);
-		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_SUBSCRIPTIONS, UserListSubscriptionsFragment.class);
+		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LISTS, UserListSubscribersFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_TIMELINE, UserListTimelineFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SAVED_SEARCHES, SavedSearchesListFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_SEARCH_TWEETS, SearchTweetsFragment.class);
@@ -293,11 +285,8 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_TRENDS, TrendsFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_ACTIVITIES_ABOUT_ME, ActivitiesAboutMeFragment.class);
 
-		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_CREATED, R.string.list_created_by_user);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_MEMBERS, R.string.list_members);
-		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_MEMBERSHIPS, R.string.list_following_user);
-		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_SUBSCRIBERS, R.string.list_subscribers);
-		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_SUBSCRIPTIONS, R.string.list_user_followed);
+		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LISTS, R.string.user_list);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_LIST_TIMELINE, R.string.list_timeline);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SAVED_SEARCHES, R.string.saved_searches);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_SEARCH_TWEETS, R.string.search_tweets);
@@ -439,6 +428,15 @@ public final class Utils implements Constants {
 			if (!objectEquals(bundle1.get(key), bundle2.get(key))) return false;
 		}
 		return true;
+	}
+
+	public static int cancelRetweet(final ServiceInterface service, final ParcelableStatus status) {
+		if (service == null || status == null) return -1;
+		if (status.my_retweet_id > 0)
+			return service.destroyStatus(status.account_id, status.my_retweet_id);
+		else if (status.retweeted_by_id == status.account_id)
+			return service.destroyStatus(status.account_id, status.retweet_id);
+		return -1;
 	}
 
 	public static boolean classEquals(final Class<?> cls1, final Class<?> cls2) {
@@ -1625,15 +1623,6 @@ public final class Utils implements Constants {
 		if (status == null) return false;
 		return status.retweeted_by_id == status.account_id || status.my_retweet_id > 0;
 	}
-	
-	public static int cancelRetweet(final ServiceInterface service, final ParcelableStatus status) {
-		if (service == null || status == null) return -1;
-		if (status.my_retweet_id > 0)
-			return service.destroyStatus(status.account_id, status.my_retweet_id);
-		else if (status.retweeted_by_id == status.account_id)
-			return service.destroyStatus(status.account_id, status.retweet_id);
-		return -1;
-	}
 
 	public static boolean isMyUserName(final Context context, final String screen_name) {
 		if (context == null) return false;
@@ -2122,33 +2111,6 @@ public final class Utils implements Constants {
 
 	}
 
-	public static void openUserListCreated(final Activity activity, final long account_id, final long user_id,
-			final String screen_name) {
-		if (activity == null) return;
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new UserListCreatedFragment();
-			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putLong(INTENT_KEY_USER_ID, user_id);
-			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_LIST_CREATED);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (user_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
-			}
-			if (screen_name != null) {
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
-			}
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-
 	public static void openUserListDetails(final Activity activity, final long account_id, final int list_id,
 			final long user_id, final String screen_name, final String list_name) {
 		if (activity == null) return;
@@ -2219,12 +2181,12 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserListMemberships(final Activity activity, final long account_id, final long user_id,
+	public static void openUserLists(final Activity activity, final long account_id, final long user_id,
 			final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new UserListMembershipsFragment();
+			final Fragment fragment = new UserListsListFragment();
 			final Bundle args = new Bundle();
 			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 			args.putLong(INTENT_KEY_USER_ID, user_id);
@@ -2234,7 +2196,7 @@ public final class Utils implements Constants {
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_LIST_MEMBERSHIPS);
+			builder.authority(AUTHORITY_LISTS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			if (user_id > 0) {
 				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
@@ -2263,7 +2225,7 @@ public final class Utils implements Constants {
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_LIST_SUBSCRIBERS);
+			builder.authority(AUTHORITY_LISTS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			if (list_id > 0) {
 				builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
@@ -2276,33 +2238,6 @@ public final class Utils implements Constants {
 			}
 			if (list_name != null) {
 				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
-			}
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-
-	public static void openUserListSubscriptions(final Activity activity, final long account_id, final long user_id,
-			final String screen_name) {
-		if (activity == null) return;
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new UserListSubscriptionsFragment();
-			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putLong(INTENT_KEY_USER_ID, user_id);
-			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_LIST_SUBSCRIPTIONS);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (user_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
-			}
-			if (screen_name != null) {
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
@@ -2338,33 +2273,6 @@ public final class Utils implements Constants {
 			}
 			if (list_name != null) {
 				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
-			}
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-
-	public static void openUserListTypes(final Activity activity, final long account_id, final long user_id,
-			final String screen_name) {
-		if (activity == null) return;
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new UserListTypesFragment();
-			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putLong(INTENT_KEY_USER_ID, user_id);
-			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_LIST_TYPES);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (user_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
-			}
-			if (screen_name != null) {
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
@@ -2655,12 +2563,17 @@ public final class Utils implements Constants {
 		if (t != null) {
 			final String t_message = trimLineBreak(unescape(t.getMessage()));
 			if (action != null) {
-				if (t instanceof TwitterException && ((TwitterException) t).exceededRateLimitation()) {
-					final RateLimitStatus status = ((TwitterException) t).getRateLimitStatus();
-					final String next_reset_time_string = DateUtils.formatDateTime(context, status.getResetTime()
-							.getTime(), DateFormat.is24HourFormat(context) ? DateUtils.FORMAT_SHOW_TIME
-							| DateUtils.FORMAT_24HOUR : DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_12HOUR);
-					message = context.getString(R.string.error_message_rate_limit, action, next_reset_time_string);
+				if (t instanceof TwitterException) {
+					final TwitterException te = (TwitterException) t;
+					if (te.exceededRateLimitation()) {
+						final RateLimitStatus status = te.getRateLimitStatus();
+						final String next_reset_time_string = DateUtils.formatDateTime(context, status.getResetTime()
+								.getTime(), DateFormat.is24HourFormat(context) ? DateUtils.FORMAT_SHOW_TIME
+								| DateUtils.FORMAT_24HOUR : DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_12HOUR);
+						message = context.getString(R.string.error_message_rate_limit, action, next_reset_time_string);
+					} else {
+						message = context.getString(R.string.error_message_with_action, action, t_message);
+					}
 				} else {
 					message = context.getString(R.string.error_message_with_action, action, t_message);
 				}

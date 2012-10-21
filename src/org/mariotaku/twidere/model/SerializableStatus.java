@@ -30,7 +30,7 @@ public class SerializableStatus implements Serializable {
 	private static final long serialVersionUID = -8496911950475055067L;
 
 	public long retweet_id, retweeted_by_id, status_id, account_id, user_id, status_timestamp, retweet_count,
-	in_reply_to_status_id, my_retweet_id;
+			in_reply_to_status_id, my_retweet_id;
 
 	public boolean is_gap, is_retweet, is_favorite, is_protected, is_verified, has_media;
 
@@ -40,7 +40,6 @@ public class SerializableStatus implements Serializable {
 	public String location;
 
 	public URL profile_image_url, image_preview_url;
-
 
 	public SerializableStatus(final ParcelableStatus in) {
 		retweet_id = in.retweet_id;

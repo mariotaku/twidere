@@ -150,7 +150,7 @@ public interface ListPopupWindow {
 	public void show();
 
 	public static class InstanceHelper {
-		public static ListPopupWindow getInstance(Context context) {
+		public static ListPopupWindow getInstance(final Context context) {
 			return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? new ListPopupWindowNative(context)
 					: new ListPopupWindowCompat(context);
 		}

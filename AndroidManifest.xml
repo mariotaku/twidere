@@ -228,7 +228,7 @@
 					android:host="list_details"
 					android:scheme="twidere"/>
 				<data
-					android:host="list_types"
+					android:host="lists"
 					android:scheme="twidere"/>
 				<data
 					android:host="list_timeline"
@@ -238,15 +238,6 @@
 					android:scheme="twidere"/>
 				<data
 					android:host="list_subscribers"
-					android:scheme="twidere"/>
-				<data
-					android:host="list_created"
-					android:scheme="twidere"/>
-				<data
-					android:host="list_subscriptions"
-					android:scheme="twidere"/>
-				<data
-					android:host="list_memberships"
 					android:scheme="twidere"/>
 				<data
 					android:host="saved_searches"
@@ -404,6 +395,11 @@
 		<activity
 			android:name=".activity.AuthorizeActivity"
 			android:label="@string/sign_in"/>
+		<activity
+			android:name=".activity.DataProfilingSettingsActivity"
+			android:label="@string/data_profiling"
+			android:theme="@style/Theme.Twidere.Dialog">
+		</activity>
 
 		<service
 			android:name=".service.TwidereService"

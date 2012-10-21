@@ -145,7 +145,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 				final Bundle args = new Bundle();
 				args.putString(INTENT_KEY_SCREEN_NAME, mText1);
 				if (AUTHORITY_LIST_TIMELINE.equals(mType) || AUTHORITY_LIST_MEMBERS.equals(mType)
-						|| AUTHORITY_LIST_SUBSCRIBERS.equals(mType)) {
+						|| AUTHORITY_LISTS.equals(mType)) {
 					if (mText1 == null || mText1.length() == 0 || mText2 == null || mText2.length() == 0) {
 						Toast.makeText(this, R.string.invalid_settings, Toast.LENGTH_SHORT).show();
 						return false;
@@ -227,8 +227,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		mText1Preference.setShouldCompleteUserName(true);
 		mText2Preference.setEnabled(false);
 		mText2Preference.setTitle(R.string.unused);
-		if (AUTHORITY_LIST_TIMELINE.equals(type) || AUTHORITY_LIST_MEMBERS.equals(type)
-				|| AUTHORITY_LIST_SUBSCRIBERS.equals(type)) {
+		if (AUTHORITY_LIST_TIMELINE.equals(type) || AUTHORITY_LIST_MEMBERS.equals(type) || AUTHORITY_LISTS.equals(type)) {
 			mText2Preference.setEnabled(true);
 			mText2Preference.setTitle(R.string.list_name);
 		} else if (AUTHORITY_SEARCH_TWEETS.equals(type) || AUTHORITY_SEARCH_USERS.equals(type)) {

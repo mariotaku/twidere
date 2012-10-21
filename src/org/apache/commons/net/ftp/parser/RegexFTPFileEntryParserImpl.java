@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.commons.net.ftp.parser;
 
 import java.util.regex.MatchResult;
@@ -26,130 +25,125 @@ import java.util.regex.PatternSyntaxException;
 import org.apache.commons.net.ftp.FTPFileEntryParserImpl;
 
 /**
- * This abstract class implements both the older FTPFileListParser and
- * newer FTPFileEntryParser interfaces with default functionality.
- * All the classes in the parser subpackage inherit from this.
- *
- * This is the base class for all regular expression based FTPFileEntryParser classes
- *
+ * This abstract class implements both the older FTPFileListParser and newer
+ * FTPFileEntryParser interfaces with default functionality. All the classes in
+ * the parser subpackage inherit from this.
+ * 
+ * This is the base class for all regular expression based FTPFileEntryParser
+ * classes
+ * 
  * @author Steve Cohen <scohen@apache.org>
  */
-public abstract class RegexFTPFileEntryParserImpl extends
-        FTPFileEntryParserImpl {
-    /**
-     * internal pattern the matcher tries to match, representing a file
-     * entry
-     */
-    private Pattern pattern = null;
+public abstract class RegexFTPFileEntryParserImpl extends FTPFileEntryParserImpl {
+	/**
+	 * internal pattern the matcher tries to match, representing a file entry
+	 */
+	private Pattern pattern = null;
 
-    /**
-     * internal match result used by the parser
-     */
-    private MatchResult result = null;
+	/**
+	 * internal match result used by the parser
+	 */
+	private MatchResult result = null;
 
-    /**
-     * Internal PatternMatcher object used by the parser.  It has protected
-     * scope in case subclasses want to make use of it for their own purposes.
-     */
-    protected Matcher _matcher_ = null;
+	/**
+	 * Internal PatternMatcher object used by the parser. It has protected scope
+	 * in case subclasses want to make use of it for their own purposes.
+	 */
+	protected Matcher _matcher_ = null;
 
-    /**
-     * The constructor for a RegexFTPFileEntryParserImpl object.
-     *
-     * @param regex  The regular expression with which this object is
-     * initialized.
-     *
-     * @exception IllegalArgumentException
-     * Thrown if the regular expression is unparseable.  Should not be seen in
-     * normal conditions.  It it is seen, this is a sign that a subclass has
-     * been created with a bad regular expression.   Since the parser must be
-     * created before use, this means that any bad parser subclasses created
-     * from this will bomb very quickly,  leading to easy detection.
-     */
+	/**
+	 * The constructor for a RegexFTPFileEntryParserImpl object.
+	 * 
+	 * @param regex The regular expression with which this object is
+	 *            initialized.
+	 * 
+	 * @exception IllegalArgumentException Thrown if the regular expression is
+	 *                unparseable. Should not be seen in normal conditions. It
+	 *                it is seen, this is a sign that a subclass has been
+	 *                created with a bad regular expression. Since the parser
+	 *                must be created before use, this means that any bad parser
+	 *                subclasses created from this will bomb very quickly,
+	 *                leading to easy detection.
+	 */
 
-    public RegexFTPFileEntryParserImpl(String regex) {
-        super();
-        setRegex(regex);
-    }
+	public RegexFTPFileEntryParserImpl(final String regex) {
+		super();
+		setRegex(regex);
+	}
 
-    /**
-     * Convenience method delegates to the internal MatchResult's matches()
-     * method.
-     *
-     * @param s the String to be matched
-     * @return true if s matches this object's regular expression.
-     */
+	/**
+	 * Convenience method
+	 * 
+	 * @return the number of groups() in the internal MatchResult.
+	 */
 
-    public boolean matches(String s) {
-        this.result = null;
-        _matcher_ = pattern.matcher(s);
-        if (_matcher_.matches()) {
-            this.result = _matcher_.toMatchResult();
-        }
-        return null != this.result;
-    }
+	public int getGroupCnt() {
+		if (result == null) return 0;
+		return result.groupCount();
+	}
 
-    /**
-     * Convenience method
-     *
-     * @return the number of groups() in the internal MatchResult.
-     */
+	/**
+	 * For debugging purposes - returns a string shows each match group by
+	 * number.
+	 * 
+	 * @return a string shows each match group by number.
+	 */
 
-    public int getGroupCnt() {
-        if (this.result == null) {
-            return 0;
-        }
-        return this.result.groupCount();
-    }
+	public String getGroupsAsString() {
+		final StringBuilder b = new StringBuilder();
+		for (int i = 1; i <= result.groupCount(); i++) {
+			b.append(i).append(") ").append(result.group(i)).append(System.getProperty("line.separator"));
+		}
+		return b.toString();
+	}
 
-    /**
-     * Convenience method delegates to the internal MatchResult's group()
-     * method.
-     *
-     * @param matchnum match group number to be retrieved
-     *
-     * @return the content of the <code>matchnum'th</code> group of the internal
-     *         match or null if this method is called without a match having
-     *         been made.
-     */
-    public String group(int matchnum) {
-        if (this.result == null) {
-            return null;
-        }
-        return this.result.group(matchnum);
-    }
+	/**
+	 * Convenience method delegates to the internal MatchResult's group()
+	 * method.
+	 * 
+	 * @param matchnum match group number to be retrieved
+	 * 
+	 * @return the content of the <code>matchnum'th</code> group of the internal
+	 *         match or null if this method is called without a match having
+	 *         been made.
+	 */
+	public String group(final int matchnum) {
+		if (result == null) return null;
+		return result.group(matchnum);
+	}
 
-    /**
-     * For debugging purposes - returns a string shows each match group by
-     * number.
-     *
-     * @return a string shows each match group by number.
-     */
+	/**
+	 * Convenience method delegates to the internal MatchResult's matches()
+	 * method.
+	 * 
+	 * @param s the String to be matched
+	 * @return true if s matches this object's regular expression.
+	 */
 
-    public String getGroupsAsString() {
-        StringBuilder b = new StringBuilder();
-        for (int i = 1; i <= this.result.groupCount(); i++) {
-            b.append(i).append(") ").append(this.result.group(i)).append(
-                    System.getProperty("line.separator"));
-        }
-        return b.toString();
-    }
+	public boolean matches(final String s) {
+		result = null;
+		_matcher_ = pattern.matcher(s);
+		if (_matcher_.matches()) {
+			result = _matcher_.toMatchResult();
+		}
+		return null != result;
+	}
 
-    /**
-     * Alter the current regular expression being utilised for entry parsing
-     * and create a new {@link Pattern} instance.
-     * @param regex The new regular expression
-     * @return  true if the compiled pattern is not null
-     * @since 2.0
-     */
-    public boolean setRegex(String regex) {
-        try {
-            pattern = Pattern.compile(regex);
-        } catch (PatternSyntaxException pse) {
-            throw new IllegalArgumentException("Unparseable regex supplied: "
-                    + regex);
-        }
-        return (pattern != null);
-    }
+	/**
+	 * Alter the current regular expression being utilised for entry parsing and
+	 * create a new {@link Pattern} instance.
+	 * 
+	 * @param regex The new regular expression
+	 * @return true if the compiled pattern is not null
+	 * @since 2.0
+	 */
+	public boolean setRegex(final String regex) {
+		try {
+			pattern = Pattern.compile(regex);
+		} catch (final PatternSyntaxException pse) {
+			throw new IllegalArgumentException("Unparseable regex supplied: " + regex);
+		}
+		return pattern != null;
+	}
 
 }

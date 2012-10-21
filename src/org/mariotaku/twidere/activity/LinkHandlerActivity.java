@@ -37,14 +37,11 @@ import org.mariotaku.twidere.fragment.UserBlocksListFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
 import org.mariotaku.twidere.fragment.UserFriendsFragment;
-import org.mariotaku.twidere.fragment.UserListCreatedFragment;
 import org.mariotaku.twidere.fragment.UserListDetailsFragment;
 import org.mariotaku.twidere.fragment.UserListMembersFragment;
-import org.mariotaku.twidere.fragment.UserListMembershipsFragment;
 import org.mariotaku.twidere.fragment.UserListSubscribersFragment;
-import org.mariotaku.twidere.fragment.UserListSubscriptionsFragment;
 import org.mariotaku.twidere.fragment.UserListTimelineFragment;
-import org.mariotaku.twidere.fragment.UserListTypesFragment;
+import org.mariotaku.twidere.fragment.UserListsListFragment;
 import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
@@ -254,9 +251,9 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
 				}
-				case LINK_ID_LIST_TYPES: {
+				case LINK_ID_LISTS: {
 					setTitle(R.string.user_list);
-					fragment = new UserListTypesFragment();
+					fragment = new UserListsListFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					if (isNullOrEmpty(param_screen_name) && isNullOrEmpty(param_user_id)) {
@@ -322,45 +319,6 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
 					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
-					break;
-				}
-				case LINK_ID_LIST_CREATED: {
-					setTitle(R.string.list_created_by_user);
-					fragment = new UserListCreatedFragment();
-					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (isNullOrEmpty(param_screen_name) && isNullOrEmpty(param_user_id)) {
-						finish();
-						return false;
-					}
-					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
-					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-					break;
-				}
-				case LINK_ID_LIST_SUBSCRIPTIONS: {
-					setTitle(R.string.list_user_followed);
-					fragment = new UserListSubscriptionsFragment();
-					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (isNullOrEmpty(param_screen_name) && isNullOrEmpty(param_user_id)) {
-						finish();
-						return false;
-					}
-					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
-					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-					break;
-				}
-				case LINK_ID_LIST_MEMBERSHIPS: {
-					setTitle(R.string.list_following_user);
-					fragment = new UserListMembershipsFragment();
-					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (isNullOrEmpty(param_screen_name) && isNullOrEmpty(param_user_id)) {
-						finish();
-						return false;
-					}
-					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
-					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					break;
 				}
 				case LINK_ID_SAVED_SEARCHES: {

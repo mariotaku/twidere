@@ -18,45 +18,43 @@
 package org.apache.commons.net.ftp.parser;
 
 /**
- * This class encapsulates all errors that may be thrown by
- * the process of an FTPFileEntryParserFactory creating and
- * instantiating an FTPFileEntryParser.
+ * This class encapsulates all errors that may be thrown by the process of an
+ * FTPFileEntryParserFactory creating and instantiating an FTPFileEntryParser.
  */
 public class ParserInitializationException extends RuntimeException {
 
-    private static final long serialVersionUID = 5563335279583210658L;
+	private static final long serialVersionUID = 5563335279583210658L;
 
-    /**
-     * Constucts a ParserInitializationException with just a message
-     *
-     * @param message Exception message
-     */
-    public ParserInitializationException(String message) {
-        super(message);
-    }
+	/**
+	 * Constucts a ParserInitializationException with just a message
+	 * 
+	 * @param message Exception message
+	 */
+	public ParserInitializationException(final String message) {
+		super(message);
+	}
 
-    /**
-     * Constucts a ParserInitializationException with a message
-     * and a root cause.
-     *
-     * @param message   Exception message
-     * @param rootCause root cause throwable that caused
-     * this to be thrown
-     */
-    public ParserInitializationException(String message, Throwable rootCause) {
-        super(message, rootCause);
-    }
+	/**
+	 * Constucts a ParserInitializationException with a message and a root
+	 * cause.
+	 * 
+	 * @param message Exception message
+	 * @param rootCause root cause throwable that caused this to be thrown
+	 */
+	public ParserInitializationException(final String message, final Throwable rootCause) {
+		super(message, rootCause);
+	}
 
-    /**
-     * returns the root cause of this exception or null
-     * if no root cause was specified.
-     *
-     * @return the root cause of this exception being thrown
-     * @deprecated use {@link #getCause()} instead
-     */
-    @Deprecated
-    public Throwable getRootCause() {
-        return super.getCause();
-    }
+	/**
+	 * returns the root cause of this exception or null if no root cause was
+	 * specified.
+	 * 
+	 * @return the root cause of this exception being thrown
+	 * @deprecated use {@link #getCause()} instead
+	 */
+	@Deprecated
+	public Throwable getRootCause() {
+		return super.getCause();
+	}
 
 }

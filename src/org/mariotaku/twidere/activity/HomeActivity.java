@@ -52,6 +52,8 @@ import org.mariotaku.twidere.util.SetHomeButtonEnabledAccessor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -65,6 +67,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.Menu;
@@ -82,6 +85,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	private SharedPreferences mPreferences;
 	private ServiceInterface mService;
 	private TwidereApplication mApplication;
+	private NotificationManager mNotificationManager;
 
 	private ActionBar mActionBar;
 	private TabsAdapter mAdapter;
@@ -193,6 +197,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mApplication = getTwidereApplication();
 		mService = mApplication.getServiceInterface();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		super.onCreate(savedInstanceState);
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final Resources res = getResources();
@@ -285,6 +290,19 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 					|| !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
 				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), "api_upgrade_notice");
 			}
+		}
+
+		if (mPreferences.getBoolean(PREFERENCE_KEY_SHOW_UCD_DATA_PROFILING_REQUEST, true)) {
+			final Intent intent = new Intent(this, DataProfilingSettingsActivity.class);
+			final PendingIntent content_intent = PendingIntent.getActivity(this, 0, intent, 0);
+			final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+			builder.setAutoCancel(true);
+			builder.setSmallIcon(R.drawable.ic_stat_question_mark);
+			builder.setTicker(getString(R.string.data_profiling_notification_ticker));
+			builder.setContentTitle(getString(R.string.data_profiling_notification_title));
+			builder.setContentText(getString(R.string.data_profiling_notification_desc));
+			builder.setContentIntent(content_intent);
+			mNotificationManager.notify(NOTIFICATION_ID_DATA_PROFILING, builder.getNotification());
 		}
 	}
 
@@ -509,7 +527,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (isTabsChanged(tabs)) {
 			restart();
 		}
-		// UCD 
+		// UCD
 		ProfilingUtil.profiling(this, ProfilingUtil.FILE_NAME_APP, "App onStart");
 	}
 
@@ -518,8 +536,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		unregisterReceiver(mStateReceiver);
 		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTOP));
-		
-		//UCD 
+
+		// UCD
 		ProfilingUtil.profiling(this, ProfilingUtil.FILE_NAME_APP, "App onStop");
 		super.onStop();
 	}

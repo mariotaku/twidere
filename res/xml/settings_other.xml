@@ -15,4 +15,12 @@
 		android:summary="@string/quick_send_summary"
 		android:title="@string/quick_send"/>
 
+	<Preference
+		android:key="data_profiling_settings"
+		android:title="@string/data_profiling">
+		<intent
+			android:targetClass="org.mariotaku.twidere.activity.DataProfilingSettingsActivity"
+			android:targetPackage="org.mariotaku.twidere"/>
+	</Preference>
+
 </PreferenceScreen>

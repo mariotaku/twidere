@@ -9,7 +9,10 @@
 		android:id="@+id/profile_image"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"
-		android:scaleType="fitCenter"/><FrameLayout
+		android:radius="4dp"
+		android:scaleType="fitCenter"/>
+
+	<FrameLayout
 		android:id="@+id/name_frame"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

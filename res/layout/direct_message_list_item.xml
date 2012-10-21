@@ -11,6 +11,7 @@
 		android:layout_height="@dimen/profile_image_size"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentTop="true"
+		android:radius="4dp"
 		android:scaleType="fitCenter"/>
 
 	<org.mariotaku.twidere.view.RoundCorneredImageView
@@ -19,6 +20,7 @@
 		android:layout_height="@dimen/profile_image_size"
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
+		android:radius="4dp"
 		android:scaleType="fitCenter"/>
 
 	<FrameLayout

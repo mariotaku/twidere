@@ -81,10 +81,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_LIST_TYPES = "list_types";
 	public static final String AUTHORITY_LIST_TIMELINE = "list_timeline";
 	public static final String AUTHORITY_LIST_MEMBERS = "list_members";
-	public static final String AUTHORITY_LIST_SUBSCRIBERS = "list_subscribers";
-	public static final String AUTHORITY_LIST_CREATED = "list_created";
-	public static final String AUTHORITY_LIST_SUBSCRIPTIONS = "list_subscriptions";
-	public static final String AUTHORITY_LIST_MEMBERSHIPS = "list_memberships";
+	public static final String AUTHORITY_LISTS = "lists";
 	public static final String AUTHORITY_USERS_RETWEETED_STATUS = "users_retweeted_status";
 	public static final String AUTHORITY_SAVED_SEARCHES = "saved_searches";
 	public static final String AUTHORITY_SEARCH_USERS = "search_users";
@@ -187,6 +184,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_NAME_DISPLAY_OPTION = "name_display_option";
 	public static final String PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW = "stop_auto_refresh_when_battery_low";
 	public static final String PREFERENCE_KEY_UCD_DATA_PROFILING = "ucd_data_profiling";
+	public static final String PREFERENCE_KEY_SHOW_UCD_DATA_PROFILING_REQUEST = "show_ucd_data_profiling_request";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -454,13 +452,10 @@ public interface Constants extends TwitterConstants {
 	public static final int LINK_ID_CONVERSATION = 8;
 	public static final int LINK_ID_DIRECT_MESSAGES_CONVERSATION = 9;
 	public static final int LINK_ID_LIST_DETAILS = 10;
-	public static final int LINK_ID_LIST_TYPES = 11;
+	public static final int LINK_ID_LISTS = 11;
 	public static final int LINK_ID_LIST_TIMELINE = 12;
 	public static final int LINK_ID_LIST_MEMBERS = 13;
 	public static final int LINK_ID_LIST_SUBSCRIBERS = 14;
-	public static final int LINK_ID_LIST_CREATED = 15;
-	public static final int LINK_ID_LIST_SUBSCRIPTIONS = 16;
-	public static final int LINK_ID_LIST_MEMBERSHIPS = 17;
 	public static final int LINK_ID_SAVED_SEARCHES = 19;
 	public static final int LINK_ID_USER_MENTIONS = 21;
 	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;
@@ -477,6 +472,7 @@ public interface Constants extends TwitterConstants {
 	public static final int NOTIFICATION_ID_MENTIONS = 2;
 	public static final int NOTIFICATION_ID_DIRECT_MESSAGES = 3;
 	public static final int NOTIFICATION_ID_DRAFTS = 4;
+	public static final int NOTIFICATION_ID_DATA_PROFILING = 5;
 
 	public static final String ICON_SPECIAL_TYPE_CUSTOMIZE = "_customize";
 

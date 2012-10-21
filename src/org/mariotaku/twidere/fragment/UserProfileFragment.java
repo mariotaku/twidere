@@ -44,7 +44,7 @@ import static org.mariotaku.twidere.util.Utils.openUserBlocks;
 import static org.mariotaku.twidere.util.Utils.openUserFavorites;
 import static org.mariotaku.twidere.util.Utils.openUserFollowers;
 import static org.mariotaku.twidere.util.Utils.openUserFriends;
-import static org.mariotaku.twidere.util.Utils.openUserListTypes;
+import static org.mariotaku.twidere.util.Utils.openUserLists;
 import static org.mariotaku.twidere.util.Utils.openUserMentions;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
@@ -414,7 +414,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 		mAdapter.add(new FavoritesAction());
 		mAdapter.add(new UserMentionsAction());
-		mAdapter.add(new UserListTypesAction());
+		mAdapter.add(new UserListsAction());
 		if (user.getId() == mAccountId) {
 			mAdapter.add(new SavedSearchesAction());
 			if (user.isProtected()) {
@@ -1263,7 +1263,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	final class UserListTypesAction extends ListAction {
+	final class UserListsAction extends ListAction {
 
 		@Override
 		public long getId() {
@@ -1278,7 +1278,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public void onClick() {
 			if (mUser == null) return;
-			openUserListTypes(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
+			openUserLists(getActivity(), mAccountId, mUser.getId(), mUser.getScreenName());
 		}
 
 	}

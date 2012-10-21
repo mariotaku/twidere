@@ -32,6 +32,7 @@
 						android:layout_height="@dimen/profile_image_size"
 						android:layout_alignParentLeft="true"
 						android:layout_centerVertical="true"
+						android:radius="4dp"
 						android:scaleType="fitCenter"/>
 
 					<LinearLayout

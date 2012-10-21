@@ -20,35 +20,39 @@ package org.apache.commons.net.ftp;
 
 /**
  * Implements some simple FTPFileFilter classes.
+ * 
  * @since 2.2
  */
 public class FTPFileFilters {
 
-    /**
-     * Accepts all FTPFile entries, including null.
-     */
-    public static final FTPFileFilter ALL = new FTPFileFilter() {
-        public boolean accept(FTPFile file) {
-            return true;
-        }
-    };
+	/**
+	 * Accepts all FTPFile entries, including null.
+	 */
+	public static final FTPFileFilter ALL = new FTPFileFilter() {
+		@Override
+		public boolean accept(final FTPFile file) {
+			return true;
+		}
+	};
 
-    /**
-     * Accepts all non-null FTPFile entries.
-     */
-    public static final FTPFileFilter NON_NULL = new FTPFileFilter() {
-        public boolean accept(FTPFile file) {
-            return file != null;
-        }
-    };
+	/**
+	 * Accepts all non-null FTPFile entries.
+	 */
+	public static final FTPFileFilter NON_NULL = new FTPFileFilter() {
+		@Override
+		public boolean accept(final FTPFile file) {
+			return file != null;
+		}
+	};
 
-    /**
-     * Accepts all (non-null) FTPFile directory entries.
-     */
-    public static final FTPFileFilter DIRECTORIES = new FTPFileFilter() {
-        public boolean accept(FTPFile file) {
-            return file != null && file.isDirectory();
-        }
-    };
+	/**
+	 * Accepts all (non-null) FTPFile directory entries.
+	 */
+	public static final FTPFileFilter DIRECTORIES = new FTPFileFilter() {
+		@Override
+		public boolean accept(final FTPFile file) {
+			return file != null && file.isDirectory();
+		}
+	};
 
 }

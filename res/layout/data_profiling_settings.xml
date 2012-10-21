@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_margin="8dp"
+		android:layout_weight="1">
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/data_profiling_summary"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+	</ScrollView>
+
+	<CheckBox
+		android:id="@+id/checkbox"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="8dp"
+		android:checked="true"
+		android:text="@string/enable_data_profiling"/>
+
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="0.2dp"
+		android:background="#40808080"/>
+
+	<Button
+		android:id="@+id/save"
+		style="?android:attr/buttonStyleSmall"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@drawable/item_background_holo_light"
+		android:gravity="center"
+		android:minHeight="48dp"
+		android:text="@android:string/ok"/>
+
+</LinearLayout>

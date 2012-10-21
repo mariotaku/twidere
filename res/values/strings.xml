@@ -150,8 +150,6 @@
 	<string name="quote_format">Quote format</string>
 	<string name="quote_format_summary">\"[TEXT]\" = Tweet text\n\"[NAME]\" = Twitter username</string>
 	<string name="direct_messages">Direct messages</string>
-	<string name="capital_on">ON</string>
-	<string name="capital_off">OFF</string>
 	<string name="blocked_users">Blocked users</string>
 	<string name="set_as_default">Set as default</string>
 	<string name="search_users">Search Users</string>
@@ -209,9 +207,8 @@
 	<string name="list_members">List members</string>
 	<string name="list_subscribers">List subscribers</string>
 	<string name="type_to_compose">Type to compose</string>
-	<string name="list_following_user">List following this user</string>
-	<string name="list_user_followed">List this user followed</string>
-	<string name="list_created_by_user">List created by this user</string>
+	<string name="users_lists">User\'s lists</string>
+	<string name="lists_following_user">Lists following this user</string>
 	<string name="Ntweets_quantity_one">You have a new tweet.</string>
 	<string name="Ntweets_quantity_other">You have <xliff:g id="items">%d</xliff:g> new tweets.</string>
 	<string name="Nmentions_quantity_one">Someone mentioned you.</string>
@@ -249,11 +246,9 @@
 	<string name="extensions">Extensions</string>
 	<string name="open_with_extensions">Open with extensions</string>
 	<string name="view_user_list">View user list</string>
-	<string name="open">Open</string>
 	<string name="uninstall">Uninstall</string>
 	<string name="users_retweeted_this">Users retweeted this</string>
 	<string name="saved_searches">Saved searches</string>
-	<string name="add_saved_search">Add saved search</string>
 	<string name="custom_tabs">Custom tabs</string>
 	<string name="add_tab">Add tab</string>
 	<string name="tab_type">Tab type</string>
@@ -269,7 +264,6 @@
 	<string name="user_timeline">User timeline</string>
 	<string name="notification_ringtone">Ringtone</string>
 	<string name="notification_light_color">Light Color</string>
-	<string name="invalid_image">Invalid image.</string>
 	<string name="share_format">Share format</string>
 	<string name="share_format_summary">\"[TITLE]\" = Content title\n\"[TEXT]\" = Content text</string>
 	<string name="network">Network</string>
@@ -364,5 +358,13 @@
 	<string name="signing_in">signing in</string>
 	<string name="retweeting">retweeting</string>
 	<string name="reporting_for_spam">reporting for spam</string>
+	<string name="data_profiling_summary">Twidere took part in a research on predicting user\'s social behavior to pre-caching content started by students in UC Davis.\n\nHere are the data we wanted to collect and why:\nCollected data:\n1. User\'s twitter ID\n2. User\'s home timeline (prediction based on user\'s interest and social interaction)\n3. User\'s click on a tweet (prediction based on user\'s interest and social interaction)\n4. Wifi availability (pre-fetching cost calculation) (which is good predictor when user will access twitter)\n5. Celluar network signal strength (pre-fetching cost calculation)\n6. Coarse location (which is good predictor when user will access twitter)\n\nTwidere will upload collected data only when Wifi available and your device connected to charger, so It will not cost you extra bandwidth fee or drain your battery power.</string>
+	<string name="data_profiling">Usage Statistics</string>
+	<string name="enable_data_profiling">Enable Reporting</string>
+	<string name="data_profiling_notification_ticker">Statistics Opted-In</string>
+	<string name="data_profiling_notification_title">Usage Statistics</string>
+	<string name="data_profiling_notification_desc">Enable or Disable Usage Statistics</string>
+	<string name="slient_notifications">Slient notifications</string>
+	<string name="slient_notifications_summary">Disable ringtone/vibrate for notifictions</string>
 
 </resources>

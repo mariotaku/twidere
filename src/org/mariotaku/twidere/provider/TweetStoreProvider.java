@@ -22,21 +22,26 @@ package org.mariotaku.twidere.provider;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.clearAccountName;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesCount;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
+import static org.mariotaku.twidere.util.Utils.parseURL;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversation;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.DatabaseHelper;
+import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -52,6 +57,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -81,6 +87,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	private NotificationManager mNotificationManager;
 
 	private SharedPreferences mPreferences;
+	private LazyImageLoader mProfileImageLoader;
 
 	@Override
 	public int bulkInsert(final Uri uri, final ContentValues[] values) {
@@ -193,6 +200,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		mDatabase = new DatabaseHelper(context, DATABASES_NAME, DATABASES_VERSION).getWritableDatabase();
 		mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mProfileImageLoader = TwidereApplication.getInstance(context).getProfileImageLoader();
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTART);
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);
@@ -265,12 +273,16 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
 		int defaults = 0;
-		if (mNotificationIsAudible && mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
-			builder.setSound(Uri.parse(mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE,
-					Settings.System.DEFAULT_RINGTONE_URI.getPath())), Notification.STREAM_DEFAULT);
-		}
-		if (mNotificationIsAudible && mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, false)) {
-			defaults |= Notification.DEFAULT_VIBRATE;
+		final Calendar now = Calendar.getInstance();
+		if (mNotificationIsAudible
+				&& !mPreferences.getBoolean("slient_notifications_at_" + now.get(Calendar.HOUR_OF_DAY), false)) {
+			if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
+				builder.setSound(Uri.parse(mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE,
+						Settings.System.DEFAULT_RINGTONE_URI.getPath())), Notification.STREAM_DEFAULT);
+			}
+			if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, false)) {
+				defaults |= Notification.DEFAULT_VIBRATE;
+			}
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false)) {
 			final int color_def = context.getResources().getColor(R.color.holo_blue_dark);
@@ -358,6 +370,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
 				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
+		final boolean display_hires_profile_image = res.getBoolean(R.bool.hires_profile_image);
 		switch (getTableId(uri)) {
 			case URI_STATUSES: {
 				if (!mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false)) return;
@@ -388,31 +401,26 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
 				delete_intent.putExtras(delete_extras);
-				if (length > 1) {
-					final Intent content_intent = new Intent(context, HomeActivity.class);
-					content_intent.setAction(Intent.ACTION_MAIN);
-					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-					final Bundle content_extras = new Bundle();
-					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
-					content_intent.putExtras(content_extras);
-					final String title = res.getString(R.string.mentions);
-					final String message = res.getQuantityString(R.plurals.Nmentions, mNewMentionsCount,
-							mNewMentionsCount);
-					notification = buildNotification(builder, message, title, message, R.drawable.ic_stat_mention,
-							null, content_intent, delete_intent);
-				} else {
-					final Intent content_intent = new Intent(context, HomeActivity.class);
-					content_intent.setAction(Intent.ACTION_MAIN);
-					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-					final Bundle content_extras = new Bundle();
-					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
-					content_intent.putExtras(content_extras);
-					final String title = res.getString(R.string.notification_mention, display_screen_name ? "@"
-							+ values[0].getAsString(Statuses.SCREEN_NAME) : values[0].getAsString(Statuses.NAME));
-					final String message = values[0].getAsString(Statuses.TEXT_PLAIN);
-					notification = buildNotification(builder, title, title, message, R.drawable.ic_stat_mention, null,
-							content_intent, delete_intent);
+				final Intent content_intent = new Intent(context, HomeActivity.class);
+				content_intent.setAction(Intent.ACTION_MAIN);
+				content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
+				final Bundle content_extras = new Bundle();
+				content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
+				content_intent.putExtras(content_extras);
+				final String title = res.getString(
+						R.string.notification_mention,
+						display_screen_name ? "@" + values[0].getAsString(Statuses.SCREEN_NAME) : values[0]
+								.getAsString(Statuses.NAME));
+				final String message = values[0].getAsString(Statuses.TEXT_PLAIN);
+				final String profile_image_url_string = values[0].getAsString(Statuses.PROFILE_IMAGE_URL);
+				final String profile_image_path = mProfileImageLoader
+						.getCachedImagePath(parseURL(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+								: profile_image_url_string));
+				if (profile_image_path != null) {
+					builder.setLargeIcon(BitmapFactory.decodeFile(profile_image_path));
 				}
+				notification = buildNotification(builder, title, title, message, R.drawable.ic_stat_mention, null,
+						content_intent, delete_intent);
 				mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, notification);
 				break;
 			}
@@ -425,6 +433,13 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 						display_screen_name ? "@" + values[0].getAsString(DirectMessages.SENDER_SCREEN_NAME)
 								: values[0].getAsString(DirectMessages.SENDER_NAME));
 				final String message = values[0].getAsString(DirectMessages.TEXT_PLAIN);
+				final String profile_image_url_string = values[0].getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
+				final String profile_image_path = mProfileImageLoader
+						.getCachedImagePath(parseURL(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+								: profile_image_url_string));
+				if (profile_image_path != null) {
+					builder.setLargeIcon(BitmapFactory.decodeFile(profile_image_path));
+				}
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);

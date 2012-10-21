@@ -98,6 +98,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.twitter.Extractor;
+
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class StatusFragment extends BaseFragment implements OnClickListener, OnMenuItemClickListener, Panes.Right {
@@ -248,12 +249,12 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 	public void displayStatus(final ParcelableStatus status) {
 
-		//UCD
-		if (mStatus != null) {
+		// UCD
+		if (mStatus != null && status != null && mStatus.status_id != status.status_id) {
 			ProfilingUtil.profiling(getActivity(), mAccountId, "End, " + mStatus.status_id);
 		}
 		mStatus = status;
-		//UCD
+		// UCD
 		if (mStatus != null) {
 			ProfilingUtil.profiling(getActivity(), mAccountId, "Start, " + mStatus.status_id);
 		}
@@ -334,11 +335,11 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
 			mStatus = bundle.getParcelable(INTENT_KEY_STATUS);
 		}
-		Bundle b = new Bundle();
+		final Bundle b = new Bundle();
 		b.putLong("account", mAccountId);
 		b.putLong("status", mStatusId);
 		mImagesPreviewFragment = (ImagesPreviewFragment) Fragment.instantiate(getActivity(),
-				ImagesPreviewFragment.class.getName(),b);
+				ImagesPreviewFragment.class.getName(), b);
 		mInReplyToView.setOnClickListener(this);
 		mFollowButton.setOnClickListener(this);
 		mProfileView.setOnClickListener(this);
@@ -425,7 +426,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 	@Override
 	public void onDestroyView() {
-		//UCD
+		// UCD
 		if (mStatus != null) {
 			ProfilingUtil.profiling(getActivity(), mAccountId, "End, " + mStatus.status_id);
 		}
@@ -561,7 +562,7 @@ public class StatusFragment extends BaseFragment implements OnClickListener, OnM
 
 	@Override
 	public void onStop() {
-		unregisterReceiver(mStatusReceiver);	
+		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
 

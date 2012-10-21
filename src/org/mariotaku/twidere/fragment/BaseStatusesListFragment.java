@@ -442,8 +442,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final MenuItem direct_retweet = menu.findItem(R.id.direct_retweet);
 		if (direct_retweet != null) {
 			final Drawable icon = direct_retweet.getIcon().mutate();
-			direct_retweet.setVisible(seprate_retweet_action
-					&& (!status.is_protected || isMyRetweet(status)));
+			direct_retweet.setVisible(seprate_retweet_action && (!status.is_protected || isMyRetweet(status)));
 			if (isMyRetweet(status)) {
 				icon.setColorFilter(activated_color, PorterDuff.Mode.MULTIPLY);
 				direct_retweet.setTitle(R.string.cancel_retweet);

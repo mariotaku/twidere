@@ -172,7 +172,7 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 		mPopup.setBackgroundDrawable(context.getResources().getDrawable(value.resourceId));
 		theme.resolveAttribute(android.R.attr.listSelector, value, true);
 		mDropDownListHighlight = context.getResources().getDrawable(value.resourceId);
-		
+
 	}
 
 	/**
@@ -421,12 +421,10 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 
 				final ListAdapter adapter = mAdapter;
 
-				boolean allEnabled;
 				int firstItem = Integer.MAX_VALUE;
 				int lastItem = Integer.MIN_VALUE;
 
 				if (adapter != null) {
-					allEnabled = adapter.areAllItemsEnabled();
 					firstItem = 0;
 					lastItem = adapter.getCount() - 1;
 					// firstItem = allEnabled ? 0 :
@@ -505,34 +503,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR)
 			return OnKeyPreImeAccessor.onKeyPreIme(this, keyCode, event);
 		return false;
-	}
-
-	@SuppressLint("NewApi")
-	static class OnKeyPreImeAccessor {
-		public static boolean onKeyPreIme(ListPopupWindowCompat window, final int keyCode, final KeyEvent event) {
-			if (keyCode == KeyEvent.KEYCODE_BACK && window.isShowing()) {
-				// special case for the back key, we do not even try to send it
-				// to the drop down list but instead, consume it immediately
-				final View anchorView = window.mDropDownAnchorView;
-				if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
-					final KeyEvent.DispatcherState state = anchorView.getKeyDispatcherState();
-					if (state != null) {
-						state.startTracking(event, window);
-					}
-					return true;
-				} else if (event.getAction() == KeyEvent.ACTION_UP) {
-					final KeyEvent.DispatcherState state = anchorView.getKeyDispatcherState();
-					if (state != null) {
-						state.handleUpEvent(event);
-					}
-					if (event.isTracking() && !event.isCanceled()) {
-						window.dismiss();
-						return true;
-					}
-				}
-			}
-			return false;
-		}
 	}
 
 	/**
@@ -1415,6 +1385,34 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 				mPopup.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
 				show();
 			}
+		}
+	}
+
+	@SuppressLint("NewApi")
+	static class OnKeyPreImeAccessor {
+		public static boolean onKeyPreIme(final ListPopupWindowCompat window, final int keyCode, final KeyEvent event) {
+			if (keyCode == KeyEvent.KEYCODE_BACK && window.isShowing()) {
+				// special case for the back key, we do not even try to send it
+				// to the drop down list but instead, consume it immediately
+				final View anchorView = window.mDropDownAnchorView;
+				if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+					final KeyEvent.DispatcherState state = anchorView.getKeyDispatcherState();
+					if (state != null) {
+						state.startTracking(event, window);
+					}
+					return true;
+				} else if (event.getAction() == KeyEvent.ACTION_UP) {
+					final KeyEvent.DispatcherState state = anchorView.getKeyDispatcherState();
+					if (state != null) {
+						state.handleUpEvent(event);
+					}
+					if (event.isTracking() && !event.isCanceled()) {
+						window.dismiss();
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 	}
 

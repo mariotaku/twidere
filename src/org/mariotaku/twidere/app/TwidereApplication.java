@@ -41,7 +41,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import edu.ucdavis.earlybird.UCDService;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
-
+	;
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
