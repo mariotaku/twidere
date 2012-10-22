@@ -25,7 +25,8 @@ public class UCDService extends Service {
 	private FineLocationListener mFineLocationListener;
 	private AlarmManager mAlarmManager;
 	private AlarmReceiver mAlarmReceiver;
-	private PendingIntent StartIntent;
+	private PendingIntent locationIntent;
+	private PendingIntent uploadIntent;
 
 	@Override
 	public IBinder onBind(final Intent intent) {
@@ -47,14 +48,21 @@ public class UCDService extends Service {
 		registerReceiver(mAlarmReceiver, myFilter);
 
 		final Intent intent = new Intent(ACTION_GET_LOCATION);
-		StartIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+		locationIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 		mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), LOCATION_PERIOD_IN_MILLI,
-				StartIntent);
+				locationIntent);
 
 		// Upload Service
 		final Intent i = new Intent(UploadReceiver.ACTION_UPLOAD_PROFILE);
-		final PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
-		mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 12 * 60 * 60 * 1000, pi);
+		uploadIntent = PendingIntent.getBroadcast(this, 0, i, 0);
+		mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 12 * 60 * 60 * 1000, uploadIntent);
+	}
+
+	@Override
+	public void onDestroy() {
+		mAlarmManager.cancel(locationIntent);
+		unregisterReceiver(mAlarmReceiver);
+		super.onDestroy();
 	}
 
 	private final class AlarmReceiver extends BroadcastReceiver {
