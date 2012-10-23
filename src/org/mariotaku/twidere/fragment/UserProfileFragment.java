@@ -143,7 +143,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private ImageView mProfileImageView;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
-			mTweetCount, mFollowersCount, mFriendsCount, mFollowedYouIndicator, mErrorMessageView;
+			mTweetCount, mFollowersCount, mFriendsCount, mFollowingYouIndicator, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
 			mTweetsContainer, mFollowersContainer, mFriendsContainer, mFollowContainer, mProfileNameBannerContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
@@ -255,7 +255,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public Loader<Response<Relationship>> onCreateLoader(final int id, final Bundle args) {
 			final boolean user_is_me = mUserId == mAccountId;
-			mFollowedYouIndicator.setVisibility(View.GONE);
+			mFollowingYouIndicator.setVisibility(View.GONE);
 			mFollowContainer.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
 			mFollowButton.setVisibility(View.GONE);
 			mFollowProgress.setVisibility(View.VISIBLE);
@@ -288,7 +288,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 						mFollowButton.setText(R.string.follow);
 					}
 				}
-				mFollowedYouIndicator.setVisibility(followed_by_user && !user_is_me ? View.VISIBLE : View.GONE);
+				mFollowingYouIndicator.setVisibility(followed_by_user && !user_is_me ? View.VISIBLE : View.GONE);
 				final ContentResolver resolver = getContentResolver();
 				final String where = CachedUsers.USER_ID + " = " + mUserId;
 				resolver.delete(CachedUsers.CONTENT_URI, where, null);
@@ -647,7 +647,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowProgress = (ProgressBar) mHeaderView.findViewById(R.id.follow_progress);
 		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
 		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
-		mFollowedYouIndicator = (TextView) mHeaderView.findViewById(R.id.followed_you_indicator);
+		mFollowingYouIndicator = (TextView) mHeaderView.findViewById(R.id.following_you_indicator);
 		mProfileNameBannerContainer = mHeaderView.findViewById(R.id.profile_name_banner_container);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);

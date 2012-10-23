@@ -270,12 +270,14 @@ public class TwidereLinkify {
 						sUrlMatchFilter, null);
 				for (final LinkSpec link : links) {
 					final URLSpan[] spans = string.getSpans(link.start, link.end, URLSpan.class);
-					if (spans != null) {
+					if (spans != null && spans.length == 1) {
 						for (final URLSpan span : spans) {
 							string.removeSpan(span);
+							applyLink(span.getURL(), link.start, link.end, string, LINK_TYPE_LINK);
 						}
+					} else {				
+						applyLink(link.url, link.start, link.end, string, LINK_TYPE_LINK);
 					}
-					applyLink(link.url, link.start, link.end, string, LINK_TYPE_LINK);
 				}
 				break;
 			}

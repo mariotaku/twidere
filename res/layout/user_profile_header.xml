@@ -72,13 +72,13 @@
 					android:textColor="?android:attr/textColorSecondary"/>
 
 				<TextView
-					android:id="@+id/followed_you_indicator"
+					android:id="@+id/following_you_indicator"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:ellipsize="marquee"
 					android:layerType="software"
 					android:singleLine="true"
-					android:text="@string/followed_you"
+					android:text="@string/following_you"
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					android:textColor="?android:attr/textColorSecondary"
 					android:textSize="10sp"

@@ -227,7 +227,7 @@
 	<string name="inline_image_preview">Inline image preview</string>
 	<string name="solid_color_background">Solid color background</string>
 	<string name="solid_color_background_summary">This may be useful if screen of your device is AMOLED.</string>
-	<string name="followed_you">Followed you</string>
+	<string name="following_you">Following you</string>
 	<string name="user_list">User list</string>
 	<string name="trends_location">Trends location</string>
 	<string name="trends_location_summary">Set location for local trends.</string>
@@ -311,8 +311,8 @@
 	<string name="activities_about_me">Activities about me</string>
 	<string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> favorited your tweet.</string>
 	<string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others favorited your tweet.</string>
-	<string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> followed you.</string>
-	<string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others followed you.</string>
+	<string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> is following you.</string>
+	<string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others are following you.</string>
 	<string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> retweeted your tweet.</string>
 	<string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others retweeted your tweet.</string>
 	<string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> added you to list.</string>
@@ -360,7 +360,7 @@
 	<string name="signing_in">signing in</string>
 	<string name="retweeting">retweeting</string>
 	<string name="reporting_for_spam">reporting for spam</string>
-	<string name="data_profiling_summary">Twidere took part in a research on predicting user\'s social behavior to pre-caching content started by students in UC Davis.\n\nHere are the data we wanted to collect and why:\nCollected data:\n1. User\'s twitter ID\n2. User\'s home timeline (prediction based on user\'s interest and social interaction)\n3. User\'s click on a tweet (prediction based on user\'s interest and social interaction)\n4. Wifi availability (pre-fetching cost calculation) (which is good predictor when user will access twitter)\n5. Celluar network signal strength (pre-fetching cost calculation)\n6. Coarse location (which is good predictor when user will access twitter)\n\nTwidere will upload collected data only when Wifi available and your device connected to charger, so It will not cost you extra bandwidth fee or drain your battery power.</string>
+	<string name="data_profiling_summary">Twidere took part in a research on predicting user\'s social behavior to pre-caching content started by students in UC Davis.\n\nHere are the data we wanted to collect and why:\nCollected data:\n1. User\'s twitter ID\n2. User\'s home timeline (prediction based on user\'s interest and social interaction)\n3. User\'s click on a tweet (prediction based on user\'s interest and social interaction)\n4. Coarse location (which is good predictor when user will access twitter)\n\nTwidere will upload collected data only when Wifi available and your device connected to charger, so It will not cost you extra bandwidth fee or drain your battery power.</string>
 	<string name="data_profiling">Usage Statistics</string>
 	<string name="enable_data_profiling">Enable Reporting</string>
 	<string name="data_profiling_notification_ticker">Statistics Opted-In</string>
