@@ -6,5 +6,9 @@
 	<dimen name="preview_image_size">120dp</dimen>
 	<dimen name="set_color_height">240dp</dimen>
 	<dimen name="preference_horizontal_margin">15dp</dimen>
+	<!-- The width of the big icons in notifications. -->
+	<dimen name="notification_large_icon_width">64dp</dimen>
+	<!-- The width of the big icons in notifications. -->
+	<dimen name="notification_large_icon_height">64dp</dimen>
 
 </resources>

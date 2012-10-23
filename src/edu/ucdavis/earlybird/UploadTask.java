@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.provider.Settings.Secure;
+import org.mariotaku.twidere.util.Utils;
 
 public class UploadTask extends AsyncTask<Void, Void, Void> {
 
@@ -147,9 +148,7 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 		try {
 			URL uploadUrl = new URL(urlStr);
 			FileInputStream fileInputStream = new FileInputStream(tmp);
-			conn = (HttpURLConnection) uploadUrl.openConnection();
-			conn.setConnectTimeout(20000);
-			conn.setReadTimeout(10000);
+			conn = Utils.getConnection(context, uploadUrl);
 			conn.setDoOutput(true);
 			conn.setRequestProperty("Content-Type",
 					"multipart/form-data;boundary=" + boundary);

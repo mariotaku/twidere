@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.getAllStatusesCount;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
@@ -62,6 +63,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.os.AsyncTask;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import java.util.ArrayList;
 
 public final class TweetStoreProvider extends ContentProvider implements Constants {
 
@@ -94,6 +98,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		final String table = getTableNameForContentUri(uri);
 		final int table_id = getTableId(uri);
 		int result = 0;
+		final int notification_count;
 		if (table != null && values != null) {
 			final Context context = getContext();
 			final int old_count;
@@ -119,25 +124,30 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 				switch (table_id) {
 					case URI_STATUSES: {
-						mNewStatusesCount += getAllStatusesCount(context, Statuses.CONTENT_URI) - old_count;
+						mNewStatusesCount += notification_count = getAllStatusesCount(context, Statuses.CONTENT_URI) - old_count;
 						break;
 					}
 					case URI_MENTIONS: {
-						mNewMentionsCount += getAllStatusesCount(context, Mentions.CONTENT_URI) - old_count;
+						mNewMentionsCount += notification_count = getAllStatusesCount(context, Mentions.CONTENT_URI) - old_count;
 						break;
 					}
 					case URI_DIRECT_MESSAGES_INBOX: {
-						mNewMessagesCount += result;
+						mNewMessagesCount += notification_count = result;
 						break;
 					}
 					default:
+						notification_count = 0;
 				}
+			} else {
+				notification_count = 0;
 			}
+		} else {
+			notification_count = 0;
 		}
 		if (result > 0) {
 			onDatabaseUpdated(uri);
 		}
-		onNewItemsInserted(uri, result, values);
+		onNewItemsInserted(uri, notification_count, values);
 		return result;
 	};
 
@@ -366,7 +376,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		if ("false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) return;
 		final Context context = getContext();
 		final Resources res = context.getResources();
-		final int length = values.length;
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
 				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
@@ -396,7 +405,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				if (mNewMentionsCount > 1) {
 					builder.setNumber(mNewMentionsCount);
 				}
-				final Notification notification;
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
@@ -407,19 +415,40 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final Bundle content_extras = new Bundle();
 				content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
 				content_intent.putExtras(content_extras);
-				final String title = res.getString(
-						R.string.notification_mention,
-						display_screen_name ? "@" + values[0].getAsString(Statuses.SCREEN_NAME) : values[0]
-								.getAsString(Statuses.NAME));
-				final String message = values[0].getAsString(Statuses.TEXT_PLAIN);
-				final String profile_image_url_string = values[0].getAsString(Statuses.PROFILE_IMAGE_URL);
+				final ArrayList<String> screen_names = new NoDuplicatesArrayList<String>();
+				ContentValues notification_value = null;
+				for (final ContentValues value : values) {
+					final String screen_name = value.getAsString(Statuses.SCREEN_NAME);
+					if (!isFiltered(mDatabase, screen_name, value.getAsString(Statuses.SOURCE),
+							value.getAsString(Statuses.TEXT_PLAIN))) {
+						if (notification_value == null) {
+							notification_value = value;
+						}
+						screen_names.add(screen_name);
+					}
+				}
+				if (notification_value == null) return;
+				final String title;
+				if (screen_names.size() > 1) {
+					title = res.getString(R.string.notification_mention_multiple,
+							display_screen_name ? "@" + notification_value.getAsString(Statuses.SCREEN_NAME) : notification_value
+									.getAsString(Statuses.NAME), screen_names.size() - 1);
+				} else {
+					title = res.getString(R.string.notification_mention,
+							display_screen_name ? "@" + notification_value.getAsString(Statuses.SCREEN_NAME) : notification_value
+									.getAsString(Statuses.NAME));
+				}
+				final String message = notification_value.getAsString(Statuses.TEXT_PLAIN);
+				final String profile_image_url_string = notification_value.getAsString(Statuses.PROFILE_IMAGE_URL);
 				final String profile_image_path = mProfileImageLoader
 						.getCachedImagePath(parseURL(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-								: profile_image_url_string));
-				if (profile_image_path != null) {
-					builder.setLargeIcon(BitmapFactory.decodeFile(profile_image_path));
-				}
-				notification = buildNotification(builder, title, title, message, R.drawable.ic_stat_mention, null,
+													 : profile_image_url_string));
+				final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
+				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
+				builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image_path != null ? 
+						BitmapFactory.decodeFile(profile_image_path):
+								BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default), w, h, false));
+				final Notification notification = buildNotification(builder, title, title, message, R.drawable.ic_stat_mention, null,
 						content_intent, delete_intent);
 				mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, notification);
 				break;
@@ -429,17 +458,32 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				if (mNewMessagesCount > 1) {
 					builder.setNumber(mNewMessagesCount);
 				}
-				final String title = res.getString(R.string.notification_direct_message,
-						display_screen_name ? "@" + values[0].getAsString(DirectMessages.SENDER_SCREEN_NAME)
-								: values[0].getAsString(DirectMessages.SENDER_NAME));
-				final String message = values[0].getAsString(DirectMessages.TEXT_PLAIN);
-				final String profile_image_url_string = values[0].getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
+				final ArrayList<String> screen_names = new NoDuplicatesArrayList<String>();
+				final ContentValues notification_value = values[0];
+				for (final ContentValues value : values) {
+					screen_names.add(value.getAsString(DirectMessages.SENDER_SCREEN_NAME));
+				}
+				if (notification_value == null) return;
+				final String title;
+				if (screen_names.size() > 1) {
+					title = res.getString(R.string.notification_direct_message_multiple,
+							display_screen_name ? "@" + notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME) : notification_value
+									.getAsString(DirectMessages.SENDER_NAME), screen_names.size() - 1);
+				} else {
+					title = res.getString(R.string.notification_direct_message,
+							display_screen_name ? "@" + notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME) : notification_value
+									.getAsString(DirectMessages.SENDER_NAME));
+				}						
+				final String message = notification_value.getAsString(DirectMessages.TEXT_PLAIN);
+				final String profile_image_url_string = notification_value.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
 				final String profile_image_path = mProfileImageLoader
 						.getCachedImagePath(parseURL(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
 								: profile_image_url_string));
-				if (profile_image_path != null) {
-					builder.setLargeIcon(BitmapFactory.decodeFile(profile_image_path));
-				}
+				final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
+				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
+				builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image_path != null ? 
+						BitmapFactory.decodeFile(profile_image_path):
+								BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default), w, h, false));
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);

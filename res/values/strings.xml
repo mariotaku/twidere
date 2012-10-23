@@ -338,6 +338,8 @@
 	<string name="stop_auto_refresh_when_battery_low">Stop auto refresh when battery low</string>
 	<string name="notification_mention"><xliff:g id="user">%s</xliff:g> mentioned you.</string>
 	<string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> sent you a direct message.</string>
+	<string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others mentioned you.</string>
+	<string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> others sent you some direct messages.</string>
 	<string name="getting_status">getting tweet</string>
 	<string name="sending_status">sending tweet</string>
 	<string name="sending_direct_message">sending direct message</string>
