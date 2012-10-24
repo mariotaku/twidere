@@ -43,6 +43,7 @@ import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.DatabaseHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -63,9 +64,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.os.AsyncTask;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-import java.util.ArrayList;
 
 public final class TweetStoreProvider extends ContentProvider implements Constants {
 
@@ -80,9 +78,9 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_HOME_ACTIVITY_ONSTART.equals(action)) {
-				mNotificationIsAudible = true;
-			} else if (BROADCAST_HOME_ACTIVITY_ONSTOP.equals(action)) {
 				mNotificationIsAudible = false;
+			} else if (BROADCAST_HOME_ACTIVITY_ONSTOP.equals(action)) {
+				mNotificationIsAudible = true;
 			}
 		}
 
@@ -415,7 +413,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final Bundle content_extras = new Bundle();
 				content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
 				content_intent.putExtras(content_extras);
-				final ArrayList<String> screen_names = new NoDuplicatesArrayList<String>();
+				final List<String> screen_names = new NoDuplicatesArrayList<String>();
 				ContentValues notification_value = null;
 				for (final ContentValues value : values) {
 					final String screen_name = value.getAsString(Statuses.SCREEN_NAME);
@@ -458,7 +456,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				if (mNewMessagesCount > 1) {
 					builder.setNumber(mNewMessagesCount);
 				}
-				final ArrayList<String> screen_names = new NoDuplicatesArrayList<String>();
+				final List<String> screen_names = new NoDuplicatesArrayList<String>();
 				final ContentValues notification_value = values[0];
 				for (final ContentValues value : values) {
 					screen_names.add(value.getAsString(DirectMessages.SENDER_SCREEN_NAME));

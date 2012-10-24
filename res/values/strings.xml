@@ -368,5 +368,6 @@
 	<string name="data_profiling_notification_desc">Enable or Disable Usage Statistics</string>
 	<string name="slient_notifications">Slient notifications</string>
 	<string name="slient_notifications_summary">Disable ringtone/vibrate for notifictions</string>
+	<string name="disable_background_service">Disable background service</string>
 
 </resources>
