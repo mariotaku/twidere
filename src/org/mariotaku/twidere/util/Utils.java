@@ -19,7 +19,6 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
@@ -107,6 +106,7 @@ import org.mariotaku.twidere.fragment.UserListsListFragment;
 import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
+import org.mariotaku.twidere.http.HttpClientImpl;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
@@ -917,14 +917,14 @@ public final class Utils implements Constants {
 
 		return bm;
 	}
-	
-	public static HttpURLConnection getConnection(final Context context, final URL url_orig) throws IOException {		
+
+	public static HttpURLConnection getConnection(final Context context, final URL url_orig) throws IOException {
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final Proxy proxy = getProxy(context);
 		final HostAddressResolver resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
 		final boolean ignore_ssl_error = prefs.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 		final int connection_timeout = prefs.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-		return getConnection(url_orig, connection_timeout, ignore_ssl_error, proxy, resolver);		
+		return getConnection(url_orig, connection_timeout, ignore_ssl_error, proxy, resolver);
 	}
 
 	public static HttpURLConnection getConnection(final URL url_orig, final int timeout_millis,
@@ -1467,6 +1467,7 @@ public final class Utils implements Constants {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setHostAddressResolver(app.getHostAddressResolver());
+				cb.setHttpClientImplementation(HttpClientImpl.class);
 				cb.setHttpConnectionTimeout(connection_timeout);
 				setUserAgent(context, cb);
 				cb.setGZIPEnabled(enable_gzip_compressing);
@@ -2570,7 +2571,8 @@ public final class Utils implements Constants {
 		if (context == null) return;
 		final String message;
 		if (t != null) {
-			final String t_message = trimLineBreak(unescape(t.getMessage()));
+			t.printStackTrace();
+			final String t_message = trimLineBreak(t.getMessage());
 			if (action != null) {
 				if (t instanceof TwitterException) {
 					final TwitterException te = (TwitterException) t;

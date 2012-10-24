@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.setUserAgent;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.http.HttpClientImpl;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
 import twitter4j.Twitter;
@@ -233,6 +234,7 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 			final String consumer_key = prefs.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY);
 			final String consumer_secret = prefs.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
 			cb.setHostAddressResolver(app.getHostAddressResolver());
+			cb.setHttpClientImplementation(HttpClientImpl.class);
 			setUserAgent(context, cb);
 			if (!isNullOrEmpty(mRESTBaseURL)) {
 				cb.setRestBaseURL(mRESTBaseURL);

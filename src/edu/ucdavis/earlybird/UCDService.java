@@ -55,7 +55,8 @@ public class UCDService extends Service {
 		// Upload Service
 		final Intent i = new Intent(UploadReceiver.ACTION_UPLOAD_PROFILE);
 		uploadIntent = PendingIntent.getBroadcast(this, 0, i, 0);
-		mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 12 * 60 * 60 * 1000, uploadIntent);
+		mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 12 * 60 * 60 * 1000,
+				uploadIntent);
 	}
 
 	@Override

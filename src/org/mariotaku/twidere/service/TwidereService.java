@@ -3671,8 +3671,7 @@ public class TwidereService extends Service implements Constants {
 			} else {
 				// If the status is a duplicate, there's no need to save it to
 				// drafts.
-				if (exception instanceof TwitterException
-						&& ((TwitterException) exception).getErrorMessages() != null
+				if (exception instanceof TwitterException && ((TwitterException) exception).getErrorMessages() != null
 						&& ((TwitterException) exception).getErrorMessages().length > 0
 						&& ((TwitterException) exception).getErrorMessages()[0].getCode() == 187) {
 					Utils.showErrorToast(getOuterType(), getString(R.string.status_is_duplicate), false);

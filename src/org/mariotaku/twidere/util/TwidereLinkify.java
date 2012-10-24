@@ -275,7 +275,7 @@ public class TwidereLinkify {
 							string.removeSpan(span);
 							applyLink(span.getURL(), link.start, link.end, string, LINK_TYPE_LINK);
 						}
-					} else {				
+					} else {
 						applyLink(link.url, link.start, link.end, string, LINK_TYPE_LINK);
 					}
 				}

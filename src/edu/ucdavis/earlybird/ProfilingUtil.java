@@ -45,7 +45,7 @@ public class ProfilingUtil {
 			final String fullname = ste.getClassName();
 			final String name = fullname.substring(fullname.lastIndexOf('.'));
 			final String tag = name + "." + ste.getMethodName();
-			Log.v(tag, msg);
+			Log.d(tag, msg);
 			return true;
 		} else
 			return false;
