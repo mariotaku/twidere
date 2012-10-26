@@ -972,17 +972,18 @@ public final class Utils implements Constants {
 		if (uri.toString().startsWith(media_uri_start)) {
 
 			final String[] proj = { MediaStore.Images.Media.DATA };
-			final Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
+			final Cursor cur = context.getContentResolver().query(uri, proj, null, null, null);
 
-			if (cursor == null || cursor.getCount() <= 0) return null;
+			if (cur == null) return null;
 
-			final int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			final int column_index = cur.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 
-			cursor.moveToFirst();
-
-			final String path = cursor.getString(column_index);
-			cursor.close();
-			return path;
+			cur.moveToFirst();
+			try {
+				return cur.getString(column_index);
+			} finally {
+				cur.close();
+			}
 		} else {
 			final String path = uri.getPath();
 			if (path != null) {

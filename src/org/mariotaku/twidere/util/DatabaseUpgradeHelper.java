@@ -195,7 +195,7 @@ public final class DatabaseUpgradeHelper {
 		else if ("TEXT".equalsIgnoreCase(type_main))
 			return FIELD_TYPE_STRING;
 		else if ("BLOB".equalsIgnoreCase(type_main)) return FIELD_TYPE_BLOB;
-		throw new IllegalStateException("Unknown field type " + type + " !");
+		throw new IllegalStateException("Unknown field type " + type);
 	}
 
 	private static String getTypeString(final SQLiteDatabase db, final String table, final String column) {
@@ -203,12 +203,12 @@ public final class DatabaseUpgradeHelper {
 		final String sql = "SELECT typeof(" + column + ") FROM " + table;
 		final Cursor cur = db.rawQuery(sql, null);
 		if (cur == null) return null;
-
 		cur.moveToFirst();
-		final String type = cur.getString(0);
-		cur.close();
-		return type;
-
+		try {
+			return cur.getString(0);
+		} finally {
+			cur.close();			
+		}
 	}
 
 	private static boolean isTypeCompatible(final String old_type, final String new_type,
