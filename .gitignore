@@ -1,5 +1,4 @@
 # built application files
-*.apk
 *.ap_
 
 # files for the dex VM
@@ -14,9 +13,6 @@ gen/
 
 # Local configuration file (sdk path, etc)
 local.properties
-
-# For AIDE testing
-libs/maps.jar
 
 # Backup files
 *.bak

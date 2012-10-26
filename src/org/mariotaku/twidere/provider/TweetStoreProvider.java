@@ -409,14 +409,10 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
 				delete_intent.putExtras(delete_extras);
-				final Intent content_intent = new Intent(context, HomeActivity.class);
-				content_intent.setAction(Intent.ACTION_MAIN);
-				content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-				final Bundle content_extras = new Bundle();
-				content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
-				content_intent.putExtras(content_extras);
+				final Intent content_intent;
 				final List<String> screen_names = new NoDuplicatesArrayList<String>();
 				ContentValues notification_value = null;
+				int notified_count = 0;
 				for (final ContentValues value : values) {
 					final String screen_name = value.getAsString(Statuses.SCREEN_NAME);
 					if (!isFiltered(mDatabase, screen_name, value.getAsString(Statuses.SOURCE),
@@ -425,7 +421,26 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 							notification_value = value;
 						}
 						screen_names.add(screen_name);
+						notified_count++;
 					}
+				}
+				if (notified_count == 1) {
+					final Uri.Builder uri_builder = new Uri.Builder();
+					uri_builder.scheme(SCHEME_TWIDERE);
+					uri_builder.authority(AUTHORITY_STATUS);
+					uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID,
+							notification_value.getAsString(Statuses.ACCOUNT_ID));
+					uri_builder.appendQueryParameter(QUERY_PARAM_STATUS_ID,
+							notification_value.getAsString(Statuses.STATUS_ID));
+					content_intent = new Intent(Intent.ACTION_VIEW, uri_builder.build());
+
+				} else {
+					content_intent = new Intent(context, HomeActivity.class);
+					content_intent.setAction(Intent.ACTION_MAIN);
+					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
+					final Bundle content_extras = new Bundle();
+					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
+					content_intent.putExtras(content_extras);
 				}
 				if (notification_value == null) return;
 				final String title;
@@ -494,12 +509,24 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
 				delete_intent.putExtras(delete_extras);
-				final Intent content_intent = new Intent(context, HomeActivity.class);
-				content_intent.setAction(Intent.ACTION_MAIN);
-				content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-				final Bundle content_extras = new Bundle();
-				content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MESSAGES);
-				content_intent.putExtras(content_extras);
+				final Intent content_intent;
+				if (values.length == 1) {
+					final Uri.Builder uri_builder = new Uri.Builder();
+					final long account_id = notification_value.getAsLong(DirectMessages.ACCOUNT_ID);
+					final long conversation_id = notification_value.getAsLong(DirectMessages.SENDER_ID);
+					uri_builder.scheme(SCHEME_TWIDERE);
+					uri_builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
+					uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+					uri_builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
+					content_intent = new Intent(Intent.ACTION_VIEW, uri_builder.build());
+				} else {
+					content_intent = new Intent(context, HomeActivity.class);
+					content_intent.setAction(Intent.ACTION_MAIN);
+					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
+					final Bundle content_extras = new Bundle();
+					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MESSAGES);
+					content_intent.putExtras(content_extras);
+				}
 				final Notification notification = buildNotification(builder, title, title, message,
 						R.drawable.ic_stat_direct_message, null, content_intent, delete_intent);
 				mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, notification);

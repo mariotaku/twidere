@@ -48,7 +48,6 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -90,13 +89,13 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 
 	public HttpClientImpl(final HttpClientConfiguration conf) {
 		this.conf = conf;
-		final SchemeRegistry schemeRegistry = new SchemeRegistry();
+		final SchemeRegistry registry = new SchemeRegistry();
 		final SSLSocketFactory factory = conf.isSSLErrorIgnored() ? TRUST_ALL_SSL_SOCKET_FACTORY : SSLSocketFactory
 				.getSocketFactory();
-		schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-		schemeRegistry.register(new Scheme("https", factory, 443));
+		registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+		registry.register(new Scheme("https", factory, 443));
 		final HttpParams params = new BasicHttpParams();
-		final ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(params, schemeRegistry);
+		final ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(params, registry);
 		final DefaultHttpClient client = new DefaultHttpClient(cm, params);
 		final HttpParams client_params = client.getParams();
 		HttpConnectionParams.setConnectionTimeout(client_params, conf.getHttpConnectionTimeout());
@@ -122,7 +121,6 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 
 	@Override
 	public twitter4j.http.HttpResponse request(final twitter4j.http.HttpRequest req) throws TwitterException {
-		System.out.println("Requesting using Apache HttpClient: " + req);
 		try {
 			HttpRequestBase commonsRequest;
 
@@ -217,14 +215,6 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 			return null;
 	}
 
-	private String composeURL(final HttpRequest req, final String host) {
-		final List<NameValuePair> params = asNameValuePairList(req);
-		if (params != null)
-			return req.getURL() + "?" + URLEncodedUtils.format(params, "UTF-8");
-		else
-			return req.getURL();
-	}
-
 	final static class TrustAllSSLSocketFactory extends SSLSocketFactory {
 		final SSLContext sslContext = SSLContext.getInstance(TLS);
 
@@ -245,7 +235,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 
 				@Override
 				public X509Certificate[] getAcceptedIssuers() {
-					return null;
+					return new X509Certificate[0];
 				}
 			};
 

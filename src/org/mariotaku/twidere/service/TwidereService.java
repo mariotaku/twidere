@@ -3625,7 +3625,6 @@ public class TwidereService extends Service implements Constants {
 							result.add(new SingleResponse<twitter4j.Status>(account_id, twitter.updateStatus(status),
 									null));
 						} catch (final TwitterException e) {
-							e.printStackTrace();
 							result.add(new SingleResponse<twitter4j.Status>(account_id, null, e));
 						}
 					}
