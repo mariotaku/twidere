@@ -39,7 +39,7 @@ import java.net.URLConnection;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
-import org.mariotaku.twidere.http.HttpClientImpl;
+import org.mariotaku.twidere.util.http.HttpClientImpl;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ColorAnalyser;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;

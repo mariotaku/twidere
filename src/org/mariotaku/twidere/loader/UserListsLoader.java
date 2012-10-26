@@ -38,23 +38,13 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 	public UserListsData loadInBackground() {
 		try {
 			final List<UserList> user_lists;
-			final List<UserList> user_list_memberships = new NoDuplicatesArrayList<UserList>();
+			final List<UserList> user_list_memberships;
 			if (mUserId > 0) {
 				user_lists = mTwitter.getUserLists(mUserId);
-				PagableResponseList<UserList> memberships = mTwitter.getUserListMemberships(mUserId, -1);
-				user_list_memberships.addAll(memberships);
-				while (memberships.hasNext()) {
-					memberships = mTwitter.getUserListMemberships(mUserId, memberships.getNextCursor());
-					user_list_memberships.addAll(memberships);
-				}
+				user_list_memberships = mTwitter.getUserListMemberships(mUserId, -1);
 			} else if (mScreenName != null) {
 				user_lists = mTwitter.getUserLists(mScreenName);
-				PagableResponseList<UserList> memberships = mTwitter.getUserListMemberships(mScreenName, -1);
-				user_list_memberships.addAll(memberships);
-				while (memberships.hasNext()) {
-					memberships = mTwitter.getUserListMemberships(mScreenName, memberships.getNextCursor());
-					user_list_memberships.addAll(memberships);
-				}
+				user_list_memberships = mTwitter.getUserListMemberships(mScreenName, -1);
 			} else
 				return null;
 			final int user_lists_size = user_lists.size(), user_list_memberships_size = user_list_memberships.size();

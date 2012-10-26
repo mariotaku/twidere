@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mariotaku.twidere.http;
+package org.mariotaku.twidere.util.http;
 
 import java.io.IOException;
 import java.util.ArrayList;

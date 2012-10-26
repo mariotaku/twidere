@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.mariotaku.twidere.http;
+package org.mariotaku.twidere.util.http;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -72,6 +73,7 @@ import twitter4j.http.HttpRequest;
 import twitter4j.http.RequestMethod;
 import twitter4j.internal.logging.Logger;
 import twitter4j.internal.util.z_T4JInternalStringUtil;
+import org.apache.http.entity.mime.content.ContentBody;
 
 /**
  * HttpClient implementation for Apache HttpClient 4.0.x
@@ -156,10 +158,12 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 						final MultipartEntity me = new MultipartEntity();
 						for (final HttpParameter parameter : req.getParameters()) {
 							if (parameter.isFile()) {
-								me.addPart(parameter.getName(),
-										new FileBody(parameter.getFile(), parameter.getContentType()));
+								final ContentBody body = new FileBody(parameter.getFile(), parameter.getContentType());
+								me.addPart(parameter.getName(), body);
 							} else {
-								me.addPart(parameter.getName(), new StringBody(parameter.getValue()));
+								final ContentBody body = new StringBody(parameter.getValue(), "text/plain; charset=UTF-8",
+										Charset.forName("UTF-8"));								
+								me.addPart(parameter.getName(), body);
 							}
 						}
 						post.setEntity(me);
