@@ -670,9 +670,8 @@ public final class Utils implements Constants {
 				return Color.TRANSPARENT;
 			}
 			cur.moveToFirst();
-			color = cur.getInt(cur.getColumnIndexOrThrow(Accounts.USER_COLOR));
+			sAccountColors.put(account_id, color = cur.getInt(cur.getColumnIndexOrThrow(Accounts.USER_COLOR)));
 			cur.close();
-			sAccountColors.put(account_id, color);
 		}
 		return color;
 	}
@@ -1579,30 +1578,27 @@ public final class Utils implements Constants {
 			final String text_plain) {
 		if (database == null) return false;
 		final StringBuilder builder = new StringBuilder();
-		builder.append("SELECT ");
-		builder.append("(SELECT '" + text_plain + "' LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT
+		final String[] selection_args = new String[]{ text_plain, screen_name, source };
+		builder.append("SELECT NULL WHERE");
+		builder.append("(SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT
 				+ "||'%' FROM " + TABLE_FILTERED_KEYWORDS + ")");
 		if (screen_name != null) {
 			builder.append(" OR ");
-			builder.append("(SELECT '" + screen_name + "' IN (SELECT " + Filters.TEXT + " FROM " + TABLE_FILTERED_USERS
+			builder.append("(SELECT ? IN (SELECT " + Filters.TEXT + " FROM " + TABLE_FILTERED_USERS
 					+ "))");
 		}
 		if (source != null) {
 			builder.append(" OR ");
-			builder.append("(SELECT '" + source + "' LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.TEXT
+			builder.append("(SELECT ? LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.TEXT
 					+ "||'</a>%' FROM " + TABLE_FILTERED_SOURCES + ")");
 		}
-		final Cursor cur = database.rawQuery(builder.toString(), null);
+		final Cursor cur = database.rawQuery(builder.toString(), selection_args);
 		if (cur == null) return false;
-		if (cur.getCount() > 0) {
-			cur.moveToFirst();
-			if (cur.getInt(0) == 1) {
-				cur.close();
-				return true;
-			}
+		try {
+			return cur.getCount() > 0;
+		} finally {
+			cur.close();
 		}
-		cur.close();
-		return false;
 	}
 
 	public static boolean isMyAccount(final Context context, final long account_id) {
