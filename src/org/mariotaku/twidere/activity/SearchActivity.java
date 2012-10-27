@@ -41,6 +41,7 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
+import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -147,7 +148,7 @@ public class SearchActivity extends MultiSelectActivity {
 				if (isDualPaneMode()) {
 					final int count = fm.getBackStackEntryCount();
 					if (count == 0) {
-						onBackPressed();
+						NavUtils.navigateUpFromSameTask(this);
 					} else if (!FragmentManagerTrojan.isStateSaved(fm)) {
 						for (int i = 0; i < count; i++) {
 							fm.popBackStackImmediate();
@@ -155,7 +156,7 @@ public class SearchActivity extends MultiSelectActivity {
 						setSupportProgressBarIndeterminateVisibility(false);
 					}
 				} else {
-					onBackPressed();
+					NavUtils.navigateUpFromSameTask(this);
 				}
 				break;
 			}

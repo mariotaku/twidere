@@ -29,7 +29,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
@@ -54,6 +53,7 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -68,11 +68,9 @@ import twitter4j.TwitterException;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientConfiguration;
 import twitter4j.http.HttpParameter;
-import twitter4j.http.HttpRequest;
 import twitter4j.http.RequestMethod;
 import twitter4j.internal.logging.Logger;
 import twitter4j.internal.util.z_T4JInternalStringUtil;
-import org.apache.http.entity.mime.content.ContentBody;
 
 /**
  * HttpClient implementation for Apache HttpClient 4.0.x
@@ -134,7 +132,6 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 
 			if (req.getMethod() == RequestMethod.GET) {
 				commonsRequest = new HttpGet(resolved_url);
-
 			} else if (req.getMethod() == RequestMethod.POST) {
 				final HttpPost post = new HttpPost(resolved_url);
 				// parameter has a file?
@@ -147,10 +144,12 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 						}
 					}
 					if (!hasFile) {
-						final List<NameValuePair> nameValuePair = asNameValuePairList(req);
-						if (nameValuePair != null) {
-							final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nameValuePair, "UTF-8");
-							post.setEntity(entity);
+						final ArrayList<NameValuePair> args = new ArrayList<NameValuePair>();
+						for (final HttpParameter parameter : req.getParameters()) {
+							args.add(new BasicNameValuePair(parameter.getName(), parameter.getValue()));
+						}
+						if (args.size() > 0) {
+							post.setEntity(new UrlEncodedFormEntity(args, "UTF-8"));
 						}
 					} else {
 						final MultipartEntity me = new MultipartEntity();
@@ -159,13 +158,12 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 								final ContentBody body = new FileBody(parameter.getFile(), parameter.getContentType());
 								me.addPart(parameter.getName(), body);
 							} else {
-								final ContentBody body = new StringBody(parameter.getValue(), "text/plain; charset=UTF-8",
-										Charset.forName("UTF-8"));								
+								final ContentBody body = new StringBody(parameter.getValue(),
+										"text/plain; charset=UTF-8", Charset.forName("UTF-8"));
 								me.addPart(parameter.getName(), body);
 							}
 						}
 						post.setEntity(me);
-
 					}
 				}
 				post.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
@@ -202,17 +200,6 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 	@Override
 	public void shutdown() {
 		client.getConnectionManager().shutdown();
-	}
-
-	private List<NameValuePair> asNameValuePairList(final HttpRequest req) {
-		if (req.getParameters() != null && req.getParameters().length > 0) {
-			final List<NameValuePair> params = new ArrayList<NameValuePair>();
-			for (final HttpParameter parameter : req.getParameters()) {
-				params.add(new BasicNameValuePair(parameter.getName(), parameter.getValue()));
-			}
-			return params;
-		} else
-			return null;
 	}
 
 	final static class TrustAllSSLSocketFactory extends SSLSocketFactory {

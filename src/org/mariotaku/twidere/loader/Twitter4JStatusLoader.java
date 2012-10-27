@@ -24,6 +24,7 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.util.CacheUsersStatusesTask;
 
 import twitter4j.Paging;
 import twitter4j.Status;
@@ -49,8 +50,8 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		final List<ParcelableStatus> data = getData();
 		final long account_id = getAccountId();
 		List<Status> statuses = null;
-		final SharedPreferences prefs = getContext()
-				.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final Context context = getContext();
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 		try {
 			final Paging paging = new Paging();
@@ -70,6 +71,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			Collections.sort(statuses);
 			final Status min_status = statuses.size() > 0 ? Collections.min(statuses) : null;
 			final long min_status_id = min_status != null ? min_status.getId() : -1;
+			new CacheUsersStatusesTask(context, statuses, account_id).execute();
 			for (final Status status : statuses) {
 				final long id = status.getId();
 				deleteStatus(id);

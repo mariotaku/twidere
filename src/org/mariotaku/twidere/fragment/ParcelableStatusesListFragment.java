@@ -43,7 +43,7 @@ import android.widget.ListView;
 
 public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
-	private SharedPreferences mPreferences;
+	protected SharedPreferences mPreferences;
 
 	private List<ParcelableStatus> mData;
 

@@ -148,7 +148,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 
 		final ParcelableStatus status = getItem(position);
 
-		final boolean show_gap = status.is_gap && !mGapDisallowed;
+		final boolean show_gap = status.is_gap && !mGapDisallowed && position != getCount() - 1;
 
 		holder.setShowAsGap(show_gap);
 		holder.setAccountColorEnabled(mShowAccountColor);

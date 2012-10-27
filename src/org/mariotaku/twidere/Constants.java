@@ -20,6 +20,7 @@
 package org.mariotaku.twidere;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -46,7 +47,7 @@ public interface Constants extends TwitterConstants {
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 29;
+	public static final int DATABASES_VERSION = 30;
 
 	// Following 4 consants are not included in source code.
 	public static final String TWITTER_CONSUMER_KEY = PrivateConstants.TWITTER_CONSUMER_KEY;
@@ -73,7 +74,6 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_USER_FRIENDS = "user_friends";
 	public static final String AUTHORITY_USER_BLOCKS = "user_blocks";
 	public static final String AUTHORITY_STATUS = "status";
-	public static final String AUTHORITY_CONVERSATION = "conversation";
 	public static final String AUTHORITY_DIRECT_MESSAGES_CONVERSATION = "direct_messages_conversation";
 	public static final String AUTHORITY_SEARCH = "search";
 	public static final String AUTHORITY_MAP = "map";
@@ -382,7 +382,6 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_MUTE_SOURCE = R.id.mute_source;
 	public static final int MENU_MUTE_USER = R.id.mute_user;
 	public static final int MENU_REFRESH = R.id.refresh;
-	public static final int MENU_CONVERSATION = R.id.conversation;
 	public static final int MENU_MENTION = R.id.mention;
 	public static final int MENU_SEND_DIRECT_MESSAGE = R.id.send_direct_message;
 	public static final int MENU_EXTENSIONS = R.id.extensions;
@@ -411,6 +410,7 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_MENTIONS = Mentions.CONTENT_PATH;
 	public static final String TABLE_DRAFTS = Drafts.CONTENT_PATH;
 	public static final String TABLE_CACHED_USERS = CachedUsers.CONTENT_PATH;
+	public static final String TABLE_CACHED_STATUSES = CachedStatuses.CONTENT_PATH;
 	public static final String TABLE_FILTERED_USERS = Filters.Users.CONTENT_PATH;
 	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.CONTENT_PATH;
 	public static final String TABLE_FILTERED_SOURCES = Filters.Sources.CONTENT_PATH;
@@ -441,6 +441,7 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_TRENDS_LOCAL = 17;
 	public static final int URI_TABS = 18;
 	public static final int URI_NOTIFICATIONS = 19;
+	public static final int URI_CACHED_STATUSES = 20;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;
@@ -449,7 +450,6 @@ public interface Constants extends TwitterConstants {
 	public static final int LINK_ID_USER_FOLLOWERS = 5;
 	public static final int LINK_ID_USER_FRIENDS = 6;
 	public static final int LINK_ID_USER_BLOCKS = 7;
-	public static final int LINK_ID_CONVERSATION = 8;
 	public static final int LINK_ID_DIRECT_MESSAGES_CONVERSATION = 9;
 	public static final int LINK_ID_LIST_DETAILS = 10;
 	public static final int LINK_ID_LISTS = 11;

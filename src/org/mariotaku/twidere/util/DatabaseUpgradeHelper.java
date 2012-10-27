@@ -207,7 +207,7 @@ public final class DatabaseUpgradeHelper {
 		try {
 			return cur.getString(0);
 		} finally {
-			cur.close();			
+			cur.close();
 		}
 	}
 

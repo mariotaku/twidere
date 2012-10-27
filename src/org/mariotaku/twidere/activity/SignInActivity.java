@@ -39,7 +39,6 @@ import java.net.URLConnection;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
-import org.mariotaku.twidere.util.http.HttpClientImpl;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ColorAnalyser;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
@@ -445,7 +444,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY);
 		final String consumer_secret = mPreferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
 		cb.setHostAddressResolver(mApplication.getHostAddressResolver());
-		cb.setHttpClientImplementation(HttpClientImpl.class);
+		// cb.setHttpClientImplementation(HttpClientImpl.class);
 		setUserAgent(this, cb);
 		if (!isNullOrEmpty(mRESTBaseURL)) {
 			cb.setRestBaseURL(mRESTBaseURL);

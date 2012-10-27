@@ -19,6 +19,9 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
+import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
+import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
@@ -86,7 +89,6 @@ import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ActivitiesAboutMeFragment;
-import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
@@ -115,14 +117,13 @@ import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
-import org.mariotaku.twidere.util.http.HttpClientImpl;
 
 import twitter4j.DirectMessage;
 import twitter4j.EntitySupport;
@@ -172,6 +173,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
@@ -250,6 +252,7 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, URI_TRENDS_LOCAL);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TABS, URI_TABS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#", URI_NOTIFICATIONS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_STATUSES, URI_CACHED_STATUSES);
 
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER, null, LINK_ID_USER);
@@ -258,7 +261,6 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_FRIENDS, null, LINK_ID_USER_FRIENDS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_FAVORITES, null, LINK_ID_USER_FAVORITES);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_BLOCKS, null, LINK_ID_USER_BLOCKS);
-		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_CONVERSATION, null, LINK_ID_CONVERSATION);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_DIRECT_MESSAGES_CONVERSATION, null,
 				LINK_ID_DIRECT_MESSAGES_CONVERSATION);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_DETAILS, null, LINK_ID_LIST_DETAILS);
@@ -324,11 +326,6 @@ public final class Utils implements Constants {
 	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
 
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
-
-	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
-
-	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
-			DirectMessages.Outbox.CONTENT_URI };
 
 	private Utils() {
 		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
@@ -453,6 +450,9 @@ public final class Utils implements Constants {
 		for (final long account_id : getAccountIds(context)) {
 			// Clean statuses.
 			for (final Uri uri : STATUSES_URIS) {
+				if (CachedStatuses.CONTENT_URI.equals(uri)) {
+					continue;
+				}
 				final String table = getTableNameForContentUri(uri);
 				final StringBuilder where = new StringBuilder();
 				where.append(Statuses.ACCOUNT_ID + " = " + account_id);
@@ -477,13 +477,12 @@ public final class Utils implements Constants {
 				resolver.delete(uri, where.toString(), null);
 			}
 		}
-		// Clean cached users.
-		{
-			final Uri uri = CachedUsers.CONTENT_URI;
+		// Clean cached values.
+		for (final Uri uri : CACHE_URIS) {
 			final String table = getTableNameForContentUri(uri);
 			final StringBuilder where = new StringBuilder();
 			where.append(Statuses._ID + " NOT IN (");
-			where.append(" SELECT " + CachedUsers._ID + " FROM " + table);
+			where.append(" SELECT " + BaseColumns._ID + " FROM " + table);
 			where.append(" LIMIT " + (int) (Math.sqrt(item_limit) * 100) + ")");
 			resolver.delete(uri, where.toString(), null);
 		}
@@ -1371,6 +1370,8 @@ public final class Utils implements Constants {
 				return TABLE_TRENDS_LOCAL;
 			case URI_TABS:
 				return TABLE_TABS;
+			case URI_CACHED_STATUSES:
+				return TABLE_CACHED_STATUSES;
 			default:
 				return null;
 		}
@@ -1467,7 +1468,7 @@ public final class Utils implements Constants {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setHostAddressResolver(app.getHostAddressResolver());
-				cb.setHttpClientImplementation(HttpClientImpl.class);
+				// cb.setHttpClientImplementation(HttpClientImpl.class);
 				cb.setHttpConnectionTimeout(connection_timeout);
 				setUserAgent(context, cb);
 				cb.setGZIPEnabled(enable_gzip_compressing);
@@ -1500,7 +1501,6 @@ public final class Utils implements Constants {
 				}
 				cb.setIncludeEntitiesEnabled(include_entities);
 				cb.setIncludeRTsEnabled(include_rts);
-
 				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
 					case Accounts.AUTH_TYPE_XAUTH: {
@@ -1579,19 +1579,18 @@ public final class Utils implements Constants {
 			final String text_plain) {
 		if (database == null) return false;
 		final StringBuilder builder = new StringBuilder();
-		final String[] selection_args = new String[]{ text_plain, screen_name, source };
+		final String[] selection_args = new String[] { text_plain, screen_name, source };
 		builder.append("SELECT NULL WHERE");
-		builder.append("(SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT
-				+ "||'%' FROM " + TABLE_FILTERED_KEYWORDS + ")");
+		builder.append("(SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT + "||'%' FROM "
+				+ TABLE_FILTERED_KEYWORDS + ")");
 		if (screen_name != null) {
 			builder.append(" OR ");
-			builder.append("(SELECT ? IN (SELECT " + Filters.TEXT + " FROM " + TABLE_FILTERED_USERS
-					+ "))");
+			builder.append("(SELECT ? IN (SELECT " + Filters.TEXT + " FROM " + TABLE_FILTERED_USERS + "))");
 		}
 		if (source != null) {
 			builder.append(" OR ");
-			builder.append("(SELECT ? LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.TEXT
-					+ "||'</a>%' FROM " + TABLE_FILTERED_SOURCES + ")");
+			builder.append("(SELECT ? LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.TEXT + "||'</a>%' FROM "
+					+ TABLE_FILTERED_SOURCES + ")");
 		}
 		final Cursor cur = database.rawQuery(builder.toString(), selection_args);
 		if (cur == null) return false;
@@ -1689,13 +1688,23 @@ public final class Utils implements Constants {
 		return values;
 	}
 
+	public static ContentValues makeCachedUserContentValues(final ContentValues status_values) {
+		if (status_values == null) return null;
+		final ContentValues values = new ContentValues();
+		values.put(CachedUsers.USER_ID, status_values.getAsLong(Statuses.USER_ID));
+		values.put(CachedUsers.NAME, status_values.getAsString(Statuses.NAME));
+		values.put(CachedUsers.SCREEN_NAME, status_values.getAsString(Statuses.SCREEN_NAME));
+		values.put(CachedUsers.PROFILE_IMAGE_URL, status_values.getAsString(Statuses.PROFILE_IMAGE_URL));
+		return values;
+	}
+
 	public static ContentValues makeCachedUserContentValues(final User user) {
 		if (user == null || user.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
-		values.put(CachedUsers.NAME, user.getName());
-		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
-		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
 		values.put(CachedUsers.USER_ID, user.getId());
+		values.put(CachedUsers.NAME, user.getName());
+		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
+		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
 		return values;
 	}
 
@@ -1855,26 +1864,6 @@ public final class Utils implements Constants {
 	public static boolean objectEquals(final Object object1, final Object object2) {
 		if (object1 == null || object2 == null) return object1 == object2;
 		return object1.equals(object2);
-	}
-
-	public static void openConversation(final Activity activity, final long account_id, final long status_id) {
-		if (activity == null) return;
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new ConversationFragment();
-			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putLong(INTENT_KEY_STATUS_ID, status_id);
-			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_CONVERSATION);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
 	}
 
 	public static void openDirectMessagesConversation(final Activity activity, final long account_id,
@@ -2517,10 +2506,6 @@ public final class Utils implements Constants {
 				icon.clearColorFilter();
 				favorite.setTitle(R.string.favorite);
 			}
-		}
-		final MenuItem conversation = menu.findItem(MENU_CONVERSATION);
-		if (conversation != null) {
-			conversation.setVisible(status.in_reply_to_status_id > 0);
 		}
 	}
 

@@ -87,7 +87,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
 
-		final boolean show_gap = is_gap && !mGapDisallowed;
+		final boolean show_gap = is_gap && !mGapDisallowed && position != getCount() - 1;
 
 		holder.setShowAsGap(show_gap);
 

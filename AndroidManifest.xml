@@ -191,6 +191,10 @@
 		<activity
 			android:name=".activity.LinkHandlerActivity"
 			android:windowSoftInputMode="adjustResize">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".activity.HomeActivity"/>
+
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>
 
@@ -217,9 +221,6 @@
 					android:scheme="twidere"/>
 				<data
 					android:host="status"
-					android:scheme="twidere"/>
-				<data
-					android:host="conversation"
 					android:scheme="twidere"/>
 				<data
 					android:host="direct_messages_conversation"
@@ -256,6 +257,9 @@
 			<meta-data
 				android:name="android.app.searchable"
 				android:resource="@xml/searchable"/>
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".activity.HomeActivity"/>
 
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH"/>
@@ -429,18 +433,20 @@
 				<action android:name="android.intent.action.BOOT_COMPLETED"/>
 			</intent-filter>
 		</receiver>
-		
-		<service android:name="edu.ucdavis.earlybird.UCDService"></service>
-	    <receiver 
-            android:name="edu.ucdavis.earlybird.UploadReceiver" 
-            android:exported="false" > 
-            <intent-filter> 
-                <action android:name="android.net.wifi.supplicant.CONNECTION_CHANGE" /> 
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" /> 
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" /> 
-                <action android:name="edu.ucdavis.earlybird.UPLOAD_PROFILE" /> 
-            </intent-filter> 
-        </receiver> 
+
+		<service android:name="edu.ucdavis.earlybird.UCDService">
+		</service>
+
+		<receiver
+			android:name="edu.ucdavis.earlybird.UploadReceiver"
+			android:exported="false">
+			<intent-filter>
+				<action android:name="android.net.wifi.supplicant.CONNECTION_CHANGE"/>
+				<action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+				<action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+				<action android:name="edu.ucdavis.earlybird.UPLOAD_PROFILE"/>
+			</intent-filter>
+		</receiver>
 	</application>
 
 </manifest>

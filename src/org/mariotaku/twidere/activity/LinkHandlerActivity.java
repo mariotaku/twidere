@@ -28,7 +28,6 @@ import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.ConversationFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
@@ -53,6 +52,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.Window;
 
@@ -96,7 +96,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 				if (isDualPaneMode()) {
 					final int count = fm.getBackStackEntryCount();
 					if (count == 0) {
-						onBackPressed();
+						NavUtils.navigateUpFromSameTask(this);
 					} else if (!FragmentManagerTrojan.isStateSaved(fm)) {
 						for (int i = 0; i < count; i++) {
 							fm.popBackStackImmediate();
@@ -104,7 +104,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						setSupportProgressBarIndeterminateVisibility(false);
 					}
 				} else {
-					onBackPressed();
+					NavUtils.navigateUpFromSameTask(this);
 				}
 				break;
 			}
@@ -210,13 +210,6 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 				case LINK_ID_USER_BLOCKS: {
 					setTitle(R.string.blocked_users);
 					fragment = new UserBlocksListFragment();
-					break;
-				}
-				case LINK_ID_CONVERSATION: {
-					setTitle(R.string.view_conversation);
-					fragment = new ConversationFragment();
-					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
 					break;
 				}
 				case LINK_ID_DIRECT_MESSAGES_CONVERSATION: {

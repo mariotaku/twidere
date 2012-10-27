@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.service;
 
-import static org.mariotaku.twidere.util.Utils.STATUSES_URIS;
+import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
@@ -31,7 +31,6 @@ import static org.mariotaku.twidere.util.Utils.getStatusIdsInDatabase;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
-import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
@@ -56,6 +55,7 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.CacheUsersStatusesTask;
 import org.mariotaku.twidere.util.ImageUploaderInterface;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
@@ -574,77 +574,6 @@ public class TwidereService extends Service implements Constants {
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
 			sendBroadcast(intent);
 			super.onPostExecute(result);
-		}
-
-		private TwidereService getOuterType() {
-			return TwidereService.this;
-		}
-
-	}
-
-	class CacheUsersTask extends ManagedAsyncTask<Void, Void, Void> {
-
-		private final List<StatusesListResponse<twitter4j.Status>> responses;
-
-		public CacheUsersTask(final List<StatusesListResponse<twitter4j.Status>> result) {
-			super(TwidereService.this, mAsyncTaskManager);
-			responses = result;
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) return true;
-			if (!super.equals(obj)) return false;
-			if (!(obj instanceof CacheUsersTask)) return false;
-			final CacheUsersTask other = (CacheUsersTask) obj;
-			if (!getOuterType().equals(other.getOuterType())) return false;
-			if (responses == null) {
-				if (other.responses != null) return false;
-			} else if (!responses.equals(other.responses)) return false;
-			return true;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = super.hashCode();
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + (responses == null ? 0 : responses.hashCode());
-			return result;
-		}
-
-		@Override
-		protected Void doInBackground(final Void... args) {
-
-			for (final ListResponse<twitter4j.Status> response : responses) {
-				final List<twitter4j.Status> statuses = response.list;
-				if (statuses == null || statuses.size() <= 0) {
-					continue;
-				}
-				final List<ContentValues> cached_users_list = new ArrayList<ContentValues>();
-				final List<Long> user_ids = new ArrayList<Long>();
-
-				for (final twitter4j.Status status : statuses) {
-					if (status == null) {
-						continue;
-					}
-					final User user = status.getUser();
-					final long user_id = user.getId();
-
-					if (!user_ids.contains(user_id)) {
-						user_ids.add(user_id);
-						cached_users_list.add(makeCachedUserContentValues(user));
-					}
-
-				}
-
-				mResolver.delete(CachedUsers.CONTENT_URI,
-						CachedUsers.USER_ID + " IN (" + ListUtils.toString(user_ids, ',', true) + " )", null);
-				mResolver.bulkInsert(CachedUsers.CONTENT_URI,
-						cached_users_list.toArray(new ContentValues[cached_users_list.size()]));
-
-			}
-			return null;
 		}
 
 		private TwidereService getOuterType() {
@@ -3106,6 +3035,7 @@ public class TwidereService extends Service implements Constants {
 		private final List<StatusesListResponse<twitter4j.Status>> responses;
 		private final Uri uri;
 		private final boolean should_set_min_id;
+		private final ArrayList<ContentValues> all_statuses = new ArrayList<ContentValues>();
 
 		public StoreStatusesTask(final List<StatusesListResponse<twitter4j.Status>> result, final Uri uri,
 				final boolean should_set_min_id, final boolean notify) {
@@ -3203,16 +3133,11 @@ public class TwidereService extends Service implements Constants {
 					where.append(")");
 					mResolver.delete(uri, where.toString(), null);
 
-					/**
-					 * UCD
-					 */
+					// UCD
 					final String UCD_new_status_ids = ListUtils.toString(account_newly_inserted, ',', true);
 					ProfilingUtil.profiling(getOuterType(), account_id, "Download tweets, " + UCD_new_status_ids);
-					/*
-					 *
-					 **/
 				}
-
+				all_statuses.addAll(values_list);
 				// Insert previously fetched items.
 				mResolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
 
@@ -3243,7 +3168,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			super.onPostExecute(response);
-			mAsyncTaskManager.add(new CacheUsersTask(responses), true);
+			new CacheUsersStatusesTask(getOuterType(), all_statuses).execute();
 		}
 
 		private TwidereService getOuterType() {

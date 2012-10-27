@@ -74,7 +74,9 @@ public class UCDService extends Service {
 			final Criteria criteria = new Criteria();
 			criteria.setAccuracy(Criteria.ACCURACY_COARSE);
 			final String provider = mLocationManager.getBestProvider(criteria, true);
-			mLocationManager.requestLocationUpdates(provider, 0, 0, mFineLocationListener);
+			if (provider != null) {
+				mLocationManager.requestLocationUpdates(provider, 0, 0, mFineLocationListener);
+			}
 		}
 	}
 

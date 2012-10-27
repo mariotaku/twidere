@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
-import static org.mariotaku.twidere.util.Utils.openConversation;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
@@ -132,9 +131,11 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mAsyncTaskManager = getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getServiceInterface();
-		mAdapter = getListAdapter();
-		setListAdapter(mAdapter);
 		mListView = getListView();
+		mAdapter = getListAdapter();
+		setListAdapter(null);
+		setListHeaders(mListView);
+		setListAdapter(mAdapter);
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemLongClickListener(this);
 		setMode(Mode.BOTH);
@@ -161,8 +162,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			final ParcelableStatus status = mSelectedStatus = getListAdapter().getStatus(
-					position - getListView().getHeaderViewsCount());
+			final ParcelableStatus status = mSelectedStatus = mAdapter.getStatus(position
+					- mListView.getHeaderViewsCount());
 			if (mApplication.isMultiSelectActive()) {
 				final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(mSelectedStatus)) {
@@ -194,8 +195,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final Object tag = v.getTag();
 		if (tag instanceof StatusViewHolder) {
 			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
-			final ParcelableStatus status = mSelectedStatus = getListAdapter().getStatus(
-					position - l.getHeaderViewsCount());
+			final ParcelableStatus status = mSelectedStatus = mAdapter.getStatus(position - l.getHeaderViewsCount());
 			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) {
@@ -295,10 +295,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				}
 				break;
 			}
-			case MENU_CONVERSATION: {
-				openConversation(getActivity(), status.account_id, status.status_id);
-				break;
-			}
 			case MENU_DELETE: {
 				mService.destroyStatus(status.account_id, status.status_id);
 				break;
@@ -392,7 +388,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			public void run() {
 				if (mTickerStopped) return;
 				if (mListView != null && !mBusy) {
-					getListAdapter().notifyDataSetChanged();
+					mAdapter.notifyDataSetChanged();
 				}
 				final long now = SystemClock.uptimeMillis();
 				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
@@ -458,4 +454,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	abstract long[] getNewestStatusIds();
 
 	abstract long[] getOldestStatusIds();
+
+	void setListHeaders(final ListView list) {
+
+	}
 }

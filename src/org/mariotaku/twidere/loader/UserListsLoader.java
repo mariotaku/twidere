@@ -7,7 +7,6 @@ import java.util.List;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
-import twitter4j.PagableResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.UserList;

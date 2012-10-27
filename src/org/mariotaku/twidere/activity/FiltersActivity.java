@@ -25,8 +25,6 @@ import org.mariotaku.twidere.fragment.FiltersFragment.FilteredKeywordsFragment;
 import org.mariotaku.twidere.fragment.FiltersFragment.FilteredSourcesFragment;
 import org.mariotaku.twidere.fragment.FiltersFragment.FilteredUsersFragment;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -42,14 +40,12 @@ import android.widget.Spinner;
 public class FiltersActivity extends BaseActivity implements OnItemSelectedListener {
 
 	private ActionBar mActionBar;
-	private SharedPreferences mPrefs;
 	private ArrayAdapter<TabSpec> mAdapter;
 	private Spinner mSpinner;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mPrefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		setContentView(new FrameLayout(this));
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayShowTitleEnabled(false);

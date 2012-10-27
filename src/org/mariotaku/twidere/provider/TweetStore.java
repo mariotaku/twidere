@@ -29,7 +29,11 @@ public final class TweetStore implements Constants {
 
 	public static final String AUTHORITY = "org.mariotaku.twidere.provider.TweetStore";
 
-	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI };
+	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI,
+			CachedStatuses.CONTENT_URI };
+	public static final Uri[] CACHE_URIS = new Uri[] { CachedUsers.CONTENT_URI, CachedStatuses.CONTENT_URI };
+	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
+			DirectMessages.Outbox.CONTENT_URI };
 
 	private static final String TYPE_PRIMARY_KEY = "INTEGER PRIMARY KEY AUTOINCREMENT";
 
@@ -135,6 +139,13 @@ public final class TweetStore implements Constants {
 				TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
 				TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
 
+	}
+
+	public static interface CachedStatuses extends Statuses {
+		public static final String CONTENT_PATH = "cached_statuses";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
 	}
 
 	public static interface CachedTrends extends BaseColumns {
