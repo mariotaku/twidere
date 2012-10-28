@@ -145,16 +145,18 @@ public class TwidereService extends Service implements Constants {
 							.getBoolean(PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true))) {
 				if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
+					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
 						if (!isHomeTimelineRefreshing()) {
-							getHomeTimeline(activated_ids, null, null);
+							getHomeTimeline(activated_ids, null, since_ids);
 						}
 					}
 				} else if (BROADCAST_REFRESH_MENTIONS.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
+					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
 						if (!isMentionsRefreshing()) {
-							getMentions(activated_ids, null, null);
+							getMentions(activated_ids, null, since_ids);
 						}
 					}
 				} else if (BROADCAST_REFRESH_DIRECT_MESSAGES.equals(action)) {
