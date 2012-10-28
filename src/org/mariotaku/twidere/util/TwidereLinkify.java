@@ -24,7 +24,6 @@ import static org.mariotaku.twidere.util.Utils.matcherEnd;
 import static org.mariotaku.twidere.util.Utils.matcherGroup;
 import static org.mariotaku.twidere.util.Utils.matcherStart;
 
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,8 +65,8 @@ public class TwidereLinkify {
 	public static final int LINK_TYPE_LIST = 6;
 	public static final int LINK_TYPE_CASHTAG = 7;
 
-	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_MENTION_LIST, LINK_TYPE_HASHTAG,
-			LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_LINK, LINK_TYPE_ALL_AVAILABLE_IMAGE, LINK_TYPE_CASHTAG
+	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_LINK, LINK_TYPE_MENTION_LIST, LINK_TYPE_HASHTAG,
+			LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_ALL_AVAILABLE_IMAGE, LINK_TYPE_CASHTAG
 
 	};
 
@@ -202,21 +201,6 @@ public class TwidereLinkify {
 
 	private OnLinkClickListener mOnLinkClickListener;
 
-	/**
-	 * Filters out web URL matches that occur after an at-sign (@). This is to
-	 * prevent turning the domain name in an email address into a web link.
-	 */
-	public static final MatchFilter sUrlMatchFilter = new MatchFilter() {
-		@Override
-		public final boolean acceptMatch(final CharSequence s, final int start, final int end) {
-			if (start == 0) return true;
-
-			if (s.charAt(start - 1) == '@') return false;
-
-			return true;
-		}
-	};
-
 	public TwidereLinkify(final TextView view) {
 		this.view = view;
 		view.setMovementMethod(LinkMovementMethod.getInstance());
@@ -265,19 +249,15 @@ public class TwidereLinkify {
 				break;
 			}
 			case LINK_TYPE_LINK: {
-				final ArrayList<LinkSpec> links = new ArrayList<LinkSpec>();
-				gatherLinks(links, string, Patterns.WEB_URL, new String[] { "http://", "https://", "rtsp://" },
-						sUrlMatchFilter, null);
-				for (final LinkSpec link : links) {
-					final URLSpan[] spans = string.getSpans(link.start, link.end, URLSpan.class);
-					if (spans != null && spans.length == 1) {
-						for (final URLSpan span : spans) {
-							string.removeSpan(span);
-							applyLink(span.getURL(), link.start, link.end, string, LINK_TYPE_LINK);
-						}
-					} else {
-						applyLink(link.url, link.start, link.end, string, LINK_TYPE_LINK);
+				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
+				for (final URLSpan span : spans) {
+					final int start = string.getSpanStart(span);
+					final int end = string.getSpanEnd(span);
+					if (start < 0 || end > string.length() || start > end) {
+						continue;
 					}
+					string.removeSpan(span);
+					applyLink(span.getURL(), start, end, string, LINK_TYPE_LINK);
 				}
 				break;
 			}
@@ -287,11 +267,11 @@ public class TwidereLinkify {
 					final Matcher matcher = PATTERN_ALL_AVAILABLE_IMAGES.matcher(span.getURL());
 					if (matcher.matches()) {
 						final ImageSpec spec = getAllAvailableImage(matcher.group());
-						if (spec == null) {
-							break;
-						}
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
+						if (spec == null || start < 0 || end > string.length() || start > end) {
+							continue;
+						}
 						final String url = spec.image_link;
 						string.removeSpan(span);
 						applyLink(url, start, end, string, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION);
@@ -390,106 +370,8 @@ public class TwidereLinkify {
 		}
 	}
 
-	private static final void gatherLinks(final ArrayList<LinkSpec> links, final Spannable s, final Pattern pattern,
-			final String[] schemes, final MatchFilter matchFilter, final TransformFilter transformFilter) {
-		final Matcher m = pattern.matcher(s);
-
-		while (m.find()) {
-			final int start = m.start();
-			final int end = m.end();
-
-			if (matchFilter == null || matchFilter.acceptMatch(s, start, end)) {
-				final LinkSpec spec = new LinkSpec();
-				final String url = makeUrl(m.group(0), schemes, m, transformFilter);
-
-				spec.url = url;
-				spec.start = start;
-				spec.end = end;
-
-				links.add(spec);
-			}
-		}
-	}
-
-	private static final String makeUrl(String url, final String[] prefixes, final Matcher m,
-			final TransformFilter filter) {
-		if (filter != null) {
-			url = filter.transformUrl(m, url);
-		}
-
-		boolean hasPrefix = false;
-
-		final int length = prefixes.length;
-		for (int i = 0; i < length; i++) {
-			if (url.regionMatches(true, 0, prefixes[i], 0, prefixes[i].length())) {
-				hasPrefix = true;
-
-				// Fix capitalization if necessary
-				if (!url.regionMatches(false, 0, prefixes[i], 0, prefixes[i].length())) {
-					url = prefixes[i] + url.substring(prefixes[i].length());
-				}
-
-				break;
-			}
-		}
-
-		if (!hasPrefix) {
-			url = prefixes[0] + url;
-		}
-
-		return url;
-	}
-
-	/**
-	 * MatchFilter enables client code to have more control over what is allowed
-	 * to match and become a link, and what is not.
-	 * 
-	 * For example: when matching web urls you would like things like
-	 * http://www.example.com to match, as well as just example.com itelf.
-	 * However, you would not want to match against the domain in
-	 * support@example.com. So, when matching against a web url pattern you
-	 * might also include a MatchFilter that disallows the match if it is
-	 * immediately preceded by an at-sign (@).
-	 */
-	public interface MatchFilter {
-		/**
-		 * Examines the character span matched by the pattern and determines if
-		 * the match should be turned into an actionable link.
-		 * 
-		 * @param s The body of text against which the pattern was matched
-		 * @param start The index of the first character in s that was matched
-		 *            by the pattern - inclusive
-		 * @param end The index of the last character in s that was matched -
-		 *            exclusive
-		 * 
-		 * @return Whether this match should be turned into a link
-		 */
-		boolean acceptMatch(CharSequence s, int start, int end);
-	}
-
 	public interface OnLinkClickListener {
 		public void onLinkClick(String link, int type);
-	}
-
-	/**
-	 * TransformFilter enables client code to have more control over how matched
-	 * patterns are represented as URLs.
-	 * 
-	 * For example: when converting a phone number such as (919) 555-1212 into a
-	 * tel: URL the parentheses, white space, and hyphen need to be removed to
-	 * produce tel:9195551212.
-	 */
-	public interface TransformFilter {
-		/**
-		 * Examines the matched text and either passes it through or uses the
-		 * data in the Matcher state to produce a replacement.
-		 * 
-		 * @param match The regex matcher state that found this URL text
-		 * @param url The text that was matched
-		 * 
-		 * @return The transformed form of the URL
-		 */
-		String transformUrl(final Matcher match, String url);
 	}
 
 	static class LinkSpan extends URLSpan {
@@ -511,10 +393,4 @@ public class TwidereLinkify {
 		}
 
 	}
-}
-
-class LinkSpec {
-	String url;
-	int start;
-	int end;
 }

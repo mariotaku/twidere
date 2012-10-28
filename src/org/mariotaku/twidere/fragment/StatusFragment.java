@@ -19,9 +19,10 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
-import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
+import static org.mariotaku.twidere.util.Utils.findStatus;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
@@ -32,8 +33,6 @@ import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
-import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
@@ -57,9 +56,7 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
@@ -68,7 +65,6 @@ import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
 import twitter4j.Relationship;
-import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.app.Activity;
@@ -100,6 +96,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -112,6 +111,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
@@ -121,6 +121,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private static final String INTENT_KEY_OMIT_INTENT_EXTRA = "omit_intent_extra";
 
+	private static final int ADD_STATUS = 1;
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
 	private static final int LOADER_ID_LOCATION = 3;
@@ -137,11 +138,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized;
 	private boolean mBusy, mTickerStopped;
 	private boolean mFollowInfoLoaderInitialized;
+	private boolean mShouldScroll;
 
 	private ServiceInterface mService;
 	private LazyImageLoader mProfileImageLoader;
 	private ShowConversationTask mShowConversationTask;
-	private StatusHandler mStatusHandler;
 
 	private ImagesAdapter mImagePreviewAdapter;
 	private ParcelableStatusesAdapter mAdapter;
@@ -157,6 +158,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private Gallery mGallery;
 	private View mStatusView;
 	private View mLoadImagesIndicator;
+	private FrameLayout mStatusContainer;
+	private ListView mListView;
 
 	private ParcelableStatus mStatus;
 
@@ -181,6 +184,26 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					getStatus(true);
 				}
 			}
+		}
+	};
+
+	private final Handler mConversationHandler = new Handler() {
+
+		@Override
+		public void handleMessage(final Message msg) {
+			switch (msg.what) {
+				case ADD_STATUS:
+					final Object obj = msg.obj;
+					if (obj instanceof ParcelableStatus) {
+						mAdapter.add((ParcelableStatus) obj);
+						mAdapter.sort(ParcelableStatus.REVERSE_ID_COMPARATOR);
+						if (!mLoadMoreAutomatically && mShouldScroll) {
+							mListView.setSelection(0 + mListView.getHeaderViewsCount());
+						}
+					}
+					break;
+			}
+			super.handleMessage(msg);
 		}
 	};
 
@@ -271,7 +294,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	};
 
-	private final OnMenuItemClickListener mMenuItemClickListener = new OnMenuItemClickListener() {
+	final OnMenuItemClickListener mMenuItemClickListener = new OnMenuItemClickListener() {
 
 		@Override
 		public boolean onMenuItemClick(final MenuItem item) {
@@ -374,10 +397,17 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 	};
 
-	private static final int ADD_STATUS = 1;
+	private final OnGlobalLayoutListener mOnGlobalLayoutListener = new OnGlobalLayoutListener() {
+		@Override
+		public void onGlobalLayout() {
+			mMainContent.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+			final float density = getResources().getDisplayMetrics().density;
+			mStatusView.setMinimumHeight((int) (mStatusContainer.getHeight() - density * 2));
+		}
+	};
 
 	public void displayStatus(final ParcelableStatus status) {
-
+		onRefreshComplete();
 		// UCD
 		if (mStatus != null && status != null && mStatus.status_id != status.status_id) {
 			ProfilingUtil.profiling(getActivity(), mAccountId, "End, " + mStatus.status_id);
@@ -408,17 +438,25 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final boolean is_reply = status.in_reply_to_status_id > 0;
 		final String time = formatToLongTimeString(getActivity(), status.status_timestamp);
 		final String source_html = status.source;
-		if (!isNullOrEmpty(time) && !isNullOrEmpty(source_html)) {
+		setPullToRefreshEnabled(!mLoadMoreAutomatically && is_reply);
+		if (!isEmpty(time) && !isEmpty(source_html)) {
 			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, source_html)));
-		} else if (isNullOrEmpty(time) && !isNullOrEmpty(source_html)) {
+		} else if (isEmpty(time) && !isEmpty(source_html)) {
 			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.source, source_html)));
-		} else if (!isNullOrEmpty(time) && isNullOrEmpty(source_html)) {
+		} else if (!isEmpty(time) && isEmpty(source_html)) {
 			mTimeAndSourceView.setText(time);
 		}
 		mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
+		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
+				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
 		mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
 		if (is_reply) {
-			mInReplyToView.setText(getString(R.string.in_reply_to, "@" + status.in_reply_to_screen_name));
+			if (mLoadMoreAutomatically) {
+				mInReplyToView.setText(getString(R.string.in_reply_to, "@" + status.in_reply_to_screen_name));
+			} else {
+				mInReplyToView.setText(getString(R.string.in_reply_to_pull_to_load_conversation, "@"
+						+ status.in_reply_to_screen_name));
+			}
 		}
 
 		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
@@ -434,30 +472,27 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			showPreviewImages();
 		}
 		mRetweetedStatusView.setVisibility(status.retweet_id > 0 ? View.VISIBLE : View.GONE);
-		// TODO show screen name when name display option is "display name"
 		if (status.retweet_id > 0) {
-			mRetweetedStatusView.setText(status.retweet_count > 1 ? getString(R.string.retweeted_by_with_count,
-					status.retweeted_by_name, status.retweet_count - 1) : getString(R.string.retweeted_by,
-					status.retweeted_by_name));
+			if (display_screen_name) {
+				mRetweetedStatusView.setText(status.retweet_count > 1 ? getString(R.string.retweeted_by_with_count,
+						status.retweeted_by_screen_name, status.retweet_count - 1) : getString(R.string.retweeted_by,
+						status.retweeted_by_screen_name));
+			} else {
+				mRetweetedStatusView.setText(status.retweet_count > 1 ? getString(R.string.retweeted_by_with_count,
+						status.retweeted_by_name, status.retweet_count - 1) : getString(R.string.retweeted_by,
+						status.retweeted_by_name));
+			}
 		}
 		mLocationView.setVisibility(ParcelableLocation.isValidLocation(status.location) ? View.VISIBLE : View.GONE);
 
 		if (mLoadMoreAutomatically) {
 			showFollowInfo(true);
 			showLocationInfo(true);
+			showConversation(status);
 		} else {
 			mFollowIndicator.setVisibility(View.GONE);
 		}
-		// TODO
-		mAdapter.clear();
-		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
-			mShowConversationTask.cancel(true);
-		}
-		if (status.in_reply_to_status_id > 0) {
-			mShowConversationTask = new ShowConversationTask(mStatusHandler, status.account_id,
-					status.in_reply_to_status_id);
-			mShowConversationTask.execute();
-		}
+
 	}
 
 	@Override
@@ -469,15 +504,23 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		setPullToRefreshEnabled(false);
+		setListShownNoAnimation(true);
+		mListView = getListView();
+		mListView.setStackFromBottom(true);
 		mAdapter = getListAdapter();
 		mAdapter.setGapDisallowed(true);
-		mStatusHandler = new StatusHandler(mAdapter);
 		final TwidereApplication application = getApplication();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mService = getServiceInterface();
 		setRetainInstance(true);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
+		if (mLoadMoreAutomatically) {
+			setPullToRefreshEnabled(false);
+		} else {
+			setMode(Mode.PULL_DOWN_TO_REFRESH);
+			setPullLabel(getString(R.string.pull_to_load_conversation_label), Mode.BOTH);
+			setReleaseLabel(getString(R.string.pull_to_load_conversation_release_label), Mode.BOTH);
+		}
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
@@ -527,7 +570,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				break;
 			}
 			case R.id.in_reply_to: {
-				// TODO
+				showConversation(mStatus);
 				break;
 			}
 			case R.id.location_view: {
@@ -556,10 +599,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.status, null, false);
 		mMainContent = view.findViewById(R.id.content);
+		final ViewTreeObserver observer = mMainContent.getViewTreeObserver();
+		if (observer.isAlive()) {
+			observer.addOnGlobalLayoutListener(mOnGlobalLayoutListener);
+		}
 		mStatusLoadProgress = (ProgressBar) view.findViewById(R.id.status_load_progress);
 		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
-		final FrameLayout status_container = (FrameLayout) view.findViewById(R.id.status_container);
-		status_container.addView(super.onCreateView(inflater, container, savedInstanceState));
+		mStatusContainer = (FrameLayout) view.findViewById(R.id.status_container);
+		mStatusContainer.addView(super.onCreateView(inflater, container, savedInstanceState));
 		mStatusView = inflater.inflate(R.layout.status_content, null, false);
 		mImagesPreviewContainer = mStatusView.findViewById(R.id.images_preview);
 		mLocationView = (TextView) mStatusView.findViewById(R.id.location_view);
@@ -604,6 +651,18 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
 		intent.setPackage(getActivity().getPackageName());
 		startActivity(intent);
+	}
+
+	@Override
+	public void onPullDownToRefresh() {
+		onRefreshComplete();
+		showConversation(mStatus);
+	}
+
+	@Override
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+		super.onScrollStateChanged(view, scrollState);
+		mShouldScroll = false;
 	}
 
 	@Override
@@ -692,6 +751,18 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		return images != null && mData.addAll(images);
 	}
 
+	private void showConversation(final ParcelableStatus status) {
+		mAdapter.clear();
+		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
+			mShowConversationTask.cancel(true);
+		}
+		if (status == null) return;
+		if (status.in_reply_to_status_id > 0) {
+			mShowConversationTask = new ShowConversationTask(status.account_id, status.in_reply_to_status_id);
+			mShowConversationTask.execute();
+		}
+	}
+
 	private void showFollowInfo(final boolean force) {
 		if (mFollowInfoDisplayed && !force) return;
 		final LoaderManager lm = getLoaderManager();
@@ -735,8 +806,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
-	void setListHeaders(final ListView list) {
-		list.addHeaderView(mStatusView);
+	void setListHeaderFooters(final ListView list) {
+		list.addFooterView(mStatusView);
 	}
 
 	public static class LocationInfoLoader extends AsyncTaskLoader<String> {
@@ -811,23 +882,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		@Override
 		public Response<ParcelableStatus> loadInBackground() {
-			ParcelableStatus status = null;
 			if (!omit_intent_extra) {
-				status = intent_args.getParcelable(INTENT_KEY_STATUS);
+				final ParcelableStatus status = intent_args.getParcelable(INTENT_KEY_STATUS);
 				if (status != null) return new Response<ParcelableStatus>(status, null);
 			}
-			status = findStatusInDatabases(context, account_id, status_id);
-			if (status != null) return new Response<ParcelableStatus>(status, null);
-
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
-			final ContentResolver resolver = context.getContentResolver();
 			try {
-				final Status t_status = twitter.showStatus(status_id);
-				final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = "
-						+ status_id;
-				resolver.delete(CachedStatuses.CONTENT_URI, where, null);
-				resolver.insert(CachedStatuses.CONTENT_URI, makeStatusContentValues(t_status, account_id));
-				return new Response<ParcelableStatus>(new ParcelableStatus(t_status, account_id, false), null);
+				return new Response<ParcelableStatus>(findStatus(context, account_id, status_id), null);
 			} catch (final TwitterException e) {
 				return new Response<ParcelableStatus>(null, e);
 			}
@@ -928,50 +988,23 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	class ShowConversationTask extends AsyncTask<Void, Void, TwitterException> {
 
 		private final long account_id, status_id;
-		private final StatusHandler mHandler;
+		private boolean canceled;
 
-		public ShowConversationTask(final StatusHandler handler, final long account_id, final long status_id) {
-			mHandler = handler;
+		public ShowConversationTask(final long account_id, final long status_id) {
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
 
 		@Override
 		protected TwitterException doInBackground(final Void... params) {
-			final Twitter twitter = getTwitterInstance(getActivity(), account_id, true);
-			final ContentResolver resolver = getContentResolver();
-			if (twitter == null) return null;
 			try {
-				ParcelableStatus p_status = findStatusInDatabases(getActivity(), account_id, status_id);
-				if (p_status == null) {
-					final twitter4j.Status status = twitter.showStatus(status_id);
-					if (status == null || status.getId() <= 0) return null;
-					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID
-							+ " = " + status.getId();
-					resolver.delete(CachedStatuses.CONTENT_URI, where, null);
-					resolver.insert(CachedStatuses.CONTENT_URI, makeStatusContentValues(status, account_id));
-					p_status = new ParcelableStatus(status, account_id, false);
-				}
-				mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, p_status));
-				long in_reply_to_id = p_status.in_reply_to_status_id;
-				while (in_reply_to_id != -1) {
-					p_status = findStatusInDatabases(getActivity(), account_id, in_reply_to_id);
-					if (p_status == null) {
-						final twitter4j.Status status = twitter.showStatus(in_reply_to_id);
-						if (status == null || status.getId() <= 0) {
-							break;
-						}
-						final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID
-								+ " = " + status.getId();
-						resolver.delete(CachedStatuses.CONTENT_URI, where, null);
-						resolver.insert(CachedStatuses.CONTENT_URI, makeStatusContentValues(status, account_id));
-						p_status = new ParcelableStatus(status, account_id, false);
-					}
-					if (p_status.status_id <= 0) {
+				ParcelableStatus p_status = findStatus(getActivity(), account_id, status_id);
+				while (p_status != null && !canceled) {
+					mConversationHandler.sendMessage(mConversationHandler.obtainMessage(ADD_STATUS, p_status));
+					if (p_status.in_reply_to_status_id <= 0) {
 						break;
 					}
-					mHandler.sendMessage(mHandler.obtainMessage(ADD_STATUS, p_status));
-					in_reply_to_id = p_status.in_reply_to_status_id;
+					p_status = findStatus(getActivity(), account_id, p_status.in_reply_to_status_id);
 				}
 			} catch (final TwitterException e) {
 				return e;
@@ -980,42 +1013,31 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 
 		@Override
+		protected void onCancelled() {
+			canceled = true;
+			super.onCancelled();
+		}
+
+		@Override
 		protected void onPostExecute(final TwitterException result) {
 			if (result != null) {
 				showErrorToast(getActivity(), getString(R.string.getting_status), result, true);
 			}
 			setProgressBarIndeterminateVisibility(false);
+			mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
+			setPullToRefreshEnabled(false);
 			super.onPostExecute(result);
 		}
 
 		@Override
 		protected void onPreExecute() {
 			setProgressBarIndeterminateVisibility(true);
+			mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+			mInReplyToView.setClickable(false);
+			mShouldScroll = !mLoadMoreAutomatically;
 			super.onPreExecute();
 		}
 
-	}
-
-	static class StatusHandler extends Handler {
-
-		private final ParcelableStatusesAdapter mAdapter;
-
-		public StatusHandler(final ParcelableStatusesAdapter adapter) {
-			mAdapter = adapter;
-		}
-
-		@Override
-		public void handleMessage(final Message msg) {
-			switch (msg.what) {
-				case ADD_STATUS:
-					final Object obj = msg.obj;
-					if (obj instanceof ParcelableStatus) {
-						mAdapter.add((ParcelableStatus) obj);
-					}
-					break;
-			}
-			super.handleMessage(msg);
-		}
 	}
 
 }

@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
-import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getTabs;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
@@ -43,9 +42,6 @@ import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Inbox;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Outbox;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.SetHomeButtonEnabledAccessor;
@@ -117,6 +113,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		}
 
 	};
+
+	private boolean mShowHomeTab, mShowMentionsTab, mShowMessagesTab, mShowAccountsTab;
 
 	public boolean checkDefaultAccountSet() {
 		boolean result = true;
@@ -252,6 +250,10 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
 		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mAdapter.setDisplayLabel(tab_display_label);
+		mShowHomeTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
+		mShowMentionsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);
+		mShowMessagesTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MESSAGES_TAB, true);
+		mShowAccountsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ACCOUNTS_TAB, true);
 		initTabs(getTabs(this));
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOffscreenPageLimit(3);
@@ -271,17 +273,14 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 		}
 		if (refresh_on_start && savedInstanceState == null) {
-			mService.getHomeTimelineWithSinceIds(activated_ids, null,
-					getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI));
+			mService.getHomeTimelineWithSinceIds(activated_ids, null, null);
 			if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
-				mService.getMentionsWithSinceIds(account_ids, null,
-						getNewestStatusIdsFromDatabase(this, Mentions.CONTENT_URI));
+				mService.getMentionsWithSinceIds(account_ids, null, null);
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
 				mService.getReceivedDirectMessagesWithSinceIds(account_ids, null,
 						getNewestMessageIdsFromDatabase(this, Inbox.CONTENT_URI));
-				mService.getSentDirectMessagesWithSinceIds(account_ids, null,
-						getNewestMessageIdsFromDatabase(this, Outbox.CONTENT_URI));
+				mService.getSentDirectMessagesWithSinceIds(account_ids, null, null);
 			}
 		}
 		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
@@ -302,7 +301,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			builder.setContentTitle(getString(R.string.data_profiling_notification_title));
 			builder.setContentText(getString(R.string.data_profiling_notification_desc));
 			builder.setContentIntent(content_intent);
-			mNotificationManager.notify(NOTIFICATION_ID_DATA_PROFILING, builder.getNotification());
+			mNotificationManager.notify(NOTIFICATION_ID_DATA_PROFILING, builder.build());
 		}
 	}
 
@@ -486,10 +485,9 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null) {
-				mService.getHomeTimelineWithSinceIds(refreshed_ids, null,
-						getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI));
-				mService.getMentionsWithSinceIds(refreshed_ids, null,
-						getNewestStatusIdsFromDatabase(this, Mentions.CONTENT_URI));
+				// TODO should I refresh inbox too?
+				mService.getHomeTimelineWithSinceIds(refreshed_ids, null, null);
+				mService.getMentionsWithSinceIds(refreshed_ids, null, null);
 			}
 			final int initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			if (initial_tab != -1 && mViewPager != null) {
@@ -522,9 +520,14 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
+		final boolean show_home_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
+		final boolean show_mentions_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);
+		final boolean show_messages_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MESSAGES_TAB, true);
+		final boolean show_accounts_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ACCOUNTS_TAB, true);
 
 		final List<TabSpec> tabs = getTabs(this);
-		if (isTabsChanged(tabs)) {
+		if (isTabsChanged(tabs) || show_home_tab != mShowHomeTab || show_mentions_tab != mShowMentionsTab
+				|| show_messages_tab != mShowMessagesTab || show_accounts_tab != mShowAccountsTab) {
 			restart();
 		}
 		// UCD
@@ -553,15 +556,23 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mCustomTabs.clear();
 		mCustomTabs.addAll(tabs);
 		mAdapter.clear();
-		mAdapter.addTab(HomeTimelineFragment.class, null, getString(R.string.home), R.drawable.ic_tab_home,
-				TAB_POSITION_HOME);
-		mAdapter.addTab(MentionsFragment.class, null, getString(R.string.mentions), R.drawable.ic_tab_mention,
-				TAB_POSITION_MENTIONS);
-		mAdapter.addTab(DirectMessagesFragment.class, null, getString(R.string.direct_messages),
-				R.drawable.ic_tab_message, TAB_POSITION_MESSAGES);
+		if (mShowHomeTab) {
+			mAdapter.addTab(HomeTimelineFragment.class, null, getString(R.string.home), R.drawable.ic_tab_home,
+					TAB_POSITION_HOME);
+		}
+		if (mShowMentionsTab) {
+			mAdapter.addTab(MentionsFragment.class, null, getString(R.string.mentions), R.drawable.ic_tab_mention,
+					TAB_POSITION_MENTIONS);
+		}
+		if (mShowMessagesTab) {
+			mAdapter.addTab(DirectMessagesFragment.class, null, getString(R.string.direct_messages),
+					R.drawable.ic_tab_message, TAB_POSITION_MESSAGES);
+		}
 		mAdapter.addTabs(tabs);
-		mAdapter.addTab(AccountsFragment.class, null, getString(R.string.accounts), R.drawable.ic_tab_accounts,
-				mAdapter.getCount());
+		if (mShowAccountsTab) {
+			mAdapter.addTab(AccountsFragment.class, null, getString(R.string.accounts), R.drawable.ic_tab_accounts,
+					mAdapter.getCount());
+		}
 
 	}
 

@@ -32,7 +32,6 @@ import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
@@ -54,6 +53,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -110,9 +110,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
 			final boolean is_verified = cursor.getShort(mIndices.is_verified) == 1;
 
-			final boolean has_location = !isNullOrEmpty(cursor.getString(mIndices.location));
-			final boolean is_retweet = !isNullOrEmpty(retweeted_by_name) && cursor.getShort(mIndices.is_retweet) == 1;
-			final boolean is_reply = !isNullOrEmpty(in_reply_to_screen_name)
+			final boolean has_location = !TextUtils.isEmpty(cursor.getString(mIndices.location));
+			final boolean is_retweet = !TextUtils.isEmpty(retweeted_by_name)
+					&& cursor.getShort(mIndices.is_retweet) == 1;
+			final boolean is_reply = !TextUtils.isEmpty(in_reply_to_screen_name)
 					&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
 
 			if (mMultiSelectEnabled) {
@@ -173,8 +174,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			if (is_retweet) {
 				if (mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
 					holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, retweeted_by_screen_name, retweet_count - 1)
-							: mContext.getString(R.string.retweeted_by, retweeted_by_screen_name));
+							R.string.retweeted_by_with_count, retweeted_by_screen_name, retweet_count - 1) : mContext
+							.getString(R.string.retweeted_by, retweeted_by_screen_name));
 				} else {
 					holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
 							R.string.retweeted_by_with_count, retweeted_by_name, retweet_count - 1) : mContext
@@ -183,8 +184,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
 			} else if (is_reply) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to,
-						in_reply_to_screen_name));
+				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to, in_reply_to_screen_name));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
 						0, 0);
 			}

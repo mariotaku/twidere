@@ -86,6 +86,7 @@
   <string name="dark_theme">Sötét téma használata</string>
   <string name="dark_theme_summary">Sötés téma használata a Twidere-hez.</string>
   <string name="display_profile_image">Profilkép megjelenítése</string>
+  <string name="image_load_summary">Ennek kikapcsolása gyorsabb listagörgetést és kisebb adatforgalmat eredményez.</string>
   <string name="in_reply_to">Válasz neki: <xliff:g id="username">%s</xliff:g></string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweetelte ezt</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> és másik <xliff:g id="retweet_count">%2$d</xliff:g> felhasználó retweetelte ezt</string>
@@ -100,17 +101,21 @@
   <string name="content">Tartalom</string>
   <string name="customize">Testreszabás</string>
   <string name="set_color">Szín beállítása</string>
+  <string name="clear">Törlés</string>
   <string name="pick_color">Szín kiválasztása</string>
   <string name="follow">Követés</string>
   <string name="unfollow">Követés megszüntetése</string>
   <string name="bottom_compose_button">Új tweet gomb alul</string>
   <string name="bottom_compose_button_summary">Új tweet gomb áthelyezése alulra; ennek nagy kijelzők esetén van értelme.</string>
   <string name="leftside_compose_button">Új tweet gomb bal oldalt</string>
+  <string name="leftside_compose_button_summary">Szerkesztés gomb bal oldalra helyezése.</string>
   <string name="load_item_limit">Betöltendő elemek maximális száma</string>
   <string name="load_item_limit_summary">Töltésenkénti elemszám korlát beállítása.</string>
   <string name="load_more_automatically">További tartalom automatikus betöltése</string>
+  <string name="load_more_automatically_summary">Még több tartalom (pl. képek, térképek, állapotok) automatikus betöltése</string>
   <string name="quote">Idézet</string>
   <string name="add_rule">Szabály hozzáadása</string>
+  <string name="longclick_to_delete">Törlés hosszú kattintással.</string>
   <string name="text_size">Szövegméret</string>
   <string name="text_size_summary">Státusz szöveg mérete.</string>
   <string name="cannot_get_location">Helyzet meghatározása sikertelen.</string>
@@ -139,6 +144,7 @@
   <string name="user_unblocked">Felhasználó blokkolás feloldva.</string>
   <string name="reported_user_for_spam">Felhasználó megjelölve spammerként.</string>
   <string name="filename_hint">Fájlnév</string>
+  <string name="overwrite_confirm">A file létezik. Felülírjam?</string>
   <string name="save_as">Mentés mint</string>
   <string name="please_wait">Kérem várjon.</string>
   <string name="file_saved_to">Fájl elmentve ide: <xliff:g id="filename">%s</xliff:g>.</string>
@@ -149,6 +155,7 @@
   <string name="proxy_port">Proxy Port</string>
   <string name="block">Blokkol</string>
   <string name="unblock">Engedélyez</string>
+  <string name="report_for_spam">Spam jelentése</string>
   <string name="inbox">Beérkezett üzenetek</string>
   <string name="load_images">Képek betöltése</string>
   <string name="other_settings">Egyéb beállítások</string>
@@ -167,6 +174,7 @@
   <string name="new_notifications">Új értesítések</string>
   <string name="screen_name">Kijelzett név</string>
   <string name="sort_timeline_by_time">Rendezés idő szerint</string>
+  <string name="sort_timeline_by_time_summary">Ez a tweetek rossz helyen történő megjelenését okozhatja, de jól jöhet, ha más szolgáltatást is használ, pl. Identi.ca-t.</string>
   <string name="refresh_on_start">Frissítés indításkor</string>
   <string name="refresh_on_start_summary">Tweet lista és említések frissítése indításkor.</string>
   <string name="refresh_after_tweet">Frissítés tweet küldése után</string>
@@ -187,11 +195,13 @@
   <string name="item_4_hours">4 óra</string>
   <string name="inline_image_preview">Beágyazott kép előnézet</string>
   <string name="solid_color_background">Egyszínű háttér</string>
+  <string name="solid_color_background_summary">Ez AMOLED képernyő esetén hasznos lehet.</string>
   <string name="user_list">Felhasználólista</string>
   <string name="trends_location">Trendek helye</string>
   <string name="trends_location_summary">Helyi trendek helyének beállítása.</string>
   <string name="trends">Trendek</string>
   <string name="accounts">Fiókok</string>
+  <string name="account">Felhasználói fiók</string>
   <string name="mention_this_user">Felhasználó megemlítése</string>
   <string name="signing_in_please_wait">Bejelentkezés folyamatban, kérem várjon, vagy nyomjon VISSZA gombot a kilépéshez.</string>
   <string name="connectivity">Kapcsolat</string>
@@ -204,4 +214,36 @@
   <string name="view_user_list">Felhasználólista megtekintése</string>
   <string name="uninstall">Eltávolít</string>
   <string name="users_retweeted_this">Következő felhasználók által retweetelve</string>
+  <string name="saved_searches">Elmentett keresések</string>
+  <string name="custom_tabs">Egyéni fülek</string>
+  <string name="add_tab">Fül hozzáadása</string>
+  <string name="tab_type">Fül típusa</string>
+  <string name="unused">Kihasználatlan</string>
+  <string name="list_name">Lista neve</string>
+  <string name="edit_tab">Fül szerkesztése</string>
+  <string name="move_up">Mozgatás felfelé</string>
+  <string name="move_down">Mozgatás lefelé</string>
+  <string name="unsaved_change_back_pressed">Elmentetlen változások vannak. Nyomjon VISSZÁT még egyszer az elvetéshez.</string>
+  <string name="invalid_settings">Érvénytelen beállítás található.</string>
+  <string name="icon">Ikon</string>
+  <string name="pick_file">Fájl kiválasztása</string>
+  <string name="user_timeline">Felhasználó idővonala</string>
+  <string name="notification_ringtone">Csengőhang</string>
+  <string name="notification_light_color">Világos szín</string>
+  <string name="share_format">Megosztás formátuma</string>
+  <string name="network">Hálózat</string>
+  <string name="content_and_storage">Tartalom és Tárhely</string>
+  <string name="image_uploader">Képfeltöltő</string>
+  <string name="image_uploader_default">Alapértelmezett (Twitter)</string>
+  <string name="error_message_image_upload_failed">Képfeltöltés sikertelen.</string>
+  <string name="error_message_image_uploader_not_found">Képfeltöltő nem található, talán el lett távolítva.</string>
+  <string name="tweet_shortener">Tweet rövidítő</string>
+  <string name="tweet_shortener_default">Egyik sem (Küldés megszakítása)</string>
+  <string name="error_message_status_too_long">Tweet túl hosszú.</string>
+  <string name="error_message_tweet_shorten_failed">Tweet rövidítés sikertelen.</string>
+  <string name="error_message_tweet_shortener_not_found">Tweet rövidítő nem található, talán el lett távolítva.</string>
+  <string name="landscape">Fekvő</string>
+  <string name="portrait">Álló</string>
+  <string name="discard">Elvetés</string>
+  <string name="view">Nézet</string>
 </resources>

@@ -79,7 +79,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 	@Override
 	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		final String where = Filters._ID + "=" + id;
+		final String where = Filters._ID + " = " + id;
 		mResolver.delete(getContentUri(), where, null);
 		getLoaderManager().restartLoader(0, null, this);
 		return true;

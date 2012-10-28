@@ -185,6 +185,10 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW = "stop_auto_refresh_when_battery_low";
 	public static final String PREFERENCE_KEY_UCD_DATA_PROFILING = "ucd_data_profiling";
 	public static final String PREFERENCE_KEY_SHOW_UCD_DATA_PROFILING_REQUEST = "show_ucd_data_profiling_request";
+	public static final String PREFERENCE_KEY_SHOW_HOME_TAB = "show_home_tab";
+	public static final String PREFERENCE_KEY_SHOW_MENTIONS_TAB = "show_mentions_tab";
+	public static final String PREFERENCE_KEY_SHOW_MESSAGES_TAB = "show_messages_tab";
+	public static final String PREFERENCE_KEY_SHOW_ACCOUNTS_TAB = "show_accounts_tab";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -343,6 +347,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_OAUTH_VERIFIER = "oauth_verifier";
 	public static final String INTENT_KEY_REQUEST_TOKEN = "request_token";
 	public static final String INTENT_KEY_REQUEST_TOKEN_SECRET = "request_token_secret";
+	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;

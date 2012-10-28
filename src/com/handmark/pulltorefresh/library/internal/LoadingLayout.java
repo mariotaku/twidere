@@ -152,6 +152,9 @@ public class LoadingLayout extends FrameLayout {
 
 	public void setPullLabel(final String pullLabel) {
 		mPullLabel = pullLabel;
+		if (!mArrowRotated) {
+			mHeaderText.setText(Html.fromHtml(mPullLabel));
+		}
 	}
 
 	public void setRefreshingLabel(final String refreshingLabel) {
@@ -160,6 +163,9 @@ public class LoadingLayout extends FrameLayout {
 
 	public void setReleaseLabel(final String releaseLabel) {
 		mReleaseLabel = releaseLabel;
+		if (mArrowRotated) {
+			mHeaderText.setText(Html.fromHtml(mReleaseLabel));
+		}
 	}
 
 	public void setSubHeaderText(final CharSequence label) {

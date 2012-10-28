@@ -1,7 +1,7 @@
 package org.mariotaku.twidere.util;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getConnection;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 		public void startElement(final String uri, final String localName, final String qName, final Attributes atts) {
 			if ("input".equalsIgnoreCase(localName) && "authenticity_token".equalsIgnoreCase(atts.getValue("", "name"))) {
 				final String authenticity_token = atts.getValue("", "value");
-				if (!isNullOrEmpty(authenticity_token)) {
+				if (!isEmpty(authenticity_token)) {
 					setAuthenticityToken(authenticity_token);
 				}
 			}
@@ -65,9 +65,9 @@ public class OAuthPasswordAuthenticator implements Constants {
 				final String content = atts.getValue("", "content");
 				final String url_prefix = "url=";
 				final int idx = content.indexOf(url_prefix);
-				if (!isNullOrEmpty(content) && idx != -1) {
+				if (!isEmpty(content) && idx != -1) {
 					final String url = content.substring(idx + url_prefix.length());
-					if (!isNullOrEmpty(url)) {
+					if (!isEmpty(url)) {
 						callback_url = url;
 					}
 				}
@@ -106,7 +106,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 				throw new IOException("Wrong OAuth callback URL " + callback_url);
 			final String oauth_verifier = parseParameters(callback_url.substring(callback_url.indexOf("?") + 1)).get(
 					INTENT_KEY_OAUTH_VERIFIER);
-			if (isNullOrEmpty(oauth_verifier)) throw new AuthenticationException("Cannot get OAuth verifier.");
+			if (isEmpty(oauth_verifier)) throw new AuthenticationException("Cannot get OAuth verifier.");
 			return twitter.getOAuthAccessToken(request_token, oauth_verifier);
 		} catch (final IOException e) {
 			throw new AuthenticationException(e);

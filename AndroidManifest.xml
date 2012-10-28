@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="49"
+	android:versionCode="50"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -151,6 +151,7 @@
 		</activity>
 		<activity
 			android:name=".activity.BrowserActivity"
+			android:exported="false"
 			android:label="@string/browser">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
@@ -165,6 +166,7 @@
 		</activity>
 		<activity
 			android:name=".activity.AboutActivity"
+			android:exported="false"
 			android:label="@string/about">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
@@ -175,6 +177,7 @@
 		</activity>
 		<activity
 			android:name=".activity.FiltersActivity"
+			android:exported="false"
 			android:label="@string/filter"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
@@ -277,6 +280,7 @@
 		</activity>
 		<activity
 			android:name=".activity.DraftsActivity"
+			android:exported="false"
 			android:label="@string/drafts">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
@@ -291,6 +295,7 @@
 		</activity>
 		<activity
 			android:name=".activity.ImageViewerActivity"
+			android:exported="false"
 			android:hardwareAccelerated="true"
 			android:label="@string/view_image"
 			android:launchMode="singleTop"
@@ -307,6 +312,7 @@
 		</activity>
 		<activity
 			android:name=".activity.MapViewerActivity"
+			android:exported="false"
 			android:label="@string/view_map"
 			android:theme="@style/Theme.Twidere.Viewer">
 			<intent-filter>
@@ -334,6 +340,7 @@
 			android:label="@string/settings"/>
 		<activity
 			android:name=".activity.FileSaveAsActivity"
+			android:exported="false"
 			android:label="@string/save_as">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SAVE_FILE"/>
@@ -343,6 +350,7 @@
 		</activity>
 		<activity
 			android:name=".activity.FilePickerActivity"
+			android:exported="false"
 			android:label="@string/pick_file">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.PICK_FILE"/>
@@ -352,6 +360,7 @@
 		</activity>
 		<activity
 			android:name=".activity.ExtensionsListActivity"
+			android:exported="false"
 			android:label="@string/extensions">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.EXTENSIONS"/>
@@ -361,6 +370,7 @@
 		</activity>
 		<activity
 			android:name=".activity.CustomTabsActivity"
+			android:exported="false"
 			android:label="@string/custom_tabs">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.CUSTOM_TABS"/>
@@ -370,6 +380,7 @@
 		</activity>
 		<activity
 			android:name=".activity.EditCustomTabActivity"
+			android:exported="false"
 			android:label="@string/add_tab">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.NEW_CUSTOM_TAB"/>
@@ -380,6 +391,7 @@
 		</activity>
 		<activity
 			android:name=".activity.HostMappingActivity"
+			android:exported="false"
 			android:label="@string/custom_host_mapping">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.EDIT_HOST_MAPPING"/>
@@ -401,8 +413,7 @@
 			android:label="@string/sign_in"/>
 		<activity
 			android:name=".activity.DataProfilingSettingsActivity"
-			android:label="@string/data_profiling"
-			android:theme="@style/Theme.Twidere.Dialog">
+			android:label="@string/data_profiling">
 		</activity>
 
 		<service

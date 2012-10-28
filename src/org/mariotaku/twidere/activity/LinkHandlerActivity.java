@@ -19,10 +19,10 @@
 
 package org.mariotaku.twidere.activity;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.matchLinkId;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseLong;
@@ -147,10 +147,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserProfileFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (!isNullOrEmpty(param_screen_name)) {
+					if (!isEmpty(param_screen_name)) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
-					if (!isNullOrEmpty(param_user_id)) {
+					if (!isEmpty(param_user_id)) {
 						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
 					}
 					break;
@@ -160,10 +160,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserTimelineFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (!isNullOrEmpty(param_screen_name)) {
+					if (!isEmpty(param_screen_name)) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
-					if (!isNullOrEmpty(param_user_id)) {
+					if (!isEmpty(param_user_id)) {
 						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
 					}
 					break;
@@ -173,10 +173,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserFavoritesFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (!isNullOrEmpty(param_screen_name)) {
+					if (!isEmpty(param_screen_name)) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
-					if (!isNullOrEmpty(param_user_id)) {
+					if (!isEmpty(param_user_id)) {
 						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
 					}
 					break;
@@ -186,10 +186,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserFollowersFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (!isNullOrEmpty(param_screen_name)) {
+					if (!isEmpty(param_screen_name)) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
-					if (!isNullOrEmpty(param_user_id)) {
+					if (!isEmpty(param_user_id)) {
 						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
 					}
 					break;
@@ -199,10 +199,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserFriendsFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (!isNullOrEmpty(param_screen_name)) {
+					if (!isEmpty(param_screen_name)) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
-					if (!isNullOrEmpty(param_user_id)) {
+					if (!isEmpty(param_user_id)) {
 						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
 					}
 					break;
@@ -232,9 +232,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
 					final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
-					if (isNullOrEmpty(param_list_id)
-							&& (isNullOrEmpty(param_list_name) || isNullOrEmpty(param_screen_name)
-									&& isNullOrEmpty(param_user_id))) {
+					if (isEmpty(param_list_id)
+							&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id))) {
 						finish();
 						return false;
 					}
@@ -249,7 +248,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserListsListFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (isNullOrEmpty(param_screen_name) && isNullOrEmpty(param_user_id)) {
+					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
 						finish();
 						return false;
 					}
@@ -264,9 +263,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
 					final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
-					if (isNullOrEmpty(param_list_id)
-							&& (isNullOrEmpty(param_list_name) || isNullOrEmpty(param_screen_name)
-									&& isNullOrEmpty(param_user_id))) {
+					if (isEmpty(param_list_id)
+							&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id))) {
 						finish();
 						return false;
 					}
@@ -283,9 +281,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
 					final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
-					if (isNullOrEmpty(param_list_id)
-							&& (isNullOrEmpty(param_list_name) || isNullOrEmpty(param_screen_name)
-									&& isNullOrEmpty(param_user_id))) {
+					if (isEmpty(param_list_id)
+							&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id))) {
 						finish();
 						return false;
 					}
@@ -302,9 +299,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 					final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
 					final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
-					if (isNullOrEmpty(param_list_id)
-							&& (isNullOrEmpty(param_list_name) || isNullOrEmpty(param_screen_name)
-									&& isNullOrEmpty(param_user_id))) {
+					if (isEmpty(param_list_id)
+							&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id))) {
 						finish();
 						return false;
 					}
@@ -323,7 +319,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					setTitle(R.string.user_mentions);
 					fragment = new UserMentionsFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-					if (!isNullOrEmpty(param_screen_name)) {
+					if (!isEmpty(param_screen_name)) {
 						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					} else {
 						finish();

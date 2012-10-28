@@ -21,13 +21,13 @@ package org.mariotaku.twidere.activity;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -240,7 +240,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public void onBackPressed() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-		if (mContentModified && !isNullOrEmpty(text)) {
+		if (mContentModified && !isEmpty(text)) {
 			mUnsavedTweetDialogFragment = (DialogFragment) Fragment.instantiate(this,
 					UnsavedTweetDialogFragment.class.getName());
 			final Bundle args = new Bundle();
@@ -332,8 +332,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
 					PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
 			if (mInReplyToScreenName != null && mInReplyToName != null) {
-				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, display_screen_name ?
-						 mInReplyToScreenName : mInReplyToName));
+				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to,
+						display_screen_name ? mInReplyToScreenName : mInReplyToName));
 			}
 			if (mAccountIds == null || mAccountIds.length == 0) {
 				mAccountIds = new long[] { account_id };
@@ -563,7 +563,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-				if (mContentModified && !isNullOrEmpty(text)) {
+				if (mContentModified && !isEmpty(text)) {
 					mUnsavedTweetDialogFragment = (DialogFragment) Fragment.instantiate(this,
 							UnsavedTweetDialogFragment.class.getName());
 					final Bundle args = new Bundle();
@@ -665,7 +665,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	protected void onStart() {
 		super.onStart();
 		final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-		mUploadUseExtension = !isNullOrEmpty(uploader_component);
+		mUploadUseExtension = !isEmpty(uploader_component);
 		if (mMenuBar != null) {
 			setMenu(mMenuBar.getMenu());
 		}
@@ -725,7 +725,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	private void send() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-		if (isNullOrEmpty(text) || isFinishing()) return;
+		if (isEmpty(text) || isFinishing()) return;
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		mService.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
 				mInReplyToStatusId, mIsPhotoAttached && !mIsImageAttached);

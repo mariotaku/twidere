@@ -1,34 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-	android:layout_width="fill_parent" 
-	android:layout_height="?android:attr/listPreferredItemHeight" 
-	android:orientation="horizontal"
-	android:gravity="center_vertical">
-	
-	<ImageView android:id="@android:id/icon" 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_gravity="center_vertical"
+	android:descendantFocusability="blocksDescendants"
+	android:gravity="center_vertical"
+	android:minHeight="?android:attr/listPreferredItemHeight"
+	android:padding="6dp">
+
+	<ImageView
+		android:id="@android:id/icon"
 		android:layout_width="48dip"
 		android:layout_height="48dip"
-		android:layout_margin="4dip"/>
-		
+		android:layout_centerVertical="true"
+		android:layout_margin="4dip"
+		android:scaleType="fitCenter"/>
+
 	<LinearLayout
-		android:orientation="vertical"
-		android:layout_width="fill_parent" 
-		android:layout_height="fill_parent" 
-		android:gravity="center_vertical">
-		
-		<TextView android:layerType="software" android:id="@android:id/text1" 
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:singleLine="true"
-			android:ellipsize="marquee" 
-			android:textAppearance="?android:attr/textAppearanceLarge"/>
-			
-		<TextView android:layerType="software" android:id="@android:id/text2" 
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content" 
-			android:singleLine="true" 
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_centerVertical="true"
+		android:layout_marginLeft="8dp"
+		android:layout_toLeftOf="@+id/checkbox"
+		android:layout_toRightOf="@android:id/icon"
+		android:orientation="vertical">
+
+		<TextView
+			android:id="@android:id/text1"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
 			android:ellipsize="marquee"
-			android:textAppearance="?android:attr/textAppearanceSmall"/> 
-			
+			android:layerType="software"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<TextView
+			android:id="@android:id/text2"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:ellipsize="marquee"
+			android:layerType="software"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</LinearLayout>
-</LinearLayout>
+
+	<CheckBox
+		android:id="@+id/checkbox"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:clickable="false"
+		android:focusable="false"/>
+
+</RelativeLayout>

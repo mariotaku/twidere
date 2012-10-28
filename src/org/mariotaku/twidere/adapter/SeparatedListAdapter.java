@@ -125,4 +125,14 @@ public class SeparatedListAdapter<T extends Adapter> extends BaseAdapter {
 		return getItemViewType(position) != TYPE_SECTION_HEADER;
 	}
 
+	@Override
+	public void notifyDataSetChanged() {
+		for (final T adapter : mSections.values()) {
+			if (adapter instanceof BaseAdapter) {
+				((BaseAdapter) adapter).notifyDataSetChanged();
+			}
+		}
+		super.notifyDataSetChanged();
+	}
+
 }

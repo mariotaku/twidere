@@ -21,6 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
@@ -35,7 +36,6 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
 import static org.mariotaku.twidere.util.Utils.openSavedSearches;
@@ -368,7 +368,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				getUserTypeIconRes(user.isVerified(), user.isProtected()), 0);
 		mScreenNameView.setText("@" + user.getScreenName());
 		final String description = user.getDescription();
-		mDescriptionContainer.setVisibility(user_is_me || !isNullOrEmpty(description) ? View.VISIBLE : View.GONE);
+		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView);
@@ -376,11 +376,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		linkify.addAllLinks();
 		mDescriptionView.setMovementMethod(null);
 		final String location = user.getLocation();
-		mLocationContainer.setVisibility(user_is_me || !isNullOrEmpty(location) ? View.VISIBLE : View.GONE);
+		mLocationContainer.setVisibility(user_is_me || !isEmpty(location) ? View.VISIBLE : View.GONE);
 		mLocationContainer.setOnLongClickListener(this);
 		mLocationView.setText(location);
 		final String url = user.getURL() != null ? user.getURL().toString() : null;
-		mURLContainer.setVisibility(user_is_me || !isNullOrEmpty(url) ? View.VISIBLE : View.GONE);
+		mURLContainer.setVisibility(user_is_me || !isEmpty(url) ? View.VISIBLE : View.GONE);
 		mURLContainer.setOnLongClickListener(this);
 		mURLView.setText(url);
 		mURLView.setMovementMethod(null);

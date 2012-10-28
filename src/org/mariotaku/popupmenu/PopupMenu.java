@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.PopupWindow.OnDismissListener;
@@ -44,6 +45,7 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 		mWindow = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? InstanceHelper.getInstance(context)
 				: new ListPopupWindowCompat(context);
 		mWindow.setInputMethodMode(ListPopupWindow.INPUT_METHOD_NOT_NEEDED);
+		mWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		mWindow.setAnchorView(mView);
 		mWindow.setWidth(mContext.getResources().getDimensionPixelSize(R.dimen.popup_window_width));
 		mWindow.setAdapter(mAdapter);

@@ -21,6 +21,7 @@ import org.mariotaku.twidere.R;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources.Theme;
+import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -28,7 +29,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -167,12 +167,11 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 		mPopup.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
 
 		final Theme theme = context.getTheme();
-		final TypedValue value = new TypedValue();
-		theme.resolveAttribute(R.attr.popupBackground, value, true);
-		mPopup.setBackgroundDrawable(context.getResources().getDrawable(value.resourceId));
-		theme.resolveAttribute(android.R.attr.listSelector, value, true);
-		mDropDownListHighlight = context.getResources().getDrawable(value.resourceId);
-
+		final TypedArray array = theme.obtainStyledAttributes(new int[] { R.attr.popupBackground,
+				android.R.attr.listSelector });
+		mPopup.setBackgroundDrawable(array.getDrawable(0));
+		mDropDownListHighlight = array.getDrawable(1);
+		array.recycle();
 	}
 
 	/**
@@ -1291,6 +1290,7 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 			super(context, null, android.R.attr.dropDownListViewStyle);
 			mHijackFocus = hijackFocus;
 			// setCacheColorHint(0);
+			setPadding(0, 0, 0, 0);
 		}
 
 		/**

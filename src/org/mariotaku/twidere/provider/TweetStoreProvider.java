@@ -300,7 +300,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			builder.setLights(color, 1000, 2000);
 		}
 		builder.setDefaults(defaults);
-		return builder.getNotification();
+		return builder.build();
 	}
 
 	private void clearNotification(final int id) {
@@ -323,6 +323,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	private void onDatabaseUpdated(final Uri uri) {
 		if (uri == null) return;
+		if ("false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) return;
 		final Context context = getContext();
 		switch (getTableId(uri)) {
 			case URI_ACCOUNTS: {
@@ -481,17 +482,13 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				if (notification_value == null) return;
 				final String title;
 				if (screen_names.size() > 1) {
-					title = res.getString(
-							R.string.notification_direct_message_multiple,
-							display_screen_name ?
-									notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME)
+					title = res.getString(R.string.notification_direct_message_multiple,
+							display_screen_name ? notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME)
 									: notification_value.getAsString(DirectMessages.SENDER_NAME),
 							screen_names.size() - 1);
 				} else {
-					title = res.getString(
-							R.string.notification_direct_message,
-							display_screen_name ?
-									notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME)
+					title = res.getString(R.string.notification_direct_message,
+							display_screen_name ? notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME)
 									: notification_value.getAsString(DirectMessages.SENDER_NAME));
 				}
 				final String message = notification_value.getAsString(DirectMessages.TEXT_PLAIN);

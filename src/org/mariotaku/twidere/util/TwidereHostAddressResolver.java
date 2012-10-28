@@ -1,6 +1,6 @@
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static android.text.TextUtils.isEmpty;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -37,8 +37,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 		mHostMapping = context.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final String dns_address = mPreferences.getString(PREFERENCE_KEY_DNS_SERVER, DEFAULT_DNS_SERVER);
-		mResolver = !local_only ? new SimpleResolver(!isNullOrEmpty(dns_address) ? dns_address : DEFAULT_DNS_SERVER)
-				: null;
+		mResolver = !local_only ? new SimpleResolver(!isEmpty(dns_address) ? dns_address : DEFAULT_DNS_SERVER) : null;
 		if (mResolver != null) {
 			mResolver.setTCP(true);
 		}

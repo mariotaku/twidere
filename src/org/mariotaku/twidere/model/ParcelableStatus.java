@@ -76,6 +76,17 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		}
 	};
 
+	public static final Comparator<ParcelableStatus> REVERSE_ID_COMPARATOR = new Comparator<ParcelableStatus>() {
+
+		@Override
+		public int compare(final ParcelableStatus object1, final ParcelableStatus object2) {
+			final long diff = object1.status_id - object2.status_id;
+			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+			return (int) diff;
+		}
+	};
+
 	public ParcelableStatus(final Cursor cursor, final StatusCursorIndices indices) {
 		retweet_id = indices.retweet_id != -1 ? cursor.getLong(indices.retweet_id) : -1;
 		retweeted_by_id = indices.retweeted_by_id != -1 ? cursor.getLong(indices.retweeted_by_id) : -1;

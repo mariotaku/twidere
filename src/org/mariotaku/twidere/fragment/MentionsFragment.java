@@ -35,6 +35,7 @@ import android.support.v4.content.Loader;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 public class MentionsFragment extends CursorStatusesListFragment implements OnTouchListener {
@@ -42,24 +43,15 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	private SharedPreferences mPreferences;
 	private ListView mListView;
 	private ServiceInterface mService;
-
-	private long mMinIdToRefresh;
-	private boolean mShouldRestorePosition = false;
+	private CursorStatusesAdapter mAdapter;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
-			final Bundle extras = intent.getExtras();
 			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
 				onRefreshComplete();
-				if (extras != null) {
-					mMinIdToRefresh = extras.getBoolean(INTENT_KEY_SUCCEED) ? extras.getLong(INTENT_KEY_MIN_ID, -1)
-							: -1;
-				} else {
-					mMinIdToRefresh = -1;
-				}
 			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
 				if (isAdded() && !isDetached()) {
 					getLoaderManager().restartLoader(0, null, MentionsFragment.this);
@@ -71,7 +63,6 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			}
 		}
 	};
-	private CursorStatusesAdapter mAdapter;
 
 	@Override
 	public Uri getContentUri() {
@@ -87,7 +78,6 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getServiceInterface();
-		mShouldRestorePosition = true;
 		super.onActivityCreated(savedInstanceState);
 		mListView = getListView();
 		mListView.setOnTouchListener(this);
@@ -97,31 +87,29 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
-		long last_viewed_id = -1;
-		{
-			final int position = mListView.getFirstVisiblePosition();
-			if (position > 0) {
-				last_viewed_id = mAdapter.findItemIdByPosition(position);
-			}
-		}
+		final int first_visible_position = mListView.getFirstVisiblePosition();
+		final long last_viewed_id = first_visible_position > 0 ? mAdapter.findItemIdByPosition(first_visible_position)
+				: -1;
 		super.onLoadFinished(loader, data);
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
-		if (mShouldRestorePosition && remember_position) {
+		if (remember_position) {
 			final long status_id = mPreferences.getLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, -1);
-			final int position = mAdapter.findItemPositionByStatusId(status_id);
+			final int position = mAdapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id : status_id);
 			if (position > -1 && position < mListView.getCount()) {
 				mListView.setSelection(position);
 			}
-			mShouldRestorePosition = false;
-			return;
 		}
-		if (mMinIdToRefresh > 0 && remember_position) {
-			final int position = mAdapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id
-					: mMinIdToRefresh);
-			if (position >= 0 && position < mListView.getCount()) {
-				mListView.setSelection(position);
-			}
-			mMinIdToRefresh = -1;
+	}
+
+	@Override
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+		super.onScrollStateChanged(view, scrollState);
+		switch (scrollState) {
+			case SCROLL_STATE_IDLE:
+				final int first_visible_position = getListView().getFirstVisiblePosition();
+				final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
+				break;
 		}
 	}
 
@@ -143,9 +131,6 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	@Override
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
-		final int first_visible_position = getListView().getFirstVisiblePosition();
-		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
-		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
 		super.onStop();
 	}
 
@@ -159,5 +144,4 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 		}
 		return false;
 	}
-
 }

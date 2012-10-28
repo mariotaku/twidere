@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 
@@ -235,19 +235,19 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 			cb.setHostAddressResolver(app.getHostAddressResolver());
 			// cb.setHttpClientImplementation(HttpClientImpl.class);
 			setUserAgent(context, cb);
-			if (!isNullOrEmpty(mRESTBaseURL)) {
+			if (!isEmpty(mRESTBaseURL)) {
 				cb.setRestBaseURL(mRESTBaseURL);
 			}
-			if (!isNullOrEmpty(mOAuthBaseURL)) {
+			if (!isEmpty(mOAuthBaseURL)) {
 				cb.setOAuthBaseURL(mOAuthBaseURL);
 			}
-			if (!isNullOrEmpty(mSigningRESTBaseURL)) {
+			if (!isEmpty(mSigningRESTBaseURL)) {
 				cb.setSigningRestBaseURL(mSigningRESTBaseURL);
 			}
-			if (!isNullOrEmpty(mSigningOAuthBaseURL)) {
+			if (!isEmpty(mSigningOAuthBaseURL)) {
 				cb.setSigningOAuthBaseURL(mSigningOAuthBaseURL);
 			}
-			if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
+			if (isEmpty(consumer_key) || isEmpty(consumer_secret)) {
 				cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
 				cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
 			} else {
@@ -259,7 +259,7 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 			if (enable_proxy) {
 				final String proxy_host = prefs.getString(PREFERENCE_KEY_PROXY_HOST, null);
 				final int proxy_port = parseInt(prefs.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
-				if (!isNullOrEmpty(proxy_host) && proxy_port > 0) {
+				if (!isEmpty(proxy_host) && proxy_port > 0) {
 					cb.setHttpProxyHost(proxy_host);
 					cb.setHttpProxyPort(proxy_port);
 				}

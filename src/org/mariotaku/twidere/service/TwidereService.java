@@ -19,7 +19,9 @@
 
 package org.mariotaku.twidere.service;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
+import static org.mariotaku.twidere.util.Utils.appendQueryParameters;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
@@ -30,7 +32,6 @@ import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getStatusIdsInDatabase;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
@@ -41,6 +42,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
@@ -59,6 +61,7 @@ import org.mariotaku.twidere.util.CacheUsersStatusesTask;
 import org.mariotaku.twidere.util.ImageUploaderInterface;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.ManagedAsyncTask;
+import org.mariotaku.twidere.util.NameValuePairImpl;
 import org.mariotaku.twidere.util.TweetShortenerInterface;
 import org.mariotaku.twidere.util.Utils;
 
@@ -142,18 +145,16 @@ public class TwidereService extends Service implements Constants {
 							.getBoolean(PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true))) {
 				if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
-					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
 						if (!isHomeTimelineRefreshing()) {
-							getHomeTimeline(activated_ids, null, since_ids);
+							getHomeTimeline(activated_ids, null, null);
 						}
 					}
 				} else if (BROADCAST_REFRESH_MENTIONS.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
 						if (!isMentionsRefreshing()) {
-							final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
-							getMentions(activated_ids, null, since_ids);
+							getMentions(activated_ids, null, null);
 						}
 					}
 				} else if (BROADCAST_REFRESH_DIRECT_MESSAGES.equals(action)) {
@@ -352,7 +353,7 @@ public class TwidereService extends Service implements Constants {
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
 			final long[] since_ids = getNewestMessageIdsFromDatabase(this, DirectMessages.Inbox.CONTENT_URI);
 			getReceivedDirectMessages(account_ids, null, since_ids);
-			getSentDirectMessages(account_ids, null, since_ids);
+			getSentDirectMessages(account_ids, null, null);
 		}
 		final long[] since_ids = getNewestStatusIdsFromDatabase(this, Statuses.CONTENT_URI);
 		return getHomeTimeline(account_ids, null, since_ids);
@@ -475,7 +476,7 @@ public class TwidereService extends Service implements Constants {
 			builder.setLights(color, 1000, 2000);
 		}
 		builder.setDefaults(defaults);
-		return builder.getNotification();
+		return builder.build();
 	}
 
 	private int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
@@ -719,9 +720,9 @@ public class TwidereService extends Service implements Constants {
 				where.append(Statuses.ACCOUNT_ID + " = " + result.account_id);
 				where.append(" AND ");
 				where.append("(");
-				where.append(Statuses.STATUS_ID + "=" + status_id);
+				where.append(Statuses.STATUS_ID + " = " + status_id);
 				where.append(" OR ");
-				where.append(Statuses.RETWEET_ID + "=" + status_id);
+				where.append(Statuses.RETWEET_ID + " = " + status_id);
 				where.append(")");
 				for (final Uri uri : TweetStore.STATUSES_URIS) {
 					mResolver.update(uri, values, where.toString(), null);
@@ -1320,9 +1321,9 @@ public class TwidereService extends Service implements Constants {
 				where.append(Statuses.ACCOUNT_ID + " = " + result.account_id);
 				where.append(" AND ");
 				where.append("(");
-				where.append(Statuses.STATUS_ID + "=" + status_id);
+				where.append(Statuses.STATUS_ID + " = " + status_id);
 				where.append(" OR ");
-				where.append(Statuses.RETWEET_ID + "=" + status_id);
+				where.append(Statuses.RETWEET_ID + " = " + status_id);
 				where.append(")");
 				for (final Uri uri : TweetStore.STATUSES_URIS) {
 					mResolver.update(uri, values, where.toString(), null);
@@ -2050,7 +2051,6 @@ public class TwidereService extends Service implements Constants {
 							paging.setSinceId(since_id);
 						}
 						final ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
-
 						if (statuses != null) {
 							result.add(new StatusesListResponse<twitter4j.Status>(account_id, max_id, since_id,
 									load_item_limit, statuses, null));
@@ -2840,11 +2840,14 @@ public class TwidereService extends Service implements Constants {
 						where.append(" AND ");
 						where.append(DirectMessages.MESSAGE_ID + " IN ( " + ListUtils.toString(message_ids, ',', true)
 								+ " ) ");
-						mResolver.delete(uri, where.toString(), null);
+						final Uri delete_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY,
+								false));
+						mResolver.delete(delete_uri, where.toString(), null);
 					}
 
 					// Insert previously fetched items.
-					mResolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
+					final Uri insert_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
+					mResolver.bulkInsert(insert_uri, values_list.toArray(new ContentValues[values_list.size()]));
 
 				}
 				succeed = true;
@@ -2895,8 +2898,10 @@ public class TwidereService extends Service implements Constants {
 			final Bundle extras = new Bundle();
 			extras.putBoolean(INTENT_KEY_SUCCEED, succeed);
 			if (shouldSetMinId()) {
-				extras.putLong(INTENT_KEY_MIN_ID,
-						response != null && response.data != null ? response.data.getLong(INTENT_KEY_MIN_ID, -1) : -1);
+				final long min_id = response != null && response.data != null ? response.data.getLong(
+						INTENT_KEY_MIN_ID, -1) : -1;
+				extras.putLong(INTENT_KEY_MIN_ID, min_id);
+				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, min_id).commit();
 			}
 			sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtras(extras));
 			super.onPostExecute(response);
@@ -2949,8 +2954,10 @@ public class TwidereService extends Service implements Constants {
 			final Bundle extras = new Bundle();
 			extras.putBoolean(INTENT_KEY_SUCCEED, succeed);
 			if (shouldSetMinId()) {
-				extras.putLong(INTENT_KEY_MIN_ID,
-						response != null && response.data != null ? response.data.getLong(INTENT_KEY_MIN_ID, -1) : -1);
+				final long min_id = response != null && response.data != null ? response.data.getLong(
+						INTENT_KEY_MIN_ID, -1) : -1;
+				extras.putLong(INTENT_KEY_MIN_ID, min_id);
+				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, min_id).commit();
 			}
 			sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtras(extras));
 			super.onPostExecute(response);
@@ -3092,7 +3099,6 @@ public class TwidereService extends Service implements Constants {
 				final boolean no_items_before = ids_in_db.size() <= 0;
 				final List<ContentValues> values_list = new ArrayList<ContentValues>();
 				final List<Long> status_ids = new ArrayList<Long>(), retweet_ids = new ArrayList<Long>();
-				long min_id = -1;
 				for (final twitter4j.Status status : statuses) {
 					if (status == null) {
 						continue;
@@ -3104,9 +3110,6 @@ public class TwidereService extends Service implements Constants {
 					status_ids.add(status_id);
 
 					if ((retweet_id <= 0 || !retweet_ids.contains(retweet_id)) && !retweet_ids.contains(status_id)) {
-						if (status_id < min_id || min_id == -1) {
-							min_id = status_id;
-						}
 						if (retweet_id > 0) {
 							retweet_ids.add(retweet_id);
 						}
@@ -3116,41 +3119,44 @@ public class TwidereService extends Service implements Constants {
 				}
 
 				// Delete all rows conflicting before new data inserted.
-				{
 
-					final ArrayList<Long> account_newly_inserted = new ArrayList<Long>();
-					account_newly_inserted.addAll(status_ids);
-					account_newly_inserted.removeAll(ids_in_db);
-					newly_inserted_ids.addAll(account_newly_inserted);
-					final StringBuilder where = new StringBuilder();
-					final String ids_string = ListUtils.toString(status_ids, ',', true);
-					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
-					where.append(" AND ");
-					where.append("(");
-					where.append(Statuses.STATUS_ID + " IN ( " + ids_string + " ) ");
-					where.append(" OR ");
-					where.append(Statuses.RETWEET_ID + " IN ( " + ids_string + " ) ");
-					where.append(")");
-					mResolver.delete(uri, where.toString(), null);
-
-					// UCD
-					final String UCD_new_status_ids = ListUtils.toString(account_newly_inserted, ',', true);
-					ProfilingUtil.profiling(getOuterType(), account_id, "Download tweets, " + UCD_new_status_ids);
-				}
+				final ArrayList<Long> account_newly_inserted = new ArrayList<Long>();
+				account_newly_inserted.addAll(status_ids);
+				account_newly_inserted.removeAll(ids_in_db);
+				newly_inserted_ids.addAll(account_newly_inserted);
+				final StringBuilder delete_where = new StringBuilder();
+				final String ids_string = ListUtils.toString(status_ids, ',', true);
+				delete_where.append(Statuses.ACCOUNT_ID + " = " + account_id);
+				delete_where.append(" AND ");
+				delete_where.append("(");
+				delete_where.append(Statuses.STATUS_ID + " IN ( " + ids_string + " ) ");
+				delete_where.append(" OR ");
+				delete_where.append(Statuses.RETWEET_ID + " IN ( " + ids_string + " ) ");
+				delete_where.append(")");
+				final Uri delete_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
+				final int rows_deleted = mResolver.delete(delete_uri, delete_where.toString(), null);
+				// UCD
+				final String UCD_new_status_ids = ListUtils.toString(account_newly_inserted, ',', true);
+				ProfilingUtil.profiling(getOuterType(), account_id, "Download tweets, " + UCD_new_status_ids);
 				all_statuses.addAll(values_list);
 				// Insert previously fetched items.
-				mResolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
+				final Uri insert_query = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NEW_ITEMS_COUNT,
+						newly_inserted_ids.size() - rows_deleted), new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
+				mResolver.bulkInsert(insert_query, values_list.toArray(new ContentValues[values_list.size()]));
 
 				// Insert a gap.
 				// TODO make sure it will not have bugs.
-				final boolean insert_gap = response.load_item_limit <= response.list.size() && !no_items_before;
+				final long min_id = status_ids.size() > 0 ? Collections.min(status_ids) : -1;
+				final boolean insert_gap = min_id > 0 && response.load_item_limit <= response.list.size()
+						&& !no_items_before;
 				if (insert_gap) {
 					final ContentValues values = new ContentValues();
 					values.put(Statuses.IS_GAP, 1);
 					final StringBuilder where = new StringBuilder();
-					where.append(Statuses.ACCOUNT_ID + "=" + account_id);
-					where.append(" AND " + Statuses.STATUS_ID + "=" + min_id);
-					mResolver.update(uri, values, where.toString(), null);
+					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
+					where.append(" AND " + Statuses.STATUS_ID + " = " + min_id);
+					final Uri update_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
+					mResolver.update(update_uri, values, where.toString(), null);
 					// Ignore gaps
 					newly_inserted_ids.remove(min_id);
 				}
@@ -3159,8 +3165,8 @@ public class TwidereService extends Service implements Constants {
 			final Bundle bundle = new Bundle();
 			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
 			getAllStatusesIds(getOuterType(), uri);
-			if (should_set_min_id) {
-				bundle.putLong(INTENT_KEY_MIN_ID, ListUtils.min(newly_inserted_ids));
+			if (should_set_min_id && newly_inserted_ids.size() > 0) {
+				bundle.putLong(INTENT_KEY_MIN_ID, Collections.min(newly_inserted_ids));
 			}
 			return new SingleResponse<Bundle>(-1, bundle, null);
 		}
@@ -3429,9 +3435,9 @@ public class TwidereService extends Service implements Constants {
 			super(TwidereService.this, mAsyncTaskManager);
 			final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
 			final String shortener_component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
-			use_uploader = !isNullOrEmpty(uploader_component);
+			use_uploader = !isEmpty(uploader_component);
 			uploader = use_uploader ? ImageUploaderInterface.getInstance(getApplication(), uploader_component) : null;
-			use_shortener = !isNullOrEmpty(shortener_component);
+			use_shortener = !isEmpty(shortener_component);
 			shortener = use_shortener ? TweetShortenerInterface.getInstance(getApplication(), shortener_component)
 					: null;
 			this.account_ids = account_ids != null ? account_ids : new long[0];

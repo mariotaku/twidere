@@ -188,4 +188,20 @@
   <string name="inline_image_preview">इनलाइन छवि पूर्वावलोकन</string>
   <string name="solid_color_background">ठोस रंग पृष्ठभूमि</string>
   <string name="user_list">उपयोगकर्ता की सूची</string>
+  <string name="trends_location">रुझान स्थान</string>
+  <string name="trends_location_summary">स्थानीय रुझान के लिए स्थान निर्धारित करें।</string>
+  <string name="trends">रुझान</string>
+  <string name="accounts">खातों</string>
+  <string name="mention_this_user">इस उपयोगकर्ता का उल्लेख करे</string>
+  <string name="signing_in_please_wait">साइन इन हो रहा है, कृपया प्रतीक्षा करें या BACK फिर से दबाये छोड़नेके लिए|</string>
+  <string name="connectivity">कनेक्टिविटी</string>
+  <string name="add_member">सदस्य जोड़ें</string>
+  <string name="new_user_list">नई उपयोगकर्ता सूची</string>
+  <string name="is_public">सार्वजनिक</string>
+  <string name="send_direct_message">DM भेजें</string>
+  <string name="extensions">एक्सटेंशन</string>
+  <string name="open_with_extensions">एक्सटेंशन के साथ खोले</string>
+  <string name="view_user_list">उपयोगकर्ता सूची देखें</string>
+  <string name="uninstall">अनइनस्टाल</string>
+  <string name="users_retweeted_this">उपयोगकर्ताओं ने यह रीट्वीट किया</string>
 </resources>

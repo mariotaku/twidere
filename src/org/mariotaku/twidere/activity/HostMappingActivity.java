@@ -1,6 +1,6 @@
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.util.Map;
@@ -107,7 +107,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 				case DialogInterface.BUTTON_POSITIVE: {
 					mHost = parseString(mEditHost.getText());
 					mAddress = parseString(mEditAddress.getText());
-					if (isNullOrEmpty(mHost) || isNullOrEmpty(mAddress)) return;
+					if (isEmpty(mHost) || isEmpty(mAddress)) return;
 					final SharedPreferences prefs = getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME,
 							Context.MODE_PRIVATE);
 					final SharedPreferences.Editor editor = prefs.edit();

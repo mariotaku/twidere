@@ -19,8 +19,8 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseString;
 
@@ -394,7 +394,7 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 
 	private void send() {
 		final Editable text = mEditText.getText();
-		if (isNullOrEmpty(text)) return;
+		if (isEmpty(text)) return;
 		final String message = text.toString();
 		if (mValidator.isValidTweet(message)) {
 			final long account_id = mArguments.getLong(INTENT_KEY_ACCOUNT_ID, -1);

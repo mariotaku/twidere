@@ -1,11 +1,10 @@
 package org.mariotaku.twidere.adapter;
 
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
-
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ListAction;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -36,7 +35,7 @@ public class ListActionAdapter extends ArrayAdapter<ListAction> {
 		final TextView summary_view = (TextView) view.findViewById(android.R.id.text2);
 		final String summary = getItem(position).getSummary();
 		summary_view.setText(summary);
-		summary_view.setVisibility(!isNullOrEmpty(summary) ? View.VISIBLE : View.GONE);
+		summary_view.setVisibility(!TextUtils.isEmpty(summary) ? View.VISIBLE : View.GONE);
 		return view;
 	}
 }

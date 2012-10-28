@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.util;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
@@ -81,6 +82,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mariotaku.twidere.Constants;
@@ -331,6 +333,16 @@ public final class Utils implements Constants {
 		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
 	}
 
+	public static Uri appendQueryParameters(final Uri uri, final NameValuePair... params) {
+		final Uri.Builder builder = uri.buildUpon();
+		if (params != null) {
+			for (final NameValuePair param : params) {
+				builder.appendQueryParameter(param.getName(), param.getValue());
+			}
+		}
+		return builder.build();
+	}
+
 	public static String buildActivatedStatsWhereClause(final Context context, final String selection) {
 		if (context == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
@@ -541,6 +553,23 @@ public final class Utils implements Constants {
 		return message;
 	}
 
+	public static ParcelableStatus findStatus(final Context context, final long account_id, final long status_id)
+			throws TwitterException {
+		if (context == null || account_id <= 0 || status_id <= 0) return null;
+		final ParcelableStatus p_status = findStatusInDatabases(context, account_id, status_id);
+		if (p_status != null) return p_status;
+		final Twitter twitter = getTwitterInstance(context, account_id, true);
+		if (twitter == null) return null;
+		final Status status = twitter.showStatus(status_id);
+		if (status == null || status.getId() <= 0) return null;
+		final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = "
+				+ status.getId();
+		final ContentResolver resolver = context.getContentResolver();
+		resolver.delete(CachedStatuses.CONTENT_URI, where, null);
+		resolver.insert(CachedStatuses.CONTENT_URI, makeStatusContentValues(status, account_id));
+		return new ParcelableStatus(status, account_id, false);
+	}
+
 	public static ParcelableStatus findStatusInDatabases(final Context context, final long account_id,
 			final long status_id) {
 		if (context == null) return null;
@@ -662,7 +691,7 @@ public final class Utils implements Constants {
 		Integer color = sAccountColors.get(account_id);
 		if (color == null) {
 			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-					new String[] { Accounts.USER_COLOR }, Accounts.ACCOUNT_ID + "=" + account_id, null, null);
+					new String[] { Accounts.USER_COLOR }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
 			if (cur == null) return Color.TRANSPARENT;
 			if (cur.getCount() <= 0) {
 				cur.close();
@@ -836,9 +865,11 @@ public final class Utils implements Constants {
 		final Cursor cur = resolver.query(uri, new String[] { Statuses.STATUS_ID },
 				buildStatusFilterWhereClause(getTableNameForContentUri(uri), null), null, null);
 		if (cur == null) return 0;
-		final int count = cur.getCount();
-		cur.close();
-		return count;
+		try {
+			return cur.getCount();
+		} finally {
+			cur.close();
+		}
 	}
 
 	public static long[] getAllStatusesIds(final Context context, final Uri uri) {
@@ -1006,7 +1037,7 @@ public final class Utils implements Constants {
 		if (context == null) return null;
 		String image_upload_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 				.getString(PREFERENCE_KEY_IMAGE_UPLOAD_FORMAT, PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT);
-		if (isNullOrEmpty(image_upload_format)) {
+		if (isEmpty(image_upload_format)) {
 			image_upload_format = PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT;
 		}
 		if (link == null) return text;
@@ -1014,7 +1045,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ImageSpec getImglyImage(final String id) {
-		if (isNullOrEmpty(id)) return null;
+		if (isEmpty(id)) return null;
 		final String thumbnail_size = "https://img.ly/show/thumb/" + id;
 		final String full_size = "https://img.ly/show/full/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
@@ -1022,21 +1053,21 @@ public final class Utils implements Constants {
 	}
 
 	public static ImageSpec getImgurImage(final String id) {
-		if (isNullOrEmpty(id)) return null;
+		if (isEmpty(id)) return null;
 		final String thumbnail_size = "http://i.imgur.com/" + id + "s.jpg";
 		final String full_size = "http://i.imgur.com/" + id + ".jpg";
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
 	public static ImageSpec getInstagramImage(final String id) {
-		if (isNullOrEmpty(id)) return null;
+		if (isEmpty(id)) return null;
 		final String thumbnail_size = "https://instagr.am/p/" + id + "/media/?size=t";
 		final String full_size = "https://instagr.am/p/" + id + "/media/?size=l";
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
 	public static ImageSpec getLockerzAndPlixiImage(final String url) {
-		if (isNullOrEmpty(url)) return null;
+		if (isEmpty(url)) return null;
 		final String thumbnail_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
 		final String full_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
 		return new ImageSpec(thumbnail_size, full_size);
@@ -1044,7 +1075,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ImageSpec getMobyPictureImage(final String id) {
-		if (isNullOrEmpty(id)) return null;
+		if (isEmpty(id)) return null;
 		final String thumbnail_size = "https://moby.to/" + id + ":thumb";
 		final String full_size = "https://moby.to/" + id + ":full";
 		return new ImageSpec(thumbnail_size, full_size);
@@ -1161,7 +1192,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ImageSpec getPhotozouImage(final String id) {
-		if (isNullOrEmpty(id)) return null;
+		if (isEmpty(id)) return null;
 		final String thumbnail_size = "http://photozou.jp/p/thumb/" + id;
 		final String full_size = "http://photozou.jp/p/img/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
@@ -1222,7 +1253,7 @@ public final class Utils implements Constants {
 		if (!enable_proxy) return Proxy.NO_PROXY;
 		final String proxy_host = prefs.getString(PREFERENCE_KEY_PROXY_HOST, null);
 		final int proxy_port = parseInt(prefs.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
-		if (!isNullOrEmpty(proxy_host) && proxy_port > 0) {
+		if (!isEmpty(proxy_host) && proxy_port > 0) {
 			final SocketAddress addr = InetSocketAddress.createUnresolved(proxy_host, proxy_port);
 			return new Proxy(Proxy.Type.HTTP, addr);
 		}
@@ -1233,7 +1264,7 @@ public final class Utils implements Constants {
 		if (context == null) return null;
 		String quote_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
 				PREFERENCE_KEY_QUOTE_FORMAT, PREFERENCE_DEFAULT_QUOTE_FORMAT);
-		if (isNullOrEmpty(quote_format)) {
+		if (isEmpty(quote_format)) {
 			quote_format = PREFERENCE_DEFAULT_QUOTE_FORMAT;
 		}
 		return quote_format.replace(FORMAT_PATTERN_NAME, screen_name).replace(FORMAT_PATTERN_TEXT, text);
@@ -1243,7 +1274,7 @@ public final class Utils implements Constants {
 		if (context == null) return null;
 		String share_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
 				PREFERENCE_KEY_SHARE_FORMAT, PREFERENCE_DEFAULT_SHARE_FORMAT);
-		if (isNullOrEmpty(share_format)) {
+		if (isEmpty(share_format)) {
 			share_format = PREFERENCE_DEFAULT_SHARE_FORMAT;
 		}
 		if (title == null) return text;
@@ -1251,7 +1282,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ImageSpec getSinaWeiboImage(final String url) {
-		if (isNullOrEmpty(url)) return null;
+		if (isEmpty(url)) return null;
 		final String thumbnail_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/thumbnail/");
 		final String full_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/large/");
 		return new ImageSpec(thumbnail_size, full_size);
@@ -1417,21 +1448,21 @@ public final class Utils implements Constants {
 	}
 
 	public static ImageSpec getTwitgooImage(final String id) {
-		if (isNullOrEmpty(id)) return null;
+		if (isEmpty(id)) return null;
 		final String thumbnail_size = "https://twitgoo.com/show/thumb/" + id;
 		final String full_size = "https://twitgoo.com/show/img/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
 	public static ImageSpec getTwitpicImage(final String id) {
-		if (isNullOrEmpty(id)) return null;
+		if (isEmpty(id)) return null;
 		final String thumbnail_size = "https://twitpic.com/show/thumb/" + id;
 		final String full_size = "https://twitpic.com/show/large/" + id;
 		return new ImageSpec(thumbnail_size, full_size);
 	}
 
 	public static ImageSpec getTwitterImage(final String url) {
-		if (isNullOrEmpty(url)) return null;
+		if (isEmpty(url)) return null;
 		return new ImageSpec(url + ":thumb", url);
 	}
 
@@ -1460,7 +1491,7 @@ public final class Utils implements Constants {
 
 		Twitter twitter = null;
 		final StringBuilder where = new StringBuilder();
-		where.append(Accounts.ACCOUNT_ID + "=" + account_id);
+		where.append(Accounts.ACCOUNT_ID + " = " + account_id);
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS, where.toString(),
 				null, null);
 		if (cur != null) {
@@ -1476,7 +1507,7 @@ public final class Utils implements Constants {
 				if (enable_proxy) {
 					final String proxy_host = preferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
 					final int proxy_port = parseInt(preferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
-					if (!isNullOrEmpty(proxy_host) && proxy_port > 0) {
+					if (!isEmpty(proxy_host) && proxy_port > 0) {
 						cb.setHttpProxyHost(proxy_host);
 						cb.setHttpProxyPort(proxy_port);
 					}
@@ -1487,16 +1518,16 @@ public final class Utils implements Constants {
 				final String oauth_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_BASE_URL));
 				final String signing_oauth_base_url = cur.getString(cur
 						.getColumnIndexOrThrow(Accounts.SIGNING_OAUTH_BASE_URL));
-				if (!isNullOrEmpty(rest_base_url)) {
+				if (!isEmpty(rest_base_url)) {
 					cb.setRestBaseURL(rest_base_url);
 				}
-				if (!isNullOrEmpty(signing_rest_base_url)) {
+				if (!isEmpty(signing_rest_base_url)) {
 					cb.setSigningRestBaseURL(signing_rest_base_url);
 				}
-				if (!isNullOrEmpty(oauth_base_url)) {
+				if (!isEmpty(oauth_base_url)) {
 					cb.setOAuthBaseURL(oauth_base_url);
 				}
-				if (!isNullOrEmpty(signing_oauth_base_url)) {
+				if (!isEmpty(signing_oauth_base_url)) {
 					cb.setSigningOAuthBaseURL(signing_oauth_base_url);
 				}
 				cb.setIncludeEntitiesEnabled(include_entities);
@@ -1504,7 +1535,7 @@ public final class Utils implements Constants {
 				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
 					case Accounts.AUTH_TYPE_XAUTH: {
-						if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
+						if (isEmpty(consumer_key) || isEmpty(consumer_secret)) {
 							cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
 							cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
 						} else {
@@ -1513,7 +1544,7 @@ public final class Utils implements Constants {
 						}
 						final String oauth_token = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN));
 						final String token_secret = cur.getString(cur.getColumnIndexOrThrow(Accounts.TOKEN_SECRET));
-						if (!isNullOrEmpty(oauth_token) && !isNullOrEmpty(token_secret)) {
+						if (!isEmpty(oauth_token) && !isEmpty(token_secret)) {
 							twitter = new TwitterFactory(cb.build()).getInstance(new AccessToken(oauth_token,
 									token_secret));
 						}
@@ -1522,7 +1553,7 @@ public final class Utils implements Constants {
 					case Accounts.AUTH_TYPE_BASIC: {
 						final String screen_name = cur.getString(cur.getColumnIndexOrThrow(Accounts.SCREEN_NAME));
 						final String password = cur.getString(cur.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD));
-						if (!isNullOrEmpty(screen_name) && !isNullOrEmpty(password)) {
+						if (!isEmpty(screen_name) && !isEmpty(password)) {
 							twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(screen_name,
 									password));
 						}
@@ -1560,7 +1591,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ImageSpec getYfrogImage(final String id) {
-		if (isNullOrEmpty(id)) return null;
+		if (isEmpty(id)) return null;
 		final String thumbnail_size = "https://yfrog.com/" + id + ":small";
 		final String full_size = "https://yfrog.com/" + id + ":medium";
 		return new ImageSpec(thumbnail_size, full_size);
@@ -1636,10 +1667,6 @@ public final class Utils implements Constants {
 			if (account_screen_name.equalsIgnoreCase(screen_name)) return true;
 		}
 		return false;
-	}
-
-	public static boolean isNullOrEmpty(final CharSequence text) {
-		return text == null || "".equals(text);
 	}
 
 	public static boolean isUserLoggedIn(final Context context, final long account_id) {

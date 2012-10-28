@@ -152,8 +152,8 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 			}
 		}
 
-		final File root = context.getFileStreamPath("");
-		final File[] files = root.listFiles();
+		final File root = context.getFilesDir();
+		final File[] files = root.listFiles(new CSVFileFilter());
 
 		uploadToNode(files);
 		prefs.edit().putLong(LAST_UPLOAD_DATE, System.currentTimeMillis()).commit();

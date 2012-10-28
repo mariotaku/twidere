@@ -30,11 +30,12 @@ import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
@@ -50,6 +51,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -207,7 +209,8 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 					getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media), 0);
 			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
-			if (status.is_retweet && !isNullOrEmpty(retweeted_by_name) && !isNullOrEmpty(retweeted_by_screen_name)) {
+			if (status.is_retweet && !TextUtils.isEmpty(retweeted_by_name)
+					&& !TextUtils.isEmpty(retweeted_by_screen_name)) {
 				if (mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
 					holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
 							R.string.retweeted_by_with_count, retweeted_by_screen_name, status.retweet_count - 1)
@@ -222,7 +225,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 						.getString(R.string.retweeted_by, retweeted_by_name));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
-			} else if (status.in_reply_to_status_id > 0 && !isNullOrEmpty(status.in_reply_to_screen_name)) {
+			} else if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
 				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to,
 						status.in_reply_to_screen_name));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
@@ -356,5 +359,9 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
+	}
+
+	public void sort(final Comparator<? super ParcelableStatus> comparator) {
+		Collections.sort(mData, comparator);
 	}
 }

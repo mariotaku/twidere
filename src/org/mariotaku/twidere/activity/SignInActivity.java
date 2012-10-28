@@ -19,11 +19,11 @@
 
 package org.mariotaku.twidere.activity;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
 import static org.mariotaku.twidere.util.Utils.getConnection;
 import static org.mariotaku.twidere.util.Utils.getProxy;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.parseInt;
@@ -257,16 +257,16 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
 		mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
 
-		if (isNullOrEmpty(mRESTBaseURL)) {
+		if (isEmpty(mRESTBaseURL)) {
 			mRESTBaseURL = DEFAULT_REST_BASE_URL;
 		}
-		if (isNullOrEmpty(mOAuthBaseURL)) {
+		if (isEmpty(mOAuthBaseURL)) {
 			mOAuthBaseURL = DEFAULT_OAUTH_BASE_URL;
 		}
-		if (isNullOrEmpty(mSigningRESTBaseURL)) {
+		if (isEmpty(mSigningRESTBaseURL)) {
 			mSigningRESTBaseURL = DEFAULT_SIGNING_REST_BASE_URL;
 		}
-		if (isNullOrEmpty(mSigningOAuthBaseURL)) {
+		if (isEmpty(mSigningOAuthBaseURL)) {
 			mSigningOAuthBaseURL = DEFAULT_SIGNING_OAUTH_BASE_URL;
 		}
 
@@ -446,19 +446,19 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		cb.setHostAddressResolver(mApplication.getHostAddressResolver());
 		// cb.setHttpClientImplementation(HttpClientImpl.class);
 		setUserAgent(this, cb);
-		if (!isNullOrEmpty(mRESTBaseURL)) {
+		if (!isEmpty(mRESTBaseURL)) {
 			cb.setRestBaseURL(mRESTBaseURL);
 		}
-		if (!isNullOrEmpty(mOAuthBaseURL)) {
+		if (!isEmpty(mOAuthBaseURL)) {
 			cb.setOAuthBaseURL(mOAuthBaseURL);
 		}
-		if (!isNullOrEmpty(mSigningRESTBaseURL)) {
+		if (!isEmpty(mSigningRESTBaseURL)) {
 			cb.setSigningRestBaseURL(mSigningRESTBaseURL);
 		}
-		if (!isNullOrEmpty(mSigningOAuthBaseURL)) {
+		if (!isEmpty(mSigningOAuthBaseURL)) {
 			cb.setSigningOAuthBaseURL(mSigningOAuthBaseURL);
 		}
-		if (isNullOrEmpty(consumer_key) || isNullOrEmpty(consumer_secret)) {
+		if (isEmpty(consumer_key) || isEmpty(consumer_secret)) {
 			cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
 			cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
 		} else {
@@ -470,7 +470,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		if (enable_proxy) {
 			final String proxy_host = mPreferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
 			final int proxy_port = parseInt(mPreferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
-			if (!isNullOrEmpty(proxy_host) && proxy_port > 0) {
+			if (!isEmpty(proxy_host) && proxy_port > 0) {
 				cb.setHttpProxyHost(proxy_host);
 				cb.setHttpProxyPort(proxy_port);
 			}

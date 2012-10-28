@@ -134,7 +134,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mListView = getListView();
 		mAdapter = getListAdapter();
 		setListAdapter(null);
-		setListHeaders(mListView);
+		setListHeaderFooters(mListView);
 		setListAdapter(mAdapter);
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemLongClickListener(this);
@@ -455,7 +455,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	abstract long[] getOldestStatusIds();
 
-	void setListHeaders(final ListView list) {
+	void setListHeaderFooters(final ListView list) {
 
 	}
 }

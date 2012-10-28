@@ -71,7 +71,7 @@ public class RoundCorneredImageView extends ImageView {
 		if (w > 0 && h > 0) {
 			mRounder = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 			final Canvas canvas = new Canvas(mRounder);
-			mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+			mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 			mPaint.setColor(Color.BLACK);
 			canvas.drawRoundRect(new RectF(0, 0, w, h), mRadius, mRadius, mPaint);
 			mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));

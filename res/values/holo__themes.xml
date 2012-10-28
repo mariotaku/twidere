@@ -22,7 +22,7 @@
 		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_dark</item>
 		<item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_handle_holo_dark</item>
 		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_handle_holo_dark</item>
-
+		<item name="android:listSelector">@drawable/list_selector_holo_dark</item>
 		<!-- Widget styles -->
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.CompoundButton.CheckBox</item>
@@ -64,6 +64,7 @@
 		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_light</item>
 		<item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_handle_holo_light</item>
 		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_handle_holo_light</item>
+		<item name="android:listSelector">@drawable/list_selector_holo_light</item>
 		<!-- Widget styles -->
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.Light.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
@@ -102,6 +103,7 @@
 		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_dark</item>
 		<item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_handle_holo_dark</item>
 		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_handle_holo_dark</item>
+		<item name="android:listSelector">@drawable/list_selector_holo_dark</item>
 		<!-- Widget styles -->
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.CompoundButton.CheckBox</item>
@@ -141,6 +143,7 @@
 		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_light</item>
 		<item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_handle_holo_light</item>
 		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_handle_holo_light</item>
+		<item name="android:listSelector">@drawable/list_selector_holo_light</item>
 		<!-- Widget styles -->
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.Light.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>

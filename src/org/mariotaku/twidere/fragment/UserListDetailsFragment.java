@@ -19,12 +19,12 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.findUserList;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
-import static org.mariotaku.twidere.util.Utils.isNullOrEmpty;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserListMembers;
 import static org.mariotaku.twidere.util.Utils.openUserListSubscribers;
@@ -147,8 +147,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mListNameView.setText("@" + mUserScreenName + "/" + mListName);
 		mUserNameView.setText(mUserName);
 		final String description = user_list.getDescription();
-		mDescriptionContainer.setVisibility(is_my_activated_account || !isNullOrEmpty(description) ? View.VISIBLE
-				: View.GONE);
+		mDescriptionContainer
+				.setVisibility(is_my_activated_account || !isEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView);

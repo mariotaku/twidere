@@ -33,19 +33,6 @@ public class ListUtils {
 		return list;
 	}
 
-	public static long min(final List<Long> list) {
-		long min = -1;
-		for (final long item : list) {
-			if (min == -1) {
-				min = item;
-			}
-			if (min > item) {
-				min = item;
-			}
-		}
-		return min;
-	}
-
 	public static <T> String toString(final List<T> list, final char token, final boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
 		final int size = list.size();

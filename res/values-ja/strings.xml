@@ -252,6 +252,8 @@
   <string name="home_refresh">ホームTLの更新</string>
   <string name="error_message_image_upload_failed">画像をアップロードできません。</string>
   <string name="error_message_image_uploader_not_found">画像アップローダーが見つかりません。</string>
+  <string name="image_upload_format">画像をアップロード時のツイート形式</string>
+  <string name="image_upload_format_summary">\"[LINK]\" = 画像リンク\n\"[TEXT]\" = ツイートするコンテンツ</string>
   <string name="tweet_shortener">Tweet shortener</string>
   <string name="tweet_shortener_default">無 (送信を取り消す)</string>
   <string name="error_message_status_too_long">ツイートのテキストは長過ぎます。</string>
@@ -274,4 +276,20 @@
   <string name="Nitems_selected_quantity_one">1 アイテムが選択</string>
   <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> アイテムが選択</string>
   <string name="view">表示</string>
+  <string name="hardware_acceleration">ハードウェア・アクセラレーション</string>
+  <string name="hardware_acceleration_summary">有効するとスクロールをよりスムーズにします。（一部のデバイスは有効にしても動かない）アンドロイド3.0以上のみ。システムの設定を上書きしません。</string>
+  <string name="custom_host_mapping">カスタム・ホスト・マッピング</string>
+  <string name="custom_host_mapping_summary">特別な許可を取らなくても/etc/hostsのようにホストマッピングができる。</string>
+  <string name="host">ホスト</string>
+  <string name="address">アドレス (他のホストアドレスも可)</string>
+  <string name="add_host_mapping">ホストマッピングを追加</string>
+  <string name="tcp_dns_query">TCP DNS クエリー</string>
+  <string name="tcp_dns_query_summary">TCP プロトコルでDNS リクエストを通信し、DNSキャッシュ汚染を回避できる。</string>
+  <string name="dns_server">DNS サーバー</string>
+  <string name="dns_server_summary">API用のDNS サーバーを設定する。</string>
+  <string name="activities_about_me">アクティビティ</string>
+  <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> があなたのツイートを気に入りました。</string>
+  <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人があなたのツイートを気に入りました。</string>
+  <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> があなたのツイートをリツイートしました。</string>
+  <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人があなたのツイートをリツイートしました。</string>
 </resources>

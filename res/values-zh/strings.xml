@@ -96,6 +96,7 @@
   <string name="display_profile_image">顯示個人資料圖片</string>
   <string name="image_load_summary">關閉可以加快列表的滾動速度，以及減少數據流量。</string>
   <string name="in_reply_to">回覆 <xliff:g id="user_name">%s</xliff:g></string>
+  <string name="in_reply_to_pull_to_load_conversation">回覆 <xliff:g id="user_name">%s</xliff:g>，下拉加載對話</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> 轉推了這個</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> 和其他 <xliff:g id="retweet_count">%2$d</xliff:g> 人轉推了這個</string>
   <string name="reply_to">回覆 <xliff:g id="user_name">%s</xliff:g></string>
@@ -215,7 +216,7 @@
   <string name="Ndirect_messages_quantity_one">你有一條新私信。</string>
   <string name="Ndirect_messages_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 條新私信。</string>
   <string name="item_1_minute">1分鐘</string>
-  <string name="item_3_minutes">三分鐘</string>
+  <string name="item_3_minutes">3分鐘</string>
   <string name="item_5_minutes">5分鐘</string>
   <string name="item_10_minutes">10分鐘</string>
   <string name="item_15_minutes">15分鐘</string>
@@ -249,6 +250,7 @@
   <string name="users_retweeted_this">轉推了這條推文的用戶</string>
   <string name="saved_searches">已保存的搜索</string>
   <string name="custom_tabs">自定義標籤頁</string>
+  <string name="default_tabs">預設標籤頁</string>
   <string name="add_tab">添加標籤頁</string>
   <string name="tab_type">標籤頁類型</string>
   <string name="unused">未用設定</string>
@@ -368,4 +370,6 @@
   <string name="slient_notifications">靜默通知</string>
   <string name="slient_notifications_summary">在特定時間為通知禁用鈴聲和震動</string>
   <string name="disable_background_service">禁用後台服務</string>
+  <string name="pull_to_load_conversation_label">下拉並釋放以加載對話…</string>
+  <string name="pull_to_load_conversation_release_label">釋放加載對話…</string>
 </resources>
