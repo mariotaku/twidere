@@ -186,7 +186,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 					break;
 				}
 				case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
-					holder.name.setText("@" + status.screen_name);
+					holder.name.setText(status.screen_name);
 					holder.screen_name.setText(null);
 					holder.screen_name.setVisibility(View.GONE);
 					break;
@@ -210,8 +210,8 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			if (status.is_retweet && !isNullOrEmpty(retweeted_by_name) && !isNullOrEmpty(retweeted_by_screen_name)) {
 				if (mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
 					holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, "@" + retweeted_by_screen_name, status.retweet_count - 1)
-							: mContext.getString(R.string.retweeted_by, "@" + retweeted_by_screen_name));
+							R.string.retweeted_by_with_count, retweeted_by_screen_name, status.retweet_count - 1)
+							: mContext.getString(R.string.retweeted_by, retweeted_by_screen_name));
 				} else {
 					holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
 							R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : mContext
@@ -223,8 +223,8 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
 			} else if (status.in_reply_to_status_id > 0 && !isNullOrEmpty(status.in_reply_to_screen_name)) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to, "@"
-						+ status.in_reply_to_screen_name));
+				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to,
+						status.in_reply_to_screen_name));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
 						0, 0);
 			}

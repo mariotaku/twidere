@@ -446,11 +446,11 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final String title;
 				if (screen_names.size() > 1) {
 					title = res.getString(R.string.notification_mention_multiple,
-							display_screen_name ? "@" + notification_value.getAsString(Statuses.SCREEN_NAME)
+							display_screen_name ? notification_value.getAsString(Statuses.SCREEN_NAME)
 									: notification_value.getAsString(Statuses.NAME), screen_names.size() - 1);
 				} else {
 					title = res.getString(R.string.notification_mention,
-							display_screen_name ? "@" + notification_value.getAsString(Statuses.SCREEN_NAME)
+							display_screen_name ? notification_value.getAsString(Statuses.SCREEN_NAME)
 									: notification_value.getAsString(Statuses.NAME));
 				}
 				final String message = notification_value.getAsString(Statuses.TEXT_PLAIN);
@@ -483,15 +483,15 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				if (screen_names.size() > 1) {
 					title = res.getString(
 							R.string.notification_direct_message_multiple,
-							display_screen_name ? "@"
-									+ notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME)
+							display_screen_name ?
+									notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME)
 									: notification_value.getAsString(DirectMessages.SENDER_NAME),
 							screen_names.size() - 1);
 				} else {
 					title = res.getString(
 							R.string.notification_direct_message,
-							display_screen_name ? "@"
-									+ notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME)
+							display_screen_name ?
+									notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME)
 									: notification_value.getAsString(DirectMessages.SENDER_NAME));
 				}
 				final String message = notification_value.getAsString(DirectMessages.TEXT_PLAIN);

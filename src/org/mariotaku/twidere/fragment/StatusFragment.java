@@ -434,6 +434,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			showPreviewImages();
 		}
 		mRetweetedStatusView.setVisibility(status.retweet_id > 0 ? View.VISIBLE : View.GONE);
+		// TODO show screen name when name display option is "display name"
 		if (status.retweet_id > 0) {
 			mRetweetedStatusView.setText(status.retweet_count > 1 ? getString(R.string.retweeted_by_with_count,
 					status.retweeted_by_name, status.retweet_count - 1) : getString(R.string.retweeted_by,

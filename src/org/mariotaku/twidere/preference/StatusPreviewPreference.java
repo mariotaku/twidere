@@ -88,7 +88,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 			mHolder.screen_name.setText(null);
 			mHolder.screen_name.setVisibility(View.GONE);
 		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
-			mHolder.name.setText("@twidere_project");
+			mHolder.name.setText("twidere_project");
 			mHolder.screen_name.setText(null);
 			mHolder.screen_name.setVisibility(View.GONE);
 		} else {

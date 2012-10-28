@@ -149,7 +149,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 					break;
 				}
 				case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
-					holder.name.setText("@" + screen_name);
+					holder.name.setText(screen_name);
 					holder.screen_name.setText(null);
 					holder.screen_name.setVisibility(View.GONE);
 					break;
@@ -173,8 +173,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			if (is_retweet) {
 				if (mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
 					holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, "@" + retweeted_by_screen_name, retweet_count - 1)
-							: mContext.getString(R.string.retweeted_by, "@" + retweeted_by_screen_name));
+							R.string.retweeted_by_with_count, retweeted_by_screen_name, retweet_count - 1)
+							: mContext.getString(R.string.retweeted_by, retweeted_by_screen_name));
 				} else {
 					holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
 							R.string.retweeted_by_with_count, retweeted_by_name, retweet_count - 1) : mContext
@@ -183,8 +183,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
 						0, 0);
 			} else if (is_reply) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to, "@"
-						+ in_reply_to_screen_name));
+				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to,
+						in_reply_to_screen_name));
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
 						0, 0);
 			}

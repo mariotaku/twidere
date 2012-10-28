@@ -332,8 +332,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
 					PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
 			if (mInReplyToScreenName != null && mInReplyToName != null) {
-				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, display_screen_name ? "@"
-						+ mInReplyToScreenName : mInReplyToName));
+				setTitle(getString(mIsQuote ? R.string.quote_user : R.string.reply_to, display_screen_name ?
+						 mInReplyToScreenName : mInReplyToName));
 			}
 			if (mAccountIds == null || mAccountIds.length == 0) {
 				mAccountIds = new long[] { account_id };
