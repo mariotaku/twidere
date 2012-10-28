@@ -137,6 +137,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
+		if (getActivity() == null) return;
 		mAdapter.changeCursor(cursor);
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
 		setListShown(true);
