@@ -52,6 +52,9 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			final String action = intent.getAction();
 			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
 				onRefreshComplete();
+				if (isAdded() && !isDetached()) {
+					getLoaderManager().restartLoader(0, null, MentionsFragment.this);
+				}
 			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
 				if (isAdded() && !isDetached()) {
 					getLoaderManager().restartLoader(0, null, MentionsFragment.this);

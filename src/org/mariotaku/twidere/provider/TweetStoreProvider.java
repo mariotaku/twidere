@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.getAllStatusesCount;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
+import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseURL;
@@ -336,20 +337,11 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				context.sendBroadcast(new Intent(BROADCAST_DRAFTS_DATABASE_UPDATED));
 				break;
 			}
-			case URI_STATUSES: {
-				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED));
-				break;
-			}
-			case URI_MENTIONS: {
-				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED));
-				break;
-			}
-			case URI_DIRECT_MESSAGES_INBOX: {
-				context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED));
-				break;
-			}
+			case URI_STATUSES:
+			case URI_MENTIONS:
+			case URI_DIRECT_MESSAGES_INBOX:
 			case URI_DIRECT_MESSAGES_OUTBOX: {
-				context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED));
+				notifyForUpdatedUri(context, uri);
 				break;
 			}
 			case URI_TRENDS_LOCAL: {

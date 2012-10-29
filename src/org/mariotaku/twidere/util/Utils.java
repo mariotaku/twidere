@@ -1862,23 +1862,19 @@ public final class Utils implements Constants {
 		if (context == null) return;
 		switch (getTableId(uri)) {
 			case URI_STATUSES: {
-				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
-						true));
+				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED));
 				break;
 			}
 			case URI_MENTIONS: {
-				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED)
-						.putExtra(INTENT_KEY_SUCCEED, true));
+				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED));
 				break;
 			}
 			case URI_DIRECT_MESSAGES_INBOX: {
-				context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
-						INTENT_KEY_SUCCEED, true));
+				context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED));
 				break;
 			}
 			case URI_DIRECT_MESSAGES_OUTBOX: {
-				context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
-						INTENT_KEY_SUCCEED, true));
+				context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED));
 				break;
 			}
 			default: {

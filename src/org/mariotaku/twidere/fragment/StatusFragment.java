@@ -1025,7 +1025,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			}
 			setProgressBarIndeterminateVisibility(false);
 			mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
-			setPullToRefreshEnabled(false);
 			super.onPostExecute(result);
 		}
 
@@ -1034,6 +1033,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			setProgressBarIndeterminateVisibility(true);
 			mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 			mInReplyToView.setClickable(false);
+			setPullToRefreshEnabled(false);
 			mShouldScroll = !mLoadMoreAutomatically;
 			super.onPreExecute();
 		}
