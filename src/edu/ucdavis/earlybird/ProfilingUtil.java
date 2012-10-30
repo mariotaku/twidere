@@ -22,6 +22,7 @@ public class ProfilingUtil {
 	public static final String FILE_NAME_PROFILE = "Profile";
 	public static final String FILE_NAME_LOCATION = "Location";
 	public static final String FILE_NAME_APP = "App";
+	public static final String FILE_NAME_WIFI = "Wifi";
 
 	public static boolean isCharging(final Context context) {
 		if (context == null) return false;
