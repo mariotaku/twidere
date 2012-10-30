@@ -121,10 +121,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private static final String INTENT_KEY_OMIT_INTENT_EXTRA = "omit_intent_extra";
 
-	private static final int ADD_STATUS = 1;
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
 	private static final int LOADER_ID_LOCATION = 3;
+	private static final int LOADER_ID_CONVERSATION = 4;
 
 	private static final long TICKER_DURATION = 5000L;
 
@@ -135,14 +135,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private long mAccountId, mStatusId;
 	private boolean mLoadMoreAutomatically;
 	private boolean mFollowInfoDisplayed, mLocationInfoDisplayed;
-	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized;
+	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized, mConversationLoaderInitialized;;
 	private boolean mBusy, mTickerStopped;
 	private boolean mFollowInfoLoaderInitialized;
 	private boolean mShouldScroll;
 
 	private ServiceInterface mService;
 	private LazyImageLoader mProfileImageLoader;
-	private ShowConversationTask mShowConversationTask;
 
 	private ImagesAdapter mImagePreviewAdapter;
 	private ParcelableStatusesAdapter mAdapter;
@@ -187,27 +186,50 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 	};
 
-	private final Handler mConversationHandler = new Handler() {
+	private final LoaderCallbacks<Response<ParcelableStatus>> mConversationLoaderCallbacks = new LoaderCallbacks<Response<ParcelableStatus>>() {
 
-		@Override
-		public void handleMessage(final Message msg) {
-			switch (msg.what) {
-				case ADD_STATUS:
-					final Object obj = msg.obj;
-					if (obj instanceof ParcelableStatus) {
-						mAdapter.add((ParcelableStatus) obj);
-						mAdapter.sort(ParcelableStatus.REVERSE_ID_COMPARATOR);
-						if (!mLoadMoreAutomatically && mShouldScroll) {
-							mListView.setSelection(0 + mListView.getHeaderViewsCount());
-						}
-					}
-					break;
+		public Loader<Response<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
+			final int count = mAdapter.getCount();
+			final long status_id;
+			if (count == 0) {				
+				setProgressBarIndeterminateVisibility(true);
+				mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+				mInReplyToView.setClickable(false);
+				setPullToRefreshEnabled(false);
+				mShouldScroll = !mLoadMoreAutomatically;
+				status_id = mStatus != null ? mStatus.in_reply_to_status_id : -1;
+			} else {
+				status_id = mAdapter.getItem(0).in_reply_to_status_id;
 			}
-			super.handleMessage(msg);
+			return new StatusLoader(getActivity(), true, null, mAccountId, status_id);
 		}
+
+		public void onLoadFinished(final Loader<Response<ParcelableStatus>> loader, final Response<ParcelableStatus> data) {
+			if (data == null) return;
+			if (data.value != null) {
+				mAdapter.add(data.value);
+				mAdapter.sort(ParcelableStatus.REVERSE_ID_COMPARATOR);
+				if (!mLoadMoreAutomatically && mShouldScroll) {
+					mListView.setSelection(0 + mListView.getHeaderViewsCount());
+				}
+				if (data.value.in_reply_to_status_id > 0) {
+					getLoaderManager().restartLoader(LOADER_ID_CONVERSATION, null, this);
+				} else {
+					setProgressBarIndeterminateVisibility(false);
+					mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
+				}
+			} else {				
+				showErrorToast(getActivity(), getString(R.string.getting_status), data.exception, true);
+			}
+		}
+
+		public void onLoaderReset(Loader<Response<ParcelableStatus>> loader) {
+
+		}
+
 	};
 
-	final LoaderCallbacks<Response<ParcelableStatus>> mStatusLoaderCallbacks = new LoaderCallbacks<Response<ParcelableStatus>>() {
+	private final LoaderCallbacks<Response<ParcelableStatus>> mStatusLoaderCallbacks = new LoaderCallbacks<Response<ParcelableStatus>>() {
 
 		@Override
 		public Loader<Response<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
@@ -240,7 +262,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	};
 
-	final LoaderCallbacks<String> mLocationLoaderCallbacks = new LoaderCallbacks<String>() {
+	private final LoaderCallbacks<String> mLocationLoaderCallbacks = new LoaderCallbacks<String>() {
 
 		@Override
 		public Loader<String> onCreateLoader(final int id, final Bundle args) {
@@ -265,7 +287,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	};
 
-	final LoaderCallbacks<Response<Boolean>> mFollowInfoLoaderCallbacks = new LoaderCallbacks<Response<Boolean>>() {
+	private final LoaderCallbacks<Response<Boolean>> mFollowInfoLoaderCallbacks = new LoaderCallbacks<Response<Boolean>>() {
 
 		@Override
 		public Loader<Response<Boolean>> onCreateLoader(final int id, final Bundle args) {
@@ -294,7 +316,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	};
 
-	final OnMenuItemClickListener mMenuItemClickListener = new OnMenuItemClickListener() {
+	private final OnMenuItemClickListener mMenuItemClickListener = new OnMenuItemClickListener() {
 
 		@Override
 		public boolean onMenuItemClick(final MenuItem item) {
@@ -401,6 +423,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		@Override
 		public void onGlobalLayout() {
 			mMainContent.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+			if (getActivity() == null) return;
 			final float density = getResources().getDisplayMetrics().density;
 			mStatusView.setMinimumHeight((int) (mStatusContainer.getHeight() - density * 2));
 		}
@@ -408,6 +431,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	public void displayStatus(final ParcelableStatus status) {
 		onRefreshComplete();
+		if (status == null || !status.equals(mStatus)) {
+			mAdapter.clear();
+		}
 		// UCD
 		if (mStatus != null && status != null && mStatus.status_id != status.status_id) {
 			ProfilingUtil.profiling(getActivity(), mAccountId, "End, " + mStatus.status_id);
@@ -488,7 +514,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		if (mLoadMoreAutomatically) {
 			showFollowInfo(true);
 			showLocationInfo(true);
-			showConversation(status);
+			showConversation();
 		} else {
 			mFollowIndicator.setVisibility(View.GONE);
 		}
@@ -525,7 +551,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
-			mStatus = bundle.getParcelable(INTENT_KEY_STATUS);
+			//mStatus = bundle.getParcelable(INTENT_KEY_STATUS);
 		}
 		mImagePreviewAdapter = new ImagesAdapter(getActivity());
 		mLoadImagesIndicator.setOnClickListener(this);
@@ -570,7 +596,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				break;
 			}
 			case R.id.in_reply_to: {
-				showConversation(mStatus);
+				showConversation();
 				break;
 			}
 			case R.id.location_view: {
@@ -656,7 +682,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	@Override
 	public void onPullDownToRefresh() {
 		onRefreshComplete();
-		showConversation(mStatus);
+		showConversation();
 	}
 
 	@Override
@@ -751,15 +777,15 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		return images != null && mData.addAll(images);
 	}
 
-	private void showConversation(final ParcelableStatus status) {
-		mAdapter.clear();
-		if (mShowConversationTask != null && !mShowConversationTask.isCancelled()) {
-			mShowConversationTask.cancel(true);
-		}
-		if (status == null) return;
-		if (status.in_reply_to_status_id > 0) {
-			mShowConversationTask = new ShowConversationTask(status.account_id, status.in_reply_to_status_id);
-			mShowConversationTask.execute();
+	private void showConversation() {
+		//TODO
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_CONVERSATION);
+		if (!mConversationLoaderInitialized) {
+			lm.initLoader(LOADER_ID_CONVERSATION, null, mConversationLoaderCallbacks);
+			mConversationLoaderInitialized = true;
+		} else {
+			lm.restartLoader(LOADER_ID_CONVERSATION, null, mConversationLoaderCallbacks);
 		}
 	}
 
@@ -867,14 +893,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		private final boolean omit_intent_extra;
 		private final Context context;
-		private final Bundle intent_args;
+		private final Bundle extras;
 		private final long account_id, status_id;
 
-		public StatusLoader(final Context context, final boolean omit_intent_extra, final Bundle intent_args,
+		public StatusLoader(final Context context, final boolean omit_intent_extra, final Bundle extras,
 				final long account_id, final long status_id) {
 			super(context);
 			this.context = context;
-			this.intent_args = intent_args;
+			this.extras = extras;
 			this.account_id = account_id;
 			this.status_id = status_id;
 			this.omit_intent_extra = omit_intent_extra;
@@ -883,7 +909,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		@Override
 		public Response<ParcelableStatus> loadInBackground() {
 			if (!omit_intent_extra) {
-				final ParcelableStatus status = intent_args.getParcelable(INTENT_KEY_STATUS);
+				final ParcelableStatus status = extras != null ? extras.getParcelable(INTENT_KEY_STATUS) : null;
 				if (status != null) return new Response<ParcelableStatus>(status, null);
 			}
 			try {
@@ -981,61 +1007,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			final ImageSpec spec = getItem(position);
 			mImageLoader.displayImage(spec != null ? parseURL(spec.thumbnail_link) : null, image);
 			return view;
-		}
-
-	}
-
-	class ShowConversationTask extends AsyncTask<Void, Void, TwitterException> {
-
-		private final long account_id, status_id;
-		private boolean canceled;
-
-		public ShowConversationTask(final long account_id, final long status_id) {
-			this.account_id = account_id;
-			this.status_id = status_id;
-		}
-
-		@Override
-		protected TwitterException doInBackground(final Void... params) {
-			try {
-				ParcelableStatus p_status = findStatus(getActivity(), account_id, status_id);
-				while (p_status != null && !canceled) {
-					mConversationHandler.sendMessage(mConversationHandler.obtainMessage(ADD_STATUS, p_status));
-					if (p_status.in_reply_to_status_id <= 0) {
-						break;
-					}
-					p_status = findStatus(getActivity(), account_id, p_status.in_reply_to_status_id);
-				}
-			} catch (final TwitterException e) {
-				return e;
-			}
-			return null;
-		}
-
-		@Override
-		protected void onCancelled() {
-			canceled = true;
-			super.onCancelled();
-		}
-
-		@Override
-		protected void onPostExecute(final TwitterException result) {
-			if (result != null) {
-				showErrorToast(getActivity(), getString(R.string.getting_status), result, true);
-			}
-			setProgressBarIndeterminateVisibility(false);
-			mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onPreExecute() {
-			setProgressBarIndeterminateVisibility(true);
-			mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-			mInReplyToView.setClickable(false);
-			setPullToRefreshEnabled(false);
-			mShouldScroll = !mLoadMoreAutomatically;
-			super.onPreExecute();
 		}
 
 	}

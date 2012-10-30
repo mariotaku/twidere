@@ -25,6 +25,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -37,6 +38,7 @@ import android.widget.ImageView;
 public class RoundCorneredImageView extends ImageView {
 
 	private final float mRadius;
+	private final Path mPath = new Path();
 	private Bitmap mRounder;
 	private Paint mPaint;
 
@@ -56,13 +58,24 @@ public class RoundCorneredImageView extends ImageView {
 		final TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.radius });
 		mRadius = a.getDimensionPixelSize(0, 0);
 		a.recycle();
+		createPath();
 	}
 
 	@Override
 	public void onDraw(final Canvas canvas) {
 		super.onDraw(canvas);
-		if (mRounder != null && mPaint != null) {
-			canvas.drawBitmap(mRounder, 0, 0, mPaint);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			if (mRounder != null && mPaint != null) {
+				canvas.drawBitmap(mRounder, 0, 0, mPaint);
+			}
+		} else {
+			// Workaround for pre-ICS devices, without anti alias.
+			try {
+				canvas.clipPath(mPath);
+			} catch (final UnsupportedOperationException e) {
+				// This shouldn't happen, but in order to keep app running, I
+				// simply ignore this Exception.
+			}
 		}
 	}
 
@@ -75,8 +88,15 @@ public class RoundCorneredImageView extends ImageView {
 			mPaint.setColor(Color.BLACK);
 			canvas.drawRoundRect(new RectF(0, 0, w, h), mRadius, mRadius, mPaint);
 			mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+			createPath();
 		}
 		super.onSizeChanged(w, h, oldw, oldh);
+	}
+	
+	private void createPath() {
+		final float density = getResources().getDisplayMetrics().density;
+		mPath.reset();
+		mPath.addRoundRect(new RectF(0, 0, getWidth(), getHeight()), 4 * density, 4 * density, Path.Direction.CW);
 	}
 
 	static class SetLayerTypeAccessor {

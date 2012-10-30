@@ -63,4 +63,11 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 		return null;
 	}
 
+	public static Runnable getRunnable(final Context context, final List<twitter4j.Status> statuses, final long account_id) {
+		return new Runnable(){
+			public void run() {				
+				new CacheUsersStatusesTask(context, statuses, account_id).execute();
+			}
+		};
+	}
 }

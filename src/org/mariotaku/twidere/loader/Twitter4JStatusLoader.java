@@ -31,14 +31,17 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.app.Activity;
 
 public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
 	private final long mMaxId, mSinceId;
+	private final Context context;
 
 	public Twitter4JStatusLoader(final Context context, final long account_id, final long max_id, final long since_id,
 			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
 		super(context, account_id, data, class_name, is_home_tab);
+		this.context = context;
 		mMaxId = max_id;
 		mSinceId = since_id;
 	}
@@ -71,6 +74,9 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			Collections.sort(statuses);
 			final Status min_status = statuses.size() > 0 ? Collections.min(statuses) : null;
 			final long min_status_id = min_status != null ? min_status.getId() : -1;
+			if (context instanceof Activity) {
+				((Activity) context).runOnUiThread(CacheUsersStatusesTask.getRunnable(context, statuses, account_id));
+			}
 			new CacheUsersStatusesTask(context, statuses, account_id).execute();
 			for (final Status status : statuses) {
 				final long id = status.getId();
