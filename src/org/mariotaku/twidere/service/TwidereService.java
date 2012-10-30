@@ -1759,7 +1759,7 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		public Twitter getTwitter(final long account_id) {
-			return getTwitterInstance(getOuterType(), account_id, true, true);
+			return getTwitterInstance(getOuterType(), account_id, true);
 		}
 
 		@Override
@@ -1872,7 +1872,7 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		public Twitter getTwitter(final long account_id) {
-			return getTwitterInstance(getOuterType(), account_id, true, false);
+			return getTwitterInstance(getOuterType(), account_id, true);
 		}
 
 		@Override
@@ -3552,7 +3552,9 @@ public class TwidereService extends Service implements Constants {
 				}
 
 				for (final long account_id : account_ids) {
-					final Twitter twitter = getTwitterInstance(getOuterType(), account_id, false);
+					// A very stupid workaround here, in order to send tweets contains asterisk symbol.
+					final Twitter twitter = getTwitterInstance(getOuterType(), account_id, false,
+							!status.getStatus().contains("*"));
 					if (twitter != null) {
 						try {
 							result.add(new SingleResponse<twitter4j.Status>(account_id, twitter.updateStatus(status),

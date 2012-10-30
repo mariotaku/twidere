@@ -126,6 +126,7 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
+import org.mariotaku.twidere.util.http.HttpClientImpl;
 
 import twitter4j.DirectMessage;
 import twitter4j.EntitySupport;
@@ -989,9 +990,9 @@ public final class Utils implements Constants {
 	}
 
 	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities,
-			final boolean include_rts) {
+			final boolean use_httpclient) {
 		if (context == null) return null;
-		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, include_rts);
+		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, use_httpclient);
 	}
 
 	public static String getImagePathFromUri(final Context context, final Uri uri) {
@@ -1472,7 +1473,7 @@ public final class Utils implements Constants {
 	}
 
 	public static Twitter getTwitterInstance(final Context context, final long account_id,
-			final boolean include_entities, final boolean include_rts) {
+			final boolean include_entities, final boolean use_httpclient) {
 		if (context == null) return null;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
@@ -1499,7 +1500,9 @@ public final class Utils implements Constants {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setHostAddressResolver(app.getHostAddressResolver());
-				// cb.setHttpClientImplementation(HttpClientImpl.class);
+				if (use_httpclient) {
+					cb.setHttpClientImplementation(HttpClientImpl.class);
+				}
 				cb.setHttpConnectionTimeout(connection_timeout);
 				setUserAgent(context, cb);
 				cb.setGZIPEnabled(enable_gzip_compressing);
@@ -1531,7 +1534,6 @@ public final class Utils implements Constants {
 					cb.setSigningOAuthBaseURL(signing_oauth_base_url);
 				}
 				cb.setIncludeEntitiesEnabled(include_entities);
-				cb.setIncludeRTsEnabled(include_rts);
 				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
 					case Accounts.AUTH_TYPE_XAUTH: {

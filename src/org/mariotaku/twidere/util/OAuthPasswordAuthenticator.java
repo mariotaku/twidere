@@ -6,10 +6,7 @@ import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -31,16 +28,16 @@ import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
-import twitter4j.http.HostAddressResolver;
+import twitter4j.http.HttpClient;
+import twitter4j.http.HttpClientFactory;
+import twitter4j.http.HttpParameter;
+import twitter4j.http.HttpRequest;
+import twitter4j.http.RequestMethod;
 
 public class OAuthPasswordAuthenticator implements Constants {
 
-	private final boolean ignore_ssl_error;
-	private final HostAddressResolver resolver;
 	private final Twitter twitter;
-	private final String user_agent;
-	private final Proxy proxy;
-	private final int connection_timeout;
+	private final HttpClient client;
 
 	private String authenticity_token, callback_url;
 
@@ -75,17 +72,13 @@ public class OAuthPasswordAuthenticator implements Constants {
 		}
 	};
 
-	public OAuthPasswordAuthenticator(final Twitter twitter, final Proxy proxy, final String user_agent) {
+	public OAuthPasswordAuthenticator(final Twitter twitter) {
 		final Configuration conf = twitter.getConfiguration();
 		this.twitter = twitter;
-		this.user_agent = user_agent;
-		this.proxy = proxy;
-		resolver = conf.getHostAddressResolver();
-		ignore_ssl_error = conf.isSSLErrorIgnored();
-		connection_timeout = conf.getHttpConnectionTimeout();
+		this.client = HttpClientFactory.getInstance(conf);
 	}
 
-	public AccessToken getOAuthAccessToken(final String username, final String password)
+	public synchronized AccessToken getOAuthAccessToken(final String username, final String password)
 			throws AuthenticationException, OAuthPasswordAuthenticator.CallbackURLException {
 		authenticity_token = null;
 		callback_url = null;
@@ -120,27 +113,15 @@ public class OAuthPasswordAuthenticator implements Constants {
 	}
 
 	private InputStream getHTTPContent(final String url_string, final boolean post, final HttpParameter[] params)
-			throws IOException {
-		final URL url = parseURL(url_string);
-		final HttpURLConnection conn = getConnection(url, connection_timeout, ignore_ssl_error, proxy, resolver);
-		if (conn == null) return null;
-		conn.addRequestProperty("User-Agent", user_agent);
-		conn.setRequestMethod(post ? "POST" : "GET");
-		if (post && params != null) {
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			final String postParam = HttpParameter.encodeParameters(params);
-			final byte[] bytes = postParam.getBytes("UTF-8");
-			conn.setRequestProperty("Content-Length", Integer.toString(bytes.length));
-			conn.setDoOutput(true);
-			final OutputStream os = conn.getOutputStream();
-			os.write(bytes);
-			os.flush();
-			os.close();
-		}
-		return conn.getInputStream();
+			throws TwitterException {
+		final RequestMethod method = post ? RequestMethod.POST : RequestMethod.GET;
+		final HashMap<String, String> headers = new HashMap<String, String>();
+		// headers.put("User-Agent", user_agent);
+		final HttpRequest request = new HttpRequest(method, url_string, url_string, params, null, headers);
+		return client.request(request).asStream();
 	}
 
-	private void readAuthenticityToken(final InputStream stream) throws SAXException, IOException {
+	private synchronized void readAuthenticityToken(final InputStream stream) throws SAXException, IOException {
 		final InputSource source = new InputSource(stream);
 		final Parser parser = new Parser();
 		parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
@@ -148,7 +129,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 		parser.parse(source);
 	}
 
-	private void readCallbackURL(final InputStream stream) throws SAXException, IOException {
+	private synchronized void readCallbackURL(final InputStream stream) throws SAXException, IOException {
 		final InputSource source = new InputSource(stream);
 		final Parser parser = new Parser();
 		parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
@@ -156,7 +137,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 		parser.parse(source);
 	}
 
-	private void setAuthenticityToken(final String authenticity_token) {
+	private synchronized void setAuthenticityToken(final String authenticity_token) {
 		this.authenticity_token = authenticity_token;
 	}
 
@@ -254,51 +235,4 @@ public class OAuthPasswordAuthenticator implements Constants {
 		private static final HTMLSchema schema = new HTMLSchema();
 	}
 
-	static final class HttpParameter {
-		final String name;
-		final String value;
-
-		HttpParameter(final String name, final String value) {
-			this.name = name;
-			this.value = value;
-		}
-
-		static String encode(final String value) {
-			String encoded = null;
-			try {
-				encoded = URLEncoder.encode(value, "UTF-8");
-			} catch (final UnsupportedEncodingException ignore) {
-			}
-			final StringBuffer buf = new StringBuffer(encoded.length());
-			char focus;
-			for (int i = 0; i < encoded.length(); i++) {
-				focus = encoded.charAt(i);
-				if (focus == '*') {
-					buf.append("%2A");
-				} else if (focus == '+') {
-					buf.append("%20");
-				} else if (focus == '%' && i + 1 < encoded.length() && encoded.charAt(i + 1) == '7'
-						&& encoded.charAt(i + 2) == 'E') {
-					buf.append('~');
-					i += 2;
-				} else {
-					buf.append(focus);
-				}
-			}
-			return buf.toString();
-		}
-
-		static String encodeParameters(final HttpParameter[] httpParams) {
-			if (null == httpParams) return "";
-			final StringBuffer buf = new StringBuffer();
-			for (int j = 0; j < httpParams.length; j++) {
-				if (j != 0) {
-					buf.append("&");
-				}
-				buf.append(encode(httpParams[j].name)).append("=").append(encode(httpParams[j].value));
-			}
-			return buf.toString();
-		}
-
-	}
 }

@@ -41,6 +41,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ColorAnalyser;
+import org.mariotaku.twidere.util.http.HttpClientImpl;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticationException;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.CallbackURLException;
@@ -444,7 +445,9 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY);
 		final String consumer_secret = mPreferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
 		cb.setHostAddressResolver(mApplication.getHostAddressResolver());
-		// cb.setHttpClientImplementation(HttpClientImpl.class);
+		if (mPassword == null || !mPassword.contains("*")) {
+			cb.setHttpClientImplementation(HttpClientImpl.class);
+		}
 		setUserAgent(this, cb);
 		if (!isEmpty(mRESTBaseURL)) {
 			cb.setRestBaseURL(mRESTBaseURL);
@@ -642,8 +645,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 		private LoginResponse authOAuth() throws AuthenticationException, TwitterException, IOException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance();
-			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(twitter, getProxy(context),
-					conf.getUserAgent());
+			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(twitter);
 			final AccessToken access_token = authenticator.getOAuthAccessToken(username, password);
 			final long user_id = access_token.getUserId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);

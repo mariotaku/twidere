@@ -372,4 +372,6 @@
   <string name="disable_background_service">禁用后台服务</string>
   <string name="pull_to_load_conversation_label">下拉并释放以加载对话…</string>
   <string name="pull_to_load_conversation_release_label">释放加载对话…</string>
+  <string name="copy">复制</string>
+  <string name="text_copied">文本已复制到剪贴板</string>
 </resources>
