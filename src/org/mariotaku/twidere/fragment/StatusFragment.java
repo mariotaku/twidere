@@ -87,6 +87,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.text.ClipboardManager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -330,6 +331,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					intent.setType("text/plain");
 					intent.putExtra(Intent.EXTRA_TEXT, "@" + mStatus.screen_name + ": " + text_plain);
 					startActivity(Intent.createChooser(intent, getString(R.string.share)));
+					break;
+				}
+				case MENU_COPY: {
+					final CharSequence text = Html.fromHtml(mStatus.text_html);
+					((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setText(text);
+					Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
 					break;
 				}
 				case MENU_RETWEET: {

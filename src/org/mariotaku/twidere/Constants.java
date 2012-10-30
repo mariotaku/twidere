@@ -395,7 +395,8 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_DOWN = R.id.down;
 	public static final int MENU_MULTI_SELECT = R.id.multi_select;
 	public static final int MENU_CLEAR_COLOR = R.id.clear_color;
-
+	public static final int MENU_COPY = R.id.copy;
+	
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
 	public static final int REQUEST_SELECT_ACCOUNT = 3;

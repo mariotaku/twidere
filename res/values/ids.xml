@@ -48,5 +48,6 @@
 	<item name="down" type="id"/>
 	<item name="multi_select" type="id"/>
 	<item name="clear_color" type="id"/>
+	<item name="copy" type="id"/>
 
 </resources>

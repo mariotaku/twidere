@@ -52,6 +52,8 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.ClipboardManager;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,6 +62,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
@@ -245,6 +248,12 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				intent.setType("text/plain");
 				intent.putExtra(Intent.EXTRA_TEXT, "@" + status.screen_name + ": " + status.text_plain);
 				startActivity(Intent.createChooser(intent, getString(R.string.share)));
+				break;
+			}
+			case MENU_COPY: {
+				final CharSequence text = Html.fromHtml(status.text_html);
+				((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setText(text);
+				Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
 				break;
 			}
 			case R.id.direct_retweet:
