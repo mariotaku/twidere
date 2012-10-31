@@ -316,6 +316,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
 				break;
 			}
+			case MENU_LOAD_FROM_POSITION: {				
+				getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
+				break;
+			}
 			case MENU_MULTI_SELECT: {
 				if (!mApplication.isMultiSelectActive()) {
 					mApplication.startMultiSelect();
