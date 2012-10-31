@@ -27,7 +27,7 @@ import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getConnection;
+import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getProxy;
@@ -56,7 +56,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.mariotaku.popupmenu.PopupMenu;
@@ -83,6 +82,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.http.HostAddressResolver;
+import twitter4j.http.HttpClientWrapper;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -1029,7 +1029,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public Bitmap loadInBackground() {
 			if (user == null) return null;
 			try {
-				final URL url = new URL(user.getProfileBannerImageUrl() + "/" + type);
+				final String url = user.getProfileBannerImageUrl() + "/" + type;
 				final File cache_dir = getCacheDir();
 				final File cache_file = cache_dir != null && cache_dir.isDirectory() ? new File(cache_dir,
 						getURLFilename(url)) : null;
@@ -1039,20 +1039,22 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					final Bitmap cache_bitmap = BitmapFactory.decodeFile(cache_file.getPath(), o);
 					if (cache_bitmap != null) return createAlphaGradientBanner(cache_bitmap);
 				}
-				final HttpURLConnection conn = getConnection(url, connection_timeout, true, getProxy(context), resolver);
+				final HttpClientWrapper client = getHttpClient(connection_timeout, true, getProxy(context), resolver, null);
 				if (cache_file != null) {
 					final FileOutputStream fos = new FileOutputStream(cache_file);
-					final InputStream is = conn.getInputStream();
+					final InputStream is = client.get(url, null).asStream();
 					copyStream(is, fos);
 					final BitmapFactory.Options o = new BitmapFactory.Options();
 					o.inSampleSize = scale_down ? 2 : 1;
 					final Bitmap bitmap = BitmapFactory.decodeFile(cache_file.getPath(), o);
 					return createAlphaGradientBanner(bitmap);
 				} else {
-					final Bitmap bitmap = BitmapFactory.decodeStream(conn.getInputStream());
+					final Bitmap bitmap = BitmapFactory.decodeStream(client.get(url, null).asStream());
 					return createAlphaGradientBanner(bitmap);
 				}
 			} catch (final IOException e) {
+				return null;
+			} catch (final TwitterException e) {
 				return null;
 			}
 		}
@@ -1078,9 +1080,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			return cache_dir;
 		}
 
-		private String getURLFilename(final URL url) {
+		private String getURLFilename(final String url) {
 			if (url == null) return null;
-			return url.toString().replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
+			return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
 		}
 
 		public static Bitmap createAlphaGradientBanner(final Bitmap orig) {

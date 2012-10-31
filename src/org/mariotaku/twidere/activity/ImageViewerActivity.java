@@ -23,9 +23,9 @@ import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
-import static org.mariotaku.twidere.util.Utils.getConnection;
+import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getProxy;
-import static org.mariotaku.twidere.util.Utils.parseURL;
+import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.File;
@@ -34,8 +34,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -44,7 +42,10 @@ import org.mariotaku.twidere.util.BitmapDecodeHelper;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.view.ImageViewer;
 
+import twitter4j.TwitterException;
 import twitter4j.http.HostAddressResolver;
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpResponse;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -140,7 +141,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	public Loader<ImageLoader.Result> onCreateLoader(final int id, final Bundle args) {
 		mProgress.setVisibility(View.VISIBLE);
 		mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
-		final Uri uri = (Uri) (args != null ? args.getParcelable(INTENT_KEY_URI) : null);
+		final Uri uri = args != null ? (Uri) args.getParcelable(INTENT_KEY_URI) : null;
 		return new ImageLoader(this, mResolver, uri, mUserAgent);
 	}
 
@@ -273,7 +274,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			if (uri == null) return new Result(null, null, null);
 			final String scheme = uri.getScheme();
 			if ("http".equals(scheme) || "https".equals(scheme)) {
-				final URL url = parseURL(uri.toString());
+				final String url = parseString(uri.toString());
 				if (url == null) return new Result(null, null, null);
 				if (mCacheDir == null || !mCacheDir.exists()) {
 					init();
@@ -288,29 +289,33 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				// from web
 				try {
 					Bitmap bitmap = null;
-					HttpURLConnection conn = null;
-					int retryCount = 0;
-					URL request_url = url;
+					final HttpClientWrapper client = getHttpClient(10000, true,
+							getProxy(context), resolver, user_agent);
+					HttpResponse resp = null;
+					int retry_count = 0;
+					String request_url = url;
 
-					while (retryCount < 5) {
-						conn = getConnection(request_url, connection_timeout, true, getProxy(context), resolver);
-						conn.addRequestProperty("User-Agent", user_agent);
-						conn.setConnectTimeout(30000);
-						conn.setReadTimeout(30000);
-						conn.setInstanceFollowRedirects(false);
-						response_code = conn.getResponseCode();
+					while (retry_count < 5) {
+						try {
+							resp = client.get(request_url, null);
+						} catch (TwitterException e) {
+							resp = e.getHttpResponse();
+						}
+						if (resp == null) {
+							break;
+						}
+						response_code = resp.getStatusCode();
 						if (response_code != 301 && response_code != 302) {
 							break;
 						}
-						final String loc = conn.getHeaderField("Location");
-						if (loc == null) {
+						request_url = resp.getResponseHeader("Location");
+						if (request_url == null) {
 							break;
 						}
-						request_url = new URL(loc);
-						retryCount++;
+						retry_count++;
 					}
-					if (conn != null) {
-						final InputStream is = conn.getInputStream();
+					if (resp != null && response_code == 200) {
+						final InputStream is = resp.asStream();
 						final OutputStream os = new FileOutputStream(cache_file);
 						copyStream(is, os);
 						os.close();
@@ -323,12 +328,12 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 							}
 						} else
 							return new Result(bitmap, cache_file, null);
+					} else {
+						//TODO show error message.
 					}
 				} catch (final FileNotFoundException e) {
 					init();
 				} catch (final IOException e) {
-					return new Result(null, null, e);
-				} catch (final NullPointerException e) {
 					return new Result(null, null, e);
 				}
 			} else if ("file".equals(scheme)) {
@@ -365,9 +370,9 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			return null;
 		}
 
-		private String getURLFilename(final URL url) {
+		private String getURLFilename(final String url) {
 			if (url == null) return null;
-			return url.toString().replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
+			return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
 		}
 
 		private void init() {

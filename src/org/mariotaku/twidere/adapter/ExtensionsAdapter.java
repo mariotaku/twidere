@@ -45,6 +45,7 @@ public class ExtensionsAdapter extends BaseAdapter {
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = convertView != null ? convertView : LayoutInflater.from(context).inflate(
 				R.layout.two_line_with_icon_list_item, parent, false);
+		view.findViewById(R.id.checkbox).setVisibility(View.GONE);
 		final ExtensionsViewHolder viewholder = view.getTag() == null ? new ExtensionsViewHolder(view)
 				: (ExtensionsViewHolder) view.getTag();
 

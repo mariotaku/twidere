@@ -22,20 +22,15 @@ package org.mariotaku.twidere.activity;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
-import static org.mariotaku.twidere.util.Utils.getConnection;
-import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -57,6 +52,8 @@ import twitter4j.auth.RequestToken;
 import twitter4j.auth.TwipOModeAuthorization;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpResponse;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -507,25 +504,17 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 		private final Configuration conf;
 		private final Context context;
-		private final SharedPreferences preferences;
 
 		public AbstractUserCredentialsLoader(final Context context, final Configuration conf) {
 			super(context);
-			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			this.context = context;
 			this.conf = conf;
 		}
 
-		int analyseUserProfileColor(final URL url) throws IOException {
-			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-			final int connection_timeout = preferences.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-			final URLConnection conn = getConnection(url, connection_timeout, true, getProxy(context),
-					conf.getHostAddressResolver());
-			final InputStream is = conn.getInputStream();
-			if (ignore_ssl_error) {
-				setIgnoreSSLError(conn);
-			}
-			final Bitmap bm = BitmapFactory.decodeStream(is);
+		int analyseUserProfileColor(final User user) throws TwitterException {
+			final HttpClientWrapper client = new HttpClientWrapper(conf);
+			final HttpResponse conn = client.get(user.getProfileImageURL().toString(), null);
+			final Bitmap bm = BitmapFactory.decodeStream(conn.asStream());
 			return ColorAnalyser.analyse(bm);
 		}
 
@@ -561,11 +550,9 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				if (user_id <= 0) return new LoginResponse(false, false, null);
 				final User user = twitter.showUser(user_id);
 				if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
-				final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+				final int color = user_color != null ? user_color : analyseUserProfileColor(user);
 				return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH,
 						color);
-			} catch (final IOException e) {
-				return new LoginResponse(false, false, e);
 			} catch (final TwitterException e) {
 				return new LoginResponse(false, false, e);
 			}
@@ -617,10 +604,6 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				return new LoginResponse(false, false, e);
 			} catch (final AuthenticationException e) {
 				return new LoginResponse(false, false, e);
-			} catch (final IOException e) {
-				return new LoginResponse(false, false, e);
-			} catch (final NullPointerException e) {
-				return new LoginResponse(false, false, e);
 			}
 		}
 
@@ -629,17 +612,17 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			forceLoad();
 		}
 
-		private LoginResponse authBasic() throws TwitterException, IOException {
+		private LoginResponse authBasic() throws TwitterException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance(new BasicAuthorization(username, password));
 			final User user = twitter.verifyCredentials();
 			final long user_id = user.getId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
-			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
 			return new LoginResponse(false, true, null, conf, password, null, user, Accounts.AUTH_TYPE_BASIC, color);
 		}
 
-		private LoginResponse authOAuth() throws AuthenticationException, TwitterException, IOException {
+		private LoginResponse authOAuth() throws AuthenticationException, TwitterException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance();
 			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(twitter);
 			final AccessToken access_token = authenticator.getOAuthAccessToken(username, password);
@@ -647,28 +630,28 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			if (user_id <= 0) return new LoginResponse(false, false, null);
 			final User user = twitter.showUser(user_id);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
-			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
 			return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH, color);
 		}
 
-		private LoginResponse authTwipOMode() throws TwitterException, IOException {
+		private LoginResponse authTwipOMode() throws TwitterException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance(new TwipOModeAuthorization());
 			final User user = twitter.verifyCredentials();
 			final long user_id = user.getId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
-			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
 			return new LoginResponse(false, true, null, conf, null, null, user, Accounts.AUTH_TYPE_TWIP_O_MODE, color);
 		}
 
-		private LoginResponse authxAuth() throws TwitterException, IOException {
+		private LoginResponse authxAuth() throws TwitterException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance();
 			final AccessToken access_token = twitter.getOAuthAccessToken(username, password);
 			final User user = twitter.showUser(access_token.getUserId());
 			final long user_id = user.getId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
-			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
 			return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_XAUTH, color);
 		}
 

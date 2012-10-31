@@ -52,17 +52,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -73,14 +67,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.NameValuePair;
 import org.json.JSONException;
@@ -149,6 +135,7 @@ import twitter4j.auth.TwipOModeAuthorization;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.http.HostAddressResolver;
+import twitter4j.http.HttpClientWrapper;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -195,42 +182,6 @@ public final class Utils implements Constants {
 	public static final HashMap<String, Class<? extends Fragment>> CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();
 	public static final HashMap<String, Integer> CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
 	public static final HashMap<String, Integer> CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
-
-	private static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new HostnameVerifier() {
-		@Override
-		public boolean verify(final String hostname, final SSLSession session) {
-			return true;
-		}
-	};
-
-	private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] { new X509TrustManager() {
-		@Override
-		public void checkClientTrusted(final X509Certificate[] chain, final String authType) {
-		}
-
-		@Override
-		public void checkServerTrusted(final X509Certificate[] chain, final String authType) {
-		}
-
-		@Override
-		public X509Certificate[] getAcceptedIssuers() {
-			return new X509Certificate[] {};
-		}
-	} };
-
-	private static final SSLSocketFactory IGNORE_ERROR_SSL_FACTORY;
-
-	static {
-		SSLSocketFactory factory = null;
-		try {
-			final SSLContext sc = SSLContext.getInstance("TLS");
-			sc.init(null, TRUST_ALL_CERTS, new SecureRandom());
-			factory = sc.getSocketFactory();
-		} catch (final KeyManagementException e) {
-		} catch (final NoSuchAlgorithmException e) {
-		}
-		IGNORE_ERROR_SSL_FACTORY = factory;
-	}
 
 	static {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
@@ -331,7 +282,7 @@ public final class Utils implements Constants {
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
 
 	private Utils() {
-		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
+		throw new AssertionError("You are trying to create an instance for this utility class!");
 	}
 
 	public static Uri appendQueryParameters(final Uri uri, final NameValuePair... params) {
@@ -948,35 +899,6 @@ public final class Utils implements Constants {
 		return bm;
 	}
 
-	public static HttpURLConnection getConnection(final Context context, final URL url_orig) throws IOException {
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final Proxy proxy = getProxy(context);
-		final HostAddressResolver resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
-		final boolean ignore_ssl_error = prefs.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-		final int connection_timeout = prefs.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-		return getConnection(url_orig, connection_timeout, ignore_ssl_error, proxy, resolver);
-	}
-
-	public static HttpURLConnection getConnection(final URL url_orig, final int timeout_millis,
-			final boolean ignore_ssl_error, final Proxy proxy, final HostAddressResolver resolver) throws IOException {
-		if (url_orig == null) return null;
-		final HttpURLConnection con;
-		final String url_string = url_orig.toString();
-		final String host = url_orig.getHost();
-		final String resolved_host = resolver != null ? resolver.resolve(host) : null;
-		con = (HttpURLConnection) new URL(resolved_host != null ? url_string.replace("://" + host, "://"
-				+ resolved_host) : url_string).openConnection(proxy);
-		con.setConnectTimeout(timeout_millis);
-		if (resolved_host != null) {
-			con.setRequestProperty("Host", host);
-		}
-		con.setInstanceFollowRedirects(false);
-		if (ignore_ssl_error) {
-			setIgnoreSSLError(con);
-		}
-		return con;
-	}
-
 	public static long getDefaultAccountId(final Context context) {
 		if (context == null) return -1;
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
@@ -993,6 +915,25 @@ public final class Utils implements Constants {
 			final boolean use_httpclient) {
 		if (context == null) return null;
 		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, use_httpclient);
+	}
+	
+	public static HttpClientWrapper getHttpClient(final int timeout_millis, final boolean ignore_ssl_error,
+			final Proxy proxy, final HostAddressResolver resolver, final String user_agent) {
+		final ConfigurationBuilder cb = new ConfigurationBuilder();
+		cb.setHttpConnectionTimeout(timeout_millis);
+		cb.setIgnoreSSLError(ignore_ssl_error);
+		if (proxy != null && !Proxy.NO_PROXY.equals(proxy)) {
+			final SocketAddress address = proxy.address();
+			if (address instanceof InetSocketAddress) {
+				cb.setHttpProxyHost(((InetSocketAddress) address).getHostName());
+				cb.setHttpProxyPort(((InetSocketAddress) address).getPort());
+			}
+		}
+		cb.setHostAddressResolver(resolver);
+		if (user_agent != null) {
+			cb.setUserAgent(user_agent);
+		}
+		return new HttpClientWrapper(cb.build());
 	}
 
 	public static String getImagePathFromUri(final Context context, final Uri uri) {
@@ -2491,15 +2432,6 @@ public final class Utils implements Constants {
 			activity.getWindow().setWindowAnimations(0);
 		}
 		activity.startActivity(activity.getIntent());
-	}
-
-	public static void setIgnoreSSLError(final URLConnection conn) {
-		if (conn instanceof HttpsURLConnection) {
-			((HttpsURLConnection) conn).setHostnameVerifier(ALLOW_ALL_HOSTNAME_VERIFIER);
-			if (IGNORE_ERROR_SSL_FACTORY != null) {
-				((HttpsURLConnection) conn).setSSLSocketFactory(IGNORE_ERROR_SSL_FACTORY);
-			}
-		}
 	}
 
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {
