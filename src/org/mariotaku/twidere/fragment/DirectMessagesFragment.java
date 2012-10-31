@@ -85,6 +85,8 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				if (mService.isReceivedDirectMessagesRefreshing() || mService.isSentDirectMessagesRefreshing()) {
 					setRefreshing(false);
+				} else {
+					onRefreshComplete();
 				}
 			}
 		}

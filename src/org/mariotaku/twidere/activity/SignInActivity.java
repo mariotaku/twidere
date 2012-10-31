@@ -27,6 +27,7 @@ import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.parseInt;
+import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
@@ -332,27 +333,29 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 	@Override
 	public void onLoadFinished(final Loader<LoginResponse> loader, final SignInActivity.LoginResponse result) {
-		if (result.succeed) {
-			final ContentValues values = makeAccountContentValues(result.conf, result.basic_password,
-					result.access_token, result.user, result.auth_type, result.color);
-			if (values != null) {
-				mResolver.insert(Accounts.CONTENT_URI, values);
-			}
-			mPreferences.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
-			final Intent intent = new Intent(INTENT_ACTION_HOME);
-			final Bundle bundle = new Bundle();
-			bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
-			intent.putExtras(bundle);
-			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			startActivity(intent);
-			finish();
-		} else if (result.already_logged_in) {
-			Toast.makeText(SignInActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
-		} else {
-			if (result.exception instanceof CallbackURLException) {
-				showErrorToast(this, getString(R.string.cannot_get_callback_url), true);
+		if (result != null) {
+			if (result.succeed) {
+				final ContentValues values = makeAccountContentValues(result.conf, result.basic_password,
+						result.access_token, result.user, result.auth_type, result.color);
+				if (values != null) {
+					mResolver.insert(Accounts.CONTENT_URI, values);
+				}
+				mPreferences.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
+				final Intent intent = new Intent(INTENT_ACTION_HOME);
+				final Bundle bundle = new Bundle();
+				bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
+				intent.putExtras(bundle);
+				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				startActivity(intent);
+				finish();
+			} else if (result.already_logged_in) {
+				Toast.makeText(SignInActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(this, getString(R.string.signing_in), result.exception, true);
+				if (result.exception instanceof CallbackURLException) {
+					showErrorToast(this, getString(R.string.cannot_get_callback_url), true);
+				} else {
+					showErrorToast(this, getString(R.string.signing_in), result.exception, true);
+				}
 			}
 		}
 		setSupportProgressBarIndeterminateVisibility(false);
@@ -482,14 +485,8 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 	}
 
 	private void saveEditedText() {
-		Editable ed = mEditUsername.getText();
-		if (ed != null) {
-			mUsername = ed.toString();
-		}
-		ed = mEditPassword.getText();
-		if (ed != null) {
-			mPassword = ed.toString();
-		}
+		mUsername = parseString(mEditUsername.getText());
+		mPassword = parseString(mEditPassword.getText());
 	}
 
 	private void setSignInButton() {
@@ -568,11 +565,10 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH,
 						color);
 			} catch (final IOException e) {
-				e.printStackTrace();
+				return new LoginResponse(false, false, e);
 			} catch (final TwitterException e) {
-				e.printStackTrace();
+				return new LoginResponse(false, false, e);
 			}
-			return null;
 		}
 
 		@Override
