@@ -92,7 +92,7 @@
   <string name="reply_to">को उत्तर दें <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">उद्धरण <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, द्वारा <xliff:g id="source">%2$s</xliff:g></string>
-  <string name="source"><xliff:g id="source"> %s </xliff:g> के द्वारा</string>
+  <string name="source"><xliff:g id="source">%s</xliff:g> के द्वारा</string>
   <string name="filter">फ़िल्टर</string>
   <string name="users">उपयोगकर्ता</string>
   <string name="keywords">खोजशब्दों</string>

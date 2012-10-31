@@ -40,6 +40,17 @@ public class NativeMapActivity extends MapActivity implements Constants {
 
 	private MapView mMapView;
 
+	public void center() {
+		final Bundle extras = getIntent().getExtras();
+		if (extras == null || !extras.containsKey(INTENT_KEY_LATITUDE) || !extras.containsKey(INTENT_KEY_LONGITUDE))
+			return;
+		final double lat = extras.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = extras
+			.getDouble(INTENT_KEY_LONGITUDE, 0.0);
+		final GeoPoint gp = new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6));
+		final MapController mc = mMapView.getController();
+		mc.animateTo(gp);
+	}
+	
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
@@ -48,18 +59,15 @@ public class NativeMapActivity extends MapActivity implements Constants {
 	@Override
 	protected void onCreate(final Bundle icicle) {
 		super.onCreate(icicle);
-		final Bundle bundle = getIntent().getExtras();
-		if (bundle == null || !bundle.containsKey(INTENT_KEY_LATITUDE) || !bundle.containsKey(INTENT_KEY_LONGITUDE)) {
+		final Bundle extras = getIntent().getExtras();
+		if (extras == null || !extras.containsKey(INTENT_KEY_LATITUDE) || !extras.containsKey(INTENT_KEY_LONGITUDE)) {
 			finish();
 			return;
 		}
-		mMapView = new MapView(this, GOOGLE_MAPS_API_KEY) {
-			{
-				setClickable(true);
-			}
-		};
+		mMapView = new MapView(this, GOOGLE_MAPS_API_KEY);
+		mMapView.setClickable(true);
 		final List<Overlay> overlays = mMapView.getOverlays();
-		final double lat = bundle.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = bundle
+		final double lat = extras.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = extras
 				.getDouble(INTENT_KEY_LONGITUDE, 0.0);
 		final GeoPoint gp = new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6));
 		final Drawable d = getResources().getDrawable(R.drawable.ic_map_marker);

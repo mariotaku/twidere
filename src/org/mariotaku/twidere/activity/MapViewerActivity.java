@@ -23,6 +23,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.NativeMapFragment;
 import org.mariotaku.twidere.fragment.WebMapFragment;
+import org.mariotaku.twidere.util.MapInterface;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,8 +35,6 @@ import android.view.View.OnClickListener;
 
 public class MapViewerActivity extends FragmentActivity implements Constants, OnClickListener {
 
-	private Fragment mFragment;
-
 	@Override
 	public void onClick(final View view) {
 		switch (view.getId()) {
@@ -44,6 +43,9 @@ public class MapViewerActivity extends FragmentActivity implements Constants, On
 				break;
 			}
 			case R.id.center: {
+				final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.map_frame);
+				if (!(fragment instanceof MapInterface)) break;
+				((MapInterface) fragment).center();
 				break;
 			}
 		}
@@ -73,13 +75,13 @@ public class MapViewerActivity extends FragmentActivity implements Constants, On
 			finish();
 			return;
 		}
-		mFragment = isNativeMapSupported() ? new NativeMapFragment() : new WebMapFragment();
-		mFragment.setArguments(bundle);
+		final Fragment fragment = isNativeMapSupported() ? new NativeMapFragment() : new WebMapFragment();
+		fragment.setArguments(bundle);
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.map_frame, mFragment).commit();
+		ft.replace(R.id.map_frame, fragment).commit();
 	}
 
-	private boolean isNativeMapSupported() {
+	private static boolean isNativeMapSupported() {
 		try {
 			Class.forName("com.google.android.maps.MapActivity");
 			Class.forName("com.google.android.maps.MapView");

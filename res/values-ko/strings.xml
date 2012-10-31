@@ -152,7 +152,7 @@
 	<string name="overwrite_confirm">파일이 이미 존재합니다. 덮어쓰시겠습니까?</string>
 	<string name="save_as">다른 이름으로 저장</string>
 	<string name="please_wait">기다려 주세요.</string>
-	<string name="file_saved_to"><xliff:g id="filename"> %s </xliff:g>로 저장 합니다.</string>
+	<string name="file_saved_to"><xliff:g id="filename">%s</xliff:g>로 저장 합니다.</string>
 	<string name="proxy">Proxy</string>
 	<string name="http_proxy">HTTP Proxy</string>
 	<string name="http_proxy_summary">모든 네트워크 요청에 HTTP 프록시를 사용.</string>

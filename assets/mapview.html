@@ -48,6 +48,16 @@
 				map.panTo(getLatLng(latitude, longitude));
 			}
 			
+			function center() {
+				var latitude = 0;
+				var longitude = 0;
+				if (window.android) {
+					latitude = window.android.getLatitude();
+					longitude = window.android.getLongitude();
+				}				
+				setCenter(latitude, longitude);
+			}
+			
 			function setMark(latitude, longitude) {
 				var latlng = getLatLng(latitude, longitude);
 				var marker = new google.maps.Marker({
