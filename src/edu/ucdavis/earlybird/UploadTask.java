@@ -1,10 +1,9 @@
 package edu.ucdavis.earlybird;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import static org.mariotaku.twidere.util.Utils.*;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -113,27 +112,19 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 		boolean success;
 		if (profile.exists()) {
 			try {
-				final BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tmp, true));
-				final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(profile));
+				final FileOutputStream os = new FileOutputStream(tmp, true);
+				final FileInputStream is = new FileInputStream(profile);
 
-				final byte[] buffer = new byte[1024];
-				int len = 0;
-				while ((len = bis.read(buffer)) != -1) {
-					bos.write(buffer, 0, len);
-				}
+				copyStream(is, os);
 
-				bis.close();
-				bos.flush();
-				bos.close();
+				is.close();
+				os.flush();
+				os.close();
 
-			} catch (final FileNotFoundException e) {
-				e.printStackTrace();
-				success = false;
 			} catch (final IOException e) {
 				e.printStackTrace();
 				success = false;
 			}
-
 			success = true;
 
 			if (success && tmp.renameTo(profile) && tmp.delete()) {

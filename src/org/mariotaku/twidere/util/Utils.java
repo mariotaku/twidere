@@ -933,6 +933,7 @@ public final class Utils implements Constants {
 		if (user_agent != null) {
 			cb.setUserAgent(user_agent);
 		}
+		cb.setHttpClientImplementation(HttpClientImpl.class);
 		return new HttpClientWrapper(cb.build());
 	}
 
