@@ -915,8 +915,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		@Override
 		public Response<ParcelableStatus> loadInBackground() {
-			if (!omit_intent_extra) {
-				final ParcelableStatus status = extras != null ? extras.getParcelable(INTENT_KEY_STATUS) : null;
+			if (!omit_intent_extra && extras != null) {
+				final ParcelableStatus status = extras.getParcelable(INTENT_KEY_STATUS);
 				if (status != null) return new Response<ParcelableStatus>(status, null);
 			}
 			try {
