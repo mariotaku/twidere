@@ -57,6 +57,7 @@ import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
@@ -78,16 +79,13 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.text.ClipboardManager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -189,10 +187,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private final LoaderCallbacks<Response<ParcelableStatus>> mConversationLoaderCallbacks = new LoaderCallbacks<Response<ParcelableStatus>>() {
 
-		public Loader<Response<ParcelableStatus>> onCreateLoader(int id, Bundle args) {
+		@Override
+		public Loader<Response<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
 			final int count = mAdapter.getCount();
 			final long status_id;
-			if (count == 0) {				
+			if (count == 0) {
 				setProgressBarIndeterminateVisibility(true);
 				mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 				mInReplyToView.setClickable(false);
@@ -205,7 +204,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			return new StatusLoader(getActivity(), true, null, mAccountId, status_id);
 		}
 
-		public void onLoadFinished(final Loader<Response<ParcelableStatus>> loader, final Response<ParcelableStatus> data) {
+		@Override
+		public void onLoaderReset(final Loader<Response<ParcelableStatus>> loader) {
+
+		}
+
+		@Override
+		public void onLoadFinished(final Loader<Response<ParcelableStatus>> loader,
+				final Response<ParcelableStatus> data) {
 			if (data == null) return;
 			if (data.value != null) {
 				mAdapter.add(data.value);
@@ -219,14 +225,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					setProgressBarIndeterminateVisibility(false);
 					mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
 				}
-			} else {	
+			} else {
 				setProgressBarIndeterminateVisibility(false);
 				showErrorToast(getActivity(), getString(R.string.getting_status), data.exception, true);
 			}
-		}
-
-		public void onLoaderReset(Loader<Response<ParcelableStatus>> loader) {
-
 		}
 
 	};
@@ -336,7 +338,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				}
 				case MENU_COPY: {
 					final CharSequence text = Html.fromHtml(mStatus.text_html);
-					((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setText(text);
+					ClipboardUtils.setText(getActivity(), text);
 					Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
 					break;
 				}
@@ -559,7 +561,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
-			//mStatus = bundle.getParcelable(INTENT_KEY_STATUS);
+			// mStatus = bundle.getParcelable(INTENT_KEY_STATUS);
 		}
 		mImagePreviewAdapter = new ImagesAdapter(getActivity());
 		mLoadImagesIndicator.setOnClickListener(this);
@@ -786,7 +788,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	private void showConversation() {
-		//TODO
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_CONVERSATION);
 		if (!mConversationLoaderInitialized) {
@@ -802,10 +803,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_FOLLOW);
 		if (!mFollowInfoLoaderInitialized) {
-			lm.initLoader(LOADER_ID_FOLLOW, null, mLocationLoaderCallbacks);
+			lm.initLoader(LOADER_ID_FOLLOW, null, mFollowInfoLoaderCallbacks);
 			mFollowInfoLoaderInitialized = true;
 		} else {
-			lm.restartLoader(LOADER_ID_FOLLOW, null, mLocationLoaderCallbacks);
+			lm.restartLoader(LOADER_ID_FOLLOW, null, mFollowInfoLoaderCallbacks);
 		}
 	}
 

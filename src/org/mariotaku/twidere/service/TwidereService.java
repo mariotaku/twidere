@@ -3552,9 +3552,10 @@ public class TwidereService extends Service implements Constants {
 				}
 
 				for (final long account_id : account_ids) {
-					// A very stupid workaround here, in order to send tweets contains asterisk symbol.
-					final Twitter twitter = getTwitterInstance(getOuterType(), account_id, false,
-							!status.getStatus().contains("*"));
+					// A very stupid workaround here, in order to send tweets
+					// contains asterisk symbol.
+					final Twitter twitter = getTwitterInstance(getOuterType(), account_id, false, !status.getStatus()
+							.contains("*"));
 					if (twitter != null) {
 						try {
 							result.add(new SingleResponse<twitter4j.Status>(account_id, twitter.updateStatus(status),

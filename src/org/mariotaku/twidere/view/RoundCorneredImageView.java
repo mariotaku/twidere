@@ -25,8 +25,8 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Path;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
@@ -92,7 +92,7 @@ public class RoundCorneredImageView extends ImageView {
 		}
 		super.onSizeChanged(w, h, oldw, oldh);
 	}
-	
+
 	private void createPath() {
 		final float density = getResources().getDisplayMetrics().density;
 		mPath.reset();

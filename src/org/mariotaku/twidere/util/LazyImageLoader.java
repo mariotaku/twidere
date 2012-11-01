@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.SoftReference;
-import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.Collections;
@@ -49,7 +48,10 @@ import java.util.concurrent.Executors;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
 
+import twitter4j.TwitterException;
 import twitter4j.http.HostAddressResolver;
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpResponse;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -59,9 +61,6 @@ import android.os.Environment;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import twitter4j.http.HttpClientWrapper;
-import twitter4j.http.HttpResponse;
-import twitter4j.TwitterException;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
@@ -88,7 +87,7 @@ public class LazyImageLoader implements Constants {
 	private Proxy mProxy;
 	private int mConnectionTimeout;
 	private HttpClientWrapper mClient;
-	
+
 	public LazyImageLoader(final Context context, final String cache_dir_name, final int fallback_image_res,
 			final int required_width, final int required_height, final int mem_cache_capacity) {
 		mContext = context;
@@ -295,7 +294,7 @@ public class LazyImageLoader implements Constants {
 				while (retry_count < 5) {
 					try {
 						resp = mClient.get(request_url, null);
-					} catch (TwitterException e) {
+					} catch (final TwitterException e) {
 						resp = e.getHttpResponse();
 					}
 					if (resp == null) {

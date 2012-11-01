@@ -249,7 +249,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		private static final String CACHE_DIR_NAME = "cached_images";
 
 		private final Uri uri;
-		private final int connection_timeout;
 
 		private final Context context;
 		private final String user_agent;
@@ -262,8 +261,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			this.context = context;
 			this.resolver = resolver;
 			this.uri = uri;
-			connection_timeout = context.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE).getInt(
-					PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
 			this.user_agent = user_agent;
 			init();
 		}
@@ -289,8 +286,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				// from web
 				try {
 					Bitmap bitmap = null;
-					final HttpClientWrapper client = getHttpClient(10000, true,
-							getProxy(context), resolver, user_agent);
+					final HttpClientWrapper client = getHttpClient(10000, true, getProxy(context), resolver, user_agent);
 					HttpResponse resp = null;
 					int retry_count = 0;
 					String request_url = url;
@@ -298,7 +294,10 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					while (retry_count < 5) {
 						try {
 							resp = client.get(request_url, null);
-						} catch (TwitterException e) {
+						} catch (final TwitterException e) {
+							if (e.getStatusCode() != 301 && e.getStatusCode() != 302) {
+								throw e;
+							}
 							resp = e.getHttpResponse();
 						}
 						if (resp == null) {
@@ -329,11 +328,13 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 						} else
 							return new Result(bitmap, cache_file, null);
 					} else {
-						//TODO show error message.
+						// TODO show error message.
 					}
 				} catch (final FileNotFoundException e) {
 					init();
 				} catch (final IOException e) {
+					return new Result(null, null, e);
+				} catch (final TwitterException e) {
 					return new Result(null, null, e);
 				}
 			} else if ("file".equals(scheme)) {

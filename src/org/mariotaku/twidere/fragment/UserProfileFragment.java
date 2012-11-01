@@ -1039,7 +1039,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					final Bitmap cache_bitmap = BitmapFactory.decodeFile(cache_file.getPath(), o);
 					if (cache_bitmap != null) return createAlphaGradientBanner(cache_bitmap);
 				}
-				final HttpClientWrapper client = getHttpClient(connection_timeout, true, getProxy(context), resolver, null);
+				final HttpClientWrapper client = getHttpClient(connection_timeout, true, getProxy(context), resolver,
+						null);
 				if (cache_file != null) {
 					final FileOutputStream fos = new FileOutputStream(cache_file);
 					final InputStream is = client.get(url, null).asStream();

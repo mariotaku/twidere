@@ -25,8 +25,8 @@ import static org.mariotaku.twidere.util.Utils.getAllStatusesCount;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
-import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
+import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 

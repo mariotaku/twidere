@@ -36,12 +36,10 @@ import android.content.SharedPreferences;
 public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
 	private final long mMaxId, mSinceId;
-	private final Context context;
 
 	public Twitter4JStatusLoader(final Context context, final long account_id, final long max_id, final long since_id,
 			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
 		super(context, account_id, data, class_name, is_home_tab);
-		this.context = context;
 		mMaxId = max_id;
 		mSinceId = since_id;
 	}

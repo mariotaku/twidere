@@ -20,7 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.util.MapInterface;
- 
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,11 +36,11 @@ public class WebMapFragment extends WebViewFragment implements MapInterface {
 	private double latitude, longitude;
 
 	@Override
-	public void center() {		
+	public void center() {
 		final WebView webview = getWebView();
 		webview.loadUrl("javascript:center();");
 	}
-	
+
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);

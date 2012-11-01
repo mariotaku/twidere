@@ -42,7 +42,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 
 	private SharedPreferences mPreferences;
 	private ServiceInterface mService;
-	
+
 	private ListView mListView;
 	private CursorStatusesAdapter mAdapter;
 

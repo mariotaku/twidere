@@ -42,7 +42,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 
 	private SharedPreferences mPreferences;
 	private ServiceInterface mService;
-	
+
 	private ListView mListView;
 	private CursorStatusesAdapter mAdapter;
 

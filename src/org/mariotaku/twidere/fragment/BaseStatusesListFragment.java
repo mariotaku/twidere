@@ -36,6 +36,7 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
@@ -52,7 +53,6 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.text.ClipboardManager;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -252,7 +252,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 			case MENU_COPY: {
 				final CharSequence text = Html.fromHtml(status.text_html);
-				((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setText(text);
+				ClipboardUtils.setText(getActivity(), text);
 				Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
 				break;
 			}
@@ -316,7 +316,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
 				break;
 			}
-			case MENU_LOAD_FROM_POSITION: {				
+			case MENU_LOAD_FROM_POSITION: {
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
 				break;
 			}

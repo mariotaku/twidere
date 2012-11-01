@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +71,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 	public OAuthPasswordAuthenticator(final Twitter twitter) {
 		final Configuration conf = twitter.getConfiguration();
 		this.twitter = twitter;
-		this.client = HttpClientFactory.getInstance(conf);
+		client = HttpClientFactory.getInstance(conf);
 	}
 
 	public synchronized AccessToken getOAuthAccessToken(final String username, final String password)

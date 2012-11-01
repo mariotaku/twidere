@@ -916,7 +916,7 @@ public final class Utils implements Constants {
 		if (context == null) return null;
 		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, use_httpclient);
 	}
-	
+
 	public static HttpClientWrapper getHttpClient(final int timeout_millis, final boolean ignore_ssl_error,
 			final Proxy proxy, final HostAddressResolver resolver, final String user_agent) {
 		final ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -933,7 +933,7 @@ public final class Utils implements Constants {
 		if (user_agent != null) {
 			cb.setUserAgent(user_agent);
 		}
-		cb.setHttpClientImplementation(HttpClientImpl.class);
+		// cb.setHttpClientImplementation(HttpClientImpl.class);
 		return new HttpClientWrapper(cb.build());
 	}
 

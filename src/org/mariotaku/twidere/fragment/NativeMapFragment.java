@@ -24,12 +24,12 @@ import org.mariotaku.twidere.util.MapInterface;
 
 public class NativeMapFragment extends ActivityHostFragment<NativeMapActivity> implements MapInterface {
 
+	@Override
 	public void center() {
 		final NativeMapActivity a = getAttachedActivity();
 		if (a == null) return;
 		a.center();
 	}
-	
 
 	@Override
 	protected Class<NativeMapActivity> getActivityClass() {

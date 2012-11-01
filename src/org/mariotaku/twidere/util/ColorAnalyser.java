@@ -19,12 +19,18 @@
 
 package org.mariotaku.twidere.util;
 
-import static android.graphics.Color.*;
+import static android.graphics.Color.WHITE;
+import static android.graphics.Color.argb;
+import static android.graphics.Color.blue;
+import static android.graphics.Color.colorToHSV;
+import static android.graphics.Color.green;
+import static android.graphics.Color.red;
 
 import java.util.Collections;
 import java.util.HashMap;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 /**
  * 

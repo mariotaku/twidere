@@ -29,18 +29,15 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ColorAnalyser;
-import org.mariotaku.twidere.util.http.HttpClientImpl;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticationException;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.CallbackURLException;
+import org.mariotaku.twidere.util.http.HttpClientImpl;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -503,11 +500,9 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 	public static abstract class AbstractUserCredentialsLoader extends AsyncTaskLoader<LoginResponse> {
 
 		private final Configuration conf;
-		private final Context context;
 
 		public AbstractUserCredentialsLoader(final Context context, final Configuration conf) {
 			super(context);
-			this.context = context;
 			this.conf = conf;
 		}
 

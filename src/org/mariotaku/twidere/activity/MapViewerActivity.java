@@ -44,7 +44,9 @@ public class MapViewerActivity extends FragmentActivity implements Constants, On
 			}
 			case R.id.center: {
 				final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.map_frame);
-				if (!(fragment instanceof MapInterface)) break;
+				if (!(fragment instanceof MapInterface)) {
+					break;
+				}
 				((MapInterface) fragment).center();
 				break;
 			}

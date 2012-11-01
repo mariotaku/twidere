@@ -1,20 +1,16 @@
 package edu.ucdavis.earlybird;
 
-import static org.mariotaku.twidere.util.Utils.*;
+import static org.mariotaku.twidere.util.Utils.copyStream;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
-
-import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.TwitterException;
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpParameter;
 import twitter4j.http.HttpResponse;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -27,7 +23,7 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 
 	private final String device_id;
 	private final Context context;
-	
+
 	private final HttpClientWrapper client = new HttpClientWrapper();
 
 	private static final String PROFILE_SERVER_URL = "http://weik.metaisle.com/profiles";

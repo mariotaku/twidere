@@ -45,12 +45,12 @@ public class NativeMapActivity extends MapActivity implements Constants {
 		if (extras == null || !extras.containsKey(INTENT_KEY_LATITUDE) || !extras.containsKey(INTENT_KEY_LONGITUDE))
 			return;
 		final double lat = extras.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = extras
-			.getDouble(INTENT_KEY_LONGITUDE, 0.0);
+				.getDouble(INTENT_KEY_LONGITUDE, 0.0);
 		final GeoPoint gp = new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6));
 		final MapController mc = mMapView.getController();
 		mc.animateTo(gp);
 	}
-	
+
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
