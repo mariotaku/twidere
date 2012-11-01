@@ -19,12 +19,12 @@
 
 package org.mariotaku.twidere.util;
 
-import java.util.ArrayList;
+import static android.graphics.Color.*;
+
 import java.util.Collections;
 import java.util.HashMap;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 
 /**
  * 
@@ -34,9 +34,9 @@ import android.graphics.Color;
  * <br>
  * 
  *         <b>Important</b>: I recommand using this method in different thread.
- *         Or it will make your application laggy or unresponceable.
+ *         Or it may makes your application laggy.
  */
-public class ColorAnalyser {
+public final class ColorAnalyser {
 
 	/**
 	 * 
@@ -60,7 +60,7 @@ public class ColorAnalyser {
 	 * @return The rgb {@link Color} in integer (no alpha)
 	 */
 	public static int analyse(final Bitmap bitmap, final int width, final int height) {
-		return analyse(bitmap, width, height, Color.WHITE);
+		return analyse(bitmap, width, height, WHITE);
 	}
 
 	/**
@@ -77,10 +77,7 @@ public class ColorAnalyser {
 
 		if (bitmap == null) return def;
 
-		int color = 0;
-
-		final HashMap<Float, Integer> colorsMap = new HashMap<Float, Integer>();
-		final ArrayList<Float> colorsScore = new ArrayList<Float>();
+		final HashMap<Float, Integer> colors = new HashMap<Float, Integer>();
 
 		final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, false);
 
@@ -89,21 +86,16 @@ public class ColorAnalyser {
 		for (int y = 0; y < resized_height; y++) {
 			for (int x = 0; x < resized_width; x++) {
 				final int temp_color = resized.getPixel(x, y);
-				color = Color.argb(0xFF, Color.red(temp_color), Color.green(temp_color), Color.blue(temp_color));
+				final int color = argb(0xFF, red(temp_color), green(temp_color), blue(temp_color));
 				final float[] hsv = new float[3];
-				Color.colorToHSV(color, hsv);
-
+				colorToHSV(color, hsv);
 				final float score = (hsv[1] * hsv[1] + 0.001f) * (hsv[2] * hsv[2]);
-
-				colorsMap.put(score, color);
-				colorsScore.add(score);
+				colors.put(score, color);
 			}
 		}
 
-		Collections.sort(colorsScore);
-		bitmap.recycle();
 		resized.recycle();
-		return colorsMap.get(colorsScore.get(colorsScore.size() - 1));
-
+		if (colors.size() == 0) return def;
+		return colors.get(Collections.max(colors.keySet()));
 	}
 }

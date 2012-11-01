@@ -455,7 +455,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
 				builder.setLargeIcon(Bitmap.createScaledBitmap(
 						profile_image_path != null ? BitmapFactory.decodeFile(profile_image_path) : BitmapFactory
-								.decodeResource(res, R.drawable.ic_profile_image_default), w, h, false));
+								.decodeResource(res, R.drawable.ic_profile_image_default), w, h, true));
 				final Notification notification = buildNotification(builder, title, title, message,
 						R.drawable.ic_stat_mention, null, content_intent, delete_intent);
 				mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, notification);
@@ -493,7 +493,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
 				builder.setLargeIcon(Bitmap.createScaledBitmap(
 						profile_image_path != null ? BitmapFactory.decodeFile(profile_image_path) : BitmapFactory
-								.decodeResource(res, R.drawable.ic_profile_image_default), w, h, false));
+								.decodeResource(res, R.drawable.ic_profile_image_default), w, h, true));
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
