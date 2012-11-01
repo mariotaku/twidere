@@ -219,7 +219,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					setProgressBarIndeterminateVisibility(false);
 					mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
 				}
-			} else {				
+			} else {	
+				setProgressBarIndeterminateVisibility(false);
 				showErrorToast(getActivity(), getString(R.string.getting_status), data.exception, true);
 			}
 		}
