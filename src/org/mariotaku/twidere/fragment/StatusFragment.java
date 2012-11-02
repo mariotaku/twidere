@@ -790,6 +790,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private void showConversation() {
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_CONVERSATION);
+		if (mStatus == null || mStatus.in_reply_to_status_id <= 0) return;
 		if (!mConversationLoaderInitialized) {
 			lm.initLoader(LOADER_ID_CONVERSATION, null, mConversationLoaderCallbacks);
 			mConversationLoaderInitialized = true;
