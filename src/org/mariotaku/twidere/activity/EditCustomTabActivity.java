@@ -1,5 +1,6 @@
 package org.mariotaku.twidere.activity;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.CUSTOM_TABS_ICON_NAME_MAP;
 import static org.mariotaku.twidere.util.Utils.CUSTOM_TABS_TYPE_NAME_MAP;
 import static org.mariotaku.twidere.util.Utils.buildArguments;
@@ -138,21 +139,17 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 					Toast.makeText(this, R.string.invalid_settings, Toast.LENGTH_SHORT).show();
 					return false;
 				}
-				if (!AUTHORITY_DIRECT_MESSAGES.equals(mType) && mAccountId <= 0) {
-					Toast.makeText(this, R.string.invalid_settings, Toast.LENGTH_SHORT).show();
-					return false;
-				}
 				final Bundle args = new Bundle();
 				args.putString(INTENT_KEY_SCREEN_NAME, mText1);
 				if (AUTHORITY_LIST_TIMELINE.equals(mType) || AUTHORITY_LIST_MEMBERS.equals(mType)
 						|| AUTHORITY_LISTS.equals(mType)) {
-					if (mText1 == null || mText1.length() == 0 || mText2 == null || mText2.length() == 0) {
+					if (isEmpty(mText1) || isEmpty(mText2)) {
 						Toast.makeText(this, R.string.invalid_settings, Toast.LENGTH_SHORT).show();
 						return false;
 					}
 					args.putString(INTENT_KEY_LIST_NAME, mText2);
 				} else if (AUTHORITY_SEARCH_TWEETS.equals(mType) || AUTHORITY_SEARCH_USERS.equals(mType)) {
-					if (mText1 == null || mText1.length() == 0) {
+					if (isEmpty(mText1)) {
 						Toast.makeText(this, R.string.invalid_settings, Toast.LENGTH_SHORT).show();
 						return false;
 					}
@@ -233,8 +230,8 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		} else if (AUTHORITY_SEARCH_TWEETS.equals(type) || AUTHORITY_SEARCH_USERS.equals(type)) {
 			mText1Preference.setTitle(R.string.keywords);
 			mText1Preference.setShouldCompleteUserName(false);
-		} else if (AUTHORITY_SAVED_SEARCHES.equals(type) || AUTHORITY_DIRECT_MESSAGES.equals(type)
-				|| AUTHORITY_TRENDS.equals(type) || AUTHORITY_ACTIVITIES_ABOUT_ME.equals(type)) {
+		} else if (AUTHORITY_SAVED_SEARCHES.equals(type) || AUTHORITY_TRENDS.equals(type)
+				|| AUTHORITY_ACTIVITIES_ABOUT_ME.equals(type)) {
 			mText1Preference.setEnabled(false);
 			mText1Preference.setTitle(R.string.unused);
 			mText1Preference.setShouldCompleteUserName(false);
@@ -482,7 +479,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			setPreferencesByType(mType);
 			final String name = mNames[which];
 			setSummary(name);
-			if (mName == null || mName.length() == 0) {
+			if (isEmpty(mName)) {
 				mName = name;
 				mNamePreference.setSummary(name);
 			}

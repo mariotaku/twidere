@@ -566,7 +566,8 @@ public final class Utils implements Constants {
 		if (twitter == null || screen_name == null || list_name == null) return null;
 		final ResponseList<UserList> response = twitter.getUserLists(screen_name);
 		for (final UserList list : response) {
-			if (list_name.equals(list.getName())) return list;
+			if (list_name.equals(list.getName()) && list.getUser() != null && screen_name.equals(list.getUser().getScreenName()))
+					return list;
 		}
 		return null;
 	}

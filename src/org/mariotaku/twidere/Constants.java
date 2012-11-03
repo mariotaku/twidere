@@ -86,7 +86,6 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_SAVED_SEARCHES = "saved_searches";
 	public static final String AUTHORITY_SEARCH_USERS = "search_users";
 	public static final String AUTHORITY_SEARCH_TWEETS = "search_tweets";
-	public static final String AUTHORITY_DIRECT_MESSAGES = "direct_messages";
 	public static final String AUTHORITY_TRENDS = "trends";
 	public static final String AUTHORITY_USER_MENTIONS = "user_mentions";
 	public static final String AUTHORITY_ACTIVITIES_ABOUT_ME = "activities_about_me";
