@@ -263,6 +263,20 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 	}
 
 	@Override
+	public String toString() {
+		return "ParcelableStatus{retweet_id=" + retweet_id + ", retweeted_by_id=" + retweeted_by_id + ", status_id="
+				+ status_id + ", account_id=" + account_id + ", user_id=" + user_id + ", status_timestamp="
+				+ status_timestamp + ", retweet_count=" + retweet_count + ", in_reply_to_status_id="
+				+ in_reply_to_status_id + ", my_retweet_id=" + my_retweet_id + ", is_gap=" + is_gap + ", is_retweet="
+				+ is_retweet + ", is_favorite=" + is_favorite + ", is_protected=" + is_protected + ", is_verified="
+				+ is_verified + ", has_media=" + has_media + ", retweeted_by_name=" + retweeted_by_name
+				+ ", retweeted_by_screen_name=" + retweeted_by_screen_name + ", text_plain=" + text_plain + ", name="
+				+ name + ", screen_name=" + screen_name + ", in_reply_to_screen_name=" + in_reply_to_screen_name
+				+ ", source=" + source + ", location_string=" + location_string + ", location=" + location + ", text="
+				+ text + ", profile_image_url=" + profile_image_url + ", image_preview_url=" + image_preview_url + "}";
+	}
+
+	@Override
 	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(retweet_id);
 		out.writeLong(retweeted_by_id);
@@ -295,19 +309,5 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 
 	private static long getTime(final Date date) {
 		return date != null ? date.getTime() : 0;
-	}
-
-	@Override
-	public String toString() {
-		return "ParcelableStatus{retweet_id=" + retweet_id + ", retweeted_by_id=" + retweeted_by_id + ", status_id="
-				+ status_id + ", account_id=" + account_id + ", user_id=" + user_id + ", status_timestamp="
-				+ status_timestamp + ", retweet_count=" + retweet_count + ", in_reply_to_status_id="
-				+ in_reply_to_status_id + ", my_retweet_id=" + my_retweet_id + ", is_gap=" + is_gap + ", is_retweet="
-				+ is_retweet + ", is_favorite=" + is_favorite + ", is_protected=" + is_protected + ", is_verified="
-				+ is_verified + ", has_media=" + has_media + ", retweeted_by_name=" + retweeted_by_name
-				+ ", retweeted_by_screen_name=" + retweeted_by_screen_name + ", text_plain=" + text_plain + ", name="
-				+ name + ", screen_name=" + screen_name + ", in_reply_to_screen_name=" + in_reply_to_screen_name
-				+ ", source=" + source + ", location_string=" + location_string + ", location=" + location + ", text="
-				+ text + ", profile_image_url=" + profile_image_url + ", image_preview_url=" + image_preview_url + "}";
 	}
 }

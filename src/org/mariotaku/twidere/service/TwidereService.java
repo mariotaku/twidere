@@ -2225,7 +2225,8 @@ public class TwidereService extends Service implements Constants {
 				Toast.makeText(getOuterType(), R.string.reported_users_for_spam, Toast.LENGTH_SHORT).show();
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
-			intent.putExtra(INTENT_KEY_USER_ID, user_ids);
+			intent.putExtra(INTENT_KEY_USER_IDS, user_ids);
+			intent.putExtra(INTENT_KEY_ACCOUNT_ID, account_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null);
 			sendBroadcast(intent);
 			super.onPostExecute(result);

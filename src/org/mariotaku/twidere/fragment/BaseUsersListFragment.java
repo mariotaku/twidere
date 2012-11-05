@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.popupmenu.PopupMenu;
@@ -32,6 +33,7 @@ import org.mariotaku.twidere.adapter.UsersAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 
 import android.content.BroadcastReceiver;
@@ -66,7 +68,8 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
 	private long mAccountId;
-	private final ArrayList<ParcelableUser> mData = new ArrayList<ParcelableUser>();
+	private final List<ParcelableUser> mData = Collections
+			.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
 	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true;
 
 	private ParcelableUser mSelectedUser;
@@ -89,7 +92,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		return mAccountId;
 	}
 
-	public final ArrayList<ParcelableUser> getData() {
+	public final List<ParcelableUser> getData() {
 		return mData;
 	}
 
@@ -298,4 +301,14 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		super.onStop();
 	}
 
+	protected final void removeUser(final long user_id) {
+		final ArrayList<ParcelableUser> items_to_remove = new ArrayList<ParcelableUser>();
+		for (final ParcelableUser user : mData) {
+			if (user != null && user.user_id == user_id) {
+				items_to_remove.add(user);
+			}
+		}
+		mData.removeAll(items_to_remove);
+		mAdapter.setData(mData);
+	}
 }

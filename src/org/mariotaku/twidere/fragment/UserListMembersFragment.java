@@ -22,7 +22,6 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.popupmenu.PopupMenu;
@@ -62,7 +61,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 				if (intent.getIntExtra(INTENT_KEY_LIST_ID, -1) == mUserListId) {
 					final long user_id = intent.getLongExtra(INTENT_KEY_USER_ID, -1);
 					if (user_id > 0) {
-						deleteItem(user_id);
+						removeUser(user_id);
 					}
 				}
 			}
@@ -175,18 +174,6 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
-	}
-
-	private void deleteItem(final long user_id) {
-		final ArrayList<ParcelableUser> data = getData();
-		final ArrayList<ParcelableUser> users_to_delete = new ArrayList<ParcelableUser>();
-		for (final ParcelableUser item : data) {
-			if (item.user_id == user_id) {
-				users_to_delete.add(item);
-			}
-		}
-		data.removeAll(users_to_delete);
-		getListAdapter().setData(data, true);
 	}
 
 }

@@ -110,7 +110,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 		super.onScrollStateChanged(view, scrollState);
 		switch (scrollState) {
 			case SCROLL_STATE_IDLE:
-				final int first_visible_position = getListView().getFirstVisiblePosition();
+				final int first_visible_position = mListView.getFirstVisiblePosition();
 				final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
 				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
 				break;
@@ -134,6 +134,9 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 
 	@Override
 	public void onStop() {
+		final int first_visible_position = mListView.getFirstVisiblePosition();
+		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}

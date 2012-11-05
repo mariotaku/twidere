@@ -110,7 +110,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 		super.onScrollStateChanged(view, scrollState);
 		switch (scrollState) {
 			case SCROLL_STATE_IDLE:
-				final int first_visible_position = view.getFirstVisiblePosition();
+				final int first_visible_position = mListView.getFirstVisiblePosition();
 				final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
 				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, status_id).commit();
 				break;
@@ -134,6 +134,9 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 
 	@Override
 	public void onStop() {
+		final int first_visible_position = mListView.getFirstVisiblePosition();
+		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, status_id).commit();
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}

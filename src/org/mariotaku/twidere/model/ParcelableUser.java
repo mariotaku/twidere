@@ -130,6 +130,17 @@ public class ParcelableUser implements Parcelable, Comparable<ParcelableUser> {
 	}
 
 	@Override
+	public String toString() {
+		return "ParcelableUser{account_id=" + account_id + ", user_id=" + user_id + ", created_at=" + created_at
+				+ ", position=" + position + ", is_protected=" + is_protected + ", is_verified=" + is_verified
+				+ ", is_follow_request_sent=" + is_follow_request_sent + ", description=" + description + ", name="
+				+ name + ", screen_name=" + screen_name + ", location=" + location + ", profile_image_url="
+				+ profile_image_url + ", profile_banner_url=" + profile_banner_url + ", url=" + url
+				+ ", followers_count=" + followers_count + ", friends_count=" + friends_count + ", statuses_count="
+				+ statuses_count + ", favorites_count=" + favorites_count + "}";
+	}
+
+	@Override
 	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(position);
 		out.writeLong(account_id);
@@ -163,16 +174,5 @@ public class ParcelableUser implements Parcelable, Comparable<ParcelableUser> {
 		values.put(CachedUsers.SCREEN_NAME, user.screen_name);
 		values.put(CachedUsers.PROFILE_IMAGE_URL, user.profile_banner_url_string);
 		return values;
-	}
-
-	@Override
-	public String toString() {
-		return "ParcelableUser{account_id=" + account_id + ", user_id=" + user_id + ", created_at=" + created_at
-				+ ", position=" + position + ", is_protected=" + is_protected + ", is_verified=" + is_verified
-				+ ", is_follow_request_sent=" + is_follow_request_sent + ", description=" + description + ", name="
-				+ name + ", screen_name=" + screen_name + ", location=" + location + ", profile_image_url="
-				+ profile_image_url + ", profile_banner_url=" + profile_banner_url + ", url=" + url
-				+ ", followers_count=" + followers_count + ", friends_count=" + friends_count + ", statuses_count="
-				+ statuses_count + ", favorites_count=" + favorites_count + "}";
 	}
 }

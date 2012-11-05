@@ -19,15 +19,43 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+
 import java.util.List;
 
 import org.mariotaku.twidere.loader.UserFollowersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
 public class UserFollowersFragment extends BaseUsersListFragment {
+
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_MULTI_BLOCKSTATE_CHANGED.equals(action)) {
+				final long[] ids = intent.getLongArrayExtra(INTENT_KEY_USER_IDS);
+				final long account_id = intent.getLongExtra(INTENT_KEY_ACCOUNT_ID, -1);
+				final String screen_name = getAccountScreenName(getActivity(), account_id);
+				final Bundle args = getArguments();
+				if (ids == null || args == null) return;
+				if (account_id > 0 && args.getLong(INTENT_KEY_USER_ID, -1) == account_id || screen_name != null
+						&& screen_name.equalsIgnoreCase(args.getString(INTENT_KEY_SCREEN_NAME))) {
+					for (final long id : ids) {
+						removeUser(id);
+					}
+				}
+			}
+		}
+
+	};
 
 	@Override
 	public Loader<List<ParcelableUser>> newLoaderInstance() {
@@ -41,6 +69,20 @@ public class UserFollowersFragment extends BaseUsersListFragment {
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		return new UserFollowersLoader(getActivity(), account_id, user_id, screen_name, max_id, getData());
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
+		registerReceiver(mStateReceiver, filter);
+
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
 	}
 
 }

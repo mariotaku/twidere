@@ -218,7 +218,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			setListShown(false);
 			setProgressBarIndeterminateVisibility(true);
 			final boolean omit_intent_extra = args != null ? args.getBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, true) : true;
-			return new UserInfoLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(), omit_intent_extra);
+			return new UserInfoLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(),
+					omit_intent_extra);
 		}
 
 		@Override
@@ -419,7 +420,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		getBannerImage();
 	}
 
-	public void getUserInfo(final long account_id, final long user_id, final String screen_name, final boolean omit_intent_extra) {
+	public void getUserInfo(final long account_id, final long user_id, final String screen_name,
+			final boolean omit_intent_extra) {
 		mAccountId = account_id;
 		mUserId = user_id;
 		mScreenName = screen_name;
@@ -884,13 +886,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
+	private void getUserInfo(final boolean omit_intent_extra) {
+		getUserInfo(mAccountId, mUserId, mScreenName, omit_intent_extra);
+	}
+
 	private void pickImage() {
 		final Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(i, REQUEST_PICK_IMAGE);
-	}
-
-	private void getUserInfo(final boolean omit_intent_extra) {
-		getUserInfo(mAccountId, mUserId, mScreenName, omit_intent_extra);
 	}
 
 	private void takePhoto() {

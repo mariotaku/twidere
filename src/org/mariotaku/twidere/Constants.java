@@ -297,6 +297,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_QUERY = "query";
 	public static final String INTENT_KEY_QUERY_TYPE = "query_type";
 	public static final String INTENT_KEY_USER_ID = "user_id";
+	public static final String INTENT_KEY_USER_IDS = "user_ids";
 	public static final String INTENT_KEY_LIST_ID = "list_id";
 	public static final String INTENT_KEY_MAX_ID = "max_id";
 	public static final String INTENT_KEY_SINCE_ID = "since_id";
