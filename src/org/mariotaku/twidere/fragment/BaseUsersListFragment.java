@@ -28,7 +28,6 @@ import java.util.List;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.UsersAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
@@ -40,10 +39,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
@@ -56,7 +52,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import android.app.Activity;
 
 abstract class BaseUsersListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUser>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
@@ -73,8 +68,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	private long mAccountId;
 	private final ArrayList<ParcelableUser> mData = new ArrayList<ParcelableUser>();
 	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true;
-
-	private Fragment mDetailFragment;
 
 	private ParcelableUser mSelectedUser;
 

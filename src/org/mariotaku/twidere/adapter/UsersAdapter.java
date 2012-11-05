@@ -34,16 +34,41 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.UserViewHolder;
 import org.mariotaku.twidere.util.BaseAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
-
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.view.LayoutInflater;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+
 public class UsersAdapter extends BaseAdapter implements BaseAdapterInterface {
+
+	private final LazyImageLoader mProfileImageLoader;
+
+	private final LayoutInflater mInflater;
+
+	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
+
+	private final NoDuplicatesArrayList<ParcelableUser> mData = new NoDuplicatesArrayList<ParcelableUser>();
+
+	private final boolean mDisplayHiResProfileImage;
+
+	private float mTextSize;
+	private final ArrayList<Long> mSelectedUserIds;
+
+	private final Context mContext;
+	private int mNameDisplayOption;
+
+	public UsersAdapter(final Context context) {
+		mContext = context;
+		mInflater = LayoutInflater.from(context);
+		final TwidereApplication application = TwidereApplication.getInstance(context);
+		mProfileImageLoader = application.getProfileImageLoader();
+		application.getServiceInterface();
+		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
+		mSelectedUserIds = application.getSelectedUserIds();
+	}
 
 	public void add(final ParcelableUser status) {
 		if (status == null) return;
@@ -54,43 +79,6 @@ public class UsersAdapter extends BaseAdapter implements BaseAdapterInterface {
 	public void clear() {
 		mData.clear();
 		notifyDataSetChanged();
-	}
-	
-	public int getCount() {
-		return mData.size();
-	}
-
-	public ParcelableUser getItem(int position) {
-		return mData.get(position);
-	}
-
-	public long getItemId(int position) {
-		// TODO: Implement this method
-		return getItem(position) != null ? getItem(position).user_id:-1;
-	}
-	
-
-	private final LazyImageLoader mProfileImageLoader;
-	private final LayoutInflater mInflater;
-	
-	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
-	private final NoDuplicatesArrayList<ParcelableUser> mData = new NoDuplicatesArrayList<ParcelableUser>();
-	private final boolean mDisplayHiResProfileImage;
-	private float mTextSize;
-	private final ArrayList<Long> mSelectedUserIds;
-	private final Context mContext;
-
-	private int mNameDisplayOption;
-
-
-	public UsersAdapter(final Context context) {
-		mContext = context;
-		mInflater = LayoutInflater.from(context);
-		final TwidereApplication application = TwidereApplication.getInstance(context);
-		mProfileImageLoader = application.getProfileImageLoader();
-		application.getServiceInterface();
-		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-		mSelectedUserIds = application.getSelectedUserIds();
 	}
 
 	public ParcelableUser findItem(final long id) {
@@ -117,6 +105,22 @@ public class UsersAdapter extends BaseAdapter implements BaseAdapterInterface {
 			if (item.user_id == user_id) return i;
 		}
 		return -1;
+	}
+
+	@Override
+	public int getCount() {
+		return mData.size();
+	}
+
+	@Override
+	public ParcelableUser getItem(final int position) {
+		return mData.get(position);
+	}
+
+	@Override
+	public long getItemId(final int position) {
+		// TODO: Implement this method
+		return getItem(position) != null ? getItem(position).user_id : -1;
 	}
 
 	@Override

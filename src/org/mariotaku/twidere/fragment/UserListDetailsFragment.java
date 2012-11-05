@@ -25,7 +25,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
-import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserListMembers;
 import static org.mariotaku.twidere.util.Utils.openUserListSubscribers;
 import static org.mariotaku.twidere.util.Utils.openUserListTimeline;
@@ -40,11 +39,12 @@ import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
 import twitter4j.Twitter;
@@ -58,7 +58,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -85,7 +84,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class UserListDetailsFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener, OnLinkClickListener, OnMenuItemClickListener,
+		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener,
 		LoaderCallbacks<UserListDetailsFragment.Response<UserList>>, Panes.Right {
 
 	private LazyImageLoader mProfileImageLoader;
@@ -152,7 +151,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView);
-		linkify.setOnLinkClickListener(this);
+		linkify.setOnLinkClickListener(new OnLinkClickHandler(getActivity(), account_id));
 		linkify.addAllLinks();
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
 		final String profile_image_url_string = parseString(user.getProfileImageURL());
@@ -264,7 +263,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			}
 			case R.id.profile_image_container: {
 				if (mAccountId > 0 && (mUserId > 0 || mUserScreenName != null)) {
-					openUserProfile(getActivity(), mAccountId, mUserId, mUserScreenName);
+					openUserProfile(getActivity(), new ParcelableUser(mUserList.getUser(), mAccountId));
 				}
 				break;
 			}
@@ -334,39 +333,6 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		final ListAction action = mAdapter.findItem(id);
 		if (action != null) return action.onLongClick();
 		return false;
-	}
-
-	@Override
-	public void onLinkClick(final String link, final int type) {
-		if (mUserList == null) return;
-		switch (type) {
-			case TwidereLinkify.LINK_TYPE_MENTION_LIST: {
-				openUserProfile(getActivity(), mAccountId, -1, link);
-				break;
-			}
-			case TwidereLinkify.LINK_TYPE_HASHTAG: {
-				openTweetSearch(getActivity(), mAccountId, link);
-				break;
-			}
-			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
-				intent.setPackage(getActivity().getPackageName());
-				startActivity(intent);
-				break;
-			}
-			case TwidereLinkify.LINK_TYPE_LINK: {
-				final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-				startActivity(intent);
-				break;
-			}
-			case TwidereLinkify.LINK_TYPE_LIST: {
-				final String[] mention_list = link.split("\\/");
-				if (mention_list == null || mention_list.length != 2) {
-					break;
-				}
-				break;
-			}
-		}
 	}
 
 	@Override

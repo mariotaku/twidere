@@ -131,14 +131,14 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 		Fragment fragment = null;
 		if (uri != null) {
 			final Bundle bundle = new Bundle();
+			if (extras != null) {
+				bundle.putAll(extras);
+			}
 			switch (matchLinkId(uri)) {
 				case LINK_ID_STATUS: {
 					setTitle(R.string.view_status);
 					fragment = new StatusFragment();
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					if (extras != null) {
-						bundle.putAll(extras);
-					}
 					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
 					break;
 				}

@@ -110,13 +110,9 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 			try {
 				final FileOutputStream os = new FileOutputStream(tmp, true);
 				final FileInputStream is = new FileInputStream(profile);
-
 				copyStream(is, os);
-
 				is.close();
-				os.flush();
 				os.close();
-
 			} catch (final IOException e) {
 				e.printStackTrace();
 				success = false;

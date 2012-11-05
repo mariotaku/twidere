@@ -33,7 +33,6 @@ import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INSTAGRAM;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_MOBYPICTURE;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_PHOTOZOU;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_SINA_WEIBO_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITGOO;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITPIC;
@@ -41,7 +40,6 @@ import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_PROFILE_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_YFROG;
 import static org.mariotaku.twidere.util.TwidereLinkify.PHOTOZOU_GROUP_ID;
-import static org.mariotaku.twidere.util.TwidereLinkify.PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK;
 import static org.mariotaku.twidere.util.TwidereLinkify.SINA_WEIBO_IMAGES_AVAILABLE_SIZES;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITGOO_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITPIC_GROUP_ID;
@@ -100,6 +98,7 @@ import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.TabSpec;
@@ -112,6 +111,7 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
+import org.mariotaku.twidere.util.HtmlLinkExtractor.HtmlLink;
 import org.mariotaku.twidere.util.http.HttpClientImpl;
 
 import twitter4j.DirectMessage;
@@ -174,7 +174,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
-import org.mariotaku.twidere.model.ParcelableUser;
 
 public final class Utils implements Constants {
 
@@ -567,8 +566,8 @@ public final class Utils implements Constants {
 		if (twitter == null || screen_name == null || list_name == null) return null;
 		final ResponseList<UserList> response = twitter.getUserLists(screen_name);
 		for (final UserList list : response) {
-			if (list_name.equals(list.getName()) && list.getUser() != null && screen_name.equals(list.getUser().getScreenName()))
-					return list;
+			if (list_name.equals(list.getName()) && list.getUser() != null
+					&& screen_name.equals(list.getUser().getScreenName())) return list;
 		}
 		return null;
 	}
@@ -971,9 +970,13 @@ public final class Utils implements Constants {
 	public static List<ImageSpec> getImagesInStatus(final String status_string) {
 		if (status_string == null) return Collections.emptyList();
 		final List<ImageSpec> images = new ArrayList<ImageSpec>();
-		final Matcher matcher = PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML.matcher(status_string);
-		while (matcher.find()) {
-			images.add(getAllAvailableImage(matcherGroup(matcher, PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK)));
+		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
+		extractor.grabLinks(status_string);
+		for (final HtmlLink link : extractor.grabLinks(status_string)) {
+			final ImageSpec spec = getAllAvailableImage(link.getLink());
+			if (spec != null) {
+				images.add(spec);
+			}
 		}
 		return images;
 	}
@@ -1153,40 +1156,34 @@ public final class Utils implements Constants {
 					|| html.contains("://twitgoo.com/") || html.contains("://moby.to/")
 					|| html.contains("://plixi.com/p/") || html.contains("://lockerz.com/s/")
 					|| html.contains(".sinaimg.cn/") || html.contains("://photozou.jp/"), null, null);
-		final Matcher m = PATTERN_PREVIEW_AVAILABLE_IMAGES_IN_HTML.matcher(html);
-		while (m.find()) {
-			final String image_url = m.group(PREVIEW_AVAILABLE_IMAGES_IN_HTML_GROUP_LINK);
-			Matcher url_m;
-			url_m = PATTERN_TWITTER_IMAGES.matcher(image_url);
-			if (url_m.matches()) return new PreviewImage(getTwitterImage(image_url), image_url);
-			url_m = PATTERN_TWITPIC.matcher(image_url);
-			if (url_m.matches())
-				return new PreviewImage(getTwitpicImage(matcherGroup(url_m, TWITPIC_GROUP_ID)), image_url);
-			url_m = PATTERN_INSTAGRAM.matcher(image_url);
-			if (url_m.matches())
-				return new PreviewImage(getInstagramImage(matcherGroup(url_m, INSTAGRAM_GROUP_ID)), image_url);
-			url_m = PATTERN_IMGUR.matcher(image_url);
-			if (url_m.matches())
-				return new PreviewImage(getImgurImage(matcherGroup(url_m, IMGUR_GROUP_ID)), image_url);
-			url_m = PATTERN_IMGLY.matcher(image_url);
-			if (url_m.matches())
-				return new PreviewImage(getImglyImage(matcherGroup(url_m, IMGLY_GROUP_ID)), image_url);
-			url_m = PATTERN_YFROG.matcher(image_url);
-			if (url_m.matches())
-				return new PreviewImage(getYfrogImage(matcherGroup(url_m, YFROG_GROUP_ID)), image_url);
-			url_m = PATTERN_LOCKERZ_AND_PLIXI.matcher(image_url);
-			if (url_m.matches()) return new PreviewImage(getLockerzAndPlixiImage(image_url), image_url);
-			url_m = PATTERN_SINA_WEIBO_IMAGES.matcher(image_url);
-			if (url_m.matches()) return new PreviewImage(getSinaWeiboImage(image_url), image_url);
-			url_m = PATTERN_TWITGOO.matcher(image_url);
-			if (url_m.matches())
-				return new PreviewImage(getTwitgooImage(matcherGroup(url_m, TWITGOO_GROUP_ID)), image_url);
-			url_m = PATTERN_MOBYPICTURE.matcher(image_url);
-			if (url_m.matches())
-				return new PreviewImage(getMobyPictureImage(matcherGroup(url_m, MOBYPICTURE_GROUP_ID)), image_url);
-			url_m = PATTERN_PHOTOZOU.matcher(image_url);
-			if (url_m.matches())
-				return new PreviewImage(getPhotozouImage(matcherGroup(url_m, PHOTOZOU_GROUP_ID)), image_url);
+		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
+		for (final HtmlLink link : extractor.grabLinks(html)) {
+			final String image_url = link.getLink();
+			Matcher m;
+			m = PATTERN_TWITTER_IMAGES.matcher(image_url);
+			if (m.matches()) return new PreviewImage(getTwitterImage(image_url), image_url);
+			m = PATTERN_TWITPIC.matcher(image_url);
+			if (m.matches()) return new PreviewImage(getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID)), image_url);
+			m = PATTERN_INSTAGRAM.matcher(image_url);
+			if (m.matches())
+				return new PreviewImage(getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID)), image_url);
+			m = PATTERN_IMGUR.matcher(image_url);
+			if (m.matches()) return new PreviewImage(getImgurImage(matcherGroup(m, IMGUR_GROUP_ID)), image_url);
+			m = PATTERN_IMGLY.matcher(image_url);
+			if (m.matches()) return new PreviewImage(getImglyImage(matcherGroup(m, IMGLY_GROUP_ID)), image_url);
+			m = PATTERN_YFROG.matcher(image_url);
+			if (m.matches()) return new PreviewImage(getYfrogImage(matcherGroup(m, YFROG_GROUP_ID)), image_url);
+			m = PATTERN_LOCKERZ_AND_PLIXI.matcher(image_url);
+			if (m.matches()) return new PreviewImage(getLockerzAndPlixiImage(image_url), image_url);
+			m = PATTERN_SINA_WEIBO_IMAGES.matcher(image_url);
+			if (m.matches()) return new PreviewImage(getSinaWeiboImage(image_url), image_url);
+			m = PATTERN_TWITGOO.matcher(image_url);
+			if (m.matches()) return new PreviewImage(getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID)), image_url);
+			m = PATTERN_MOBYPICTURE.matcher(image_url);
+			if (m.matches())
+				return new PreviewImage(getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID)), image_url);
+			m = PATTERN_PHOTOZOU.matcher(image_url);
+			if (m.matches()) return new PreviewImage(getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID)), image_url);
 		}
 		return new PreviewImage(false, null, null);
 	}
@@ -2266,10 +2263,10 @@ public final class Utils implements Constants {
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
-	
 
-	public static void openUserProfile(final Activity activity, final long account_id, final long user_id, final String screen_name) {
-		if (activity == null || account_id <= 0 || (user_id <= 0 && isEmpty(screen_name))) return;
+	public static void openUserProfile(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
+		if (activity == null || account_id <= 0 || user_id <= 0 && isEmpty(screen_name)) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserProfileFragment();
@@ -2305,17 +2302,23 @@ public final class Utils implements Constants {
 		bundle.putParcelable(INTENT_KEY_USER, user);
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new UserProfileFragment();
-			final Bundle args = new Bundle(bundle);
-			args.putLong(INTENT_KEY_ACCOUNT_ID, user.account_id);
-			if (user.user_id > 0) {
-				args.putLong(INTENT_KEY_USER_ID, user.user_id);
+			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
+			if (details_fragment instanceof UserProfileFragment && details_fragment.isAdded()) {
+				((UserProfileFragment) details_fragment).displayUser(user);
+				dual_pane_activity.bringRightPaneToFront();
+			} else {
+				final Fragment fragment = new UserProfileFragment();
+				final Bundle args = new Bundle(bundle);
+				args.putLong(INTENT_KEY_ACCOUNT_ID, user.account_id);
+				if (user.user_id > 0) {
+					args.putLong(INTENT_KEY_USER_ID, user.user_id);
+				}
+				if (user.screen_name != null) {
+					args.putString(INTENT_KEY_SCREEN_NAME, user.screen_name);
+				}
+				fragment.setArguments(args);
+				dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
 			}
-			if (user.screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, user.screen_name);
-			}
-			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);

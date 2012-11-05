@@ -118,8 +118,6 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
 		OnItemClickListener, OnTouchListener {
 
-	private static final String INTENT_KEY_OMIT_INTENT_EXTRA = "omit_intent_extra";
-
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
 	private static final int LOADER_ID_LOCATION = 3;
@@ -901,8 +899,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	public static class StatusLoader extends AsyncTaskLoader<Response<ParcelableStatus>> {
 
-		private final boolean omit_intent_extra;
 		private final Context context;
+		private final boolean omit_intent_extra;
 		private final Bundle extras;
 		private final long account_id, status_id;
 
@@ -910,10 +908,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				final long account_id, final long status_id) {
 			super(context);
 			this.context = context;
+			this.omit_intent_extra = omit_intent_extra;
 			this.extras = extras;
 			this.account_id = account_id;
 			this.status_id = status_id;
-			this.omit_intent_extra = omit_intent_extra;
 		}
 
 		@Override

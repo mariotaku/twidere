@@ -3,6 +3,9 @@ package org.mariotaku.twidere.fragment;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.openStatus;
+import static org.mariotaku.twidere.util.Utils.openUserFollowers;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
@@ -17,9 +20,9 @@ import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
 import org.mariotaku.twidere.loader.Twitter4JActivitiesLoader;
 import org.mariotaku.twidere.model.ActivityViewHolder;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.BaseAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.Activity.Action;
 import twitter4j.Status;
@@ -85,52 +88,48 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		final int sources_length = sources != null ? sources.length : 0;
 		final Action action = item.getAction();
 		if (sources_length > 0) {
-			final User first_source = sources[0];
 			final Status[] target_objects = item.getTargetObjectStatuses();
 			switch (action.getActionId()) {
 				case Action.ACTION_FAVORITE: {
 					if (sources_length == 1) {
-						Utils.openUserProfile(getActivity(), mAccountId, first_source.getId(),
-								first_source.getScreenName());
+						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId));
 					} else {
 						if (target_statuses != null && target_statuses.length > 0) {
 							final Status status = target_statuses[0];
-							Utils.openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
+							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
 						}
 					}
 					break;
 				}
 				case Action.ACTION_FOLLOW: {
 					if (sources_length == 1) {
-						Utils.openUserProfile(getActivity(), mAccountId, first_source.getId(),
-								first_source.getScreenName());
+						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId));
 					} else {
-						Utils.openUserFollowers(getActivity(), mAccountId, mAccountId, null);
+						openUserFollowers(getActivity(), mAccountId, mAccountId, null);
 					}
 					break;
 				}
 				case Action.ACTION_MENTION: {
 					if (target_objects != null && target_objects.length > 0) {
 						final Status status = target_objects[0];
-						Utils.openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
+						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
 					}
 					break;
 				}
 				case Action.ACTION_REPLY: {
 					if (target_statuses != null && target_statuses.length > 0) {
 						final Status status = target_statuses[0];
-						Utils.openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
+						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
 					}
 					break;
 				}
 				case Action.ACTION_RETWEET: {
 					if (sources_length == 1) {
-						Utils.openUserProfile(getActivity(), mAccountId, first_source.getId(),
-								first_source.getScreenName());
+						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId));
 					} else {
 						if (target_objects != null && target_objects.length > 0) {
 							final Status status = target_objects[0];
-							Utils.openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
+							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
 						}
 					}
 					break;

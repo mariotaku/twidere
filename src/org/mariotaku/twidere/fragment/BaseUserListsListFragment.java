@@ -273,7 +273,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
 			final HomeActivity home_activity = (HomeActivity) activity;
 			if (mDetailFragment instanceof UserProfileFragment && mDetailFragment.isAdded()) {
-				((UserProfileFragment) mDetailFragment).getUserInfo(mAccountId, user_id, screen_name);
+				((UserProfileFragment) mDetailFragment).getUserInfo(mAccountId, user_id, screen_name, true);
 			} else {
 				mDetailFragment = new UserListDetailsFragment();
 				final Bundle args = new Bundle();

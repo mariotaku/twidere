@@ -295,9 +295,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 						try {
 							resp = client.get(request_url, null);
 						} catch (final TwitterException e) {
-							if (e.getStatusCode() != 301 && e.getStatusCode() != 302) {
-								throw e;
-							}
+							if (e.getStatusCode() != 301 && e.getStatusCode() != 302) throw e;
 							resp = e.getHttpResponse();
 						}
 						if (resp == null) {

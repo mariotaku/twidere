@@ -98,8 +98,6 @@ import android.widget.Toast;
 import com.twitter.Validator;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
-import android.os.Handler;
-import android.os.Message;
 
 public class TwidereService extends Service implements Constants {
 
@@ -123,7 +121,7 @@ public class TwidereService extends Service implements Constants {
 
 	private PendingIntent mPendingRefreshHomeTimelineIntent, mPendingRefreshMentionsIntent,
 			mPendingRefreshDirectMessagesIntent;
-			
+
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override

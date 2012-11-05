@@ -347,6 +347,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_REQUEST_TOKEN = "request_token";
 	public static final String INTENT_KEY_REQUEST_TOKEN_SECRET = "request_token_secret";
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
+	public static final String INTENT_KEY_OMIT_INTENT_EXTRA = "omit_intent_extra";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;

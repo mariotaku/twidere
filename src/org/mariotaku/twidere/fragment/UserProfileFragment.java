@@ -31,12 +31,10 @@ import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getProxy;
-import static org.mariotaku.twidere.util.Utils.getTimestampFromDate;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
-import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
 import static org.mariotaku.twidere.util.Utils.openSavedSearches;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
@@ -48,7 +46,6 @@ import static org.mariotaku.twidere.util.Utils.openUserLists;
 import static org.mariotaku.twidere.util.Utils.openUserMentions;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
-import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
 
@@ -56,7 +53,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -80,7 +76,6 @@ import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.User;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientWrapper;
 import android.app.Activity;
@@ -196,7 +191,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
 				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.user_id
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
-					reloadUserInfo();
+					getUserInfo(true);
 				}
 			}
 		}
@@ -222,7 +217,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mErrorMessageView.setVisibility(View.GONE);
 			setListShown(false);
 			setProgressBarIndeterminateVisibility(true);
-			return new UserInfoLoader(getActivity(), mAccountId, mUserId, mScreenName);
+			final boolean omit_intent_extra = args != null ? args.getBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, true) : true;
+			return new UserInfoLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(), omit_intent_extra);
 		}
 
 		@Override
@@ -235,7 +231,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (getActivity() == null) return;
 			if (data.value != null && data.value.user_id > 0) {
 				setListShown(true);
-				changeUser(data.value);
+				displayUser(data.value);
 				mErrorRetryContainer.setVisibility(View.GONE);
 			} else {
 				if (data.exception != null) {
@@ -281,7 +277,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				if (data.value.isSourceFollowingTarget()) {
 					mFollowButton.setText(R.string.unfollow);
 				} else {
-					if (mUser.is_protected) {					
+					if (mUser.is_protected) {
 						mFollowButton.setText(mUser.is_follow_request_sent ? R.string.follow_request_sent
 								: R.string.send_follow_request);
 					} else {
@@ -344,7 +340,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	};
 
-	public void changeUser(final ParcelableUser user) {
+	public void displayUser(final ParcelableUser user) {
 		mFriendship = null;
 		mUser = null;
 		mUserId = -1;
@@ -423,7 +419,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		getBannerImage();
 	}
 
-	public void getUserInfo(final long account_id, final long user_id, final String screen_name) {
+	public void getUserInfo(final long account_id, final long user_id, final String screen_name, final boolean omit_intent_extra) {
 		mAccountId = account_id;
 		mUserId = user_id;
 		mScreenName = screen_name;
@@ -435,11 +431,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mErrorRetryContainer.setVisibility(View.GONE);
 			return;
 		}
+		final Bundle args = new Bundle();
+		args.putBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, omit_intent_extra);
 		if (!mGetUserInfoLoaderInitialized) {
-			lm.initLoader(LOADER_ID_USER, null, mUserInfoLoaderCallbacks);
+			lm.initLoader(LOADER_ID_USER, args, mUserInfoLoaderCallbacks);
 			mGetUserInfoLoaderInitialized = true;
 		} else {
-			lm.restartLoader(LOADER_ID_USER, null, mUserInfoLoaderCallbacks);
+			lm.restartLoader(LOADER_ID_USER, args, mUserInfoLoaderCallbacks);
 		}
 
 		if (account_id == -1 || user_id == -1 && screen_name == null) {
@@ -479,7 +477,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
-		getUserInfo(account_id, user_id, screen_name);
+		getUserInfo(account_id, user_id, screen_name, false);
 
 	}
 
@@ -552,7 +550,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case R.id.retry: {
-				reloadUserInfo();
+				getUserInfo(true);
 				break;
 			}
 			case R.id.profile_image_container: {
@@ -891,8 +889,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		startActivityForResult(i, REQUEST_PICK_IMAGE);
 	}
 
-	private void reloadUserInfo() {
-		getUserInfo(mAccountId, mUserId, mScreenName);
+	private void getUserInfo(final boolean omit_intent_extra) {
+		getUserInfo(mAccountId, mUserId, mScreenName, omit_intent_extra);
 	}
 
 	private void takePhoto() {
@@ -1009,7 +1007,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private final boolean scale_down;
 		private final int connection_timeout;
 
-		public BannerImageLoader(final Context context, final ParcelableUser user, final String type, final boolean scale_down) {
+		public BannerImageLoader(final Context context, final ParcelableUser user, final String type,
+				final boolean scale_down) {
 			super(context);
 			this.context = context;
 			this.user = user;
@@ -1230,13 +1229,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	static final class UserInfoLoader extends AsyncTaskLoader<Response<ParcelableUser>> {
 
 		private final Twitter twitter;
+		private final boolean omit_intent_extra;
+		private final Bundle extras;
 		private final long account_id, user_id;
 		private final String screen_name;
 
 		private UserInfoLoader(final Context context, final long account_id, final long user_id,
-				final String screen_name) {
+				final String screen_name, final Bundle extras, final boolean omit_intent_extra) {
 			super(context);
 			twitter = getTwitterInstance(context, account_id, true);
+			this.omit_intent_extra = omit_intent_extra;
+			this.extras = extras;
 			this.account_id = account_id;
 			this.user_id = user_id;
 			this.screen_name = screen_name;
@@ -1244,12 +1247,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public Response<ParcelableUser> loadInBackground() {
+			if (!omit_intent_extra && extras != null) {
+				final ParcelableUser user = extras.getParcelable(INTENT_KEY_USER);
+				if (user != null) return new Response<ParcelableUser>(user, null);
+			}
 			if (twitter == null) return new Response<ParcelableUser>(null, null);
 			try {
 				if (user_id != -1)
 					return new Response<ParcelableUser>(new ParcelableUser(twitter.showUser(user_id), account_id), null);
 				else if (screen_name != null)
-					return new Response<ParcelableUser>(new ParcelableUser(twitter.showUser(screen_name), account_id), null);
+					return new Response<ParcelableUser>(new ParcelableUser(twitter.showUser(screen_name), account_id),
+							null);
 			} catch (final TwitterException e) {
 				return new Response<ParcelableUser>(null, e);
 			}

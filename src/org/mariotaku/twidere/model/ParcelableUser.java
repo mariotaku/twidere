@@ -22,16 +22,15 @@ package org.mariotaku.twidere.model;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
-import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
- 
 import java.net.URL;
-import java.util.Comparator;
 import java.util.Date;
 
+import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+
 import twitter4j.User;
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.content.ContentValues;
 
 public class ParcelableUser implements Parcelable, Comparable<ParcelableUser> {
 
@@ -55,7 +54,7 @@ public class ParcelableUser implements Parcelable, Comparable<ParcelableUser> {
 			url_string;
 
 	public final URL profile_image_url, profile_banner_url, url;
-	
+
 	public final int followers_count, friends_count, statuses_count, favorites_count;
 
 	public ParcelableUser(final Parcel in) {
@@ -109,10 +108,10 @@ public class ParcelableUser implements Parcelable, Comparable<ParcelableUser> {
 		statuses_count = user.getStatusesCount();
 		favorites_count = user.getFollowersCount();
 	}
-	
+
 	@Override
-	public int compareTo(ParcelableUser that) {
-		final long diff = that != null ? this.position - that.position : this.position;
+	public int compareTo(final ParcelableUser that) {
+		final long diff = that != null ? position - that.position : position;
 		if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 		if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 		return (int) diff;
@@ -155,8 +154,8 @@ public class ParcelableUser implements Parcelable, Comparable<ParcelableUser> {
 	private long getTime(final Date date) {
 		return date != null ? date.getTime() : 0;
 	}
-	
-	public static ContentValues makeCachedUserContentValues(ParcelableUser user) {
+
+	public static ContentValues makeCachedUserContentValues(final ParcelableUser user) {
 		if (user == null) return null;
 		final ContentValues values = new ContentValues();
 		values.put(CachedUsers.USER_ID, user.user_id);
@@ -164,5 +163,16 @@ public class ParcelableUser implements Parcelable, Comparable<ParcelableUser> {
 		values.put(CachedUsers.SCREEN_NAME, user.screen_name);
 		values.put(CachedUsers.PROFILE_IMAGE_URL, user.profile_banner_url_string);
 		return values;
+	}
+
+	@Override
+	public String toString() {
+		return "ParcelableUser{account_id=" + account_id + ", user_id=" + user_id + ", created_at=" + created_at
+				+ ", position=" + position + ", is_protected=" + is_protected + ", is_verified=" + is_verified
+				+ ", is_follow_request_sent=" + is_follow_request_sent + ", description=" + description + ", name="
+				+ name + ", screen_name=" + screen_name + ", location=" + location + ", profile_image_url="
+				+ profile_image_url + ", profile_banner_url=" + profile_banner_url + ", url=" + url
+				+ ", followers_count=" + followers_count + ", friends_count=" + friends_count + ", statuses_count="
+				+ statuses_count + ", favorites_count=" + favorites_count + "}";
 	}
 }
