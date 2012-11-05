@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
 import android.os.AsyncTask.Status;
+import android.os.Handler;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class AsyncTaskManager {

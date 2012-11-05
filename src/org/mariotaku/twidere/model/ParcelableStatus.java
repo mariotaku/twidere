@@ -253,18 +253,13 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 
 	@Override
 	public int describeContents() {
-		return hashCode();
+		return 0;
 	}
 
 	@Override
 	public final boolean equals(final Object o) {
 		if (!(o instanceof ParcelableStatus)) return false;
 		return status_id == ((ParcelableStatus) o).status_id;
-	}
-
-	@Override
-	public String toString() {
-		return unescape(text_html);
 	}
 
 	@Override
