@@ -174,6 +174,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
+import org.mariotaku.twidere.model.ParcelableUser;
 
 public final class Utils implements Constants {
 
@@ -2265,10 +2266,10 @@ public final class Utils implements Constants {
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
+	
 
-	public static void openUserProfile(final Activity activity, final long account_id, final long user_id,
-			final String screen_name) {
-		if (activity == null) return;
+	public static void openUserProfile(final Activity activity, final long account_id, final long user_id, final String screen_name) {
+		if (activity == null || account_id <= 0 || (user_id <= 0 && isEmpty(screen_name))) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserProfileFragment();
@@ -2293,7 +2294,42 @@ public final class Utils implements Constants {
 			if (screen_name != null) {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			activity.startActivity(intent);
+		}
+	}
+
+	public static void openUserProfile(final Activity activity, final ParcelableUser user) {
+		if (activity == null || user == null) return;
+		final Bundle bundle = new Bundle();
+		bundle.putParcelable(INTENT_KEY_USER, user);
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new UserProfileFragment();
+			final Bundle args = new Bundle(bundle);
+			args.putLong(INTENT_KEY_ACCOUNT_ID, user.account_id);
+			if (user.user_id > 0) {
+				args.putLong(INTENT_KEY_USER_ID, user.user_id);
+			}
+			if (user.screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, user.screen_name);
+			}
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(user.account_id));
+			if (user.user_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user.user_id));
+			}
+			if (user.screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, user.screen_name);
+			}
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			intent.putExtras(bundle);
+			activity.startActivity(intent);
 		}
 	}
 

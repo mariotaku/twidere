@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +140,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 				break;
 			}
 			case MENU_VIEW_PROFILE: {
-				openUserProfile(mSelectedUser.user_id, mSelectedUser.screen_name);
+				openUserProfile(getActivity(), mSelectedUser);
 				break;
 			}
 			case MENU_EXTENSIONS: {

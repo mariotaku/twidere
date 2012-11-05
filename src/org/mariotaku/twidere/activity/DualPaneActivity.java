@@ -114,10 +114,10 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 				final BackStackEntry entry = fm.getBackStackEntryAt(count - 1);
 				if (entry == null) return;
 				final Fragment fragment = BackStackEntryTrojan.getFragmentInBackStackRecord(entry);
-				if (fragment instanceof Panes.Left) {
-					bringLeftPaneToFront();
-				} else if (fragment instanceof Panes.Right) {
+				if (fragment instanceof Panes.Right) {
 					bringRightPaneToFront();
+				} else if (fragment instanceof Panes.Left) {
+					bringLeftPaneToFront();
 				}
 			} else {
 				if (fm.findFragmentById(R.id.content) != null || left_pane_used) {
