@@ -23,7 +23,7 @@ import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
-import static org.mariotaku.twidere.util.Utils.getConnection;
+import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.SoftReference;
-import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.Collections;
@@ -49,7 +48,10 @@ import java.util.concurrent.Executors;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
 
+import twitter4j.TwitterException;
 import twitter4j.http.HostAddressResolver;
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpResponse;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -80,10 +82,11 @@ public class LazyImageLoader implements Constants {
 	private final ExecutorService mExecutorService;
 	private final int mFallbackRes;
 	private final int mRequiredWidth, mRequiredHeight;
-	private Proxy mProxy;
-	private int mConnectionTimeout;
 	private final String mUserAgent;
 	private final HostAddressResolver mResolver;
+	private Proxy mProxy;
+	private int mConnectionTimeout;
+	private HttpClientWrapper mClient;
 
 	public LazyImageLoader(final Context context, final String cache_dir_name, final int fallback_image_res,
 			final int required_width, final int required_height, final int mem_cache_capacity) {
@@ -142,6 +145,7 @@ public class LazyImageLoader implements Constants {
 		mProxy = getProxy(mContext);
 		mConnectionTimeout = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
+		mClient = getHttpClient(mConnectionTimeout, true, mProxy, mResolver, mUserAgent);
 	}
 
 	// decodes image and scales it to reduce memory consumption
@@ -283,29 +287,31 @@ public class LazyImageLoader implements Constants {
 			// from web
 			try {
 				Bitmap bitmap = null;
-				HttpURLConnection conn = null;
-				int retryCount = 0;
-				URL request_url = url;
+				int retry_count = 0;
+				String request_url = url.toString();
+				HttpResponse resp = null;
 
-				while (retryCount < 5) {
-					conn = getConnection(request_url, mConnectionTimeout, true, mProxy, mResolver);
-					conn.addRequestProperty("User-Agent", mUserAgent);
-					conn.setConnectTimeout(30000);
-					conn.setReadTimeout(30000);
-					conn.setInstanceFollowRedirects(false);
-					response_code = conn.getResponseCode();
+				while (retry_count < 5) {
+					try {
+						resp = mClient.get(request_url, null);
+					} catch (final TwitterException e) {
+						resp = e.getHttpResponse();
+					}
+					if (resp == null) {
+						break;
+					}
+					response_code = resp.getStatusCode();
 					if (response_code != 301 && response_code != 302) {
 						break;
 					}
-					final String loc = conn.getHeaderField("Location");
-					if (loc == null) {
+					request_url = resp.getResponseHeader("Location");
+					if (request_url == null) {
 						break;
 					}
-					request_url = new URL(loc);
-					retryCount++;
+					retry_count++;
 				}
-				if (conn != null) {
-					final InputStream is = conn.getInputStream();
+				if (resp != null && response_code == 200) {
+					final InputStream is = resp.asStream();
 					final OutputStream os = new FileOutputStream(cache_file);
 					copyStream(is, os);
 					os.close();
@@ -324,8 +330,6 @@ public class LazyImageLoader implements Constants {
 				mFileCache.init();
 			} catch (final IOException e) {
 				// e.printStackTrace();
-			} catch (final NullPointerException e) {
-
 			}
 			return null;
 		}

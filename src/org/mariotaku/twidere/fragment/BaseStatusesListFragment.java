@@ -36,6 +36,7 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
@@ -52,6 +53,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,6 +62,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
@@ -247,6 +250,12 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				startActivity(Intent.createChooser(intent, getString(R.string.share)));
 				break;
 			}
+			case MENU_COPY: {
+				final CharSequence text = Html.fromHtml(status.text_html);
+				ClipboardUtils.setText(getActivity(), text);
+				Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
+				break;
+			}
 			case R.id.direct_retweet:
 			case MENU_RETWEET: {
 				if (isMyRetweet(status)) {
@@ -305,6 +314,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				extras.putParcelable(INTENT_KEY_STATUS, status);
 				intent.putExtras(extras);
 				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+				break;
+			}
+			case MENU_LOAD_FROM_POSITION: {
+				getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
 				break;
 			}
 			case MENU_MULTI_SELECT: {

@@ -22,6 +22,8 @@ package org.mariotaku.twidere.model;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
+import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+ 
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,8 +31,9 @@ import java.util.Date;
 import twitter4j.User;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.content.ContentValues;
 
-public class ParcelableUser implements Parcelable {
+public class ParcelableUser implements Parcelable, Comparable<ParcelableUser> {
 
 	public static final Parcelable.Creator<ParcelableUser> CREATOR = new Parcelable.Creator<ParcelableUser>() {
 		@Override
@@ -46,22 +49,14 @@ public class ParcelableUser implements Parcelable {
 
 	public final long account_id, user_id, created_at, position;
 
-	public final boolean is_protected, is_verified;
+	public final boolean is_protected, is_verified, is_follow_request_sent;
 
-	public final String description, name, screen_name, location, profile_image_url_string;
+	public final String description, name, screen_name, location, profile_image_url_string, profile_banner_url_string,
+			url_string;
 
-	public URL profile_image_url;
-
-	public static final Comparator<ParcelableUser> POSITION_COMPARATOR = new Comparator<ParcelableUser>() {
-
-		@Override
-		public int compare(final ParcelableUser object1, final ParcelableUser object2) {
-			final long diff = object1.position - object2.position;
-			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
-			return (int) diff;
-		}
-	};
+	public final URL profile_image_url, profile_banner_url, url;
+	
+	public final int followers_count, friends_count, statuses_count, favorites_count;
 
 	public ParcelableUser(final Parcel in) {
 		position = in.readLong();
@@ -76,6 +71,15 @@ public class ParcelableUser implements Parcelable {
 		location = in.readString();
 		profile_image_url_string = in.readString();
 		profile_image_url = parseURL(profile_image_url_string);
+		profile_banner_url_string = in.readString();
+		profile_banner_url = parseURL(profile_banner_url_string);
+		url_string = in.readString();
+		url = parseURL(url_string);
+		is_follow_request_sent = in.readInt() == 1;
+		followers_count = in.readInt();
+		friends_count = in.readInt();
+		statuses_count = in.readInt();
+		favorites_count = in.readInt();
 	}
 
 	public ParcelableUser(final User user, final long account_id) {
@@ -95,11 +99,28 @@ public class ParcelableUser implements Parcelable {
 		location = user.getLocation();
 		profile_image_url = user.getProfileImageURL();
 		profile_image_url_string = parseString(profile_image_url);
+		profile_banner_url_string = user.getProfileBannerImageUrl();
+		profile_banner_url = parseURL(profile_image_url_string);
+		url = user.getURL();
+		url_string = parseString(url);
+		is_follow_request_sent = user.isFollowRequestSent();
+		followers_count = user.getFollowersCount();
+		friends_count = user.getFriendsCount();
+		statuses_count = user.getStatusesCount();
+		favorites_count = user.getFollowersCount();
+	}
+	
+	@Override
+	public int compareTo(ParcelableUser that) {
+		final long diff = that != null ? this.position - that.position : this.position;
+		if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+		if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+		return (int) diff;
 	}
 
 	@Override
 	public int describeContents() {
-		return hashCode();
+		return 0;
 	}
 
 	@Override
@@ -107,11 +128,6 @@ public class ParcelableUser implements Parcelable {
 		if (!(o instanceof ParcelableUser)) return false;
 		final ParcelableUser that = (ParcelableUser) o;
 		return user_id == that.user_id;
-	}
-
-	@Override
-	public String toString() {
-		return description;
 	}
 
 	@Override
@@ -127,9 +143,26 @@ public class ParcelableUser implements Parcelable {
 		out.writeString(description);
 		out.writeString(location);
 		out.writeString(profile_image_url_string);
+		out.writeString(profile_banner_url_string);
+		out.writeString(url_string);
+		out.writeInt(is_follow_request_sent ? 1 : 0);
+		out.writeInt(followers_count);
+		out.writeInt(friends_count);
+		out.writeInt(statuses_count);
+		out.writeInt(favorites_count);
 	}
 
 	private long getTime(final Date date) {
 		return date != null ? date.getTime() : 0;
+	}
+	
+	public static ContentValues makeCachedUserContentValues(ParcelableUser user) {
+		if (user == null) return null;
+		final ContentValues values = new ContentValues();
+		values.put(CachedUsers.USER_ID, user.user_id);
+		values.put(CachedUsers.NAME, user.name);
+		values.put(CachedUsers.SCREEN_NAME, user.screen_name);
+		values.put(CachedUsers.PROFILE_IMAGE_URL, user.profile_banner_url_string);
+		return values;
 	}
 }

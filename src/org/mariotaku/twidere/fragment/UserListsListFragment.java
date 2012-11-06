@@ -139,9 +139,11 @@ public class UserListsListFragment extends BaseListFragment implements LoaderCal
 	public void onLoadFinished(final Loader<UserListsLoader.UserListsData> loader,
 			final UserListsLoader.UserListsData data) {
 		setProgressBarIndeterminateVisibility(false);
-		mUserListsAdapter.setData(data.getLists());
-		mUserListMembershipsAdapter.setData(data.getMemberships());
-		mAdapter.notifyDataSetChanged();
+		if (data != null) {
+			mUserListsAdapter.setData(data.getLists());
+			mUserListMembershipsAdapter.setData(data.getMemberships());
+			mAdapter.notifyDataSetChanged();
+		}
 		setListShown(true);
 	}
 

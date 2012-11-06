@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import android.app.Activity;
 
 abstract class BaseUsersListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUser>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
@@ -159,7 +161,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 			}
 			return;
 		}
-		openUserProfile(user.user_id, user.screen_name);
+		openUserProfile(getActivity(), user);
 	}
 
 	@Override
@@ -202,7 +204,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		if (mSelectedUser == null) return false;
 		switch (item.getItemId()) {
 			case MENU_VIEW_PROFILE: {
-				openUserProfile(mSelectedUser.user_id, mSelectedUser.screen_name);
+				openUserProfile(getActivity(), mSelectedUser);
 				break;
 			}
 			case MENU_EXTENSIONS: {
@@ -301,32 +303,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		}
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
-	}
-
-	protected void openUserProfile(final long user_id, final String screen_name) {
-		final FragmentActivity activity = getActivity();
-		if (activity instanceof HomeActivity && ((HomeActivity) activity).isDualPaneMode()) {
-			final HomeActivity home_activity = (HomeActivity) activity;
-			if (mDetailFragment instanceof UserProfileFragment && mDetailFragment.isAdded()) {
-				((UserProfileFragment) mDetailFragment).getUserInfo(mAccountId, user_id, screen_name);
-			} else {
-				mDetailFragment = new UserProfileFragment();
-				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				args.putLong(INTENT_KEY_USER_ID, user_id);
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-				mDetailFragment.setArguments(args);
-				home_activity.showAtPane(HomeActivity.PANE_RIGHT, mDetailFragment, true);
-			}
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_USER);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
-			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
-			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
-			startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
 	}
 
 }

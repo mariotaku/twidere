@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
-import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
 
 import android.content.Context;
@@ -17,11 +16,12 @@ import android.os.BatteryManager;
 import android.util.Log;
 
 public class ProfilingUtil {
-	static final boolean DEBUG = BuildConfig.DEBUG;
+	static final boolean DEBUG = Constants.DEBUG;
 
 	public static final String FILE_NAME_PROFILE = "Profile";
 	public static final String FILE_NAME_LOCATION = "Location";
 	public static final String FILE_NAME_APP = "App";
+	public static final String FILE_NAME_WIFI = "Wifi";
 
 	public static boolean isCharging(final Context context) {
 		if (context == null) return false;

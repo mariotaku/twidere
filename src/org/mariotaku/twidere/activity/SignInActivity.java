@@ -22,19 +22,12 @@ package org.mariotaku.twidere.activity;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
-import static org.mariotaku.twidere.util.Utils.getConnection;
-import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.parseInt;
-import static org.mariotaku.twidere.util.Utils.setIgnoreSSLError;
+import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -44,6 +37,7 @@ import org.mariotaku.twidere.util.ColorAnalyser;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticationException;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.CallbackURLException;
+import org.mariotaku.twidere.util.http.HttpClientImpl;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -55,6 +49,8 @@ import twitter4j.auth.RequestToken;
 import twitter4j.auth.TwipOModeAuthorization;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpResponse;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -331,27 +327,29 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 	@Override
 	public void onLoadFinished(final Loader<LoginResponse> loader, final SignInActivity.LoginResponse result) {
-		if (result.succeed) {
-			final ContentValues values = makeAccountContentValues(result.conf, result.basic_password,
-					result.access_token, result.user, result.auth_type, result.color);
-			if (values != null) {
-				mResolver.insert(Accounts.CONTENT_URI, values);
-			}
-			mPreferences.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
-			final Intent intent = new Intent(INTENT_ACTION_HOME);
-			final Bundle bundle = new Bundle();
-			bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
-			intent.putExtras(bundle);
-			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			startActivity(intent);
-			finish();
-		} else if (result.already_logged_in) {
-			Toast.makeText(SignInActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
-		} else {
-			if (result.exception instanceof CallbackURLException) {
-				showErrorToast(this, getString(R.string.cannot_get_callback_url), true);
+		if (result != null) {
+			if (result.succeed) {
+				final ContentValues values = makeAccountContentValues(result.conf, result.basic_password,
+						result.access_token, result.user, result.auth_type, result.color);
+				if (values != null) {
+					mResolver.insert(Accounts.CONTENT_URI, values);
+				}
+				mPreferences.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
+				final Intent intent = new Intent(INTENT_ACTION_HOME);
+				final Bundle bundle = new Bundle();
+				bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
+				intent.putExtras(bundle);
+				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				startActivity(intent);
+				finish();
+			} else if (result.already_logged_in) {
+				Toast.makeText(SignInActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(this, getString(R.string.signing_in), result.exception, true);
+				if (result.exception instanceof CallbackURLException) {
+					showErrorToast(this, getString(R.string.cannot_get_callback_url), true);
+				} else {
+					showErrorToast(this, getString(R.string.signing_in), result.exception, true);
+				}
 			}
 		}
 		setSupportProgressBarIndeterminateVisibility(false);
@@ -444,7 +442,9 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY);
 		final String consumer_secret = mPreferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
 		cb.setHostAddressResolver(mApplication.getHostAddressResolver());
-		// cb.setHttpClientImplementation(HttpClientImpl.class);
+		if (mPassword == null || !mPassword.contains("*")) {
+			cb.setHttpClientImplementation(HttpClientImpl.class);
+		}
 		setUserAgent(this, cb);
 		if (!isEmpty(mRESTBaseURL)) {
 			cb.setRestBaseURL(mRESTBaseURL);
@@ -479,14 +479,8 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 	}
 
 	private void saveEditedText() {
-		Editable ed = mEditUsername.getText();
-		if (ed != null) {
-			mUsername = ed.toString();
-		}
-		ed = mEditPassword.getText();
-		if (ed != null) {
-			mPassword = ed.toString();
-		}
+		mUsername = parseString(mEditUsername.getText());
+		mPassword = parseString(mEditPassword.getText());
 	}
 
 	private void setSignInButton() {
@@ -506,26 +500,16 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 	public static abstract class AbstractUserCredentialsLoader extends AsyncTaskLoader<LoginResponse> {
 
 		private final Configuration conf;
-		private final Context context;
-		private final SharedPreferences preferences;
 
 		public AbstractUserCredentialsLoader(final Context context, final Configuration conf) {
 			super(context);
-			preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			this.context = context;
 			this.conf = conf;
 		}
 
-		int analyseUserProfileColor(final URL url) throws IOException {
-			final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-			final int connection_timeout = preferences.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-			final URLConnection conn = getConnection(url, connection_timeout, true, getProxy(context),
-					conf.getHostAddressResolver());
-			final InputStream is = conn.getInputStream();
-			if (ignore_ssl_error) {
-				setIgnoreSSLError(conn);
-			}
-			final Bitmap bm = BitmapFactory.decodeStream(is);
+		int analyseUserProfileColor(final User user) throws TwitterException {
+			final HttpClientWrapper client = new HttpClientWrapper(conf);
+			final HttpResponse conn = client.get(user.getProfileImageURL().toString(), null);
+			final Bitmap bm = BitmapFactory.decodeStream(conn.asStream());
 			return ColorAnalyser.analyse(bm);
 		}
 
@@ -561,15 +545,12 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				if (user_id <= 0) return new LoginResponse(false, false, null);
 				final User user = twitter.showUser(user_id);
 				if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
-				final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+				final int color = user_color != null ? user_color : analyseUserProfileColor(user);
 				return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH,
 						color);
-			} catch (final IOException e) {
-				e.printStackTrace();
 			} catch (final TwitterException e) {
-				e.printStackTrace();
+				return new LoginResponse(false, false, e);
 			}
-			return null;
 		}
 
 		@Override
@@ -618,10 +599,6 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				return new LoginResponse(false, false, e);
 			} catch (final AuthenticationException e) {
 				return new LoginResponse(false, false, e);
-			} catch (final IOException e) {
-				return new LoginResponse(false, false, e);
-			} catch (final NullPointerException e) {
-				return new LoginResponse(false, false, e);
 			}
 		}
 
@@ -630,47 +607,46 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			forceLoad();
 		}
 
-		private LoginResponse authBasic() throws TwitterException, IOException {
+		private LoginResponse authBasic() throws TwitterException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance(new BasicAuthorization(username, password));
 			final User user = twitter.verifyCredentials();
 			final long user_id = user.getId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
-			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
 			return new LoginResponse(false, true, null, conf, password, null, user, Accounts.AUTH_TYPE_BASIC, color);
 		}
 
-		private LoginResponse authOAuth() throws AuthenticationException, TwitterException, IOException {
+		private LoginResponse authOAuth() throws AuthenticationException, TwitterException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance();
-			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(twitter, getProxy(context),
-					conf.getUserAgent());
+			final OAuthPasswordAuthenticator authenticator = new OAuthPasswordAuthenticator(twitter);
 			final AccessToken access_token = authenticator.getOAuthAccessToken(username, password);
 			final long user_id = access_token.getUserId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
 			final User user = twitter.showUser(user_id);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
-			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
 			return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH, color);
 		}
 
-		private LoginResponse authTwipOMode() throws TwitterException, IOException {
+		private LoginResponse authTwipOMode() throws TwitterException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance(new TwipOModeAuthorization());
 			final User user = twitter.verifyCredentials();
 			final long user_id = user.getId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
-			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
 			return new LoginResponse(false, true, null, conf, null, null, user, Accounts.AUTH_TYPE_TWIP_O_MODE, color);
 		}
 
-		private LoginResponse authxAuth() throws TwitterException, IOException {
+		private LoginResponse authxAuth() throws TwitterException {
 			final Twitter twitter = new TwitterFactory(conf).getInstance();
 			final AccessToken access_token = twitter.getOAuthAccessToken(username, password);
 			final User user = twitter.showUser(access_token.getUserId());
 			final long user_id = user.getId();
 			if (user_id <= 0) return new LoginResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new LoginResponse(true, false, null);
-			final int color = user_color != null ? user_color : analyseUserProfileColor(user.getProfileImageURL());
+			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
 			return new LoginResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_XAUTH, color);
 		}
 

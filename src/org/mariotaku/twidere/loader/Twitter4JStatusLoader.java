@@ -29,6 +29,7 @@ import org.mariotaku.twidere.util.CacheUsersStatusesTask;
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.TwitterException;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -71,6 +72,9 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			Collections.sort(statuses);
 			final Status min_status = statuses.size() > 0 ? Collections.min(statuses) : null;
 			final long min_status_id = min_status != null ? min_status.getId() : -1;
+			if (context instanceof Activity) {
+				((Activity) context).runOnUiThread(CacheUsersStatusesTask.getRunnable(context, statuses, account_id));
+			}
 			new CacheUsersStatusesTask(context, statuses, account_id).execute();
 			for (final Status status : statuses) {
 				final long id = status.getId();

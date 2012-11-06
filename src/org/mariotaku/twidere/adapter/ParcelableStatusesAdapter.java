@@ -83,12 +83,14 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	public void add(final ParcelableStatus status) {
+		if (status == null) return;
 		mData.add(status);
 		notifyDataSetChanged();
 	}
 
 	public void clear() {
 		mData.clear();
+		notifyDataSetChanged();
 	}
 
 	public ParcelableStatus findItemByStatusId(final long status_id) {

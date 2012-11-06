@@ -98,6 +98,8 @@ import android.widget.Toast;
 import com.twitter.Validator;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
+import android.os.Handler;
+import android.os.Message;
 
 public class TwidereService extends Service implements Constants {
 
@@ -121,7 +123,7 @@ public class TwidereService extends Service implements Constants {
 
 	private PendingIntent mPendingRefreshHomeTimelineIntent, mPendingRefreshMentionsIntent,
 			mPendingRefreshDirectMessagesIntent;
-
+			
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -145,16 +147,18 @@ public class TwidereService extends Service implements Constants {
 							.getBoolean(PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true))) {
 				if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
+					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
 						if (!isHomeTimelineRefreshing()) {
-							getHomeTimeline(activated_ids, null, null);
+							getHomeTimeline(activated_ids, null, since_ids);
 						}
 					}
 				} else if (BROADCAST_REFRESH_MENTIONS.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
+					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
 						if (!isMentionsRefreshing()) {
-							getMentions(activated_ids, null, null);
+							getMentions(activated_ids, null, since_ids);
 						}
 					}
 				} else if (BROADCAST_REFRESH_DIRECT_MESSAGES.equals(action)) {
@@ -1757,7 +1761,7 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		public Twitter getTwitter(final long account_id) {
-			return getTwitterInstance(getOuterType(), account_id, true, true);
+			return getTwitterInstance(getOuterType(), account_id, true);
 		}
 
 		@Override
@@ -1870,7 +1874,7 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		public Twitter getTwitter(final long account_id) {
-			return getTwitterInstance(getOuterType(), account_id, true, false);
+			return getTwitterInstance(getOuterType(), account_id, true);
 		}
 
 		@Override
@@ -3550,7 +3554,10 @@ public class TwidereService extends Service implements Constants {
 				}
 
 				for (final long account_id : account_ids) {
-					final Twitter twitter = getTwitterInstance(getOuterType(), account_id, false);
+					// A very stupid workaround here, in order to send tweets
+					// contains asterisk symbol.
+					final Twitter twitter = getTwitterInstance(getOuterType(), account_id, false, !status.getStatus()
+							.contains("*"));
 					if (twitter != null) {
 						try {
 							result.add(new SingleResponse<twitter4j.Status>(account_id, twitter.updateStatus(status),

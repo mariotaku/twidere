@@ -39,11 +39,42 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.view.LayoutInflater;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
-public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
+public class UsersAdapter extends BaseAdapter implements BaseAdapterInterface {
+
+	public void add(final ParcelableUser status) {
+		if (status == null) return;
+		mData.add(status);
+		notifyDataSetChanged();
+	}
+
+	public void clear() {
+		mData.clear();
+		notifyDataSetChanged();
+	}
+	
+	public int getCount() {
+		return mData.size();
+	}
+
+	public ParcelableUser getItem(int position) {
+		return mData.get(position);
+	}
+
+	public long getItemId(int position) {
+		// TODO: Implement this method
+		return getItem(position) != null ? getItem(position).user_id:-1;
+	}
+	
 
 	private final LazyImageLoader mProfileImageLoader;
+	private final LayoutInflater mInflater;
+	
 	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
+	private final NoDuplicatesArrayList<ParcelableUser> mData = new NoDuplicatesArrayList<ParcelableUser>();
 	private final boolean mDisplayHiResProfileImage;
 	private float mTextSize;
 	private final ArrayList<Long> mSelectedUserIds;
@@ -51,9 +82,10 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 
 	private int mNameDisplayOption;
 
+
 	public UsersAdapter(final Context context) {
-		super(context, R.layout.user_list_item, R.id.description);
 		mContext = context;
+		mInflater = LayoutInflater.from(context);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
 		application.getServiceInterface();
@@ -89,7 +121,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
-		final View view = super.getView(position, convertView, parent);
+		final View view = convertView != null ? convertView : mInflater.inflate(R.layout.user_list_item, null);
 		final Object tag = view.getTag();
 		UserViewHolder holder = null;
 		if (tag instanceof UserViewHolder) {
@@ -137,6 +169,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 				break;
 			}
 		}
+		holder.description.setText(user.description);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {

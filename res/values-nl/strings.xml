@@ -92,7 +92,7 @@
   <string name="reply_to">Antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="quote_user">Quote <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g>;</string>
-  <string name="source">via <xliff:g id="source"> %s </xliff:g></string>
+  <string name="source">via <xliff:g id="source">%s</xliff:g></string>
   <string name="filter">Filter</string>
   <string name="users">Gebruikers</string>
   <string name="keywords">Trefwoorden</string>

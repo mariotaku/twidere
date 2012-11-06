@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
+import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
@@ -336,20 +337,11 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				context.sendBroadcast(new Intent(BROADCAST_DRAFTS_DATABASE_UPDATED));
 				break;
 			}
-			case URI_STATUSES: {
-				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED));
-				break;
-			}
-			case URI_MENTIONS: {
-				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED));
-				break;
-			}
-			case URI_DIRECT_MESSAGES_INBOX: {
-				context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED));
-				break;
-			}
+			case URI_STATUSES:
+			case URI_MENTIONS:
+			case URI_DIRECT_MESSAGES_INBOX:
 			case URI_DIRECT_MESSAGES_OUTBOX: {
-				context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED));
+				notifyForUpdatedUri(context, uri);
 				break;
 			}
 			case URI_TRENDS_LOCAL: {
@@ -463,7 +455,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
 				builder.setLargeIcon(Bitmap.createScaledBitmap(
 						profile_image_path != null ? BitmapFactory.decodeFile(profile_image_path) : BitmapFactory
-								.decodeResource(res, R.drawable.ic_profile_image_default), w, h, false));
+								.decodeResource(res, R.drawable.ic_profile_image_default), w, h, true));
 				final Notification notification = buildNotification(builder, title, title, message,
 						R.drawable.ic_stat_mention, null, content_intent, delete_intent);
 				mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, notification);
@@ -501,7 +493,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
 				builder.setLargeIcon(Bitmap.createScaledBitmap(
 						profile_image_path != null ? BitmapFactory.decodeFile(profile_image_path) : BitmapFactory
-								.decodeResource(res, R.drawable.ic_profile_image_default), w, h, false));
+								.decodeResource(res, R.drawable.ic_profile_image_default), w, h, true));
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);

@@ -70,7 +70,7 @@ public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<Parcela
 				}
 			}
 		}
-		Collections.sort(mUsersList, ParcelableUser.POSITION_COMPARATOR);
+		Collections.sort(mUsersList);
 		return mUsersList;
 	}
 

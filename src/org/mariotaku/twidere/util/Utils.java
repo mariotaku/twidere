@@ -52,17 +52,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -73,14 +67,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.NameValuePair;
 import org.json.JSONException;
@@ -126,6 +112,7 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
+import org.mariotaku.twidere.util.http.HttpClientImpl;
 
 import twitter4j.DirectMessage;
 import twitter4j.EntitySupport;
@@ -148,6 +135,7 @@ import twitter4j.auth.TwipOModeAuthorization;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.http.HostAddressResolver;
+import twitter4j.http.HttpClientWrapper;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -186,6 +174,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
+import org.mariotaku.twidere.model.ParcelableUser;
 
 public final class Utils implements Constants {
 
@@ -194,42 +183,6 @@ public final class Utils implements Constants {
 	public static final HashMap<String, Class<? extends Fragment>> CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();
 	public static final HashMap<String, Integer> CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
 	public static final HashMap<String, Integer> CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
-
-	private static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new HostnameVerifier() {
-		@Override
-		public boolean verify(final String hostname, final SSLSession session) {
-			return true;
-		}
-	};
-
-	private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] { new X509TrustManager() {
-		@Override
-		public void checkClientTrusted(final X509Certificate[] chain, final String authType) {
-		}
-
-		@Override
-		public void checkServerTrusted(final X509Certificate[] chain, final String authType) {
-		}
-
-		@Override
-		public X509Certificate[] getAcceptedIssuers() {
-			return new X509Certificate[] {};
-		}
-	} };
-
-	private static final SSLSocketFactory IGNORE_ERROR_SSL_FACTORY;
-
-	static {
-		SSLSocketFactory factory = null;
-		try {
-			final SSLContext sc = SSLContext.getInstance("TLS");
-			sc.init(null, TRUST_ALL_CERTS, new SecureRandom());
-			factory = sc.getSocketFactory();
-		} catch (final KeyManagementException e) {
-		} catch (final NoSuchAlgorithmException e) {
-		}
-		IGNORE_ERROR_SSL_FACTORY = factory;
-	}
 
 	static {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
@@ -330,7 +283,7 @@ public final class Utils implements Constants {
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
 
 	private Utils() {
-		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
+		throw new AssertionError("You are trying to create an instance for this utility class!");
 	}
 
 	public static Uri appendQueryParameters(final Uri uri, final NameValuePair... params) {
@@ -947,35 +900,6 @@ public final class Utils implements Constants {
 		return bm;
 	}
 
-	public static HttpURLConnection getConnection(final Context context, final URL url_orig) throws IOException {
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final Proxy proxy = getProxy(context);
-		final HostAddressResolver resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
-		final boolean ignore_ssl_error = prefs.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-		final int connection_timeout = prefs.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-		return getConnection(url_orig, connection_timeout, ignore_ssl_error, proxy, resolver);
-	}
-
-	public static HttpURLConnection getConnection(final URL url_orig, final int timeout_millis,
-			final boolean ignore_ssl_error, final Proxy proxy, final HostAddressResolver resolver) throws IOException {
-		if (url_orig == null) return null;
-		final HttpURLConnection con;
-		final String url_string = url_orig.toString();
-		final String host = url_orig.getHost();
-		final String resolved_host = resolver != null ? resolver.resolve(host) : null;
-		con = (HttpURLConnection) new URL(resolved_host != null ? url_string.replace("://" + host, "://"
-				+ resolved_host) : url_string).openConnection(proxy);
-		con.setConnectTimeout(timeout_millis);
-		if (resolved_host != null) {
-			con.setRequestProperty("Host", host);
-		}
-		con.setInstanceFollowRedirects(false);
-		if (ignore_ssl_error) {
-			setIgnoreSSLError(con);
-		}
-		return con;
-	}
-
 	public static long getDefaultAccountId(final Context context) {
 		if (context == null) return -1;
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
@@ -989,9 +913,29 @@ public final class Utils implements Constants {
 	}
 
 	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities,
-			final boolean include_rts) {
+			final boolean use_httpclient) {
 		if (context == null) return null;
-		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, include_rts);
+		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, use_httpclient);
+	}
+
+	public static HttpClientWrapper getHttpClient(final int timeout_millis, final boolean ignore_ssl_error,
+			final Proxy proxy, final HostAddressResolver resolver, final String user_agent) {
+		final ConfigurationBuilder cb = new ConfigurationBuilder();
+		cb.setHttpConnectionTimeout(timeout_millis);
+		cb.setIgnoreSSLError(ignore_ssl_error);
+		if (proxy != null && !Proxy.NO_PROXY.equals(proxy)) {
+			final SocketAddress address = proxy.address();
+			if (address instanceof InetSocketAddress) {
+				cb.setHttpProxyHost(((InetSocketAddress) address).getHostName());
+				cb.setHttpProxyPort(((InetSocketAddress) address).getPort());
+			}
+		}
+		cb.setHostAddressResolver(resolver);
+		if (user_agent != null) {
+			cb.setUserAgent(user_agent);
+		}
+		// cb.setHttpClientImplementation(HttpClientImpl.class);
+		return new HttpClientWrapper(cb.build());
 	}
 
 	public static String getImagePathFromUri(final Context context, final Uri uri) {
@@ -1472,7 +1416,7 @@ public final class Utils implements Constants {
 	}
 
 	public static Twitter getTwitterInstance(final Context context, final long account_id,
-			final boolean include_entities, final boolean include_rts) {
+			final boolean include_entities, final boolean use_httpclient) {
 		if (context == null) return null;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
@@ -1499,7 +1443,9 @@ public final class Utils implements Constants {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setHostAddressResolver(app.getHostAddressResolver());
-				// cb.setHttpClientImplementation(HttpClientImpl.class);
+				if (use_httpclient) {
+					cb.setHttpClientImplementation(HttpClientImpl.class);
+				}
 				cb.setHttpConnectionTimeout(connection_timeout);
 				setUserAgent(context, cb);
 				cb.setGZIPEnabled(enable_gzip_compressing);
@@ -1531,7 +1477,6 @@ public final class Utils implements Constants {
 					cb.setSigningOAuthBaseURL(signing_oauth_base_url);
 				}
 				cb.setIncludeEntitiesEnabled(include_entities);
-				cb.setIncludeRTsEnabled(include_rts);
 				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
 					case Accounts.AUTH_TYPE_XAUTH: {
@@ -1862,23 +1807,19 @@ public final class Utils implements Constants {
 		if (context == null) return;
 		switch (getTableId(uri)) {
 			case URI_STATUSES: {
-				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED).putExtra(INTENT_KEY_SUCCEED,
-						true));
+				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED));
 				break;
 			}
 			case URI_MENTIONS: {
-				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED)
-						.putExtra(INTENT_KEY_SUCCEED, true));
+				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED));
 				break;
 			}
 			case URI_DIRECT_MESSAGES_INBOX: {
-				context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
-						INTENT_KEY_SUCCEED, true));
+				context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED));
 				break;
 			}
 			case URI_DIRECT_MESSAGES_OUTBOX: {
-				context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED).putExtra(
-						INTENT_KEY_SUCCEED, true));
+				context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED));
 				break;
 			}
 			default: {
@@ -2324,10 +2265,10 @@ public final class Utils implements Constants {
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 	}
+	
 
-	public static void openUserProfile(final Activity activity, final long account_id, final long user_id,
-			final String screen_name) {
-		if (activity == null) return;
+	public static void openUserProfile(final Activity activity, final long account_id, final long user_id, final String screen_name) {
+		if (activity == null || account_id <= 0 || (user_id <= 0 && isEmpty(screen_name))) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserProfileFragment();
@@ -2352,7 +2293,42 @@ public final class Utils implements Constants {
 			if (screen_name != null) {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			activity.startActivity(intent);
+		}
+	}
+
+	public static void openUserProfile(final Activity activity, final ParcelableUser user) {
+		if (activity == null || user == null) return;
+		final Bundle bundle = new Bundle();
+		bundle.putParcelable(INTENT_KEY_USER, user);
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new UserProfileFragment();
+			final Bundle args = new Bundle(bundle);
+			args.putLong(INTENT_KEY_ACCOUNT_ID, user.account_id);
+			if (user.user_id > 0) {
+				args.putLong(INTENT_KEY_USER_ID, user.user_id);
+			}
+			if (user.screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, user.screen_name);
+			}
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(user.account_id));
+			if (user.user_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user.user_id));
+			}
+			if (user.screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, user.screen_name);
+			}
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			intent.putExtras(bundle);
+			activity.startActivity(intent);
 		}
 	}
 
@@ -2493,15 +2469,6 @@ public final class Utils implements Constants {
 			activity.getWindow().setWindowAnimations(0);
 		}
 		activity.startActivity(activity.getIntent());
-	}
-
-	public static void setIgnoreSSLError(final URLConnection conn) {
-		if (conn instanceof HttpsURLConnection) {
-			((HttpsURLConnection) conn).setHostnameVerifier(ALLOW_ALL_HOSTNAME_VERIFIER);
-			if (IGNORE_ERROR_SSL_FACTORY != null) {
-				((HttpsURLConnection) conn).setSSLSocketFactory(IGNORE_ERROR_SSL_FACTORY);
-			}
-		}
 	}
 
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {

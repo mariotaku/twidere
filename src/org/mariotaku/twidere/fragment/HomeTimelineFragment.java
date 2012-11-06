@@ -41,8 +41,9 @@ import android.widget.ListView;
 public class HomeTimelineFragment extends CursorStatusesListFragment implements OnTouchListener {
 
 	private SharedPreferences mPreferences;
-	private ListView mListView;
 	private ServiceInterface mService;
+
+	private ListView mListView;
 	private CursorStatusesAdapter mAdapter;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -52,6 +53,9 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 			final String action = intent.getAction();
 			if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
 				onRefreshComplete();
+				if (isAdded() && !isDetached()) {
+					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
+				}
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
 				if (isAdded() && !isDetached()) {
 					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
@@ -95,7 +99,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 		if (remember_position) {
 			final long status_id = mPreferences.getLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, -1);
 			final int position = mAdapter.findItemPositionByStatusId(last_viewed_id > 0 ? last_viewed_id : status_id);
-			if (position > -1 && position < mListView.getCount()) {
+			if (position > -1 && position < mListView.getCount() && last_viewed_id != status_id) {
 				mListView.setSelection(position);
 			}
 		}
@@ -131,7 +135,6 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 	@Override
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
-
 		super.onStop();
 	}
 

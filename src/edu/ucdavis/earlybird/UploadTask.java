@@ -1,19 +1,16 @@
 package edu.ucdavis.earlybird;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
+import static org.mariotaku.twidere.util.Utils.copyStream;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import org.mariotaku.twidere.util.Utils;
-
+import twitter4j.TwitterException;
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpParameter;
+import twitter4j.http.HttpResponse;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -27,6 +24,8 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 	private final String device_id;
 	private final Context context;
 
+	private final HttpClientWrapper client = new HttpClientWrapper();
+
 	private static final String PROFILE_SERVER_URL = "http://weik.metaisle.com/profiles";
 
 	// private static final String PROFILE_SERVER_URL =
@@ -37,7 +36,7 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 		device_id = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
 	}
 
-	public void uploadMultipart(final String urlStr, final File file) {
+	public void uploadMultipart(final String url, final File file) {
 		final String app_root = file.getParent();
 		final File tmp_dir = new File(app_root + "/tmp");
 		if (!tmp_dir.exists()) {
@@ -49,69 +48,14 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 		final File tmp = new File(tmp_dir, file.getName());
 		file.renameTo(tmp);
 
-		final String lineEnd = "\r\n";
-		final String twoHyphens = "--";
-
-		// generating byte[] boundary here
-
-		final String boundary = "---------------------------131976563820899716501910991218";
-		HttpURLConnection conn = null;
-		DataOutputStream outputStream = null;
-
-		int bytesRead, bytesAvailable, bufferSize;
-		byte[] buffer;
-		final int maxBufferSize = 1 * 1024 * 1024;
-
 		try {
-			final URL uploadUrl = new URL(urlStr);
-			final FileInputStream fileInputStream = new FileInputStream(tmp);
-			conn = Utils.getConnection(context, uploadUrl);
-			conn.setDoOutput(true);
-			conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-
-			String multipartFormStart = new String();
-
-			multipartFormStart += twoHyphens + boundary + lineEnd
-					+ "Content-Disposition: form-data; name=\"upload\"; filename=\"" + tmp.getName() + "\"" + lineEnd;
-			multipartFormStart += "Content-Type: text/csv" + lineEnd + "Content-Length: " + tmp.length() + lineEnd
-					+ lineEnd;
-
-			final String multipartFormEnd = lineEnd + twoHyphens + boundary + twoHyphens + lineEnd;
-
-			final int totalLength = multipartFormStart.length() + (int) tmp.length() + multipartFormEnd.length();
-			ProfilingUtil.log("totallenhth " + totalLength);
-			conn.setFixedLengthStreamingMode(totalLength);
-
-			outputStream = new DataOutputStream(conn.getOutputStream());
-			outputStream.writeBytes(multipartFormStart);
-
-			// Upload file
-			bytesAvailable = fileInputStream.available();
-			bufferSize = Math.min(bytesAvailable, maxBufferSize);
-			ProfilingUtil.log("bufferSize " + bufferSize);
-			buffer = new byte[bufferSize];
-			bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-			ProfilingUtil.log("bytesRead " + bytesRead);
-
-			while (bytesRead > 0) {
-				outputStream.write(buffer, 0, bufferSize);
-				bytesAvailable = fileInputStream.available();
-				bufferSize = Math.min(bytesAvailable, maxBufferSize);
-				bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-			}
-
-			outputStream.writeBytes(multipartFormEnd);
-
-			ProfilingUtil.log("connection outputstream size is " + outputStream.size());
-
-			// finished with POST request body
+			final HttpParameter param = new HttpParameter("upload", tmp);
+			final HttpResponse resp = client.post(url, null, new HttpParameter[] { param });
 
 			// Responses from the server (code and message)
-			final int serverResponseCode = conn.getResponseCode();
-			final String serverResponseMessage = conn.getResponseMessage();
+			final int serverResponseCode = resp.getStatusCode();
 
 			ProfilingUtil.log("server response code " + serverResponseCode);
-			ProfilingUtil.log("server response message " + serverResponseMessage);
 
 			if (serverResponseCode / 100 == 2) {
 				tmp.delete();
@@ -119,23 +63,10 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 				putBackProfile(tmp, file);
 			}
 
-			fileInputStream.close();
-
-			outputStream.flush();
-			outputStream.close();
-
-		} catch (final MalformedURLException e) {
+		} catch (final TwitterException e) {
 			e.printStackTrace();
 			putBackProfile(tmp, file);
-		} catch (final IOException e) {
-			e.printStackTrace();
-			putBackProfile(tmp, file);
-		} finally {
-			if (conn != null) {
-				conn.disconnect();
-			}
 		}
-
 	}
 
 	@Override
@@ -177,27 +108,19 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 		boolean success;
 		if (profile.exists()) {
 			try {
-				final BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tmp, true));
-				final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(profile));
+				final FileOutputStream os = new FileOutputStream(tmp, true);
+				final FileInputStream is = new FileInputStream(profile);
 
-				final byte[] buffer = new byte[1024];
-				int len = 0;
-				while ((len = bis.read(buffer)) != -1) {
-					bos.write(buffer, 0, len);
-				}
+				copyStream(is, os);
 
-				bis.close();
-				bos.flush();
-				bos.close();
+				is.close();
+				os.flush();
+				os.close();
 
-			} catch (final FileNotFoundException e) {
-				e.printStackTrace();
-				success = false;
 			} catch (final IOException e) {
 				e.printStackTrace();
 				success = false;
 			}
-
 			success = true;
 
 			if (success && tmp.renameTo(profile) && tmp.delete()) {
