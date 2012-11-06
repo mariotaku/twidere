@@ -187,10 +187,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		@Override
 		public Loader<Response<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
+			setProgressBarIndeterminateVisibility(true);
 			final int count = mAdapter.getCount();
 			final long status_id;
 			if (count == 0) {
-				setProgressBarIndeterminateVisibility(true);
 				mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 				mInReplyToView.setClickable(false);
 				setPullToRefreshEnabled(false);
@@ -366,14 +366,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				case MENU_REPLY: {
 					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 					final Bundle bundle = new Bundle();
-					final List<String> mentions = new Extractor().extractMentionedScreennames(text_plain);
-					mentions.remove(screen_name);
-					mentions.add(0, screen_name);
+					final List<String> mentions = new Extractor().extractMentionedScreennames(mStatus.text_plain);
+					mentions.remove(mStatus.screen_name);
+					mentions.add(0, mStatus.screen_name);
 					bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatusId);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, mStatus.account_id);
+					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatus.status_id);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mStatus.screen_name);
+					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, mStatus.name);
 					intent.putExtras(bundle);
 					startActivity(intent);
 					break;
@@ -446,6 +446,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		if (mStatus != null && status != null && mStatus.status_id != status.status_id) {
 			ProfilingUtil.profiling(getActivity(), mAccountId, "End, " + mStatus.status_id);
 		}
+		mStatusId = -1;
+		mAccountId = -1;
 		mStatus = status;
 		// UCD
 		if (mStatus != null) {

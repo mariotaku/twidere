@@ -93,19 +93,20 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 		if (!show_gap) {
 
-			final String retweeted_by_name = cursor.getString(mIndices.retweeted_by_name);
-			final String retweeted_by_screen_name = cursor.getString(mIndices.retweeted_by_screen_name);
-			final String text = cursor.getString(mIndices.text);
-			final String screen_name = cursor.getString(mIndices.screen_name);
-			final String name = cursor.getString(mIndices.name);
-			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
-
 			final long account_id = cursor.getLong(mIndices.account_id);
 			final long user_id = cursor.getLong(mIndices.user_id);
 			final long status_id = cursor.getLong(mIndices.status_id);
 			final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
 			final long retweet_count = cursor.getLong(mIndices.retweet_count);
 
+			final String retweeted_by_name = cursor.getString(mIndices.retweeted_by_name);
+			final String retweeted_by_screen_name = cursor.getString(mIndices.retweeted_by_screen_name);
+			final String text = cursor.getString(mIndices.text);
+			final String screen_name = cursor.getString(mIndices.screen_name);
+			final String name = cursor.getString(mIndices.name);
+			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
+			final String account_screen_name = getAccountScreenName(mContext, account_id);
+			
 			final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
 			final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
 			final boolean is_verified = cursor.getShort(mIndices.is_verified) == 1;
@@ -115,6 +116,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 					&& cursor.getShort(mIndices.is_retweet) == 1;
 			final boolean is_reply = !TextUtils.isEmpty(in_reply_to_screen_name)
 					&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
+			final boolean is_mention = text.toLowerCase().contains('@' + account_screen_name.toLowerCase());
 
 			if (mMultiSelectEnabled) {
 				holder.setSelected(mSelectedStatusIds.contains(status_id));
@@ -125,8 +127,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			holder.setUserColor(getUserColor(mContext, user_id));
 			if (text != null) {
 				holder.setHighlightColor(getStatusBackground(
-						mMentionsHighlightDisabled ? false : text.contains('@' + getAccountScreenName(mContext,
-								account_id)), is_favorite, is_retweet));
+						mMentionsHighlightDisabled ? false : is_mention, is_favorite, is_retweet));
 			}
 
 			holder.setAccountColorEnabled(mShowAccountColor);

@@ -309,6 +309,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 			}
 		}
 		mData.removeAll(items_to_remove);
-		mAdapter.setData(mData);
+		mAdapter.setData(mData, true);
 	}
 }

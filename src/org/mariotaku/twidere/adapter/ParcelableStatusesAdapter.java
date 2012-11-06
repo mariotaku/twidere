@@ -173,12 +173,11 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			} else {
 				holder.setSelected(false);
 			}
-
+			final String account_screen_name = getAccountScreenName(mContext, status.account_id);
+			final boolean is_mention = status.text_plain.toLowerCase().contains('@' + account_screen_name.toLowerCase());
 			holder.setUserColor(getUserColor(mContext, status.user_id));
 			holder.setHighlightColor(getStatusBackground(
-					mMentionsHighlightDisabled ? false : status.text_plain.contains('@' + getAccountScreenName(
-							mContext, status.account_id)), status.is_favorite, status.is_retweet));
-
+					mMentionsHighlightDisabled ? false : is_mention, status.is_favorite, status.is_retweet));
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getUserTypeIconRes(status.is_verified, status.is_protected), 0);
