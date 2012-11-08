@@ -102,10 +102,10 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
 	private static final String INTENT_KEY_CONTENT_MODIFIED = "content_modified";
 	private static final String INTENT_KEY_IS_NAVIGATE_UP = "is_navigate_up";
-
+	
 	private ServiceInterface mService;
 	private LocationManager mLocationManager;
-	private SharedPreferences mPreferences;
+	private static SharedPreferences mPreferences;
 	private Location mRecentLocation;
 	private ContentResolver mResolver;
 	private final Validator mValidator = new Validator();
@@ -133,6 +133,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	private boolean mLoaderInitialized;
 
+	public static int MAX_TWEET_LENGTH = 140;
+	
 	@Override
 	public void afterTextChanged(final Editable s) {
 
@@ -597,18 +599,27 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		final String text_orig = mEditText != null ? parseString(mEditText.getText()) : null;
 		final String text = mIsPhotoAttached || mIsImageAttached ? mUploadUseExtension ? getImageUploadStatus(this,
 				FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
+		
+		MAX_TWEET_LENGTH = get_max_tweet_Length();
+		
 		if (mTextCount != null) {
 			final int count = mValidator.getTweetLength(text);
-			final float hue = count < 140 ? count >= 130 ? 5 * (140 - count) : 50 : 0;
+			
+			final float hue = count < MAX_TWEET_LENGTH ? count >= (MAX_TWEET_LENGTH - 10) ? 5 * (MAX_TWEET_LENGTH - count) : 50 : 0;
 			final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-			mTextCount.setTextColor(count >= 130 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
-			mTextCount.setText(parseString(count));
+			mTextCount.setTextColor(count >= (MAX_TWEET_LENGTH - 10) ? Color.HSVToColor(0x80, hsv) : 0x80808080);
+			mTextCount.setText(parseString(count)+" / "+MAX_TWEET_LENGTH);
 		}
 		final MenuItem sendItem = menu.findItem(MENU_SEND);
 		sendItem.setEnabled(text_orig.length() > 0);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
+	public static int get_max_tweet_Length() {
+		String s = mPreferences.getString("max_tweet_Length", "140");
+		return Integer.valueOf(s);
+	}
+	
 	@Override
 	public void onProviderDisabled(final String provider) {
 	}
