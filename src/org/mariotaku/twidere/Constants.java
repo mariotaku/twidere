@@ -34,12 +34,12 @@ import twitter4j.TwitterConstants;
 
 public interface Constants extends TwitterConstants {
 
-	public static final String APP_NAME = "Twidere";
+	public static final String APP_NAME = "Twidere for StatusNet";
 
 	public static final String APP_PROJECT_URL = "https://github.com/mariotaku/twidere";
 
 	public static final boolean DEBUG = BuildConfig.DEBUG;
-
+	
 	public static final String LOGTAG = APP_NAME;
 
 	public static final String USER_COLOR_PREFERENCES_NAME = "user_colors";
@@ -50,10 +50,10 @@ public interface Constants extends TwitterConstants {
 	public static final int DATABASES_VERSION = 30;
 
 	// Following 4 consants are not included in source code.
-	public static final String TWITTER_CONSUMER_KEY = PrivateConstants.TWITTER_CONSUMER_KEY;
-	public static final String TWITTER_CONSUMER_SECRET = PrivateConstants.TWITTER_CONSUMER_SECRET;
-	public static final String GOOGLE_MAPS_API_KEY_RELEASE = PrivateConstants.GOOGLE_MAPS_API_KEY_RELEASE;
-	public static final String GOOGLE_MAPS_API_KEY_DEBUG = PrivateConstants.GOOGLE_MAPS_API_KEY_DEBUG;
+	public static final String TWITTER_CONSUMER_KEY = "";
+	public static final String TWITTER_CONSUMER_SECRET = "";
+	public static final String GOOGLE_MAPS_API_KEY_RELEASE = "";
+	public static final String GOOGLE_MAPS_API_KEY_DEBUG ="";
 
 	public static final String GOOGLE_MAPS_API_KEY = DEBUG ? GOOGLE_MAPS_API_KEY_DEBUG : GOOGLE_MAPS_API_KEY_RELEASE;
 
@@ -484,4 +484,5 @@ public interface Constants extends TwitterConstants {
 	public static final String ICON_SPECIAL_TYPE_CUSTOMIZE = "_customize";
 
 	public static final String FRAGMENT_TAG_API_UPGRADE_NOTICE = "api_upgrade_notice";
+	
 }

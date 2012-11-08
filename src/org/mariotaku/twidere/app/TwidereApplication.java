@@ -55,7 +55,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private final ArrayList<Long> mSelectedUserIds = new ArrayList<Long>();
 
 	private HostAddressResolver mResolver;
-
+	
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager != null) return mAsyncTaskManager;
 		return mAsyncTaskManager = AsyncTaskManager.getInstance();
@@ -133,7 +133,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		}
 		super.onLowMemory();
 	}
-
+		
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
 		if (mServiceInterface != null

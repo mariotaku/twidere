@@ -8,7 +8,7 @@
 			android:title="@string/app_name"/>
 		<Preference
 			android:summary="Mariotaku Lee"
-			android:title="Developer">
+			android:title="Original Developer">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=57610574"/>
@@ -20,6 +20,13 @@
 				android:action="android.intent.action.VIEW"
 				android:data="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=mariotaku.lee%40gmail%2ecom&amp;item_name=Donate%20to%20Twidere&amp;currency_code=USD"/>
 		</Preference>
+		<Preference
+			android:summary="Modder"
+			android:title="Bob Kromonos Achten">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="http://kromonos.net/"/>
+		</Preference>		
 	</PreferenceCategory>
 	<PreferenceCategory android:title="TRANSLATORS">
 		<Preference

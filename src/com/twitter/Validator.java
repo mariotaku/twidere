@@ -1,16 +1,18 @@
 package com.twitter;
 
+import android.content.SharedPreferences;
+
 /**
  * A class for validating Tweet texts.
  */
 public class Validator {
-	public static final int MAX_TWEET_LENGTH = 140;
+	public static int MAX_TWEET_LENGTH = 140;
 
 	protected int shortUrlLength = 20;
 	protected int shortUrlLengthHttps = 21;
 
 	private final Extractor extractor = new Extractor();
-
+	
 	public int getShortUrlLength() {
 		return shortUrlLength;
 	}
@@ -38,7 +40,8 @@ public class Validator {
 					c == '\uFFFF' || // Special
 					c >= '\u202A' && c <= '\u202E') return false;
 		}
-
+		MAX_TWEET_LENGTH = org.mariotaku.twidere.activity.ComposeActivity.get_max_tweet_Length();
+		
 		return getTweetLength(text) <= MAX_TWEET_LENGTH;
 	}
 
