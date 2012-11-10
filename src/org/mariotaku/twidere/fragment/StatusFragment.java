@@ -114,6 +114,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
 		OnItemClickListener, OnTouchListener {
@@ -346,7 +347,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					} else {
 						final long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
 								: mStatus.status_id;
-						mService.retweetStatus(mAccountId, id_to_retweet);
+						mService.retweetStatus(mStatus.account_id, id_to_retweet);
 					}
 					break;
 				}
@@ -449,9 +450,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mStatusId = -1;
 		mAccountId = -1;
 		mStatus = status;
-		// UCD
 		if (mStatus != null) {
+			// UCD
 			ProfilingUtil.profiling(getActivity(), mAccountId, "Start, " + mStatus.status_id);
+			mAccountId = mStatus.account_id;
+			mStatusId = mStatus.status_id;
 		}
 		clearPreviewImages();
 		if (status == null || getActivity() == null) return;
@@ -467,7 +470,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 				getUserTypeIconRes(status.is_verified, status.is_protected), 0);
 		mScreenNameView.setText("@" + status.screen_name);
-		mTextView.setText(status.text);
+		mTextView.setText(Html.fromHtml(status.text_html));
 		final TwidereLinkify linkify = new TwidereLinkify(mTextView);
 		linkify.setOnLinkClickListener(new OnLinkClickHandler(getActivity(), mAccountId));
 		linkify.addAllLinks();
@@ -532,7 +535,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
+	public Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(final Bundle args) {
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		return new DummyParcelableStatusesLoader(getActivity(), account_id, getData());
 	}

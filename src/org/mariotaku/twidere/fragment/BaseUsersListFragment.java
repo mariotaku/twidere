@@ -54,6 +54,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 abstract class BaseUsersListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUser>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
@@ -68,8 +69,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
 	private long mAccountId;
-	private final List<ParcelableUser> mData = Collections
-			.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
+	private final SynchronizedStateSavedList<ParcelableUser, Long> mData = new SynchronizedStateSavedList<ParcelableUser, Long>();
 	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true;
 
 	private ParcelableUser mSelectedUser;

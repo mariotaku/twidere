@@ -26,13 +26,14 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 public class UserTimelineFragment extends ParcelableStatusesListFragment {
 
 	private boolean mIsStatusesSaved = false;
 
 	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
+	public Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(final Bundle args) {
 		long account_id = -1, max_id = -1, since_id = -1, user_id = -1;
 		String screen_name = null;
 		boolean is_home_tab = false;

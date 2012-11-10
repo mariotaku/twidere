@@ -25,8 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.SerializableStatus;
-import org.mariotaku.twidere.util.NoDuplicatesStateSavedList;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.SerializationUtil;
 
 import twitter4j.Paging;
@@ -36,6 +35,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.os.Bundle;
+import java.util.ConcurrentModificationException;
 
 public class UserFavoritesLoader extends Twitter4JStatusLoader {
 
@@ -66,28 +66,23 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 	}
 
 	@Override
-	public synchronized List<ParcelableStatus> loadInBackground() {
+	public SynchronizedStateSavedList<ParcelableStatus, Long> loadInBackground() {
 		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
 				final String path = SerializationUtil.getSerializationFilePath(getContext(), getClassName(),
 						getAccountId(), mUserId, mUserScreenName);
-				@SuppressWarnings("unchecked")
-				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) SerializationUtil
-						.read(path);
+				final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = SerializationUtil.read(path);
 				setLastViewedId(statuses.getState());
-				final ArrayList<ParcelableStatus> result = new ArrayList<ParcelableStatus>();
-				for (final SerializableStatus status : statuses) {
-					result.add(new ParcelableStatus(status));
+				final SynchronizedStateSavedList<ParcelableStatus, Long> data = getData();
+				if (data != null && statuses != null) {
+					data.addAll(statuses);
+					Collections.sort(data);
 				}
-				final List<ParcelableStatus> data = getData();
-				if (data != null) {
-					data.addAll(result);
-				}
-				Collections.sort(data);
 				return data;
 			} catch (final IOException e) {
 			} catch (final ClassNotFoundException e) {
 			} catch (final ClassCastException e) {
+			} catch (final ConcurrentModificationException e) {
 			}
 		}
 		return super.loadInBackground();
@@ -102,16 +97,10 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 		final int items_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		try {
-			final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = new NoDuplicatesStateSavedList<SerializableStatus, Long>();
+			final int size = data.size();
+			final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = new SynchronizedStateSavedList<ParcelableStatus, Long>(data.subList(0, size > items_limit ? items_limit : size));
 			if (last_viewed_id > 0) {
 				statuses.setState(last_viewed_id);
-			}
-			final int count = data.size();
-			for (int i = 0; i < count; i++) {
-				if (i >= items_limit) {
-					break;
-				}
-				statuses.add(new SerializableStatus(data.get(i)));
 			}
 			final String path = SerializationUtil.getSerializationFilePath(context,
 					instance.getClass().getSimpleName(), account_id, user_id, screen_name);

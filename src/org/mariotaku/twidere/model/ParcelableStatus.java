@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Date;
@@ -37,7 +38,7 @@ import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spanned;
 
-public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus> {
+public class ParcelableStatus implements Parcelable, Serializable, Comparable<ParcelableStatus> {
 
 	public static final Parcelable.Creator<ParcelableStatus> CREATOR = new Parcelable.Creator<ParcelableStatus>() {
 		@Override
@@ -61,7 +62,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 			location_string, text_unescaped;
 	public final ParcelableLocation location;
 
-	public final Spanned text;
+	//public final Spanned text;
 
 	public final URL profile_image_url, image_preview_url;
 
@@ -119,7 +120,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		profile_image_url_string = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
 		profile_image_url = parseURL(profile_image_url_string);
 
-		text = text_html != null ? Html.fromHtml(text_html) : null;
+		//text = text_html != null ? Html.fromHtml(text_html) : null;
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
@@ -157,44 +158,9 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		location = new ParcelableLocation(location_string);
 		image_preview_url = parseURL(image_preview_url_string);
 		profile_image_url = parseURL(profile_image_url_string);
-		text = text_html != null ? Html.fromHtml(text_html) : null;
+		//text = text_html != null ? Html.fromHtml(text_html) : null;
 		text_unescaped = unescape(text_html);
 		my_retweet_id = in.readLong();
-	}
-
-	public ParcelableStatus(final SerializableStatus in) {
-		retweet_id = in.retweet_id;
-		retweeted_by_id = in.retweeted_by_id;
-		status_id = in.status_id;
-		account_id = in.account_id;
-		user_id = in.user_id;
-		status_timestamp = in.status_timestamp;
-		retweet_count = in.retweet_count;
-		in_reply_to_status_id = in.in_reply_to_status_id;
-		is_gap = in.is_gap;
-		is_retweet = in.is_retweet;
-		is_favorite = in.is_favorite;
-		is_protected = in.is_protected;
-		is_verified = in.is_verified;
-		has_media = in.has_media;
-		retweeted_by_name = in.retweeted_by_name;
-		retweeted_by_screen_name = in.retweeted_by_screen_name;
-		text_html = in.text_html;
-		text_plain = in.text_plain;
-		name = in.name;
-		screen_name = in.screen_name;
-		in_reply_to_screen_name = in.in_reply_to_screen_name;
-		source = in.source;
-		profile_image_url_string = in.profile_image_url_string;
-		image_preview_url_string = in.image_preview_url_string;
-		image_orig_url_string = in.image_orig_url_string;
-		location_string = in.location_string;
-		location = new ParcelableLocation(in.location);
-		image_preview_url = in.image_preview_url;
-		profile_image_url = in.profile_image_url;
-		text = text_html != null ? Html.fromHtml(text_html) : null;
-		text_unescaped = unescape(text_html);
-		my_retweet_id = in.my_retweet_id;
 	}
 
 	public ParcelableStatus(Status status, final long account_id, final boolean is_gap) {
@@ -234,7 +200,7 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 		location_string = location.toString();
 		is_favorite = status.isFavorited();
 		has_media = medias != null && medias.length > 0 || preview.has_image;
-		text = text_html != null ? Html.fromHtml(text_html) : null;
+		//text = text_html != null ? Html.fromHtml(text_html) : null;
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
@@ -272,8 +238,8 @@ public class ParcelableStatus implements Parcelable, Comparable<ParcelableStatus
 				+ is_verified + ", has_media=" + has_media + ", retweeted_by_name=" + retweeted_by_name
 				+ ", retweeted_by_screen_name=" + retweeted_by_screen_name + ", text_plain=" + text_plain + ", name="
 				+ name + ", screen_name=" + screen_name + ", in_reply_to_screen_name=" + in_reply_to_screen_name
-				+ ", source=" + source + ", location_string=" + location_string + ", location=" + location + ", text="
-				+ text + ", profile_image_url=" + profile_image_url + ", image_preview_url=" + image_preview_url + "}";
+				+ ", source=" + source + ", location_string=" + location_string + ", location=" + location
+				+ ", profile_image_url=" + profile_image_url + ", image_preview_url=" + image_preview_url + "}";
 	}
 
 	@Override

@@ -31,8 +31,9 @@ import twitter4j.User;
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
+import java.io.Serializable;
 
-public class ParcelableUser implements Parcelable, Comparable<ParcelableUser> {
+public class ParcelableUser implements Parcelable, Serializable, Comparable<ParcelableUser> {
 
 	public static final Parcelable.Creator<ParcelableUser> CREATOR = new Parcelable.Creator<ParcelableUser>() {
 		@Override

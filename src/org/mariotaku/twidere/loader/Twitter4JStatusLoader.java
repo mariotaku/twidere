@@ -32,6 +32,7 @@ import twitter4j.TwitterException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
@@ -47,8 +48,8 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 	public abstract List<Status> getStatuses(Paging paging) throws TwitterException;
 
 	@Override
-	public synchronized List<ParcelableStatus> loadInBackground() {
-		final List<ParcelableStatus> data = getData();
+	public SynchronizedStateSavedList<ParcelableStatus, Long> loadInBackground() {
+		final SynchronizedStateSavedList<ParcelableStatus, Long> data = getData();
 		final long account_id = getAccountId();
 		List<Status> statuses = null;
 		final Context context = getContext();

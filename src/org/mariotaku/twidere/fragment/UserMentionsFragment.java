@@ -11,13 +11,14 @@ import org.mariotaku.twidere.util.Utils;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 public class UserMentionsFragment extends SearchTweetsFragment {
 
 	private boolean mIsStatusesSaved = false;
 
 	@Override
-	public Loader<List<ParcelableStatus>> newLoaderInstance(final Bundle args) {
+	public Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(final Bundle args) {
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		if (args == null) return new DummyParcelableStatusesLoader(getActivity(), account_id, getData());
 		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);

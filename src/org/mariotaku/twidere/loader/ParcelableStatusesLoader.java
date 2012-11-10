@@ -21,23 +21,25 @@ package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import twitter4j.Twitter;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
-public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>> implements Constants {
+public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<SynchronizedStateSavedList<ParcelableStatus, Long>> implements Constants {
 
 	private final Twitter mTwitter;
 	private final long mAccountId;
 	private final String mClassName;
-	private final List<ParcelableStatus> mData;
+	private final SynchronizedStateSavedList<ParcelableStatus, Long> mData = new SynchronizedStateSavedList<ParcelableStatus, Long>();
 	private final boolean mFirstLoad, mIsHomeTab;
 
 	private Long mLastViewedId;
@@ -49,7 +51,9 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
 		mFirstLoad = data == null;
-		mData = data != null ? data : new NoDuplicatesArrayList<ParcelableStatus>();
+		if (data != null) {
+			mData.addAll(data);
+		}
 		mIsHomeTab = is_home_tab;
 	}
 
@@ -64,7 +68,7 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 		return false;
 	}
 
-	protected synchronized boolean deleteStatus(final long status_id) {
+	protected boolean deleteStatus(final long status_id) {
 		try {
 			final NoDuplicatesArrayList<ParcelableStatus> data_to_remove = new NoDuplicatesArrayList<ParcelableStatus>();
 			for (final ParcelableStatus status : mData) {
@@ -87,7 +91,7 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 		return mClassName;
 	}
 
-	protected List<ParcelableStatus> getData() {
+	protected SynchronizedStateSavedList<ParcelableStatus, Long> getData() {
 		return mData;
 	}
 

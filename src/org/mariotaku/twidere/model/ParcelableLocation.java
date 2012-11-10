@@ -23,8 +23,9 @@ import static org.mariotaku.twidere.util.Utils.parseDouble;
 import twitter4j.GeoLocation;
 import android.os.Parcel;
 import android.os.Parcelable;
+import java.io.Serializable;
 
-public class ParcelableLocation implements Parcelable {
+public class ParcelableLocation implements Serializable, Parcelable {
 
 	public final double latitude, longitude;
 

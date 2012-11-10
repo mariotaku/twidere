@@ -66,7 +66,8 @@ public class SerializationUtil {
 		return cache_file.getPath();
 	}
 
-	public static Object read(final String path) throws IOException, ClassNotFoundException {
+	@SuppressWarnings("unchecked")
+	public static<T> T read(final String path) throws IOException, ClassNotFoundException {
 		if (path == null) return null;
 		ObjectInputStream is = null;
 		try {
@@ -74,7 +75,7 @@ public class SerializationUtil {
 			// FILE_MODE_RW);
 			final FileInputStream fis = new FileInputStream(new File(path));
 			is = new ObjectInputStream(fis);
-			return is.readObject();
+			return (T) is.readObject();
 		} finally {
 			if (is != null) {
 				is.close();

@@ -26,9 +26,8 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.SerializableStatus;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-import org.mariotaku.twidere.util.NoDuplicatesStateSavedList;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.SerializationUtil;
 
 import twitter4j.Paging;
@@ -62,22 +61,16 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 	}
 
 	@Override
-	public synchronized List<ParcelableStatus> loadInBackground() {
+	public SynchronizedStateSavedList<ParcelableStatus, Long> loadInBackground() {
 		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
 				final String path = SerializationUtil.getSerializationFilePath(getContext(), getClassName(),
 						getAccountId(), mQuery);
-				@SuppressWarnings("unchecked")
-				final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = (NoDuplicatesStateSavedList<SerializableStatus, Long>) SerializationUtil
-						.read(path);
+				final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = SerializationUtil.read(path);
 				setLastViewedId(statuses.getState());
-				final NoDuplicatesArrayList<ParcelableStatus> result = new NoDuplicatesArrayList<ParcelableStatus>();
-				for (final SerializableStatus status : statuses) {
-					result.add(new ParcelableStatus(status));
-				}
-				final List<ParcelableStatus> data = getData();
-				if (data != null) {
-					data.addAll(result);
+				final SynchronizedStateSavedList<ParcelableStatus, Long> data = getData();
+				if (data != null && statuses != null) {
+					data.addAll(statuses);
 				}
 				Collections.sort(data);
 				return data;
@@ -100,17 +93,10 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 		final int items_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		try {
-			final NoDuplicatesStateSavedList<SerializableStatus, Long> statuses = new NoDuplicatesStateSavedList<SerializableStatus, Long>();
+			final int size = data.size();
+			final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = new SynchronizedStateSavedList<ParcelableStatus, Long>(data.subList(0, size > items_limit ? items_limit : size));
 			if (last_viewed_id > 0) {
 				statuses.setState(last_viewed_id);
-			}
-			int i = 0;
-			for (final ParcelableStatus status : data) {
-				if (i >= items_limit) {
-					break;
-				}
-				statuses.add(new SerializableStatus(status));
-				i++;
 			}
 			final String path = SerializationUtil.getSerializationFilePath(context,
 					instance.getClass().getSimpleName(), account_id, query);
