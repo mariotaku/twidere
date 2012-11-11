@@ -74,6 +74,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.twitter.Validator;
+import android.graphics.Color;
 
 public class DirectMessagesConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>,
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener,
@@ -85,6 +86,7 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 
 	private ListView mListView;
 	private EditText mEditText;
+	private TextView mTextCount;
 	private AutoCompleteTextView mEditScreenName;
 	private ImageButton mSendButton;
 	private Button mScreenNameConfirmButton;
@@ -188,6 +190,7 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 		mSendButton.setEnabled(false);
 		mScreenNameConfirmButton.setOnClickListener(this);
 		mScreenNameConfirmButton.setEnabled(false);
+		updateTextCount();
 	}
 
 	@Override
@@ -220,8 +223,8 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID))
-			return new CursorLoader(getActivity(), TweetStore.NULL_CONTENT_URI, null, null, null, null);
+		//if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID))
+		//	return new CursorLoader(getActivity(), TweetStore.NULL_CONTENT_URI, null, null, null, null);
 		final String[] cols = new String[] { DirectMessages._ID, DirectMessages.ACCOUNT_ID, DirectMessages.MESSAGE_ID,
 				DirectMessages.MESSAGE_TIMESTAMP, DirectMessages.SENDER_ID, DirectMessages.RECIPIENT_ID,
 				DirectMessages.IS_OUTGOING, DirectMessages.TEXT, DirectMessages.SENDER_NAME,
@@ -230,12 +233,11 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		final long conversation_id = args != null ? args.getLong(INTENT_KEY_CONVERSATION_ID, -1) : -1;
 		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;
-		final Uri uri = buildDirectMessageConversationUri(account_id, conversation_id, screen_name);
-		mConversationContainer.setVisibility(account_id <= 0 || conversation_id <= 0 && screen_name == null ? View.GONE
+		mConversationContainer.setVisibility(account_id <= 0 || conversation_id <= 0 && isEmpty(screen_name) ? View.GONE
 				: View.VISIBLE);
-		mScreenNameContainer
-				.setVisibility(account_id <= 0 || conversation_id <= 0 && screen_name == null ? View.VISIBLE
-						: View.GONE);
+		mScreenNameContainer.setVisibility(account_id <= 0 || conversation_id <= 0 && isEmpty(screen_name) ? View.VISIBLE
+										   : View.GONE);
+		final Uri uri = buildDirectMessageConversationUri(account_id, conversation_id, screen_name);
 		return new CursorLoader(getActivity(), uri, cols, null, null, DirectMessages.Conversation.DEFAULT_SORT_ORDER);
 	}
 
@@ -244,6 +246,7 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 		final View view = inflater.inflate(R.layout.direct_messages_conversation, null);
 		mListView = (ListView) view.findViewById(android.R.id.list);
 		mEditText = (EditText) view.findViewById(R.id.edit_text);
+		mTextCount = (TextView) view.findViewById(R.id.text_count);
 		mSendButton = (ImageButton) view.findViewById(R.id.send);
 		mConversationContainer = view.findViewById(R.id.conversation_container);
 		mScreenNameContainer = view.findViewById(R.id.screen_name_container);
@@ -381,6 +384,7 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 
 	@Override
 	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+		updateTextCount();
 		if (mSendButton == null || s == null) return;
 		mSendButton.setEnabled(mValidator.isValidTweet(s.toString()));
 	}
@@ -405,6 +409,18 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 		}
 	}
 
+	private void updateTextCount() {
+		if (mTextCount != null) {
+			final String text = mEditText != null ? parseString(mEditText.getText()) : null;
+			final int count = mValidator.getTweetLength(text);
+			final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count) : 50 : 0;
+			final float[] hsv = new float[] { hue, 1.0f, 1.0f };
+			mTextCount.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
+			mTextCount.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
+		}
+	}
+	
+	
 	private static class AccountsAdapter extends ArrayAdapter<Account> {
 
 		public AccountsAdapter(final Context context) {

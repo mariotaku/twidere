@@ -116,32 +116,13 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	private boolean mShowHomeTab, mShowMentionsTab, mShowMessagesTab, mShowAccountsTab;
 
-	public boolean checkDefaultAccountSet() {
-		boolean result = true;
+	public void checkDefaultAccountSet() {
 		final long[] activated_ids = getActivatedAccountIds(this);
 		final long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
-		if (default_account_id == -1 || !ArrayUtils.contains(activated_ids, default_account_id)) {
-			if (activated_ids.length == 1) {
-				mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
-				mIndicator.setPagingEnabled(true);
-				mIsNavigateToDefaultAccount = false;
-			} else if (activated_ids.length > 1) {
-				final int count = mAdapter.getCount();
-				if (count > 0) {
-					mViewPager.setCurrentItem(count - 1, false);
-				}
-				mIndicator.setPagingEnabled(false);
-				if (!mIsNavigateToDefaultAccount) {
-					Toast.makeText(this, R.string.set_default_account_hint, Toast.LENGTH_LONG).show();
-				}
-				mIsNavigateToDefaultAccount = true;
-				result = false;
-			}
-		} else {
+		if (!ArrayUtils.contains(activated_ids, default_account_id)) {
+			mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
 			mIndicator.setPagingEnabled(true);
-			mIsNavigateToDefaultAccount = false;
 		}
-		return result;
 	}
 
 	@Override
@@ -163,14 +144,15 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		switch (v.getId()) {
 			case R.id.compose:
 			case R.id.button_compose:
-				if (mViewPager == null) return;
+				if (mViewPager == null || mAdapter == null) return;
 				final int position = mViewPager.getCurrentItem();
-				if (position == mAdapter.getCount() - 1) {
+				final TabSpec tab = mAdapter.getTab(position);
+				if (mShowAccountsTab && tab.position == Integer.MAX_VALUE) {
 					final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
 					intent.setClass(this, SignInActivity.class);
 					startActivity(intent);
 				} else {
-					switch (position) {
+					switch (tab.position) {
 						case TAB_POSITION_MESSAGES:
 							openDirectMessagesConversation(this, -1, -1);
 							break;
@@ -265,7 +247,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		final long[] activated_ids = getActivatedAccountIds(this);
 		if (activated_ids.length <= 0) {
 			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
-		} else if (checkDefaultAccountSet() && (remember_position || initial_tab >= 0)) {
+		} else if (remember_position || initial_tab >= 0) {
 			final int position = initial_tab >= 0 ? initial_tab : mPreferences.getInt(
 					PREFERENCE_KEY_SAVED_TAB_POSITION, TAB_POSITION_HOME);
 			if (position >= 0 || position < mViewPager.getChildCount()) {
@@ -359,7 +341,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	@Override
 	public void onPageSelected(final int position) {
-		switch (position) {
+		final TabSpec tab = mAdapter.getTab(position);
+		switch (tab.position) {
 			case TAB_POSITION_HOME: {
 				mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
 				break;
@@ -383,12 +366,13 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		int icon = R.drawable.ic_menu_tweet, title = R.string.compose;
 		if (mViewPager != null && mAdapter != null) {
 			final int position = mViewPager.getCurrentItem();
-			if (position == mAdapter.getCount() - 1) {
+			final TabSpec tab = mAdapter.getTab(position);
+			if (mShowAccountsTab && tab.position == Integer.MAX_VALUE) {
 				icon = R.drawable.ic_menu_add;
 				title = R.string.add_account;
 			} else {
 				title = R.string.compose;
-				switch (position) {
+				switch (tab.position) {
 					case TAB_POSITION_MESSAGES:
 						icon = R.drawable.ic_menu_compose;
 						break;
@@ -573,7 +557,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mAdapter.addTabs(tabs);
 		if (mShowAccountsTab) {
 			mAdapter.addTab(AccountsFragment.class, null, getString(R.string.accounts), R.drawable.ic_tab_accounts,
-					mAdapter.getCount());
+					Integer.MAX_VALUE);
 		}
 
 	}

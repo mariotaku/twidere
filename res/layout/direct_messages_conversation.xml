@@ -28,19 +28,37 @@
 			android:layout_alignParentBottom="true"
 			android:orientation="horizontal">
 
-			<org.mariotaku.twidere.view.StatusComposeEditText
-				android:id="@+id/edit_text"
+			<FrameLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:completionThreshold="1"
-				android:gravity="left|bottom"
-				android:hint="@string/type_to_compose"
-				android:imeOptions="actionDone"
-				android:inputType="textMultiLine"
-				android:minHeight="64dp"
-				android:singleLine="false"/>
+				android:layout_weight="1">
+				
+				<org.mariotaku.twidere.view.StatusComposeEditText
+					android:id="@+id/edit_text"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:completionThreshold="1"
+					android:gravity="left|bottom"
+					android:hint="@string/type_to_compose"
+					android:imeOptions="actionDone"
+					android:inputType="textMultiLine"
+					android:minHeight="64dp"
+					android:singleLine="false"/>
 
+				<TextView
+					android:id="@+id/text_count"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="bottom|right"
+					android:gravity="center"
+					android:layerType="software"
+					android:paddingBottom="8dp"
+					android:paddingRight="8dp"
+					android:singleLine="true"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:textColor="#80808080"/>
+			</FrameLayout>
+			
 			<ImageButton
 				android:id="@+id/send"
 				android:layout_width="56dp"
