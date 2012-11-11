@@ -95,7 +95,7 @@ import android.widget.Toast;
 
 import com.twitter.Validator;
 
-public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
+public class ComposeActivity extends BaseDialogActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
 		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener, OnEditorActionListener,
 		LoaderCallbacks<Bitmap> {
 
@@ -295,8 +295,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			return;
 		}
 		setContentView(R.layout.compose);
-		mActionBar = getSupportActionBar();
-		mActionBar.setDisplayHomeAsUpEnabled(true);
+		//mActionBar = getSupportActionBar();
+		//mActionBar.setDisplayHomeAsUpEnabled(true);
 
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		final long account_id = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
@@ -421,7 +421,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				mEditText.setSelection(mEditText.length());
 			}
 		}
-		invalidateSupportOptionsMenu();
+		//invalidateSupportOptionsMenu();
 		mColorIndicator.setOrientation(ColorView.VERTICAL);
 		mColorIndicator.setColor(getAccountColors(this, mAccountIds));
 		mContentModified = savedInstanceState != null ? savedInstanceState.getBoolean(INTENT_KEY_CONTENT_MODIFIED)
@@ -640,7 +640,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
-		invalidateSupportOptionsMenu();
+		//invalidateSupportOptionsMenu();
 		mContentModified = true;
 	}
 
@@ -779,7 +779,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			}
 			drafts_cur.close();
 		}
-		invalidateSupportOptionsMenu();
+		//invalidateSupportOptionsMenu();
 		mMenuBar.invalidate();
 	}
 

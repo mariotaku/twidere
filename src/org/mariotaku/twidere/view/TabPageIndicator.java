@@ -74,6 +74,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 	private int mSelectedTabIndex;
 
 	private boolean mPagingEnabled = true;
+	private boolean mDisplayLabel;
 
 	public TabPageIndicator(final Context context) {
 		super(context);
@@ -90,6 +91,11 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 				ViewGroup.LayoutParams.MATCH_PARENT));
 	}
 
+	public void setDisplayLabel(boolean label) {
+		mDisplayLabel = label;
+		notifyDataSetChanged();
+	}
+
 	public void notifyDataSetChanged() {
 		if (mTabLayout == null || mViewPager == null) return;
 		mTabLayout.removeAllViews();
@@ -97,14 +103,14 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		if (mAdapter == null) return;
 		final int count = ((PagerAdapter) mAdapter).getCount();
 		for (int i = 0; i < count; i++) {
-			final String title = mAdapter.getTitle(i);
-			final Drawable icon = mAdapter.getIcon(i);
+			final CharSequence title = mAdapter.getPageTitle(i);
+			final Drawable icon = mAdapter.getPageIcon(i);
 			if (title != null && icon != null) {
 				addTab(title, icon, i);
 			} else if (title == null && icon != null) {
-				addTab(icon, i);
+				addTab(null, icon, i);
 			} else if (title != null && icon == null) {
-				addTab(title, i);
+				addTab(title, null, i);
 			}
 		}
 		if (mSelectedTabIndex > count) {
@@ -225,23 +231,15 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		setCurrentItem(initialPosition);
 	}
 
-	private void addTab(final Drawable icon, final int index) {
-		addTab(null, icon, index);
-	}
-
-	private void addTab(final String text, final Drawable icon, final int index) {
+	private void addTab(final CharSequence text, final Drawable icon, final int index) {
 		// Workaround for not being able to pass a defStyle on pre-3.0
 		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
-		tabView.init(this, text, icon, index);
+		tabView.init(this, mDisplayLabel ? text : null, icon, index);
 		tabView.setFocusable(true);
 		tabView.setOnClickListener(mTabClickListener);
 		tabView.setOnLongClickListener(mTabLongClickListener);
 
 		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
-	}
-
-	private void addTab(final String text, final int index) {
-		addTab(text, null, index);
 	}
 
 	private void animateToTab(final int position) {
@@ -278,7 +276,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			init(parent, null, icon, index);
 		}
 
-		public void init(final TabPageIndicator parent, final String text, final Drawable icon, final int index) {
+		public void init(final TabPageIndicator parent, final CharSequence text, final Drawable icon, final int index) {
 			mParent = parent;
 			mIndex = index;
 
@@ -291,7 +289,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			textView.setText(text);
 		}
 
-		public void init(final TabPageIndicator parent, final String text, final int index) {
+		public void init(final TabPageIndicator parent, final CharSequence text, final int index) {
 			init(parent, text, null, index);
 		}
 
@@ -318,7 +316,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		 * @param position
 		 * @return
 		 */
-		public Drawable getIcon(int position);
+		public Drawable getPageIcon(int position);
 
 		/**
 		 * Returns the title of the view at position
@@ -326,7 +324,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		 * @param position
 		 * @return
 		 */
-		public String getTitle(int position);
+		public CharSequence getPageTitle(int position);
 
 		public void onPageReselected(int position);
 

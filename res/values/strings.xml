@@ -373,7 +373,6 @@
 	<string name="disable_background_service">Disable background service</string>
 	<string name="pull_to_load_conversation_label">Pull to load conversation…</string>
 	<string name="pull_to_load_conversation_release_label">Release to load conversation…</string>
-	<string name="copy">Copy</string>
 	<string name="text_copied">Text copied to clipboard.</string>
 	<string name="load_from_here">Load from here</string>
 

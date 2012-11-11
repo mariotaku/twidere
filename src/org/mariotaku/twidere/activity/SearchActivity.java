@@ -45,6 +45,7 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.support.v4.view.PagerTabStrip;
 
 public class SearchActivity extends MultiSelectActivity {
 
@@ -54,10 +55,9 @@ public class SearchActivity extends MultiSelectActivity {
 	private Uri mData;
 	private final Bundle mArguments = new Bundle();
 
-	private TabPageIndicator mIndicator;
 	private ExtendedViewPager mViewPager;
+	private PagerTabStrip mPagerTab;
 	private boolean mDisplayAppIcon;
-	private ProgressBar mProgress;
 
 	@Override
 	public void onBackStackChanged() {
@@ -80,11 +80,13 @@ public class SearchActivity extends MultiSelectActivity {
 	public void onContentChanged() {
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
+		mPagerTab = (PagerTabStrip) findViewById(R.id.pager_tab);
 	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setTitle(android.R.string.search_go);
 		final Intent intent = getIntent();
 		mArguments.clear();
 		mData = intent.getData();
@@ -121,23 +123,16 @@ public class SearchActivity extends MultiSelectActivity {
 			}
 		}
 		mActionBar = getSupportActionBar();
-		mActionBar.setCustomView(R.layout.base_tabs);
-		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
-		mActionBar.setDisplayShowCustomEnabled(true);
-		final View view = mActionBar.getCustomView();
-		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
-		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
-		mAdapter.setDisplayLabel(true);
-		mAdapter.addTab(SearchTweetsFragment.class, mArguments, getString(R.string.search_tweets),
+		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), null);
+		mAdapter.addTab(SearchTweetsFragment.class, mArguments, getString(R.string.tweets),
 				R.drawable.ic_tab_twitter, 0);
-		mAdapter.addTab(SearchUsersFragment.class, mArguments, getString(R.string.search_users),
+		mAdapter.addTab(SearchUsersFragment.class, mArguments, getString(R.string.users),
 				R.drawable.ic_tab_person, 1);
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOffscreenPageLimit(1);
-		mIndicator.setViewPager(mViewPager);
 		mViewPager.setCurrentItem(is_search_user ? 1 : 0);
+		mPagerTab.setTabIndicatorColorResource(R.color.holo_blue_light);
 	}
 
 	@Override
@@ -164,15 +159,10 @@ public class SearchActivity extends MultiSelectActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
-		mProgress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
-	}
-
 	protected void setPagingEnabled(final boolean enabled) {
-		if (mIndicator != null) {
-			mIndicator.setPagingEnabled(enabled);
-			mIndicator.setEnabled(enabled);
+		if (mViewPager != null) {
+			mViewPager.setPagingEnabled(enabled);
+			mViewPager.setEnabled(enabled);
 		}
 	}
 

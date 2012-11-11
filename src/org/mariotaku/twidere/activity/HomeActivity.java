@@ -248,8 +248,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
-		mAdapter.setDisplayLabel(tab_display_label);
+		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);		
 		mShowHomeTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
 		mShowMentionsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);
 		mShowMessagesTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MESSAGES_TAB, true);
@@ -259,6 +258,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mViewPager.setOffscreenPageLimit(3);
 		mIndicator.setViewPager(mViewPager);
 		mIndicator.setOnPageChangeListener(this);
+		mIndicator.setDisplayLabel(tab_display_label);
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
@@ -493,7 +493,9 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			if (initial_tab != -1 && mViewPager != null) {
 				switch (initial_tab) {
 					case TAB_POSITION_HOME: {
-						mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
+						if (mShowHomeTab) {
+							mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
+						}
 						break;
 					}
 					case TAB_POSITION_MENTIONS: {

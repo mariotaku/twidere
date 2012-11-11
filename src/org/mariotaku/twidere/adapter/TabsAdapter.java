@@ -44,8 +44,6 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	private final Context mContext;
 	private final TabPageIndicator mIndicator;
 
-	private boolean mDisplayLabel;
-
 	public TabsAdapter(final Context context, final FragmentManager fm, final TabPageIndicator indicator) {
 		super(fm);
 		mContext = context;
@@ -79,7 +77,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	}
 
 	@Override
-	public Drawable getIcon(final int position) {
+	public Drawable getPageIcon(final int position) {
 		return getTabIconDrawable(mContext, mTabs.get(position).icon);
 	}
 
@@ -89,10 +87,14 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 		fragment.setArguments(mTabs.get(position).args);
 		return fragment;
 	}
+	
+	public TabSpec getTab(final int position) {
+		return mTabs.get(position);
+	}
 
 	@Override
-	public String getTitle(final int position) {
-		return mDisplayLabel ? mTabs.get(position).name : null;
+	public CharSequence getPageTitle(final int position) {
+		return mTabs.get(position).name;
 	}
 
 	@Override
@@ -123,11 +125,6 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 		intent.setPackage(mContext.getPackageName());
 		mContext.sendBroadcast(intent);
 		return true;
-	}
-
-	public void setDisplayLabel(final boolean display_label) {
-		mDisplayLabel = display_label;
-		notifyDataSetChanged();
 	}
 
 }

@@ -27,7 +27,15 @@
 					<org.mariotaku.twidere.view.ExtendedViewPager
 						android:id="@+id/pager"
 						android:layout_width="match_parent"
-						android:layout_height="match_parent"/>
+						android:layout_height="match_parent">
+					
+						<android.support.v4.view.PagerTabStrip
+							android:id="@+id/pager_tab"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_gravity="top"/>
+
+					</org.mariotaku.twidere.view.ExtendedViewPager>
 				</FrameLayout>
 
 				<FrameLayout

@@ -43,7 +43,7 @@
 	<item
 		android:id="@id/copy"
 		android:icon="@drawable/ic_menu_copy"
-		android:title="@string/copy"/>
+		android:title="@android:string/copy"/>
 	<item
 		android:id="@id/extensions"
 		android:icon="@drawable/ic_menu_extension"

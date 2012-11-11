@@ -46,7 +46,7 @@
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
 		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
-		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_holo</item>
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
 		<item name="popupBackground">@drawable/popup_holo_light</item>
 		<item name="actionModeBackground">@drawable/cab_background_top_holo_dark</item>
 	</style>
@@ -59,7 +59,7 @@
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
 		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
-		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_holo</item>
 		<item name="popupBackground">@drawable/popup_holo_light</item>
 		<item name="actionModeBackground">@drawable/cab_background_top_holo_light</item>
 	</style>
