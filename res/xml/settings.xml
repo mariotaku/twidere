@@ -25,11 +25,7 @@
 			android:title="@string/extensions"/>
 		<Preference
 			android:key="filters"
-			android:title="@string/filter">
-			<intent
-				android:action="org.mariotaku.twidere.FILTERS"
-				android:targetPackage="org.mariotaku.twidere"/>
-		</Preference>
+			android:title="@string/filter"/>
 		<Preference
 			android:key="settings_appearance"
 			android:title="@string/look_and_feel"/>

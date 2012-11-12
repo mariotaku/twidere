@@ -39,6 +39,7 @@ import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
+import org.mariotaku.twidere.fragment.FiltersListFragment;
 
 public class SettingsActivity extends DualPaneActivity implements OnSharedPreferenceChangeListener,
 		OnPreferenceClickListener {
@@ -49,6 +50,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	private static final String KEY_ABOUT = "about";
 	private static final String KEY_CUSTOM_TABS = "custom_tabs";
 	private static final String KEY_EXTENSIONS = "extensions";
+	private static final String KEY_FILTERS = "filters";
 	private static final String KEY_SETTINGS_APPEARANCE = "settings_appearance";
 	private static final String KEY_SETTINGS_CONTENT_AND_STORAGE = "settings_content_and_storage";
 	private static final String KEY_SETTINGS_NETWORK = "settings_network";
@@ -87,6 +89,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			activity.findPreference(KEY_ABOUT).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_EXTENSIONS).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_CUSTOM_TABS).setOnPreferenceClickListener(this);
+			activity.findPreference(KEY_FILTERS).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_APPEARANCE).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_CONTENT_AND_STORAGE).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_SETTINGS_NETWORK).setOnPreferenceClickListener(this);
@@ -126,6 +129,16 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_EXTENSIONS);
 				intent.setPackage(getPackageName());
+				startActivity(intent);
+			}
+			return true;
+		}else if (KEY_FILTERS.equals(key)) {
+			if (isDualPaneMode()) {
+				final Fragment fragment = new FiltersListFragment();
+				showFragment(fragment, true);
+			} else {
+				final Intent intent = new Intent(INTENT_ACTION_FILTERS);
+				intent.setClass(this, FiltersActivity.class);
 				startActivity(intent);
 			}
 			return true;

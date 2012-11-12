@@ -25,11 +25,14 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -46,19 +49,31 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public abstract class FiltersFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
+public abstract class BaseFiltersFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
 		OnItemLongClickListener {
 
+	private static final String INTENT_KEY_AUTO_COMPLETE = "auto_complete";
+			
 	private FilterListAdapter mAdapter;
-
-	private final AddItemFragment mFragment = new AddItemFragment();
 
 	private ContentResolver mResolver;
 
-	public abstract String[] getContentColumns();
+	protected abstract String[] getContentColumns();
 
-	public abstract Uri getContentUri();
+	protected abstract Uri getContentUri();
 
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_FILTERS_UPDATED.equals(action)) {
+				getLoaderManager().restartLoader(0, null, BaseFiltersFragment.this);
+			}
+		}
+	
+	};
+	
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mResolver = getContentResolver();
@@ -105,18 +120,33 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_ADD:
-				mFragment.setFiltersFragment(this);
-				mFragment.show(getFragmentManager(), "add_rule");
-				break;
+				final Bundle args = new Bundle();
+				args.putBoolean(INTENT_KEY_AUTO_COMPLETE, this instanceof FilteredUsersFragment);
+				args.putParcelable(INTENT_KEY_URI, getContentUri());
+				final AddItemFragment fragment = new AddItemFragment();
+				fragment.setArguments(args);
+				fragment.show(getFragmentManager(), "add_rule");
+			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	public static class AddItemFragment extends BaseDialogFragment implements OnClickListener {
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_FILTERS_UPDATED);
+		registerReceiver(mStateReceiver, filter);
+	}
+	
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
+	}
+	
+	public static final class AddItemFragment extends BaseDialogFragment implements OnClickListener {
 
 		private AutoCompleteTextView mEditText;
-
-		private FiltersFragment mFragment;
 
 		private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
 
@@ -124,13 +154,13 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 		public void onClick(final DialogInterface dialog, final int which) {
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE:
-					if (mFragment == null) return;
-					final ContentValues values = new ContentValues();
 					if (mEditText.length() <= 0) return;
+					final ContentValues values = new ContentValues();
 					final String text = mEditText.getText().toString();
 					values.put(Filters.TEXT, text);
-					getContentResolver().insert(mFragment.getContentUri(), values);
-					mFragment.getLoaderManager().restartLoader(0, null, mFragment);
+					final Bundle args = getArguments();
+					final Uri uri = args.getParcelable(INTENT_KEY_URI);
+					getContentResolver().insert(uri, values);
 					break;
 			}
 
@@ -143,7 +173,8 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 			final View view = LayoutInflater.from(context).inflate(R.layout.auto_complete_textview_default_style, null);
 			builder.setView(view);
 			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
-			if (mFragment instanceof FilteredUsersFragment) {
+			final Bundle args = getArguments();
+			if (args != null && args.getBoolean(INTENT_KEY_AUTO_COMPLETE)) {
 				mUserAutoCompleteAdapter = new UserAutoCompleteAdapter(getActivity());
 				mEditText.setAdapter(mUserAutoCompleteAdapter);
 				mEditText.setThreshold(1);
@@ -154,12 +185,9 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 			return builder.create();
 		}
 
-		public void setFiltersFragment(final FiltersFragment fragment) {
-			mFragment = fragment;
-		}
 	}
 
-	public static class FilteredKeywordsFragment extends FiltersFragment {
+	public static final class FilteredKeywordsFragment extends BaseFiltersFragment {
 
 		@Override
 		public String[] getContentColumns() {
@@ -173,7 +201,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 	}
 
-	public static class FilteredSourcesFragment extends FiltersFragment {
+	public static final class FilteredSourcesFragment extends BaseFiltersFragment {
 
 		@Override
 		public String[] getContentColumns() {
@@ -187,7 +215,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 	}
 
-	public static class FilteredUsersFragment extends FiltersFragment {
+	public static final class FilteredUsersFragment extends BaseFiltersFragment {
 
 		@Override
 		public String[] getContentColumns() {
@@ -201,7 +229,7 @@ public abstract class FiltersFragment extends BaseListFragment implements Loader
 
 	}
 
-	public static class FilterListAdapter extends SimpleCursorAdapter {
+	public static final class FilterListAdapter extends SimpleCursorAdapter {
 
 		private static final String[] from = new String[] { Filters.TEXT };
 

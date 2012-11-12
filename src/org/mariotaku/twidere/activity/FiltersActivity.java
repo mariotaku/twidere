@@ -21,93 +21,62 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.FiltersFragment.FilteredKeywordsFragment;
-import org.mariotaku.twidere.fragment.FiltersFragment.FilteredSourcesFragment;
-import org.mariotaku.twidere.fragment.FiltersFragment.FilteredUsersFragment;
+import org.mariotaku.twidere.adapter.TabsAdapter;
+import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredKeywordsFragment;
+import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredSourcesFragment;
+import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.Spinner;
+import android.view.ViewGroup;
 
-public class FiltersActivity extends BaseActivity implements OnItemSelectedListener {
+public class FiltersActivity extends BaseActivity {
 
 	private ActionBar mActionBar;
-	private ArrayAdapter<TabSpec> mAdapter;
-	private Spinner mSpinner;
+	
+	private ViewPager mViewPager;
+	private PagerTabStrip mPagerTab;
+
+	private TabsAdapter mAdapter;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(new FrameLayout(this));
+		setContentView(R.layout.filters);
 		mActionBar = getSupportActionBar();
-		mActionBar.setDisplayShowTitleEnabled(false);
-		mActionBar.setDisplayHomeAsUpEnabled(true);
-		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setCustomView(R.layout.actionbar_spinner_navigation);
-		final View view = mActionBar.getCustomView();
-		mSpinner = (Spinner) view.findViewById(R.id.navigate);
-		mAdapter = new ArrayAdapter<TabSpec>(this, R.layout.spinner_item_white_text);
-		mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-		mAdapter.add(new TabSpec(FilteredUsersFragment.class, getString(R.string.users)));
-		mAdapter.add(new TabSpec(FilteredKeywordsFragment.class, getString(R.string.keywords)));
-		mAdapter.add(new TabSpec(FilteredSourcesFragment.class, getString(R.string.sources)));
-		mSpinner.setAdapter(mAdapter);
-		mSpinner.setOnItemSelectedListener(this);
+		if (mActionBar != null) {
+			mActionBar.setDisplayHomeAsUpEnabled(true);
+		}
+		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), null);
+		mAdapter.addTab(FilteredUsersFragment.class, null, getString(R.string.users), null, 0);
+		mAdapter.addTab(FilteredKeywordsFragment.class, null, getString(R.string.keywords), null, 1);
+		mAdapter.addTab(FilteredSourcesFragment.class, null, getString(R.string.sources), null, 2);
+		mViewPager.setAdapter(mAdapter);
+		mPagerTab.setTabIndicatorColorResource(R.color.holo_blue_light);
+	}
+
+
+	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mPagerTab = (PagerTabStrip) findViewById(R.id.pager_tab);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_filter, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
-		final Fragment fragment = Fragment.instantiate(this, mAdapter.getItem(position).cls.getName());
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(android.R.id.content, fragment);
-		ft.commit();
-
-	}
-
-	@Override
-	public void onNothingSelected(final AdapterView<?> parent) {
-
+		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME:
-				finish();
-				break;
-			case MENU_ADD:
-				return false;
-		}
-		return super.onOptionsItemSelected(item);
+		return false;
 	}
-
-	static class TabSpec {
-		public final Class<? extends Fragment> cls;
-		public final String name;
-
-		public TabSpec(final Class<? extends Fragment> cls, final String name) {
-			this.cls = cls;
-			this.name = name;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-	}
-
 }

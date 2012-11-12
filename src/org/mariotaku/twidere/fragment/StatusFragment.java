@@ -431,7 +431,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private final OnGlobalLayoutListener mOnGlobalLayoutListener = new OnGlobalLayoutListener() {
 		@Override
 		public void onGlobalLayout() {
-			mMainContent.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+			//mMainContent.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 			if (getActivity() == null) return;
 			final float density = getResources().getDisplayMetrics().density;
 			mStatusView.setMinimumHeight((int) (mStatusContainer.getHeight() - density * 2));

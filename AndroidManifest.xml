@@ -446,8 +446,7 @@
 			</intent-filter>
 		</receiver>
 
-		<service android:name="edu.ucdavis.earlybird.UCDService">
-		</service>
+		<service android:name="edu.ucdavis.earlybird.UCDService"/>
 
 		<receiver
 			android:name="edu.ucdavis.earlybird.UploadReceiver"

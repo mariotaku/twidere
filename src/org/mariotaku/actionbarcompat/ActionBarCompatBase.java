@@ -105,6 +105,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 	@Override
 	public void setCustomView(final int resId) {
+		if (mActivity == null) return;
 		setCustomView(mActivity.getLayoutInflater().inflate(resId, null));
 	}
 
@@ -130,7 +131,7 @@ class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 	@Override
 	public void setDisplayShowHomeEnabled(final boolean showHome) {
-		if (mActionBarView == null) return;
+		if (mHomeView == null) return;
 		mHomeView.setVisibility(showHome ? View.VISIBLE : View.GONE);
 	}
 

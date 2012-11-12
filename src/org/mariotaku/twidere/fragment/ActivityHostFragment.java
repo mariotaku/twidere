@@ -24,11 +24,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
-
+ 
 /**
  * This is a fragment that will be used during transition from activities to
  * fragments.
@@ -80,5 +83,26 @@ public abstract class ActivityHostFragment<A extends Activity> extends LocalActi
 		return wd;
 	}
 
+    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		if (mAttachedActivity == null) return;
+		mAttachedActivity.onCreateOptionsMenu(menu);
+	}
+
+    public void onPrepareOptionsMenu(final Menu menu) {
+		if (mAttachedActivity == null) return;
+		mAttachedActivity.onPrepareOptionsMenu(menu);
+	}
+
+    public boolean onOptionsItemSelected(final MenuItem item) {
+		if (mAttachedActivity == null) return false;
+		mAttachedActivity.onOptionsItemSelected(item);
+		return true;
+	}
+
+    public void onOptionsMenuClosed(final Menu menu) {
+		if (mAttachedActivity == null) return;
+		mAttachedActivity.onOptionsMenuClosed(menu);
+	}
+	
 	protected abstract Class<A> getActivityClass();
 }
