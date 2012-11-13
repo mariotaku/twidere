@@ -30,6 +30,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.KeyEvent;
+import android.view.ViewGroup;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.FrameLayout;
+import android.content.res.Resources;
 
 @SuppressWarnings("deprecation")
 public class InternalSettingsActivity extends PreferenceActivity implements Constants {
@@ -55,6 +60,27 @@ public class InternalSettingsActivity extends PreferenceActivity implements Cons
 			}
 		}
 		return super.onKeyUp(keyCode, event);
+	}
+
+	@Override
+	public void setContentView(final int layoutRes) {
+		setContentView(null);
+	}
+
+	@Override
+	public void setContentView(final View view) {
+		setContentView(null, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+	}
+
+	@Override
+	public void setContentView(final View view, final ViewGroup.LayoutParams params) {
+		final ListView lv = new ListView(this);
+		final Resources res = getResources();
+		final float density = res.getDisplayMetrics().density;
+		final int padding = (int) density * 16;
+		lv.setId(android.R.id.list);
+		lv.setPadding(padding, 0, padding ,0);
+		super.setContentView(lv, params);
 	}
 
 	public void setTheme() {

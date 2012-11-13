@@ -8,8 +8,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<ListView
-			android:id="@android:id/list"
+		<FrameLayout
+			android:id="@+id/list_container"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:layout_above="@+id/divider_horizontal"/>

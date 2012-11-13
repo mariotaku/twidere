@@ -40,6 +40,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import org.mariotaku.twidere.fragment.FiltersListFragment;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.FrameLayout;
 
 public class SettingsActivity extends DualPaneActivity implements OnSharedPreferenceChangeListener,
 		OnPreferenceClickListener {
@@ -106,7 +110,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		if (KEY_CUSTOM_TABS.equals(key)) {
 			if (isDualPaneMode()) {
 				final Fragment fragment = new CustomTabsFragment();
-				showFragment(fragment, true);
+				showFragment(fragment, false);
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_CUSTOM_TABS);
 				intent.setPackage(getPackageName());
@@ -125,7 +129,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		} else if (KEY_EXTENSIONS.equals(key)) {
 			if (isDualPaneMode()) {
 				final Fragment fragment = new ExtensionsListFragment();
-				showFragment(fragment, true);
+				showFragment(fragment, false);
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_EXTENSIONS);
 				intent.setPackage(getPackageName());
@@ -135,7 +139,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		}else if (KEY_FILTERS.equals(key)) {
 			if (isDualPaneMode()) {
 				final Fragment fragment = new FiltersListFragment();
-				showFragment(fragment, true);
+				showFragment(fragment, false);
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_FILTERS);
 				intent.setClass(this, FiltersActivity.class);
@@ -160,7 +164,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			if (isDualPaneMode()) {
 				final Fragment fragment = new SettingsDetailsFragment();
 				fragment.setArguments(args);
-				showFragment(fragment, true);
+				showFragment(fragment, false);
 			} else {
 				final Intent intent = new Intent(this, SettingsDetailsActivity.class);
 				intent.putExtras(args);
@@ -184,4 +188,5 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			restartActivity(this, show_anim);
 		}
 	}
+
 }

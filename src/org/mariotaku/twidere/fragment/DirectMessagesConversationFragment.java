@@ -75,8 +75,9 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.twitter.Validator;
 import android.graphics.Color;
+import android.widget.FrameLayout;
 
-public class DirectMessagesConversationFragment extends BaseFragment implements LoaderCallbacks<Cursor>,
+public class DirectMessagesConversationFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener,
 		Panes.Right, OnItemSelectedListener, OnEditorActionListener {
 
@@ -84,7 +85,7 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 	private ServiceInterface mService;
 	private SharedPreferences mPreferences;
 
-	private ListView mListView;
+	//private ListView mListView;
 	private EditText mEditText;
 	private TextView mTextCount;
 	private AutoCompleteTextView mEditScreenName;
@@ -157,15 +158,17 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 
 		final LazyImageLoader imageloader = mApplication.getProfileImageLoader();
 		mAdapter = new DirectMessagesConversationAdapter(getActivity(), imageloader);
-		mListView.setAdapter(mAdapter);
-		mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-		mListView.setStackFromBottom(true);
-		mListView.setOnItemClickListener(this);
-		mListView.setOnItemLongClickListener(this);
+		setListAdapter(mAdapter);
+		final ListView list = getListView();
+		list.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+		list.setStackFromBottom(true);
+		list.setOnItemClickListener(this);
+		list.setOnItemLongClickListener(this);
 		final Bundle args = savedInstanceState == null ? getArguments() : savedInstanceState.getBundle(INTENT_KEY_DATA);
 		if (args != null) {
 			mArguments.putAll(args);
 		}
+		setListShownNoAnimation(false);
 		getLoaderManager().initLoader(0, mArguments, this);
 
 		if (mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false)) {
@@ -206,6 +209,7 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 				final String screen_name = text.toString();
 				mArguments.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 				mArguments.putLong(INTENT_KEY_ACCOUNT_ID, mSelectedAccount.account_id);
+				setListShownNoAnimation(false);
 				getLoaderManager().restartLoader(0, mArguments, this);
 				break;
 			}
@@ -244,7 +248,9 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.direct_messages_conversation, null);
-		mListView = (ListView) view.findViewById(android.R.id.list);
+		final FrameLayout list_container = (FrameLayout) view.findViewById(R.id.list_container);
+		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+		list_container.addView(super.onCreateView(inflater, container, savedInstanceState), lp);
 		mEditText = (EditText) view.findViewById(R.id.edit_text);
 		mTextCount = (TextView) view.findViewById(R.id.text_count);
 		mSendButton = (ImageButton) view.findViewById(R.id.send);
@@ -313,7 +319,7 @@ public class DirectMessagesConversationFragment extends BaseFragment implements 
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.swapCursor(cursor);
-
+		setListShown(true);
 	}
 
 	@Override

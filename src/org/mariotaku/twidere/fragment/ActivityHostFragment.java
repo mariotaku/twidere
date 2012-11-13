@@ -31,6 +31,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
+import android.support.v4.app.FragmentManagerTrojan;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
  
 /**
  * This is a fragment that will be used during transition from activities to
@@ -95,7 +98,10 @@ public abstract class ActivityHostFragment<A extends Activity> extends LocalActi
 
     public boolean onOptionsItemSelected(final MenuItem item) {
 		if (mAttachedActivity == null) return false;
-		mAttachedActivity.onOptionsItemSelected(item);
+		if (!mAttachedActivity.onOptionsItemSelected(item) && mAttachedActivity instanceof FragmentActivity) {
+			final FragmentManager fm = ((FragmentActivity) mAttachedActivity).getSupportFragmentManager();
+			return FragmentManagerTrojan.dispatchOptionsItemSelected(fm, item);
+		}
 		return true;
 	}
 

@@ -11,6 +11,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.content.res.Resources;
 
 public class InternalSettingsDetailsActivity extends PreferenceActivity implements Constants {
 
@@ -41,6 +46,28 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 			}
 		}
 		return super.onKeyUp(keyCode, event);
+	}
+	
+
+	@Override
+	public void setContentView(final int layoutRes) {
+		setContentView(null);
+	}
+
+	@Override
+	public void setContentView(final View view) {
+		setContentView(null, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+	}
+
+	@Override
+	public void setContentView(final View view, final ViewGroup.LayoutParams params) {
+		final ListView lv = new ListView(this);
+		final Resources res = getResources();
+		final float density = res.getDisplayMetrics().density;
+		final int padding = (int) density * 16;
+		lv.setId(android.R.id.list);
+		lv.setPadding(padding, 0, padding ,0);
+		super.setContentView(lv, params);
 	}
 
 	public void setTheme() {
