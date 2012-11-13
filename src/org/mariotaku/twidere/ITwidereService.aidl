@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere;
 
+import org.mariotaku.twidere.model.ParcelableLocation;
+
 interface ITwidereService {
 	int getHomeTimeline(in long[] account_ids, in long[] max_ids);
 	int getMentions(in long[] account_ids, in long[] max_ids);
@@ -30,7 +32,7 @@ interface ITwidereService {
 	int getSentDirectMessagesWithSinceIds(in long[] account_ids, in long[] max_ids, in long[] since_ids);
 	int refreshAll();
 	int getLocalTrends(long account_id, int woeid);
-	int updateStatus(in long[] account_ids, String content, in Location location, in Uri image_uri, long in_reply_to, boolean delete_image);
+	int updateStatus(in long[] account_ids, String content, in ParcelableLocation location, in Uri image_uri, long in_reply_to, boolean delete_image);
 	int destroyStatus(long account_id, long status_id);
 	int sendDirectMessage(long account_id, String screen_name, long user_id, String message);
 	int destroyDirectMessage(long account_id, long message_id);

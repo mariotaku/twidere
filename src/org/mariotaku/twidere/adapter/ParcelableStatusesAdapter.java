@@ -146,8 +146,10 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		} else {
 			holder = new StatusViewHolder(view);
 			view.setTag(holder);
-			holder.image_preview.setOnClickListener(this);
-			holder.profile_image.setOnClickListener(this);
+			holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
+			holder.image_preview.setOnClickListener(mMultiSelectEnabled ? null : this);
+			//holder.image_preview.setClickable(!mMultiSelectEnabled);
+			//holder.profile_image.setClickable(!mMultiSelectEnabled);
 		}
 
 		final ParcelableStatus status = getItem(position);
@@ -241,7 +243,6 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 				} else {
 					mProfileImageLoader.displayImage(parseURL(status.profile_image_url_string), holder.profile_image);
 				}
-				holder.profile_image.setOnClickListener(this);
 				holder.profile_image.setTag(position);
 			}
 			final boolean has_preview = mDisplayImagePreview && status.has_media && status.image_preview_url != null;
@@ -257,6 +258,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 
 	@Override
 	public void onClick(final View view) {
+		if (mMultiSelectEnabled) return;
 		final Object tag = view.getTag();
 		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
 		if (status == null) return;

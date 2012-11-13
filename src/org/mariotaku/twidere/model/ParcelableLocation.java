@@ -24,38 +24,44 @@ import twitter4j.GeoLocation;
 import android.os.Parcel;
 import android.os.Parcelable;
 import java.io.Serializable;
+import android.location.Location;
 
 public class ParcelableLocation implements Serializable, Parcelable {
 
 	public final double latitude, longitude;
 
-	public static final Parcelable.Creator<ParcelableUserList> CREATOR = new Parcelable.Creator<ParcelableUserList>() {
+	public static final Parcelable.Creator<ParcelableLocation> CREATOR = new Parcelable.Creator<ParcelableLocation>() {
 		@Override
-		public ParcelableUserList createFromParcel(final Parcel in) {
-			return new ParcelableUserList(in);
+		public ParcelableLocation createFromParcel(final Parcel in) {
+			return new ParcelableLocation(in);
 		}
 
 		@Override
-		public ParcelableUserList[] newArray(final int size) {
-			return new ParcelableUserList[size];
+		public ParcelableLocation[] newArray(final int size) {
+			return new ParcelableLocation[size];
 		}
 	};
 
 	public ParcelableLocation(final GeoLocation location) {
-		if (location == null) {
-			latitude = -1;
-			longitude = -1;
-			return;
-		}
-		latitude = location.getLatitude();
-		longitude = location.getLongitude();
+		latitude = location != null ? location.getLatitude() : -1;
+		longitude = location != null ? location.getLongitude() : -1;
 	}
 
+	public ParcelableLocation(final Location location) {
+		latitude = location != null ? location.getLatitude() : -1;
+		longitude = location != null ? location.getLongitude() : -1;
+	}
+	
 	public ParcelableLocation(final Parcel in) {
 		latitude = in.readDouble();
 		longitude = in.readDouble();
 	}
 
+	public ParcelableLocation(final double latitude, final double longitude) {
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
+	
 	public ParcelableLocation(final String location_string) {
 		if (location_string == null) {
 			latitude = -1;
@@ -95,5 +101,13 @@ public class ParcelableLocation implements Serializable, Parcelable {
 
 	public static boolean isValidLocation(final ParcelableLocation location) {
 		return location != null && location.isValid();
+	}
+	
+	public GeoLocation toGeoLocation() {
+		return isValid() ? new GeoLocation(latitude, longitude) : null;
+	}
+	
+	public static GeoLocation toGeoLocation(final ParcelableLocation location) {
+		return isValidLocation(location) ? location.toGeoLocation() : null;
 	}
 }

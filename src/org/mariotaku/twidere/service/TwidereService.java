@@ -98,6 +98,7 @@ import android.widget.Toast;
 import com.twitter.Validator;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
+import org.mariotaku.twidere.model.ParcelableLocation;
 
 public class TwidereService extends Service implements Constants {
 
@@ -433,7 +434,7 @@ public class TwidereService extends Service implements Constants {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int updateStatus(final long[] account_ids, final String content, final Location location,
+	public int updateStatus(final long[] account_ids, final String content, final ParcelableLocation location,
 			final Uri image_uri, final long in_reply_to, final boolean delete_image) {
 		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to,
 				delete_image);
@@ -2713,10 +2714,9 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
-		public int updateStatus(final long[] account_ids, final String content, final Location location,
+		public int updateStatus(final long[] account_ids, final String content, final ParcelableLocation location,
 				final Uri image_uri, final long in_reply_to, final boolean delete_image) {
 			return mService.get().updateStatus(account_ids, content, location, image_uri, in_reply_to, delete_image);
-
 		}
 
 		@Override
@@ -3428,12 +3428,12 @@ public class TwidereService extends Service implements Constants {
 		private final long[] account_ids;
 		private final String content;
 
-		private final Location location;
+		private final ParcelableLocation location;
 		private final Uri image_uri;
 		private final long in_reply_to;
 		private final boolean use_uploader, use_shortener, delete_image;
 
-		public UpdateStatusTask(final long[] account_ids, final String content, final Location location,
+		public UpdateStatusTask(final long[] account_ids, final String content, final ParcelableLocation location,
 				final Uri image_uri, final long in_reply_to, final boolean delete_image) {
 			super(TwidereService.this, mAsyncTaskManager);
 			final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
@@ -3546,7 +3546,7 @@ public class TwidereService extends Service implements Constants {
 						: unshortened_content);
 				status.setInReplyToStatusId(in_reply_to);
 				if (location != null) {
-					status.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
+					status.setLocation(ParcelableLocation.toGeoLocation(location));
 				}
 				if (!use_uploader && image_file != null && image_file.exists()) {
 					status.setMedia(image_file);

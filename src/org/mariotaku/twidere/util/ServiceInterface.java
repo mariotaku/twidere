@@ -33,6 +33,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
+import org.mariotaku.twidere.model.ParcelableLocation;
 
 public final class ServiceInterface implements Constants, ITwidereService {
 
@@ -547,7 +548,7 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
-	public int updateStatus(final long[] account_ids, final String content, final Location location,
+	public int updateStatus(final long[] account_ids, final String content, final ParcelableLocation location,
 			final Uri image_uri, final long in_reply_to, final boolean delete_image) {
 		if (mService == null) return -1;
 		try {

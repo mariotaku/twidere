@@ -244,14 +244,17 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		if (!(tag instanceof StatusViewHolder)) {
 			final StatusViewHolder holder = new StatusViewHolder(view);
 			view.setTag(holder);
-			holder.profile_image.setOnClickListener(this);
-			holder.image_preview.setOnClickListener(this);
+			holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
+			holder.image_preview.setOnClickListener(mMultiSelectEnabled ? null : this);
+			//holder.image_preview.setClickable(!mMultiSelectEnabled);
+			//holder.profile_image.setClickable(!mMultiSelectEnabled);
 		}
 		return view;
 	}
 
 	@Override
 	public void onClick(final View view) {
+		if (mMultiSelectEnabled) return;
 		final Object tag = view.getTag();
 		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
 		if (status == null) return;

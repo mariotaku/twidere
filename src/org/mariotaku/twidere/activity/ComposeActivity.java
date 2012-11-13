@@ -94,6 +94,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.twitter.Validator;
+import org.mariotaku.twidere.model.ParcelableLocation;
 
 public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
 		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener, OnEditorActionListener,
@@ -106,7 +107,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private ServiceInterface mService;
 	private LocationManager mLocationManager;
 	private SharedPreferences mPreferences;
-	private Location mRecentLocation;
+	private ParcelableLocation mRecentLocation;
 	private ContentResolver mResolver;
 	private final Validator mValidator = new Validator();
 
@@ -467,7 +468,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	/** Sets the mRecentLocation object to the current location of the device **/
 	@Override
 	public void onLocationChanged(final Location location) {
-		mRecentLocation = location;
+		mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 	}
 
 	@Override
@@ -693,7 +694,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		final String provider = mLocationManager.getBestProvider(criteria, true);
 
 		if (provider != null) {
-			mRecentLocation = mLocationManager.getLastKnownLocation(provider);
+			final Location location = mLocationManager.getLastKnownLocation(provider);
+			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 		} else {
 			Toast.makeText(this, R.string.cannot_get_location, Toast.LENGTH_SHORT).show();
 		}

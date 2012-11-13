@@ -190,10 +190,13 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 	}
 
 	private void updateMultiSelectCount() {
-		if (mActionMode != null) {
-			final int count = mApplication.getSelectedItems().size();
-			mActionMode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
+		if (mActionMode == null) return;
+		final int count = mApplication.getSelectedItems().size();
+		if (count == 0) {
+			mActionMode.finish();
+			return;
 		}
+		mActionMode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
 	}
 
 	private void updateMultiSelectState() {
