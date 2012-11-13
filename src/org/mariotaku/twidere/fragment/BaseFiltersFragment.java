@@ -53,14 +53,10 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 		OnItemLongClickListener {
 
 	private static final String INTENT_KEY_AUTO_COMPLETE = "auto_complete";
-			
+
 	private FilterListAdapter mAdapter;
 
 	private ContentResolver mResolver;
-
-	protected abstract String[] getContentColumns();
-
-	protected abstract Uri getContentUri();
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -71,9 +67,9 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 				getLoaderManager().restartLoader(0, null, BaseFiltersFragment.this);
 			}
 		}
-	
+
 	};
-	
+
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mResolver = getContentResolver();
@@ -126,7 +122,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 				final AddItemFragment fragment = new AddItemFragment();
 				fragment.setArguments(args);
 				fragment.show(getFragmentManager(), "add_rule");
-			break;
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -137,13 +133,17 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 		final IntentFilter filter = new IntentFilter(BROADCAST_FILTERS_UPDATED);
 		registerReceiver(mStateReceiver, filter);
 	}
-	
+
 	@Override
 	public void onStop() {
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
 	}
-	
+
+	protected abstract String[] getContentColumns();
+
+	protected abstract Uri getContentUri();
+
 	public static final class AddItemFragment extends BaseDialogFragment implements OnClickListener {
 
 		private AutoCompleteTextView mEditText;

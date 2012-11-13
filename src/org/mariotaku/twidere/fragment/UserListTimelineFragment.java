@@ -19,14 +19,12 @@
 
 package org.mariotaku.twidere.fragment;
 
-import java.util.List;
-
 import org.mariotaku.twidere.loader.UserListTimelineLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 

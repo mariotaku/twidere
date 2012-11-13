@@ -26,15 +26,15 @@ import org.mariotaku.twidere.util.OnBackPressedAccessor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.KeyEvent;
-import android.view.ViewGroup;
 import android.view.View;
-import android.widget.ListView;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.content.res.Resources;
+import android.widget.ListView;
 
 @SuppressWarnings("deprecation")
 public class InternalSettingsActivity extends PreferenceActivity implements Constants {
@@ -69,7 +69,8 @@ public class InternalSettingsActivity extends PreferenceActivity implements Cons
 
 	@Override
 	public void setContentView(final View view) {
-		setContentView(null, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+		setContentView(null, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+				FrameLayout.LayoutParams.MATCH_PARENT));
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class InternalSettingsActivity extends PreferenceActivity implements Cons
 		final float density = res.getDisplayMetrics().density;
 		final int padding = (int) density * 16;
 		lv.setId(android.R.id.list);
-		lv.setPadding(padding, 0, padding ,0);
+		lv.setPadding(padding, 0, padding, 0);
 		super.setContentView(lv, params);
 	}
 

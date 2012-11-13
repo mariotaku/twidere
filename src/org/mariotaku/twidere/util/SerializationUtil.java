@@ -67,7 +67,7 @@ public class SerializationUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static<T> T read(final String path) throws IOException, ClassNotFoundException {
+	public static <T> T read(final String path) throws IOException, ClassNotFoundException {
 		if (path == null) return null;
 		ObjectInputStream is = null;
 		try {

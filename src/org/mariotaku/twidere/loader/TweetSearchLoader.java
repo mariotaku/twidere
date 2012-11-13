@@ -26,9 +26,8 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.SerializationUtil;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import twitter4j.Paging;
 import twitter4j.Query;
@@ -94,7 +93,8 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		try {
 			final int size = data.size();
-			final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = new SynchronizedStateSavedList<ParcelableStatus, Long>(data.subList(0, size > items_limit ? items_limit : size));
+			final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = new SynchronizedStateSavedList<ParcelableStatus, Long>(
+					data.subList(0, size > items_limit ? items_limit : size));
 			if (last_viewed_id > 0) {
 				statuses.setState(last_viewed_id);
 			}

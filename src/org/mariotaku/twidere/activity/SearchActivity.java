@@ -31,7 +31,6 @@ import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
 import org.mariotaku.twidere.view.ExtendedViewPager;
-import org.mariotaku.twidere.view.TabPageIndicator;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -42,10 +41,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.support.v4.view.PagerTabStrip;
+import android.view.MenuItem;
 
 public class SearchActivity extends MultiSelectActivity {
 
@@ -125,10 +122,9 @@ public class SearchActivity extends MultiSelectActivity {
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), null);
-		mAdapter.addTab(SearchTweetsFragment.class, mArguments, getString(R.string.tweets),
-				R.drawable.ic_tab_twitter, 0);
-		mAdapter.addTab(SearchUsersFragment.class, mArguments, getString(R.string.users),
-				R.drawable.ic_tab_person, 1);
+		mAdapter.addTab(SearchTweetsFragment.class, mArguments, getString(R.string.tweets), R.drawable.ic_tab_twitter,
+				0);
+		mAdapter.addTab(SearchUsersFragment.class, mArguments, getString(R.string.users), R.drawable.ic_tab_person, 1);
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setCurrentItem(is_search_user ? 1 : 0);
 		mPagerTab.setTabIndicatorColorResource(R.color.holo_blue_light);

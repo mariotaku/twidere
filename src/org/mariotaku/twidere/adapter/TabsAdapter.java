@@ -77,24 +77,24 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	}
 
 	@Override
-	public Drawable getPageIcon(final int position) {
-		return getTabIconDrawable(mContext, mTabs.get(position).icon);
-	}
-
-	@Override
 	public Fragment getItem(final int position) {
 		final Fragment fragment = Fragment.instantiate(mContext, mTabs.get(position).cls.getName());
 		fragment.setArguments(mTabs.get(position).args);
 		return fragment;
 	}
-	
-	public TabSpec getTab(final int position) {
-		return mTabs.get(position);
+
+	@Override
+	public Drawable getPageIcon(final int position) {
+		return getTabIconDrawable(mContext, mTabs.get(position).icon);
 	}
 
 	@Override
 	public CharSequence getPageTitle(final int position) {
 		return mTabs.get(position).name;
+	}
+
+	public TabSpec getTab(final int position) {
+		return mTabs.get(position);
 	}
 
 	@Override

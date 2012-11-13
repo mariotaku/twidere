@@ -19,16 +19,13 @@
 
 package org.mariotaku.twidere.fragment;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.loader.ParcelableStatusesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -36,12 +33,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.content.Loader;
 import android.widget.ListView;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
-public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<SynchronizedStateSavedList<ParcelableStatus, Long>> {
+public abstract class ParcelableStatusesListFragment extends
+		BaseStatusesListFragment<SynchronizedStateSavedList<ParcelableStatus, Long>> {
 
 	protected SharedPreferences mPreferences;
 
@@ -123,14 +119,16 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public final Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> onCreateLoader(final int id, final Bundle args) {
+	public final Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> onCreateLoader(final int id,
+			final Bundle args) {
 		if (isLoaderUsed()) {
 			setProgressBarIndeterminateVisibility(true);
 		}
 		return newLoaderInstance(args);
 	}
 
-	public void onDataLoaded(final Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> loader, final ParcelableStatusesAdapter adapter) {
+	public void onDataLoaded(final Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> loader,
+			final ParcelableStatusesAdapter adapter) {
 		if (loader instanceof ParcelableStatusesLoader) {
 			final Long last_viewed_id = ((ParcelableStatusesLoader) loader).getLastViewedId();
 			if (last_viewed_id != null && mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true)) {
@@ -156,7 +154,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public final void onLoadFinished(final Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> loader, final SynchronizedStateSavedList<ParcelableStatus, Long> data) {
+	public final void onLoadFinished(final Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> loader,
+			final SynchronizedStateSavedList<ParcelableStatus, Long> data) {
 		super.onLoadFinished(loader, data);
 		if (!isLoaderUsed()) return;
 		mAdapter.setData(data);

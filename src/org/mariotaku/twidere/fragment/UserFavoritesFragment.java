@@ -19,10 +19,9 @@
 
 package org.mariotaku.twidere.fragment;
 
-import java.util.List;
-
 import org.mariotaku.twidere.loader.UserFavoritesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,7 +29,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 

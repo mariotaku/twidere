@@ -39,6 +39,7 @@ import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.BaseDialogFragment;
+import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
@@ -94,7 +95,6 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.twitter.Validator;
-import org.mariotaku.twidere.model.ParcelableLocation;
 
 public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
 		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener, OnEditorActionListener,
@@ -600,9 +600,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
 		if (mTextCount != null) {
 			final int count = mValidator.getTweetLength(text);
-			final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count) : 50 : 0;
+			final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count)
+					: 50
+					: 0;
 			final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-			mTextCount.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
+			mTextCount
+					.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
 			mTextCount.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
 		}
 		final MenuItem sendItem = menu.findItem(MENU_SEND);

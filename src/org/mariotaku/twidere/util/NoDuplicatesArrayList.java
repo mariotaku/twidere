@@ -6,19 +6,19 @@ import java.util.Collection;
 public class NoDuplicatesArrayList<E> extends ArrayList<E> {
 
 	private static final long serialVersionUID = -7277301117508689125L;
-	
-	public NoDuplicatesArrayList(int capacity) {
-		super(capacity);
-	}
 
-    public NoDuplicatesArrayList() {
+	public NoDuplicatesArrayList() {
 		super();
 	}
 
-    public NoDuplicatesArrayList(java.util.Collection<? extends E> collection) {
+	public NoDuplicatesArrayList(final int capacity) {
+		super(capacity);
+	}
+
+	public NoDuplicatesArrayList(final java.util.Collection<? extends E> collection) {
 		super(collection);
 	}
-	
+
 	@Override
 	public boolean add(final E e) {
 		if (contains(e))

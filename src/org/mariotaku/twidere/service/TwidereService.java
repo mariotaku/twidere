@@ -49,6 +49,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -66,7 +67,6 @@ import org.mariotaku.twidere.util.TweetShortenerInterface;
 import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.DirectMessage;
-import twitter4j.GeoLocation;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.StatusUpdate;
@@ -87,7 +87,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -98,7 +97,6 @@ import android.widget.Toast;
 import com.twitter.Validator;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
-import org.mariotaku.twidere.model.ParcelableLocation;
 
 public class TwidereService extends Service implements Constants {
 

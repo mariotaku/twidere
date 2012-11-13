@@ -62,6 +62,7 @@ import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
@@ -114,7 +115,6 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
 		OnItemClickListener, OnTouchListener {
@@ -431,7 +431,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private final OnGlobalLayoutListener mOnGlobalLayoutListener = new OnGlobalLayoutListener() {
 		@Override
 		public void onGlobalLayout() {
-			//mMainContent.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+			// mMainContent.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 			if (getActivity() == null) return;
 			final float density = getResources().getDisplayMetrics().density;
 			mStatusView.setMinimumHeight((int) (mStatusContainer.getHeight() - density * 2));

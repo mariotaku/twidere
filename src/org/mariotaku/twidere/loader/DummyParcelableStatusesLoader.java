@@ -1,12 +1,11 @@
 package org.mariotaku.twidere.loader;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import android.content.Context;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 public final class DummyParcelableStatusesLoader extends ParcelableStatusesLoader {
 

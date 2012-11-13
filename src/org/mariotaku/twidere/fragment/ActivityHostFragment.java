@@ -23,6 +23,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManagerTrojan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,10 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
-import android.support.v4.app.FragmentManagerTrojan;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
- 
+
 /**
  * This is a fragment that will be used during transition from activities to
  * fragments.
@@ -46,6 +46,12 @@ public abstract class ActivityHostFragment<A extends Activity> extends LocalActi
 
 	public A getAttachedActivity() {
 		return mAttachedActivity;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		if (mAttachedActivity == null) return;
+		mAttachedActivity.onCreateOptionsMenu(menu);
 	}
 
 	@SuppressWarnings({ "deprecation", "unchecked" })
@@ -86,17 +92,8 @@ public abstract class ActivityHostFragment<A extends Activity> extends LocalActi
 		return wd;
 	}
 
-    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-		if (mAttachedActivity == null) return;
-		mAttachedActivity.onCreateOptionsMenu(menu);
-	}
-
-    public void onPrepareOptionsMenu(final Menu menu) {
-		if (mAttachedActivity == null) return;
-		mAttachedActivity.onPrepareOptionsMenu(menu);
-	}
-
-    public boolean onOptionsItemSelected(final MenuItem item) {
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		if (mAttachedActivity == null) return false;
 		if (!mAttachedActivity.onOptionsItemSelected(item) && mAttachedActivity instanceof FragmentActivity) {
 			final FragmentManager fm = ((FragmentActivity) mAttachedActivity).getSupportFragmentManager();
@@ -105,10 +102,17 @@ public abstract class ActivityHostFragment<A extends Activity> extends LocalActi
 		return true;
 	}
 
-    public void onOptionsMenuClosed(final Menu menu) {
+	@Override
+	public void onOptionsMenuClosed(final Menu menu) {
 		if (mAttachedActivity == null) return;
 		mAttachedActivity.onOptionsMenuClosed(menu);
 	}
-	
+
+	@Override
+	public void onPrepareOptionsMenu(final Menu menu) {
+		if (mAttachedActivity == null) return;
+		mAttachedActivity.onPrepareOptionsMenu(menu);
+	}
+
 	protected abstract Class<A> getActivityClass();
 }

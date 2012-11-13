@@ -23,17 +23,16 @@ import static org.mariotaku.twidere.util.ServiceUtils.bindToService;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
+import org.mariotaku.twidere.model.ParcelableLocation;
 
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
-import org.mariotaku.twidere.model.ParcelableLocation;
 
 public final class ServiceInterface implements Constants, ITwidereService {
 

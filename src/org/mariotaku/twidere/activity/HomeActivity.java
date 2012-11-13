@@ -73,7 +73,6 @@ import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class HomeActivity extends MultiSelectActivity implements OnClickListener, OnPageChangeListener {
@@ -93,7 +92,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	private boolean mProgressBarIndeterminateVisible = false;
 
-	private boolean mIsNavigateToDefaultAccount = false;
 	private boolean mDisplayAppIcon;
 
 	public static final int TAB_POSITION_HOME = 0;
@@ -230,7 +228,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);		
+		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mShowHomeTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
 		mShowMentionsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);
 		mShowMessagesTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MESSAGES_TAB, true);
@@ -449,10 +447,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, intent);
-	}
-
-	protected void onDefaultAccountSet() {
-		mIsNavigateToDefaultAccount = false;
 	}
 
 	@Override

@@ -106,7 +106,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			final String name = cursor.getString(mIndices.name);
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 			final String account_screen_name = getAccountScreenName(mContext, account_id);
-			
+
 			final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
 			final boolean is_protected = cursor.getShort(mIndices.is_protected) == 1;
 			final boolean is_verified = cursor.getShort(mIndices.is_verified) == 1;
@@ -126,8 +126,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 			holder.setUserColor(getUserColor(mContext, user_id));
 			if (text != null) {
-				holder.setHighlightColor(getStatusBackground(
-						mMentionsHighlightDisabled ? false : is_mention, is_favorite, is_retweet));
+				holder.setHighlightColor(getStatusBackground(mMentionsHighlightDisabled ? false : is_mention,
+						is_favorite, is_retweet));
 			}
 
 			holder.setAccountColorEnabled(mShowAccountColor);
@@ -246,8 +246,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			view.setTag(holder);
 			holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
 			holder.image_preview.setOnClickListener(mMultiSelectEnabled ? null : this);
-			//holder.image_preview.setClickable(!mMultiSelectEnabled);
-			//holder.profile_image.setClickable(!mMultiSelectEnabled);
+			// holder.image_preview.setClickable(!mMultiSelectEnabled);
+			// holder.profile_image.setClickable(!mMultiSelectEnabled);
 		}
 		return view;
 	}

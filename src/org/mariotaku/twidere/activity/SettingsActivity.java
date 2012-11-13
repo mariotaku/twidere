@@ -25,6 +25,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ActivityHostFragment;
 import org.mariotaku.twidere.fragment.CustomTabsFragment;
 import org.mariotaku.twidere.fragment.ExtensionsListFragment;
+import org.mariotaku.twidere.fragment.FiltersListFragment;
 import org.mariotaku.twidere.fragment.InternalSettingsFragment;
 import org.mariotaku.twidere.fragment.SettingsDetailsFragment;
 
@@ -39,11 +40,6 @@ import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
-import org.mariotaku.twidere.fragment.FiltersListFragment;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.FrameLayout;
 
 public class SettingsActivity extends DualPaneActivity implements OnSharedPreferenceChangeListener,
 		OnPreferenceClickListener {
@@ -136,7 +132,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 				startActivity(intent);
 			}
 			return true;
-		}else if (KEY_FILTERS.equals(key)) {
+		} else if (KEY_FILTERS.equals(key)) {
 			if (isDualPaneMode()) {
 				final Fragment fragment = new FiltersListFragment();
 				showFragment(fragment, false);

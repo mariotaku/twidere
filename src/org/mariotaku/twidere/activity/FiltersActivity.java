@@ -29,21 +29,24 @@ import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 public class FiltersActivity extends BaseActivity {
 
 	private ActionBar mActionBar;
-	
+
 	private ViewPager mViewPager;
 	private PagerTabStrip mPagerTab;
 
 	private TabsAdapter mAdapter;
+
+	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mPagerTab = (PagerTabStrip) findViewById(R.id.pager_tab);
+	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -59,14 +62,6 @@ public class FiltersActivity extends BaseActivity {
 		mAdapter.addTab(FilteredSourcesFragment.class, null, getString(R.string.sources), null, 2);
 		mViewPager.setAdapter(mAdapter);
 		mPagerTab.setTabIndicatorColorResource(R.color.holo_blue_light);
-	}
-
-
-	@Override
-	public void onContentChanged() {
-		super.onContentChanged();
-		mViewPager = (ViewPager) findViewById(R.id.pager);
-		mPagerTab = (PagerTabStrip) findViewById(R.id.pager_tab);
 	}
 
 	@Override

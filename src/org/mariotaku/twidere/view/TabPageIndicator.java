@@ -91,11 +91,6 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 				ViewGroup.LayoutParams.MATCH_PARENT));
 	}
 
-	public void setDisplayLabel(boolean label) {
-		mDisplayLabel = label;
-		notifyDataSetChanged();
-	}
-
 	public void notifyDataSetChanged() {
 		if (mTabLayout == null || mViewPager == null) return;
 		mTabLayout.removeAllViews();
@@ -205,6 +200,11 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		}
 	}
 
+	public void setDisplayLabel(final boolean label) {
+		mDisplayLabel = label;
+		notifyDataSetChanged();
+	}
+
 	public void setOnPageChangeListener(final ExtendedViewPager.OnPageChangeListener listener) {
 		mListener = listener;
 	}
@@ -272,10 +272,6 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			return mIndex;
 		}
 
-		public void init(final TabPageIndicator parent, final Drawable icon, final int index) {
-			init(parent, null, icon, index);
-		}
-
 		public void init(final TabPageIndicator parent, final CharSequence text, final Drawable icon, final int index) {
 			mParent = parent;
 			mIndex = index;
@@ -291,6 +287,10 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 
 		public void init(final TabPageIndicator parent, final CharSequence text, final int index) {
 			init(parent, text, null, index);
+		}
+
+		public void init(final TabPageIndicator parent, final Drawable icon, final int index) {
+			init(parent, null, icon, index);
 		}
 
 		@Override

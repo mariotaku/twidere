@@ -34,7 +34,6 @@ import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.DirectMessageConversationViewHolder;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
-import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.ServiceInterface;
@@ -45,6 +44,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -67,6 +67,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -74,8 +75,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.twitter.Validator;
-import android.graphics.Color;
-import android.widget.FrameLayout;
 
 public class DirectMessagesConversationFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener,
@@ -85,7 +84,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	private ServiceInterface mService;
 	private SharedPreferences mPreferences;
 
-	//private ListView mListView;
+	// private ListView mListView;
 	private EditText mEditText;
 	private TextView mTextCount;
 	private AutoCompleteTextView mEditScreenName;
@@ -227,8 +226,9 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		//if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID))
-		//	return new CursorLoader(getActivity(), TweetStore.NULL_CONTENT_URI, null, null, null, null);
+		// if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID))
+		// return new CursorLoader(getActivity(), TweetStore.NULL_CONTENT_URI,
+		// null, null, null, null);
 		final String[] cols = new String[] { DirectMessages._ID, DirectMessages.ACCOUNT_ID, DirectMessages.MESSAGE_ID,
 				DirectMessages.MESSAGE_TIMESTAMP, DirectMessages.SENDER_ID, DirectMessages.RECIPIENT_ID,
 				DirectMessages.IS_OUTGOING, DirectMessages.TEXT, DirectMessages.SENDER_NAME,
@@ -237,10 +237,12 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		final long conversation_id = args != null ? args.getLong(INTENT_KEY_CONVERSATION_ID, -1) : -1;
 		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;
-		mConversationContainer.setVisibility(account_id <= 0 || conversation_id <= 0 && isEmpty(screen_name) ? View.GONE
-				: View.VISIBLE);
-		mScreenNameContainer.setVisibility(account_id <= 0 || conversation_id <= 0 && isEmpty(screen_name) ? View.VISIBLE
-										   : View.GONE);
+		mConversationContainer
+				.setVisibility(account_id <= 0 || conversation_id <= 0 && isEmpty(screen_name) ? View.GONE
+						: View.VISIBLE);
+		mScreenNameContainer
+				.setVisibility(account_id <= 0 || conversation_id <= 0 && isEmpty(screen_name) ? View.VISIBLE
+						: View.GONE);
 		final Uri uri = buildDirectMessageConversationUri(account_id, conversation_id, screen_name);
 		return new CursorLoader(getActivity(), uri, cols, null, null, DirectMessages.Conversation.DEFAULT_SORT_ORDER);
 	}
@@ -249,7 +251,8 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.direct_messages_conversation, null);
 		final FrameLayout list_container = (FrameLayout) view.findViewById(R.id.list_container);
-		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+				FrameLayout.LayoutParams.MATCH_PARENT);
 		list_container.addView(super.onCreateView(inflater, container, savedInstanceState), lp);
 		mEditText = (EditText) view.findViewById(R.id.edit_text);
 		mTextCount = (TextView) view.findViewById(R.id.text_count);
@@ -419,14 +422,16 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		if (mTextCount != null) {
 			final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 			final int count = mValidator.getTweetLength(text);
-			final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count) : 50 : 0;
+			final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count)
+					: 50
+					: 0;
 			final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-			mTextCount.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
+			mTextCount
+					.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
 			mTextCount.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
 		}
 	}
-	
-	
+
 	private static class AccountsAdapter extends ArrayAdapter<Account> {
 
 		public AccountsAdapter(final Context context) {

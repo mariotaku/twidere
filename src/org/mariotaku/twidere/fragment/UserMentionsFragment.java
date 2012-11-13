@@ -2,16 +2,14 @@ package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 
-import java.util.List;
-
 import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
 import org.mariotaku.twidere.loader.TweetSearchLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.Utils;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 public class UserMentionsFragment extends SearchTweetsFragment {
 

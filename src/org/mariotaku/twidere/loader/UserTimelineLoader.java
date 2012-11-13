@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.loader;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -106,7 +105,8 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		try {
 			final int size = data.size();
-			final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = new SynchronizedStateSavedList<ParcelableStatus, Long>(data.subList(0, size > items_limit ? items_limit : size));
+			final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = new SynchronizedStateSavedList<ParcelableStatus, Long>(
+					data.subList(0, size > items_limit ? items_limit : size));
 			if (last_viewed_id > 0) {
 				statuses.setState(last_viewed_id);
 			}

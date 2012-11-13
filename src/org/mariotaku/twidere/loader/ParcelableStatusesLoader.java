@@ -21,7 +21,6 @@ package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -34,7 +33,8 @@ import twitter4j.Twitter;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
-public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<SynchronizedStateSavedList<ParcelableStatus, Long>> implements Constants {
+public abstract class ParcelableStatusesLoader extends
+		AsyncTaskLoader<SynchronizedStateSavedList<ParcelableStatus, Long>> implements Constants {
 
 	private final Twitter mTwitter;
 	private final long mAccountId;

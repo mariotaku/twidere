@@ -35,10 +35,13 @@ import twitter4j.User;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.Html;
-import android.text.Spanned;
 
 public class ParcelableStatus implements Parcelable, Serializable, Comparable<ParcelableStatus> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8687220519842668226L;
 
 	public static final Parcelable.Creator<ParcelableStatus> CREATOR = new Parcelable.Creator<ParcelableStatus>() {
 		@Override
@@ -62,7 +65,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 			location_string, text_unescaped;
 	public final ParcelableLocation location;
 
-	//public final Spanned text;
+	// public final Spanned text;
 
 	public final URL profile_image_url, image_preview_url;
 
@@ -120,7 +123,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		profile_image_url_string = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
 		profile_image_url = parseURL(profile_image_url_string);
 
-		//text = text_html != null ? Html.fromHtml(text_html) : null;
+		// text = text_html != null ? Html.fromHtml(text_html) : null;
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
@@ -158,7 +161,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		location = new ParcelableLocation(location_string);
 		image_preview_url = parseURL(image_preview_url_string);
 		profile_image_url = parseURL(profile_image_url_string);
-		//text = text_html != null ? Html.fromHtml(text_html) : null;
+		// text = text_html != null ? Html.fromHtml(text_html) : null;
 		text_unescaped = unescape(text_html);
 		my_retweet_id = in.readLong();
 	}
@@ -200,7 +203,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		location_string = location.toString();
 		is_favorite = status.isFavorited();
 		has_media = medias != null && medias.length > 0 || preview.has_image;
-		//text = text_html != null ? Html.fromHtml(text_html) : null;
+		// text = text_html != null ? Html.fromHtml(text_html) : null;
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);

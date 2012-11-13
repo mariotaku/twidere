@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.CacheUsersStatusesTask;
+import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import twitter4j.Paging;
 import twitter4j.Status;
@@ -32,7 +33,6 @@ import twitter4j.TwitterException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 

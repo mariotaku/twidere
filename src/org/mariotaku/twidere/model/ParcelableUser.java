@@ -22,6 +22,7 @@ package org.mariotaku.twidere.model;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.parseURL;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
 
@@ -31,9 +32,13 @@ import twitter4j.User;
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
-import java.io.Serializable;
 
 public class ParcelableUser implements Parcelable, Serializable, Comparable<ParcelableUser> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5977877636776748705L;
 
 	public static final Parcelable.Creator<ParcelableUser> CREATOR = new Parcelable.Creator<ParcelableUser>() {
 		@Override
