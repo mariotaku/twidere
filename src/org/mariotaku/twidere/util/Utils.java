@@ -1840,6 +1840,7 @@ public final class Utils implements Constants {
 			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
 			if (details_fragment instanceof DirectMessagesConversationFragment && details_fragment.isAdded()) {
 				((DirectMessagesConversationFragment) details_fragment).showConversation(account_id, conversation_id);
+				dual_pane_activity.bringRightPaneToFront();
 			} else {
 				final Fragment fragment = new DirectMessagesConversationFragment();
 				final Bundle args = new Bundle();

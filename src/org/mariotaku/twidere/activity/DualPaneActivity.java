@@ -146,7 +146,9 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 				break;
 		}
 		setContentView(layout);
-		mRightPaneContainer.setBackgroundResource(getPaneBackground());
+		if (mRightPaneContainer != null) {
+			mRightPaneContainer.setBackgroundResource(getPaneBackground());
+		}
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 	}
 
