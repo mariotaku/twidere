@@ -39,35 +39,13 @@
 			<View
 				android:layout_width="0dp"
 				android:layout_height="match_parent"
-				android:layout_weight="@integer/pane_left_shadow_weight"
-				android:background="@drawable/two_panes_shadow_left"/>
+				android:layout_weight="@integer/pane_left_shadow_weight"/>
 		</LinearLayout>
 
-		<LinearLayout
+		<org.mariotaku.twidere.view.SlidePane
 			android:id="@+id/right_pane_layer"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:baselineAligned="false"
-			android:orientation="horizontal">
-
-			<View
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_weight="@integer/pane_right_shadow_weight"
-				android:background="@drawable/two_panes_shadow_right"/>
-
-			<org.mariotaku.twidere.view.ExtendedFrameLayout
-				android:id="@+id/right_pane_container"
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_weight="@integer/pane_right_content_weight">
-
-				<FrameLayout
-					android:id="@+id/right_pane"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"/>
-			</org.mariotaku.twidere.view.ExtendedFrameLayout>
-		</LinearLayout>
+			android:layout_height="match_parent"/>
 	</FrameLayout>
 
 	<ImageButton

@@ -3,5 +3,6 @@
 
 	<item name="tab_display_label" type="bool">true</item>
 	<item name="home_display_icon" type="bool">true</item>
+	<item name="should_disable_scroll" type="bool">true</item>
 
 </resources>

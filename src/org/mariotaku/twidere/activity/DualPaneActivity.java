@@ -41,52 +41,30 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import org.mariotaku.twidere.view.SlidePane;
 
 @SuppressLint("Registered")
 public class DualPaneActivity extends BaseActivity implements OnBackStackChangedListener {
 
 	private SharedPreferences mPreferences;
 
-	private ExtendedFrameLayout mLeftPaneContainer, mRightPaneContainer;
+	private FrameLayout mLeftPaneContainer, mRightPaneContainer;
 	private ViewGroup mLeftPaneLayer, mRightPaneLayer;
 
 	private Fragment mDetailsFragment;
 
 	private boolean mDualPaneInPortrait, mDualPaneInLandscape;
 
-	private final TouchInterceptor mLeftPaneTouchInterceptor = new TouchInterceptor() {
-
-		@Override
-		public void onInterceptTouchEvent(final MotionEvent event) {
-			if (MotionEvent.ACTION_DOWN == event.getAction()) {
-				bringLeftPaneToFront();
-			}
-		}
-	};
-	private final TouchInterceptor mRightPaneTouchInterceptor = new TouchInterceptor() {
-
-		@Override
-		public void onInterceptTouchEvent(final MotionEvent event) {
-			if (MotionEvent.ACTION_DOWN == event.getAction()) {
-				bringRightPaneToFront();
-			}
-		}
-	};
-
 	public final void bringLeftPaneToFront() {
-		if (mLeftPaneLayer == null || mRightPaneLayer == null || mLeftPaneContainer == null
-				|| mRightPaneContainer == null) return;
-		mLeftPaneLayer.bringToFront();
-		mLeftPaneContainer.setBackgroundResource(getPaneBackground());
-		mRightPaneContainer.setBackgroundResource(0);
+		if (mRightPaneLayer instanceof SlidePane) {
+			((SlidePane)mRightPaneLayer).close();
+		}
 	}
 
 	public final void bringRightPaneToFront() {
-		if (mLeftPaneLayer == null || mRightPaneLayer == null || mLeftPaneContainer == null
-				|| mRightPaneContainer == null) return;
-		mRightPaneLayer.bringToFront();
-		mRightPaneContainer.setBackgroundResource(getPaneBackground());
-		mLeftPaneContainer.setBackgroundResource(0);
+		if (mRightPaneLayer instanceof SlidePane) {
+			((SlidePane)mRightPaneLayer).open();
+		}
 	}
 
 	public Fragment getDetailsFragment() {
@@ -126,7 +104,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 					bringRightPaneToFront();
 				}
 			}
-
+			mRightPaneContainer.setBackgroundResource(getPaneBackground());
 			if (main_view != null) {
 				main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
 			}
@@ -137,13 +115,13 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	public void onContentChanged() {
 		super.onContentChanged();
 		if (isDualPaneMode()) {
-			mLeftPaneContainer = (ExtendedFrameLayout) findViewById(R.id.left_pane_container);
-			mLeftPaneContainer.setTouchInterceptor(mLeftPaneTouchInterceptor);
+			mLeftPaneContainer = (FrameLayout) findViewById(R.id.left_pane_container);
 			mLeftPaneLayer = (ViewGroup) findViewById(R.id.left_pane_layer);
-			mRightPaneContainer = (ExtendedFrameLayout) findViewById(R.id.right_pane_container);
-			mRightPaneContainer.setTouchInterceptor(mRightPaneTouchInterceptor);
+			mRightPaneContainer = (FrameLayout) findViewById(R.id.right_pane_container);
 			mRightPaneLayer = (ViewGroup) findViewById(R.id.right_pane_layer);
-			bringLeftPaneToFront();
+			if (mRightPaneLayer instanceof SlidePane) {
+				((SlidePane)mRightPaneLayer).closeNoAnimation();
+			}
 		}
 	}
 
@@ -168,6 +146,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 				break;
 		}
 		setContentView(layout);
+		mRightPaneContainer.setBackgroundResource(getPaneBackground());
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 	}
 

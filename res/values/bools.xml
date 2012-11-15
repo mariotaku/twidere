@@ -5,5 +5,6 @@
 	<item name="home_display_icon" type="bool">false</item>
 	<item name="hw_accel_supported" type="bool">false</item>
 	<item name="hires_profile_image" type="bool">false</item>
+	<item name="should_disable_scroll" type="bool">false</item>
 
 </resources>
