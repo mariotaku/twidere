@@ -35,11 +35,16 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation;
+import android.widget.ImageView;
+import android.graphics.drawable.ColorDrawable;
+import android.view.animation.AlphaAnimation;
 
 public class SlidePane extends FrameLayout {
 
 	private final LinearLayout mInternalLinearLayout;
 	private final FrameLayout mInternalContentView;
+	private final View mBlankView;
+	private final ShadeLayer mShadeLayer;
 
 	private int mBlankViewWidth, mContentWidth;
 	
@@ -63,9 +68,10 @@ public class SlidePane extends FrameLayout {
 		final Resources res = getResources();
 		mShouldDisableScroll = res.getBoolean(R.bool.should_disable_scroll);
 		final LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(0, MATCH_PARENT, res.getInteger(R.integer.pane_right_shadow_weight));
-		mInternalLinearLayout.addView(new BlankView(this), lp1);
+		mInternalLinearLayout.addView(mBlankView = new BlankView(this), lp1);
 		final LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(0, MATCH_PARENT, res.getInteger(R.integer.pane_right_content_weight));
 		mInternalLinearLayout.addView(mInternalContentView = new InternalContentView(this), lp2);
+		addView(mShadeLayer = new ShadeLayer(this));
 		addView(mInternalLinearLayout);
 		final FrameLayout v = new FrameLayout(context);
 		v.setId(R.id.right_pane);
@@ -80,6 +86,32 @@ public class SlidePane extends FrameLayout {
 		mInternalContentView.addView(view, params);
 	}
 	
+	static class ShadeLayer extends ImageView {
+		
+		final SlidePane parent;
+		
+		float alpha;
+		
+		ShadeLayer(SlidePane parent) {
+			super(parent.getContext());
+			this.parent = parent;
+			setImageDrawable(new ColorDrawable(0x40000000));
+		}
+//		
+//		public float getAlpha() {
+//			return alpha;
+//		}
+//		
+//		public void setAlpha(int alpha) {
+//			this.alpha = (float) alpha / 0xFF;
+//			super.setAlpha(alpha);
+//		}
+//		
+//		public void setAlpha(float alpha) {
+//			setAlpha((int)(alpha * 0xFF));
+//		}
+	}
+	
 	void abortAnimation() {
 		final Animation scroll_anim = mInternalLinearLayout.getAnimation();
 		if (scroll_anim != null) {
@@ -90,40 +122,41 @@ public class SlidePane extends FrameLayout {
 	void animateContentTo(final int x) {
 		if (shouldDisableScroll()) return;
 		abortAnimation();
-		final int move = getContentScrollX() - x;
+		final int scroll = getContentScrollX();
+		final int move = x - scroll;
 		if (move == 0) return;
-		final TranslateAnimation anim = new TranslateAnimation(0, move, 0, 0);
-		anim.setDuration(100);
-		anim.setAnimationListener(new ScrollAnimationListener(x));
-		mInternalLinearLayout.startAnimation(anim);
+		final long dur = 3000;
+		final TranslateAnimation scroll_anim = new TranslateAnimation(0, move, 0, 0);
+		scroll_anim.setDuration(dur);
+		scroll_anim.setFillEnabled(true);
+		scroll_anim.setFillAfter(true);
+		scroll_anim.setFillBefore(true);
+		scroll_anim.setAnimationListener(new ScrollAnimationListener(move));
+		mInternalLinearLayout.startAnimation(scroll_anim);
+		final int max = getMaxScrollWidth();
+		final AlphaAnimation alpha_anim = new AlphaAnimation(((float)(max + scroll) / max), ((float)(max + x) / max));
+		alpha_anim.setDuration(dur);
+		mShadeLayer.startAnimation(alpha_anim);
 	}
 	
 	class ScrollAnimationListener implements Animation.AnimationListener {
-
+		
+		final int move;
+		
+		ScrollAnimationListener(int move) {
+			this.move = move;
+		}
+		
 		public void onAnimationStart(Animation anim) {
 		}
 
 		public void onAnimationEnd(Animation anim) {
-			post(new ScrollToRunnable());
+			mInternalLinearLayout.offsetLeftAndRight(move);
 		}
 
 		public void onAnimationRepeat(Animation anim) {
 		}
-		
-		
-		private final int x;
-		
-		ScrollAnimationListener(int x){
-			this.x = x;
-		}
-		
-		class ScrollToRunnable implements Runnable {
 
-			public void run() {
-				scrollContentTo(x);
-			}		
-			
-		}
 	}
 	
 	public void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -146,14 +179,18 @@ public class SlidePane extends FrameLayout {
 		public void onScrollChanged(int l, int t, int oldl, int oldt) {
 			super.onScrollChanged(l, t, oldl, oldt);
 			if (parent.shouldDisableScroll()) {
-				//parent.setBackgroundColor(Color.TRANSPARENT);
+				parent.setBackgroundColor(Color.TRANSPARENT);
 				return;
 			}
 			final int max = parent.getMaxScrollWidth();
 			final float percent = (float)(limit(l + max, 0, max)) / max;
-			//parent.setBackgroundColor(Color.argb((int)(percent * 0x40), 0, 0, 0));
+			parent.setShadeAlpha((int)(percent * 0xFF));
 		}
 
+	}
+	
+	void setShadeAlpha(int alpha) {
+		mShadeLayer.setAlpha(alpha);
 	}
 	
 	class CloseNoAnimationRunnable implements Runnable {
@@ -169,11 +206,12 @@ public class SlidePane extends FrameLayout {
 
 	void scrollContentTo(int x) {
 		if (shouldDisableScroll()) return;
-		mInternalLinearLayout.scrollTo(x, 0);
+		mInternalLinearLayout.offsetLeftAndRight(x);
 	}
 
 	int getContentScrollX() {
-		return mInternalLinearLayout.getScrollX();
+		return mInternalLinearLayout.getLeft();
+		//return mInternalLinearLayout.getScrollX();
 	}
 	
 	int getMaxScrollWidth() {
@@ -190,13 +228,13 @@ public class SlidePane extends FrameLayout {
 	
 	void updateMainBackground() {
 		if (shouldDisableScroll()) {
-			//setBackgroundColor(Color.TRANSPARENT);
+			setBackgroundColor(Color.TRANSPARENT);
 			return;
 		}
 		final int sx = getScrollX();
 		final int max = getMaxScrollWidth();
 		final float percent = (float)(limit(sx + max, 0, max)) / max;
-		//setBackgroundColor(Color.argb((int)(percent * 0x40), 0, 0, 0));
+		setShadeAlpha((int)(percent * 0xFF));
 	}
 	
 	static class BlankView extends View {
@@ -291,12 +329,11 @@ public class SlidePane extends FrameLayout {
 				case MotionEvent.ACTION_MOVE: {
 					final int history_size = event.getHistorySize();
 					if (history_size <= 0) break;
-					final int delta = Math.round(event.getHistoricalX(0) - event.getX());
+					final int delta = Math.round(event.getX() - event.getHistoricalX(0));
 					if (delta != 0) mTempDelta = delta;
 					mTotalMove += delta;
 					if (Math.abs(mTotalMove) < conf.getScaledTouchSlop()) return false;
-					final int scroll_x = parent.getContentScrollX();
-					parent.scrollContentTo(limit(scroll_x + delta, -max, 0));
+					parent.scrollContentTo(delta);
 					return true;
 				}
 				case MotionEvent.ACTION_UP: {
@@ -305,7 +342,7 @@ public class SlidePane extends FrameLayout {
 					mTempDelta = null;
 					mTotalMove = 0;
 					if (delta != null && Math.abs(move) >= conf.getScaledTouchSlop()) {
-						parent.animateContentTo(delta > 0 ? 0 : -max);
+						parent.animateContentTo(delta < 0 ? 0 : -max);
 						return true;
 					}
 					break;
@@ -324,7 +361,7 @@ public class SlidePane extends FrameLayout {
 	
 	public void close() {
 		if (shouldDisableScroll()) return;
-		animateContentTo(-getMaxScrollWidth());
+		animateContentTo(getMaxScrollWidth());
 	}
 	
 	public void open() {
@@ -334,7 +371,7 @@ public class SlidePane extends FrameLayout {
 	
 	public void closeNoAnimation() {
 		if (shouldDisableScroll()) return;
-		scrollContentTo(-getMaxScrollWidth());
+		scrollContentTo(getMaxScrollWidth());
 	}
 	
 	public void openNoAnimation() {
