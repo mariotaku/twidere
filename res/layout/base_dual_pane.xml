@@ -37,8 +37,7 @@
 		<View
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="@integer/pane_left_shadow_weight"
-			android:background="@drawable/two_panes_shadow_left"/>
+			android:layout_weight="@integer/pane_left_shadow_weight"/>
 	</LinearLayout>
 
 	<org.mariotaku.twidere.view.SlidePane

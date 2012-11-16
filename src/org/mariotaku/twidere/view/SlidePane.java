@@ -32,6 +32,9 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation;
 
 public class SlidePane extends FrameLayout {
 
@@ -54,8 +57,9 @@ public class SlidePane extends FrameLayout {
 	
 	public SlidePane(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		mInternalLinearLayout = new LinearLayout(context);
+		mInternalLinearLayout = new InternalLinearLayout(this);
 		setWillNotDraw(false);
+		setClipChildren(false);
 		final Resources res = getResources();
 		mShouldDisableScroll = res.getBoolean(R.bool.should_disable_scroll);
 		final LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(0, MATCH_PARENT, res.getInteger(R.integer.pane_right_shadow_weight));
@@ -76,92 +80,96 @@ public class SlidePane extends FrameLayout {
 		mInternalContentView.addView(view, params);
 	}
 	
-	private Thread mThread;
-	
 	void abortAnimation() {
-		if (mThread != null) {
-			mThread.interrupt();
-			mThread = null;
+		final Animation scroll_anim = mInternalLinearLayout.getAnimation();
+		if (scroll_anim != null) {
+			scroll_anim.cancel();
 		}
 	}
 	
 	void animateContentTo(final int x) {
 		if (shouldDisableScroll()) return;
 		abortAnimation();
-		mThread = new AnimateScrollThread(x);
-		mThread.start();
+		final int move = getContentScrollX() - x;
+		if (move == 0) return;
+		final TranslateAnimation anim = new TranslateAnimation(0, move, 0, 0);
+		anim.setDuration(100);
+		anim.setAnimationListener(new ScrollAnimationListener(x));
+		mInternalLinearLayout.startAnimation(anim);
+	}
+	
+	class ScrollAnimationListener implements Animation.AnimationListener {
+
+		public void onAnimationStart(Animation anim) {
+		}
+
+		public void onAnimationEnd(Animation anim) {
+			post(new ScrollToRunnable());
+		}
+
+		public void onAnimationRepeat(Animation anim) {
+		}
+		
+		
+		private final int x;
+		
+		ScrollAnimationListener(int x){
+			this.x = x;
+		}
+		
+		class ScrollToRunnable implements Runnable {
+
+			public void run() {
+				scrollContentTo(x);
+			}		
+			
+		}
 	}
 	
 	public void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		if (mFirstCreate) {
-			//closeNoAnimation();
 			post(new CloseNoAnimationRunnable());
 			mFirstCreate = false;
 		}
+	}
+	
+	static class InternalLinearLayout extends LinearLayout {
+		
+		private final SlidePane parent;
+		
+		InternalLinearLayout(SlidePane parent) {
+			super(parent.getContext());
+			this.parent = parent;
+		}
+		
+		public void onScrollChanged(int l, int t, int oldl, int oldt) {
+			super.onScrollChanged(l, t, oldl, oldt);
+			if (parent.shouldDisableScroll()) {
+				//parent.setBackgroundColor(Color.TRANSPARENT);
+				return;
+			}
+			final int max = parent.getMaxScrollWidth();
+			final float percent = (float)(limit(l + max, 0, max)) / max;
+			//parent.setBackgroundColor(Color.argb((int)(percent * 0x40), 0, 0, 0));
+		}
+
 	}
 	
 	class CloseNoAnimationRunnable implements Runnable {
 
 		public void run() {
 			closeNoAnimation();
-		}
-		
-		
+		}				
 	}
 	
 	boolean shouldDisableScroll() {
 		return mShouldDisableScroll;
 	}
 
-	class AnimateScrollThread extends Thread {
-
-		final int x;
-
-		AnimateScrollThread(int x) {
-			this.x = x;
-		}
-		
-		public void run() {
-			final int move = getContentScrollX() - x;
-			if (move == 0) return;
-			final int max = getMaxScrollWidth();
-			final int step = (int) getResources().getDisplayMetrics().density * 16;
-			try {
-				int scroll = getContentScrollX();
-				while (scroll >= -max && scroll <= 0) {
-					scroll = getContentScrollX();
-					post(new ScrollRunnable(limit(getContentScrollX() - (move > 0 ? step : -step), -max, 0)));
-					Thread.sleep(1L);
-				}
-			} catch (InterruptedException e) {
-				
-			}
-		}
-		
-		class ScrollRunnable implements Runnable {
-
-			final int x;
-			
-			ScrollRunnable(final int x) {
-				this.x = x;
-			}
-			
-			public void run() {
-				scrollContentTo(x);
-				final int scroll = getContentScrollX();
-				if (scroll == 0 || scroll == -getMaxScrollWidth()) {
-					abortAnimation();
-				}
-			}
-			
-		}
-	}
-	
 	void scrollContentTo(int x) {
 		if (shouldDisableScroll()) return;
 		mInternalLinearLayout.scrollTo(x, 0);
-		updateMainBackground();
 	}
 
 	int getContentScrollX() {
@@ -182,12 +190,13 @@ public class SlidePane extends FrameLayout {
 	
 	void updateMainBackground() {
 		if (shouldDisableScroll()) {
-			setBackgroundColor(Color.TRANSPARENT);
+			//setBackgroundColor(Color.TRANSPARENT);
 			return;
 		}
-		final int sx = getContentScrollX();
-		final float percent = (float)(limit(sx + getMaxScrollWidth(), 0, getMaxScrollWidth())) / getMaxScrollWidth();
-		setBackgroundColor(Color.argb((int)(percent * 0x80), 0, 0, 0));
+		final int sx = getScrollX();
+		final int max = getMaxScrollWidth();
+		final float percent = (float)(limit(sx + max, 0, max)) / max;
+		//setBackgroundColor(Color.argb((int)(percent * 0x40), 0, 0, 0));
 	}
 	
 	static class BlankView extends View {
@@ -197,7 +206,7 @@ public class SlidePane extends FrameLayout {
 		public BlankView(SlidePane parent) {
 			super(parent.getContext());
 			this.parent = parent;
-			setBackgroundResource(R.drawable.two_panes_shadow_right);
+			setBackgroundResource(R.drawable.right_pane_shadow);
 		}
 		
 		public void onSizeChanged(int w, int h, int oldw, int oldh) {

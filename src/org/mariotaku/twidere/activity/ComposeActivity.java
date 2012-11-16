@@ -224,6 +224,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					}
 					final String text = extras.getString(INTENT_KEY_TEXT);
 					final String append = extras.getString(INTENT_KEY_APPEND_TEXT);
+					final Uri image_uri = extras.getParcelable(INTENT_KEY_IMAGE_URI);
 					if (text != null) {
 						mEditText.setText(text);
 						mText = parseString(mEditText.getText());
@@ -231,6 +232,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 						mEditText.append(append);
 						mText = parseString(mEditText.getText());
 					}
+					final File file = image_uri == null ? null : new File(getImagePathFromUri(this, image_uri));
+					if (file != null && file.exists()) {
+						mImageUri = Uri.fromFile(file);
+						reloadAttachedImageThumbnail(file);
+					}
+					setMenu(mMenuBar.getMenu());
 				}
 				break;
 			}
@@ -468,7 +475,10 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	/** Sets the mRecentLocation object to the current location of the device **/
 	@Override
 	public void onLocationChanged(final Location location) {
-		mRecentLocation = location != null ? new ParcelableLocation(location) : null;
+		if (mRecentLocation == null) {			
+			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
+			setSupportProgressBarIndeterminateVisibility(false);
+		}
 	}
 
 	@Override
@@ -615,6 +625,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public void onProviderDisabled(final String provider) {
+		setSupportProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
@@ -675,7 +686,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		}
 		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mEditText.setTextSize(text_size * 1.25f);
-
 	}
 
 	@Override
@@ -698,6 +708,10 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 		if (provider != null) {
 			final Location location = mLocationManager.getLastKnownLocation(provider);
+			if (location == null) {
+				mLocationManager.requestLocationUpdates(provider, 0, 0, this);
+				setSupportProgressBarIndeterminateVisibility(true);
+			}
 			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 		} else {
 			Toast.makeText(this, R.string.cannot_get_location, Toast.LENGTH_SHORT).show();

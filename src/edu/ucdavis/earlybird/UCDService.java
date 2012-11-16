@@ -7,9 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -22,9 +20,8 @@ public class UCDService extends Service {
 	public static final long LOCATION_PERIOD_IN_MILLI = 15 * 60 * 1000;
 	public static final String ACTION_GET_LOCATION = "edu.ucdavis.earlybird.GET_LOCATION";
 	private LocationManager mLocationManager;
-	private FineLocationListener mFineLocationListener;
 	private AlarmManager mAlarmManager;
-	private AlarmReceiver mAlarmReceiver;
+	private LocationUpdateReceiver mAlarmReceiver;
 	private PendingIntent locationIntent;
 	private PendingIntent uploadIntent;
 
@@ -39,13 +36,12 @@ public class UCDService extends Service {
 
 		ProfilingUtil.log("onCreate");
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		mFineLocationListener = new FineLocationListener();
 		mAlarmManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
 
-		mAlarmReceiver = new AlarmReceiver();
-		final IntentFilter myFilter = new IntentFilter();
-		myFilter.addAction(ACTION_GET_LOCATION);
-		registerReceiver(mAlarmReceiver, myFilter);
+		mAlarmReceiver = new LocationUpdateReceiver();
+		final IntentFilter filter = new IntentFilter();
+		filter.addAction(ACTION_GET_LOCATION);
+		registerReceiver(mAlarmReceiver, filter);
 
 		final Intent intent = new Intent(ACTION_GET_LOCATION);
 		locationIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
@@ -66,45 +62,23 @@ public class UCDService extends Service {
 		super.onDestroy();
 	}
 
-	private final class AlarmReceiver extends BroadcastReceiver {
+	private final class LocationUpdateReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (mLocationManager == null) return;
 			ProfilingUtil.log("AlarmReceiver");
-			final Criteria criteria = new Criteria();
-			criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-			final String provider = mLocationManager.getBestProvider(criteria, true);
-			if (provider != null) {
-				mLocationManager.requestLocationUpdates(provider, 0, 0, mFineLocationListener);
+			final String provider = LocationManager.NETWORK_PROVIDER;		
+			if (mLocationManager.isProviderEnabled(provider)) {
+				final Location location = mLocationManager.getLastKnownLocation(provider);
+				if (location != null) {
+					ProfilingUtil.profiling(UCDService.this, ProfilingUtil.FILE_NAME_LOCATION, location.getTime() + ","
+							+ location.getLatitude() + "," + location.getLongitude() + "," + location.getProvider());
+					ProfilingUtil.log(location.getTime() + "," + location.getLatitude() + "," + location.getLongitude() + ","
+							+ location.getProvider());
+				}
 			}
 		}
 	}
 
-	private final class FineLocationListener implements LocationListener {
-
-		@Override
-		public void onLocationChanged(final Location location) {
-			ProfilingUtil.profiling(UCDService.this, ProfilingUtil.FILE_NAME_LOCATION, location.getTime() + ","
-					+ location.getLatitude() + "," + location.getLongitude() + "," + location.getProvider());
-			ProfilingUtil.log(location.getTime() + "," + location.getLatitude() + "," + location.getLongitude() + ","
-					+ location.getProvider());
-
-			mLocationManager.removeUpdates(mFineLocationListener);
-		}
-
-		@Override
-		public void onProviderDisabled(final String provider) {
-			ProfilingUtil.log("onProviderDisabled");
-		}
-
-		@Override
-		public void onProviderEnabled(final String provider) {
-			ProfilingUtil.log("onProviderEnabled");
-		}
-
-		@Override
-		public void onStatusChanged(final String provider, final int status, final Bundle extras) {
-			ProfilingUtil.log("onStatusChanged");
-		}
-	}
 }
