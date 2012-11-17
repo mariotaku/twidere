@@ -11,27 +11,20 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
-import android.widget.Button;
 
 public class SlidingPanel extends ViewGroup {
-//	private static final String TAG = "Su.SlidingPanel";
 
-	private final int mButtonId;
-	private View mButton;
 	private final int mAnchorId;
 	private View mAnchor;
 	private final int mContentId;
 	private View mContent;
 
-	private final int mOpenOverlap;
 	private final int mClosedLimit;
 
 	private boolean mAnimating = false;
 	private int mFillOffset = 0;
 
 	private boolean mExpanded = true;
-
-	private Toggler mToggler;
 
 	public SlidingPanel(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
@@ -42,44 +35,29 @@ public class SlidingPanel extends ViewGroup {
 		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlidingPanel,
 				defStyle, 0);
 
-		final int buttonId = a.getResourceId(R.styleable.SlidingPanel_button, 0);
-		if (buttonId == 0) {
-			throw new IllegalArgumentException("The button attribute is required and must refer" +
-					" to a valid child");
-		}
-
 		final int anchorId = a.getResourceId(R.styleable.SlidingPanel_anchor, 0);
-		if (anchorId == buttonId) {
+		if (anchorId == 0) {
 			throw new IllegalArgumentException("The anchor attribute is required and must refer" +
 					" to a different child");
 		}
 
 		final int contentId = a.getResourceId(R.styleable.SlidingPanel_content, 0);
-		if (contentId == anchorId || contentId == buttonId) {
+		if (contentId == anchorId || contentId == 0) {
 			throw new IllegalArgumentException("The content attribute is required and must refer" +
 					" to a different child");
 		}
 
-		mOpenOverlap = a.getDimensionPixelSize(R.styleable.SlidingPanel_openOverlap, 0);
 		mClosedLimit = a.getDimensionPixelSize(R.styleable.SlidingPanel_closedLimit, 0);
 
 		a.recycle();
 
-		mButtonId = buttonId;
 		mAnchorId = anchorId;
 		mContentId = contentId;
 
-		mToggler = new Toggler();
 	}
 
 	@Override
 	protected void onFinishInflate() {
-		mButton = findViewById(mButtonId);
-		((Button)mButton).setText(">");
-		if (mButton == null) {
-			throw new IllegalArgumentException("The handle attribute must refer to a child");
-		}
-		
 		mAnchor = findViewById(mAnchorId);
 		if (mAnchor == null) {
 			throw new IllegalArgumentException("The anchor attribute must refer to a child");
@@ -98,13 +76,7 @@ public class SlidingPanel extends ViewGroup {
 		
 		final View anchor = mAnchor;
 		measureChild(anchor, widthMeasureSpec, heightMeasureSpec);
-		
-		final View button = mButton;
-		measureChild(button, MeasureSpec.makeMeasureSpec(anchor.getMeasuredWidth(),
-				MeasureSpec.EXACTLY),
-				heightMeasureSpec);
-		button.setOnClickListener(mToggler);
-		
+
 		final View content = mContent;
 		int contentWidth = width - mClosedLimit;
 		content.measure(MeasureSpec.makeMeasureSpec(contentWidth, MeasureSpec.EXACTLY),
@@ -115,32 +87,44 @@ public class SlidingPanel extends ViewGroup {
 
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		final View button = mButton;
-		button.layout(0, 0, button.getMeasuredWidth(), button.getMeasuredHeight());
-		
 		final View anchor = mAnchor;
-		anchor.layout(0, button.getMeasuredHeight(), anchor.getMeasuredWidth(),
-				button.getMeasuredHeight() + anchor.getMeasuredHeight());
+		anchor.layout(0, 0, anchor.getMeasuredWidth(),
+				getMeasuredHeight());
 		
 		final View content = mContent;
-		int contentLeft;
+		final int contentLeft;
 		if (mAnimating) {
 			contentLeft = content.getLeft();
 		} else if (mExpanded) {
 			contentLeft = mClosedLimit;
 		} else {
-			contentLeft = anchor.getRight() - mOpenOverlap;
+			contentLeft = anchor.getRight();
 		}
 		content.layout(contentLeft, 0,
 				contentLeft + content.getMeasuredWidth(),
 				content.getMeasuredHeight());
 	}
+	
+	public void open() {
+		if (mExpanded) return;
+		toggle();
+	}
 
+	public void close() {
+		if (!mExpanded) return;
+		toggle();
+	}
+	
+	public boolean isOpened() {
+		return mExpanded;
+	}
+	
 	public void toggle() {
+		if (mAnimating) return;
 		final View content = mContent;
 		
 		final View anchor = mAnchor;
-		final int offset = anchor.getMeasuredWidth() - mOpenOverlap - mClosedLimit;
+		final int offset = anchor.getMeasuredWidth() - mClosedLimit;
 		TranslateAnimation anim;
 		if (mExpanded) {
 			anim = new TranslateAnimation(0, offset, 0, 0);
@@ -152,35 +136,18 @@ public class SlidingPanel extends ViewGroup {
 		mExpanded = !mExpanded;
 		anim.setFillEnabled(true);
 		anim.setFillBefore(true);
-		anim.setDuration(300);
+		anim.setDuration(200);
 		anim.setInterpolator(new AccelerateDecelerateInterpolator());
 		anim.setAnimationListener(new AnimationFiller());
 		content.startAnimation(anim);
-	}
-	
-	private class Toggler implements OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			if (!mAnimating) {
-				toggle();
-			}
-		}
 	}
 	
 	private class AnimationFiller implements AnimationListener {
 
 		@Override
 		public void onAnimationEnd(Animation animation) {
+			mContent.offsetLeftAndRight(mFillOffset);
 			mAnimating = false;
-			final View content = mContent;
-			content.offsetLeftAndRight(mFillOffset);
-			final Button button = (Button) mButton;
-			if (mExpanded) {
-				button.setText(">");
-			} else {
-				button.setText("<");
-			}
 		}
 
 		@Override

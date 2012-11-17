@@ -65,7 +65,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		mFragment = new InternalSettingsFragment();
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.content, mFragment);
+		ft.replace(R.id.main, mFragment);
 		ft.commit();
 
 	}

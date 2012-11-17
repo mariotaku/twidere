@@ -12,11 +12,9 @@
 		<attr name="tabBackground" format="reference"/>
 	</declare-styleable>
 	<declare-styleable name="SlidingPanel">
-        <attr name="button" format="reference" />
-        <attr name="anchor" format="reference" />
-        <attr name="content" format="reference" />
-        <attr name="openOverlap" format="dimension" />
-        <attr name="closedLimit" format="dimension" />
+        <attr name="anchor" format="reference"/>
+        <attr name="content" format="reference"/>
+        <attr name="closedLimit" format="dimension"/>
     </declare-styleable>
 
 	

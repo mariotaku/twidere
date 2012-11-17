@@ -133,7 +133,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		setPagingEnabled(!left_pane_used);
 		final int count = fm.getBackStackEntryCount();
 		if (count == 0) {
-			bringLeftPaneToFront();
+			showLeftPane();
 		}
 	}
 

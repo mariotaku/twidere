@@ -69,14 +69,14 @@ public class SearchActivity extends MultiSelectActivity {
 			mActionBar.setDisplayHomeAsUpEnabled(count > 0);
 		}
 		if (count == 0) {
-			bringLeftPaneToFront();
+			showLeftPane();
 		}
 	}
 
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
+		mViewPager = (ExtendedViewPager) findViewById(R.id.main);
 		mPagerTab = (PagerTabStrip) findViewById(R.id.pager_tab);
 	}
 

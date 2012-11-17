@@ -1840,7 +1840,7 @@ public final class Utils implements Constants {
 			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
 			if (details_fragment instanceof DirectMessagesConversationFragment && details_fragment.isAdded()) {
 				((DirectMessagesConversationFragment) details_fragment).showConversation(account_id, conversation_id);
-				dual_pane_activity.bringRightPaneToFront();
+				dual_pane_activity.showRightPane();
 			} else {
 				final Fragment fragment = new DirectMessagesConversationFragment();
 				final Bundle args = new Bundle();
@@ -1913,7 +1913,7 @@ public final class Utils implements Constants {
 			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
 			if (details_fragment instanceof StatusFragment && details_fragment.isAdded()) {
 				((StatusFragment) details_fragment).displayStatus(status);
-				dual_pane_activity.bringRightPaneToFront();
+				dual_pane_activity.showRightPane();
 			} else {
 				final Fragment fragment = new StatusFragment();
 				final Bundle args = new Bundle(bundle);
@@ -2306,7 +2306,7 @@ public final class Utils implements Constants {
 			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
 			if (details_fragment instanceof UserProfileFragment && details_fragment.isAdded()) {
 				((UserProfileFragment) details_fragment).displayUser(user);
-				dual_pane_activity.bringRightPaneToFront();
+				dual_pane_activity.showRightPane();
 			} else {
 				final Fragment fragment = new UserProfileFragment();
 				final Bundle args = new Bundle(bundle);

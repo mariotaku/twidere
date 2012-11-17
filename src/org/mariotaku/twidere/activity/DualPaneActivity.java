@@ -40,22 +40,66 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import org.mariotaku.twidere.util.ExtendedViewGroupInterface;
+import org.mariotaku.twidere.view.SlidingPanel;
 
 @SuppressLint("Registered")
 public class DualPaneActivity extends BaseActivity implements OnBackStackChangedListener {
 
 	private SharedPreferences mPreferences;
 
-	private FrameLayout mFragmentContainerLeft, mFragmentContainerRight;
+	private SlidingPanel mSlidingPanel;
+	private FrameLayout mFragmentContainerLeft;
+	private ExtendedFrameLayout mPanelAnchor, mFragmentContainerRight;
 
 	private Fragment mDetailsFragment;
 
 	private boolean mDualPaneInPortrait, mDualPaneInLandscape;
 
-	public final void bringLeftPaneToFront() {
+	private ExtendedViewGroupInterface.TouchInterceptor mTouchInterceptorRight = new ExtendedFrameLayout.TouchInterceptor() {
+
+		public boolean onInterceptTouchEvent(ViewGroup view, MotionEvent event) {
+			final int action = event.getAction();
+			switch (action) {
+				case MotionEvent.ACTION_DOWN: {
+					showRightPane();
+					break;
+				}
+			}
+			return false;
+		}
+
+		public boolean onTouchEvent(ViewGroup view, MotionEvent event) {
+			return true;
+		}
+	
+	};
+
+	private ExtendedViewGroupInterface.TouchInterceptor mTouchInterceptorLeft = new ExtendedFrameLayout.TouchInterceptor() {
+
+		public boolean onInterceptTouchEvent(ViewGroup view, MotionEvent event) {
+			final int action = event.getAction();
+			switch (action) {
+				case MotionEvent.ACTION_DOWN: {
+					showLeftPane();
+					break;
+				}
+			}
+			return false;
+		}
+
+		public boolean onTouchEvent(ViewGroup view, MotionEvent event) {
+			return false;
+		}
+
+	};
+	
+	public final void showLeftPane() {
+		mSlidingPanel.close();
 	}
 
-	public final void bringRightPaneToFront() {
+	public final void showRightPane() {
+		mSlidingPanel.open();
 	}
 
 	public Fragment getDetailsFragment() {
@@ -81,19 +125,19 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 				if (entry == null) return;
 				final Fragment fragment = BackStackEntryTrojan.getFragmentInBackStackRecord(entry);
 				if (fragment instanceof Panes.Right) {
-					bringRightPaneToFront();
+					showRightPane();
 				} else if (fragment instanceof Panes.Left) {
-					bringLeftPaneToFront();
+					showLeftPane();
 				}
 			} else {
 				if (fm.findFragmentById(R.id.content) != null || left_pane_used) {
-					bringLeftPaneToFront();
+					showLeftPane();
 				} else if (right_pane_used) {
-					bringRightPaneToFront();
+					showRightPane();
 				}
 			}
 			if (main_view != null) {
-				//main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
+				main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
 			}
 		}
 	}
@@ -102,8 +146,10 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	public void onContentChanged() {
 		super.onContentChanged();
 		if (isDualPaneMode()) {
+			mSlidingPanel = (SlidingPanel) findViewById(R.id.main_container);
 			mFragmentContainerLeft = (FrameLayout) findViewById(PANE_LEFT);
-			mFragmentContainerRight = (FrameLayout) findViewById(PANE_RIGHT);
+			mFragmentContainerRight = (ExtendedFrameLayout) findViewById(PANE_RIGHT);
+			mPanelAnchor = (ExtendedFrameLayout) findViewById(R.id.panel_anchor);
 		}
 	}
 
@@ -128,9 +174,9 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 				break;
 		}
 		setContentView(layout);
-		if (mFragmentContainerRight != null) {
-			mFragmentContainerRight.setBackgroundResource(getPaneBackground());
-		}
+		mFragmentContainerRight.setBackgroundResource(getPaneBackground());
+		mFragmentContainerRight.setTouchInterceptor(mTouchInterceptorRight);
+		mPanelAnchor.setTouchInterceptor(mTouchInterceptorLeft);
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 	}
 
@@ -138,12 +184,12 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		switch (pane) {
 			case PANE_LEFT: {
-				bringLeftPaneToFront();
+				showLeftPane();
 				ft.replace(PANE_LEFT, fragment);
 				break;
 			}
 			case PANE_RIGHT: {
-				bringRightPaneToFront();
+				showRightPane();
 				ft.replace(PANE_RIGHT, fragment);
 				break;
 			}

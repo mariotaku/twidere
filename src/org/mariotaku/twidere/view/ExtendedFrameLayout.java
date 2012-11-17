@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.view;
 
-import org.mariotaku.twidere.util.ExtendedViewInterface;
+import org.mariotaku.twidere.util.ExtendedViewGroupInterface;
  
 import android.content.Context;
 import android.util.AttributeSet;
@@ -27,7 +27,7 @@ import android.view.MotionEvent;
 import android.widget.FrameLayout;
 import android.view.View;
 
-public class ExtendedFrameLayout extends FrameLayout implements ExtendedViewInterface {
+public final class ExtendedFrameLayout extends FrameLayout implements ExtendedViewGroupInterface {
 
 	private TouchInterceptor mTouchInterceptor;
 	private OnSizeChangedListener mOnSizeChangedListener;
@@ -47,7 +47,8 @@ public class ExtendedFrameLayout extends FrameLayout implements ExtendedViewInte
 	@Override
 	public boolean onInterceptTouchEvent(final MotionEvent event) {
 		if (mTouchInterceptor != null) {
-			mTouchInterceptor.onInterceptTouchEvent(this, event);
+			final boolean ret = mTouchInterceptor.onInterceptTouchEvent(this, event);
+			if (ret) return true;
 		}
 		return super.onInterceptTouchEvent(event);
 	}
@@ -55,7 +56,8 @@ public class ExtendedFrameLayout extends FrameLayout implements ExtendedViewInte
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		if (mTouchInterceptor != null) {
-			mTouchInterceptor.onTouchEvent(this, event);
+			final boolean ret = mTouchInterceptor.onTouchEvent(this, event);
+			if (ret) return true;
 		}
 		return super.onTouchEvent(event);
 	}

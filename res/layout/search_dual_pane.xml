@@ -1,59 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:twidere="http://schemas.android.com/apk/res/org.mariotaku.twidere">
 
-	<FrameLayout
+	<org.mariotaku.twidere.view.SlidingPanel
 		android:id="@+id/main_container"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="match_parent"
+		twidere:anchor="@+id/panel_anchor"
+		twidere:content="@+id/fragment_container_right"
+		twidere:closedLimit="@dimen/pane_closed_limit">
 
-		<LinearLayout
-			android:id="@+id/left_pane_layer"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:baselineAligned="false"
-			android:orientation="horizontal">
+		<org.mariotaku.twidere.view.ExtendedFrameLayout
+			android:id="@+id/panel_anchor"
+			android:layout_width="@dimen/pane_left_width"
+			android:layout_height="match_parent">
 
-			<org.mariotaku.twidere.view.ExtendedFrameLayout
-				android:id="@+id/left_pane_container"
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_weight="@integer/pane_left_content_weight">
+			<org.mariotaku.twidere.view.ExtendedViewPager
+				android:id="@+id/main"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
 
-				<FrameLayout
-					android:id="@+id/main"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent">
+				<android.support.v4.view.PagerTabStrip
+					android:id="@+id/pager_tab"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="top"/>
 
-					<org.mariotaku.twidere.view.ExtendedViewPager
-						android:id="@+id/pager"
-						android:layout_width="match_parent"
-						android:layout_height="match_parent">
-					
-						<android.support.v4.view.PagerTabStrip
-							android:id="@+id/pager_tab"
-							android:layout_width="wrap_content"
-							android:layout_height="wrap_content"
-							android:layout_gravity="top"/>
-
-					</org.mariotaku.twidere.view.ExtendedViewPager>
-				</FrameLayout>
-
-				<FrameLayout
-					android:id="@+id/left_pane"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"/>
-			</org.mariotaku.twidere.view.ExtendedFrameLayout>
+			</org.mariotaku.twidere.view.ExtendedViewPager>
+			
+			<FrameLayout
+				android:id="@+id/fragment_container_left"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
 
 			<View
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_weight="@integer/pane_left_shadow_weight"/>
-		</LinearLayout>
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+		</org.mariotaku.twidere.view.ExtendedFrameLayout>
 
-		<org.mariotaku.twidere.view.SlidePane
-			android:id="@+id/right_pane_layer"
+		<org.mariotaku.twidere.view.ExtendedFrameLayout
+			android:id="@+id/fragment_container_right"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"/>
-	</FrameLayout>
+	</org.mariotaku.twidere.view.SlidingPanel>
 
 </merge>
