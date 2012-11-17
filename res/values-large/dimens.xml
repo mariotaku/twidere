@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<dimen name="pane_left_width">375dp</dimen>
+	<dimen name="pane_closed_limit">150dp</dimen>
+
+</resources>

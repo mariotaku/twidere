@@ -10,5 +10,7 @@
 	<dimen name="notification_large_icon_width">64dp</dimen>
 	<!-- The width of the big icons in notifications. -->
 	<dimen name="notification_large_icon_height">64dp</dimen>
+	<dimen name="pane_left_width">300dp</dimen>
+	<dimen name="pane_closed_limit">120dp</dimen>
 
 </resources>

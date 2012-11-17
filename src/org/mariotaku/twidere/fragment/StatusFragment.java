@@ -65,6 +65,7 @@ import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
+import org.mariotaku.twidere.view.ExtendedFrameLayout;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -96,8 +97,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -155,7 +154,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private Gallery mGallery;
 	private View mStatusView;
 	private View mLoadImagesIndicator;
-	private FrameLayout mStatusContainer;
+	private ExtendedFrameLayout mStatusContainer;
 	private ListView mListView;
 
 	private ParcelableStatus mStatus;
@@ -428,14 +427,15 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 	};
 
-	private final OnGlobalLayoutListener mOnGlobalLayoutListener = new OnGlobalLayoutListener() {
+	private final ExtendedFrameLayout.OnSizeChangedListener mOnSizeChangedListener = new ExtendedFrameLayout.OnSizeChangedListener() {
+
 		@Override
-		public void onGlobalLayout() {
-			// mMainContent.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+		public void onSizeChanged(View view, int w, int h, int oldw, int oldh) {
 			if (getActivity() == null) return;
 			final float density = getResources().getDisplayMetrics().density;
-			mStatusView.setMinimumHeight((int) (mStatusContainer.getHeight() - density * 2));
+			mStatusView.setMinimumHeight(h - (int) (density * 2));
 		}
+
 	};
 
 	public void displayStatus(final ParcelableStatus status) {
@@ -638,14 +638,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.status, null, false);
 		mMainContent = view.findViewById(R.id.content);
-		final ViewTreeObserver observer = mMainContent.getViewTreeObserver();
-		if (observer.isAlive()) {
-			observer.addOnGlobalLayoutListener(mOnGlobalLayoutListener);
-		}
 		mStatusLoadProgress = (ProgressBar) view.findViewById(R.id.status_load_progress);
 		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
-		mStatusContainer = (FrameLayout) view.findViewById(R.id.status_container);
+		mStatusContainer = (ExtendedFrameLayout) view.findViewById(R.id.status_container);
 		mStatusContainer.addView(super.onCreateView(inflater, container, savedInstanceState));
+		mStatusContainer.setOnSizeChangedListener(mOnSizeChangedListener);
 		mStatusView = inflater.inflate(R.layout.status_content, null, false);
 		mImagesPreviewContainer = mStatusView.findViewById(R.id.images_preview);
 		mLocationView = (TextView) mStatusView.findViewById(R.id.location_view);

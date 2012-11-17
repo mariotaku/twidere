@@ -22,7 +22,6 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
-import org.mariotaku.twidere.view.ExtendedFrameLayout.TouchInterceptor;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -41,30 +40,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import org.mariotaku.twidere.view.SlidePane;
 
 @SuppressLint("Registered")
 public class DualPaneActivity extends BaseActivity implements OnBackStackChangedListener {
 
 	private SharedPreferences mPreferences;
 
-	private FrameLayout mLeftPaneContainer, mRightPaneContainer;
-	private ViewGroup mLeftPaneLayer, mRightPaneLayer;
+	private FrameLayout mFragmentContainerLeft, mFragmentContainerRight;
 
 	private Fragment mDetailsFragment;
 
 	private boolean mDualPaneInPortrait, mDualPaneInLandscape;
 
 	public final void bringLeftPaneToFront() {
-		if (mRightPaneLayer instanceof SlidePane) {
-			((SlidePane)mRightPaneLayer).close();
-		}
 	}
 
 	public final void bringRightPaneToFront() {
-		if (mRightPaneLayer instanceof SlidePane) {
-			((SlidePane)mRightPaneLayer).open();
-		}
 	}
 
 	public Fragment getDetailsFragment() {
@@ -72,10 +63,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	}
 
 	public final boolean isDualPaneMode() {
-		if (!(findViewById(PANE_LEFT_CONTAINER) instanceof ViewGroup && findViewById(PANE_RIGHT_CONTAINER) instanceof ViewGroup))
-			return false;
-		final View main_container = findViewById(R.id.main_container);
-		return main_container != null && main_container instanceof FrameLayout;
+		return findViewById(PANE_LEFT) instanceof ViewGroup && findViewById(PANE_RIGHT) instanceof ViewGroup;
 	}
 
 	@Override
@@ -104,9 +92,8 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 					bringRightPaneToFront();
 				}
 			}
-			mRightPaneContainer.setBackgroundResource(getPaneBackground());
 			if (main_view != null) {
-				main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
+				//main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
 			}
 		}
 	}
@@ -115,13 +102,8 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	public void onContentChanged() {
 		super.onContentChanged();
 		if (isDualPaneMode()) {
-			mLeftPaneContainer = (FrameLayout) findViewById(R.id.left_pane_container);
-			mLeftPaneLayer = (ViewGroup) findViewById(R.id.left_pane_layer);
-			mRightPaneContainer = (FrameLayout) findViewById(R.id.right_pane_container);
-			mRightPaneLayer = (ViewGroup) findViewById(R.id.right_pane_layer);
-			if (mRightPaneLayer instanceof SlidePane) {
-				((SlidePane)mRightPaneLayer).closeNoAnimation();
-			}
+			mFragmentContainerLeft = (FrameLayout) findViewById(PANE_LEFT);
+			mFragmentContainerRight = (FrameLayout) findViewById(PANE_RIGHT);
 		}
 	}
 
@@ -146,8 +128,8 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 				break;
 		}
 		setContentView(layout);
-		if (mRightPaneContainer != null) {
-			mRightPaneContainer.setBackgroundResource(getPaneBackground());
+		if (mFragmentContainerRight != null) {
+			mFragmentContainerRight.setBackgroundResource(getPaneBackground());
 		}
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 	}

@@ -165,7 +165,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
+		mViewPager = (ExtendedViewPager) findViewById(R.id.main);
 		mComposeButton = (ImageButton) findViewById(R.id.button_compose);
 	}
 

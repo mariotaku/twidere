@@ -20,27 +20,27 @@
 package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.util.ExtendedViewInterface;
- 
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.view.View;
 
-public class ExtendedFrameLayout extends FrameLayout implements ExtendedViewInterface {
+public class ExtendedLinearLayout extends LinearLayout implements ExtendedViewInterface {
 
 	private TouchInterceptor mTouchInterceptor;
 	private OnSizeChangedListener mOnSizeChangedListener;
 
-	public ExtendedFrameLayout(final Context context) {
+	public ExtendedLinearLayout(final Context context) {
 		super(context);
 	}
 
-	public ExtendedFrameLayout(final Context context, final AttributeSet attrs) {
+	public ExtendedLinearLayout(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public ExtendedFrameLayout(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ExtendedLinearLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
