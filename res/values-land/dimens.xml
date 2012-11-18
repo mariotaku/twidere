@@ -3,5 +3,6 @@
 
 	<dimen name="set_color_height">180dp</dimen>
 	<dimen name="pane_spacing_right">200dp</dimen>
+	<dimen name="pane_left_width">260dp</dimen>
 
 </resources>
