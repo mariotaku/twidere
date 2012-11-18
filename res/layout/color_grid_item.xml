@@ -10,13 +10,14 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"/>
 
-	<TextView android:layerType="software"
+	<TextView
 		android:id="@+id/text"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
 		android:background="#80000000"
 		android:gravity="center"
+		android:layerType="software"
 		android:text="@string/customize"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorPrimary"
