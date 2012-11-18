@@ -78,7 +78,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 					showLeftPane();
 				}
 			} else {
-				if (fm.findFragmentById(R.id.content) != null || left_pane_used) {
+				if (fm.findFragmentById(R.id.main) != null || left_pane_used) {
 					showLeftPane();
 				} else if (right_pane_used) {
 					showRightPane();

@@ -75,7 +75,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						showFragment(mFragment, true);
 					} else {
 						final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-						ft.replace(R.id.content, mFragment);
+						ft.replace(R.id.main, mFragment);
 						ft.commit();
 					}
 					return;
@@ -116,7 +116,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 	protected void onStart() {
 		if (isDualPaneMode() && mFragment != null) {
 			final FragmentManager fm = getSupportFragmentManager();
-			final Fragment f = fm.findFragmentById(R.id.content);
+			final Fragment f = fm.findFragmentById(R.id.main);
 			if (f != null) {
 				final FragmentTransaction ft = fm.beginTransaction();
 				ft.remove(f);

@@ -106,7 +106,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		if (KEY_CUSTOM_TABS.equals(key)) {
 			if (isDualPaneMode()) {
 				final Fragment fragment = new CustomTabsFragment();
-				showFragment(fragment, false);
+				showFragment(fragment, true);
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_CUSTOM_TABS);
 				intent.setPackage(getPackageName());
@@ -125,7 +125,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		} else if (KEY_EXTENSIONS.equals(key)) {
 			if (isDualPaneMode()) {
 				final Fragment fragment = new ExtensionsListFragment();
-				showFragment(fragment, false);
+				showFragment(fragment, true);
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_EXTENSIONS);
 				intent.setPackage(getPackageName());
