@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<org.mariotaku.twidere.view.ExtendedViewPager
+		android:id="@+id/main"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<android.support.v4.view.PagerTabStrip
+			android:id="@+id/pager_tab"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="top"/>
+	</org.mariotaku.twidere.view.ExtendedViewPager>
+
+	<FrameLayout
+		android:id="@+id/fragment_container_left"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+
+</FrameLayout>

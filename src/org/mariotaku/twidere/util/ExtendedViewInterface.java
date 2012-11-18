@@ -1,6 +1,5 @@
 package org.mariotaku.twidere.util;
 
-import android.view.MotionEvent;
 import android.view.View;
 
 public interface ExtendedViewInterface {

@@ -362,6 +362,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 	}
 
 	// This simply disables dual pane layout.
+	@Override
 	int getDualPaneLayoutRes() {
 		return getNormalLayoutRes();
 	}

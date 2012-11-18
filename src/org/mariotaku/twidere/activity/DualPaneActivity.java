@@ -21,7 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.view.ExtendedFrameLayout;
+import org.mariotaku.twidere.view.SlidingPaneView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -36,71 +36,19 @@ import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import org.mariotaku.twidere.util.ExtendedViewGroupInterface;
-import org.mariotaku.twidere.view.SlidingPanel;
 
 @SuppressLint("Registered")
 public class DualPaneActivity extends BaseActivity implements OnBackStackChangedListener {
 
 	private SharedPreferences mPreferences;
 
-	private SlidingPanel mSlidingPanel;
-	private FrameLayout mFragmentContainerLeft;
-	private ExtendedFrameLayout mPanelAnchor, mFragmentContainerRight;
+	private SlidingPaneView mSlidingPane;
 
 	private Fragment mDetailsFragment;
 
 	private boolean mDualPaneInPortrait, mDualPaneInLandscape;
-
-	private ExtendedViewGroupInterface.TouchInterceptor mTouchInterceptorRight = new ExtendedFrameLayout.TouchInterceptor() {
-
-		public boolean onInterceptTouchEvent(ViewGroup view, MotionEvent event) {
-			final int action = event.getAction();
-			switch (action) {
-				case MotionEvent.ACTION_DOWN: {
-					showRightPane();
-					break;
-				}
-			}
-			return false;
-		}
-
-		public boolean onTouchEvent(ViewGroup view, MotionEvent event) {
-			return true;
-		}
-	
-	};
-
-	private ExtendedViewGroupInterface.TouchInterceptor mTouchInterceptorLeft = new ExtendedFrameLayout.TouchInterceptor() {
-
-		public boolean onInterceptTouchEvent(ViewGroup view, MotionEvent event) {
-			final int action = event.getAction();
-			switch (action) {
-				case MotionEvent.ACTION_DOWN: {
-					showLeftPane();
-					break;
-				}
-			}
-			return false;
-		}
-
-		public boolean onTouchEvent(ViewGroup view, MotionEvent event) {
-			return false;
-		}
-
-	};
-	
-	public final void showLeftPane() {
-		mSlidingPanel.close();
-	}
-
-	public final void showRightPane() {
-		mSlidingPanel.open();
-	}
 
 	public Fragment getDetailsFragment() {
 		return mDetailsFragment;
@@ -145,12 +93,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		if (isDualPaneMode()) {
-			mSlidingPanel = (SlidingPanel) findViewById(R.id.main_container);
-			mFragmentContainerLeft = (FrameLayout) findViewById(PANE_LEFT);
-			mFragmentContainerRight = (ExtendedFrameLayout) findViewById(PANE_RIGHT);
-			mPanelAnchor = (ExtendedFrameLayout) findViewById(R.id.panel_anchor);
-		}
+		mSlidingPane = (SlidingPaneView) findViewById(R.id.sliding_pane);
 	}
 
 	@Override
@@ -174,9 +117,10 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 				break;
 		}
 		setContentView(layout);
-		mFragmentContainerRight.setBackgroundResource(getPaneBackground());
-		mFragmentContainerRight.setTouchInterceptor(mTouchInterceptorRight);
-		mPanelAnchor.setTouchInterceptor(mTouchInterceptorLeft);
+		final View pane_right = findViewById(PANE_RIGHT);
+		if (pane_right != null) {
+			pane_right.setBackgroundResource(getPaneBackground());
+		}
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 	}
 
@@ -207,6 +151,18 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 			showAtPane(PANE_RIGHT, fragment, add_to_backstack);
 		} else {
 			showAtPane(PANE_LEFT, fragment, add_to_backstack);
+		}
+	}
+
+	public final void showLeftPane() {
+		if (mSlidingPane != null) {
+			mSlidingPane.animateClose();
+		}
+	}
+
+	public final void showRightPane() {
+		if (mSlidingPane != null) {
+			mSlidingPane.animateOpen();
 		}
 	}
 

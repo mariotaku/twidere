@@ -20,12 +20,11 @@
 package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.util.ExtendedViewGroupInterface;
- 
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
-import android.view.View;
 
 public final class ExtendedFrameLayout extends FrameLayout implements ExtendedViewGroupInterface {
 
@@ -62,10 +61,12 @@ public final class ExtendedFrameLayout extends FrameLayout implements ExtendedVi
 		return super.onTouchEvent(event);
 	}
 
+	@Override
 	public void setOnSizeChangedListener(final OnSizeChangedListener listener) {
 		mOnSizeChangedListener = listener;
 	}
 
+	@Override
 	public void setTouchInterceptor(final TouchInterceptor listener) {
 		mTouchInterceptor = listener;
 	}

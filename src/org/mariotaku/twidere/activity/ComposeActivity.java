@@ -475,7 +475,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	/** Sets the mRecentLocation object to the current location of the device **/
 	@Override
 	public void onLocationChanged(final Location location) {
-		if (mRecentLocation == null) {			
+		if (mRecentLocation == null) {
 			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 			setSupportProgressBarIndeterminateVisibility(false);
 		}

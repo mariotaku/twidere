@@ -25,10 +25,10 @@ import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredKeywordsFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredSourcesFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
+import org.mariotaku.twidere.view.ExtendedViewPager;
+import org.mariotaku.twidere.view.TabPageIndicator;
 
 import android.os.Bundle;
-import android.support.v4.view.PagerTabStrip;
-import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -36,16 +36,16 @@ public class FiltersActivity extends BaseActivity {
 
 	private ActionBar mActionBar;
 
-	private ViewPager mViewPager;
-	private PagerTabStrip mPagerTab;
+	private ExtendedViewPager mViewPager;
+	private TabPageIndicator mIndicator;
 
 	private TabsAdapter mAdapter;
 
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		mViewPager = (ViewPager) findViewById(R.id.pager);
-		mPagerTab = (PagerTabStrip) findViewById(R.id.pager_tab);
+		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
+		mIndicator = (TabPageIndicator) findViewById(android.R.id.tabs);
 	}
 
 	@Override
@@ -56,12 +56,15 @@ public class FiltersActivity extends BaseActivity {
 		if (mActionBar != null) {
 			mActionBar.setDisplayHomeAsUpEnabled(true);
 		}
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), null);
+		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mAdapter.addTab(FilteredUsersFragment.class, null, getString(R.string.users), null, 0);
 		mAdapter.addTab(FilteredKeywordsFragment.class, null, getString(R.string.keywords), null, 1);
 		mAdapter.addTab(FilteredSourcesFragment.class, null, getString(R.string.sources), null, 2);
 		mViewPager.setAdapter(mAdapter);
-		mPagerTab.setTabIndicatorColorResource(R.color.holo_blue_light);
+		mViewPager.setPagingEnabled(false);
+		mIndicator.setViewPager(mViewPager);
+		mIndicator.setDisplayLabel(true);
+		mIndicator.setDisplayIcon(false);
 	}
 
 	@Override

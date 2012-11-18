@@ -102,7 +102,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -430,7 +429,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private final ExtendedFrameLayout.OnSizeChangedListener mOnSizeChangedListener = new ExtendedFrameLayout.OnSizeChangedListener() {
 
 		@Override
-		public void onSizeChanged(View view, int w, int h, int oldw, int oldh) {
+		public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
 			if (getActivity() == null) return;
 			final float density = getResources().getDisplayMetrics().density;
 			mStatusView.setMinimumHeight(h - (int) (density * 2));

@@ -11,11 +11,40 @@
 		<attr name="tabTextStyle" format="reference"/>
 		<attr name="tabBackground" format="reference"/>
 	</declare-styleable>
-	<declare-styleable name="SlidingPanel">
-        <attr name="anchor" format="reference"/>
-        <attr name="content" format="reference"/>
-        <attr name="closedLimit" format="dimension"/>
-    </declare-styleable>
 
-	
+	<!-- Default fade types. -->
+	<attr name="fadeType">
+
+		<!-- Fade is disabled. -->
+		<enum name="none" value="0"/>
+		<!-- Fade applies to actions container. -->
+		<enum name="left" value="1"/>
+		<!-- Fade applies to content container. -->
+		<enum name="right" value="2"/>
+		<!-- Fade applies to every container. -->
+		<enum name="both" value="3"/>
+	</attr>
+
+	<declare-styleable name="ActionsContentView">
+
+		<!-- Spacing value. -->
+		<attr name="spacingRight" format="dimension"/>
+		<!-- Spacing value for actions container. -->
+		<attr name="spacingLeft" format="dimension"/>
+		<!-- Actions layout ID to link at view creation time. -->
+		<attr name="layoutLeft" format="reference"/>
+		<!-- Content layout ID to link at view creation time. -->
+		<attr name="layoutRight" format="reference"/>
+		<!-- Drawable to be used to draw shadow dropped by content view to actions one. -->
+		<attr name="shadowDrawable" format="reference"/>
+		<!-- Shadow width. -->
+		<attr name="shadowWidth" format="dimension"/>
+		<!-- Fade type. -->
+		<attr name="fadeType"/>
+		<!-- Max fade value. -->
+		<attr name="fadeMax" format="integer"/>
+		<!-- Indicates how long flinging will take time in milliseconds. -->
+		<attr name="flingDuration" format="integer"/>
+	</declare-styleable>
+
 </resources>

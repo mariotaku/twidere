@@ -12,14 +12,13 @@
 			android:layout_height="match_parent"
 			android:layout_weight="0">
 
-			<include layout="@layout/home_pane_left_content"/>
+			<include layout="@layout/search_pane_left_content"/>
 
 			<View
 				android:layout_width="@dimen/default_slidingpane_shadow_width"
 				android:layout_height="match_parent"
 				android:layout_gravity="right"
 				android:background="@drawable/shadow_holo"/>
-
 		</FrameLayout>
 
 		<FrameLayout
@@ -28,14 +27,5 @@
 			android:layout_height="match_parent"
 			android:layout_weight="1"/>
 	</LinearLayout>
-
-	<ImageButton
-		android:id="@+id/button_compose"
-		android:layout_width="56dp"
-		android:layout_height="56dp"
-		android:layout_gravity="bottom|right"
-		android:contentDescription="@string/compose"
-		android:onClick="onClick"
-		android:src="@drawable/ic_menu_tweet"/>
 
 </merge>

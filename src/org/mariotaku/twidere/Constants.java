@@ -473,7 +473,6 @@ public interface Constants extends TwitterConstants {
 
 	public static final int PANE_LEFT = R.id.fragment_container_left;
 	public static final int PANE_RIGHT = R.id.fragment_container_right;
-	public static final int PANE_RIGHT_CONTAINER = R.id.right_pane_container;
 
 	public static final int NOTIFICATION_ID_HOME_TIMELINE = 1;
 	public static final int NOTIFICATION_ID_MENTIONS = 2;

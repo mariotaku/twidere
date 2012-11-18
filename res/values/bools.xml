@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<item name="tab_display_label" type="bool">false</item>
-	<item name="home_display_icon" type="bool">false</item>
-	<item name="hw_accel_supported" type="bool">false</item>
-	<item name="hires_profile_image" type="bool">false</item>
-	<item name="should_disable_scroll" type="bool">false</item>
+	<bool name="tab_display_label">false</bool>
+	<bool name="home_display_icon">false</bool>
+	<bool name="hw_accel_supported">false</bool>
+	<bool name="hires_profile_image">false</bool>
+	<bool name="should_disable_scroll">false</bool>
 
 </resources>

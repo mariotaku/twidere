@@ -2,6 +2,6 @@
 <resources>
 
 	<dimen name="pane_left_width">375dp</dimen>
-	<dimen name="pane_closed_limit">150dp</dimen>
+	<dimen name="pane_spacing_right">150dp</dimen>
 
 </resources>

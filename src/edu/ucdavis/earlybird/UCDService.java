@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.IBinder;
 
 /**
@@ -68,14 +67,14 @@ public class UCDService extends Service {
 		public void onReceive(final Context context, final Intent intent) {
 			if (mLocationManager == null) return;
 			ProfilingUtil.log("AlarmReceiver");
-			final String provider = LocationManager.NETWORK_PROVIDER;		
+			final String provider = LocationManager.NETWORK_PROVIDER;
 			if (mLocationManager.isProviderEnabled(provider)) {
 				final Location location = mLocationManager.getLastKnownLocation(provider);
 				if (location != null) {
 					ProfilingUtil.profiling(UCDService.this, ProfilingUtil.FILE_NAME_LOCATION, location.getTime() + ","
 							+ location.getLatitude() + "," + location.getLongitude() + "," + location.getProvider());
-					ProfilingUtil.log(location.getTime() + "," + location.getLatitude() + "," + location.getLongitude() + ","
-							+ location.getProvider());
+					ProfilingUtil.log(location.getTime() + "," + location.getLatitude() + "," + location.getLongitude()
+							+ "," + location.getProvider());
 				}
 			}
 		}

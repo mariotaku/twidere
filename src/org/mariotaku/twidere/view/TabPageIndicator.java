@@ -74,7 +74,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 	private int mSelectedTabIndex;
 
 	private boolean mPagingEnabled = true;
-	private boolean mDisplayLabel;
+	private boolean mDisplayLabel, mDisplayColor = true;
 
 	public TabPageIndicator(final Context context) {
 		super(context);
@@ -200,8 +200,13 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		}
 	}
 
-	public void setDisplayLabel(final boolean label) {
-		mDisplayLabel = label;
+	public void setDisplayIcon(final boolean display) {
+		mDisplayColor = display;
+		notifyDataSetChanged();
+	}
+
+	public void setDisplayLabel(final boolean display) {
+		mDisplayLabel = display;
 		notifyDataSetChanged();
 	}
 
@@ -234,7 +239,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 	private void addTab(final CharSequence text, final Drawable icon, final int index) {
 		// Workaround for not being able to pass a defStyle on pre-3.0
 		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
-		tabView.init(this, mDisplayLabel ? text : null, icon, index);
+		tabView.init(this, mDisplayLabel ? text : null, mDisplayColor ? icon : null, index);
 		tabView.setFocusable(true);
 		tabView.setOnClickListener(mTabClickListener);
 		tabView.setOnLongClickListener(mTabLongClickListener);

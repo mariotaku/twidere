@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="51"
+	android:versionCode="52"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -90,8 +90,8 @@
 			android:name=".activity.ComposeActivity"
 			android:label="@string/compose"
 			android:launchMode="singleTop"
-			android:windowSoftInputMode="adjustResize"
-			android:theme="@style/Theme.Twidere.Light.Dialog">
+			android:theme="@style/Theme.Twidere.Light.Dialog"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter android:label="@string/compose">
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.COMPOSE"/>

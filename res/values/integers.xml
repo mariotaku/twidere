@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<item name="pane_left_content_weight" type="integer">5</item>
-	<item name="pane_left_shadow_weight" type="integer">3</item>
-	<item name="pane_right_content_weight" type="integer">5</item>
-	<item name="pane_right_shadow_weight" type="integer">3</item>
+	<integer name="pane_left_content_weight">5</integer>
+	<integer name="pane_left_shadow_weight">3</integer>
+	<integer name="pane_right_content_weight">5</integer>
+	<integer name="pane_right_shadow_weight">3</integer>
+	<integer name="default_sliding_pane_fade_max">128</integer>
+	<integer name="default_sliding_pane_fling_duration">900</integer>
 
 </resources>

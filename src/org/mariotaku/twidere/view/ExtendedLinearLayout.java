@@ -25,7 +25,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
-import android.view.View;
 
 public final class ExtendedLinearLayout extends LinearLayout implements ExtendedViewGroupInterface {
 
@@ -61,12 +60,13 @@ public final class ExtendedLinearLayout extends LinearLayout implements Extended
 		}
 		return super.onTouchEvent(event);
 	}
-	
 
+	@Override
 	public void setOnSizeChangedListener(final OnSizeChangedListener listener) {
 		mOnSizeChangedListener = listener;
 	}
 
+	@Override
 	public void setTouchInterceptor(final TouchInterceptor listener) {
 		mTouchInterceptor = listener;
 	}
