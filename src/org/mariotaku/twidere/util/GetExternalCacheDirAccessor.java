@@ -25,7 +25,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 
-public class GetExternalCacheDirAccessor {
+public final class GetExternalCacheDirAccessor {
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
 	public static File getExternalCacheDir(final Context context) {

@@ -19,8 +19,7 @@
 
 package org.mariotaku.twidere.util;
 
-import static android.os.Environment.getExternalStorageDirectory;
-import static android.os.Environment.getExternalStorageState;
+import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,8 +32,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import android.content.Context;
-import android.os.Build;
-import android.os.Environment;
 
 public class SerializationUtil {
 
@@ -44,15 +41,7 @@ public class SerializationUtil {
 
 	public static String getSerializationFilePath(final Context context, final Object... args) {
 		if (context == null || args == null || args.length == 0) return null;
-		final File cache_dir;
-		if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-			cache_dir = new File(
-					Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(context)
-							: new File(getExternalStorageDirectory().getPath() + "/Android/data/"
-									+ context.getPackageName() + "/cache/"), SERIALIZATION_CACHE_DIR);
-		} else {
-			cache_dir = new File(context.getCacheDir(), SERIALIZATION_CACHE_DIR);
-		}
+		final File cache_dir = getBestCacheDir(context, SERIALIZATION_CACHE_DIR);
 		if (!cache_dir.exists()) {
 			cache_dir.mkdirs();
 		}

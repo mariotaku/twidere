@@ -19,10 +19,9 @@
 
 package org.mariotaku.twidere.activity;
 
-import static android.os.Environment.getExternalStorageDirectory;
-import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
+import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.parseString;
@@ -52,9 +51,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -376,14 +373,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private void init() {
 			/* Find the dir to save cached images. */
-			if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-				mCacheDir = new File(
-						Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(context)
-								: new File(getExternalStorageDirectory().getPath() + "/Android/data/"
-										+ context.getPackageName() + "/cache/"), CACHE_DIR_NAME);
-			} else {
-				mCacheDir = new File(context.getCacheDir(), CACHE_DIR_NAME);
-			}
+			mCacheDir = getBestCacheDir(context, CACHE_DIR_NAME);
 			if (mCacheDir != null && !mCacheDir.exists()) {
 				mCacheDir.mkdirs();
 			}

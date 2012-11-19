@@ -163,6 +163,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -398,6 +399,11 @@ public final class Utils implements Constants {
 		else if (status.retweeted_by_id == status.account_id)
 			return service.destroyStatus(status.account_id, status.retweet_id);
 		return -1;
+	}
+	
+	public static boolean checkActivityValidity(final Context context, final Intent intent) {
+		final PackageManager pm = context.getPackageManager();
+		return !pm.queryIntentActivities(intent, 0).isEmpty();
 	}
 
 	public static boolean classEquals(final Class<?> cls1, final Class<?> cls2) {
@@ -850,12 +856,27 @@ public final class Utils implements Constants {
 		return url;
 	}
 
+	public static File getBestCacheDir(final Context context, final String cache_dir_name) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			final File ext_cache_dir = GetExternalCacheDirAccessor.getExternalCacheDir(context);
+			if (ext_cache_dir != null && ext_cache_dir.isDirectory())
+				return new File(ext_cache_dir, cache_dir_name);
+		} else {
+			final File ext_storage_dir = Environment.getExternalStorageDirectory();
+			if (ext_storage_dir != null && ext_storage_dir.isDirectory()) {
+				final String ext_cache_path = ext_storage_dir.getAbsolutePath() + "/Android/data/" + context.getPackageName() + "/cache/";
+				return new File(ext_cache_path, cache_dir_name);
+			}
+		}
+		return new File(context.getCacheDir(), cache_dir_name);
+	}
+
 	public static String getBrowserUserAgent(final Context context) {
 		if (context == null) return null;
 		final WebView wv = new WebView(context);
 		return wv.getSettings().getUserAgentString();
 	}
-
+	
 	public static Bitmap getColorPreviewBitmap(final Context context, final int color) {
 		if (context == null) return null;
 		final float density = context.getResources().getDisplayMetrics().density;

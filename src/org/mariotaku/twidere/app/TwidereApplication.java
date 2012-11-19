@@ -41,7 +41,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import edu.ucdavis.earlybird.UCDService;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
-	;
+	
+	private LazyImageLoader.URLBitmapLruCache mURLBitmapLruCache;
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
@@ -55,6 +56,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private final ArrayList<Long> mSelectedUserIds = new ArrayList<Long>();
 
 	private HostAddressResolver mResolver;
+
+	public LazyImageLoader.URLBitmapLruCache getURLBitmapLruCache() {
+		if (mURLBitmapLruCache != null) return mURLBitmapLruCache;
+		return mURLBitmapLruCache = new LazyImageLoader.URLBitmapLruCache();
+	}
 
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager != null) return mAsyncTaskManager;
@@ -74,14 +80,14 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		if (mPreviewImageLoader != null) return mPreviewImageLoader;
 		final int preview_image_size = getResources().getDimensionPixelSize(R.dimen.preview_image_size);
 		return mPreviewImageLoader = new LazyImageLoader(this, DIR_NAME_CACHED_THUMBNAILS,
-				R.drawable.image_preview_fallback, preview_image_size, preview_image_size, 10);
+				R.drawable.image_preview_fallback, preview_image_size, preview_image_size);
 	}
 
 	public LazyImageLoader getProfileImageLoader() {
 		if (mProfileImageLoader != null) return mProfileImageLoader;
 		final int profile_image_size = getResources().getDimensionPixelSize(R.dimen.profile_image_size);
 		return mProfileImageLoader = new LazyImageLoader(this, DIR_NAME_PROFILE_IMAGES,
-				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, 60);
+				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size);
 	}
 
 	public ItemsList getSelectedItems() {

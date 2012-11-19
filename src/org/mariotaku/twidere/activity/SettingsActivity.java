@@ -135,7 +135,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		} else if (KEY_FILTERS.equals(key)) {
 			if (isDualPaneMode()) {
 				final Fragment fragment = new FiltersListFragment();
-				showFragment(fragment, false);
+				showFragment(fragment, true);
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_FILTERS);
 				intent.setClass(this, FiltersActivity.class);

@@ -19,10 +19,9 @@
 
 package org.mariotaku.twidere.util;
 
-import static android.os.Environment.getExternalStorageDirectory;
-import static android.os.Environment.getExternalStorageState;
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
+import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.parseURL;
@@ -38,10 +37,8 @@ import java.lang.ref.SoftReference;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,10 +54,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Debug;
 import android.os.Environment;
-import android.widget.GridView;
+import android.support.v4.util.LruCache;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
@@ -73,9 +70,9 @@ import android.widget.ListView;
  * @author mariotaku
  * 
  */
-public class LazyImageLoader implements Constants {
+public final class LazyImageLoader implements Constants {
 
-	private final MemoryCache mMemoryCache;
+	private final URLBitmapLruCache mMemoryCache;
 	private final Context mContext;
 	private final FileCache mFileCache;
 	private final Map<ImageView, URL> mImageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, URL>());
@@ -86,19 +83,20 @@ public class LazyImageLoader implements Constants {
 	private final HostAddressResolver mResolver;
 	private Proxy mProxy;
 	private int mConnectionTimeout;
-	private HttpClientWrapper mClient;
+	private HttpClientWrapper mHttpClient;
 
 	public LazyImageLoader(final Context context, final String cache_dir_name, final int fallback_image_res,
-			final int required_width, final int required_height, final int mem_cache_capacity) {
+			final int required_width, final int required_height) {
 		mContext = context;
-		mMemoryCache = new MemoryCache(mem_cache_capacity);
 		mFileCache = new FileCache(context, cache_dir_name);
 		mExecutorService = Executors.newFixedThreadPool(5);
 		mFallbackRes = fallback_image_res;
 		mRequiredWidth = required_width % 2 == 0 ? required_width : required_width + 1;
 		mRequiredHeight = required_height % 2 == 0 ? required_height : required_height + 1;
 		mUserAgent = getBrowserUserAgent(context);
-		mResolver = TwidereApplication.getInstance(context).getHostAddressResolver();
+		final TwidereApplication app = TwidereApplication.getInstance(context);
+		mResolver = app.getHostAddressResolver();
+		mMemoryCache = app.getURLBitmapLruCache();
 		reloadConnectivitySettings();
 	}
 
@@ -107,7 +105,7 @@ public class LazyImageLoader implements Constants {
 	}
 
 	public void clearMemoryCache() {
-		mMemoryCache.clear();
+		mMemoryCache.evictAll();
 	}
 
 	public void displayImage(final String url, final ImageView imageview) {
@@ -125,7 +123,7 @@ public class LazyImageLoader implements Constants {
 		if (bitmap != null) {
 			imageview.setImageBitmap(bitmap);
 		} else {
-			queuePhoto(url, imageview);
+			queueImage(url, imageview);
 			imageview.setImageResource(mFallbackRes);
 		}
 	}
@@ -136,7 +134,7 @@ public class LazyImageLoader implements Constants {
 		if (f != null && f.exists())
 			return f.getPath();
 		else {
-			queuePhoto(url, null);
+			queueImage(url, null);
 		}
 		return null;
 	}
@@ -145,7 +143,7 @@ public class LazyImageLoader implements Constants {
 		mProxy = getProxy(mContext);
 		mConnectionTimeout = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 				PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-		mClient = getHttpClient(mConnectionTimeout, true, mProxy, mResolver, mUserAgent);
+		mHttpClient = getHttpClient(mConnectionTimeout, true, mProxy, mResolver, mUserAgent);
 	}
 
 	// decodes image and scales it to reduce memory consumption
@@ -182,53 +180,71 @@ public class LazyImageLoader implements Constants {
 		return null;
 	}
 
-	private void queuePhoto(final URL url, final ImageView imageview) {
-		final ImageToLoad p = new ImageToLoad(url, imageview);
-		mExecutorService.submit(new ImageLoader(p));
+	private int getFallbackImageRes() {
+		return mFallbackRes;
 	}
 
-	boolean imageViewReused(final ImageToLoad imagetoload) {
-		final Object tag = mImageViews.get(imagetoload.imageview);
-		if (tag == null || !tag.equals(imagetoload.source)) return true;
+	private FileCache getFileCache() {
+		return mFileCache;
+	}
+	
+	private URLBitmapLruCache getMemoryCache() {
+		return mMemoryCache;
+	}
+
+	private HttpClientWrapper getHttpClientInstance() {
+		return mHttpClient;
+	}
+
+	private boolean isImageViewReused(final ImageViewHolder imagetoload) {
+		final Object tag = mImageViews.get(imagetoload.view);
+		if (tag == null || !tag.equals(imagetoload.url)) return true;
 		return false;
+	}
+	
+	private void queueImage(final URL url, final ImageView imageview) {
+		final ImageViewHolder p = new ImageViewHolder(url, imageview);
+		mExecutorService.submit(new ImageLoader(this, p));
 	}
 
 	// Used to display bitmap in the UI thread
-	class BitmapDisplayer implements Runnable {
+	static final class BitmapDisplayer implements Runnable {
 
-		Bitmap bitmap;
-		ImageToLoad imagetoload;
+		private final LazyImageLoader loader;
+		private final Bitmap bitmap;
+		private final ImageViewHolder holder;
 
-		public BitmapDisplayer(final Bitmap b, final ImageToLoad p) {
-			bitmap = b;
-			imagetoload = p;
+		BitmapDisplayer(final LazyImageLoader loader, final Bitmap bitmap, final ImageViewHolder imagetoload) {
+			this.loader = loader;
+			this.bitmap = bitmap;
+			this.holder = imagetoload;
 		}
 
 		@Override
 		public final void run() {
-			if (imageViewReused(imagetoload)) return;
+			if (loader.isImageViewReused(holder)) return;
 			if (bitmap != null) {
-				imagetoload.imageview.setImageBitmap(bitmap);
+				holder.view.setImageBitmap(bitmap);
 			} else {
-				imagetoload.imageview.setImageResource(mFallbackRes);
+				holder.view.setImageResource(loader.getFallbackImageRes());
 			}
 		}
 	}
-
-	static class FileCache {
+	
+	static final class FileCache {
 
 		private final String mCacheDirName;
 
 		private File mCacheDir;
 		private final Context mContext;
 
-		public FileCache(final Context context, final String cache_dir_name) {
+		FileCache(final Context context, final String cache_dir_name) {
 			mContext = context;
 			mCacheDirName = cache_dir_name;
 			init();
 		}
 
-		public void clear() {
+		void clear() {
 			if (mCacheDir == null) return;
 			final File[] files = mCacheDir.listFiles();
 			if (files == null) return;
@@ -237,7 +253,7 @@ public class LazyImageLoader implements Constants {
 			}
 		}
 
-		public File getFile(final URL tag) {
+		File getFile(final URL tag) {
 			if (mCacheDir == null) return null;
 			final String filename = getURLFilename(tag);
 			if (filename == null) return null;
@@ -245,41 +261,36 @@ public class LazyImageLoader implements Constants {
 			return file;
 		}
 
-		public void init() {
+		void init() {
 			/* Find the dir to save cached images. */
-			if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-				mCacheDir = new File(
-						Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor.getExternalCacheDir(mContext)
-								: new File(getExternalStorageDirectory().getPath() + "/Android/data/"
-										+ mContext.getPackageName() + "/cache/"), mCacheDirName);
-			} else {
-				mCacheDir = new File(mContext.getCacheDir(), mCacheDirName);
-			}
+			mCacheDir = getBestCacheDir(mContext, mCacheDirName);
 			if (mCacheDir != null && !mCacheDir.exists()) {
 				mCacheDir.mkdirs();
 			}
 		}
 
-		private String getURLFilename(final URL url) {
+		static String getURLFilename(final URL url) {
 			if (url == null) return null;
 			return url.toString().replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
 		}
 
 	}
 
-	class ImageLoader implements Runnable {
-		private final ImageToLoad imagetoload;
+	static final class ImageLoader implements Runnable {
+		private final ImageViewHolder holder;
+		private final LazyImageLoader loader;
 
-		public ImageLoader(final ImageToLoad imagetoload) {
-			this.imagetoload = imagetoload;
+		ImageLoader(final LazyImageLoader loader, final ImageViewHolder holder) {
+			this.loader = loader;
+			this.holder = holder;
 		}
 
-		public Bitmap getBitmap(final URL url) {
+		Bitmap getBitmap(final URL url) {
 			if (url == null) return null;
-			final File cache_file = mFileCache.getFile(url);
+			final File cache_file = loader.getFileCache().getFile(url);
 
 			// from SD cache
-			final Bitmap cached_bitmap = decodeFile(cache_file);
+			final Bitmap cached_bitmap = loader.decodeFile(cache_file);
 			if (cached_bitmap != null) return cached_bitmap;
 
 			int response_code = -1;
@@ -293,7 +304,7 @@ public class LazyImageLoader implements Constants {
 
 				while (retry_count < 5) {
 					try {
-						resp = mClient.get(request_url, null);
+						resp = loader.getHttpClientInstance().get(request_url, null);
 					} catch (final TwitterException e) {
 						resp = e.getHttpResponse();
 					}
@@ -315,7 +326,7 @@ public class LazyImageLoader implements Constants {
 					final OutputStream os = new FileOutputStream(cache_file);
 					copyStream(is, os);
 					os.close();
-					bitmap = decodeFile(cache_file);
+					bitmap = loader.decodeFile(cache_file);
 					if (bitmap == null) {
 						// The file is corrupted, so we remove it from cache.
 						if (cache_file.isFile()) {
@@ -326,8 +337,7 @@ public class LazyImageLoader implements Constants {
 				}
 			} catch (final FileNotFoundException e) {
 				// Storage state may changed, so call FileCache.init() again.
-				// e.printStackTrace();
-				mFileCache.init();
+				loader.getFileCache().init();
 			} catch (final IOException e) {
 				// e.printStackTrace();
 			}
@@ -336,90 +346,36 @@ public class LazyImageLoader implements Constants {
 
 		@Override
 		public void run() {
-			if (imageViewReused(imagetoload) || imagetoload.source == null) return;
-			final Bitmap bmp = getBitmap(imagetoload.source);
-			mMemoryCache.put(imagetoload.source, bmp);
-			if (imageViewReused(imagetoload)) return;
-			final BitmapDisplayer bd = new BitmapDisplayer(bmp, imagetoload);
-			final Activity a = (Activity) imagetoload.imageview.getContext();
+			if (loader.isImageViewReused(holder) || holder.url == null) return;
+			final Bitmap bitmap = getBitmap(holder.url);
+			loader.getMemoryCache().put(holder.url, bitmap);
+			if (loader.isImageViewReused(holder)) return;
+			final BitmapDisplayer bd = new BitmapDisplayer(loader, bitmap, holder);
+			final Activity a = (Activity) holder.view.getContext();
 			a.runOnUiThread(bd);
 		}
 	}
 
-	static class ImageToLoad {
-		public final URL source;
-		public final ImageView imageview;
+	static final class ImageViewHolder {
+		final URL url;
+		final ImageView view;
 
-		public ImageToLoad(final URL source, final ImageView imageview) {
-			this.source = source;
-			this.imageview = imageview;
+		ImageViewHolder(final URL url, final ImageView view) {
+			this.url = url;
+			this.view = view;
 		}
 	}
 
-	static class MemoryCache {
+	public static final class URLBitmapLruCache extends LruCache<URL, Bitmap> {
 
-		private final int mMaxCapacity;
-		private final Map<URL, SoftReference<Bitmap>> mSoftCache;
-		private final Map<URL, Bitmap> mHardCache;
-
-		public MemoryCache(final int max_capacity) {
-			mMaxCapacity = max_capacity;
-			mSoftCache = new ConcurrentHashMap<URL, SoftReference<Bitmap>>();
-			mHardCache = new LinkedHashMap<URL, Bitmap>(mMaxCapacity / 3, 0.75f, true) {
-
-				private static final long serialVersionUID = 1347795807259717646L;
-
-				@Override
-				protected boolean removeEldestEntry(final LinkedHashMap.Entry<URL, Bitmap> eldest) {
-					// Moves the last used item in the hard cache to the soft
-					// cache.
-					if (size() > mMaxCapacity) {
-						mSoftCache.put(eldest.getKey(), new SoftReference<Bitmap>(eldest.getValue()));
-						return true;
-					} else
-						return false;
-				}
-			};
+		public URLBitmapLruCache() {
+			super((int) Debug.getNativeHeapSize() / 2);
+			
 		}
 
-		public void clear() {
-			mHardCache.clear();
-			mSoftCache.clear();
-		}
-
-		public Bitmap get(final URL url) {
-			if (url == null) return null;
-			synchronized (mHardCache) {
-				final Bitmap bitmap = mHardCache.get(url);
-				if (bitmap != null) {
-					// Put bitmap on top of cache so it's purged last.
-					mHardCache.remove(url);
-					mHardCache.put(url, bitmap);
-					return bitmap;
-				}
-			}
-
-			final SoftReference<Bitmap> bitmapRef = mSoftCache.get(url);
-			if (bitmapRef != null) {
-				final Bitmap bitmap = bitmapRef.get();
-				if (bitmap != null)
-					return bitmap;
-				else {
-					// Must have been collected by the Garbage Collector
-					// so we remove the bucket from the cache.
-					mSoftCache.remove(url);
-				}
-			}
-
-			// Could not locate the bitmap in any of the caches, so we return
-			// null.
-			return null;
-
-		}
-
-		public void put(final URL url, final Bitmap bitmap) {
-			if (url == null || bitmap == null) return;
-			mHardCache.put(url, bitmap);
+		@Override
+		protected int sizeOf(final URL key, final Bitmap value) {
+			return value.getByteCount();
 		}
 	}
 

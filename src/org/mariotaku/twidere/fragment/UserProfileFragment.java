@@ -27,6 +27,7 @@ import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
@@ -1026,7 +1027,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (user == null || user.profile_banner_url_string == null) return null;
 			try {
 				final String url = user.profile_banner_url_string + "/" + type;
-				final File cache_dir = getCacheDir();
+				final File cache_dir = getImageCacheDir();
 				final File cache_file = cache_dir != null && cache_dir.isDirectory() ? new File(cache_dir,
 						getURLFilename(url)) : null;
 				if (cache_file != null && cache_file.isFile()) {
@@ -1061,16 +1062,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			forceLoad();
 		}
 
-		private File getCacheDir() {
-			final File cache_dir;
-			if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-				final File app_cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
-						.getExternalCacheDir(context) : new File(getExternalStorageDirectory(), "/Android/data/"
-						+ context.getPackageName() + "/cache/");
-				cache_dir = new File(app_cache_dir, CACHE_DIR);
-			} else {
-				cache_dir = new File(context.getCacheDir(), CACHE_DIR);
-			}
+		private File getImageCacheDir() {
+			final File cache_dir = getBestCacheDir(context, CACHE_DIR);
 			if (cache_dir != null && !cache_dir.exists()) {
 				cache_dir.mkdirs();
 			}
