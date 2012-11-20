@@ -39,6 +39,7 @@ import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 public class SettingsActivity extends DualPaneActivity implements OnSharedPreferenceChangeListener,
@@ -74,7 +75,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
-				onBackPressed();
+				NavUtils.navigateUpFromSameTask(this);
 				break;
 		}
 		return super.onOptionsItemSelected(item);

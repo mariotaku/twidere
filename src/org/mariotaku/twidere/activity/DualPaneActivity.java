@@ -141,7 +141,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 		if (addToBackStack) {
 			ft.addToBackStack(null);
 		}
-		ft.setTransitionStyle(FragmentTransaction.TRANSIT_NONE);
+		ft.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.commit();
 		mDetailsFragment = fragment;
 	}

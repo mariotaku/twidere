@@ -20,6 +20,8 @@ package org.mariotaku.twidere.util;
 
 import java.util.HashMap;
 
+import android.text.TextUtils;
+
 /**
  * Utilities for String formatting, manipulation, and queries. More information
  * about this class is available from <a target="_top" href=
@@ -290,61 +292,92 @@ public class HtmlEscapeHelper {
 	};
 
 	public static String escape(final String string) {
-		final StringBuffer sb = new StringBuffer(string.length());
-		// true if last char was blank
-		boolean lastWasBlankChar = false;
-		final int len = string.length();
-		for (int i = 0; i < len; i++) {
-			final char c = string.charAt(i);
-			if (c == ' ') {
-				// blank gets extra work,
-				// this solves the problem you get if you replace all
-				// blanks with &nbsp;, if you do that you loss
-				// word breaking
-				if (lastWasBlankChar) {
-					lastWasBlankChar = false;
-					sb.append("&nbsp;");
-				} else {
-					lastWasBlankChar = true;
-					sb.append(' ');
-				}
-			} else {
-				lastWasBlankChar = false;
-				// HTML Special Chars
-				switch (c) {
-					case '"':
-						sb.append("&quot;");
-						break;
-					case '&':
-						sb.append("&amp;");
-						break;
-					case '<':
-						sb.append("&lt;");
-						break;
-					case '>':
-						sb.append("&gt;");
-						break;
-					case '\n':
-						sb.append("<br/>");
-						break;
-					default:
-						final int ci = 0xffff & c;
-						if (ci < 160) {
-							// nothing special only 7 Bit
-							sb.append(c);
-						} else {
-							// Not 7 Bit use the unicode system
-							sb.append("&#");
-							sb.append(ci);
-							sb.append(';');
-						}
-						break;
-
-				}
-			}
-		}
-		return sb.toString();
-	}
+		if (string == null) return null;
+        final StringBuilder sb = new StringBuilder();
+        char c;
+        for (int i = 0; i < string.length(); i++) {
+            c = string.charAt(i);
+            switch (c) {
+				case '<':
+					sb.append("&lt;"); //$NON-NLS-1$
+					break;
+				case '>':
+					sb.append("&gt;"); //$NON-NLS-1$
+					break;
+				case '&':
+					sb.append("&amp;"); //$NON-NLS-1$
+					break;
+				case '\'':
+					sb.append("&apos;"); //$NON-NLS-1$
+					break;
+				case '"':
+					sb.append("&quot;"); //$NON-NLS-1$
+					break;
+				case '\n':
+					sb.append("<br/>");
+					break;
+				default:
+					sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+	
+	
+//	public static String escape(final String string) {
+//		final StringBuilder sb = new StringBuilder();
+//		// true if last char was blank
+//		boolean lastWasBlankChar = false;
+//		final int len = string.length();
+//		for (int i = 0; i < len; i++) {
+//			final char c = string.charAt(i);
+//			if (c == ' ') {
+//				// blank gets extra work,
+//				// this solves the problem you get if you replace all
+//				// blanks with &nbsp;, if you do that you loss
+//				// word breaking
+//				if (lastWasBlankChar) {
+//					lastWasBlankChar = false;
+//					sb.append("&nbsp;");
+//				} else {
+//					lastWasBlankChar = true;
+//					sb.append(' ');
+//				}
+//			} else {
+//				lastWasBlankChar = false;
+//				// HTML Special Chars
+//				switch (c) {
+//					case '"':
+//						sb.append("&quot;");
+//						break;
+//					case '&':
+//						sb.append("&amp;");
+//						break;
+//					case '<':
+//						sb.append("&lt;");
+//						break;
+//					case '>':
+//						sb.append("&gt;");
+//						break;
+//					case '\n':
+//						sb.append("<br/>");
+//						break;
+//					default:
+//						final int ci = 0xffff & c;
+//						if (ci < 160) {
+//							// nothing special only 7 Bit
+//							sb.append(c);
+//						} else {
+//							// Not 7 Bit use the unicode system
+//							sb.append("&#" + ci + ";");
+//						}
+//						break;
+//
+//				}
+//			}
+//		}
+//		return sb.toString();
+//	}
 
 	/**
 	 * Turn any HTML escape entities in the string into characters and return

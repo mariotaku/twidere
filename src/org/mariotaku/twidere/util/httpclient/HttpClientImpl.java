@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mariotaku.twidere.util.http;
+package org.mariotaku.twidere.util.httpclient;
 
 import java.io.IOException;
 import java.net.Socket;

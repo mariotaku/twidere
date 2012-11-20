@@ -20,11 +20,9 @@
 package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.escape;
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class HtmlBuilder {
@@ -67,9 +65,9 @@ public class HtmlBuilder {
 		return links.add(new LinkSpec(link, display, start, end));
 	}
 
-	public String build(final boolean unescape) {
-		if (links.size() == 0) return escape(unescape ? unescape(string) : string);
-		Collections.sort(links, LinkSpec.COMPARATOR);
+	public String build() {
+		if (links.size() == 0) return escape(string);
+		Collections.sort(links);
 		final StringBuilder builder = new StringBuilder();
 		final int links_size = links.size();
 		for (int i = 0; i < links_size; i++) {
@@ -80,38 +78,27 @@ public class HtmlBuilder {
 			final int start = spec.start, end = spec.end;
 			if (i == 0) {
 				if (start >= 0 && start <= string_length) {
-					builder.append(escape(unescape ? unescape(string.substring(0, start)) : string.substring(0, start)));
+					builder.append(escape(string.substring(0, start)));
 				}
 			} else if (i > 0) {
 				final int last_end = links.get(i - 1).end;
 				if (last_end >= 0 && last_end <= start && start <= string_length) {
-					builder.append(escape(unescape ? unescape(string.substring(last_end, start)) : string.substring(
-							last_end, start)));
+					builder.append(escape(string.substring(last_end, start)));
 				}
 			}
 			builder.append("<a href=\"" + spec.link + "\">");
 			if (start >= 0 && start <= end && end <= string_length) {
-				builder.append(spec.display != null ? spec.display : escape(unescape ? unescape(string.substring(start,
-						end)) : string.substring(start, end)));
+				builder.append(escape(spec.display != null ? spec.display : spec.link));
 			}
 			builder.append("</a>");
 			if (i == links.size() - 1 && end >= 0 && end <= string_length) {
-				builder.append(escape(unescape ? unescape(string.substring(end, string_length)) : string.substring(end,
-						string_length)));
+				builder.append(escape(string.substring(end, string_length)));
 			}
 		}
 		return builder.toString();
 	}
 
-	static class LinkSpec {
-
-		private static final Comparator<LinkSpec> COMPARATOR = new Comparator<LinkSpec>() {
-
-			@Override
-			public int compare(final LinkSpec lhs, final LinkSpec rhs) {
-				return lhs.start - rhs.start;
-			}
-		};
+	static final class LinkSpec implements Comparable<LinkSpec> {
 
 		final String link, display;
 		final int start, end;
@@ -121,6 +108,11 @@ public class HtmlBuilder {
 			this.display = display;
 			this.start = start;
 			this.end = end;
+		}
+		
+		@Override
+		public int compareTo(LinkSpec that) {
+			return this.start - that.start;
 		}
 
 		@Override

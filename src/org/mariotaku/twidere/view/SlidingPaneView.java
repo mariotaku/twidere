@@ -132,12 +132,7 @@ public class SlidingPaneView extends ViewGroup {
 		addView(mViewLeftPaneContainer, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
 		mViewRightPaneContainer = new RightPaneLayout(this);
-		mViewRightPaneContainer.setOnSwipeListener(new RightPaneLayout.OnSwipeListener() {
-			@Override
-			public void onSwipe(final int scrollPosition) {
-				fadeViews();
-			}
-		});
+		mViewRightPaneContainer.setOnSwipeListener(new SwipeFadeListener());
 
 		mViewShadow = new View(context);
 		mViewShadow.setBackgroundResource(shadowDrawableRes);
@@ -155,36 +150,29 @@ public class SlidingPaneView extends ViewGroup {
 		mViewRightPaneContainer.addView(mRightPaneContent, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
 		addView(mViewRightPaneContainer, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		post(new Runnable() {
-
-			@Override
-			public void run() {
-				close();
-			}
-		});
 	}
 
 	public void animateClose() {
-		mController.hideContent(mFlingDuration);
+		mController.hideRightPane(mFlingDuration);
 	}
 
 	public void animateOpen() {
-		mController.showContent(mFlingDuration);
+		mController.showRightPane(mFlingDuration);
 	}
 
 	public void close() {
-		mController.hideContent(0);
+		mController.hideRightPane(0);
 	}
 
-	public ViewGroup getActionsContainer() {
+	public ViewGroup getLeftPaneContainer() {
 		return mViewLeftPaneContainer;
 	}
 
-	public int getActionsSpacingWidth() {
+	public int getLeftPaneSpacingWidth() {
 		return mLeftSpacing;
 	}
 
-	public ViewGroup getContentContainer() {
+	public ViewGroup getRightPaneContainer() {
 		return mViewRightPaneContainer;
 	}
 
@@ -238,28 +226,28 @@ public class SlidingPaneView extends ViewGroup {
 		final SavedState ss = (SavedState) state;
 		super.onRestoreInstanceState(ss.getSuperState());
 
-		mController.isContentShown = ss.isContentShown;
+		mController.mIsRightPaneShown = ss.mIsRightPaneShown;
 
 		mRightSpacing = ss.mSpacing;
-		mLeftSpacing = ss.mActionsSpacing;
+		mLeftSpacing = ss.mLeftPaneSpacing;
 		mShadowWidth = ss.mShadowWidth;
 		mFlingDuration = ss.mFlingDuration;
 		mFadeType = ss.mFadeType;
 		mFadeMax = ss.mFadeValue;
 
 		// this will call requestLayout() to calculate layout according to
-		// values
-		setShadowVisible(ss.isShadowVisible);
+		// values		
+		setShadowVisible(ss.mIsShadowVisible);
 	}
 
 	@Override
 	public Parcelable onSaveInstanceState() {
 		final Parcelable superState = super.onSaveInstanceState();
 		final SavedState ss = new SavedState(superState);
-		ss.isContentShown = isContentShown();
+		ss.mIsRightPaneShown = isContentShown();
 		ss.mSpacing = getSpacingWidth();
-		ss.mActionsSpacing = getActionsSpacingWidth();
-		ss.isShadowVisible = isShadowVisible();
+		ss.mLeftPaneSpacing = getLeftPaneSpacingWidth();
+		ss.mIsShadowVisible = isShadowVisible();
 		ss.mShadowWidth = getShadowWidth();
 		ss.mFlingDuration = getFlingDuration();
 		ss.mFadeType = getFadeType();
@@ -268,7 +256,7 @@ public class SlidingPaneView extends ViewGroup {
 	}
 
 	public void open() {
-		mController.showContent(0);
+		mController.showRightPane(0);
 	}
 
 	public void setActionsSpacingWidth(final int width) {
@@ -450,7 +438,7 @@ public class SlidingPaneView extends ViewGroup {
 		/**
 		 * Indicates whether content was shown while saving state.
 		 */
-		private boolean isContentShown;
+		private boolean mIsRightPaneShown;
 
 		/**
 		 * Value of spacing to use.
@@ -460,12 +448,12 @@ public class SlidingPaneView extends ViewGroup {
 		/**
 		 * Value of actions container spacing to use.
 		 */
-		private int mActionsSpacing;
+		private int mLeftPaneSpacing;
 
 		/**
 		 * Indicates whether shadow is visible.
 		 */
-		private boolean isShadowVisible;
+		private boolean mIsShadowVisible;
 
 		/**
 		 * Value of shadow width.
@@ -505,10 +493,10 @@ public class SlidingPaneView extends ViewGroup {
 		SavedState(final Parcel in) {
 			super(in);
 
-			isContentShown = in.readInt() == 1;
+			mIsRightPaneShown = in.readInt() == 1;
 			mSpacing = in.readInt();
-			mActionsSpacing = in.readInt();
-			isShadowVisible = in.readInt() == 1;
+			mLeftPaneSpacing = in.readInt();
+			mIsShadowVisible = in.readInt() == 1;
 			mShadowWidth = in.readInt();
 			mFlingDuration = in.readInt();
 			mFadeType = in.readInt();
@@ -519,10 +507,10 @@ public class SlidingPaneView extends ViewGroup {
 		public void writeToParcel(final Parcel out, final int flags) {
 			super.writeToParcel(out, flags);
 
-			out.writeInt(isContentShown ? 1 : 0);
+			out.writeInt(mIsRightPaneShown ? 1 : 0);
 			out.writeInt(mSpacing);
-			out.writeInt(mActionsSpacing);
-			out.writeInt(isShadowVisible ? 1 : 0);
+			out.writeInt(mLeftPaneSpacing);
+			out.writeInt(mIsShadowVisible ? 1 : 0);
 			out.writeInt(mShadowWidth);
 			out.writeInt(mFlingDuration);
 			out.writeInt(mFadeType);
@@ -550,7 +538,7 @@ public class SlidingPaneView extends ViewGroup {
 		 * Indicates whether we need initialize position of view after measuring
 		 * is finished.
 		 */
-		private boolean isContentShown = true;
+		private boolean mIsRightPaneShown = false;
 
 		public ContentScrollController(final Scroller scroller) {
 			mScroller = scroller;
@@ -560,8 +548,8 @@ public class SlidingPaneView extends ViewGroup {
 			return 1f + (float) mViewRightPaneContainer.getScrollX() / (float) getRightBound();
 		}
 
-		public void hideContent(final int duration) {
-			isContentShown = false;
+		public void hideRightPane(final int duration) {
+			mIsRightPaneShown = false;
 			if (mViewRightPaneContainer.getMeasuredWidth() == 0 || mViewRightPaneContainer.getMeasuredHeight() == 0)
 				return;
 
@@ -574,10 +562,10 @@ public class SlidingPaneView extends ViewGroup {
 		 * Initializes visibility of content after views measuring is finished.
 		 */
 		public void init() {
-			if (isContentShown) {
-				showContent(0);
+			if (mIsRightPaneShown) {
+				showRightPane(0);
 			} else {
-				hideContent(0);
+				hideRightPane(0);
 			}
 			fadeViews();
 		}
@@ -627,8 +615,8 @@ public class SlidingPaneView extends ViewGroup {
 			}
 		}
 
-		public void showContent(final int duration) {
-			isContentShown = true;
+		public void showRightPane(final int duration) {
+			mIsRightPaneShown = true;
 			if (mViewRightPaneContainer.getMeasuredWidth() == 0 || mViewRightPaneContainer.getMeasuredHeight() == 0)
 				return;
 
@@ -645,9 +633,9 @@ public class SlidingPaneView extends ViewGroup {
 		private void completeScrolling(final float delta) {
 			// if (delta == 0) return;
 			if (delta > 0) {
-				showContent(getFlingDuration());
+				showRightPane(getFlingDuration());
 			} else {
-				hideContent(getFlingDuration());
+				hideRightPane(getFlingDuration());
 			}
 		}
 
@@ -697,7 +685,16 @@ public class SlidingPaneView extends ViewGroup {
 			mViewRightPaneContainer.scrollBy(scrollBy, 0);
 		}
 	}
-
+	
+	private class SwipeFadeListener implements RightPaneLayout.OnSwipeListener {
+		
+		@Override
+		public void onSwipe(final int scrollPosition) {
+			fadeViews();
+		}
+		
+	}
+	
 	private static class RightPaneLayout extends LinearLayout {
 
 		private final Paint mFadePaint = new Paint();

@@ -37,7 +37,7 @@ import org.mariotaku.twidere.util.ColorAnalyser;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticationException;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.CallbackURLException;
-import org.mariotaku.twidere.util.http.HttpClientImpl;
+import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;

@@ -23,6 +23,8 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.escape;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
@@ -112,7 +114,7 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 import org.mariotaku.twidere.util.HtmlLinkExtractor.HtmlLink;
-import org.mariotaku.twidere.util.http.HttpClientImpl;
+import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
 
 import twitter4j.DirectMessage;
 import twitter4j.EntitySupport;
@@ -584,7 +586,7 @@ public final class Utils implements Constants {
 		if (text == null) return null;
 		final HtmlBuilder builder = new HtmlBuilder(text, false);
 		parseEntities(builder, message);
-		return builder.build(true);
+		return builder.build();
 	}
 
 	public static String formatSameDayTime(final Context context, final long timestamp) {
@@ -598,11 +600,11 @@ public final class Utils implements Constants {
 
 	public static String formatStatusText(final Status status) {
 		if (status == null) return null;
-		final String text = status.getRawText();
-		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, false);
+		final String raw_text = status.getRawText();
+		if (raw_text == null) return null;
+		final HtmlBuilder builder = new HtmlBuilder(unescape(raw_text), false);
 		parseEntities(builder, status);
-		return builder.build(true);
+		return builder.build();
 	}
 
 	public static String formatTimeStampString(final Context context, final long timestamp) {

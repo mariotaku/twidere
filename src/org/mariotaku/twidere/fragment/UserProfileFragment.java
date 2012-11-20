@@ -453,11 +453,15 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mService = getApplication().getServiceInterface();
+		setRetainInstance(true);
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
-		String screen_name = null;
+		String screen_name = null;		
 		if (args != null) {
+			if (savedInstanceState != null) {
+				args.putAll(savedInstanceState);
+			}
 			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
@@ -655,15 +659,18 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		return container_view;
 	}
 
-	@Override
-	public void onDestroyView() {
-		mUser = null;
-		mFriendship = null;
-		final LoaderManager lm = getLoaderManager();
-		lm.destroyLoader(LOADER_ID_USER);
-		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
-		super.onDestroyView();
-	}
+//	@Override
+//	public void onDestroyView() {
+//		mUser = null;
+//		mFriendship = null;
+//		mAccountId = -1;
+//		mUserId = -1;
+//		mScreenName = null;
+//		final LoaderManager lm = getLoaderManager();
+//		lm.destroyLoader(LOADER_ID_USER);
+//		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
+//		super.onDestroyView();
+//	}
 
 	@Override
 	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
@@ -848,6 +855,15 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 		}
 		return true;
+	}
+	
+	@Override
+	public void onSaveInstanceState(final Bundle outState) {
+		outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+		outState.putLong(INTENT_KEY_USER_ID, mUserId);
+		outState.putString(INTENT_KEY_SCREEN_NAME, mScreenName);
+		outState.putParcelable(INTENT_KEY_USER, mUser);
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override

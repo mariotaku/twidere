@@ -39,10 +39,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import edu.ucdavis.earlybird.UCDService;
+import android.app.ActivityManager;
+import org.mariotaku.twidere.util.imageloader.ImageCache;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 	
-	private LazyImageLoader.URLBitmapLruCache mURLBitmapLruCache;
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
@@ -57,11 +58,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	private HostAddressResolver mResolver;
 
-	public LazyImageLoader.URLBitmapLruCache getURLBitmapLruCache() {
-		if (mURLBitmapLruCache != null) return mURLBitmapLruCache;
-		return mURLBitmapLruCache = new LazyImageLoader.URLBitmapLruCache();
-	}
-
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager != null) return mAsyncTaskManager;
 		return mAsyncTaskManager = AsyncTaskManager.getInstance();
@@ -75,7 +71,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		}
 		return mResolver;
 	}
-
+	
 	public LazyImageLoader getPreviewImageLoader() {
 		if (mPreviewImageLoader != null) return mPreviewImageLoader;
 		final int preview_image_size = getResources().getDimensionPixelSize(R.dimen.preview_image_size);

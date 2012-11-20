@@ -43,7 +43,10 @@
 					android:imeOptions="actionDone"
 					android:inputType="textMultiLine"
 					android:minHeight="64dp"
-					android:singleLine="false"/>
+					android:singleLine="false">
+					
+					<requestFocus/>
+				</org.mariotaku.twidere.view.StatusComposeEditText>
 
 				<TextView
 					android:id="@+id/text_count"

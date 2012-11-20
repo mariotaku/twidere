@@ -26,7 +26,7 @@ import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.util.http.HttpClientImpl;
+import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
