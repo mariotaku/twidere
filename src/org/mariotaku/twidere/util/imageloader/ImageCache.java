@@ -174,6 +174,11 @@ public class ImageCache {
 		return mDiskCache.get(data);
 	}
 
+	public File getFileFromDiskCache(String data) {
+		if (mDiskCache == null) return null;
+		return mDiskCache.getFile(data);
+	}
+	
 	public void clearCaches() {
 		clearDiskCache();
 		clearMemoryCache();

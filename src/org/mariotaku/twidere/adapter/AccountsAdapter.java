@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -71,10 +70,10 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 		holder.setIsDefault(mDefaultAccountId != -1 && mDefaultAccountId == cursor.getLong(mAccountIdIdx));
 		final String profile_image_url_string = cursor.getString(mProfileImageIdx);
 		if (mDisplayHiResProfileImage) {
-			mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
+			mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string),
 					holder.profile_image);
 		} else {
-			mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
+			mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
 		}
 		super.bindView(view, context, cursor);
 	}

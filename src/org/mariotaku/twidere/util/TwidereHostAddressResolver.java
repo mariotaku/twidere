@@ -23,6 +23,7 @@ import static android.text.TextUtils.isEmpty;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.LinkedHashMap;
 
 import org.mariotaku.twidere.Constants;
@@ -40,28 +41,43 @@ import org.xbill.DNS.Type;
 import twitter4j.http.HostAddressResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import org.apache.http.conn.util.InetAddressUtils;
 
 public class TwidereHostAddressResolver implements Constants, HostAddressResolver {
 
-	private final Resolver mResolver;
+	private static final String DEFAULT_DNS_SERVER_ADDRESS = "8.8.8.8";
+
 	private final SharedPreferences mHostMapping, mPreferences;
 	private final LinkedHashMap<String, String> mHostCache = new LinkedHashMap<String, String>(512, 0.75f, false);
-	private static final String DEFAULT_DNS_SERVER = "8.8.8.8";
+	private final boolean mLocalMappingOnly;
+	private final String mDNSAddress;
 
-	public TwidereHostAddressResolver(final Context context) throws IOException {
+	private Resolver mResolver;
+	
+	public TwidereHostAddressResolver(final Context context) {
 		this(context, false);
 	}
 
-	public TwidereHostAddressResolver(final Context context, final boolean local_only) throws IOException {
+	public TwidereHostAddressResolver(final Context context, final boolean local_only) {
 		mHostMapping = context.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final String dns_address = mPreferences.getString(PREFERENCE_KEY_DNS_SERVER, DEFAULT_DNS_SERVER);
-		mResolver = !local_only ? new SimpleResolver(!isEmpty(dns_address) ? dns_address : DEFAULT_DNS_SERVER) : null;
+		final String address = mPreferences.getString(PREFERENCE_KEY_DNS_SERVER, DEFAULT_DNS_SERVER_ADDRESS);
+		mDNSAddress = isValidIpAddress(address) ? address : DEFAULT_DNS_SERVER_ADDRESS;
+		mLocalMappingOnly = local_only;
+	}
+	
+	void init() throws UnknownHostException {
+		mResolver = !mLocalMappingOnly ? new SimpleResolver(mDNSAddress) : null;
 		if (mResolver != null) {
 			mResolver.setTCP(true);
 		}
 	}
 
+	static boolean isValidIpAddress(final String address) {
+		return !isEmpty(address) || InetAddressUtils.isIPv4Address(address) || InetAddressUtils.isIPv6Address(address) 
+				|| InetAddressUtils.isIPv6HexCompressedAddress(address) || InetAddressUtils.isIPv6StdAddress(address);
+	}
+	
 	@Override
 	public String resolve(final String host) throws IOException {
 		if (host == null) return null;
@@ -85,6 +101,9 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 				mHostCache.put(host, host_addr);
 				return host_addr;
 			}
+		}
+		if (!mLocalMappingOnly) {
+			init();
 		}
 		// Use TCP DNS Query if enabled.
 		if (mResolver != null && mPreferences.getBoolean(PREFERENCE_KEY_TCP_DNS_QUERY, false)) {

@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getProxy;
+import static org.mariotaku.twidere.util.Utils.isRedirected;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -284,29 +285,15 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				try {
 					Bitmap bitmap = null;
 					final HttpClientWrapper client = getHttpClient(10000, true, getProxy(context), resolver, user_agent);
-					HttpResponse resp = null;
 					int retry_count = 0;
 					String request_url = url;
-
-					while (retry_count < 5) {
-						try {
-							resp = client.get(request_url, null);
-						} catch (final TwitterException e) {
-							if (e.getStatusCode() != 301 && e.getStatusCode() != 302) throw e;
-							resp = e.getHttpResponse();
-						}
-						if (resp == null) {
-							break;
-						}
-						response_code = resp.getStatusCode();
-						if (response_code != 301 && response_code != 302) {
-							break;
-						}
+					HttpResponse resp = client.get(request_url, request_url);
+					if (resp == null) return null;
+					while (resp != null && isRedirected(resp.getStatusCode())) {
+						resp = client.get(request_url, request_url);
+						if (resp == null) return null;
 						request_url = resp.getResponseHeader("Location");
-						if (request_url == null) {
-							break;
-						}
-						retry_count++;
+						if (request_url == null) return null;
 					}
 					if (resp != null && response_code == 200) {
 						final InputStream is = resp.asStream();

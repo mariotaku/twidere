@@ -33,7 +33,6 @@ import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.util.ArrayList;
 
@@ -193,17 +192,17 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			if (mDisplayProfileImage) {
 				final String profile_image_url_string = cursor.getString(mIndices.profile_image_url);
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
+					mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string),
 							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
+					mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
 				}
 				holder.profile_image.setTag(position);
 			}
 			final boolean has_preview = mDisplayImagePreview && has_media && preview.matched_url != null;
 			holder.image_preview.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
-				mPreviewImageLoader.displayImage(parseURL(preview.matched_url), holder.image_preview);
+				mPreviewImageLoader.displayImage(preview.matched_url, holder.image_preview);
 				holder.image_preview.setTag(position);
 			}
 		}

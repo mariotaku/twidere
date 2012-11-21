@@ -87,7 +87,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				if (getActivity() == null) return;
 				getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 				if (getActivity() instanceof HomeActivity) {
-					((HomeActivity) getActivity()).checkDefaultAccountSet();
+					((HomeActivity) getActivity()).setDefaultAccount();
 				}
 			}
 		}
@@ -267,7 +267,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, account_id).commit();
 		mAdapter.notifyDataSetChanged();
 		if (getActivity() instanceof HomeActivity) {
-			((HomeActivity) getActivity()).checkDefaultAccountSet();
+			((HomeActivity) getActivity()).setDefaultAccount();
 		}
 	}
 }

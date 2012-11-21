@@ -22,7 +22,7 @@ package org.mariotaku.twidere.model;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
-import static org.mariotaku.twidere.util.Utils.parseURL;
+import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -66,8 +66,6 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 	public final ParcelableLocation location;
 
 	// public final Spanned text;
-
-	public final URL profile_image_url, image_preview_url;
 
 	public static final Comparator<ParcelableStatus> TIMESTAMP_COMPARATOR = new Comparator<ParcelableStatus>() {
 
@@ -121,12 +119,10 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		location_string = cursor.getString(indices.location);
 		location = indices.location != -1 ? new ParcelableLocation(location_string) : null;
 		profile_image_url_string = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
-		profile_image_url = parseURL(profile_image_url_string);
 
 		// text = text_html != null ? Html.fromHtml(text_html) : null;
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
-		image_preview_url = parseURL(image_preview_url_string);
 		text_unescaped = toPlainText(text_html);
 		my_retweet_id = indices.my_retweet_id != -1 ? cursor.getLong(indices.my_retweet_id) : -1;
 	}
@@ -159,8 +155,6 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		image_orig_url_string = in.readString();
 		location_string = in.readString();
 		location = new ParcelableLocation(location_string);
-		image_preview_url = parseURL(image_preview_url_string);
-		profile_image_url = parseURL(profile_image_url_string);
 		// text = text_html != null ? Html.fromHtml(text_html) : null;
 		text_unescaped = toPlainText(text_html);
 		my_retweet_id = in.readLong();
@@ -185,8 +179,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		user_id = user != null ? user.getId() : -1;
 		name = user != null ? user.getName() : null;
 		screen_name = user != null ? user.getScreenName() : null;
-		profile_image_url = user != null ? user.getProfileImageURL() : null;
-		profile_image_url_string = profile_image_url != null ? profile_image_url.toString() : null;
+		profile_image_url_string = user != null ? parseString(user.getProfileImageURL()) : null;
 		is_protected = user != null ? user.isProtected() : false;
 		is_verified = user != null ? user.isVerified() : false;
 		final MediaEntity[] medias = status.getMediaEntities();
@@ -206,7 +199,6 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		// text = text_html != null ? Html.fromHtml(text_html) : null;
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
-		image_preview_url = parseURL(image_preview_url_string);
 		text_unescaped = toPlainText(text_html);
 		my_retweet_id = retweeted_by_id == account_id ? status_id : -1;
 	}
@@ -229,20 +221,6 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 	public final boolean equals(final Object o) {
 		if (!(o instanceof ParcelableStatus)) return false;
 		return status_id == ((ParcelableStatus) o).status_id;
-	}
-
-	@Override
-	public String toString() {
-		return "ParcelableStatus{retweet_id=" + retweet_id + ", retweeted_by_id=" + retweeted_by_id + ", status_id="
-				+ status_id + ", account_id=" + account_id + ", user_id=" + user_id + ", status_timestamp="
-				+ status_timestamp + ", retweet_count=" + retweet_count + ", in_reply_to_status_id="
-				+ in_reply_to_status_id + ", my_retweet_id=" + my_retweet_id + ", is_gap=" + is_gap + ", is_retweet="
-				+ is_retweet + ", is_favorite=" + is_favorite + ", is_protected=" + is_protected + ", is_verified="
-				+ is_verified + ", has_media=" + has_media + ", retweeted_by_name=" + retweeted_by_name
-				+ ", retweeted_by_screen_name=" + retweeted_by_screen_name + ", text_plain=" + text_plain + ", name="
-				+ name + ", screen_name=" + screen_name + ", in_reply_to_screen_name=" + in_reply_to_screen_name
-				+ ", source=" + source + ", location_string=" + location_string + ", location=" + location
-				+ ", profile_image_url=" + profile_image_url + ", image_preview_url=" + image_preview_url + "}";
 	}
 
 	@Override

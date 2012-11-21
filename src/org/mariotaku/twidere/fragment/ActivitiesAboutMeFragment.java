@@ -26,7 +26,6 @@ import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.openUserFollowers;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -396,10 +395,10 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		private void setProfileImage(final URL url, final ActivityViewHolder holder) {
 			if (!mDisplayProfileImage) return;
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(parseString(url))),
+				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(parseString(url)),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(parseURL(parseString(url)), holder.profile_image);
+				mProfileImageLoader.displayImage(parseString(url), holder.profile_image);
 			}
 		}
 
@@ -439,10 +438,10 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 				}
 				if (mDisplayHiResProfileImage) {
 					mProfileImageLoader.displayImage(
-							parseURL(getBiggerTwitterProfileImage(parseString(user.getProfileImageURL()))),
+							getBiggerTwitterProfileImage(parseString(user.getProfileImageURL())),
 							activity_profile_image);
 				} else {
-					mProfileImageLoader.displayImage(user.getProfileImageURL(), activity_profile_image);
+					mProfileImageLoader.displayImage(parseString(user.getProfileImageURL()), activity_profile_image);
 				}
 			}
 		}

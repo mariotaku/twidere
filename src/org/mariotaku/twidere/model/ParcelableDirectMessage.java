@@ -18,10 +18,9 @@
  */
 
 package org.mariotaku.twidere.model;
+ 
+import static org.mariotaku.twidere.util.Utils.parseString;
 
-import static org.mariotaku.twidere.util.Utils.parseURL;
-
-import java.net.URL;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -64,7 +63,7 @@ public class ParcelableDirectMessage implements Parcelable {
 	public final String text;
 	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
 
-	public final URL sender_profile_image_url, recipient_profile_image_url;
+	public final String sender_profile_image_url_string, recipient_profile_image_url_string;
 
 	public ParcelableDirectMessage(final Cursor cursor, final DirectMessageCursorIndices indices) {
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
@@ -79,10 +78,10 @@ public class ParcelableDirectMessage implements Parcelable {
 		sender_screen_name = indices.sender_screen_name != -1 ? cursor.getString(indices.sender_screen_name) : null;
 		recipient_screen_name = indices.recipient_screen_name != -1 ? cursor.getString(indices.recipient_screen_name)
 				: null;
-		sender_profile_image_url = indices.sender_profile_image_url != -1 ? parseURL(cursor
-				.getString(indices.sender_profile_image_url)) : null;
-		recipient_profile_image_url = indices.recipient_profile_image_url != -1 ? parseURL(cursor
-				.getString(indices.recipient_profile_image_url)) : null;
+		sender_profile_image_url_string = indices.sender_profile_image_url != -1 ? cursor
+				.getString(indices.sender_profile_image_url) : null;
+		recipient_profile_image_url_string = indices.recipient_profile_image_url != -1 ? cursor
+				.getString(indices.recipient_profile_image_url) : null;
 	}
 
 	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_outgoing) {
@@ -98,8 +97,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		recipient_name = recipient != null ? recipient.getName() : null;
 		sender_screen_name = sender != null ? sender.getScreenName() : null;
 		recipient_screen_name = recipient != null ? recipient.getScreenName() : null;
-		sender_profile_image_url = sender != null ? sender.getProfileImageURL() : null;
-		recipient_profile_image_url = recipient != null ? recipient.getProfileImageURL() : null;
+		sender_profile_image_url_string = sender != null ? parseString(sender.getProfileImageURL()) : null;
+		recipient_profile_image_url_string = recipient != null ? parseString(recipient.getProfileImageURL()) : null;
 	}
 
 	public ParcelableDirectMessage(final Parcel in) {
@@ -114,8 +113,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		recipient_name = in.readString();
 		sender_screen_name = in.readString();
 		recipient_screen_name = in.readString();
-		sender_profile_image_url = (URL) in.readSerializable();
-		recipient_profile_image_url = (URL) in.readSerializable();
+		sender_profile_image_url_string = in.readString();
+		recipient_profile_image_url_string = in.readString();
 	}
 
 	@Override
@@ -141,8 +140,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		out.writeString(recipient_name);
 		out.writeString(sender_screen_name);
 		out.writeString(recipient_screen_name);
-		out.writeSerializable(sender_profile_image_url);
-		out.writeSerializable(recipient_profile_image_url);
+		out.writeString(sender_profile_image_url_string);
+		out.writeString(recipient_profile_image_url_string);
 	}
 
 	private long getTime(final Date date) {

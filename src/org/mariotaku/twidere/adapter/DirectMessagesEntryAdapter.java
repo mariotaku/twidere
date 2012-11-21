@@ -31,7 +31,6 @@ import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.text.DateFormat;
 
@@ -121,10 +120,10 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(profile_image_url_string)),
+				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(parseURL(profile_image_url_string), holder.profile_image);
+				mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
 			}
 		}
 

@@ -20,10 +20,8 @@
 package org.mariotaku.twidere.model;
 
 import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.io.Serializable;
-import java.net.URL;
 
 import twitter4j.User;
 import twitter4j.UserList;
@@ -57,8 +55,6 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 
 	public final String description, name, user_screen_name, user_name, user_profile_image_url_string;
 
-	public final URL user_profile_image_url;
-
 	public ParcelableUserList(final Parcel in) {
 		position = in.readLong();
 		account_id = in.readLong();
@@ -71,7 +67,6 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		user_name = in.readString();
 		user_screen_name = in.readString();
 		user_profile_image_url_string = in.readString();
-		user_profile_image_url = parseURL(user_profile_image_url_string);
 	}
 
 	public ParcelableUserList(final UserList user, final long account_id) {
@@ -90,8 +85,7 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		user_id = user.getId();
 		user_name = user.getName();
 		user_screen_name = user.getScreenName();
-		user_profile_image_url = user.getProfileImageURL();
-		user_profile_image_url_string = parseString(user_profile_image_url);
+		user_profile_image_url_string = parseString(user.getProfileImageURL());
 	}
 
 	@Override
@@ -129,9 +123,6 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		if (user_name == null) {
 			if (other.user_name != null) return false;
 		} else if (!user_name.equals(other.user_name)) return false;
-		if (user_profile_image_url == null) {
-			if (other.user_profile_image_url != null) return false;
-		} else if (!user_profile_image_url.equals(other.user_profile_image_url)) return false;
 		if (user_profile_image_url_string == null) {
 			if (other.user_profile_image_url_string != null) return false;
 		} else if (!user_profile_image_url_string.equals(other.user_profile_image_url_string)) return false;
@@ -154,7 +145,6 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		result = prime * result + (int) (position ^ position >>> 32);
 		result = prime * result + (int) (user_id ^ user_id >>> 32);
 		result = prime * result + (user_name == null ? 0 : user_name.hashCode());
-		result = prime * result + (user_profile_image_url == null ? 0 : user_profile_image_url.hashCode());
 		result = prime * result
 				+ (user_profile_image_url_string == null ? 0 : user_profile_image_url_string.hashCode());
 		result = prime * result + (user_screen_name == null ? 0 : user_screen_name.hashCode());

@@ -114,15 +114,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	private boolean mShowHomeTab, mShowMentionsTab, mShowMessagesTab, mShowAccountsTab;
 
-	public void checkDefaultAccountSet() {
-		final long[] activated_ids = getActivatedAccountIds(this);
-		final long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
-		if (activated_ids.length > 0 && !ArrayUtils.contains(activated_ids, default_account_id)) {
-			mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
-			mIndicator.setPagingEnabled(true);
-		}
-	}
-
 	@Override
 	public void onBackStackChanged() {
 		super.onBackStackChanged();
@@ -187,6 +178,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			startActivity(intent);
 			finish();
 			return;
+		} else {
+			setDefaultAccount();
 		}
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
 		final Bundle bundle = getIntent().getExtras();
@@ -403,6 +396,15 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		invalidateSupportOptionsMenu();
 	}
 
+	public void setDefaultAccount() {
+		final long[] activated_ids = getActivatedAccountIds(this);
+		final long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
+		if (activated_ids.length > 0 && !ArrayUtils.contains(activated_ids, default_account_id)) {
+			mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
+			mIndicator.setPagingEnabled(true);
+		}
+	}
+
 	@Override
 	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
 		mProgressBarIndeterminateVisible = visible;
@@ -435,12 +437,12 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 							resolver.update(Accounts.CONTENT_URI, values, where, null);
 						}
 					}
-					checkDefaultAccountSet();
+					setDefaultAccount();
 				} else if (resultCode == RESULT_CANCELED) {
 					if (getActivatedAccountIds(this).length <= 0) {
 						finish();
 					} else {
-						checkDefaultAccountSet();
+						setDefaultAccount();
 					}
 				}
 				break;

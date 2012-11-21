@@ -20,10 +20,8 @@
 package org.mariotaku.twidere.model;
 
 import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.Date;
 
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -59,8 +57,6 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 	public final String description, name, screen_name, location, profile_image_url_string, profile_banner_url_string,
 			url_string;
 
-	public final URL profile_image_url, profile_banner_url, url;
-
 	public final int followers_count, friends_count, statuses_count, favorites_count;
 
 	public ParcelableUser(final Parcel in) {
@@ -75,11 +71,8 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		description = in.readString();
 		location = in.readString();
 		profile_image_url_string = in.readString();
-		profile_image_url = parseURL(profile_image_url_string);
 		profile_banner_url_string = in.readString();
-		profile_banner_url = parseURL(profile_banner_url_string);
 		url_string = in.readString();
-		url = parseURL(url_string);
 		is_follow_request_sent = in.readInt() == 1;
 		followers_count = in.readInt();
 		friends_count = in.readInt();
@@ -102,12 +95,9 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		screen_name = user.getScreenName();
 		description = user.getDescription();
 		location = user.getLocation();
-		profile_image_url = user.getProfileImageURL();
-		profile_image_url_string = parseString(profile_image_url);
+		profile_image_url_string = parseString(user.getProfileImageURL());
 		profile_banner_url_string = user.getProfileBannerImageUrl();
-		profile_banner_url = parseURL(profile_image_url_string);
-		url = user.getURL();
-		url_string = parseString(url);
+		url_string = parseString(user.getURL());
 		is_follow_request_sent = user.isFollowRequestSent();
 		followers_count = user.getFollowersCount();
 		friends_count = user.getFriendsCount();
@@ -133,17 +123,6 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		if (!(o instanceof ParcelableUser)) return false;
 		final ParcelableUser that = (ParcelableUser) o;
 		return user_id == that.user_id;
-	}
-
-	@Override
-	public String toString() {
-		return "ParcelableUser{account_id=" + account_id + ", user_id=" + user_id + ", created_at=" + created_at
-				+ ", position=" + position + ", is_protected=" + is_protected + ", is_verified=" + is_verified
-				+ ", is_follow_request_sent=" + is_follow_request_sent + ", description=" + description + ", name="
-				+ name + ", screen_name=" + screen_name + ", location=" + location + ", profile_image_url="
-				+ profile_image_url + ", profile_banner_url=" + profile_banner_url + ", url=" + url
-				+ ", followers_count=" + followers_count + ", friends_count=" + friends_count + ", statuses_count="
-				+ statuses_count + ", favorites_count=" + favorites_count + "}";
 	}
 
 	@Override

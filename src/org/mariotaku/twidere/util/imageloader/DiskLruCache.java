@@ -39,6 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.mariotaku.twidere.util.Utils;
+import java.io.RandomAccessFile;
 
 /**
  * A simple disk LRU bitmap cache to illustrate how a disk cache would be used for bitmap caching. A
@@ -190,13 +191,40 @@ public class DiskLruCache {
 					if (BuildConfig.DEBUG) {
 						Log.d(TAG, "Disk cache hit (existing file)");
 					}
-					return BitmapFactory.decodeFile(existingFile);
+					try {
+						final RandomAccessFile raf = new RandomAccessFile(existingFile, "r");
+						return BitmapFactory.decodeFileDescriptor(raf.getFD());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			return null;
 		}
 	}
 
+	public File getFile(String key) {
+		synchronized (mLinkedHashMap) {
+			final String file = mLinkedHashMap.get(key);
+			if (file != null) {
+				if (BuildConfig.DEBUG) {
+					Log.d(TAG, "Disk cache hit");
+				}
+				return new File(file);
+			} else {
+				final String existingFile = createFilePath(mCacheDir, key);
+				if (new File(existingFile).exists()) {
+					put(key, existingFile);
+					if (BuildConfig.DEBUG) {
+						Log.d(TAG, "Disk cache hit (existing file)");
+					}
+					return new File(existingFile);
+				}
+			}
+			return null;
+		}
+	}
+	
 	/**
 	 * Checks if a specific key exist in the cache.
 	 *
@@ -317,7 +345,8 @@ public class DiskLruCache {
 
 		OutputStream out = null;
 		try {
-			out = new BufferedOutputStream(new FileOutputStream(file), ImageLoaderUtils.IO_BUFFER_SIZE);
+			final RandomAccessFile raf = new RandomAccessFile(file, "rw");
+			out = new BufferedOutputStream(new FileOutputStream(raf.getFD()), ImageLoaderUtils.IO_BUFFER_SIZE);
 			return bitmap.compress(mCompressFormat, mCompressQuality, out);
 		} finally {
 			if (out != null) {

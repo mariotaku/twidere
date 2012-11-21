@@ -16,6 +16,10 @@
 
 package org.mariotaku.twidere.util.imageloader;
 
+import static org.mariotaku.twidere.util.Utils.copyStream;
+import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
+import static org.mariotaku.twidere.util.Utils.isRedirected;
+
 import org.mariotaku.twidere.BuildConfig;
 
 import android.content.Context;
@@ -33,15 +37,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import org.mariotaku.twidere.util.Utils;
+
+import twitter4j.TwitterException;
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpResponse;
 
 /**
  * A simple subclass of {@link ImageResizer} that fetches and resizes images fetched from a URL.
  */
 public class ImageFetcher extends ImageResizer {
+ 
 	private static final String TAG = "ImageFetcher";
 	private static final int HTTP_CACHE_SIZE = 10 * 1024 * 1024; // 10MB
 	public static final String HTTP_CACHE_DIR = "http";
+	
+	private HttpClientWrapper mClient;
 
 	/**
 	 * Initialize providing a target image width and height for the processing images.
@@ -52,7 +62,6 @@ public class ImageFetcher extends ImageResizer {
 	 */
 	public ImageFetcher(Context context, int imageWidth, int imageHeight) {
 		super(context, imageWidth, imageHeight);
-		init(context);
 	}
 
 	/**
@@ -63,10 +72,10 @@ public class ImageFetcher extends ImageResizer {
 	 */
 	public ImageFetcher(Context context, int imageSize) {
 		super(context, imageSize);
-		init(context);
 	}
 
-	private void init(Context context) {
+	public void init() {
+		mClient = getImageLoaderHttpClient(mContext);
 		//checkConnection(context);
 	}
 
@@ -121,7 +130,7 @@ public class ImageFetcher extends ImageResizer {
 	 * @param urlString The URL to fetch
 	 * @return A File pointing to the fetched bitmap
 	 */
-	public static File downloadBitmap(Context context, String urlString) {
+	public File downloadBitmap(Context context, String urlString) {
 		final File cacheDir = DiskLruCache.getDiskCacheDir(context, HTTP_CACHE_DIR);
 
 		final DiskLruCache cache =
@@ -140,25 +149,28 @@ public class ImageFetcher extends ImageResizer {
 			Log.d(TAG, "downloadBitmap - downloading - " + urlString);
 		}
 
-		ImageLoaderUtils.disableConnectionReuseIfNecessary();
-		HttpURLConnection urlConnection = null;
+		//ImageLoaderUtils.disableConnectionReuseIfNecessary();
 		BufferedOutputStream out = null;
 
 		try {
-			final URL url = new URL(urlString);
-			urlConnection = (HttpURLConnection) url.openConnection();
-			final InputStream in =
-					new BufferedInputStream(urlConnection.getInputStream(), ImageLoaderUtils.IO_BUFFER_SIZE);
+			String request_url = urlString;
+			HttpResponse resp = mClient.get(request_url, request_url);
+			if (resp == null) return null;
+			while (resp != null && isRedirected(resp.getStatusCode())) {
+				resp = mClient.get(request_url, request_url);
+				if (resp == null) return null;
+				request_url = resp.getResponseHeader("Location");
+				if (request_url == null) return null;
+			}
+			final InputStream in = new BufferedInputStream(resp.asStream(), ImageLoaderUtils.IO_BUFFER_SIZE);
 			out = new BufferedOutputStream(new FileOutputStream(cacheFile), ImageLoaderUtils.IO_BUFFER_SIZE);
-			Utils.copyStream(in, out);
+			copyStream(in, out);
 			return cacheFile;
-
 		} catch (final IOException e) {
 			Log.e(TAG, "Error in downloadBitmap - " + e);
+		} catch (final TwitterException e) {
+			
 		} finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
 			if (out != null) {
 				try {
 					out.close();
@@ -170,4 +182,5 @@ public class ImageFetcher extends ImageResizer {
 
 		return null;
 	}
+
 }

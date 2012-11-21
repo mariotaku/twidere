@@ -34,7 +34,6 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
@@ -77,6 +76,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -136,6 +136,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private boolean mFollowInfoLoaderInitialized;
 	private boolean mShouldScroll;
 
+	private SharedPreferences mPreferences;
 	private ServiceInterface mService;
 	private LazyImageLoader mProfileImageLoader;
 
@@ -496,12 +497,15 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 						+ status.in_reply_to_screen_name));
 			}
 		}
-
-		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
-
-		mProfileImageLoader.displayImage(
-				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string)
-						: status.profile_image_url_string), mProfileImageView);
+		
+		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
+			final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
+			mProfileImageLoader.displayImage(
+					hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string)
+							: status.profile_image_url_string, mProfileImageView);
+		} else {
+			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
+		}
 		final List<ImageSpec> images = getImagesInStatus(status.text_html);
 		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		loadPreviewImages(images);
@@ -548,6 +552,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mAdapter = getListAdapter();
 		mAdapter.setGapDisallowed(true);
 		final TwidereApplication application = getApplication();
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProfileImageLoader = application.getProfileImageLoader();
 		mService = getServiceInterface();
 		setRetainInstance(true);
@@ -1014,7 +1019,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.images_preview_item, null);
 			final ImageView image = (ImageView) view.findViewById(R.id.image);
 			final ImageSpec spec = getItem(position);
-			mImageLoader.displayImage(spec != null ? parseURL(spec.thumbnail_link) : null, image);
+			mImageLoader.displayImage(spec != null ? spec.thumbnail_link : null, image);
 			return view;
 		}
 

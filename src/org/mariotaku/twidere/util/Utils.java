@@ -925,9 +925,9 @@ public final class Utils implements Constants {
 
 	public static long getDefaultAccountId(final Context context) {
 		if (context == null) return -1;
-		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
-		return preferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
+		return prefs.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
 	}
 
 	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities) {
@@ -940,7 +940,17 @@ public final class Utils implements Constants {
 		if (context == null) return null;
 		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, use_httpclient);
 	}
-
+	
+	public static HttpClientWrapper getImageLoaderHttpClient(final Context context) {
+		if (context == null) return null;
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+				Context.MODE_PRIVATE);
+		final int timeout_millis = prefs.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10000);
+		final Proxy proxy = getProxy(context);
+		final HostAddressResolver resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
+		return getHttpClient(timeout_millis, true, proxy, resolver, null);
+	}
+	
 	public static HttpClientWrapper getHttpClient(final int timeout_millis, final boolean ignore_ssl_error,
 			final Proxy proxy, final HostAddressResolver resolver, final String user_agent) {
 		final ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -1645,6 +1655,10 @@ public final class Utils implements Constants {
 		return false;
 	}
 
+	public static boolean isRedirected(final int code) {
+		return code == 301 || code == 302;
+	}
+	
 	public static ContentValues makeAccountContentValues(final Configuration conf, final String basic_password,
 			final AccessToken access_token, final User user, final int auth_type, final int color) {
 		if (user == null || user.getId() <= 0) return null;

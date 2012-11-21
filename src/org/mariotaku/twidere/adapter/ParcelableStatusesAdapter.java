@@ -31,7 +31,6 @@ import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -239,17 +238,17 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			if (mDisplayProfileImage) {
 				if (mDisplayHiResProfileImage) {
 					mProfileImageLoader.displayImage(
-							parseURL(getBiggerTwitterProfileImage(status.profile_image_url_string)),
+							getBiggerTwitterProfileImage(status.profile_image_url_string),
 							holder.profile_image);
 				} else {
-					mProfileImageLoader.displayImage(parseURL(status.profile_image_url_string), holder.profile_image);
+					mProfileImageLoader.displayImage(status.profile_image_url_string, holder.profile_image);
 				}
 				holder.profile_image.setTag(position);
 			}
-			final boolean has_preview = mDisplayImagePreview && status.has_media && status.image_preview_url != null;
+			final boolean has_preview = mDisplayImagePreview && status.has_media && status.image_preview_url_string != null;
 			holder.image_preview.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
-				mPreviewImageLoader.displayImage(status.image_preview_url, holder.image_preview);
+				mPreviewImageLoader.displayImage(status.image_preview_url_string, holder.image_preview);
 				holder.image_preview.setTag(position);
 			}
 		}

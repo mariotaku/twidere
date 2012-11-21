@@ -41,7 +41,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import edu.ucdavis.earlybird.UCDService;
-import android.app.ActivityManager;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 	
@@ -66,11 +65,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public HostAddressResolver getHostAddressResolver() {
 		if (mResolver != null) return mResolver;
-		try {
-			return mResolver = new TwidereHostAddressResolver(this);
-		} catch (final IOException e) {
-		}
-		return mResolver;
+		return mResolver = new TwidereHostAddressResolver(this);
 	}
 	
 	public LazyImageLoader getPreviewImageLoader() {
@@ -84,7 +79,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public LazyImageLoader getProfileImageLoader() {
 		if (mProfileImageLoader != null) return mProfileImageLoader;
 		final int profile_image_size = getResources().getDimensionPixelSize(R.dimen.profile_image_size);
-		final int max_mem_size = ImageLoaderUtils.getMemoryClass(this) * 1024 * 1024 / 4;
+		final int max_mem_size = ImageLoaderUtils.getMemoryClass(this) * 1024 * 1024 / 6;
 		return mProfileImageLoader = new LazyImageLoader(this, DIR_NAME_PROFILE_IMAGES,
 				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, max_mem_size);
 	}
@@ -229,4 +224,5 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		}
 
 	}
+
 }

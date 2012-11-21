@@ -28,8 +28,8 @@ import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 
@@ -448,14 +448,14 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				}
 				final String message = notification_value.getAsString(Statuses.TEXT_PLAIN);
 				final String profile_image_url_string = notification_value.getAsString(Statuses.PROFILE_IMAGE_URL);
-				final String profile_image_path = mProfileImageLoader
-						.getCachedImagePath(parseURL(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-								: profile_image_url_string));
+				final File profile_image_file = mProfileImageLoader
+						.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+								: profile_image_url_string);
 				final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
 				builder.setLargeIcon(Bitmap.createScaledBitmap(
-						profile_image_path != null ? BitmapFactory.decodeFile(profile_image_path) : BitmapFactory
-								.decodeResource(res, R.drawable.ic_profile_image_default), w, h, true));
+						profile_image_file != null && profile_image_file.isFile() ? BitmapFactory.decodeFile(profile_image_file.getPath())
+								: BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default), w, h, true));
 				final Notification notification = buildNotification(builder, title, title, message,
 						R.drawable.ic_stat_mention, null, content_intent, delete_intent);
 				mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, notification);
@@ -486,14 +486,14 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				final String message = notification_value.getAsString(DirectMessages.TEXT_PLAIN);
 				final String profile_image_url_string = notification_value
 						.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
-				final String profile_image_path = mProfileImageLoader
-						.getCachedImagePath(parseURL(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-								: profile_image_url_string));
+				final File profile_image_file = mProfileImageLoader
+						.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+								: profile_image_url_string);
 				final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
 				builder.setLargeIcon(Bitmap.createScaledBitmap(
-						profile_image_path != null ? BitmapFactory.decodeFile(profile_image_path) : BitmapFactory
-								.decodeResource(res, R.drawable.ic_profile_image_default), w, h, true));
+						profile_image_file != null && profile_image_file.isFile() ? BitmapFactory.decodeFile(profile_image_file.getPath())
+								: BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default), w, h, true));
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);

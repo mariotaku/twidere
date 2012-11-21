@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.util.List;
 
@@ -88,10 +87,10 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {
 				mProfileImageLoader.displayImage(
-						parseURL(getBiggerTwitterProfileImage(user_list.user_profile_image_url_string)),
+						getBiggerTwitterProfileImage(user_list.user_profile_image_url_string),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(parseURL(user_list.user_profile_image_url_string),
+				mProfileImageLoader.displayImage(user_list.user_profile_image_url_string,
 						holder.profile_image);
 			}
 		}

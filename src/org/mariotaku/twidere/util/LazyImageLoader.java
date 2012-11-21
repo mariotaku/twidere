@@ -21,7 +21,6 @@ package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.Utils.parseString;
 
-import java.net.URL;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.imageloader.ImageWorker;
@@ -33,15 +32,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
 import android.widget.ImageView;
+import java.io.File;
 
 /**
- * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
- * Inspired by <a href="https://github.com/thest1/LazyList">LazyList</a>, this
- * class has extra features like image loading/caching image to
- * /mnt/sdcard/Android/data/[package name]/cache features.</br> </br> Requires
- * Android 2.2, you can modify {@link Context#getExternalCacheDir()} to other to
- * support Android 2.1 and below.
- * 
  * @author mariotaku
  * 
  */
@@ -82,126 +75,12 @@ public final class LazyImageLoader implements Constants {
 		mImageWorker.loadImage(url, imageview);
 	}
 
-	public void displayImage(final URL url, final ImageView imageview) {
-		if (imageview == null) return;
-		mImageWorker.loadImage(parseString(url), imageview);
-	}
-
-	public String getCachedImagePath(final URL url) {
-		//TODO
-		return null;
+	public File getCachedImageFile(final String url) {
+		if (url == null) return null;
+		return mImageWorker.getCachedImageFile(url);
 	}
 
 	public void reloadConnectivitySettings() {
-		
+		mImageWorker.init();
 	}
-
-//	static final class ImageLoader implements Runnable {
-//		private final ImageViewHolder holder;
-//		private final LazyImageLoader loader;
-//
-//		ImageLoader(final LazyImageLoader loader, final ImageViewHolder holder) {
-//			this.loader = loader;
-//			this.holder = holder;
-//		}
-//
-//		Bitmap getBitmap(final URL url) {
-//			if (url == null) return null;
-//			final File cache_file = loader.getFileCache().getFile(url);
-//
-//			// from SD cache
-//			final Bitmap cached_bitmap = loader.decodeFile(cache_file);
-//			if (cached_bitmap != null) return cached_bitmap;
-//
-//			int response_code = -1;
-//
-//			// from web
-//			try {
-//				Bitmap bitmap = null;
-//				int retry_count = 0;
-//				String request_url = url.toString();
-//				HttpResponse resp = null;
-//
-//				while (retry_count < 5) {
-//					try {
-//						resp = loader.getHttpClientInstance().get(request_url, null);
-//					} catch (final TwitterException e) {
-//						resp = e.getHttpResponse();
-//					}
-//					if (resp == null) {
-//						break;
-//					}
-//					response_code = resp.getStatusCode();
-//					if (response_code != 301 && response_code != 302) {
-//						break;
-//					}
-//					request_url = resp.getResponseHeader("Location");
-//					if (request_url == null) {
-//						break;
-//					}
-//					retry_count++;
-//				}
-//				if (resp != null && response_code == 200) {
-//					final InputStream is = resp.asStream();
-//					final OutputStream os = new FileOutputStream(cache_file);
-//					copyStream(is, os);
-//					os.close();
-//					bitmap = loader.decodeFile(cache_file);
-//					if (bitmap == null) {
-//						// The file is corrupted, so we remove it from cache.
-//						if (cache_file.isFile()) {
-//							cache_file.delete();
-//						}
-//					} else
-//						return bitmap;
-//				}
-//			} catch (final FileNotFoundException e) {
-//				// Storage state may changed, so call FileCache.init() again.
-//				loader.getFileCache().init();
-//			} catch (final IOException e) {
-//				// e.printStackTrace();
-//			}
-//			return null;
-//		}
-//
-//		@Override
-//		public void run() {
-//			if (loader.isImageViewReused(holder) || holder.url == null) return;
-//			final Bitmap bitmap = getBitmap(holder.url);
-//			loader.getMemoryCache().put(holder.url, bitmap);
-//			if (loader.isImageViewReused(holder)) return;
-//			final BitmapDisplayer bd = new BitmapDisplayer(loader, bitmap, holder);
-//			final Activity a = (Activity) holder.view.getContext();
-//			a.runOnUiThread(bd);
-//		}
-//	}
-//
-//	static final class ImageViewHolder {
-//		final URL url;
-//		final ImageView view;
-//
-//		ImageViewHolder(final URL url, final ImageView view) {
-//			this.url = url;
-//			this.view = view;
-//		}
-//	}
-//
-//	public static final class URLBitmapLruCache extends LruCache<URL, Bitmap> {
-//
-//		public URLBitmapLruCache() {
-//			super((int) Debug.getNativeHeapSize() / 2);
-//			
-//		}
-//		
-//		public URLBitmapLruCache(final int maxSize) {
-//			super(maxSize);
-//
-//		}
-//
-//		@Override
-//		protected int sizeOf(final URL key, final Bitmap value) {
-//			return value.getByteCount();
-//		}
-//	}
-//
 }

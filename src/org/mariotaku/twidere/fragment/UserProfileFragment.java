@@ -47,7 +47,6 @@ import static org.mariotaku.twidere.util.Utils.openUserLists;
 import static org.mariotaku.twidere.util.Utils.openUserMentions;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
 
 import java.io.File;
@@ -89,6 +88,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -135,7 +135,17 @@ import android.widget.Toast;
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right {
 
+	private static final int TYPE_NAME = 1;
+	private static final int TYPE_URL = 2;
+	private static final int TYPE_LOCATION = 3;
+	private static final int TYPE_DESCRIPTION = 4;
+
+	private static final int LOADER_ID_USER = 1;
+	private static final int LOADER_ID_FRIENDSHIP = 2;
+	private static final int LOADER_ID_BANNER = 3;
+	
 	private LazyImageLoader mProfileImageLoader;
+	private SharedPreferences mPreferences;
 
 	private ImageView mProfileImageView;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
@@ -154,17 +164,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private final DialogFragment mDialogFragment = new EditTextDialogFragment();
 	private Uri mImageUri;
 	private ParcelableUser mUser = null;
+	
+	private View mListContainer, mErrorRetryContainer;
 
-	private static final int TYPE_NAME = 1;
-
-	private static final int TYPE_URL = 2;
-
-	private static final int TYPE_LOCATION = 3;
-
-	private static final int TYPE_DESCRIPTION = 4;
+	private boolean mGetUserInfoLoaderInitialized;
+	private boolean mGetFriendShipLoaderInitialized;
+	private boolean mBannerImageLoaderInitialized;
 
 	private long mUserId;
-
 	private String mScreenName;
 
 	private ServiceInterface mService;
@@ -197,16 +204,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 		}
 	};
-
-	private View mListContainer, mErrorRetryContainer;
-
-	private boolean mGetUserInfoLoaderInitialized;
-	private boolean mGetFriendShipLoaderInitialized;
-	private boolean mBannerImageLoaderInitialized;
-
-	private static final int LOADER_ID_USER = 1;
-	private static final int LOADER_ID_FRIENDSHIP = 2;
-	private static final int LOADER_ID_BANNER = 3;
 
 	private final LoaderCallbacks<Response<ParcelableUser>> mUserInfoLoaderCallbacks = new LoaderCallbacks<Response<ParcelableUser>>() {
 
@@ -384,17 +381,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mTweetCount.setText(String.valueOf(user.statuses_count));
 		mFollowersCount.setText(String.valueOf(user.followers_count));
 		mFriendsCount.setText(String.valueOf(user.friends_count));
-		// final boolean display_profile_image =
-		// mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		//final boolean display_profile_image = preferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		// mProfileImageView.setVisibility(display_profile_image ? View.VISIBLE
 		// : View.GONE);
-		// if (display_profile_image) {
-		final String profile_image_url_string = user.profile_image_url_string;
-		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
-		mProfileImageLoader.displayImage(
-				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-						: profile_image_url_string), mProfileImageView);
-		// }
+		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
+			final String profile_image_url_string = user.profile_image_url_string;
+			final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
+			mProfileImageLoader.displayImage(
+					hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+							: profile_image_url_string, mProfileImageView);
+		}
 		if (isMyAccount(getActivity(), user.user_id)) {
 			final ContentResolver resolver = getContentResolver();
 			final ContentValues values = new ContentValues();
@@ -453,8 +449,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mService = getApplication().getServiceInterface();
-		setRetainInstance(true);
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
+		setRetainInstance(true);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
 		String screen_name = null;		

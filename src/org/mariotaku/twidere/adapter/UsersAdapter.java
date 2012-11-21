@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -177,10 +176,10 @@ public class UsersAdapter extends BaseAdapter implements BaseAdapterInterface {
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(parseURL(getBiggerTwitterProfileImage(user.profile_image_url_string)),
+				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(user.profile_image_url_string),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(parseURL(user.profile_image_url_string), holder.profile_image);
+				mProfileImageLoader.displayImage(user.profile_image_url_string, holder.profile_image);
 			}
 		}
 

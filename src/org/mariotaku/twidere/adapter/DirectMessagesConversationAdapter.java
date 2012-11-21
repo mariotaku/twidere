@@ -23,9 +23,6 @@ import static org.mariotaku.twidere.util.Utils.findDirectMessageInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.parseURL;
-
-import java.net.URL;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.DirectMessageConversationViewHolder;
@@ -112,11 +109,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String sender_profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
-			final URL sender_profile_image_url = parseURL(mDisplayHiResProfileImage ? getBiggerTwitterProfileImage(sender_profile_image_url_string)
-					: sender_profile_image_url_string);
-
-			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_left);
-			mImageLoader.displayImage(sender_profile_image_url, holder.profile_image_right);
+			mImageLoader.displayImage(sender_profile_image_url_string, holder.profile_image_left);
+			mImageLoader.displayImage(sender_profile_image_url_string, holder.profile_image_right);
 			holder.profile_image_left.setTag(position);
 			holder.profile_image_right.setTag(position);
 		}

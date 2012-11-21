@@ -30,7 +30,6 @@ import static org.mariotaku.twidere.util.Utils.openUserListSubscribers;
 import static org.mariotaku.twidere.util.Utils.openUserListTimeline;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.parseURL;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -157,8 +156,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		final String profile_image_url_string = parseString(user.getProfileImageURL());
 		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 		mProfileImageLoader.displayImage(
-				parseURL(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-						: profile_image_url_string), mProfileImageView);
+				hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+						: profile_image_url_string, mProfileImageView);
 		mUserList = user_list;
 		if (mUserId == mAccountId) {
 			mFollowMoreButton.setText(R.string.more);

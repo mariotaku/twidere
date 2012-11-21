@@ -32,6 +32,7 @@ import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 import android.graphics.Color;
+import java.io.File;
 
 /**
  * This class wraps up completing some arbitrary long running work when loading a bitmap to an
@@ -52,6 +53,11 @@ public abstract class ImageWorker {
 
 	protected ImageWorker(Context context) {
 		mContext = context;
+		init();
+	}
+	
+	public void init() {
+		
 	}
 
 	/**
@@ -82,6 +88,14 @@ public abstract class ImageWorker {
 			imageView.setImageDrawable(asyncDrawable);
 			task.execute(data);
 		}
+	}
+	
+	public File getCachedImageFile(Object data) {
+		String dataString = String.valueOf(data);
+		final File file = mImageCache.getFileFromDiskCache(dataString);
+		if (file != null && file.isFile()) return file;
+		new BitmapPreloaderTask().execute(data);
+		return null;
 	}
 
 	/**
@@ -289,6 +303,46 @@ public abstract class ImageWorker {
 
 			return null;
 		}
+	}
+	
+
+	private class BitmapPreloaderTask extends AsyncTask<Object, Void, Void> {
+
+		private Object data;
+		
+		protected Void doInBackground(Object... params) {
+			data = params[0];
+			final String dataString = String.valueOf(data);
+			Bitmap bitmap = null;
+
+			// If the image cache is available and this task has not been cancelled by another
+			// thread and the ImageView that was originally bound to this task is still bound back
+			// to this task and our "exit early" flag is not set then try and fetch the bitmap from
+			// the cache
+			if (mImageCache != null && !isCancelled() && !mExitTasksEarly) {
+				bitmap = mImageCache.getBitmapFromDiskCache(dataString);
+			}
+
+			// If the bitmap was not found in the cache and this task has not been cancelled by
+			// another thread and the ImageView that was originally bound to this task is still
+			// bound back to this task and our "exit early" flag is not set, then call the main
+			// process method (as implemented by a subclass)
+			if (bitmap == null && !isCancelled() && !mExitTasksEarly) {
+				bitmap = processBitmap(params[0]);
+			}
+
+			// If the bitmap was processed and the image cache is available, then add the processed
+			// bitmap to the cache for future use. Note we don't check if the task was cancelled
+			// here, if it was, and the thread is still running, we may as well add the processed
+			// bitmap to our cache as it might be used again in the future
+			if (bitmap != null && mImageCache != null) {
+				mImageCache.addBitmapToCache(dataString, bitmap);
+			}
+
+			return null;
+		}
+		
+		
 	}
 
 	/**
