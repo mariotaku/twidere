@@ -111,6 +111,9 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 			if (BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)
 					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, mArguments, DirectMessagesConversationFragment.this);
+			} else if (BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED.equals(action)
+					|| BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED.equals(action)) {
+				getLoaderManager().restartLoader(0, mArguments, DirectMessagesConversationFragment.this);
 			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
 				setProgressBarIndeterminateVisibility(mService.isReceivedDirectMessagesRefreshing()
 						|| mService.isSentDirectMessagesRefreshing());
@@ -371,6 +374,8 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
 		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED);
+		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED);
 		registerReceiver(mStatusReceiver, filter);
 
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
