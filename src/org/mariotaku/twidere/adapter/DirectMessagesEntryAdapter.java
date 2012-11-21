@@ -27,7 +27,7 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_PROFILE_IMAGE_URL;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_SCREEN_NAME;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_TEXT;
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -108,7 +108,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 				break;
 			}
 		}
-		holder.text.setText(unescape(cursor.getString(IDX_TEXT)));
+		holder.text.setText(toPlainText(cursor.getString(IDX_TEXT)));
 		if (mShowAbsoluteTime) {
 			holder.time.setText(formatSameDayTime(message_timestamp, System.currentTimeMillis(), DateFormat.MEDIUM,
 					DateFormat.SHORT));

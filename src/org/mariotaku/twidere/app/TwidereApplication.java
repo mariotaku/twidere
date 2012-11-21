@@ -31,6 +31,8 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
+import org.mariotaku.twidere.util.imageloader.ImageCache;
+import org.mariotaku.twidere.util.imageloader.ImageLoaderUtils;
 
 import twitter4j.http.HostAddressResolver;
 import android.app.Application;
@@ -40,7 +42,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import edu.ucdavis.earlybird.UCDService;
 import android.app.ActivityManager;
-import org.mariotaku.twidere.util.imageloader.ImageCache;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 	
@@ -75,15 +76,17 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public LazyImageLoader getPreviewImageLoader() {
 		if (mPreviewImageLoader != null) return mPreviewImageLoader;
 		final int preview_image_size = getResources().getDimensionPixelSize(R.dimen.preview_image_size);
+		final int max_mem_size = ImageLoaderUtils.getMemoryClass(this) * 1024 * 1024 / 12;
 		return mPreviewImageLoader = new LazyImageLoader(this, DIR_NAME_CACHED_THUMBNAILS,
-				R.drawable.image_preview_fallback, preview_image_size, preview_image_size);
+				R.drawable.image_preview_fallback, preview_image_size, preview_image_size, max_mem_size);
 	}
 
 	public LazyImageLoader getProfileImageLoader() {
 		if (mProfileImageLoader != null) return mProfileImageLoader;
 		final int profile_image_size = getResources().getDimensionPixelSize(R.dimen.profile_image_size);
+		final int max_mem_size = ImageLoaderUtils.getMemoryClass(this) * 1024 * 1024 / 4;
 		return mProfileImageLoader = new LazyImageLoader(this, DIR_NAME_PROFILE_IMAGES,
-				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size);
+				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, max_mem_size);
 	}
 
 	public ItemsList getSelectedItems() {

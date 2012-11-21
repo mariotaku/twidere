@@ -398,7 +398,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					break;
 				}
 				case MENU_MUTE_SOURCE: {
-					final String source = HtmlEscapeHelper.unescape(mStatus.source);
+					final String source = HtmlEscapeHelper.toPlainText(mStatus.source);
 					if (source == null) return false;
 					final Uri uri = Filters.Sources.CONTENT_URI;
 					final ContentValues values = new ContentValues();

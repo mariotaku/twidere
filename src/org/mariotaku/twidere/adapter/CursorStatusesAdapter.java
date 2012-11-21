@@ -20,7 +20,7 @@
 package org.mariotaku.twidere.adapter;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -141,7 +141,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 
 			holder.setTextSize(mTextSize);
 
-			holder.text.setText(unescape(text));
+			holder.text.setText(toPlainText(text));
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(is_verified, is_protected), 0);
 			switch (mNameDisplayOption) {
 				case NAME_DISPLAY_OPTION_CODE_NAME: {

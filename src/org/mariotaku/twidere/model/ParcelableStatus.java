@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.model;
 
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.parseURL;
@@ -127,7 +127,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
-		text_unescaped = unescape(text_html);
+		text_unescaped = toPlainText(text_html);
 		my_retweet_id = indices.my_retweet_id != -1 ? cursor.getLong(indices.my_retweet_id) : -1;
 	}
 
@@ -162,7 +162,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		image_preview_url = parseURL(image_preview_url_string);
 		profile_image_url = parseURL(profile_image_url_string);
 		// text = text_html != null ? Html.fromHtml(text_html) : null;
-		text_unescaped = unescape(text_html);
+		text_unescaped = toPlainText(text_html);
 		my_retweet_id = in.readLong();
 	}
 
@@ -207,7 +207,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		image_preview_url = parseURL(image_preview_url_string);
-		text_unescaped = unescape(text_html);
+		text_unescaped = toPlainText(text_html);
 		my_retweet_id = retweeted_by_id == account_id ? status_id : -1;
 	}
 

@@ -104,15 +104,19 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			}
 		}
 	}
+	
+	@Override
+	public void onPullDownToRefresh() {
+		saveReadPosition();
+		super.onPullDownToRefresh();
+	}
 
 	@Override
 	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		super.onScrollStateChanged(view, scrollState);
 		switch (scrollState) {
 			case SCROLL_STATE_IDLE:
-				final int first_visible_position = mListView.getFirstVisiblePosition();
-				final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
-				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
+				saveReadPosition();
 				break;
 		}
 	}
@@ -134,9 +138,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 
 	@Override
 	public void onStop() {
-		final int first_visible_position = mListView.getFirstVisiblePosition();
-		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
-		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
+		saveReadPosition();
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
@@ -150,5 +152,11 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			}
 		}
 		return false;
+	}
+	
+	private void saveReadPosition() {
+		final int first_visible_position = mListView.getFirstVisiblePosition();
+		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, status_id).commit();
 	}
 }

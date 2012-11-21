@@ -106,13 +106,17 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 	}
 
 	@Override
+	public void onPullDownToRefresh() {
+		saveReadPosition();
+		super.onPullDownToRefresh();
+	}
+
+	@Override
 	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		super.onScrollStateChanged(view, scrollState);
 		switch (scrollState) {
 			case SCROLL_STATE_IDLE:
-				final int first_visible_position = mListView.getFirstVisiblePosition();
-				final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
-				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, status_id).commit();
+				saveReadPosition();
 				break;
 		}
 	}
@@ -134,9 +138,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 
 	@Override
 	public void onStop() {
-		final int first_visible_position = mListView.getFirstVisiblePosition();
-		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
-		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, status_id).commit();
+		saveReadPosition();
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
@@ -152,4 +154,10 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 		return false;
 	}
 
+
+	private void saveReadPosition() {
+		final int first_visible_position = mListView.getFirstVisiblePosition();
+		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+		mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, status_id).commit();
+	}
 }

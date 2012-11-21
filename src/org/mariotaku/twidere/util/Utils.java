@@ -23,8 +23,8 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.escape;
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toHtml;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
@@ -602,7 +602,7 @@ public final class Utils implements Constants {
 		if (status == null) return null;
 		final String raw_text = status.getRawText();
 		if (raw_text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(unescape(raw_text), false);
+		final HtmlBuilder builder = new HtmlBuilder(toPlainText(raw_text), false);
 		parseEntities(builder, status);
 		return builder.build();
 	}

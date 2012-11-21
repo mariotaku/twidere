@@ -52,13 +52,18 @@ public final class LazyImageLoader implements Constants {
 
 	public LazyImageLoader(final Context context, final String cache_dir_name, final int fallback_image_res,
 			final int required_width, final int required_height) {
+		this(context, cache_dir_name, fallback_image_res, required_width, required_height, ImageCache.DEFAULT_MEM_CACHE_SIZE);		
+	}
+	
+	public LazyImageLoader(final Context context, final String cache_dir_name, final int fallback_image_res,
+			final int required_width, final int required_height, final int max_memory_size) {
 		mImageWorker = new ImageFetcher(context, required_width, required_height);
 		mImageWorker.setLoadingImage(fallback_image_res);
 		final ImageCache.ImageCacheParams params = new ImageCache.ImageCacheParams(cache_dir_name);
 		params.diskCacheEnabled = true;
 		params.compressFormat = Bitmap.CompressFormat.PNG;
 		params.memoryCacheEnabled = true;
-		params.memCacheSize = ImageLoaderUtils.getMemoryClass(context) * 1024 * 1024 / 4;
+		params.memCacheSize = max_memory_size;
 		mCache = ImageCache.findOrCreateCache(context, params);
 		mImageWorker.setImageCache(mCache);
 		reloadConnectivitySettings();

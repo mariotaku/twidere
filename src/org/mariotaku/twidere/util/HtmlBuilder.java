@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.escape;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toHtml;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,7 +66,7 @@ public class HtmlBuilder {
 	}
 
 	public String build() {
-		if (links.size() == 0) return escape(string);
+		if (links.size() == 0) return toHtml(string);
 		Collections.sort(links);
 		final StringBuilder builder = new StringBuilder();
 		final int links_size = links.size();
@@ -78,21 +78,21 @@ public class HtmlBuilder {
 			final int start = spec.start, end = spec.end;
 			if (i == 0) {
 				if (start >= 0 && start <= string_length) {
-					builder.append(escape(string.substring(0, start)));
+					builder.append(toHtml(string.substring(0, start)));
 				}
 			} else if (i > 0) {
 				final int last_end = links.get(i - 1).end;
 				if (last_end >= 0 && last_end <= start && start <= string_length) {
-					builder.append(escape(string.substring(last_end, start)));
+					builder.append(toHtml(string.substring(last_end, start)));
 				}
 			}
 			builder.append("<a href=\"" + spec.link + "\">");
 			if (start >= 0 && start <= end && end <= string_length) {
-				builder.append(escape(spec.display != null ? spec.display : spec.link));
+				builder.append(toHtml(spec.display != null ? spec.display : spec.link));
 			}
 			builder.append("</a>");
 			if (i == links.size() - 1 && end >= 0 && end <= string_length) {
-				builder.append(escape(string.substring(end, string_length)));
+				builder.append(toHtml(string.substring(end, string_length)));
 			}
 		}
 		return builder.toString();
