@@ -183,7 +183,13 @@ public class DiskLruCache {
 				if (BuildConfig.DEBUG) {
 					Log.d(TAG, "Disk cache hit");
 				}
-				return BitmapFactory.decodeFile(file);
+				try {
+					final RandomAccessFile raf = new RandomAccessFile(file, "r");
+					return BitmapFactory.decodeFileDescriptor(raf.getFD());
+				} catch (IOException e) {
+					Log.e(TAG, "getBitmap - " + e);
+				}
+//				return BitmapFactory.decodeFile(file);
 			} else {
 				final String existingFile = createFilePath(mCacheDir, key);
 				if (new File(existingFile).exists()) {
@@ -195,8 +201,9 @@ public class DiskLruCache {
 						final RandomAccessFile raf = new RandomAccessFile(existingFile, "r");
 						return BitmapFactory.decodeFileDescriptor(raf.getFD());
 					} catch (IOException e) {
-						e.printStackTrace();
+						Log.e(TAG, "getBitmap - " + e);
 					}
+//					return BitmapFactory.decodeFile(existingFile);
 				}
 			}
 			return null;
@@ -346,7 +353,8 @@ public class DiskLruCache {
 		OutputStream out = null;
 		try {
 			final RandomAccessFile raf = new RandomAccessFile(file, "rw");
-			out = new BufferedOutputStream(new FileOutputStream(raf.getFD()), ImageLoaderUtils.IO_BUFFER_SIZE);
+			out = new FileOutputStream(raf.getFD());
+			//out = new BufferedOutputStream(new FileOutputStream(file), ImageLoaderUtils.IO_BUFFER_SIZE);
 			return bitmap.compress(mCompressFormat, mCompressQuality, out);
 		} finally {
 			if (out != null) {

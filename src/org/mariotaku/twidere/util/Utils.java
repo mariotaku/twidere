@@ -138,6 +138,7 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpResponse;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -941,16 +942,6 @@ public final class Utils implements Constants {
 		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, use_httpclient);
 	}
 	
-	public static HttpClientWrapper getImageLoaderHttpClient(final Context context) {
-		if (context == null) return null;
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
-				Context.MODE_PRIVATE);
-		final int timeout_millis = prefs.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10000);
-		final Proxy proxy = getProxy(context);
-		final HostAddressResolver resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
-		return getHttpClient(timeout_millis, true, proxy, resolver, null);
-	}
-	
 	public static HttpClientWrapper getHttpClient(final int timeout_millis, final boolean ignore_ssl_error,
 			final Proxy proxy, final HostAddressResolver resolver, final String user_agent) {
 		final ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -969,6 +960,18 @@ public final class Utils implements Constants {
 		}
 		// cb.setHttpClientImplementation(HttpClientImpl.class);
 		return new HttpClientWrapper(cb.build());
+	}
+
+	public static HttpClientWrapper getImageLoaderHttpClient(final Context context) {
+		if (context == null) return null;
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+																	 Context.MODE_PRIVATE);
+		final int timeout_millis = prefs.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10000) * 1000;
+		final Proxy proxy = getProxy(context);
+		final String user_agent = getBrowserUserAgent(context);
+		//final HostAddressResolver resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
+		final HostAddressResolver resolver = null;
+		return getHttpClient(timeout_millis, true, proxy, resolver, user_agent);
 	}
 
 	public static String getImagePathFromUri(final Context context, final Uri uri) {
@@ -1245,6 +1248,39 @@ public final class Utils implements Constants {
 		return quote_format.replace(FORMAT_PATTERN_NAME, screen_name).replace(FORMAT_PATTERN_TEXT, text);
 	}
 
+	public static HttpResponse getRedirectedHttpResponse(final HttpClientWrapper client, final String url) throws TwitterException {
+		if (true) return client.get(url, url);
+		if (url == null) return null;
+		final ArrayList<String> urls = new ArrayList<String>();
+		urls.add(url);
+		HttpResponse resp;
+		try {
+			resp = client.get(url, url);
+		} catch (TwitterException te) {
+			if (isRedirected(te.getStatusCode())){
+				resp = te.getHttpResponse();	
+			} else {
+				throw te;
+			}
+		}
+		while (resp != null && isRedirected(resp.getStatusCode())) {
+			final String request_url = resp.getResponseHeader("Location");
+			if (request_url == null) return null;
+			if (urls.contains(request_url)) throw new TwitterException("Too many redirects");
+			urls.add(request_url);
+			try {
+				resp = client.get(request_url, request_url);
+			} catch (TwitterException te) {
+				if (isRedirected(te.getStatusCode())){
+					resp = te.getHttpResponse();	
+				} else {
+					throw te;
+				}
+			}
+		}
+		return resp;
+	}
+	
 	public static String getShareStatus(final Context context, final String title, final String text) {
 		if (context == null) return null;
 		String share_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
@@ -1685,7 +1721,7 @@ public final class Utils implements Constants {
 		values.put(Accounts.ACCOUNT_ID, user.getId());
 		values.put(Accounts.SCREEN_NAME, user.getScreenName());
 		values.put(Accounts.NAME, user.getName());
-		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
+		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageUrlHttps().toString());
 		values.put(Accounts.USER_COLOR, color);
 		values.put(Accounts.IS_ACTIVATED, 1);
 		values.put(Accounts.REST_BASE_URL, conf.getRestBaseURL());
@@ -1711,7 +1747,7 @@ public final class Utils implements Constants {
 		values.put(CachedUsers.USER_ID, user.getId());
 		values.put(CachedUsers.NAME, user.getName());
 		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
-		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageURL().toString());
+		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageUrlHttps().toString());
 		return values;
 	}
 
@@ -1733,8 +1769,8 @@ public final class Utils implements Constants {
 		values.put(DirectMessages.SENDER_SCREEN_NAME, sender.getScreenName());
 		values.put(DirectMessages.RECIPIENT_NAME, recipient.getName());
 		values.put(DirectMessages.RECIPIENT_SCREEN_NAME, recipient.getScreenName());
-		final URL sender_profile_image_url = sender.getProfileImageURL();
-		final URL recipient_profile_image_url = recipient.getProfileImageURL();
+		final URL sender_profile_image_url = sender.getProfileImageUrlHttps();
+		final URL recipient_profile_image_url = recipient.getProfileImageUrlHttps();
 		if (sender_profile_image_url != null) {
 			values.put(DirectMessages.SENDER_PROFILE_IMAGE_URL, sender_profile_image_url.toString());
 		}
@@ -1762,7 +1798,7 @@ public final class Utils implements Constants {
 		final User user = status.getUser();
 		if (user != null) {
 			final long user_id = user.getId();
-			final String profile_image_url = user.getProfileImageURL().toString();
+			final String profile_image_url = user.getProfileImageUrlHttps().toString();
 			final String name = user.getName(), screen_name = user.getScreenName();
 			values.put(Statuses.USER_ID, user_id);
 			values.put(Statuses.NAME, name);

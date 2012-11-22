@@ -18,6 +18,7 @@ package org.mariotaku.twidere.util.imageloader;
 
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
+import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
 import static org.mariotaku.twidere.util.Utils.isRedirected;
 
 import org.mariotaku.twidere.BuildConfig;
@@ -150,26 +151,19 @@ public class ImageFetcher extends ImageResizer {
 		}
 
 		//ImageLoaderUtils.disableConnectionReuseIfNecessary();
-		BufferedOutputStream out = null;
+		FileOutputStream out = null;
 
 		try {
-			String request_url = urlString;
-			HttpResponse resp = mClient.get(request_url, request_url);
+			final HttpResponse resp = getRedirectedHttpResponse(mClient, urlString);
 			if (resp == null) return null;
-			while (resp != null && isRedirected(resp.getStatusCode())) {
-				resp = mClient.get(request_url, request_url);
-				if (resp == null) return null;
-				request_url = resp.getResponseHeader("Location");
-				if (request_url == null) return null;
-			}
-			final InputStream in = new BufferedInputStream(resp.asStream(), ImageLoaderUtils.IO_BUFFER_SIZE);
-			out = new BufferedOutputStream(new FileOutputStream(cacheFile), ImageLoaderUtils.IO_BUFFER_SIZE);
+			final InputStream in = resp.asStream();
+			out = new FileOutputStream(cacheFile);
 			copyStream(in, out);
 			return cacheFile;
 		} catch (final IOException e) {
 			Log.e(TAG, "Error in downloadBitmap - " + e);
 		} catch (final TwitterException e) {
-			
+			Log.e(TAG, "Error in downloadBitmap - " + e.getMessage());		
 		} finally {
 			if (out != null) {
 				try {

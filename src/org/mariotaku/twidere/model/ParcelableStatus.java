@@ -179,7 +179,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		user_id = user != null ? user.getId() : -1;
 		name = user != null ? user.getName() : null;
 		screen_name = user != null ? user.getScreenName() : null;
-		profile_image_url_string = user != null ? parseString(user.getProfileImageURL()) : null;
+		profile_image_url_string = user != null ? parseString(user.getProfileImageUrlHttps()) : null;
 		is_protected = user != null ? user.isProtected() : false;
 		is_verified = user != null ? user.isVerified() : false;
 		final MediaEntity[] medias = status.getMediaEntities();

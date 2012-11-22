@@ -95,7 +95,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		screen_name = user.getScreenName();
 		description = user.getDescription();
 		location = user.getLocation();
-		profile_image_url_string = parseString(user.getProfileImageURL());
+		profile_image_url_string = parseString(user.getProfileImageUrlHttps());
 		profile_banner_url_string = user.getProfileBannerImageUrl();
 		url_string = parseString(user.getURL());
 		is_follow_request_sent = user.isFollowRequestSent();

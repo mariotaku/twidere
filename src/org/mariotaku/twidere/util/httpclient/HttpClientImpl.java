@@ -211,13 +211,11 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 
 			final TrustManager tm = new X509TrustManager() {
 				@Override
-				public void checkClientTrusted(final X509Certificate[] chain, final String authType)
-						throws CertificateException {
+				public void checkClientTrusted(final X509Certificate[] chain, final String authType) {
 				}
 
 				@Override
-				public void checkServerTrusted(final X509Certificate[] chain, final String authType)
-						throws CertificateException {
+				public void checkServerTrusted(final X509Certificate[] chain, final String authType) {
 				}
 
 				@Override

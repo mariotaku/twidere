@@ -380,10 +380,6 @@ public abstract class ImageWorker {
 							new ColorDrawable(Color.TRANSPARENT),
 							new BitmapDrawable(mContext.getResources(), bitmap)
 					});
-			// Set background to loading bitmap
-			//imageView.setBackgroundDrawable(
-			//		new BitmapDrawable(mContext.getResources(), mLoadingBitmap));
-
 			imageView.setImageDrawable(td);
 			td.startTransition(FADE_IN_TIME);
 		} else {

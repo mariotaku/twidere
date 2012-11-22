@@ -20,10 +20,9 @@
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.copyStream;
-import static org.mariotaku.twidere.util.Utils.getBrowserUserAgent;
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
-import static org.mariotaku.twidere.util.Utils.getHttpClient;
-import static org.mariotaku.twidere.util.Utils.getProxy;
+import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
+import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
 import static org.mariotaku.twidere.util.Utils.isRedirected;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
@@ -37,13 +36,11 @@ import java.io.OutputStream;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.view.ImageViewer;
 
 import twitter4j.TwitterException;
-import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
 import android.content.ActivityNotFoundException;
@@ -70,9 +67,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	private ImageButton mRefreshStopSaveButton;
 	private boolean mImageLoaded;
 	private File mImageFile;
-	private String mUserAgent;
-
-	private HostAddressResolver mResolver;
 
 	@Override
 	public void onClick(final View view) {
@@ -140,7 +134,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		mProgress.setVisibility(View.VISIBLE);
 		mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
 		final Uri uri = args != null ? (Uri) args.getParcelable(INTENT_KEY_URI) : null;
-		return new ImageLoader(this, mResolver, uri, mUserAgent);
+		return new ImageLoader(this, uri);
 	}
 
 	@Override
@@ -169,9 +163,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 	@Override
 	protected void onCreate(final Bundle icicle) {
-		mResolver = TwidereApplication.getInstance(this).getHostAddressResolver();
 		super.onCreate(icicle);
-		mUserAgent = getBrowserUserAgent(this);
 		setContentView(R.layout.image_viewer);
 		loadImage(true);
 	}
@@ -246,30 +238,27 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private static final String CACHE_DIR_NAME = "cached_images";
 
-		private final Uri uri;
+		private final Uri mUri;
+		private final Context mContext;
+		private final HttpClientWrapper mClient;
 
-		private final Context context;
-		private final String user_agent;
-		private final HostAddressResolver resolver;
 		private File mCacheDir;
 
-		public ImageLoader(final Context context, final HostAddressResolver resolver, final Uri uri,
-				final String user_agent) {
+		public ImageLoader(final Context context, final Uri uri) {
 			super(context);
-			this.context = context;
-			this.resolver = resolver;
-			this.uri = uri;
-			this.user_agent = user_agent;
+			this.mContext = context;
+			this.mUri = uri;
+			mClient = getImageLoaderHttpClient(context);
 			init();
 		}
 
 		@Override
 		public Result loadInBackground() {
 
-			if (uri == null) return new Result(null, null, null);
-			final String scheme = uri.getScheme();
+			if (mUri == null) return new Result(null, null, null);
+			final String scheme = mUri.getScheme();
 			if ("http".equals(scheme) || "https".equals(scheme)) {
-				final String url = parseString(uri.toString());
+				final String url = parseString(mUri.toString());
 				if (url == null) return new Result(null, null, null);
 				if (mCacheDir == null || !mCacheDir.exists()) {
 					init();
@@ -279,39 +268,23 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				// from SD cache
 				final Bitmap cached_bitmap = decodeFile(cache_file);
 				if (cached_bitmap != null) return new Result(cached_bitmap, cache_file, null);
-
-				int response_code = -1;
 				// from web
 				try {
-					Bitmap bitmap = null;
-					final HttpClientWrapper client = getHttpClient(10000, true, getProxy(context), resolver, user_agent);
-					int retry_count = 0;
-					String request_url = url;
-					HttpResponse resp = client.get(request_url, request_url);
+					final HttpResponse resp = getRedirectedHttpResponse(mClient, url);
 					if (resp == null) return null;
-					while (resp != null && isRedirected(resp.getStatusCode())) {
-						resp = client.get(request_url, request_url);
-						if (resp == null) return null;
-						request_url = resp.getResponseHeader("Location");
-						if (request_url == null) return null;
+					final InputStream is = resp.asStream();
+					final OutputStream os = new FileOutputStream(cache_file);
+					copyStream(is, os);
+					os.close();
+					final Bitmap bitmap = decodeFile(cache_file);
+					if (bitmap == null) {
+						// The file is corrupted, so we remove it from
+						// cache.
+						if (cache_file.isFile()) {
+							cache_file.delete();
+						}
 					}
-					if (resp != null && response_code == 200) {
-						final InputStream is = resp.asStream();
-						final OutputStream os = new FileOutputStream(cache_file);
-						copyStream(is, os);
-						os.close();
-						bitmap = decodeFile(cache_file);
-						if (bitmap == null) {
-							// The file is corrupted, so we remove it from
-							// cache.
-							if (cache_file.isFile()) {
-								cache_file.delete();
-							}
-						} else
-							return new Result(bitmap, cache_file, null);
-					} else {
-						// TODO show error message.
-					}
+					return new Result(bitmap, cache_file, null);
 				} catch (final FileNotFoundException e) {
 					init();
 				} catch (final IOException e) {
@@ -320,7 +293,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					return new Result(null, null, e);
 				}
 			} else if ("file".equals(scheme)) {
-				final File file = new File(uri.getPath());
+				final File file = new File(mUri.getPath());
 				return new Result(decodeFile(file), file, null);
 			}
 			return new Result(null, null, null);
@@ -360,7 +333,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private void init() {
 			/* Find the dir to save cached images. */
-			mCacheDir = getBestCacheDir(context, CACHE_DIR_NAME);
+			mCacheDir = getBestCacheDir(mContext, CACHE_DIR_NAME);
 			if (mCacheDir != null && !mCacheDir.exists()) {
 				mCacheDir.mkdirs();
 			}

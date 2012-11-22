@@ -508,7 +508,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 		int analyseUserProfileColor(final User user) throws TwitterException {
 			final HttpClientWrapper client = new HttpClientWrapper(conf);
-			final HttpResponse conn = client.get(user.getProfileImageURL().toString(), null);
+			final HttpResponse conn = client.get(user.getProfileImageUrlHttps().toString(), null);
 			final Bitmap bm = BitmapFactory.decodeStream(conn.asStream());
 			return ColorAnalyser.analyse(bm);
 		}

@@ -85,7 +85,7 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		user_id = user.getId();
 		user_name = user.getName();
 		user_screen_name = user.getScreenName();
-		user_profile_image_url_string = parseString(user.getProfileImageURL());
+		user_profile_image_url_string = parseString(user.getProfileImageUrlHttps());
 	}
 
 	@Override

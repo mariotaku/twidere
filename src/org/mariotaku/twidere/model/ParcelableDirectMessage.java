@@ -97,8 +97,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		recipient_name = recipient != null ? recipient.getName() : null;
 		sender_screen_name = sender != null ? sender.getScreenName() : null;
 		recipient_screen_name = recipient != null ? recipient.getScreenName() : null;
-		sender_profile_image_url_string = sender != null ? parseString(sender.getProfileImageURL()) : null;
-		recipient_profile_image_url_string = recipient != null ? parseString(recipient.getProfileImageURL()) : null;
+		sender_profile_image_url_string = sender != null ? parseString(sender.getProfileImageUrlHttps()) : null;
+		recipient_profile_image_url_string = recipient != null ? parseString(recipient.getProfileImageUrlHttps()) : null;
 	}
 
 	public ParcelableDirectMessage(final Parcel in) {
