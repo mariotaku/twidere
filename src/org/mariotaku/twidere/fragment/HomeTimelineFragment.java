@@ -154,7 +154,6 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 		return false;
 	}
 
-
 	private void saveReadPosition() {
 		final int first_visible_position = mListView.getFirstVisiblePosition();
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);

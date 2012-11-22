@@ -19,7 +19,6 @@
 
 package org.mariotaku.twidere.app;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.mariotaku.twidere.Constants;
@@ -31,7 +30,6 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
-import org.mariotaku.twidere.util.imageloader.ImageCache;
 import org.mariotaku.twidere.util.imageloader.ImageLoaderUtils;
 
 import twitter4j.http.HostAddressResolver;
@@ -43,7 +41,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import edu.ucdavis.earlybird.UCDService;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
-	
+
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
@@ -67,7 +65,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		if (mResolver != null) return mResolver;
 		return mResolver = new TwidereHostAddressResolver(this);
 	}
-	
+
 	public LazyImageLoader getPreviewImageLoader() {
 		if (mPreviewImageLoader != null) return mPreviewImageLoader;
 		final int preview_image_size = getResources().getDimensionPixelSize(R.dimen.preview_image_size);

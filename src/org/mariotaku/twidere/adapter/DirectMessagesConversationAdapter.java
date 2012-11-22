@@ -21,8 +21,8 @@ package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.findDirectMessageInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.DirectMessageConversationViewHolder;
@@ -108,9 +108,12 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		holder.profile_image_left.setVisibility(mDisplayProfileImage && is_outgoing ? View.VISIBLE : View.GONE);
 		holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
-			final String sender_profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
-			mImageLoader.displayImage(sender_profile_image_url_string, holder.profile_image_left);
-			mImageLoader.displayImage(sender_profile_image_url_string, holder.profile_image_right);
+			final String profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
+			final String bigger_profile_image_url_string = getBiggerTwitterProfileImage(profile_image_url_string);
+			mImageLoader.displayImage(mDisplayHiResProfileImage ? bigger_profile_image_url_string
+					: profile_image_url_string, holder.profile_image_left);
+			mImageLoader.displayImage(mDisplayHiResProfileImage ? bigger_profile_image_url_string
+					: profile_image_url_string, holder.profile_image_right);
 			holder.profile_image_left.setTag(position);
 			holder.profile_image_right.setTag(position);
 		}

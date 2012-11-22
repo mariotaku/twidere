@@ -19,20 +19,16 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.Utils.parseString;
-
+import java.io.File;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.util.imageloader.ImageWorker;
-import org.mariotaku.twidere.util.imageloader.ImageFetcher;
 import org.mariotaku.twidere.util.imageloader.ImageCache;
-import org.mariotaku.twidere.util.imageloader.ImageLoaderUtils;
+import org.mariotaku.twidere.util.imageloader.ImageFetcher;
+import org.mariotaku.twidere.util.imageloader.ImageWorker;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v4.app.FragmentActivity;
 import android.widget.ImageView;
-import java.io.File;
 
 /**
  * @author mariotaku
@@ -45,9 +41,10 @@ public final class LazyImageLoader implements Constants {
 
 	public LazyImageLoader(final Context context, final String cache_dir_name, final int fallback_image_res,
 			final int required_width, final int required_height) {
-		this(context, cache_dir_name, fallback_image_res, required_width, required_height, ImageCache.DEFAULT_MEM_CACHE_SIZE);		
+		this(context, cache_dir_name, fallback_image_res, required_width, required_height,
+				ImageCache.DEFAULT_MEM_CACHE_SIZE);
 	}
-	
+
 	public LazyImageLoader(final Context context, final String cache_dir_name, final int fallback_image_res,
 			final int required_width, final int required_height, final int max_memory_size) {
 		mImageWorker = new ImageFetcher(context, required_width, required_height);

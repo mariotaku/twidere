@@ -497,7 +497,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 						+ status.in_reply_to_screen_name));
 			}
 		}
-		
+
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 			final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 			mProfileImageLoader.displayImage(

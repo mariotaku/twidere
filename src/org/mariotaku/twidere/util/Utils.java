@@ -23,7 +23,6 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.toHtml;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
@@ -403,7 +402,7 @@ public final class Utils implements Constants {
 			return service.destroyStatus(status.account_id, status.retweet_id);
 		return -1;
 	}
-	
+
 	public static boolean checkActivityValidity(final Context context, final Intent intent) {
 		final PackageManager pm = context.getPackageManager();
 		return !pm.queryIntentActivities(intent, 0).isEmpty();
@@ -852,6 +851,31 @@ public final class Utils implements Constants {
 		return ids;
 	}
 
+	public static File getBestCacheDir(final Context context, final String cache_dir_name) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			final File ext_cache_dir = GetExternalCacheDirAccessor.getExternalCacheDir(context);
+			if (ext_cache_dir != null && ext_cache_dir.isDirectory()) {
+				final File cache_dir = new File(ext_cache_dir, cache_dir_name);
+				if ((cache_dir.isFile() && cache_dir.delete())
+						|| (cache_dir.isDirectory() && cache_dir.canRead() && cache_dir.canWrite())) {
+					return cache_dir;
+				}
+			}
+		} else {
+			final File ext_storage_dir = Environment.getExternalStorageDirectory();
+			if (ext_storage_dir != null && ext_storage_dir.isDirectory()) {
+				final String ext_cache_path = ext_storage_dir.getAbsolutePath() + "/Android/data/"
+						+ context.getPackageName() + "/cache/";
+				final File cache_dir = new File(ext_cache_path, cache_dir_name);
+				if ((cache_dir.isFile() && cache_dir.delete())
+						|| (cache_dir.isDirectory() && cache_dir.canRead() && cache_dir.canWrite())) {
+					return cache_dir;
+				}
+			}
+		}
+		return new File(context.getCacheDir(), cache_dir_name);
+	}
+
 	public static String getBiggerTwitterProfileImage(final String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
@@ -859,27 +883,12 @@ public final class Utils implements Constants {
 		return url;
 	}
 
-	public static File getBestCacheDir(final Context context, final String cache_dir_name) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			final File ext_cache_dir = GetExternalCacheDirAccessor.getExternalCacheDir(context);
-			if (ext_cache_dir != null && ext_cache_dir.isDirectory())
-				return new File(ext_cache_dir, cache_dir_name);
-		} else {
-			final File ext_storage_dir = Environment.getExternalStorageDirectory();
-			if (ext_storage_dir != null && ext_storage_dir.isDirectory()) {
-				final String ext_cache_path = ext_storage_dir.getAbsolutePath() + "/Android/data/" + context.getPackageName() + "/cache/";
-				return new File(ext_cache_path, cache_dir_name);
-			}
-		}
-		return new File(context.getCacheDir(), cache_dir_name);
-	}
-
 	public static String getBrowserUserAgent(final Context context) {
 		if (context == null) return null;
 		final WebView wv = new WebView(context);
 		return wv.getSettings().getUserAgentString();
 	}
-	
+
 	public static Bitmap getColorPreviewBitmap(final Context context, final int color) {
 		if (context == null) return null;
 		final float density = context.getResources().getDisplayMetrics().density;
@@ -926,8 +935,7 @@ public final class Utils implements Constants {
 
 	public static long getDefaultAccountId(final Context context) {
 		if (context == null) return -1;
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
-				Context.MODE_PRIVATE);
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		return prefs.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
 	}
 
@@ -941,7 +949,7 @@ public final class Utils implements Constants {
 		if (context == null) return null;
 		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, use_httpclient);
 	}
-	
+
 	public static HttpClientWrapper getHttpClient(final int timeout_millis, final boolean ignore_ssl_error,
 			final Proxy proxy, final HostAddressResolver resolver, final String user_agent) {
 		final ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -964,12 +972,12 @@ public final class Utils implements Constants {
 
 	public static HttpClientWrapper getImageLoaderHttpClient(final Context context) {
 		if (context == null) return null;
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
-																	 Context.MODE_PRIVATE);
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int timeout_millis = prefs.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10000) * 1000;
 		final Proxy proxy = getProxy(context);
 		final String user_agent = getBrowserUserAgent(context);
-		//final HostAddressResolver resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
+		// final HostAddressResolver resolver =
+		// TwidereApplication.getInstance(context).getHostAddressResolver();
 		final HostAddressResolver resolver = null;
 		return getHttpClient(timeout_millis, true, proxy, resolver, user_agent);
 	}
@@ -1248,20 +1256,19 @@ public final class Utils implements Constants {
 		return quote_format.replace(FORMAT_PATTERN_NAME, screen_name).replace(FORMAT_PATTERN_TEXT, text);
 	}
 
-	public static HttpResponse getRedirectedHttpResponse(final HttpClientWrapper client, final String url) throws TwitterException {
-		if (true) return client.get(url, url);
+	public static HttpResponse getRedirectedHttpResponse(final HttpClientWrapper client, final String url)
+			throws TwitterException {
 		if (url == null) return null;
 		final ArrayList<String> urls = new ArrayList<String>();
 		urls.add(url);
 		HttpResponse resp;
 		try {
 			resp = client.get(url, url);
-		} catch (TwitterException te) {
-			if (isRedirected(te.getStatusCode())){
-				resp = te.getHttpResponse();	
-			} else {
+		} catch (final TwitterException te) {
+			if (isRedirected(te.getStatusCode())) {
+				resp = te.getHttpResponse();
+			} else
 				throw te;
-			}
 		}
 		while (resp != null && isRedirected(resp.getStatusCode())) {
 			final String request_url = resp.getResponseHeader("Location");
@@ -1270,17 +1277,16 @@ public final class Utils implements Constants {
 			urls.add(request_url);
 			try {
 				resp = client.get(request_url, request_url);
-			} catch (TwitterException te) {
-				if (isRedirected(te.getStatusCode())){
-					resp = te.getHttpResponse();	
-				} else {
+			} catch (final TwitterException te) {
+				if (isRedirected(te.getStatusCode())) {
+					resp = te.getHttpResponse();
+				} else
 					throw te;
-				}
 			}
 		}
 		return resp;
 	}
-	
+
 	public static String getShareStatus(final Context context, final String title, final String text) {
 		if (context == null) return null;
 		String share_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
@@ -1681,6 +1687,10 @@ public final class Utils implements Constants {
 		return false;
 	}
 
+	public static boolean isRedirected(final int code) {
+		return code == 301 || code == 302;
+	}
+
 	public static boolean isUserLoggedIn(final Context context, final long account_id) {
 		if (context == null) return false;
 		final long[] ids = getAccountIds(context);
@@ -1691,10 +1701,6 @@ public final class Utils implements Constants {
 		return false;
 	}
 
-	public static boolean isRedirected(final int code) {
-		return code == 301 || code == 302;
-	}
-	
 	public static ContentValues makeAccountContentValues(final Configuration conf, final String basic_password,
 			final AccessToken access_token, final User user, final int auth_type, final int color) {
 		if (user == null || user.getId() <= 0) return null;

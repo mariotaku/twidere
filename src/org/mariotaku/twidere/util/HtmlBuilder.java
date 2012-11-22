@@ -109,10 +109,10 @@ public class HtmlBuilder {
 			this.start = start;
 			this.end = end;
 		}
-		
+
 		@Override
-		public int compareTo(LinkSpec that) {
-			return this.start - that.start;
+		public int compareTo(final LinkSpec that) {
+			return start - that.start;
 		}
 
 		@Override

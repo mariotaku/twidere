@@ -164,18 +164,6 @@ public class SlidingPaneView extends ViewGroup {
 		mController.hideRightPane(0);
 	}
 
-	public ViewGroup getLeftPaneContainer() {
-		return mViewLeftPaneContainer;
-	}
-
-	public int getLeftPaneSpacingWidth() {
-		return mLeftSpacing;
-	}
-
-	public ViewGroup getRightPaneContainer() {
-		return mViewRightPaneContainer;
-	}
-
 	public int getFadeType() {
 		return mFadeType;
 	}
@@ -188,8 +176,20 @@ public class SlidingPaneView extends ViewGroup {
 		return mFlingDuration;
 	}
 
+	public ViewGroup getLeftPaneContainer() {
+		return mViewLeftPaneContainer;
+	}
+
 	public View getLeftPaneLayout() {
 		return mLeftPaneLayout;
+	}
+
+	public int getLeftPaneSpacingWidth() {
+		return mLeftSpacing;
+	}
+
+	public ViewGroup getRightPaneContainer() {
+		return mViewRightPaneContainer;
 	}
 
 	public View getRightPaneLayout() {
@@ -236,7 +236,7 @@ public class SlidingPaneView extends ViewGroup {
 		mFadeMax = ss.mFadeValue;
 
 		// this will call requestLayout() to calculate layout according to
-		// values		
+		// values
 		setShadowVisible(ss.mIsShadowVisible);
 	}
 
@@ -685,16 +685,7 @@ public class SlidingPaneView extends ViewGroup {
 			mViewRightPaneContainer.scrollBy(scrollBy, 0);
 		}
 	}
-	
-	private class SwipeFadeListener implements RightPaneLayout.OnSwipeListener {
-		
-		@Override
-		public void onSwipe(final int scrollPosition) {
-			fadeViews();
-		}
-		
-	}
-	
+
 	private static class RightPaneLayout extends LinearLayout {
 
 		private final Paint mFadePaint = new Paint();
@@ -817,5 +808,14 @@ public class SlidingPaneView extends ViewGroup {
 			}
 			return false;
 		}
+	}
+
+	private class SwipeFadeListener implements RightPaneLayout.OnSwipeListener {
+
+		@Override
+		public void onSwipe(final int scrollPosition) {
+			fadeViews();
+		}
+
 	}
 }

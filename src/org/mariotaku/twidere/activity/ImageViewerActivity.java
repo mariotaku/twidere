@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
 import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
-import static org.mariotaku.twidere.util.Utils.isRedirected;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -37,7 +36,6 @@ import java.io.OutputStream;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
-import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.view.ImageViewer;
 
 import twitter4j.TwitterException;
@@ -246,8 +244,8 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		public ImageLoader(final Context context, final Uri uri) {
 			super(context);
-			this.mContext = context;
-			this.mUri = uri;
+			mContext = context;
+			mUri = uri;
 			mClient = getImageLoaderHttpClient(context);
 			init();
 		}

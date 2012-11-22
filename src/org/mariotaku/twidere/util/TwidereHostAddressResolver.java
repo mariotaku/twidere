@@ -42,14 +42,12 @@ import org.xbill.DNS.Type;
 import twitter4j.http.HostAddressResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
-import org.apache.http.conn.util.InetAddressUtils;
 import android.util.Log;
-import java.util.Arrays;
 
 public class TwidereHostAddressResolver implements Constants, HostAddressResolver {
 
- private static final String RESOLVER_LOGTAG = "TwidereHostAddressResolver";
- 
+	private static final String RESOLVER_LOGTAG = "TwidereHostAddressResolver";
+
 	private static final String DEFAULT_DNS_SERVER_ADDRESS = "8.8.8.8";
 
 	private final SharedPreferences mHostMapping, mPreferences;
@@ -58,7 +56,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 	private final String mDNSAddress;
 
 	private Resolver mDNS;
-	
+
 	public TwidereHostAddressResolver(final Context context) {
 		this(context, false);
 	}
@@ -70,18 +68,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 		mDNSAddress = isValidIpAddress(address) ? address : DEFAULT_DNS_SERVER_ADDRESS;
 		mLocalMappingOnly = local_only;
 	}
-	
-	void init() throws UnknownHostException {
-		mDNS = !mLocalMappingOnly ? new SimpleResolver(mDNSAddress) : null;
-		if (mDNS != null) {
-			mDNS.setTCP(true);
-		}
-	}
 
-	static boolean isValidIpAddress(final String address) {
-		return !isEmpty(address);
-	}
-	
 	@Override
 	public String resolve(final String host) throws IOException {
 		if (host == null) return null;
@@ -155,9 +142,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 			} else if (record instanceof AAAARecord) {
 				final InetAddress ipv6_addr = ((AAAARecord) record).getAddress();
 				host_addr = ipv6_addr.getHostAddress();
-			} else if (record instanceof CNAMERecord) {
-				return resolve(((CNAMERecord) record).getTarget().toString());
-			}
+			} else if (record instanceof CNAMERecord) return resolve(((CNAMERecord) record).getTarget().toString());
 			mHostCache.put(host, host_addr);
 			if (DEBUG) {
 				Log.d(RESOLVER_LOGTAG, "Resolved address " + host_addr + " for host " + host);
@@ -170,12 +155,26 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 		return host;
 	}
 
+	void init() throws UnknownHostException {
+		mDNS = !mLocalMappingOnly ? new SimpleResolver(mDNSAddress) : null;
+		if (mDNS != null) {
+			mDNS.setTCP(true);
+		}
+	}
+
+	static boolean isValidIpAddress(final String address) {
+		return !isEmpty(address);
+	}
+
 	private static class HostCache extends LinkedHashMap<String, String> {
-		
+
+		private static final long serialVersionUID = -9216545511009449147L;
+
 		HostCache(final int initialCapacity) {
 			super(initialCapacity);
 		}
-		
+
+		@Override
 		public String put(final String key, final String value) {
 			if (value == null) return value;
 			return super.put(key, value);

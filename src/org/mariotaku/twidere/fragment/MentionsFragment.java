@@ -104,7 +104,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 			}
 		}
 	}
-	
+
 	@Override
 	public void onPullDownToRefresh() {
 		saveReadPosition();
@@ -153,7 +153,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 		}
 		return false;
 	}
-	
+
 	private void saveReadPosition() {
 		final int first_visible_position = mListView.getFirstVisiblePosition();
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);

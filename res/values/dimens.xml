@@ -11,9 +11,9 @@
 	<!-- The width of the big icons in notifications. -->
 	<dimen name="notification_large_icon_height">64dp</dimen>
 	<dimen name="pane_left_width">300dp</dimen>
-	<dimen name="pane_spacing_right">120dp</dimen>
-	<dimen name="default_slidepane_spacing_left">@dimen/pane_spacing_right</dimen>
-	<dimen name="default_slidepane_spacing_right">@dimen/pane_spacing_right</dimen>
+	<dimen name="pane_right_width">120dp</dimen>
+	<dimen name="default_slidepane_spacing_left">@dimen/pane_right_width</dimen>
+	<dimen name="default_slidepane_spacing_right">@dimen/pane_right_width</dimen>
 	<dimen name="default_slidingpane_shadow_width">56dp</dimen>
 
 </resources>

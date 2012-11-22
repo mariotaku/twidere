@@ -237,15 +237,15 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(
-							getBiggerTwitterProfileImage(status.profile_image_url_string),
+					mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(status.profile_image_url_string),
 							holder.profile_image);
 				} else {
 					mProfileImageLoader.displayImage(status.profile_image_url_string, holder.profile_image);
 				}
 				holder.profile_image.setTag(position);
 			}
-			final boolean has_preview = mDisplayImagePreview && status.has_media && status.image_preview_url_string != null;
+			final boolean has_preview = mDisplayImagePreview && status.has_media
+					&& status.image_preview_url_string != null;
 			holder.image_preview.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
 				mPreviewImageLoader.displayImage(status.image_preview_url_string, holder.image_preview);

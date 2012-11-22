@@ -25,9 +25,9 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 /**
- * A simple subclass of {@link ImageWorker} that resizes images from resources given a target width
- * and height. Useful for when the input images might be too large to simply load directly into
- * memory.
+ * A simple subclass of {@link ImageWorker} that resizes images from resources
+ * given a target width and height. Useful for when the input images might be
+ * too large to simply load directly into memory.
  */
 public class ImageResizer extends ImageWorker {
 	private static final String TAG = "ImageWorker";
@@ -35,135 +35,87 @@ public class ImageResizer extends ImageWorker {
 	protected int mImageHeight;
 
 	/**
-	 * Initialize providing a single target image size (used for both width and height);
-	 *
-	 * @param context
-	 * @param imageWidth
-	 * @param imageHeight
-	 */
-	public ImageResizer(Context context, int imageWidth, int imageHeight) {
-		super(context);
-		setImageSize(imageWidth, imageHeight);
-	}
-
-	/**
-	 * Initialize providing a single target image size (used for both width and height);
-	 *
+	 * Initialize providing a single target image size (used for both width and
+	 * height);
+	 * 
 	 * @param context
 	 * @param imageSize
 	 */
-	public ImageResizer(Context context, int imageSize) {
+	public ImageResizer(final Context context, final int imageSize) {
 		super(context);
 		setImageSize(imageSize);
 	}
 
 	/**
-	 * Set the target image width and height.
-	 *
-	 * @param width
-	 * @param height
+	 * Initialize providing a single target image size (used for both width and
+	 * height);
+	 * 
+	 * @param context
+	 * @param imageWidth
+	 * @param imageHeight
 	 */
-	public void setImageSize(int width, int height) {
-		mImageWidth = width;
-		mImageHeight = height;
+	public ImageResizer(final Context context, final int imageWidth, final int imageHeight) {
+		super(context);
+		setImageSize(imageWidth, imageHeight);
 	}
 
 	/**
 	 * Set the target image size (width and height will be the same).
-	 *
+	 * 
 	 * @param size
 	 */
-	public void setImageSize(int size) {
+	public void setImageSize(final int size) {
 		setImageSize(size, size);
 	}
 
 	/**
-	 * The main processing method. This happens in a background task. In this case we are just
-	 * sampling down the bitmap and returning it from a resource.
-	 *
-	 * @param resId
-	 * @return
+	 * Set the target image width and height.
+	 * 
+	 * @param width
+	 * @param height
 	 */
-	private Bitmap processBitmap(int resId) {
-		if (BuildConfig.DEBUG) {
-			Log.d(TAG, "processBitmap - " + resId);
-		}
-		return decodeSampledBitmapFromResource(
-				mContext.getResources(), resId, mImageWidth, mImageHeight);
+	public void setImageSize(final int width, final int height) {
+		mImageWidth = width;
+		mImageHeight = height;
 	}
 
 	@Override
-	protected Bitmap processBitmap(Object data) {
+	protected Bitmap processBitmap(final Object data) {
 		return processBitmap(Integer.parseInt(String.valueOf(data)));
 	}
 
 	/**
-	 * Decode and sample down a bitmap from resources to the requested width and height.
-	 *
-	 * @param res The resources object containing the image data
-	 * @param resId The resource id of the image data
-	 * @param reqWidth The requested width of the resulting bitmap
-	 * @param reqHeight The requested height of the resulting bitmap
-	 * @return A bitmap sampled down from the original with the same aspect ratio and dimensions
-	 *		 that are equal to or greater than the requested width and height
+	 * The main processing method. This happens in a background task. In this
+	 * case we are just sampling down the bitmap and returning it from a
+	 * resource.
+	 * 
+	 * @param resId
+	 * @return
 	 */
-	public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-			int reqWidth, int reqHeight) {
-
-		// First decode with inJustDecodeBounds=true to check dimensions
-		final BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeResource(res, resId, options);
-
-		// Calculate inSampleSize
-		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		// Decode bitmap with inSampleSize set
-		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeResource(res, resId, options);
+	private Bitmap processBitmap(final int resId) {
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "processBitmap - " + resId);
+		}
+		return decodeSampledBitmapFromResource(mContext.getResources(), resId, mImageWidth, mImageHeight);
 	}
 
 	/**
-	 * Decode and sample down a bitmap from a file to the requested width and height.
-	 *
-	 * @param filename The full path of the file to decode
-	 * @param reqWidth The requested width of the resulting bitmap
-	 * @param reqHeight The requested height of the resulting bitmap
-	 * @return A bitmap sampled down from the original with the same aspect ratio and dimensions
-	 *		 that are equal to or greater than the requested width and height
-	 */
-	public static synchronized Bitmap decodeSampledBitmapFromFile(String filename,
-			int reqWidth, int reqHeight) {
-
-		// First decode with inJustDecodeBounds=true to check dimensions
-		final BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(filename, options);
-
-		// Calculate inSampleSize
-		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		// Decode bitmap with inSampleSize set
-		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeFile(filename, options);
-	}
-
-	/**
-	 * Calculate an inSampleSize for use in a {@link BitmapFactory.Options} object when decoding
-	 * bitmaps using the decode* methods from {@link BitmapFactory}. This implementation calculates
-	 * the closest inSampleSize that will result in the final decoded bitmap having a width and
-	 * height equal to or larger than the requested width and height. This implementation does not
-	 * ensure a power of 2 is returned for inSampleSize which can be faster when decoding but
-	 * results in a larger bitmap which isn't as useful for caching purposes.
-	 *
-	 * @param options An options object with out* params already populated (run through a decode*
-	 *			method with inJustDecodeBounds==true
+	 * Calculate an inSampleSize for use in a {@link BitmapFactory.Options}
+	 * object when decoding bitmaps using the decode* methods from
+	 * {@link BitmapFactory}. This implementation calculates the closest
+	 * inSampleSize that will result in the final decoded bitmap having a width
+	 * and height equal to or larger than the requested width and height. This
+	 * implementation does not ensure a power of 2 is returned for inSampleSize
+	 * which can be faster when decoding but results in a larger bitmap which
+	 * isn't as useful for caching purposes.
+	 * 
+	 * @param options An options object with out* params already populated (run
+	 *            through a decode* method with inJustDecodeBounds==true
 	 * @param reqWidth The requested width of the resulting bitmap
 	 * @param reqHeight The requested height of the resulting bitmap
 	 * @return The value to be used for inSampleSize
 	 */
-	public static int calculateInSampleSize(BitmapFactory.Options options,
-			int reqWidth, int reqHeight) {
+	public static int calculateInSampleSize(final BitmapFactory.Options options, final int reqWidth, final int reqHeight) {
 		// Raw height and width of image
 		final int height = options.outHeight;
 		final int width = options.outWidth;
@@ -194,5 +146,60 @@ public class ImageResizer extends ImageWorker {
 			}
 		}
 		return inSampleSize;
+	}
+
+	/**
+	 * Decode and sample down a bitmap from a file to the requested width and
+	 * height.
+	 * 
+	 * @param filename The full path of the file to decode
+	 * @param reqWidth The requested width of the resulting bitmap
+	 * @param reqHeight The requested height of the resulting bitmap
+	 * @return A bitmap sampled down from the original with the same aspect
+	 *         ratio and dimensions that are equal to or greater than the
+	 *         requested width and height
+	 */
+	public static synchronized Bitmap decodeSampledBitmapFromFile(final String filename, final int reqWidth,
+			final int reqHeight) {
+
+		// First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(filename, options);
+
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeFile(filename, options);
+	}
+
+	/**
+	 * Decode and sample down a bitmap from resources to the requested width and
+	 * height.
+	 * 
+	 * @param res The resources object containing the image data
+	 * @param resId The resource id of the image data
+	 * @param reqWidth The requested width of the resulting bitmap
+	 * @param reqHeight The requested height of the resulting bitmap
+	 * @return A bitmap sampled down from the original with the same aspect
+	 *         ratio and dimensions that are equal to or greater than the
+	 *         requested width and height
+	 */
+	public static Bitmap decodeSampledBitmapFromResource(final Resources res, final int resId, final int reqWidth,
+			final int reqHeight) {
+
+		// First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeResource(res, resId, options);
+
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeResource(res, resId, options);
 	}
 }

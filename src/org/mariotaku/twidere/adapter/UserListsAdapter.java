@@ -86,12 +86,10 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(
-						getBiggerTwitterProfileImage(user_list.user_profile_image_url_string),
+				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(user_list.user_profile_image_url_string),
 						holder.profile_image);
 			} else {
-				mProfileImageLoader.displayImage(user_list.user_profile_image_url_string,
-						holder.profile_image);
+				mProfileImageLoader.displayImage(user_list.user_profile_image_url_string, holder.profile_image);
 			}
 		}
 		return view;

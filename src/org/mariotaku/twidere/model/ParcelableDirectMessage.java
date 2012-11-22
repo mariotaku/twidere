@@ -18,7 +18,7 @@
  */
 
 package org.mariotaku.twidere.model;
- 
+
 import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.util.Comparator;
@@ -98,7 +98,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		sender_screen_name = sender != null ? sender.getScreenName() : null;
 		recipient_screen_name = recipient != null ? recipient.getScreenName() : null;
 		sender_profile_image_url_string = sender != null ? parseString(sender.getProfileImageUrlHttps()) : null;
-		recipient_profile_image_url_string = recipient != null ? parseString(recipient.getProfileImageUrlHttps()) : null;
+		recipient_profile_image_url_string = recipient != null ? parseString(recipient.getProfileImageUrlHttps())
+				: null;
 	}
 
 	public ParcelableDirectMessage(final Parcel in) {

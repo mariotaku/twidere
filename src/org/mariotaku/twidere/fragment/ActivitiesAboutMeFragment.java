@@ -395,8 +395,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		private void setProfileImage(final URL url, final ActivityViewHolder holder) {
 			if (!mDisplayProfileImage) return;
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(parseString(url)),
-						holder.profile_image);
+				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(parseString(url)), holder.profile_image);
 			} else {
 				mProfileImageLoader.displayImage(parseString(url), holder.profile_image);
 			}

@@ -25,7 +25,6 @@ import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.Comparator;
 import java.util.Date;
 

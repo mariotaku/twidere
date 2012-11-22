@@ -26,8 +26,8 @@ import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
@@ -143,7 +143,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private static final int LOADER_ID_USER = 1;
 	private static final int LOADER_ID_FRIENDSHIP = 2;
 	private static final int LOADER_ID_BANNER = 3;
-	
+
 	private LazyImageLoader mProfileImageLoader;
 	private SharedPreferences mPreferences;
 
@@ -164,7 +164,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private final DialogFragment mDialogFragment = new EditTextDialogFragment();
 	private Uri mImageUri;
 	private ParcelableUser mUser = null;
-	
+
 	private View mListContainer, mErrorRetryContainer;
 
 	private boolean mGetUserInfoLoaderInitialized;
@@ -381,7 +381,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mTweetCount.setText(String.valueOf(user.statuses_count));
 		mFollowersCount.setText(String.valueOf(user.followers_count));
 		mFriendsCount.setText(String.valueOf(user.friends_count));
-		//final boolean display_profile_image = preferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		// final boolean display_profile_image =
+		// preferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		// mProfileImageView.setVisibility(display_profile_image ? View.VISIBLE
 		// : View.GONE);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
@@ -454,7 +455,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		setRetainInstance(true);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
-		String screen_name = null;		
+		String screen_name = null;
 		if (args != null) {
 			if (savedInstanceState != null) {
 				args.putAll(savedInstanceState);
@@ -656,18 +657,18 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		return container_view;
 	}
 
-//	@Override
-//	public void onDestroyView() {
-//		mUser = null;
-//		mFriendship = null;
-//		mAccountId = -1;
-//		mUserId = -1;
-//		mScreenName = null;
-//		final LoaderManager lm = getLoaderManager();
-//		lm.destroyLoader(LOADER_ID_USER);
-//		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
-//		super.onDestroyView();
-//	}
+	// @Override
+	// public void onDestroyView() {
+	// mUser = null;
+	// mFriendship = null;
+	// mAccountId = -1;
+	// mUserId = -1;
+	// mScreenName = null;
+	// final LoaderManager lm = getLoaderManager();
+	// lm.destroyLoader(LOADER_ID_USER);
+	// lm.destroyLoader(LOADER_ID_FRIENDSHIP);
+	// super.onDestroyView();
+	// }
 
 	@Override
 	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
@@ -853,7 +854,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 		return true;
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
