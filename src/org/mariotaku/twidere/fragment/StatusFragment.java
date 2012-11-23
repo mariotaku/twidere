@@ -191,14 +191,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			final int count = mAdapter.getCount();
 			final long status_id;
 			if (count == 0) {
-				mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-				mInReplyToView.setClickable(false);
-				setPullToRefreshEnabled(false);
 				mShouldScroll = !mLoadMoreAutomatically;
 				status_id = mStatus != null ? mStatus.in_reply_to_status_id : -1;
 			} else {
 				status_id = mAdapter.getItem(0).in_reply_to_status_id;
 			}
+			updatePullRefresh();
 			return new StatusLoader(getActivity(), true, null, mAccountId, status_id);
 		}
 
@@ -210,6 +208,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		@Override
 		public void onLoadFinished(final Loader<Response<ParcelableStatus>> loader,
 				final Response<ParcelableStatus> data) {
+			updatePullRefresh();
 			if (data == null) return;
 			if (data.value != null) {
 				mAdapter.add(data.value);
@@ -221,12 +220,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					getLoaderManager().restartLoader(LOADER_ID_CONVERSATION, null, this);
 				} else {
 					setProgressBarIndeterminateVisibility(false);
-					mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
 				}
 			} else {
 				setProgressBarIndeterminateVisibility(false);
 				showErrorToast(getActivity(), getString(R.string.getting_status), data.exception, true);
 			}
+			updatePullRefresh();
 		}
 
 	};
@@ -440,9 +439,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	public void displayStatus(final ParcelableStatus status) {
 		onRefreshComplete();
+		updatePullRefresh();
 		if (status == null || !status.equals(mStatus)) {
 			mAdapter.clear();
 		}
+		mListView.setSelection(0);
 		// UCD
 		if (mStatus != null && status != null && mStatus.status_id != status.status_id) {
 			ProfilingUtil.profiling(getActivity(), mAccountId, "End, " + mStatus.status_id);
@@ -526,7 +527,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			}
 		}
 		mLocationView.setVisibility(ParcelableLocation.isValidLocation(status.location) ? View.VISIBLE : View.GONE);
-
 		if (mLoadMoreAutomatically) {
 			showFollowInfo(true);
 			showLocationInfo(true);
@@ -838,6 +838,15 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		if (mImagePreviewAdapter == null) return;
 		mImagePreviewAdapter.clear();
 		mImagePreviewAdapter.addAll(mData);
+	}
+	
+	private void updatePullRefresh() {
+		final boolean has_converstion = mStatus != null && mStatus.in_reply_to_status_id > 0;
+		final boolean load_not_finished = mAdapter.getCount() > 0 && mAdapter.getItem(0).in_reply_to_status_id > 0;
+		final boolean should_enable = has_converstion && load_not_finished;
+		mListView.setTranscriptMode(should_enable ? ListView.TRANSCRIPT_MODE_NORMAL : ListView.TRANSCRIPT_MODE_DISABLED);
+		mInReplyToView.setClickable(should_enable);
+		setPullToRefreshEnabled(should_enable);
 	}
 
 	private void updateUserColor() {

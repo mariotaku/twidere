@@ -782,7 +782,7 @@ public class SlidingPaneView extends ViewGroup {
 					mTempDeltaX = event.getX() - event.getHistoricalX(0);
 					mTotalMoveX += mTempDeltaX;
 					mTotalMoveY += event.getY() - event.getHistoricalY(0);
-					if (Math.abs(mTotalMoveX) >= mScaledTouchSlop / 2) return true;
+					if (!mIsVerticalScrolling && Math.abs(mTotalMoveX) >= mScaledTouchSlop / 2) return true;
 					if (Math.abs(mTotalMoveY) >= mScaledTouchSlop / 2) {
 						mIsVerticalScrolling = true;
 						return false;
@@ -790,7 +790,6 @@ public class SlidingPaneView extends ViewGroup {
 					break;
 				}
 				case MotionEvent.ACTION_UP: {
-					mController.release(-mTempDeltaX, -mTotalMoveX);
 					mTempDeltaX = 0;
 					mTotalMoveX = 0;
 					mTotalMoveY = 0;
