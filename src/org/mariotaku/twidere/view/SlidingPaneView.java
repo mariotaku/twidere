@@ -782,8 +782,8 @@ public class SlidingPaneView extends ViewGroup {
 					mTempDeltaX = event.getX() - event.getHistoricalX(0);
 					mTotalMoveX += mTempDeltaX;
 					mTotalMoveY += event.getY() - event.getHistoricalY(0);
-					if (!mIsVerticalScrolling && Math.abs(mTotalMoveX) >= mScaledTouchSlop / 2) return true;
-					if (Math.abs(mTotalMoveY) >= mScaledTouchSlop / 2) {
+					if (!mIsVerticalScrolling && Math.abs(mTotalMoveX) >= mScaledTouchSlop) return true;
+					if (Math.abs(mTotalMoveY) >= mScaledTouchSlop) {
 						mIsVerticalScrolling = true;
 						return false;
 					}

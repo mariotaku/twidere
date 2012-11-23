@@ -459,7 +459,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 		clearPreviewImages();
 		if (status == null || getActivity() == null) return;
-
+		final Bundle args = getArguments();
+		args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+		args.putLong(INTENT_KEY_STATUS_ID, mStatusId);
+		args.putParcelable(INTENT_KEY_STATUS, status);
 		mMenuBar.inflate(R.menu.menu_status);
 		setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
 		mMenuBar.show();
@@ -568,7 +571,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
-			// mStatus = bundle.getParcelable(INTENT_KEY_STATUS);
 		}
 		mImagePreviewAdapter = new ImagesAdapter(getActivity());
 		mLoadImagesIndicator.setOnClickListener(this);
