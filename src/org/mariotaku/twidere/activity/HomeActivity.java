@@ -397,9 +397,10 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	}
 
 	public void setDefaultAccount() {
+		if (mPreferences == null) return;
 		final long[] activated_ids = getActivatedAccountIds(this);
 		final long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
-		if (activated_ids.length > 0 && !ArrayUtils.contains(activated_ids, default_account_id)) {
+		if (activated_ids != null && activated_ids.length > 0 && !ArrayUtils.contains(activated_ids, default_account_id)) {
 			mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
 			mIndicator.setPagingEnabled(true);
 		}

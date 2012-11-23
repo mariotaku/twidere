@@ -195,6 +195,7 @@ public class DiskLruCache {
 	 * @param data The bitmap to store.
 	 */
 	public void put(final String key, final Bitmap data) {
+		if (data == null) return;
 		synchronized (mLinkedHashMap) {
 			if (mLinkedHashMap.get(key) == null) {
 				try {
@@ -267,7 +268,7 @@ public class DiskLruCache {
 	 * @return
 	 */
 	private boolean writeBitmapToFile(final Bitmap bitmap, final String file) throws IOException, FileNotFoundException {
-
+		if (bitmap == null) return false;
 		OutputStream out = null;
 		try {
 			final RandomAccessFile raf = new RandomAccessFile(file, "rw");

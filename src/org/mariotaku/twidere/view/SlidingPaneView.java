@@ -538,10 +538,16 @@ public class SlidingPaneView extends ViewGroup {
 		 * Indicates whether we need initialize position of view after measuring
 		 * is finished.
 		 */
-		private boolean mIsRightPaneShown = false;
+		private boolean mIsRightPaneShown;
+		
+		private boolean mIsScrolling;
 
 		public ContentScrollController(final Scroller scroller) {
 			mScroller = scroller;
+		}
+
+		public boolean isScrolling() {
+			return mIsScrolling;
 		}
 
 		public float getScrollFactor() {
@@ -577,7 +583,6 @@ public class SlidingPaneView extends ViewGroup {
 			} else {
 				x = mViewRightPaneContainer.getScrollX();
 			}
-
 			return x == 0;
 		}
 
@@ -589,6 +594,7 @@ public class SlidingPaneView extends ViewGroup {
 		 * Resets scroller controller. Stops flinging on current position.
 		 */
 		public void reset() {
+			mIsScrolling = false;
 			if (!mScroller.isFinished()) {
 				mScroller.forceFinished(true);
 			}
@@ -600,8 +606,11 @@ public class SlidingPaneView extends ViewGroup {
 		 */
 		@Override
 		public void run() {
-			if (mScroller.isFinished()) return;
-
+			if (mScroller.isFinished()) {
+				mIsScrolling = false;
+				return;
+			}
+			mIsScrolling = true;
 			final boolean more = mScroller.computeScrollOffset();
 			final int x = mScroller.getCurrX();
 			final int diff = mLastFlingX - x;
@@ -631,7 +640,16 @@ public class SlidingPaneView extends ViewGroup {
 		 * @param delta
 		 */
 		private void completeScrolling(final float delta) {
-			// if (delta == 0) return;
+			if (delta == 0) {
+				final int bound = getRightBound();
+				final int scroll = mViewRightPaneContainer.getScrollX();
+				if (-scroll > bound / 2) {
+					showRightPane(getFlingDuration());
+				} else {
+					hideRightPane(getFlingDuration());
+				}
+				return;
+			}
 			if (delta > 0) {
 				showRightPane(getFlingDuration());
 			} else {
@@ -641,9 +659,8 @@ public class SlidingPaneView extends ViewGroup {
 
 		private void fling(final int startX, final int dx, final int duration) {
 			reset();
-
 			if (dx == 0) return;
-
+			mIsScrolling = true;
 			if (duration <= 0) {
 				mViewRightPaneContainer.scrollBy(-dx, 0);
 				return;
@@ -733,10 +750,12 @@ public class SlidingPaneView extends ViewGroup {
 
 	private static class ScrollTouchInterceptor implements TouchInterceptor {
 
-		private float mTempDelta, mTotalMove;
+		private final ContentScrollController mController;
 		private final int mScaledTouchSlop;
-		ContentScrollController mController;
 
+		private float mTempDeltaX, mTotalMoveX, mTotalMoveY;
+		private boolean mIsVerticalScrolling, mIsScrollIntrrupted;
+		
 		public ScrollTouchInterceptor(final SlidingPaneView parent) {
 			mScaledTouchSlop = ViewConfiguration.get(parent.getContext()).getScaledTouchSlop();
 			mController = parent.getController();
@@ -746,29 +765,37 @@ public class SlidingPaneView extends ViewGroup {
 		public boolean onInterceptTouchEvent(final ViewGroup view, final MotionEvent event) {
 			switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN: {
-					mTempDelta = 0;
-					mTotalMove = 0;
+					mTempDeltaX = 0;
+					mTotalMoveX = 0;
+					mTotalMoveY = 0;
+					mIsVerticalScrolling = false;
+					mIsScrollIntrrupted = mController.isScrolling();
 					mController.reset();
 					break;
 				}
 				case MotionEvent.ACTION_MOVE: {
+					if (mController.isScrolling() || mIsScrollIntrrupted) return true;
 					final int hist_size = event.getHistorySize();
 					if (hist_size == 0) {
 						break;
 					}
-					mTempDelta = event.getX() - event.getHistoricalX(0);
-					mTotalMove += mTempDelta;
-					if (Math.abs(mTotalMove) >= mScaledTouchSlop) return true;
+					mTempDeltaX = event.getX() - event.getHistoricalX(0);
+					mTotalMoveX += mTempDeltaX;
+					mTotalMoveY += event.getY() - event.getHistoricalY(0);
+					if (Math.abs(mTotalMoveX) >= mScaledTouchSlop / 2) return true;
+					if (Math.abs(mTotalMoveY) >= mScaledTouchSlop / 2) {
+						mIsVerticalScrolling = true;
+						return false;
+					}
 					break;
 				}
 				case MotionEvent.ACTION_UP: {
-					mTempDelta = 0;
-					mTotalMove = 0;
-					break;
-				}
-				default: {
-					mTempDelta = 0;
-					mTotalMove = 0;
+					mController.release(-mTempDeltaX, -mTotalMoveX);
+					mTempDeltaX = 0;
+					mTotalMoveX = 0;
+					mTotalMoveY = 0;
+					mIsVerticalScrolling = false;
+					mIsScrollIntrrupted = false;
 					break;
 				}
 			}
@@ -777,10 +804,13 @@ public class SlidingPaneView extends ViewGroup {
 
 		@Override
 		public boolean onTouchEvent(final ViewGroup view, final MotionEvent event) {
+			if (mIsVerticalScrolling && !mController.isScrolling()) return true;
 			switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN: {
-					mTempDelta = 0;
-					mTotalMove = 0;
+					mTempDeltaX = 0;
+					mTotalMoveX = 0;
+					mTotalMoveY = 0;
+					mIsVerticalScrolling = false;
 					mController.reset();
 					break;
 				}
@@ -789,20 +819,17 @@ public class SlidingPaneView extends ViewGroup {
 					if (hist_size == 0) {
 						break;
 					}
-					final float distanceX = mTempDelta = event.getX() - event.getHistoricalX(0);
-					mTotalMove += mTempDelta;
+					final float distanceX = mTempDeltaX = event.getX() - event.getHistoricalX(0);
+					mTotalMoveX += mTempDeltaX;
 					mController.scrollBy((int) -distanceX);
 					break;
 				}
 				case MotionEvent.ACTION_UP: {
-					mController.release(-mTempDelta, -mTotalMove);
-					mTempDelta = 0;
-					mTotalMove = 0;
-					break;
-				}
-				default: {
-					mTempDelta = 0;
-					mTotalMove = 0;
+					mController.release(-mTempDeltaX, -mTotalMoveX);
+					mTempDeltaX = 0;
+					mTotalMoveX = 0;
+					mTotalMoveY = 0;
+					mIsVerticalScrolling = false;
 					break;
 				}
 			}

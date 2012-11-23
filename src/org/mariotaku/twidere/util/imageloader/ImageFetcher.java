@@ -107,7 +107,8 @@ public class ImageFetcher extends ImageResizer {
 			final InputStream in = resp.asStream();
 			out = new FileOutputStream(cacheFile);
 			copyStream(in, out);
-			return cacheFile;
+			if (cacheFile.length() > 0) return cacheFile;
+			cacheFile.delete();
 		} catch (final IOException e) {
 			Log.e(TAG, "Error in downloadBitmap - " + e);
 		} catch (final TwitterException e) {

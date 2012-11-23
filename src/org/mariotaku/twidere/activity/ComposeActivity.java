@@ -693,6 +693,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
+		mLocationManager.removeUpdates(this);
 		super.onStop();
 	}
 
