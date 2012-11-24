@@ -61,7 +61,7 @@ public class FiltersActivity extends BaseActivity {
 		mAdapter.addTab(FilteredKeywordsFragment.class, null, getString(R.string.keywords), null, 1);
 		mAdapter.addTab(FilteredSourcesFragment.class, null, getString(R.string.sources), null, 2);
 		mViewPager.setAdapter(mAdapter);
-		mViewPager.setPagingEnabled(false);
+		//mViewPager.setPagingEnabled(false);
 		mIndicator.setViewPager(mViewPager);
 		mIndicator.setDisplayLabel(true);
 		mIndicator.setDisplayIcon(false);

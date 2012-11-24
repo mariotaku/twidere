@@ -34,6 +34,7 @@ import org.mariotaku.twidere.view.ExtendedViewPager;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
@@ -128,6 +129,8 @@ public class SearchActivity extends MultiSelectActivity {
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setCurrentItem(is_search_user ? 1 : 0);
 		mPagerTab.setTabIndicatorColorResource(R.color.holo_blue_light);
+		final Resources res = getResources();
+		mPagerTab.setTextColor(res.getColor(isDarkTheme() ? R.color.primary_text_holo_dark : R.color.primary_text_holo_light));
 	}
 
 	@Override

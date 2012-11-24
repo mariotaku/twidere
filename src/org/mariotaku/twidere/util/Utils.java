@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
@@ -582,9 +583,9 @@ public final class Utils implements Constants {
 
 	public static String formatDirectMessageText(final DirectMessage message) {
 		if (message == null) return null;
-		final String text = message.getRawText();
-		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, false);
+		final String raw_text = message.getRawText();
+		if (raw_text == null) return null;
+		final HtmlBuilder builder = new HtmlBuilder(unescape(raw_text), false);
 		parseEntities(builder, message);
 		return builder.build();
 	}
@@ -602,7 +603,7 @@ public final class Utils implements Constants {
 		if (status == null) return null;
 		final String raw_text = status.getRawText();
 		if (raw_text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(toPlainText(raw_text), false);
+		final HtmlBuilder builder = new HtmlBuilder(unescape(raw_text), false);
 		parseEntities(builder, status);
 		return builder.build();
 	}

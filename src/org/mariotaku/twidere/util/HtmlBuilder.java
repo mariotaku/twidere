@@ -23,15 +23,18 @@ import static org.mariotaku.twidere.util.HtmlEscapeHelper.toHtml;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+
+import android.util.Log;
 
 public class HtmlBuilder {
 
+ 	private static final String LOGTAG = "HtmlBuilder";
+ 
 	private final String string;
 	private final int string_length;
 	private final boolean strict;
 
-	private final List<LinkSpec> links = new ArrayList<LinkSpec>();
+	private final ArrayList<LinkSpec> links = new ArrayList<LinkSpec>();
 
 	public HtmlBuilder(final String string) {
 		this(string, false);
@@ -45,20 +48,19 @@ public class HtmlBuilder {
 	}
 
 	public boolean addLink(final String link, final String display, final int start, final int end) {
-		// if (start >= end) {
-		// if (strict) throw new
-		// IllegalArgumentException("start must lesser than end!");
-		// return;
-		// }
 		if (start < 0 || end < 0 || start > end || end > string_length) {
+			final String message = "String length = " + string_length + ", start = " + start
+				+ ", end = " + end;
 			if (strict)
-				throw new StringIndexOutOfBoundsException("String length = " + string_length + ", start = " + start
-						+ ", end = " + end);
+				throw new StringIndexOutOfBoundsException(message);
+			Log.e(LOGTAG, message);
 			return false;
 		}
 		for (final LinkSpec spec : links) {
 			if (start >= spec.start && start <= spec.end || end >= spec.start && end <= spec.end) {
-				if (strict) throw new IllegalArgumentException("link already added in this range!");
+				final String message = "link already added in this range!";
+				if (strict) throw new IllegalArgumentException(message);
+				Log.e(LOGTAG, message);
 				return false;
 			}
 		}

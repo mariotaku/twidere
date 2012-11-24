@@ -196,7 +196,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			} else {
 				status_id = mAdapter.getItem(0).in_reply_to_status_id;
 			}
-			updatePullRefresh();
+			mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+			mInReplyToView.setClickable(false);
+			setPullToRefreshEnabled(false);	
 			return new StatusLoader(getActivity(), true, null, mAccountId, status_id);
 		}
 
