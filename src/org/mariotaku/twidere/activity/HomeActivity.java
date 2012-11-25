@@ -400,7 +400,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (mPreferences == null) return;
 		final long[] activated_ids = getActivatedAccountIds(this);
 		final long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
-		if (activated_ids != null && activated_ids.length > 0 && !ArrayUtils.contains(activated_ids, default_account_id)) {
+		if (activated_ids != null && activated_ids.length > 0
+				&& !ArrayUtils.contains(activated_ids, default_account_id)) {
 			mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
 			mIndicator.setPagingEnabled(true);
 		}
@@ -410,6 +411,16 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
 		mProgressBarIndeterminateVisible = visible;
 		mProgress.setVisibility(visible || mService.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
+	}
+
+	@Override
+	protected int getDualPaneLayoutRes() {
+		return R.layout.home_dual_pane;
+	}
+
+	@Override
+	protected int getNormalLayoutRes() {
+		return R.layout.home;
 	}
 
 	@Override
@@ -567,16 +578,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			if (!mCustomTabs.get(i).equals(tabs.get(i))) return true;
 		}
 		return false;
-	}
-
-	@Override
-	int getDualPaneLayoutRes() {
-		return R.layout.home_dual_pane;
-	}
-
-	@Override
-	int getNormalLayoutRes() {
-		return R.layout.home;
 	}
 
 }

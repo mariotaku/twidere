@@ -23,7 +23,6 @@ import org.mariotaku.twidere.Constants;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 
 public abstract class ManagedAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> implements
 		Constants {

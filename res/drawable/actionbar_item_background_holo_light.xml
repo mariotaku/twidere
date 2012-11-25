@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android" android:exitFadeDuration="@android:integer/config_mediumAnimTime">
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<!-- Even though these two point to the same resource, have two states so the drawable will invalidate itself when coming out of pressed state. -->
 	<item android:drawable="@drawable/list_selector_disabled_holo_light" android:state_enabled="false" android:state_focused="true" android:state_pressed="true"/>

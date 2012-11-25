@@ -28,8 +28,8 @@ import android.util.Log;
 
 public class HtmlBuilder {
 
- 	private static final String LOGTAG = "HtmlBuilder";
- 
+	private static final String LOGTAG = "HtmlBuilder";
+
 	private final String string;
 	private final int string_length;
 	private final boolean strict;
@@ -49,10 +49,8 @@ public class HtmlBuilder {
 
 	public boolean addLink(final String link, final String display, final int start, final int end) {
 		if (start < 0 || end < 0 || start > end || end > string_length) {
-			final String message = "String length = " + string_length + ", start = " + start
-				+ ", end = " + end;
-			if (strict)
-				throw new StringIndexOutOfBoundsException(message);
+			final String message = "String length = " + string_length + ", start = " + start + ", end = " + end;
+			if (strict) throw new StringIndexOutOfBoundsException(message);
 			Log.e(LOGTAG, message);
 			return false;
 		}

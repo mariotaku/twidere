@@ -27,6 +27,7 @@ import static org.mariotaku.twidere.util.Utils.matchLinkId;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseLong;
 
+import org.mariotaku.actionbarcompat.ActionBarCompatBase;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
@@ -45,6 +46,7 @@ import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -53,19 +55,42 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 
 public class LinkHandlerActivity extends MultiSelectActivity {
 
+	private ActionBarCompatBase mActionBarCompat;
+
 	private Fragment mFragment;
+
+	@Override
+	public MenuInflater getMenuInflater() {
+		return mActionBarCompat.getMenuInflater(super.getMenuInflater());
+	}
+
+	@Override
+	public void invalidateSupportOptionsMenu() {
+		mActionBarCompat.invalidateOptionsMenu();
+	}
+
+	@Override
+	public void onAttachFragment(final Fragment fragment) {
+		super.onAttachFragment(fragment);
+		mActionBarCompat.createActionBarMenu();
+	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		mActionBarCompat = new ActionBarCompatBase(this);
 		super.onCreate(savedInstanceState);
-		setSupportProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		mActionBarCompat.initViews();
+		mActionBarCompat.setDisplayHomeAsUpEnabled(true);
+		setSupportProgressBarIndeterminateVisibility(false);
 		final Intent intent = getIntent();
 		final Uri data = intent.getData();
 		if (data != null) {
@@ -86,6 +111,21 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 		} else {
 			finish();
 		}
+	}
+
+	/**
+	 * Base action bar-aware implementation for
+	 * {@link Activity#onCreateOptionsMenu(android.view.Menu)}.
+	 * 
+	 * Note: marking menu items as invisible/visible is not currently supported.
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		if (mAttachedFragment != null) {
+			mAttachedFragment.onCreateOptionsMenu(menu, getMenuInflater());
+		}
+		return true;
 	}
 
 	@Override
@@ -110,6 +150,33 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 			}
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onTitleChanged(final CharSequence title, final int color) {
+		mActionBarCompat.setTitle(title);
+		super.onTitleChanged(title, color);
+	}
+
+	@Override
+	protected int getDarkThemeRes() {
+		return R.style.Theme_Twidere_DialogWhenLarge;
+	}
+
+	// This simply disables dual pane layout.
+	@Override
+	protected int getDualPaneLayoutRes() {
+		return getNormalLayoutRes();
+	}
+
+	@Override
+	protected int getLightThemeRes() {
+		return R.style.Theme_Twidere_Light_DialogWhenLarge;
+	}
+
+	@Override
+	protected int getNormalLayoutRes() {
+		return R.layout.base_dialogwhenlarge;
 	}
 
 	@Override
@@ -359,11 +426,5 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 		}
 		mFragment = fragment;
 		return true;
-	}
-
-	// This simply disables dual pane layout.
-	@Override
-	int getDualPaneLayoutRes() {
-		return getNormalLayoutRes();
 	}
 }

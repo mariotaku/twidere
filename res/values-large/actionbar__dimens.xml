@@ -17,8 +17,8 @@
 
 <resources>
 
-	<dimen name="actionbar_height">48dp</dimen>
-	<dimen name="actionbar_home_width">32dp</dimen>
-	<dimen name="actionbar_button_width">56dp</dimen>
+	<dimen name="actionbar_height">56dp</dimen>
+	<dimen name="actionbar_button_width">64dp</dimen>
+	<dimen name="actionbar_home_width">48dp</dimen>
 
 </resources>

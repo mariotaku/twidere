@@ -40,7 +40,7 @@ public class ExtendedLinearLayout extends LinearLayout implements ExtendedViewGr
 	}
 
 	public ExtendedLinearLayout(final Context context, final AttributeSet attrs, final int defStyle) {
-		//Workaround for pre-Honeycomb devices.
+		// Workaround for pre-Honeycomb devices.
 		super(context, attrs);
 	}
 

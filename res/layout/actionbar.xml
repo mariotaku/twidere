@@ -29,7 +29,7 @@
 
 			<ImageView
 				android:id="@id/actionbar_icon"
-				android:layout_width="32dp"
+				android:layout_width="@dimen/actionbar_home_width"
 				android:layout_height="match_parent"
 				android:gravity="center_vertical|left"
 				android:scaleType="fitCenter"/>

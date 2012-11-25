@@ -130,7 +130,8 @@ public class SearchActivity extends MultiSelectActivity {
 		mViewPager.setCurrentItem(is_search_user ? 1 : 0);
 		mPagerTab.setTabIndicatorColorResource(R.color.holo_blue_light);
 		final Resources res = getResources();
-		mPagerTab.setTextColor(res.getColor(isDarkTheme() ? R.color.primary_text_holo_dark : R.color.primary_text_holo_light));
+		mPagerTab.setTextColor(res.getColor(isDarkTheme() ? R.color.primary_text_holo_dark
+				: R.color.primary_text_holo_light));
 	}
 
 	@Override
@@ -157,20 +158,20 @@ public class SearchActivity extends MultiSelectActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	protected int getDualPaneLayoutRes() {
+		return R.layout.search_dual_pane;
+	}
+
+	@Override
+	protected int getNormalLayoutRes() {
+		return R.layout.search;
+	}
+
 	protected void setPagingEnabled(final boolean enabled) {
 		if (mViewPager != null) {
 			mViewPager.setPagingEnabled(enabled);
 			mViewPager.setEnabled(enabled);
 		}
-	}
-
-	@Override
-	int getDualPaneLayoutRes() {
-		return R.layout.search_dual_pane;
-	}
-
-	@Override
-	int getNormalLayoutRes() {
-		return R.layout.search;
 	}
 }

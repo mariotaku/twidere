@@ -131,7 +131,7 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 				final Toast t = Toast.makeText(mContext, item.getTitle(), Toast.LENGTH_SHORT);
 
 				final int[] screenPos = new int[2];
-				v.getLocationInWindow(screenPos);
+				v.getLocationOnScreen(screenPos);
 
 				final int height = v.getHeight();
 

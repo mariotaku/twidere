@@ -104,6 +104,16 @@ public class BaseListFragment extends ListFragment implements Constants {
 	}
 
 	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		final View view = super.onCreateView(inflater, container, savedInstanceState);
+		final ViewGroup progress_container = (ViewGroup) view
+				.findViewById(ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID);
+		final View progress = progress_container.getChildAt(0);
+		progress.post(new InvalidateProgressBarRunnable(progress));
+		return view;
+	}
+
+	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		mActivityFirstCreated = true;
@@ -144,14 +154,5 @@ public class BaseListFragment extends ListFragment implements Constants {
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.unregisterReceiver(receiver);
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		final View view = super.onCreateView(inflater, container, savedInstanceState);
-		final ViewGroup progress_container = (ViewGroup) view.findViewById(ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID);
-		final View progress = progress_container.getChildAt(0);
-		progress.post(new InvalidateProgressBarRunnable(progress));
-		return view;
 	}
 }

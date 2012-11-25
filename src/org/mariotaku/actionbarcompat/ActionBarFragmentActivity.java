@@ -17,7 +17,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	private final ActionBarCompat mActionBarCompat = ActionBarCompat.getInstance(this);
 	private boolean mActionBarInitialized = false;
 
-	private Fragment mAttachedFragment;
+	protected Fragment mAttachedFragment;
 
 	private ActionModeCompat mActionModeCompat;
 
@@ -82,8 +82,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
-			if (((ActionBarCompatBase) mActionBarCompat).isActionModeShowing() && mActionModeCompat != null)
-				return false;
+			if (((ActionBarCompatBase) mActionBarCompat).isActionModeShowing()) return false;
 		}
 		boolean retValue = super.onCreateOptionsMenu(menu);
 		if (mActionBarCompat instanceof ActionBarCompatBase) {

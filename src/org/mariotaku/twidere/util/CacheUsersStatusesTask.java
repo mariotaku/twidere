@@ -54,10 +54,8 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 
 	@Override
 	protected Void doInBackground(final Void... args) {
-
 		final List<ContentValues> cached_users_list = new ArrayList<ContentValues>();
 		final List<Long> user_ids = new ArrayList<Long>(), status_ids = new ArrayList<Long>();
-
 		for (final ContentValues values : all_statuses) {
 			if (values == null) {
 				continue;
@@ -68,9 +66,7 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 				user_ids.add(user_id);
 				cached_users_list.add(makeCachedUserContentValues(values));
 			}
-
 		}
-
 		resolver.delete(CachedUsers.CONTENT_URI,
 				CachedUsers.USER_ID + " IN (" + ListUtils.toString(user_ids, ',', true) + " )", null);
 		resolver.bulkInsert(CachedUsers.CONTENT_URI,
@@ -84,11 +80,25 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 
 	public static Runnable getRunnable(final Context context, final List<twitter4j.Status> statuses,
 			final long account_id) {
-		return new Runnable() {
-			@Override
-			public void run() {
-				new CacheUsersStatusesTask(context, statuses, account_id).execute();
-			}
-		};
+		return new ExecuteCacheUserStatusesTaskRunnable(context, statuses, account_id);
+
+	}
+
+	static class ExecuteCacheUserStatusesTaskRunnable implements Runnable {
+		final Context context;
+		final List<twitter4j.Status> statuses;
+		final long account_id;
+
+		ExecuteCacheUserStatusesTaskRunnable(final Context context, final List<twitter4j.Status> statuses,
+				final long account_id) {
+			this.context = context;
+			this.statuses = statuses;
+			this.account_id = account_id;
+		}
+
+		@Override
+		public void run() {
+			new CacheUsersStatusesTask(context, statuses, account_id).execute();
+		}
 	}
 }

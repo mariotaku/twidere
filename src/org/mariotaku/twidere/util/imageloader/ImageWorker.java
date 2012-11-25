@@ -20,6 +20,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 import org.mariotaku.twidere.BuildConfig;
+import org.mariotaku.twidere.util.AsyncTask;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -30,7 +31,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
-import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -49,11 +50,14 @@ public abstract class ImageWorker {
 	private boolean mFadeInBitmap = true;
 	private boolean mExitTasksEarly = false;
 
-	protected Context mContext;
+	protected final Context mContext;
+	protected final Handler mHandler;
+
 	protected ImageWorkerAdapter mImageWorkerAdapter;
 
 	protected ImageWorker(final Context context) {
 		mContext = context;
+		mHandler = new Handler();
 		init();
 	}
 
@@ -70,7 +74,7 @@ public abstract class ImageWorker {
 		final String dataString = String.valueOf(data);
 		final File file = mImageCache.getFileFromDiskCache(dataString);
 		if (file != null && file.isFile()) return file;
-		new BitmapPreloaderTask().execute(data);
+		mHandler.post(new BitmapPreloaderTaskRunnable(data));
 		return null;
 	}
 
@@ -338,6 +342,21 @@ public abstract class ImageWorker {
 			}
 
 			return null;
+		}
+
+	}
+
+	private class BitmapPreloaderTaskRunnable implements Runnable {
+
+		final Object data;
+
+		BitmapPreloaderTaskRunnable(final Object data) {
+			this.data = data;
+		}
+
+		@Override
+		public void run() {
+			new BitmapPreloaderTask().execute(data);
 		}
 
 	}

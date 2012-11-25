@@ -50,4 +50,14 @@
 		<item name="popupBackground">@drawable/popup_holo_light</item>
 	</style>
 
+	<style name="Theme.ActionBar.Dialog.NoActionBar" parent="android:Theme.Holo.Dialog.NoActionBar">
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
+		<item name="popupBackground">@drawable/popup_holo_light</item>
+	</style>
+
+	<style name="Theme.ActionBar.Light.Dialog.NoActionBar" parent="android:Theme.Holo.Light.Dialog.NoActionBar">
+		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_holo</item>
+		<item name="popupBackground">@drawable/popup_holo_light</item>
+	</style>
+
 </resources>

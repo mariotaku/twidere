@@ -10,13 +10,15 @@
 		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
-		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
 		<!-- Button styles -->
 		<item name="android:buttonStyle">@style/Widget.Twidere.Button</item>
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.ImageButton</item>
+
+		<!-- Other widgets -->
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="Theme.Holo.Light.DarkActionBar">
@@ -27,17 +29,19 @@
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
-		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
 		<!-- Button styles -->
 		<item name="android:buttonStyle">@style/Widget.Twidere.Light.Button</item>
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Light.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Light.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.Light.ImageButton</item>
+
+		<!-- Other widgets -->
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 	</style>
 
 	<style name="Theme.Twidere.Viewer" parent="android:Theme.Translucent.NoTitleBar">
-		<item name="android:windowBackground">@drawable/image_viewer_background</item>
+		<item name="android:windowBackground">@drawable/viewer_background</item>
 		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
@@ -48,13 +52,15 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
-		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
 		<!-- Button styles -->
 		<item name="android:buttonStyle">@style/Widget.Twidere.Button</item>
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.ImageButton</item>
+
+		<!-- Other widgets -->
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Dialog" parent="Theme.Holo.Light.Dialog">
@@ -62,13 +68,19 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
-		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 
 		<!-- Button styles -->
 		<item name="android:buttonStyle">@style/Widget.Twidere.Light.Button</item>
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Light.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Light.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.Light.ImageButton</item>
+
+		<!-- Other widgets -->
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 	</style>
+
+	<style name="Theme.Twidere.DialogWhenLarge"/>
+
+	<style name="Theme.Twidere.Light.DialogWhenLarge"/>
 
 </resources>

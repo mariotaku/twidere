@@ -22,8 +22,6 @@ package org.mariotaku.twidere.util;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
-import android.os.AsyncTask.Status;
-
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class AsyncTaskManager {
 
@@ -92,7 +90,7 @@ public class AsyncTaskManager {
 
 	public boolean isExcuting(final int hashCode) {
 		final ManagedAsyncTask task = findTask(hashCode);
-		if (task != null && task.getStatus() == Status.RUNNING) return true;
+		if (task != null && task.getStatus() == AsyncTask.Status.RUNNING) return true;
 		return false;
 	}
 

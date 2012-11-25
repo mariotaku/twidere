@@ -440,6 +440,8 @@ public final class TweetStore implements Constants {
 
 		public static final String IMAGE_URI = "image_uri";
 
+		public static final String LOCATION = "location";
+
 		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
 
 		public static final String IN_REPLY_TO_NAME = "in_reply_to_name";
@@ -452,11 +454,12 @@ public final class TweetStore implements Constants {
 
 		public static final String IS_PHOTO_ATTACHED = "is_photo_attached";
 
-		public static final String[] COLUMNS = new String[] { _ID, TEXT, ACCOUNT_IDS, IMAGE_URI, IN_REPLY_TO_STATUS_ID,
-				IN_REPLY_TO_NAME, IN_REPLY_TO_SCREEN_NAME, IS_QUOTE, IS_IMAGE_ATTACHED, IS_PHOTO_ATTACHED };
+		public static final String[] COLUMNS = new String[] { _ID, TEXT, ACCOUNT_IDS, LOCATION, IMAGE_URI,
+				IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_NAME, IN_REPLY_TO_SCREEN_NAME, IS_QUOTE, IS_IMAGE_ATTACHED,
+				IS_PHOTO_ATTACHED };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
+				TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
 	}
 
 	public static interface Filters extends BaseColumns {

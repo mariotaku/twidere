@@ -44,6 +44,14 @@ public class ExtendedFrameLayout extends FrameLayout implements ExtendedViewGrou
 	}
 
 	@Override
+	public final boolean dispatchTouchEvent(final MotionEvent ev) {
+		if (mTouchInterceptor != null) {
+			mTouchInterceptor.dispatchTouchEvent(this, ev);
+		}
+		return super.dispatchTouchEvent(ev);
+	}
+
+	@Override
 	public final boolean onInterceptTouchEvent(final MotionEvent event) {
 		if (mTouchInterceptor != null) {
 			final boolean ret = mTouchInterceptor.onInterceptTouchEvent(this, event);

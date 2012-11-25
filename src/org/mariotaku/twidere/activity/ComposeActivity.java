@@ -33,7 +33,7 @@ import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.File;
 
-import org.mariotaku.actionbarcompat.ActionBar;
+import org.mariotaku.actionbarcompat.ActionBarCompatBase;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.popupmenu.PopupMenu;
@@ -84,6 +84,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -111,7 +112,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private ContentResolver mResolver;
 	private final Validator mValidator = new Validator();
 
-	private ActionBar mActionBar;
+	private ActionBarCompatBase mActionBarCompat;
 	private PopupMenu mPopupMenu;
 
 	private static final int THUMBNAIL_SIZE = 36;
@@ -142,6 +143,16 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
 
+	}
+
+	@Override
+	public MenuInflater getMenuInflater() {
+		return mActionBarCompat.getMenuInflater(super.getMenuInflater());
+	}
+
+	@Override
+	public void invalidateSupportOptionsMenu() {
+		mActionBarCompat.invalidateOptionsMenu();
 	}
 
 	@Override
@@ -246,6 +257,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	@Override
+	public void onAttachFragment(final Fragment fragment) {
+		super.onAttachFragment(fragment);
+		mActionBarCompat.createActionBarMenu();
+	}
+
+	@Override
 	public void onBackPressed() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (mContentModified && !isEmpty(text)) {
@@ -293,6 +310,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getTwidereApplication().getServiceInterface();
 		mResolver = getContentResolver();
+		mActionBarCompat = new ActionBarCompatBase(this);
 		super.onCreate(savedInstanceState);
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length <= 0) {
@@ -302,9 +320,10 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			finish();
 			return;
 		}
-		setContentView(R.layout.compose);
-		mActionBar = getSupportActionBar();
-		mActionBar.setDisplayHomeAsUpEnabled(true);
+		setContentView(R.layout.compose_dialogwhenlarge);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		mActionBarCompat.initViews();
+		mActionBarCompat.setDisplayHomeAsUpEnabled(true);
 
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		final long account_id = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
@@ -444,6 +463,9 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_compose_actionbar, menu);
+		if (mAttachedFragment != null) {
+			mAttachedFragment.onCreateOptionsMenu(menu, getMenuInflater());
+		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -659,6 +681,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mContentModified = true;
 	}
 
+	@Override
+	public void onTitleChanged(final CharSequence title, final int color) {
+		mActionBarCompat.setTitle(title);
+		super.onTitleChanged(title, color);
+	}
+
 	public void saveToDrafts() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		final ContentValues values = new ContentValues();
@@ -674,6 +702,16 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			values.put(Drafts.IMAGE_URI, parseString(mImageUri));
 		}
 		mResolver.insert(Drafts.CONTENT_URI, values);
+	}
+
+	@Override
+	protected int getDarkThemeRes() {
+		return R.style.Theme_Twidere_DialogWhenLarge;
+	}
+
+	@Override
+	protected int getLightThemeRes() {
+		return R.style.Theme_Twidere_Light_DialogWhenLarge;
 	}
 
 	@Override
@@ -898,7 +936,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setMessage(R.string.unsaved_tweet);
 			builder.setPositiveButton(R.string.save, this);
-			builder.setNeutralButton(android.R.string.cancel, null);
 			builder.setNegativeButton(R.string.discard, this);
 			return builder.create();
 		}

@@ -6,7 +6,7 @@
 	<style name="Theme.Twidere.Viewer" parent="android:Theme.Holo.NoActionBar">
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowContentOverlay">@null</item>
-		<item name="android:windowBackground">@drawable/image_viewer_background</item>
+		<item name="android:windowBackground">@drawable/viewer_background</item>
 		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>

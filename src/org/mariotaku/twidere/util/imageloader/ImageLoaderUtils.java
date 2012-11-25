@@ -104,7 +104,7 @@ public class ImageLoaderUtils {
 	}
 
 	static class GetMemoryClassAccessor {
-		
+
 		@TargetApi(Build.VERSION_CODES.ECLAIR)
 		public static int getMemoryClass(final Context context) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR)

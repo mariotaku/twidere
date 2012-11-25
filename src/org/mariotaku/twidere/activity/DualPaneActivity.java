@@ -166,6 +166,14 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 		}
 	}
 
+	protected int getDualPaneLayoutRes() {
+		return R.layout.base_dual_pane;
+	}
+
+	protected int getNormalLayoutRes() {
+		return R.layout.base;
+	}
+
 	@Override
 	protected void onStart() {
 		final FragmentManager fm = getSupportFragmentManager();
@@ -198,13 +206,5 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 		final boolean dark = isDarkTheme(), solid = isSolidColorBackground();
 		return dark ? solid ? android.R.color.black : R.drawable.background_holo_dark : solid ? android.R.color.white
 				: R.drawable.background_holo_light;
-	}
-
-	int getDualPaneLayoutRes() {
-		return R.layout.base_dual_pane;
-	}
-
-	int getNormalLayoutRes() {
-		return R.layout.base;
 	}
 }

@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android" android:exitFadeDuration="@android:integer/config_shortAnimTime">
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<!-- Non focused states -->
 	<item android:drawable="@drawable/vpi__tab_unselected_holo" android:state_focused="false" android:state_pressed="false" android:state_selected="false"/>

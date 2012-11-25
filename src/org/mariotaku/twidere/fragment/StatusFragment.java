@@ -198,7 +198,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			}
 			mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 			mInReplyToView.setClickable(false);
-			setPullToRefreshEnabled(false);	
+			setPullToRefreshEnabled(false);
 			return new StatusLoader(getActivity(), true, null, mAccountId, status_id);
 		}
 
@@ -843,12 +843,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mImagePreviewAdapter.clear();
 		mImagePreviewAdapter.addAll(mData);
 	}
-	
+
 	private void updatePullRefresh() {
 		final boolean has_converstion = mStatus != null && mStatus.in_reply_to_status_id > 0;
 		final boolean load_not_finished = mAdapter.getCount() > 0 && mAdapter.getItem(0).in_reply_to_status_id > 0;
 		final boolean should_enable = has_converstion && load_not_finished;
-		mListView.setTranscriptMode(should_enable ? ListView.TRANSCRIPT_MODE_NORMAL : ListView.TRANSCRIPT_MODE_DISABLED);
+		mListView
+				.setTranscriptMode(should_enable ? ListView.TRANSCRIPT_MODE_NORMAL : ListView.TRANSCRIPT_MODE_DISABLED);
 		mInReplyToView.setClickable(should_enable);
 		setPullToRefreshEnabled(should_enable);
 	}

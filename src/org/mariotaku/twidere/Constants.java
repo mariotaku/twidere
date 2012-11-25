@@ -47,7 +47,7 @@ public interface Constants extends TwitterConstants {
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 30;
+	public static final int DATABASES_VERSION = 31;
 
 	// Following 4 consants are not included in source code.
 	public static final String TWITTER_CONSUMER_KEY = PrivateConstants.TWITTER_CONSUMER_KEY;
