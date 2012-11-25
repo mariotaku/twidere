@@ -71,7 +71,7 @@
 			android:orientation="horizontal"
 			android:visibility="gone"/>
 
-		<ProgressBar
+		<org.mariotaku.twidere.view.HoloProgressBar
 			android:id="@id/actionbar_progress_indeterminate"
 			style="?actionBarIndeterminateProgressStyle"
 			android:layout_width="@dimen/actionbar_height"

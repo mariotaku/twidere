@@ -306,15 +306,11 @@ public class DiskLruCache {
 	 */
 	public static String createFilePath(final File cacheDir, final String key) {
 		try {
-			// Use URLEncoder to ensure we have a valid filename, a tad hacky
-			// but it will do for
-			// this example
 			return cacheDir.getAbsolutePath() + File.separator + CACHE_FILENAME_PREFIX
 					+ URLEncoder.encode(key.replace("*", ""), "UTF-8");
 		} catch (final UnsupportedEncodingException e) {
 			Log.e(TAG, "createFilePath - " + e);
 		}
-
 		return null;
 	}
 

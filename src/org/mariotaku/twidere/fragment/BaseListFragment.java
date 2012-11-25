@@ -22,6 +22,7 @@ package org.mariotaku.twidere.fragment;
 import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.InvalidateProgressBarRunnable;
 import org.mariotaku.twidere.util.ServiceInterface;
 
 import android.app.Activity;
@@ -33,6 +34,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.ListFragmentTrojan;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class BaseListFragment extends ListFragment implements Constants {
 
@@ -139,5 +144,14 @@ public class BaseListFragment extends ListFragment implements Constants {
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.unregisterReceiver(receiver);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		final View view = super.onCreateView(inflater, container, savedInstanceState);
+		final ViewGroup progress_container = (ViewGroup) view.findViewById(ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID);
+		final View progress = progress_container.getChildAt(0);
+		progress.post(new InvalidateProgressBarRunnable(progress));
+		return view;
 	}
 }

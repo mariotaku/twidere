@@ -4,10 +4,12 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ExtendedViewGroupInterface.TouchInterceptor;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -43,8 +45,11 @@ public class SlidingPaneView extends ViewGroup {
 	private final LeftPaneLayout mViewLeftPaneContainer;
 	private final RightPaneLayout mViewRightPaneContainer;
 	private final ExtendedFrameLayout mRightPaneContent;
+	private final View mLeftPaneLayout, mRightPaneLayout;
 
-	final ContentScrollController mController;
+	private final ScrollTouchInterceptor mTouchInterceptor;
+	private final OnTouchListener mShadowTouchListener;
+	private final ContentScrollController mController;
 
 	/**
 	 * Value of spacing to use.
@@ -81,7 +86,7 @@ public class SlidingPaneView extends ViewGroup {
 	 */
 	private boolean mForceRefresh = false;
 
-	private final View mLeftPaneLayout, mRightPaneLayout;
+	private boolean mShadowSlidable;
 
 	public SlidingPaneView(final Context context) {
 		this(context, null);
@@ -94,15 +99,17 @@ public class SlidingPaneView extends ViewGroup {
 	public SlidingPaneView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 
+		final Resources res = getResources();
+
 		setClipChildren(false);
 		setClipToPadding(false);
 
 		// reading attributes
-		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ActionsContentView);
-		final int spacingRightDefault = getResources().getDimensionPixelSize(R.dimen.default_slidepane_spacing_right);
-		mRightSpacing = a.getDimensionPixelSize(R.styleable.ActionsContentView_spacingRight, spacingRightDefault);
-		final int spacingLeftDefault = getResources().getDimensionPixelSize(R.dimen.default_slidepane_spacing_left);
+		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ActionsContentView);
+		final int spacingLeftDefault = res.getDimensionPixelSize(R.dimen.default_slidepane_spacing_left);
 		mLeftSpacing = a.getDimensionPixelSize(R.styleable.ActionsContentView_spacingLeft, spacingLeftDefault);
+		final int spacingRightDefault = res.getDimensionPixelSize(R.dimen.default_slidepane_spacing_right);
+		mRightSpacing = a.getDimensionPixelSize(R.styleable.ActionsContentView_spacingRight, spacingRightDefault);
 
 		final int leftPaneLayout = a.getResourceId(R.styleable.ActionsContentView_layoutLeft, 0);
 		if (leftPaneLayout == 0) throw new IllegalArgumentException("The layoutLeft attribute is required");
@@ -111,45 +118,52 @@ public class SlidingPaneView extends ViewGroup {
 		if (rightPaneLayout == leftPaneLayout || rightPaneLayout == 0)
 			throw new IllegalArgumentException("The layoutRight attribute is required");
 
+		final boolean shadowSlidableDefault = res.getBoolean(R.bool.default_shadow_slidable);
+		final boolean shadowSlidable = a.getBoolean(R.styleable.ActionsContentView_shadowSlidable,
+				shadowSlidableDefault);
+
 		mShadowWidth = a.getDimensionPixelSize(R.styleable.ActionsContentView_shadowWidth, 0);
 		final int shadowDrawableRes = a.getResourceId(R.styleable.ActionsContentView_shadowDrawable, 0);
 
 		mFadeType = a.getInteger(R.styleable.ActionsContentView_fadeType, FADE_NONE);
-		final int fadeValueDefault = getResources().getInteger(R.integer.default_sliding_pane_fade_max);
+		final int fadeValueDefault = res.getInteger(R.integer.default_sliding_pane_fade_max);
 		mFadeMax = a.getDimensionPixelSize(R.styleable.ActionsContentView_fadeMax, fadeValueDefault);
 
-		final int flingDurationDefault = getResources().getInteger(R.integer.default_sliding_pane_fling_duration);
+		final int flingDurationDefault = res.getInteger(R.integer.default_sliding_pane_fling_duration);
 		mFlingDuration = a.getInteger(R.styleable.ActionsContentView_flingDuration, flingDurationDefault);
 
 		a.recycle();
 
 		mController = new ContentScrollController(new Scroller(context));
-		final LayoutInflater inflater = LayoutInflater.from(context);
+		mTouchInterceptor = new ScrollTouchInterceptor(this);
+		mShadowTouchListener = new ShadowTouchListener(this);
+
 		mViewLeftPaneContainer = new LeftPaneLayout(this);
+		mViewRightPaneContainer = new RightPaneLayout(this);
+		mRightPaneContent = new ExtendedFrameLayout(context);
+		mViewShadow = new View(context);
+
+		final LayoutInflater inflater = LayoutInflater.from(context);
 		if (leftPaneLayout == 0) throw new IllegalArgumentException();
 		mLeftPaneLayout = inflater.inflate(leftPaneLayout, mViewLeftPaneContainer, true);
 
+		if (rightPaneLayout == 0) throw new IllegalArgumentException();
+		mRightPaneLayout = inflater.inflate(rightPaneLayout, mRightPaneContent, true);
+
 		addView(mViewLeftPaneContainer, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		addView(mViewRightPaneContainer, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-		mViewRightPaneContainer = new RightPaneLayout(this);
-		mViewRightPaneContainer.setOnSwipeListener(new SwipeFadeListener());
-
-		mViewShadow = new View(context);
 		mViewShadow.setBackgroundResource(shadowDrawableRes);
-		mViewRightPaneContainer.addView(mViewShadow, mShadowWidth, LinearLayout.LayoutParams.MATCH_PARENT);
-
 		if (mShadowWidth <= 0 || shadowDrawableRes == 0) {
 			mViewShadow.setVisibility(GONE);
 		}
-		mRightPaneContent = new ExtendedFrameLayout(context);
-
-		mRightPaneContent.setTouchInterceptor(new ScrollTouchInterceptor(this));
-
-		if (rightPaneLayout == 0) throw new IllegalArgumentException();
-		mRightPaneLayout = inflater.inflate(rightPaneLayout, mRightPaneContent, true);
+		mViewRightPaneContainer.addView(mViewShadow, mShadowWidth, LinearLayout.LayoutParams.MATCH_PARENT);
 		mViewRightPaneContainer.addView(mRightPaneContent, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-		addView(mViewRightPaneContainer, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		mRightPaneContent.setTouchInterceptor(mTouchInterceptor);
+		mViewRightPaneContainer.setOnSwipeListener(new SwipeFadeListener());
+		mViewShadow.setOnTouchListener(mShadowTouchListener);
+		setShadowSlidable(shadowSlidable);
 	}
 
 	public void animateClose() {
@@ -210,6 +224,10 @@ public class SlidingPaneView extends ViewGroup {
 
 	public boolean isOpened() {
 		return !mController.isContentShown();
+	}
+
+	public boolean isShadowSlidable() {
+		return mShadowSlidable;
 	}
 
 	public boolean isShadowVisible() {
@@ -279,6 +297,11 @@ public class SlidingPaneView extends ViewGroup {
 
 	public void setFlingDuration(final int duration) {
 		mFlingDuration = duration;
+	}
+
+	public void setShadowSlidable(final boolean slidable) {
+		mShadowSlidable = slidable;
+		mViewShadow.setOnTouchListener(slidable ? mShadowTouchListener : null);
 	}
 
 	public void setShadowVisible(final boolean visible) {
@@ -391,6 +414,33 @@ public class SlidingPaneView extends ViewGroup {
 	 */
 	private int getRightBound() {
 		return getWidth() - mRightSpacing - mLeftSpacing;
+	}
+
+	private static boolean isTouchEventHandled(final View view, final MotionEvent event) {
+		if (!(view instanceof ViewGroup)) return true;
+		final MotionEvent ev = MotionEvent.obtain(event);
+		final float xf = ev.getX();
+		final float yf = ev.getY();
+		final float scrolledXFloat = xf + view.getScrollX();
+		final float scrolledYFloat = yf + view.getScrollY();
+		final Rect frame = new Rect();
+		final int scrolledXInt = (int) scrolledXFloat;
+		final int scrolledYInt = (int) scrolledYFloat;
+		final int count = ((ViewGroup) view).getChildCount();
+		for (int i = count - 1; i >= 0; i--) {
+			final View child = ((ViewGroup) view).getChildAt(i);
+			if (child.isShown() || child.getAnimation() != null) {
+				child.getHitRect(frame);
+				if (frame.contains(scrolledXInt, scrolledYInt)) {
+					// offset the event to the view's coordinate system
+					final float xc = scrolledXFloat - child.getLeft();
+					final float yc = scrolledYFloat - child.getTop();
+					ev.setLocation(xc, yc);
+					if (child.dispatchTouchEvent(ev)) return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	static int limit(final int value, final int min, final int max) {
@@ -539,65 +589,11 @@ public class SlidingPaneView extends ViewGroup {
 		 * is finished.
 		 */
 		private boolean mIsRightPaneShown;
-		
+
 		private boolean mIsScrolling;
 
-		public ContentScrollController(final Scroller scroller) {
+		private ContentScrollController(final Scroller scroller) {
 			mScroller = scroller;
-		}
-
-		public boolean isScrolling() {
-			return mIsScrolling;
-		}
-
-		public float getScrollFactor() {
-			return 1f + (float) mViewRightPaneContainer.getScrollX() / (float) getRightBound();
-		}
-
-		public void hideRightPane(final int duration) {
-			mIsRightPaneShown = false;
-			if (mViewRightPaneContainer.getMeasuredWidth() == 0 || mViewRightPaneContainer.getMeasuredHeight() == 0)
-				return;
-
-			final int startX = mViewRightPaneContainer.getScrollX();
-			final int dx = getRightBound() + startX;
-			fling(startX, dx, duration);
-		}
-
-		/**
-		 * Initializes visibility of content after views measuring is finished.
-		 */
-		public void init() {
-			if (mIsRightPaneShown) {
-				showRightPane(0);
-			} else {
-				hideRightPane(0);
-			}
-			fadeViews();
-		}
-
-		public boolean isContentShown() {
-			final int x;
-			if (!mScroller.isFinished()) {
-				x = mScroller.getFinalX();
-			} else {
-				x = mViewRightPaneContainer.getScrollX();
-			}
-			return x == 0;
-		}
-
-		public void release(final float delta, final float totalMove) {
-			completeScrolling(delta);
-		}
-
-		/**
-		 * Resets scroller controller. Stops flinging on current position.
-		 */
-		public void reset() {
-			mIsScrolling = false;
-			if (!mScroller.isFinished()) {
-				mScroller.forceFinished(true);
-			}
 		}
 
 		/**
@@ -622,16 +618,6 @@ public class SlidingPaneView extends ViewGroup {
 			if (more) {
 				mViewRightPaneContainer.post(this);
 			}
-		}
-
-		public void showRightPane(final int duration) {
-			mIsRightPaneShown = true;
-			if (mViewRightPaneContainer.getMeasuredWidth() == 0 || mViewRightPaneContainer.getMeasuredHeight() == 0)
-				return;
-
-			final int startX = mViewRightPaneContainer.getScrollX();
-			final int dx = startX;
-			fling(startX, dx, duration);
 		}
 
 		/**
@@ -672,6 +658,60 @@ public class SlidingPaneView extends ViewGroup {
 			mViewRightPaneContainer.post(this);
 		}
 
+		private float getScrollFactor() {
+			return 1f + (float) mViewRightPaneContainer.getScrollX() / (float) getRightBound();
+		}
+
+		private void hideRightPane(final int duration) {
+			mIsRightPaneShown = false;
+			if (mViewRightPaneContainer.getMeasuredWidth() == 0 || mViewRightPaneContainer.getMeasuredHeight() == 0)
+				return;
+
+			final int startX = mViewRightPaneContainer.getScrollX();
+			final int dx = getRightBound() + startX;
+			fling(startX, dx, duration);
+		}
+
+		/**
+		 * Initializes visibility of content after views measuring is finished.
+		 */
+		private void init() {
+			if (mIsRightPaneShown) {
+				showRightPane(0);
+			} else {
+				hideRightPane(0);
+			}
+			fadeViews();
+		}
+
+		private boolean isContentShown() {
+			final int x;
+			if (!mScroller.isFinished()) {
+				x = mScroller.getFinalX();
+			} else {
+				x = mViewRightPaneContainer.getScrollX();
+			}
+			return x == 0;
+		}
+
+		private boolean isScrolling() {
+			return mIsScrolling;
+		}
+
+		private void release(final float delta, final float totalMove) {
+			completeScrolling(delta);
+		}
+
+		/**
+		 * Resets scroller controller. Stops flinging on current position.
+		 */
+		private void reset() {
+			mIsScrolling = false;
+			if (!mScroller.isFinished()) {
+				mScroller.forceFinished(true);
+			}
+		}
+
 		/**
 		 * Scrolling content view according by given value.
 		 * 
@@ -701,9 +741,19 @@ public class SlidingPaneView extends ViewGroup {
 
 			mViewRightPaneContainer.scrollBy(scrollBy, 0);
 		}
+
+		private void showRightPane(final int duration) {
+			mIsRightPaneShown = true;
+			if (mViewRightPaneContainer.getMeasuredWidth() == 0 || mViewRightPaneContainer.getMeasuredHeight() == 0)
+				return;
+
+			final int startX = mViewRightPaneContainer.getScrollX();
+			final int dx = startX;
+			fling(startX, dx, duration);
+		}
 	}
 
-	private static class RightPaneLayout extends LinearLayout {
+	private static class RightPaneLayout extends ExtendedLinearLayout {
 
 		private final Paint mFadePaint = new Paint();
 
@@ -754,15 +804,16 @@ public class SlidingPaneView extends ViewGroup {
 		private final int mScaledTouchSlop;
 
 		private float mTempDeltaX, mTotalMoveX, mTotalMoveY;
-		private boolean mIsVerticalScrolling, mIsScrollIntrrupted;
-		
-		public ScrollTouchInterceptor(final SlidingPaneView parent) {
+		private boolean mIsVerticalScrolling, mIsScrollIntrrupted, mShouldDisableScroll;
+
+		ScrollTouchInterceptor(final SlidingPaneView parent) {
 			mScaledTouchSlop = ViewConfiguration.get(parent.getContext()).getScaledTouchSlop();
 			mController = parent.getController();
 		}
 
 		@Override
 		public boolean onInterceptTouchEvent(final ViewGroup view, final MotionEvent event) {
+			mShouldDisableScroll = !isTouchEventHandled(view, event);
 			switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN: {
 					mTempDeltaX = 0;
@@ -770,7 +821,9 @@ public class SlidingPaneView extends ViewGroup {
 					mTotalMoveY = 0;
 					mIsVerticalScrolling = false;
 					mIsScrollIntrrupted = mController.isScrolling();
-					mController.reset();
+					if (!mShouldDisableScroll) {
+						mController.reset();
+					}
 					break;
 				}
 				case MotionEvent.ACTION_MOVE: {
@@ -803,7 +856,7 @@ public class SlidingPaneView extends ViewGroup {
 
 		@Override
 		public boolean onTouchEvent(final ViewGroup view, final MotionEvent event) {
-			if (mIsVerticalScrolling && !mController.isScrolling()) return true;
+			if (mIsVerticalScrolling && !mController.isScrolling() || mShouldDisableScroll) return true;
 			switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN: {
 					mTempDeltaX = 0;
@@ -829,11 +882,74 @@ public class SlidingPaneView extends ViewGroup {
 					mTotalMoveX = 0;
 					mTotalMoveY = 0;
 					mIsVerticalScrolling = false;
+					mShouldDisableScroll = false;
 					break;
 				}
 			}
-			return false;
+			return true;
 		}
+	}
+
+	private static class ShadowTouchListener implements OnTouchListener {
+
+		private final ContentScrollController mController;
+		private final int mScaledTouchSlop;
+		private final SlidingPaneView mParent;
+
+		private float mTempDeltaX, mTotalMoveX;
+
+		private boolean mIsScrolling, mShouldDisableScroll;
+
+		ShadowTouchListener(final SlidingPaneView parent) {
+			mParent = parent;
+			mScaledTouchSlop = ViewConfiguration.get(parent.getContext()).getScaledTouchSlop();
+			mController = parent.getController();
+		}
+
+		@Override
+		public boolean onTouch(final View view, final MotionEvent event) {
+			switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN: {
+					mTempDeltaX = 0;
+					mTotalMoveX = 0;
+					mIsScrolling = false;
+					final View layout = mParent.getRightPaneLayout();
+					mShouldDisableScroll = !isTouchEventHandled(layout, event);
+					if (!mShouldDisableScroll) {
+						mController.reset();
+					}
+					break;
+				}
+				case MotionEvent.ACTION_MOVE: {
+					if (mShouldDisableScroll) return false;
+					final int hist_size = event.getHistorySize();
+					if (hist_size == 0) {
+						break;
+					}
+					final float distanceX = mTempDeltaX = event.getX() - event.getHistoricalX(0);
+					mTotalMoveX += mTempDeltaX;
+					if (Math.abs(mTotalMoveX) >= mScaledTouchSlop) {
+						mIsScrolling = true;
+					}
+					if (mIsScrolling) {
+						mController.scrollBy((int) -distanceX);
+					}
+					break;
+				}
+				case MotionEvent.ACTION_UP: {
+					if (mIsScrolling) {
+						mController.release(-mTempDeltaX, -mTotalMoveX);
+					}
+					mTempDeltaX = 0;
+					mTotalMoveX = 0;
+					mIsScrolling = false;
+					mShouldDisableScroll = false;
+					break;
+				}
+			}
+			return true;
+		}
+
 	}
 
 	private class SwipeFadeListener implements RightPaneLayout.OnSwipeListener {

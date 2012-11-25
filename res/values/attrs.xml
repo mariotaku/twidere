@@ -39,6 +39,7 @@
 		<attr name="shadowDrawable" format="reference"/>
 		<!-- Shadow width. -->
 		<attr name="shadowWidth" format="dimension"/>
+		<attr name="shadowSlidable" format="boolean"/>
 		<!-- Fade type. -->
 		<attr name="fadeType"/>
 		<!-- Max fade value. -->

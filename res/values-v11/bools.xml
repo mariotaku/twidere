@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<item name="hw_accel_supported" type="bool">true</item>
+	<bool name="hw_accel_supported">true</bool>
 
 </resources>

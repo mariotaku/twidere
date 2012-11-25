@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<dimen name="pane_right_width">200dp</dimen>
-	<dimen name="pane_left_width">260dp</dimen>
+	<dimen name="pane_spacing_right">160dp</dimen>
 
 </resources>

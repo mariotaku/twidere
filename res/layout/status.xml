@@ -22,7 +22,7 @@
 			android:background="?menuBarBackground"/>
 	</LinearLayout>
 
-	<ProgressBar
+	<org.mariotaku.twidere.view.HoloProgressBar
 		android:id="@+id/status_load_progress"
 		style="?android:attr/progressBarStyleLarge"
 		android:layout_width="wrap_content"

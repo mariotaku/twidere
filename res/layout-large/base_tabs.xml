@@ -35,7 +35,7 @@
 		android:layout_height="match_parent"
 		android:layout_weight="1"/>
 
-	<ProgressBar
+	<org.mariotaku.twidere.view.HoloProgressBar
 		android:id="@android:id/progress"
 		style="@style/Widget.Holo.ProgressBar.Small"
 		android:layout_width="wrap_content"

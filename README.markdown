@@ -42,15 +42,11 @@ I started a crowdin project, so anyone can do something for Twidere. Visit this 
 
 ###Consider donate?###
 
-<img src="https://lh4.googleusercontent.com/-fSkfFjnUck8/UAK_IeWs1lI/AAAAAAAABC8/2MqME6ngVrE/I/DSC_0096.jpg"/>
+Thanks to @huxim 's memory stick!!!
 
-Thats all my stuffs to develop Twidere (Taken by my SONY Xperia ray, it's my another Android device).
+Buy me a bread or anything you want :)
 
-This netbook (HASEE Q130B, 1.6GHz Intel Atom N270, $300 in 2009) is nearly broken, the desktop computer behind it works fine, but it only have 1GB RAM. It's too small to run Eclipse and Android Emulator.
-
-So, buy me a RAM stick, a bread or anything you want :)
-
-<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=mariotaku.lee%40gmail%2ecom&amp;item_name=Donate%20to%20Twidere&amp;currency_code=USD"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG_global.gif"/></a>
+**[Donate Via Paypal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mariotaku.lee@gmail.com&item_name=Donate to Twidere&currency_code=USD)**
 
 **Donate Via Alipay(支付宝)**
 

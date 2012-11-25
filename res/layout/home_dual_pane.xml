@@ -10,9 +10,10 @@
 		twidere:layoutLeft="@layout/home_pane_left_content"
 		twidere:layoutRight="@layout/base_pane_right_content"
 		twidere:shadowDrawable="@drawable/shadow_holo"
+		twidere:shadowSlidable="@bool/shadow_slidable"
 		twidere:shadowWidth="@dimen/default_slidingpane_shadow_width"
-		twidere:spacingLeft="@dimen/pane_right_width"
-		twidere:spacingRight="@dimen/pane_right_width"/>
+		twidere:spacingLeft="@dimen/pane_spacing_right"
+		twidere:spacingRight="@dimen/pane_spacing_right"/>
 
 	<ImageButton
 		android:id="@+id/button_compose"

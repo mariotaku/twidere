@@ -56,20 +56,14 @@ public class RoundCorneredImageView extends ImageView {
 			SetLayerTypeAccessor.setLayerType(this, View.LAYER_TYPE_SOFTWARE, null);
 		}
 		final TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.radius });
-		mRadius = a.getDimensionPixelSize(0, 0);
+		mRadius = a.getDimensionPixelSize(0, (int) (4 * getResources().getDisplayMetrics().density));
 		a.recycle();
-		createPath();
 	}
 
 	@Override
 	public void onDraw(final Canvas canvas) {
-		super.onDraw(canvas);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			if (mRounder != null && mPaint != null) {
-				canvas.drawBitmap(mRounder, 0, 0, mPaint);
-			}
-		} else {
-			// Workaround for pre-ICS devices, without anti alias.
+		// Workaround for pre-ICS devices, without anti-alias.
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			try {
 				canvas.clipPath(mPath);
 			} catch (final UnsupportedOperationException e) {
@@ -77,25 +71,34 @@ public class RoundCorneredImageView extends ImageView {
 				// simply ignore this Exception.
 			}
 		}
+		super.onDraw(canvas);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			if (mRounder != null && mPaint != null) {
+				canvas.drawBitmap(mRounder, 0, 0, mPaint);
+			}
+		}
 	}
 
 	@Override
 	public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		if (w > 0 && h > 0) {
-			mRounder = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-			final Canvas canvas = new Canvas(mRounder);
-			mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-			mPaint.setColor(Color.BLACK);
-			canvas.drawRoundRect(new RectF(0, 0, w, h), mRadius, mRadius, mPaint);
-			mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-			createPath();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+				mRounder = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+				final Canvas canvas = new Canvas(mRounder);
+				mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+				mPaint.setColor(Color.BLACK);
+				canvas.drawRoundRect(new RectF(0, 0, w, h), mRadius, mRadius, mPaint);
+				mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+			} else {
+				createPath(w, h);
+			}
 		}
 		super.onSizeChanged(w, h, oldw, oldh);
 	}
 
-	private void createPath() {
+	private void createPath(final int w, final int h) {
 		mPath.reset();
-		mPath.addRoundRect(new RectF(0, 0, getWidth(), getHeight()), mRadius, mRadius, Path.Direction.CW);
+		mPath.addRoundRect(new RectF(0, 0, w, h), mRadius, mRadius, Path.Direction.CW);
 	}
 
 	static class SetLayerTypeAccessor {

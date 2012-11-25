@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<item name="tab_display_label" type="bool">true</item>
-	<item name="home_display_icon" type="bool">true</item>
+	<bool name="tab_display_label">true</bool>
+	<bool name="home_display_icon">true</bool>
 
 </resources>

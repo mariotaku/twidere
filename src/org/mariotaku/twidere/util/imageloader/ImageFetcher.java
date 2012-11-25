@@ -32,10 +32,7 @@ import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * A simple subclass of {@link ImageResizer} that fetches and resizes images
@@ -135,20 +132,6 @@ public class ImageFetcher extends ImageResizer {
 	@Override
 	protected Bitmap processBitmap(final Object data) {
 		return processBitmap(String.valueOf(data));
-	}
-
-	/**
-	 * Simple network connection check.
-	 * 
-	 * @param context
-	 */
-	private void checkConnection(final Context context) {
-		final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-		if (networkInfo == null || !networkInfo.isConnectedOrConnecting()) {
-			Toast.makeText(context, "No network connection found.", Toast.LENGTH_LONG).show();
-			Log.e(TAG, "checkConnection - no connection found");
-		}
 	}
 
 	/**

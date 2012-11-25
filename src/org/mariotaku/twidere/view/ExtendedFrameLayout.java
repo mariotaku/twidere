@@ -26,7 +26,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
-public final class ExtendedFrameLayout extends FrameLayout implements ExtendedViewGroupInterface {
+public class ExtendedFrameLayout extends FrameLayout implements ExtendedViewGroupInterface {
 
 	private TouchInterceptor mTouchInterceptor;
 	private OnSizeChangedListener mOnSizeChangedListener;
@@ -44,7 +44,7 @@ public final class ExtendedFrameLayout extends FrameLayout implements ExtendedVi
 	}
 
 	@Override
-	public boolean onInterceptTouchEvent(final MotionEvent event) {
+	public final boolean onInterceptTouchEvent(final MotionEvent event) {
 		if (mTouchInterceptor != null) {
 			final boolean ret = mTouchInterceptor.onInterceptTouchEvent(this, event);
 			if (ret) return true;
@@ -53,7 +53,7 @@ public final class ExtendedFrameLayout extends FrameLayout implements ExtendedVi
 	}
 
 	@Override
-	public boolean onTouchEvent(final MotionEvent event) {
+	public final boolean onTouchEvent(final MotionEvent event) {
 		if (mTouchInterceptor != null) {
 			final boolean ret = mTouchInterceptor.onTouchEvent(this, event);
 			if (ret) return true;
@@ -62,17 +62,17 @@ public final class ExtendedFrameLayout extends FrameLayout implements ExtendedVi
 	}
 
 	@Override
-	public void setOnSizeChangedListener(final OnSizeChangedListener listener) {
+	public final void setOnSizeChangedListener(final OnSizeChangedListener listener) {
 		mOnSizeChangedListener = listener;
 	}
 
 	@Override
-	public void setTouchInterceptor(final TouchInterceptor listener) {
+	public final void setTouchInterceptor(final TouchInterceptor listener) {
 		mTouchInterceptor = listener;
 	}
 
 	@Override
-	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
+	protected final void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		if (mOnSizeChangedListener != null) {
 			mOnSizeChangedListener.onSizeChanged(this, w, h, oldw, oldh);
