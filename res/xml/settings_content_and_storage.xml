@@ -79,7 +79,7 @@
 		<com.robobunny.SeekBarPreference
 			android:defaultValue="100"
 			android:key="database_item_limit"
-			android:max="300"
+			android:max="500"
 			android:summary="@string/database_item_limit_summary"
 			android:title="@string/database_item_limit"
 			robobunny:min="50"
