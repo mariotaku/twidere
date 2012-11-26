@@ -147,7 +147,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public MenuInflater getMenuInflater() {
-		return mActionBarCompat.getMenuInflater(super.getMenuInflater());
+		return mActionBarCompat.getMenuInflater(super.getBaseMenuInflater());
 	}
 
 	@Override
@@ -627,21 +627,21 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		final String text_orig = mEditText != null ? parseString(mEditText.getText()) : null;
+		if (menu == null || mEditText == null || mTextCount == null) return false;
+		final String text_orig = parseString(mEditText.getText());
 		final String text = mIsPhotoAttached || mIsImageAttached ? mUploadUseExtension ? getImageUploadStatus(this,
 				FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
-		if (mTextCount != null) {
-			final int count = mValidator.getTweetLength(text);
-			final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count)
+		final int count = mValidator.getTweetLength(text);
+		final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count)
 					: 50
 					: 0;
-			final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-			mTextCount
-					.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
-			mTextCount.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
-		}
+		final float[] hsv = new float[] { hue, 1.0f, 1.0f };
+		mTextCount.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
+		mTextCount.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
 		final MenuItem sendItem = menu.findItem(MENU_SEND);
-		sendItem.setEnabled(text_orig.length() > 0);
+		if (sendItem != null) {
+			sendItem.setEnabled(text_orig.length() > 0);
+		}
 		return super.onPrepareOptionsMenu(menu);
 	}
 

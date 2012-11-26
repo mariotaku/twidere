@@ -32,7 +32,6 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.os.AsyncTask;
 
 public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 
@@ -74,7 +73,6 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 		resolver.delete(CachedStatuses.CONTENT_URI,
 				CachedStatuses.STATUS_ID + " IN (" + ListUtils.toString(status_ids, ',', true) + " )", null);
 		resolver.bulkInsert(CachedStatuses.CONTENT_URI, all_statuses.toArray(new ContentValues[all_statuses.size()]));
-
 		return null;
 	}
 

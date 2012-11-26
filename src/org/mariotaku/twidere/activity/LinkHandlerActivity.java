@@ -68,7 +68,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 
 	@Override
 	public MenuInflater getMenuInflater() {
-		return mActionBarCompat.getMenuInflater(super.getMenuInflater());
+		return mActionBarCompat.getMenuInflater(super.getBaseMenuInflater());
 	}
 
 	@Override

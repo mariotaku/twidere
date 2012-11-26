@@ -76,7 +76,6 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			if (context instanceof Activity) {
 				((Activity) context).runOnUiThread(CacheUsersStatusesTask.getRunnable(context, statuses, account_id));
 			}
-			new CacheUsersStatusesTask(context, statuses, account_id).execute();
 			for (final Status status : statuses) {
 				final long id = status.getId();
 				deleteStatus(id);

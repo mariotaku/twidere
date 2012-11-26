@@ -346,6 +346,9 @@
 			android:name=".activity.InternalSettingsDetailsActivity"
 			android:label="@string/settings"/>
 		<activity
+			android:name=".activity.InternalFiltersActivity"
+			android:label="@string/filter"/>
+		<activity
 			android:name=".activity.FileSaveAsActivity"
 			android:exported="false"
 			android:label="@string/save_as">
