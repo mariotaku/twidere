@@ -26,7 +26,6 @@
 		<item name="android:windowContentOverlay">@drawable/actionbar_shadow</item>
 
 		<!-- for programmatic instantiation -->
-
 		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_holo</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
 		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
@@ -46,6 +45,14 @@
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
 		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+
+		<!-- for programmatic instantiation -->
+		<item name="actionBarBackground">@drawable/actionbar_bg_dark_holo</item>
+		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
+		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
+		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>
+		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
+		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyle</item>
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
 		<item name="popupBackground">@drawable/popup_holo_light</item>
 		<item name="actionModeBackground">@drawable/cab_background_top_holo_dark</item>
@@ -59,6 +66,14 @@
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
 		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+			
+		<!-- for programmatic instantiation -->
+		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_holo</item>
+		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
+		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
+		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>
+		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
+		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyle</item>
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_holo</item>
 		<item name="popupBackground">@drawable/popup_holo_light</item>
 		<item name="actionModeBackground">@drawable/cab_background_top_holo_light</item>
