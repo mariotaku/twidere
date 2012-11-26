@@ -12,7 +12,8 @@
 			android:id="@+id/list_container"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:layout_above="@+id/divider_horizontal"/>
+			android:layout_above="@+id/divider_horizontal"
+			android:background="#20808080"/>
 
 		<View
 			android:id="@+id/divider_horizontal"
@@ -26,7 +27,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_alignParentBottom="true"
-			android:orientation="horizontal">
+			android:orientation="horizontal"
+			android:background="@drawable/actionbar_shadow">
 
 			<FrameLayout
 				android:layout_width="match_parent"

@@ -39,7 +39,7 @@
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Medium</item>
 
 		<!-- for programmatic instantiation -->
-		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_holo</item>
+		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
 		<item name="actionBarItemStyle">@style/Widget.ActionBarItem.Light</item>
 		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem.Light</item>
