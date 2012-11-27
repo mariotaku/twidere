@@ -102,7 +102,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		followers_count = user.getFollowersCount();
 		friends_count = user.getFriendsCount();
 		statuses_count = user.getStatusesCount();
-		favorites_count = user.getFollowersCount();
+		favorites_count = user.getFavouritesCount();
 	}
 
 	@Override
