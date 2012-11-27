@@ -856,8 +856,7 @@ public final class Utils implements Constants {
 			final File ext_cache_dir = GetExternalCacheDirAccessor.getExternalCacheDir(context);
 			if (ext_cache_dir != null && ext_cache_dir.isDirectory()) {
 				final File cache_dir = new File(ext_cache_dir, cache_dir_name);
-				if (cache_dir.isFile() && cache_dir.delete() || cache_dir.isDirectory() && cache_dir.canRead()
-						&& cache_dir.canWrite()) return cache_dir;
+				if (cache_dir.isDirectory() || cache_dir.mkdirs()) return cache_dir;
 			}
 		} else {
 			final File ext_storage_dir = Environment.getExternalStorageDirectory();
@@ -865,8 +864,7 @@ public final class Utils implements Constants {
 				final String ext_cache_path = ext_storage_dir.getAbsolutePath() + "/Android/data/"
 						+ context.getPackageName() + "/cache/";
 				final File cache_dir = new File(ext_cache_path, cache_dir_name);
-				if (cache_dir.isFile() && cache_dir.delete() || cache_dir.isDirectory() && cache_dir.canRead()
-						&& cache_dir.canWrite()) return cache_dir;
+				if (cache_dir.isDirectory() || cache_dir.mkdirs()) return cache_dir;
 			}
 		}
 		return new File(context.getCacheDir(), cache_dir_name);

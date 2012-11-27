@@ -41,8 +41,8 @@
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
-		<item name="actionBarItemStyle">@style/Widget.ActionBarItem.Light</item>
-		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem.Light</item>
+		<item name="actionBarItemStyle">@style/Widget.ActionBarItem.Light.DarkActionBar</item>
+		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem.Light.DarkActionBar</item>
 		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_light</item>
 		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
 			
@@ -64,6 +64,15 @@
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Medium</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
+
+		<!-- for programmatic instantiation -->
+		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
+		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
+		<item name="actionBarItemStyle">@style/Widget.ActionBarItem.Light.DarkActionBar</item>
+		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem.Light.DarkActionBar</item>
+		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_light</item>
+		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
+		
 	</style>
 
 </resources>

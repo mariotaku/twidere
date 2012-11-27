@@ -715,6 +715,11 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	@Override
+	protected boolean isSetBackgroundEnabled() {
+		return false;
+	}
+	
+	@Override
 	protected void onStart() {
 		super.onStart();
 		final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
