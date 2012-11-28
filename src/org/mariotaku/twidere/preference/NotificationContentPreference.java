@@ -41,7 +41,7 @@ public class NotificationContentPreference extends MultiSelectListPreference imp
 
 	@Override
 	protected boolean[] getDefaults() {
-		return new boolean[] { false, false, false };
+		return new boolean[] { false, true, true };
 	}
 
 	@Override

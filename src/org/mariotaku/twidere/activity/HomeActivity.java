@@ -187,10 +187,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null && !refresh_on_start && savedInstanceState == null) {
-				mService.getHomeTimeline(refreshed_ids, null);
-				mService.getMentions(refreshed_ids, null);
-				mService.getReceivedDirectMessages(account_ids, null);
-				mService.getSentDirectMessages(account_ids, null);
+				mService.refreshAll();
 			}
 			initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			switch (initial_tab) {
@@ -246,15 +243,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 		}
 		if (refresh_on_start && savedInstanceState == null) {
-			mService.getHomeTimelineWithSinceIds(activated_ids, null, null);
-			if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
-				mService.getMentionsWithSinceIds(account_ids, null, null);
-			}
-			if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
-				mService.getReceivedDirectMessagesWithSinceIds(account_ids, null,
-						getNewestMessageIdsFromDatabase(this, Inbox.CONTENT_URI));
-				mService.getSentDirectMessagesWithSinceIds(account_ids, null, null);
-			}
+			mService.refreshAll();
 		}
 		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
 			final FragmentManager fm = getSupportFragmentManager();
@@ -478,8 +467,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null) {
 				// TODO should I refresh inbox too?
-				mService.getHomeTimelineWithSinceIds(refreshed_ids, null, null);
-				mService.getMentionsWithSinceIds(refreshed_ids, null, null);
+				mService.refreshAll();
 			}
 			final int initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			if (initial_tab != -1 && mViewPager != null) {

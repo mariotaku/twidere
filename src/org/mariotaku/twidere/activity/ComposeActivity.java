@@ -157,7 +157,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
-
 		switch (requestCode) {
 			case REQUEST_TAKE_PHOTO: {
 				if (resultCode == Activity.RESULT_OK) {
@@ -170,7 +169,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					} else {
 						mIsPhotoAttached = false;
 					}
-					setMenu(mMenuBar.getMenu());
+					setMenu();
 				} else {
 					mImageUri = null;
 				}
@@ -189,7 +188,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					} else {
 						mIsImageAttached = false;
 					}
-					setMenu(mMenuBar.getMenu());
+					setMenu();
 				}
 				break;
 			}
@@ -223,7 +222,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					} else {
 						break;
 					}
-					setMenu(mMenuBar.getMenu());
+					setMenu();
 				}
 				break;
 			}
@@ -248,7 +247,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 						mImageUri = Uri.fromFile(file);
 						reloadAttachedImageThumbnail(file);
 					}
-					setMenu(mMenuBar.getMenu());
+					setMenu();
 				}
 				break;
 			}
@@ -431,7 +430,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mImageThumbnailPreview.setOnLongClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(this);
 		mMenuBar.inflate(R.menu.menu_compose);
-		setMenu(mMenuBar.getMenu());
 		mMenuBar.show();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false)) {
 			mEditText.setOnEditorActionListener(this);
@@ -448,7 +446,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				mEditText.setSelection(mEditText.length());
 			}
 		}
-		invalidateSupportOptionsMenu();
+		setMenu();
 		mColorIndicator.setOrientation(ColorView.VERTICAL);
 		mColorIndicator.setColor(getAccountColors(this, mAccountIds));
 		mContentModified = savedInstanceState != null ? savedInstanceState.getBoolean(INTENT_KEY_CONTENT_MODIFIED)
@@ -494,7 +492,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 
 	}
 
-	/** Sets the mRecentLocation object to the current location of the device **/
 	@Override
 	public void onLocationChanged(final Location location) {
 		if (mRecentLocation == null) {
@@ -531,7 +528,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 					getLocation();
 				}
 				mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, !attach_location).commit();
-				setMenu(mMenuBar.getMenu());
+				setMenu();
 				break;
 			}
 			case MENU_DRAFTS: {
@@ -540,21 +537,18 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			}
 			case MENU_DELETE: {
 				if (mImageUri == null) return false;
-				if (mIsImageAttached && !mIsPhotoAttached) {
-					mImageUri = null;
-
-				} else if (mIsPhotoAttached && !mIsImageAttached) {
-					final File image_file = mImageUri != null && "file".equals(mImageUri.getScheme()) ? new File(
-							mImageUri.getPath()) : null;
+				if (mIsPhotoAttached && !mIsImageAttached) {
+					final File image_file = "file".equals(mImageUri.getScheme()) ? new File(mImageUri.getPath())
+							: null;
 					if (image_file != null) {
 						image_file.delete();
 					}
-					mImageUri = null;
 				}
+				mImageUri = null;
 				mIsPhotoAttached = false;
 				mIsImageAttached = false;
 				reloadAttachedImageThumbnail(null);
-				setMenu(mMenuBar.getMenu());
+				setMenu();
 				break;
 			}
 			case MENU_EDIT: {
@@ -725,7 +719,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
 		mUploadUseExtension = !isEmpty(uploader_component);
 		if (mMenuBar != null) {
-			setMenu(mMenuBar.getMenu());
+			setMenu();
 		}
 		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mEditText.setTextSize(text_size * 1.25f);
@@ -751,7 +745,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		final String provider = mLocationManager.getBestProvider(criteria, true);
 
 		if (provider != null) {
-			final Location location = mLocationManager.getLastKnownLocation(provider);
+			final Location location;
+			if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+				location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+			} else {
+				location = mLocationManager.getLastKnownLocation(provider);
+			}
 			if (location == null) {
 				mLocationManager.requestLocationUpdates(provider, 0, 0, this);
 				setSupportProgressBarIndeterminateVisibility(true);
@@ -796,7 +795,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		finish();
 	}
 
-	private void setMenu(final Menu menu) {
+	private void setMenu() {
+		final Menu menu = mMenuBar.getMenu();
 		final int activated_color = getResources().getColor(R.color.holo_blue_bright);
 		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		final Drawable iconAddImage = itemAddImage.getIcon().mutate();
@@ -842,8 +842,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			}
 			drafts_cur.close();
 		}
-		invalidateSupportOptionsMenu();
 		mMenuBar.invalidate();
+		invalidateSupportOptionsMenu();
 	}
 
 	private void takePhoto() {

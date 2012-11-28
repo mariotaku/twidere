@@ -41,7 +41,7 @@ public class HomeRefreshContentPreference extends MultiSelectListPreference impl
 
 	@Override
 	protected boolean[] getDefaults() {
-		return new boolean[] { false, false };
+		return new boolean[] { true, false };
 	}
 
 	@Override

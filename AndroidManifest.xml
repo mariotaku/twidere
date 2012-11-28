@@ -423,13 +423,13 @@
 			android:label="@string/sign_in"/>
 		<activity
 			android:name=".activity.DataProfilingSettingsActivity"
-			android:label="@string/data_profiling">
-		</activity>
+			android:label="@string/data_profiling"/>
 
 		<service
 			android:name=".service.TwidereService"
 			android:label="@string/label_backend_service"
-			android:permission="org.mariotaku.twidere.ACCESS_SERVICE">
+			android:permission="org.mariotaku.twidere.ACCESS_SERVICE"
+			android:settingsActivity=".activity.SettingsActivity">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SERVICE"/>
 
@@ -437,6 +437,10 @@
 			</intent-filter>
 		</service>
 
+		<service
+			android:name="edu.ucdavis.earlybird.UCDService"
+			android:settingsActivity=".activity.DataProfilingSettingsActivity"/>
+		
 		<provider
 			android:name=".provider.TweetStoreProvider"
 			android:authorities="org.mariotaku.twidere.provider.TweetStore"
@@ -454,8 +458,6 @@
 				<action android:name="android.intent.action.BOOT_COMPLETED"/>
 			</intent-filter>
 		</receiver>
-
-		<service android:name="edu.ucdavis.earlybird.UCDService"/>
 
 		<receiver
 			android:name="edu.ucdavis.earlybird.UploadReceiver"
