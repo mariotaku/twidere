@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+	<style name="Theme.Blank.DialogWhenLarge" parent="Theme.Twidere.DialogWhenLarge"/>
+
 	<style name="Theme.Twidere.DialogWhenLarge" parent="Theme.Twidere.Dialog">
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>

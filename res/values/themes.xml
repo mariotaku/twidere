@@ -2,7 +2,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<style name="Theme.Blank" parent="android:Theme.NoTitleBar"/>
-
+	
+	<style name="Theme.Blank.DialogWhenLarge" parent="android:Theme.NoTitleBar"/>
+	
 	<style name="Theme.Twidere" parent="Theme.Holo">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>

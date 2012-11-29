@@ -91,7 +91,7 @@
 			android:name=".activity.ComposeActivity"
 			android:label="@string/compose"
 			android:launchMode="singleTop"
-			android:theme="@style/Theme.Twidere.Light.DialogWhenLarge"
+			android:theme="@style/Theme.Blank.DialogWhenLarge"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter android:label="@string/compose">
 				<action android:name="android.intent.action.MAIN"/>
@@ -199,7 +199,7 @@
 			android:theme="@style/Theme.Twidere.Light.Dialog"/>
 		<activity
 			android:name=".activity.LinkHandlerActivity"
-			android:theme="@style/Theme.Twidere.Light.DialogWhenLarge"
+			android:theme="@style/Theme.Blank.DialogWhenLarge"
 			android:windowSoftInputMode="adjustResize">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
