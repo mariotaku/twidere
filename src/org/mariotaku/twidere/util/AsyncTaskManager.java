@@ -22,14 +22,13 @@ package org.mariotaku.twidere.util;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class AsyncTaskManager {
 
-	private final ArrayList<ManagedAsyncTask> mTasks = new ArrayList<ManagedAsyncTask>();
+	private final ArrayList<ManagedAsyncTask<?, ?, ?>> mTasks = new ArrayList<ManagedAsyncTask<?, ?, ?>>();
 
 	private static AsyncTaskManager sInstance;
 
-	public <T> int add(final ManagedAsyncTask task, final boolean exec, final T... params) {
+	public <T> int add(final ManagedAsyncTask<T, ?, ?> task, final boolean exec, final T... params) {
 		final int hashCode = task.hashCode();
 		mTasks.add(task);
 		if (exec) {
@@ -56,14 +55,14 @@ public class AsyncTaskManager {
 	 * Cancel all tasks added, then clear all tasks.
 	 */
 	public void cancelAll() {
-		for (final ManagedAsyncTask task : mTasks) {
+		for (final ManagedAsyncTask<?, ?, ?> task : getTaskSpecList()) {
 			task.cancel(true);
 		}
 		mTasks.clear();
 	}
 
 	public <T> boolean execute(final int hashCode, final T... params) {
-		final ManagedAsyncTask task = findTask(hashCode);
+		final ManagedAsyncTask<?, ?, ?> task = findTask(hashCode);
 		if (task != null) {
 			task.execute(params == null || params.length == 0 ? null : params);
 			return true;
@@ -71,21 +70,27 @@ public class AsyncTaskManager {
 		return false;
 	}
 
-	public ArrayList<ManagedAsyncTask<?, ?, ?>> getTaskList() {
-		return (ArrayList<ManagedAsyncTask<?, ?, ?>>) mTasks.clone();
+	public ArrayList<ManagedAsyncTask<?, ?, ?>> getTaskSpecList() {
+		return new ArrayList<ManagedAsyncTask<?, ?, ?>>(mTasks);
 	}
 
 	public boolean hasRunningTask() {
-		final ArrayList<ManagedAsyncTask> tasks_to_remove = new ArrayList<ManagedAsyncTask>();
-		for (final ManagedAsyncTask task : getTaskList()) {
-			if (task.getStatus() != ManagedAsyncTask.Status.RUNNING) {
-				tasks_to_remove.add(task);
+		for (final ManagedAsyncTask<?, ?, ?> task : getTaskSpecList()) {
+			if (task.getStatus() == ManagedAsyncTask.Status.RUNNING) {
+				return true;
 			}
 		}
-		for (final ManagedAsyncTask task : tasks_to_remove) {
-			remove(task.hashCode());
+		return false;
+	}
+
+	public boolean hasRunningTasksForTag(final String tag) {
+		if (tag == null) return false;
+		for (final ManagedAsyncTask<?, ?, ?> task : getTaskSpecList()) {
+			if (task.getStatus() == ManagedAsyncTask.Status.RUNNING && tag.equals(task.getTag())) {
+				return true;
+			}
 		}
-		return mTasks.size() > 0;
+		return false;
 	}
 
 	public boolean isExcuting(final int hashCode) {
@@ -102,13 +107,9 @@ public class AsyncTaskManager {
 		}
 	}
 
-	private ManagedAsyncTask findTask(final int hashCode) {
-		try {
-			for (final ManagedAsyncTask task : getTaskList()) {
-				if (hashCode == task.hashCode()) return task;
-			}
-		} catch (final ConcurrentModificationException e) {
-
+	private ManagedAsyncTask<?, ?, ?> findTask(final int hashCode) {
+		for (final ManagedAsyncTask<?, ?, ?> task : getTaskSpecList()) {
+			if (hashCode == task.hashCode()) return task;
 		}
 		return null;
 	}
@@ -119,4 +120,5 @@ public class AsyncTaskManager {
 		}
 		return sInstance;
 	}
+
 }

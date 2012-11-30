@@ -29,10 +29,16 @@ public abstract class ManagedAsyncTask<Params, Progress, Result> extends AsyncTa
 
 	private final AsyncTaskManager manager;
 	private final Context context;
+	private final String tag;
 
 	public ManagedAsyncTask(final Context context, final AsyncTaskManager manager) {
+		this(context, manager, null);
+	}
+	
+	public ManagedAsyncTask(final Context context, final AsyncTaskManager manager, final String tag) {
 		this.manager = manager;
 		this.context = context;
+		this.tag = tag;
 	}
 
 	@Override
@@ -60,6 +66,10 @@ public abstract class ManagedAsyncTask<Params, Progress, Result> extends AsyncTa
 		super.onPreExecute();
 		context.sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED).putExtra(INTENT_KEY_HAS_RUNNING_TASK,
 				manager.hasRunningTask()));
+	}
+	
+	public String getTag() {
+		return tag;
 	}
 
 }

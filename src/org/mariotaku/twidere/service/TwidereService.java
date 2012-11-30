@@ -280,8 +280,8 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public boolean isHomeTimelineRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetHomeTimelineTaskId)
-				|| mAsyncTaskManager.isExcuting(mStoreStatusesTaskId);
+		return mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_GET_HOME_TIMELINE)
+				|| mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_STORE_HOME_TIMELINE);
 	}
 
 	public boolean isLocalTrendsRefreshing() {
@@ -290,17 +290,18 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public boolean isMentionsRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetMentionsTaskId) || mAsyncTaskManager.isExcuting(mStoreMentionsTaskId);
+		return mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_GET_MENTIONS)
+				|| mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_STORE_MENTIONS);
 	}
 
 	public boolean isReceivedDirectMessagesRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetReceivedDirectMessagesTaskId)
-				|| mAsyncTaskManager.isExcuting(mStoreReceivedDirectMessagesTaskId);
+		return mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_GET_RECEIVED_DIRECT_MESSAGES)
+				|| mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_STORE_RECEIVED_DIRECT_MESSAGES);
 	}
 
 	public boolean isSentDirectMessagesRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetSentDirectMessagesTaskId)
-				|| mAsyncTaskManager.isExcuting(mStoreSentDirectMessagesTaskId);
+		return mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_GET_SENT_DIRECT_MESSAGES)
+				|| mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_STORE_SENT_DIRECT_MESSAGES);
 	}
 
 	@Override
@@ -1637,8 +1638,8 @@ public class TwidereService extends Service implements Constants {
 
 		private final long[] account_ids, max_ids, since_ids;
 
-		public GetDirectMessagesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-			super(TwidereService.this, mAsyncTaskManager);
+		public GetDirectMessagesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids, final String tag) {
+			super(TwidereService.this, mAsyncTaskManager, tag);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
 			this.since_ids = since_ids;
@@ -1737,7 +1738,7 @@ public class TwidereService extends Service implements Constants {
 	class GetHomeTimelineTask extends GetStatusesTask {
 
 		public GetHomeTimelineTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-			super(account_ids, max_ids, since_ids);
+			super(account_ids, max_ids, since_ids, TASK_TAG_GET_HOME_TIMELINE);
 		}
 
 		@Override
@@ -1850,7 +1851,7 @@ public class TwidereService extends Service implements Constants {
 	class GetMentionsTask extends GetStatusesTask {
 
 		public GetMentionsTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-			super(account_ids, max_ids, since_ids);
+			super(account_ids, max_ids, since_ids, TASK_TAG_GET_MENTIONS);
 		}
 
 		@Override
@@ -1912,7 +1913,7 @@ public class TwidereService extends Service implements Constants {
 	class GetReceivedDirectMessagesTask extends GetDirectMessagesTask {
 
 		public GetReceivedDirectMessagesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-			super(account_ids, max_ids, since_ids);
+			super(account_ids, max_ids, since_ids, TASK_TAG_GET_RECEIVED_DIRECT_MESSAGES);
 		}
 
 		@Override
@@ -1969,7 +1970,7 @@ public class TwidereService extends Service implements Constants {
 	class GetSentDirectMessagesTask extends GetDirectMessagesTask {
 
 		public GetSentDirectMessagesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-			super(account_ids, max_ids, since_ids);
+			super(account_ids, max_ids, since_ids, TASK_TAG_GET_SENT_DIRECT_MESSAGES);
 		}
 
 		@Override
@@ -1992,8 +1993,8 @@ public class TwidereService extends Service implements Constants {
 
 		private final long[] account_ids, max_ids, since_ids;
 
-		public GetStatusesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-			super(TwidereService.this, mAsyncTaskManager);
+		public GetStatusesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids, final String tag) {
+			super(TwidereService.this, mAsyncTaskManager, tag);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
 			this.since_ids = since_ids;
@@ -2783,8 +2784,8 @@ public class TwidereService extends Service implements Constants {
 		private final Uri uri;
 
 		public StoreDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result, final Uri uri,
-				final boolean notify) {
-			super(TwidereService.this, mAsyncTaskManager);
+				final boolean notify, final String tag) {
+			super(TwidereService.this, mAsyncTaskManager, tag);
 			responses = result;
 			this.uri = uri.buildUpon().appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify)).build();
 		}
@@ -2870,7 +2871,7 @@ public class TwidereService extends Service implements Constants {
 
 		public StoreHomeTimelineTask(final List<StatusesListResponse<twitter4j.Status>> result,
 				final boolean should_set_min_id, final boolean notify) {
-			super(result, Statuses.CONTENT_URI, should_set_min_id, notify);
+			super(result, Statuses.CONTENT_URI, should_set_min_id, notify, TASK_TAG_STORE_HOME_TIMELINE);
 		}
 
 		@Override
@@ -2926,7 +2927,7 @@ public class TwidereService extends Service implements Constants {
 
 		public StoreMentionsTask(final List<StatusesListResponse<twitter4j.Status>> result,
 				final boolean should_set_min_id, final boolean notify) {
-			super(result, Mentions.CONTENT_URI, should_set_min_id, notify);
+			super(result, Mentions.CONTENT_URI, should_set_min_id, notify, TASK_TAG_STORE_MENTIONS);
 		}
 
 		@Override
@@ -2974,7 +2975,7 @@ public class TwidereService extends Service implements Constants {
 
 		public StoreReceivedDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result,
 				final boolean notify) {
-			super(result, DirectMessages.Inbox.CONTENT_URI, notify);
+			super(result, DirectMessages.Inbox.CONTENT_URI, notify, TASK_TAG_STORE_RECEIVED_DIRECT_MESSAGES);
 		}
 
 		@Override
@@ -3019,7 +3020,7 @@ public class TwidereService extends Service implements Constants {
 	class StoreSentDirectMessagesTask extends StoreDirectMessagesTask {
 
 		public StoreSentDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result, final boolean notify) {
-			super(result, DirectMessages.Outbox.CONTENT_URI, notify);
+			super(result, DirectMessages.Outbox.CONTENT_URI, notify, TASK_TAG_STORE_SENT_DIRECT_MESSAGES);
 		}
 
 		@Override
@@ -3046,8 +3047,8 @@ public class TwidereService extends Service implements Constants {
 		private final ArrayList<ContentValues> all_statuses = new ArrayList<ContentValues>();
 
 		public StoreStatusesTask(final List<StatusesListResponse<twitter4j.Status>> result, final Uri uri,
-				final boolean should_set_min_id, final boolean notify) {
-			super(TwidereService.this, mAsyncTaskManager);
+				final boolean should_set_min_id, final boolean notify, final String tag) {
+			super(TwidereService.this, mAsyncTaskManager, tag);
 			responses = result;
 			this.should_set_min_id = should_set_min_id;
 			this.uri = uri.buildUpon().appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify)).build();
