@@ -18,6 +18,7 @@ local.properties
 *.bak
 *.old
 *.*~
+*~
 
 # Private constants
 src/org/mariotaku/twidere/PrivateConstants.java
