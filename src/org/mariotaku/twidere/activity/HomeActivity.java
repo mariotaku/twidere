@@ -22,7 +22,6 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getTabs;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
@@ -41,7 +40,6 @@ import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Inbox;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.SetHomeButtonEnabledAccessor;

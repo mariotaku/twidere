@@ -14,7 +14,7 @@ import android.view.Window;
 @SuppressLint("Registered")
 public class ActionBarFragmentActivity extends FragmentActivity {
 
-	private final ActionBarCompat mActionBarCompat = ActionBarCompat.getInstance(this);
+	protected final ActionBarCompat mActionBarCompat = ActionBarCompat.getInstance(this);
 	private boolean mActionBarInitialized = false;
 
 	protected Fragment mAttachedFragment;

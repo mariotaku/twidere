@@ -13,7 +13,7 @@ public interface ActionBar {
 
 	public CharSequence getTitle();
 
-	public void setBackgroundDrawable(Drawable paramDrawable);
+	public void setBackgroundDrawable(Drawable d);
 
 	public void setCustomView(int resId);
 
@@ -23,7 +23,7 @@ public interface ActionBar {
 
 	public void setDisplayShowCustomEnabled(boolean showCustom);
 
-	public void setDisplayShowHomeEnabled(boolean sShowHome);
+	public void setDisplayShowHomeEnabled(boolean showHome);
 
 	public void setDisplayShowTitleEnabled(boolean showTitle);
 

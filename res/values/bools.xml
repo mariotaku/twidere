@@ -8,5 +8,6 @@
 	<bool name="should_disable_scroll">false</bool>
 	<bool name="default_shadow_slidable">true</bool>
 	<bool name="shadow_slidable">true</bool>
+	<bool name="should_set_background">true</bool>
 
 </resources>

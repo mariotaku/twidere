@@ -4,16 +4,13 @@ import android.app.Activity;
 import android.os.Build;
 import android.view.MenuInflater;
 
-abstract class ActionBarCompat {
+public abstract class ActionBarCompat implements ActionBar {
+
+	public abstract boolean isAvailable();
 
 	ActionBar getActionBar() {
-		if (this instanceof ActionBar) // if (!isActionBarAvailable()) return
-										// null;
-			return (ActionBar) this;
-		return null;
+		return this;
 	}
-
-	// protected abstract boolean isActionBarAvailable();
 
 	/**
 	 * Returns a {@link MenuInflater} for use when inflating menus. The

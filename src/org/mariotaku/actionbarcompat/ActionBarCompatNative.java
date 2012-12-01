@@ -40,6 +40,11 @@ class ActionBarCompatNative extends ActionBarCompat implements ActionBar {
 	}
 
 	@Override
+	public boolean isAvailable() {
+		return mActivity != null && mActivity.getActionBar() != null;
+	}
+
+	@Override
 	public void setBackgroundDrawable(final Drawable background) {
 		if (mActivity == null || mActivity.getActionBar() == null) return;
 		mActivity.getActionBar().setBackgroundDrawable(background);

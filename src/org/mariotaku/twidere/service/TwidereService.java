@@ -109,11 +109,8 @@ public class TwidereService extends Service implements Constants {
 	private ContentResolver mResolver;
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
-	private int mStoreStatusesTaskId, mStoreMentionsTaskId;
 	private int mGetReceivedDirectMessagesTaskId, mGetSentDirectMessagesTaskId;
-	private int mStoreReceivedDirectMessagesTaskId, mStoreSentDirectMessagesTaskId;
 	private int mGetLocalTrendsTaskId;
-	private int mStoreLocalTrendsTaskId;
 
 	private boolean mShouldShutdown = false;
 	private boolean mBatteryLow = false;
@@ -285,8 +282,8 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public boolean isLocalTrendsRefreshing() {
-		return mAsyncTaskManager.isExcuting(mGetLocalTrendsTaskId)
-				|| mAsyncTaskManager.isExcuting(mStoreLocalTrendsTaskId);
+		return mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_GET_TRENDS)
+				|| mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_STORE_TRENDS);
 	}
 
 	public boolean isMentionsRefreshing() {
@@ -1638,7 +1635,8 @@ public class TwidereService extends Service implements Constants {
 
 		private final long[] account_ids, max_ids, since_ids;
 
-		public GetDirectMessagesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids, final String tag) {
+		public GetDirectMessagesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids,
+				final String tag) {
 			super(TwidereService.this, mAsyncTaskManager, tag);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
@@ -1773,8 +1771,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(final List<StatusesListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
-			mStoreStatusesTaskId = mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, shouldSetMinId(),
-					!isMaxIdsValid()), true);
+			mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, shouldSetMinId(), !isMaxIdsValid()), true);
 			mGetHomeTimelineTaskId = -1;
 		}
 
@@ -1837,7 +1834,7 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(final ListResponse<Trends> result) {
-			mStoreLocalTrendsTaskId = mAsyncTaskManager.add(new StoreLocalTrendsTask(result), true);
+			mAsyncTaskManager.add(new StoreLocalTrendsTask(result), true);
 			super.onPostExecute(result);
 
 		}
@@ -1886,8 +1883,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(final List<StatusesListResponse<twitter4j.Status>> responses) {
 			super.onPostExecute(responses);
-			mStoreMentionsTaskId = mAsyncTaskManager.add(new StoreMentionsTask(responses, shouldSetMinId(),
-					!isMaxIdsValid()), true);
+			mAsyncTaskManager.add(new StoreMentionsTask(responses, shouldSetMinId(), !isMaxIdsValid()), true);
 			mGetMentionsTaskId = -1;
 		}
 
@@ -1943,8 +1939,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(final List<StatusesListResponse<DirectMessage>> responses) {
 			super.onPostExecute(responses);
-			mStoreReceivedDirectMessagesTaskId = mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses,
-					!isMaxIdsValid()), true);
+			mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses, !isMaxIdsValid()), true);
 			mGetReceivedDirectMessagesTaskId = -1;
 		}
 
@@ -1982,8 +1977,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		protected void onPostExecute(final List<StatusesListResponse<DirectMessage>> responses) {
 			super.onPostExecute(responses);
-			mStoreSentDirectMessagesTaskId = mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses,
-					!isMaxIdsValid()), true);
+			mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses, !isMaxIdsValid()), true);
 			mGetSentDirectMessagesTaskId = -1;
 		}
 
@@ -2100,7 +2094,7 @@ public class TwidereService extends Service implements Constants {
 		private final long account_id;
 
 		public GetTrendsTask(final long account_id) {
-			super(TwidereService.this, mAsyncTaskManager);
+			super(TwidereService.this, mAsyncTaskManager, TASK_TAG_GET_TRENDS);
 			this.account_id = account_id;
 		}
 
@@ -2894,7 +2888,6 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			mStoreStatusesTaskId = -1;
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
 			final Bundle extras = new Bundle();
@@ -2950,7 +2943,6 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			mStoreMentionsTaskId = -1;
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
 			final Bundle extras = new Bundle();
@@ -2998,7 +2990,6 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			mStoreReceivedDirectMessagesTaskId = -1;
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
 			sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED)
@@ -3025,7 +3016,6 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			mStoreSentDirectMessagesTaskId = -1;
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
 			sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED, succeed));
@@ -3191,7 +3181,7 @@ public class TwidereService extends Service implements Constants {
 		private final Uri uri;
 
 		public StoreTrendsTask(final ListResponse<Trends> result, final Uri uri) {
-			super(TwidereService.this, mAsyncTaskManager);
+			super(TwidereService.this, mAsyncTaskManager, TASK_TAG_STORE_TRENDS);
 			response = result;
 			this.uri = uri;
 		}

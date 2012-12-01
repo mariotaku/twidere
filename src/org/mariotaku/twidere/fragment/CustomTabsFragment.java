@@ -164,7 +164,6 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	@Override
 	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_custom_tabs, menu);
-		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
@@ -294,10 +293,10 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 				intent.setPackage(getActivity().getPackageName());
 				intent.putExtras(extras);
 				startActivityForResult(intent, REQUEST_ADD_TAB);
-				break;
+				return true;
 			}
 		}
-		return super.onOptionsItemSelected(item);
+		return false;
 	}
 
 	@Override

@@ -128,6 +128,11 @@ public class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	}
 
 	@Override
+	public boolean isAvailable() {
+		return mActionBarView != null;
+	}
+
+	@Override
 	public void setBackgroundDrawable(final Drawable d) {
 		if (mActionBarView != null) {
 			mActionBarView.setBackgroundDrawable(d);

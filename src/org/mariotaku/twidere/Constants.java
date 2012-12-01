@@ -488,8 +488,10 @@ public interface Constants extends TwitterConstants {
 	public static final String TASK_TAG_GET_MENTIONS = "get_mentions";
 	public static final String TASK_TAG_GET_SENT_DIRECT_MESSAGES = "get_sent_direct_messages";
 	public static final String TASK_TAG_GET_RECEIVED_DIRECT_MESSAGES = "get_received_direct_messages";
+	public static final String TASK_TAG_GET_TRENDS = "get_trends";
 	public static final String TASK_TAG_STORE_HOME_TIMELINE = "store_home_tomeline";
 	public static final String TASK_TAG_STORE_MENTIONS = "store_mentions";
 	public static final String TASK_TAG_STORE_SENT_DIRECT_MESSAGES = "store_sent_direct_messages";
 	public static final String TASK_TAG_STORE_RECEIVED_DIRECT_MESSAGES = "store_received_direct_messages";
+	public static final String TASK_TAG_STORE_TRENDS = "store_trends";
 }

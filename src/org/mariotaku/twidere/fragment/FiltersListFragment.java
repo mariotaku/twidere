@@ -19,21 +19,67 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.activity.InternalFiltersActivity;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.TabsAdapter;
+import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredKeywordsFragment;
+import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredSourcesFragment;
+import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
 import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.view.ExtendedViewPager;
+import org.mariotaku.twidere.view.TabPageIndicator;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
-public class FiltersListFragment extends ActivityHostFragment<InternalFiltersActivity> implements Panes.Right {
+public class FiltersListFragment extends BaseFragment implements Panes.Right {
+
+	private ExtendedViewPager mViewPager;
+	private TabPageIndicator mIndicator;
+
+	private TabsAdapter mAdapter;
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
+		new Handler().post(new Runnable() {
+
+			@Override
+			public void run() {
+				mAdapter = new TabsAdapter(getActivity(), getFragmentManager(), mIndicator);
+				mAdapter.addTab(FilteredUsersFragment.class, null, getString(R.string.users), null, 0);
+				mAdapter.addTab(FilteredKeywordsFragment.class, null, getString(R.string.keywords), null, 1);
+				mAdapter.addTab(FilteredSourcesFragment.class, null, getString(R.string.sources), null, 2);
+				mViewPager.setAdapter(mAdapter);
+				mIndicator.setViewPager(mViewPager);
+				mIndicator.setDisplayLabel(true);
+				mIndicator.setDisplayIcon(false);
+			}
+
+		});
 	}
 
 	@Override
-	protected Class<InternalFiltersActivity> getActivityClass() {
-		return InternalFiltersActivity.class;
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_filter, menu);
+	}
+
+	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup parent, final Bundle savedInstanceState) {
+		final View view = inflater.inflate(R.layout.filters, null);
+		mViewPager = (ExtendedViewPager) view.findViewById(R.id.pager);
+		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
+		return view;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		return false;
 	}
 }

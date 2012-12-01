@@ -17,13 +17,12 @@
 		<item name="actionModeBackground">@drawable/cab_background_top_holo_dark</item>
 	</style>
 
-	<style name="Theme.Twidere.Light.DialogWhenLarge" parent="Theme.Twidere.Light.Dialog">
-		<item name="android:windowActionBar">false</item>
+	<style name="Theme.Twidere.Light.DialogWhenLarge" parent="Theme.Twidere.Light.Dialog"><item name="android:windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>
-		<item name="android:windowBackground">@drawable/dialog_full_holo_light_darkactionbar</item>
+<item name="android:windowBackground">@drawable/dialog_full_holo_light_darkactionbar</item>
 
 		<!-- for programmatic instantiation -->
-		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_holo</item>
+		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
 		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
 		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>

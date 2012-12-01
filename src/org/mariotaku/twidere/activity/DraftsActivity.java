@@ -48,8 +48,8 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class DraftsActivity extends BaseActivity implements LoaderCallbacks<Cursor>, OnItemClickListener,
-		OnItemLongClickListener, OnMenuItemClickListener {
+public class DraftsActivity extends BaseDialogWhenLargeActivity implements LoaderCallbacks<Cursor>,
+		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
 	private ContentResolver mResolver;
 	private ServiceInterface mService;

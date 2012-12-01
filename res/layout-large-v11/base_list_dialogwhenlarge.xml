@@ -19,7 +19,7 @@
 		android:layout_height="match_parent"
 		android:background="@drawable/actionbar_shadow">
 
-		<include layout="@layout/base"/>
+		<include layout="@layout/base_list"/>
 	</FrameLayout>
 
 </LinearLayout>

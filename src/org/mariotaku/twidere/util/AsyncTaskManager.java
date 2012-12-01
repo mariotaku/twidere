@@ -42,7 +42,7 @@ public class AsyncTaskManager {
 	}
 
 	public boolean cancel(final int hashCode, final boolean mayInterruptIfRunning) {
-		final ManagedAsyncTask task = findTask(hashCode);
+		final ManagedAsyncTask<?, ?, ?> task = findTask(hashCode);
 		if (task != null) {
 			task.cancel(mayInterruptIfRunning);
 			mTasks.remove(task);
@@ -62,7 +62,7 @@ public class AsyncTaskManager {
 	}
 
 	public <T> boolean execute(final int hashCode, final T... params) {
-		final ManagedAsyncTask<?, ?, ?> task = findTask(hashCode);
+		final ManagedAsyncTask<T, ?, ?> task = findTask(hashCode);
 		if (task != null) {
 			task.execute(params == null || params.length == 0 ? null : params);
 			return true;
@@ -76,9 +76,7 @@ public class AsyncTaskManager {
 
 	public boolean hasRunningTask() {
 		for (final ManagedAsyncTask<?, ?, ?> task : getTaskSpecList()) {
-			if (task.getStatus() == ManagedAsyncTask.Status.RUNNING) {
-				return true;
-			}
+			if (task.getStatus() == ManagedAsyncTask.Status.RUNNING) return true;
 		}
 		return false;
 	}
@@ -86,15 +84,13 @@ public class AsyncTaskManager {
 	public boolean hasRunningTasksForTag(final String tag) {
 		if (tag == null) return false;
 		for (final ManagedAsyncTask<?, ?, ?> task : getTaskSpecList()) {
-			if (task.getStatus() == ManagedAsyncTask.Status.RUNNING && tag.equals(task.getTag())) {
-				return true;
-			}
+			if (task.getStatus() == ManagedAsyncTask.Status.RUNNING && tag.equals(task.getTag())) return true;
 		}
 		return false;
 	}
 
 	public boolean isExcuting(final int hashCode) {
-		final ManagedAsyncTask task = findTask(hashCode);
+		final ManagedAsyncTask<?, ?, ?> task = findTask(hashCode);
 		if (task != null && task.getStatus() == AsyncTask.Status.RUNNING) return true;
 		return false;
 	}
@@ -107,9 +103,10 @@ public class AsyncTaskManager {
 		}
 	}
 
-	private ManagedAsyncTask<?, ?, ?> findTask(final int hashCode) {
+	@SuppressWarnings("unchecked")
+	private <T> ManagedAsyncTask<T, ?, ?> findTask(final int hashCode) {
 		for (final ManagedAsyncTask<?, ?, ?> task : getTaskSpecList()) {
-			if (hashCode == task.hashCode()) return task;
+			if (hashCode == task.hashCode()) return (ManagedAsyncTask<T, ?, ?>) task;
 		}
 		return null;
 	}

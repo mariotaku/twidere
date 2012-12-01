@@ -50,7 +50,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class HostMappingActivity extends BaseActivity implements OnItemClickListener, OnItemLongClickListener {
+public class HostMappingActivity extends BaseDialogWhenLargeActivity implements OnItemClickListener,
+		OnItemLongClickListener {
 
 	private ListView mListView;
 	private HostMappingAdapter mAdapter;
@@ -62,7 +63,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		setContentView(R.layout.base_list);
+		setContentView(R.layout.base_list_dialogwhenlarge);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mAdapter = new HostMappingAdapter(this);
 		mListView = (ListView) findViewById(android.R.id.list);

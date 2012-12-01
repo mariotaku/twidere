@@ -19,64 +19,30 @@
 
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.TabsAdapter;
-import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredKeywordsFragment;
-import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredSourcesFragment;
-import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
-import org.mariotaku.twidere.view.ExtendedViewPager;
-import org.mariotaku.twidere.view.TabPageIndicator;
+import org.mariotaku.twidere.fragment.FiltersListFragment;
 
 import android.os.Bundle;
-import android.view.Menu;
+import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
-public class FiltersActivity extends BaseActivity {
-
-	private ActionBar mActionBar;
-
-	private ExtendedViewPager mViewPager;
-	private TabPageIndicator mIndicator;
-
-	private TabsAdapter mAdapter;
-
-	@Override
-	public void onContentChanged() {
-		super.onContentChanged();
-		mViewPager = (ExtendedViewPager) findViewById(R.id.pager);
-		mIndicator = (TabPageIndicator) findViewById(android.R.id.tabs);
-	}
+public class FiltersActivity extends BaseDialogWhenLargeActivity {
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.filters);
-		mActionBar = getSupportActionBar();
-		if (mActionBar != null) {
-			mActionBar.setDisplayHomeAsUpEnabled(true);
-		}
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
-		mAdapter.addTab(FilteredUsersFragment.class, null, getString(R.string.users), null, 0);
-		mAdapter.addTab(FilteredKeywordsFragment.class, null, getString(R.string.keywords), null, 1);
-		mAdapter.addTab(FilteredSourcesFragment.class, null, getString(R.string.sources), null, 2);
-		mViewPager.setAdapter(mAdapter);
-		mIndicator.setViewPager(mViewPager);
-		mIndicator.setDisplayLabel(true);
-		mIndicator.setDisplayIcon(false);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_filter, menu);
-		return true;
+		setContentView(R.layout.base_dialogwhenlarge);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.replace(R.id.main, new FiltersListFragment());
+		ft.commit();
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
-				finish();
+				onBackPressed();
 				return true;
 		}
 		return false;

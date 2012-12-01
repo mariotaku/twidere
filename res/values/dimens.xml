@@ -15,5 +15,7 @@
 	<dimen name="default_slidepane_spacing_left">@dimen/pane_spacing_right</dimen>
 	<dimen name="default_slidepane_spacing_right">@dimen/pane_spacing_right</dimen>
 	<dimen name="default_slidingpane_shadow_width">32dp</dimen>
+	<dimen name="dialogwhenlarge_min_height">480dp</dimen>
+	<dimen name="dialogwhenlarge_min_width">480dp</dimen>
 
 </resources>

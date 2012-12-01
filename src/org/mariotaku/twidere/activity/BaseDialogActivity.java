@@ -40,7 +40,7 @@ import android.view.WindowManager;
 @SuppressLint("Registered")
 class BaseDialogActivity extends FragmentActivity implements Constants, ActivityThemeChangeInterface {
 
-private boolean mIsDarkTheme, mHardwareAccelerated;
+	private boolean mIsDarkTheme, mHardwareAccelerated;
 
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();

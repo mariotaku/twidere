@@ -106,8 +106,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		final int res_id;
 		if (KEY_CUSTOM_TABS.equals(key)) {
 			if (isDualPaneMode()) {
-				final Fragment fragment = new CustomTabsFragment();
-				showFragment(fragment, true);
+				showFragment(new CustomTabsFragment());
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_CUSTOM_TABS);
 				intent.setPackage(getPackageName());
@@ -125,8 +124,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			}
 		} else if (KEY_EXTENSIONS.equals(key)) {
 			if (isDualPaneMode()) {
-				final Fragment fragment = new ExtensionsListFragment();
-				showFragment(fragment, true);
+				showFragment(new ExtensionsListFragment());
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_EXTENSIONS);
 				intent.setPackage(getPackageName());
@@ -135,8 +133,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			return true;
 		} else if (KEY_FILTERS.equals(key)) {
 			if (isDualPaneMode()) {
-				final Fragment fragment = new FiltersListFragment();
-				showFragment(fragment, true);
+				showFragment(new FiltersListFragment());
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_FILTERS);
 				intent.setClass(this, FiltersActivity.class);
@@ -184,6 +181,10 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			}
 			restartActivity(this, show_anim);
 		}
+	}
+
+	void showFragment(final Fragment fragment) {
+		showFragment(fragment, true);
 	}
 
 }

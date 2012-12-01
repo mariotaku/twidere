@@ -33,7 +33,6 @@ import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.File;
 
-import org.mariotaku.actionbarcompat.ActionBarCompatBase;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.popupmenu.PopupMenu;
@@ -84,7 +83,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -97,9 +95,9 @@ import android.widget.Toast;
 
 import com.twitter.Validator;
 
-public class ComposeActivity extends BaseActivity implements TextWatcher, LocationListener, OnMenuItemClickListener,
-		OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener, OnEditorActionListener,
-		LoaderCallbacks<Bitmap> {
+public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
+		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
+		OnEditorActionListener, LoaderCallbacks<Bitmap> {
 
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
 	private static final String INTENT_KEY_CONTENT_MODIFIED = "content_modified";
@@ -112,7 +110,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	private ContentResolver mResolver;
 	private final Validator mValidator = new Validator();
 
-	private ActionBarCompatBase mActionBarCompat;
 	private PopupMenu mPopupMenu;
 
 	private static final int THUMBNAIL_SIZE = 36;
@@ -143,16 +140,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
 
-	}
-
-	@Override
-	public MenuInflater getMenuInflater() {
-		return mActionBarCompat.getMenuInflater(super.getBaseMenuInflater());
-	}
-
-	@Override
-	public void invalidateSupportOptionsMenu() {
-		mActionBarCompat.invalidateOptionsMenu();
 	}
 
 	@Override
@@ -256,12 +243,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	}
 
 	@Override
-	public void onAttachFragment(final Fragment fragment) {
-		super.onAttachFragment(fragment);
-		mActionBarCompat.createActionBarMenu();
-	}
-
-	@Override
 	public void onBackPressed() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (mContentModified && !isEmpty(text)) {
@@ -309,7 +290,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mService = getTwidereApplication().getServiceInterface();
 		mResolver = getContentResolver();
-		mActionBarCompat = new ActionBarCompatBase(this);
 		super.onCreate(savedInstanceState);
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length <= 0) {
@@ -321,8 +301,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		}
 		setContentView(R.layout.compose_dialogwhenlarge);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		mActionBarCompat.initViews();
-		mActionBarCompat.setDisplayHomeAsUpEnabled(true);
 
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		final long account_id = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID) : -1;
@@ -461,9 +439,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_compose_actionbar, menu);
-		if (mAttachedFragment != null) {
-			mAttachedFragment.onCreateOptionsMenu(menu, getMenuInflater());
-		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -538,8 +513,7 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 			case MENU_DELETE: {
 				if (mImageUri == null) return false;
 				if (mIsPhotoAttached && !mIsImageAttached) {
-					final File image_file = "file".equals(mImageUri.getScheme()) ? new File(mImageUri.getPath())
-							: null;
+					final File image_file = "file".equals(mImageUri.getScheme()) ? new File(mImageUri.getPath()) : null;
 					if (image_file != null) {
 						image_file.delete();
 					}
@@ -627,8 +601,8 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 				FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
 		final int count = mValidator.getTweetLength(text);
 		final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count)
-					: 50
-					: 0;
+				: 50
+				: 0;
 		final float[] hsv = new float[] { hue, 1.0f, 1.0f };
 		mTextCount.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
 		mTextCount.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
@@ -675,11 +649,12 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mContentModified = true;
 	}
 
-	@Override
-	public void onTitleChanged(final CharSequence title, final int color) {
-		mActionBarCompat.setTitle(title);
-		super.onTitleChanged(title, color);
-	}
+	//
+	// @Override
+	// public void onTitleChanged(final CharSequence title, final int color) {
+	// mActionBarCompat.setTitle(title);
+	// super.onTitleChanged(title, color);
+	// }
 
 	public void saveToDrafts() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
@@ -698,21 +673,6 @@ public class ComposeActivity extends BaseActivity implements TextWatcher, Locati
 		mResolver.insert(Drafts.CONTENT_URI, values);
 	}
 
-	@Override
-	protected int getDarkThemeRes() {
-		return R.style.Theme_Twidere_DialogWhenLarge;
-	}
-
-	@Override
-	protected int getLightThemeRes() {
-		return R.style.Theme_Twidere_Light_DialogWhenLarge;
-	}
-
-	@Override
-	protected boolean isSetBackgroundEnabled() {
-		return false;
-	}
-	
 	@Override
 	protected void onStart() {
 		super.onStart();

@@ -57,7 +57,7 @@ public class BaseFragment extends Fragment implements Constants {
 	}
 
 	public ServiceInterface getServiceInterface() {
-		return getApplication().getServiceInterface();
+		return getApplication() != null ? getApplication().getServiceInterface() : null;
 	}
 
 	public SharedPreferences getSharedPreferences(final String name, final int mode) {
