@@ -2,8 +2,10 @@ package org.mariotaku.twidere.activity;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountScreenName;
-import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseString;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 import org.mariotaku.twidere.R;
 
@@ -73,6 +75,12 @@ public class DonateActivity extends BaseDialogWhenLargeActivity implements OnCli
 
 	@Override
 	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
-		mDonateButton.setEnabled(count > 0 && parseInt(parseString(s)) > 0);
+		final NumberFormat format = NumberFormat.getInstance(getResources().getConfiguration().locale);
+		try {
+			final Number number = format.parse(parseString(s));
+			mDonateButton.setEnabled(count > 0 && number.doubleValue() > 0);
+		} catch (ParseException e) {
+			mDonateButton.setEnabled(false);
+		}
 	}
 }

@@ -25,10 +25,7 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 			return;
 		}
 		final LayoutInflater inflater = getLayoutInflater();
-		final ViewGroup root = (ViewGroup) inflater.inflate(R.layout.dialogwhenlarge, null);
-		final ViewGroup content = (ViewGroup) root.findViewById(R.id.activity_content);
-		mActivityContent = getLayoutInflater().inflate(layoutResID, content);
-		super.setContentView(root);
+		setContentView(inflater.inflate(layoutResID, null));
 	}
 
 	@Override
