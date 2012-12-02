@@ -27,7 +27,6 @@ import static org.mariotaku.twidere.util.Utils.matchLinkId;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseLong;
 
-import org.mariotaku.actionbarcompat.ActionBarCompatBase;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
@@ -56,40 +55,18 @@ import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 
 public class LinkHandlerActivity extends MultiSelectActivity {
 
-	private ActionBarCompatBase mActionBarCompat;
-
 	private Fragment mFragment;
-
-	@Override
-	public MenuInflater getMenuInflater() {
-		return mActionBarCompat.getMenuInflater(super.getBaseMenuInflater());
-	}
-
-	@Override
-	public void invalidateSupportOptionsMenu() {
-		mActionBarCompat.invalidateOptionsMenu();
-	}
-
-	@Override
-	public void onAttachFragment(final Fragment fragment) {
-		super.onAttachFragment(fragment);
-		mActionBarCompat.createActionBarMenu();
-	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		mActionBarCompat = new ActionBarCompatBase(this);
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		mActionBarCompat.initViews();
-		mActionBarCompat.setDisplayHomeAsUpEnabled(true);
 		setSupportProgressBarIndeterminateVisibility(false);
 		final Intent intent = getIntent();
 		final Uri data = intent.getData();
@@ -153,12 +130,6 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 	}
 
 	@Override
-	public void onTitleChanged(final CharSequence title, final int color) {
-		mActionBarCompat.setTitle(title);
-		super.onTitleChanged(title, color);
-	}
-
-	@Override
 	protected int getDarkThemeRes() {
 		return R.style.Theme_Twidere_DialogWhenLarge;
 	}
@@ -176,7 +147,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 
 	@Override
 	protected int getNormalLayoutRes() {
-		return R.layout.base_dialogwhenlarge;
+		return R.layout.base;
 	}
 
 	@Override
@@ -191,6 +162,11 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 			}
 		}
 		super.onStart();
+	}
+
+	@Override
+	protected boolean shouldDisableDialogWhenLargeMode() {
+		return false;
 	}
 
 	private boolean setFragment(final Uri uri) {

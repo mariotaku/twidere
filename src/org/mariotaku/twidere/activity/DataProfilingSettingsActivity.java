@@ -36,7 +36,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import edu.ucdavis.earlybird.CSVFileFilter;
 
-public class DataProfilingSettingsActivity extends BaseActivity implements OnClickListener {
+public class DataProfilingSettingsActivity extends BaseDialogWhenLargeActivity implements OnClickListener {
 
 	private SharedPreferences mPreferences;
 

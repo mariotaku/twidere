@@ -30,32 +30,33 @@ import android.database.Cursor;
 
 public class Account implements CharSequence {
 
-	public final String username;
+	public final String screen_name, name;
 	public final long account_id;
 
 	Account(final Cursor cursor, final Indices indices) {
-		username = cursor.getString(indices.username);
+		screen_name = cursor.getString(indices.screen_name);
+		name = cursor.getString(indices.name);
 		account_id = cursor.getLong(indices.account_id);
 	}
 
 	@Override
 	public char charAt(final int index) {
-		return username.charAt(index);
+		return screen_name.charAt(index);
 	}
 
 	@Override
 	public int length() {
-		return username.length();
+		return screen_name.length();
 	}
 
 	@Override
 	public CharSequence subSequence(final int start, final int end) {
-		return username.subSequence(start, end);
+		return screen_name.subSequence(start, end);
 	}
 
 	@Override
 	public String toString() {
-		return username;
+		return screen_name;
 	}
 
 	public static List<Account> getAccounts(final Context context, final boolean activated_only) {
@@ -80,10 +81,11 @@ public class Account implements CharSequence {
 
 	public static class Indices {
 
-		public final int username, account_id;
+		public final int screen_name, name, account_id;
 
 		public Indices(final Cursor cursor) {
-			username = cursor.getColumnIndex(Accounts.SCREEN_NAME);
+			screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
+			name = cursor.getColumnIndex(Accounts.NAME);
 			account_id = cursor.getColumnIndex(Accounts.ACCOUNT_ID);
 		}
 	}

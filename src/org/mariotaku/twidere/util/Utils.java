@@ -933,6 +933,11 @@ public final class Utils implements Constants {
 		return prefs.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
 	}
 
+	public static String getDefaultAccountScreenName(final Context context) {
+		if (context == null) return null;
+		return getAccountScreenName(context, getDefaultAccountId(context));
+	}
+
 	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities) {
 		if (context == null) return null;
 		return getDefaultTwitterInstance(context, include_entities, true);

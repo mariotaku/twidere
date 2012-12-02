@@ -217,9 +217,39 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 	}
 
 	@Override
-	public final boolean equals(final Object o) {
-		if (!(o instanceof ParcelableStatus)) return false;
-		return status_id == ((ParcelableStatus) o).status_id;
+	public boolean equals(final Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (!(obj instanceof ParcelableStatus)) return false;
+		final ParcelableStatus other = (ParcelableStatus) obj;
+		if (account_id != other.account_id) return false;
+		if (status_id != other.status_id) return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (account_id ^ account_id >>> 32);
+		result = prime * result + (int) (status_id ^ status_id >>> 32);
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "ParcelableStatus{retweet_id=" + retweet_id + ", retweeted_by_id=" + retweeted_by_id + ", status_id="
+				+ status_id + ", account_id=" + account_id + ", user_id=" + user_id + ", status_timestamp="
+				+ status_timestamp + ", retweet_count=" + retweet_count + ", in_reply_to_status_id="
+				+ in_reply_to_status_id + ", my_retweet_id=" + my_retweet_id + ", is_gap=" + is_gap + ", is_retweet="
+				+ is_retweet + ", is_favorite=" + is_favorite + ", is_protected=" + is_protected + ", is_verified="
+				+ is_verified + ", has_media=" + has_media + ", retweeted_by_name=" + retweeted_by_name
+				+ ", retweeted_by_screen_name=" + retweeted_by_screen_name + ", text_html=" + text_html
+				+ ", text_plain=" + text_plain + ", name=" + name + ", screen_name=" + screen_name
+				+ ", in_reply_to_screen_name=" + in_reply_to_screen_name + ", source=" + source
+				+ ", profile_image_url_string=" + profile_image_url_string + ", image_preview_url_string="
+				+ image_preview_url_string + ", image_orig_url_string=" + image_orig_url_string + ", location_string="
+				+ location_string + ", text_unescaped=" + text_unescaped + ", location=" + location + "}";
 	}
 
 	@Override

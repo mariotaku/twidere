@@ -56,4 +56,17 @@ public class StatusCursorIndices {
 		source = cursor.getColumnIndex(Statuses.SOURCE);
 		retweet_count = cursor.getColumnIndex(Statuses.RETWEET_COUNT);
 	}
+
+	@Override
+	public String toString() {
+		return "StatusCursorIndices{account_id=" + account_id + ", status_id=" + status_id + ", status_timestamp="
+				+ status_timestamp + ", name=" + name + ", screen_name=" + screen_name + ", text=" + text
+				+ ", text_plain=" + text_plain + ", profile_image_url=" + profile_image_url + ", is_retweet="
+				+ is_retweet + ", is_favorite=" + is_favorite + ", is_gap=" + is_gap + ", location=" + location
+				+ ", is_protected=" + is_protected + ", is_verified=" + is_verified + ", in_reply_to_status_id="
+				+ in_reply_to_status_id + ", in_reply_to_screen_name=" + in_reply_to_screen_name + ", my_retweet_id="
+				+ my_retweet_id + ", retweeted_by_name=" + retweeted_by_name + ", retweeted_by_screen_name="
+				+ retweeted_by_screen_name + ", retweet_id=" + retweet_id + ", retweeted_by_id=" + retweeted_by_id
+				+ ", user_id=" + user_id + ", source=" + source + ", retweet_count=" + retweet_count + "}";
+	}
 }

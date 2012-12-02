@@ -30,9 +30,6 @@ import android.os.Parcelable;
 
 public class ParcelableUserList implements Parcelable, Serializable, Comparable<ParcelableUserList> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5896769285301886501L;
 
 	public static final Parcelable.Creator<ParcelableUserList> CREATOR = new Parcelable.Creator<ParcelableUserList>() {
@@ -109,26 +106,7 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		if (!(obj instanceof ParcelableUserList)) return false;
 		final ParcelableUserList other = (ParcelableUserList) obj;
 		if (account_id != other.account_id) return false;
-		if (description == null) {
-			if (other.description != null) return false;
-		} else if (!description.equals(other.description)) return false;
-		if (is_following != other.is_following) return false;
-		if (is_public != other.is_public) return false;
 		if (list_id != other.list_id) return false;
-		if (name == null) {
-			if (other.name != null) return false;
-		} else if (!name.equals(other.name)) return false;
-		if (position != other.position) return false;
-		if (user_id != other.user_id) return false;
-		if (user_name == null) {
-			if (other.user_name != null) return false;
-		} else if (!user_name.equals(other.user_name)) return false;
-		if (user_profile_image_url_string == null) {
-			if (other.user_profile_image_url_string != null) return false;
-		} else if (!user_profile_image_url_string.equals(other.user_profile_image_url_string)) return false;
-		if (user_screen_name == null) {
-			if (other.user_screen_name != null) return false;
-		} else if (!user_screen_name.equals(other.user_screen_name)) return false;
 		return true;
 	}
 
@@ -137,23 +115,16 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (account_id ^ account_id >>> 32);
-		result = prime * result + (description == null ? 0 : description.hashCode());
-		result = prime * result + (is_following ? 1231 : 1237);
-		result = prime * result + (is_public ? 1231 : 1237);
 		result = prime * result + list_id;
-		result = prime * result + (name == null ? 0 : name.hashCode());
-		result = prime * result + (int) (position ^ position >>> 32);
-		result = prime * result + (int) (user_id ^ user_id >>> 32);
-		result = prime * result + (user_name == null ? 0 : user_name.hashCode());
-		result = prime * result
-				+ (user_profile_image_url_string == null ? 0 : user_profile_image_url_string.hashCode());
-		result = prime * result + (user_screen_name == null ? 0 : user_screen_name.hashCode());
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return description;
+		return "ParcelableUserList{list_id=" + list_id + ", account_id=" + account_id + ", user_id=" + user_id
+				+ ", position=" + position + ", is_public=" + is_public + ", is_following=" + is_following
+				+ ", description=" + description + ", name=" + name + ", user_screen_name=" + user_screen_name
+				+ ", user_name=" + user_name + ", user_profile_image_url_string=" + user_profile_image_url_string + "}";
 	}
 
 	@Override

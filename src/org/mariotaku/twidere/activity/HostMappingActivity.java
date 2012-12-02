@@ -63,7 +63,7 @@ public class HostMappingActivity extends BaseDialogWhenLargeActivity implements 
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		setContentView(R.layout.base_list_dialogwhenlarge);
+		setContentView(R.layout.base_list);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mAdapter = new HostMappingAdapter(this);
 		mListView = (ListView) findViewById(android.R.id.list);

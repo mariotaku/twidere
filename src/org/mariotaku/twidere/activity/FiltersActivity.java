@@ -31,7 +31,7 @@ public class FiltersActivity extends BaseDialogWhenLargeActivity {
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.base_dialogwhenlarge);
+		setContentView(R.layout.base);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.main, new FiltersListFragment());

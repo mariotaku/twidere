@@ -83,10 +83,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	private ListView mListView;
 
 	private StatusesAdapterInterface mAdapter;
-	private PopupMenu mPopupMenu;
+	protected PopupMenu mPopupMenu;
 
-	private Data mData;
-	private ParcelableStatus mSelectedStatus;
+	protected Data mData;
+	protected ParcelableStatus mSelectedStatus;
 
 	private boolean mLoadMoreAutomatically;
 

@@ -41,8 +41,6 @@ public abstract class ParcelableStatusesListFragment extends
 
 	protected SharedPreferences mPreferences;
 
-	private final SynchronizedStateSavedList<ParcelableStatus, Long> mData = new SynchronizedStateSavedList<ParcelableStatus, Long>();
-
 	private ParcelableStatusesAdapter mAdapter;
 	private ListView mListView;
 
@@ -73,7 +71,7 @@ public abstract class ParcelableStatusesListFragment extends
 		if (status_id <= 0 || mData == null) return;
 		final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
 		for (final ParcelableStatus status : mData) {
-			if (status.status_id == status_id || status.retweet_id == status_id) {
+			if (status.status_id == status_id || status.retweet_id > 0 && status.retweet_id == status_id) {
 				data_to_remove.add(status);
 			}
 		}
@@ -108,7 +106,7 @@ public abstract class ParcelableStatusesListFragment extends
 		if (savedInstanceState != null) {
 			final List<ParcelableStatus> saved = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
 			if (saved != null) {
-				mData.addAll(saved);
+				mData = new SynchronizedStateSavedList<ParcelableStatus, Long>(saved);
 			}
 		}
 		mAdapter = new ParcelableStatusesAdapter(getActivity());

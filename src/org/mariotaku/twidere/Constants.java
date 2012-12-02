@@ -483,7 +483,7 @@ public interface Constants extends TwitterConstants {
 	public static final String ICON_SPECIAL_TYPE_CUSTOMIZE = "_customize";
 
 	public static final String FRAGMENT_TAG_API_UPGRADE_NOTICE = "api_upgrade_notice";
-	
+
 	public static final String TASK_TAG_GET_HOME_TIMELINE = "get_home_tomeline";
 	public static final String TASK_TAG_GET_MENTIONS = "get_mentions";
 	public static final String TASK_TAG_GET_SENT_DIRECT_MESSAGES = "get_sent_direct_messages";

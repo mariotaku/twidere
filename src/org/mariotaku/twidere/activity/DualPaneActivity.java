@@ -40,7 +40,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 @SuppressLint("Registered")
-public class DualPaneActivity extends BaseActivity implements OnBackStackChangedListener {
+public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnBackStackChangedListener {
 
 	private SharedPreferences mPreferences;
 
@@ -200,6 +200,11 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 				}
 				break;
 		}
+	}
+
+	@Override
+	protected boolean shouldDisableDialogWhenLargeMode() {
+		return true;
 	}
 
 	private int getPaneBackground() {

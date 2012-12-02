@@ -33,9 +33,6 @@ import android.os.Parcelable;
 
 public class ParcelableUser implements Parcelable, Serializable, Comparable<ParcelableUser> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5977877636776748705L;
 
 	public static final Parcelable.Creator<ParcelableUser> CREATOR = new Parcelable.Creator<ParcelableUser>() {
@@ -119,10 +116,34 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (!(o instanceof ParcelableUser)) return false;
-		final ParcelableUser that = (ParcelableUser) o;
-		return user_id == that.user_id;
+	public boolean equals(final Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (!(obj instanceof ParcelableUser)) return false;
+		final ParcelableUser other = (ParcelableUser) obj;
+		if (account_id != other.account_id) return false;
+		if (user_id != other.user_id) return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (account_id ^ account_id >>> 32);
+		result = prime * result + (int) (user_id ^ user_id >>> 32);
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "ParcelableUser{account_id=" + account_id + ", user_id=" + user_id + ", created_at=" + created_at
+				+ ", position=" + position + ", is_protected=" + is_protected + ", is_verified=" + is_verified
+				+ ", is_follow_request_sent=" + is_follow_request_sent + ", description=" + description + ", name="
+				+ name + ", screen_name=" + screen_name + ", location=" + location + ", profile_image_url_string="
+				+ profile_image_url_string + ", profile_banner_url_string=" + profile_banner_url_string
+				+ ", url_string=" + url_string + ", followers_count=" + followers_count + ", friends_count="
+				+ friends_count + ", statuses_count=" + statuses_count + ", favorites_count=" + favorites_count + "}";
 	}
 
 	@Override

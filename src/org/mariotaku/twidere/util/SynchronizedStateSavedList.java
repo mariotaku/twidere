@@ -28,9 +28,6 @@ import java.util.ListIterator;
 
 public class SynchronizedStateSavedList<E, State extends Serializable> implements Serializable, List<E> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6648620731104270012L;
 	private State state;
 	private final List<E> list;
@@ -83,12 +80,36 @@ public class SynchronizedStateSavedList<E, State extends Serializable> implement
 	}
 
 	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (!(obj instanceof SynchronizedStateSavedList)) return false;
+		final SynchronizedStateSavedList<?, ?> other = (SynchronizedStateSavedList<?, ?>) obj;
+		if (list == null) {
+			if (other.list != null) return false;
+		} else if (!list.equals(other.list)) return false;
+		if (state == null) {
+			if (other.state != null) return false;
+		} else if (!state.equals(other.state)) return false;
+		return true;
+	}
+
+	@Override
 	public E get(final int location) {
 		return list.get(location);
 	}
 
 	public State getState() {
 		return state;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (list == null ? 0 : list.hashCode());
+		result = prime * result + (state == null ? 0 : state.hashCode());
+		return result;
 	}
 
 	@Override
@@ -168,6 +189,11 @@ public class SynchronizedStateSavedList<E, State extends Serializable> implement
 	@Override
 	public <T extends Object> T[] toArray(final T[] array) {
 		return list.toArray(array);
+	}
+
+	@Override
+	public String toString() {
+		return "SynchronizedStateSavedList{state=" + state + ", list=" + list + "}";
 	}
 
 }

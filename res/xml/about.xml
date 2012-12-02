@@ -17,8 +17,8 @@
 			android:summary="Donate to Twidere to support my development"
 			android:title="Donate via PayPal">
 			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=mariotaku.lee%40gmail%2ecom&amp;item_name=Donate%20to%20Twidere&amp;currency_code=USD"/>
+				android:targetClass="org.mariotaku.twidere.activity.DonateActivity"
+				android:targetPackage="org.mariotaku.twidere"/>
 		</Preference>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="TRANSLATORS">

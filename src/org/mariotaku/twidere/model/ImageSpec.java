@@ -29,6 +29,6 @@ public class ImageSpec {
 
 	@Override
 	public String toString() {
-		return "ImageSpec(" + thumbnail_link + ", " + image_link + ")";
+		return "ImageSpec{thumbnail_link=" + thumbnail_link + ", image_link=" + image_link + "}";
 	}
 }

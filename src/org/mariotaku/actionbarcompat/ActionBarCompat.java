@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.os.Build;
 import android.view.MenuInflater;
 
-public abstract class ActionBarCompat implements ActionBar {
-
-	public abstract boolean isAvailable();
+public abstract class ActionBarCompat {
 
 	ActionBar getActionBar() {
-		return this;
+		if (this instanceof ActionBar) return (ActionBar) this;
+		return null;
 	}
 
 	/**
@@ -21,6 +20,8 @@ public abstract class ActionBarCompat implements ActionBar {
 	MenuInflater getMenuInflater(final MenuInflater inflater) {
 		return inflater;
 	}
+
+	abstract boolean isAvailable();
 
 	static ActionBarCompat getInstance(final Activity activity) {
 		if (activity == null) return null;

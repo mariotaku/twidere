@@ -299,7 +299,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			finish();
 			return;
 		}
-		setContentView(R.layout.compose_dialogwhenlarge);
+		setContentView(R.layout.compose);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();

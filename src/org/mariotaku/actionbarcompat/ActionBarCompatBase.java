@@ -34,7 +34,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
+final class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 	private static final String MENU_RES_NAMESPACE = "http://schemas.android.com/apk/res/android";
 	private static final String MENU_ATTR_ID = "id";
@@ -51,15 +51,10 @@ public class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 	private boolean mActionModeShowing;
 
-	public ActionBarCompatBase(final Activity activity) {
+	ActionBarCompatBase(final Activity activity) {
 		mActivity = activity;
 		mActionBarMenu = new MenuImpl(activity);
 		mRealMenu = new MenuImpl(mActivity);
-	}
-
-	public void createActionBarMenu() {
-		mActivity.onCreatePanelMenu(Window.FEATURE_OPTIONS_PANEL, mRealMenu);
-		mActivity.onPrepareOptionsMenu(mRealMenu);
 	}
 
 	@Override
@@ -94,42 +89,6 @@ public class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	public CharSequence getTitle() {
 		if (mTitleView == null) return null;
 		return mTitleView.getText();
-	}
-
-	public boolean initViews() {
-		mActionBarView = mActivity.findViewById(R.id.actionbar);
-		mActionModeContainer = (ViewGroup) mActivity.findViewById(R.id.action_mode_container);
-		if (mActionBarView == null) return false;
-		mTitleContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_title_view);
-		mTitleView = (TextView) mTitleContainer.findViewById(R.id.actionbar_title);
-		mSubtitleView = (TextView) mTitleContainer.findViewById(R.id.actionbar_subtitle);
-		mHomeView = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_home);
-		mIconView = (ImageView) mHomeView.findViewById(R.id.actionbar_icon);
-		mHomeAsUpIndicator = mHomeView.findViewById(R.id.actionbar_home_as_up_indicator);
-		mActionMenuView = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_menu_buttons);
-		mCustomViewContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_custom_view_container);
-
-		setTitle(mActivity.getTitle());
-
-		// Add Home button
-		setHomeButton();
-
-		createActionBarMenu();
-		return true;
-	}
-
-	public void invalidateOptionsMenu() {
-		final SupportMenu menu = new SupportMenu(mActivity);
-		mActivity.onPrepareOptionsMenu(menu);
-		clearMenuItems();
-		for (final MenuItem item : ((MenuImpl) mActionBarMenu).getMenuItems()) {
-			addActionItemCompatFromMenuItem(item);
-		}
-	}
-
-	@Override
-	public boolean isAvailable() {
-		return mActionBarView != null;
 	}
 
 	@Override
@@ -306,6 +265,11 @@ public class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		}
 	}
 
+	void createActionBarMenu() {
+		mActivity.onCreatePanelMenu(Window.FEATURE_OPTIONS_PANEL, mRealMenu);
+		mActivity.onPrepareOptionsMenu(mRealMenu);
+	}
+
 	void hideInRealMenu(final Menu menu) {
 		if (menu instanceof MenuImpl || menu == null) return;
 		for (int i = 0; i < menu.size(); i++) {
@@ -319,8 +283,44 @@ public class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		}
 	}
 
+	boolean initViews() {
+		mActionBarView = mActivity.getWindow().findViewById(R.id.actionbar);
+		mActionModeContainer = (ViewGroup) mActivity.getWindow().findViewById(R.id.action_mode_container);
+		if (mActionBarView == null) return false;
+		mTitleContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_title_view);
+		mTitleView = (TextView) mTitleContainer.findViewById(R.id.actionbar_title);
+		mSubtitleView = (TextView) mTitleContainer.findViewById(R.id.actionbar_subtitle);
+		mHomeView = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_home);
+		mIconView = (ImageView) mHomeView.findViewById(R.id.actionbar_icon);
+		mHomeAsUpIndicator = mHomeView.findViewById(R.id.actionbar_home_as_up_indicator);
+		mActionMenuView = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_menu_buttons);
+		mCustomViewContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_custom_view_container);
+
+		setTitle(mActivity.getTitle());
+
+		// Add Home button
+		setHomeButton();
+
+		createActionBarMenu();
+		return true;
+	}
+
+	void invalidateOptionsMenu() {
+		final SupportMenu menu = new SupportMenu(mActivity);
+		mActivity.onPrepareOptionsMenu(menu);
+		clearMenuItems();
+		for (final MenuItem item : ((MenuImpl) mActionBarMenu).getMenuItems()) {
+			addActionItemCompatFromMenuItem(item);
+		}
+	}
+
 	boolean isActionModeShowing() {
 		return mActionModeShowing;
+	}
+
+	@Override
+	boolean isAvailable() {
+		return mActionBarView != null;
 	}
 
 	boolean requestCustomTitleView() {

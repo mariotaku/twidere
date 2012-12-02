@@ -15,11 +15,9 @@
 	</FrameLayout>
 
 	<FrameLayout
+		android:id="@+id/activity_content"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:background="@drawable/actionbar_shadow">
-
-		<include layout="@layout/base_list"/>
-	</FrameLayout>
+		android:background="@drawable/actionbar_shadow"/>
 
 </LinearLayout>

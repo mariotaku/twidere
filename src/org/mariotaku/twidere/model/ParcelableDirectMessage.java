@@ -124,8 +124,34 @@ public class ParcelableDirectMessage implements Parcelable {
 	}
 
 	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (!(obj instanceof ParcelableDirectMessage)) return false;
+		final ParcelableDirectMessage other = (ParcelableDirectMessage) obj;
+		if (account_id != other.account_id) return false;
+		if (message_id != other.message_id) return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (account_id ^ account_id >>> 32);
+		result = prime * result + (int) (message_id ^ message_id >>> 32);
+		return result;
+	}
+
+	@Override
 	public String toString() {
-		return text;
+		return "ParcelableDirectMessage{account_id=" + account_id + ", message_id=" + message_id
+				+ ", message_timestamp=" + message_timestamp + ", sender_id=" + sender_id + ", recipient_id="
+				+ recipient_id + ", is_out_going=" + is_out_going + ", text=" + text + ", sender_name=" + sender_name
+				+ ", recipient_name=" + recipient_name + ", sender_screen_name=" + sender_screen_name
+				+ ", recipient_screen_name=" + recipient_screen_name + ", sender_profile_image_url_string="
+				+ sender_profile_image_url_string + ", recipient_profile_image_url_string="
+				+ recipient_profile_image_url_string + "}";
 	}
 
 	@Override

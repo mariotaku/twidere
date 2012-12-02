@@ -54,4 +54,10 @@ public class TabSpec {
 				&& bundleEquals(args, spec.args) && position == spec.position;
 	}
 
+	@Override
+	public String toString() {
+		return "TabSpec{name=" + name + ", icon=" + icon + ", cls=" + cls + ", args=" + args + ", position=" + position
+				+ "}";
+	}
+
 }

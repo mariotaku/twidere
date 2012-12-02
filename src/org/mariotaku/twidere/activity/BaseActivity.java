@@ -116,7 +116,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		mIsDarkTheme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
 		mIsSolidColorBackground = preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
 		setTheme(is_dark_theme ? getDarkThemeRes() : getLightThemeRes());
-		if (mIsSolidColorBackground && isSetBackgroundEnabled()) {
+		if (mIsSolidColorBackground && shouldSetBackground()) {
 			getWindow().setBackgroundDrawableResource(is_dark_theme ? android.R.color.black : android.R.color.white);
 		}
 	}
@@ -129,7 +129,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		return R.style.Theme_Twidere_Light;
 	}
 
-	protected boolean isSetBackgroundEnabled() {
+	protected boolean shouldSetBackground() {
 		return true;
 	}
 }

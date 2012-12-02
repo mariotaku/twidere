@@ -14,7 +14,7 @@ import android.view.Window;
 @SuppressLint("Registered")
 public class ActionBarFragmentActivity extends FragmentActivity {
 
-	protected final ActionBarCompat mActionBarCompat = ActionBarCompat.getInstance(this);
+	protected ActionBarCompat mActionBarCompat = ActionBarCompat.getInstance(this);
 	private boolean mActionBarInitialized = false;
 
 	protected Fragment mAttachedFragment;
@@ -140,24 +140,42 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	@Override
 	public void setContentView(final int layoutResID) {
 		super.setContentView(layoutResID);
+		if (!mActionBarCompat.isAvailable()) {
+			mActionBarCompat = new ActionBarCompatBase(this);
+		}
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
+			if (mActionBarInitialized) {
+				mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).initViews();
+			}
 		}
 	}
 
 	@Override
 	public void setContentView(final View view) {
 		super.setContentView(view);
+		if (!mActionBarCompat.isAvailable()) {
+			mActionBarCompat = new ActionBarCompatBase(this);
+		}
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
+			if (mActionBarInitialized) {
+				mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).initViews();
+			}
 		}
 	}
 
 	@Override
 	public void setContentView(final View view, final LayoutParams params) {
 		super.setContentView(view, params);
+		if (!mActionBarCompat.isAvailable()) {
+			mActionBarCompat = new ActionBarCompatBase(this);
+		}
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
+			if (mActionBarInitialized) {
+				mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).initViews();
+			}
 		}
 	}
 

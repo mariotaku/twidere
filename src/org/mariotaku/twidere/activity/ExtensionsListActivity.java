@@ -32,7 +32,7 @@ public class ExtensionsListActivity extends BaseDialogWhenLargeActivity {
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.base_dialogwhenlarge);
+		setContentView(R.layout.base);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		final Fragment fragment = new ExtensionsListFragment();
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

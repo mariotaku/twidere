@@ -375,5 +375,7 @@
 	<string name="pull_to_load_conversation_release_label">Release to load conversation…</string>
 	<string name="text_copied">Text copied to clipboard.</string>
 	<string name="load_from_here">Load from here</string>
+	<string name="amount">Amount</string>
+	<string name="donate">Donate</string>
 
 </resources>

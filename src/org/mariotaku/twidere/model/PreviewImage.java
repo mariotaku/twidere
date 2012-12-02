@@ -33,4 +33,9 @@ public class PreviewImage {
 		this(spec != null && spec.thumbnail_link != null, spec.thumbnail_link, orig_url);
 	}
 
+	@Override
+	public String toString() {
+		return "PreviewImage{has_image=" + has_image + ", matched_url=" + matched_url + ", orig_url=" + orig_url + "}";
+	}
+
 }

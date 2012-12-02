@@ -30,9 +30,6 @@ import android.os.Parcelable;
 
 public class ParcelableLocation implements Serializable, Parcelable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1690848439775407442L;
 
 	public final double latitude, longitude;
@@ -90,6 +87,29 @@ public class ParcelableLocation implements Serializable, Parcelable {
 		return hashCode();
 	}
 
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (!(obj instanceof ParcelableLocation)) return false;
+		final ParcelableLocation other = (ParcelableLocation) obj;
+		if (Double.doubleToLongBits(latitude) != Double.doubleToLongBits(other.latitude)) return false;
+		if (Double.doubleToLongBits(longitude) != Double.doubleToLongBits(other.longitude)) return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(latitude);
+		result = prime * result + (int) (temp ^ temp >>> 32);
+		temp = Double.doubleToLongBits(longitude);
+		result = prime * result + (int) (temp ^ temp >>> 32);
+		return result;
+	}
+
 	public boolean isValid() {
 		return latitude >= 0 || longitude >= 0;
 	}
@@ -100,8 +120,7 @@ public class ParcelableLocation implements Serializable, Parcelable {
 
 	@Override
 	public String toString() {
-		if (!isValid()) return null;
-		return latitude + "," + longitude;
+		return "ParcelableLocation{latitude=" + latitude + ", longitude=" + longitude + "}";
 	}
 
 	@Override

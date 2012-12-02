@@ -348,6 +348,10 @@
 			android:name=".activity.InternalSettingsDetailsActivity"
 			android:label="@string/settings"/>
 		<activity
+			android:name=".activity.DonateActivity"
+			android:label="@string/donate"
+			android:theme="@style/Theme.Blank.DialogWhenLarge"/>
+		<activity
 			android:name=".activity.FileSaveAsActivity"
 			android:exported="false"
 			android:label="@string/save_as">
@@ -425,7 +429,8 @@
 			android:label="@string/sign_in"/>
 		<activity
 			android:name=".activity.DataProfilingSettingsActivity"
-			android:label="@string/data_profiling"/>
+			android:label="@string/data_profiling"
+			android:theme="@style/Theme.Blank.DialogWhenLarge"/>
 
 		<service
 			android:name=".service.TwidereService"
