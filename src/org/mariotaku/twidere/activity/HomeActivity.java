@@ -103,7 +103,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
-			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 			}
 		}
@@ -498,7 +498,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		super.onStart();
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTART));
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
-		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
 		final boolean show_home_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
 		final boolean show_mentions_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);

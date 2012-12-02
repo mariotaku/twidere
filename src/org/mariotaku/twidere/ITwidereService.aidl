@@ -54,6 +54,7 @@ interface ITwidereService {
 	int deleteUserListMember(long account_id, int list_id, long user_id);
 	int updateProfile(long account_id, String name, String url, String location, String description);
 	int updateProfileImage(long account_id, in Uri image_uri, boolean delete_image);
+	int updateProfileBannerImage(long account_id, in Uri image_uri, boolean delete_image);
 	int updateUserListDetails(long account_id, int list_id, boolean is_public, String name, String description);
 	boolean isHomeTimelineRefreshing();
 	boolean isMentionsRefreshing();

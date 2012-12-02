@@ -49,7 +49,9 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ListResponse;
 import org.mariotaku.twidere.model.ParcelableLocation;
+import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -65,6 +67,7 @@ import org.mariotaku.twidere.util.ManagedAsyncTask;
 import org.mariotaku.twidere.util.NameValuePairImpl;
 import org.mariotaku.twidere.util.TweetShortenerInterface;
 import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.view.TwitterCommands;
 
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
@@ -123,7 +126,7 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
-			if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				if (!mAsyncTaskManager.hasRunningTask() && mShouldShutdown) {
 					stopSelf();
 				}
@@ -319,7 +322,7 @@ public class TwidereService extends Service implements Constants {
 		mPendingRefreshMentionsIntent = PendingIntent.getBroadcast(this, 0, new Intent(BROADCAST_REFRESH_MENTIONS), 0);
 		mPendingRefreshDirectMessagesIntent = PendingIntent.getBroadcast(this, 0, new Intent(
 				BROADCAST_REFRESH_DIRECT_MESSAGES), 0);
-		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
 		filter.addAction(BROADCAST_NOTIFICATION_CLEARED);
 		filter.addAction(BROADCAST_REFRESH_HOME_TIMELINE);
 		filter.addAction(BROADCAST_REFRESH_MENTIONS);
@@ -422,6 +425,11 @@ public class TwidereService extends Service implements Constants {
 	public int updateProfile(final long account_id, final String name, final String url, final String location,
 			final String description) {
 		final UpdateProfileTask task = new UpdateProfileTask(account_id, name, url, location, description);
+		return mAsyncTaskManager.add(task, true);
+	}
+
+	public int updateProfileBannerImage(final long account_id, final Uri image_uri, final boolean delete_image) {
+		final UpdateProfileBannerImageTask task = new UpdateProfileBannerImageTask(account_id, image_uri, delete_image);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -2139,20 +2147,6 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	static class ListResponse<Data> {
-
-		public final long account_id;
-		public final List<Data> list;
-		public final Exception exception;
-
-		public ListResponse(final long account_id, final List<Data> list, final Exception exception) {
-			this.account_id = account_id;
-			this.list = list;
-			this.exception = exception;
-		}
-
-	}
-
 	class ReportMultiSpamTask extends ManagedAsyncTask<Void, Void, ListResponse<Long>> {
 
 		private final long account_id;
@@ -2702,6 +2696,11 @@ public class TwidereService extends Service implements Constants {
 		}
 
 		@Override
+		public int updateProfileBannerImage(final long account_id, final Uri image_uri, final boolean delete_image) {
+			return mService.get().updateProfileBannerImage(account_id, image_uri, delete_image);
+		}
+
+		@Override
 		public int updateProfileImage(final long account_id, final Uri image_uri, final boolean delete_image) {
 			return mService.get().updateProfileImage(account_id, image_uri, delete_image);
 		}
@@ -2716,44 +2715,6 @@ public class TwidereService extends Service implements Constants {
 		public int updateUserListDetails(final long account_id, final int list_id, final boolean is_public,
 				final String name, final String description) {
 			return mService.get().updateUserListDetails(account_id, list_id, is_public, name, description);
-		}
-	}
-
-	static final class SingleResponse<Data> {
-		public final Exception exception;
-		public final Data data;
-		public final long account_id;
-
-		public SingleResponse(final long account_id, final Data data, final Exception exception) {
-			this.exception = exception;
-			this.data = data;
-			this.account_id = account_id;
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (!(obj instanceof SingleResponse)) return false;
-			final SingleResponse<?> other = (SingleResponse<?>) obj;
-			if (account_id != other.account_id) return false;
-			if (data == null) {
-				if (other.data != null) return false;
-			} else if (!data.equals(other.data)) return false;
-			if (exception == null) {
-				if (other.exception != null) return false;
-			} else if (!exception.equals(other.exception)) return false;
-			return true;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + (int) (account_id ^ account_id >>> 32);
-			result = prime * result + (data == null ? 0 : data.hashCode());
-			result = prime * result + (exception == null ? 0 : exception.hashCode());
-			return result;
 		}
 	}
 
@@ -3245,6 +3206,75 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
+	class UpdateProfileBannerImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<Integer>> {
+
+		private final long account_id;
+		private final Uri image_uri;
+		private final boolean delete_image;
+
+		public UpdateProfileBannerImageTask(final long account_id, final Uri image_uri, final boolean delete_image) {
+			super(TwidereService.this, mAsyncTaskManager);
+			this.account_id = account_id;
+			this.image_uri = image_uri;
+			this.delete_image = delete_image;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof UpdateProfileImageTask)) return false;
+			final UpdateProfileImageTask other = (UpdateProfileImageTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (account_id != other.account_id) return false;
+			if (delete_image != other.delete_image) return false;
+			if (image_uri == null) {
+				if (other.image_uri != null) return false;
+			} else if (!image_uri.equals(other.image_uri)) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + (int) (account_id ^ account_id >>> 32);
+			result = prime * result + (delete_image ? 1231 : 1237);
+			result = prime * result + (image_uri == null ? 0 : image_uri.hashCode());
+			return result;
+		}
+
+		@Override
+		protected SingleResponse<Integer> doInBackground(final Void... params) {
+			return TwitterCommands.updateProfileBannerImage(getOuterType(), account_id, image_uri, delete_image);
+		}
+
+		@Override
+		protected void onPostExecute(final SingleResponse<Integer> result) {
+			if (result != null && result.data != null) {
+				if (result.data >= 200 && result.data <= 202) {
+					Toast.makeText(getOuterType(), R.string.profile_banner_image_update_successfully,
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Utils.showErrorToast(getOuterType(), getString(R.string.updating_profile_banner_image), "Code "
+							+ result.data, true);
+				}
+			} else {
+				showErrorToast(R.string.updating_profile_banner_image, result.exception, true);
+			}
+			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
+			intent.putExtra(INTENT_KEY_USER_ID, account_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+	}
+
 	class UpdateProfileImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private final long account_id;
@@ -3286,28 +3316,15 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected SingleResponse<User> doInBackground(final Void... params) {
-
-			final Twitter twitter = getTwitterInstance(getOuterType(), account_id, false);
-			if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
-				try {
-					final User user = twitter.updateProfileImage(new File(image_uri.getPath()));
-					return new SingleResponse<User>(account_id, user, null);
-				} catch (final TwitterException e) {
-					return new SingleResponse<User>(account_id, null, e);
-				}
-			}
-			return new SingleResponse<User>(account_id, null, null);
+			return TwitterCommands.updateProfileImage(getOuterType(), account_id, image_uri, delete_image);
 		}
 
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
 				Toast.makeText(getOuterType(), R.string.profile_image_update_successfully, Toast.LENGTH_SHORT).show();
-				if (delete_image) {
-					new File(image_uri.getPath()).delete();
-				}
 			} else {
-				showErrorToast(R.string.updating_profile, result.exception, true);
+				showErrorToast(R.string.updating_profile_image, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);
@@ -3319,7 +3336,6 @@ public class TwidereService extends Service implements Constants {
 		private TwidereService getOuterType() {
 			return TwidereService.this;
 		}
-
 	}
 
 	class UpdateProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {

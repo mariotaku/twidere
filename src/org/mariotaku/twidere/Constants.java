@@ -224,6 +224,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_NEW_CUSTOM_TAB = INTENT_PACKAGE_PREFIX + "NEW_CUSTOM_TAB";
 	public static final String INTENT_ACTION_EDIT_CUSTOM_TAB = INTENT_PACKAGE_PREFIX + "EDIT_CUSTOM_TAB";
 	public static final String INTENT_ACTION_EDIT_HOST_MAPPING = INTENT_PACKAGE_PREFIX + "EDIT_HOST_MAPPING";
+	public static final String INTENT_ACTION_SERVICE_COMMAND = INTENT_PACKAGE_PREFIX + "SERVICE_COMMAND";
 
 	public static final String INTENT_ACTION_EXTENSION_EDIT_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_EDIT_IMAGE";
 	public static final String INTENT_ACTION_EXTENSION_UPLOAD = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD";
@@ -246,7 +247,7 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_DRAFTS_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DRAFTS_DATABASE_UPDATED";
 	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = INTENT_PACKAGE_PREFIX + "HOME_TIMELINE_REFRESHED";
 	public static final String BROADCAST_MENTIONS_REFRESHED = INTENT_PACKAGE_PREFIX + "MENTIONS_REFRESHED";
-	public static final String BROADCAST_REFRESHSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "REFRESHSTATE_CHANGED";
+	public static final String BROADCAST_TASK_STATE_CHANGED = INTENT_PACKAGE_PREFIX + "TASK_STATE_CHANGED";
 	public static final String BROADCAST_NOTIFICATION_CLEARED = INTENT_PACKAGE_PREFIX + "NOTIFICATION_CLEARED";
 	public static final String BROADCAST_FRIENDSHIP_CHANGED = INTENT_PACKAGE_PREFIX + "FRIENDSHIP_CHANGED";
 	public static final String BROADCAST_BLOCKSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "BLOCKSTATE_CHANGED";
@@ -291,6 +292,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_URI = "uri";
 	public static final String INTENT_KEY_MENTIONS = "mentions";
 	public static final String INTENT_KEY_ACCOUNT_ID = "account_id";
+	public static final String INTENT_KEY_ACCOUNT_IDS = "account_ids";
 	public static final String INTENT_KEY_CONVERSATION_ID = "conversation_id";
 	public static final String INTENT_KEY_PAGE = "page";
 	public static final String INTENT_KEY_DATA = "data";
@@ -300,7 +302,9 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_USER_IDS = "user_ids";
 	public static final String INTENT_KEY_LIST_ID = "list_id";
 	public static final String INTENT_KEY_MAX_ID = "max_id";
+	public static final String INTENT_KEY_MAX_IDS = "max_ids";
 	public static final String INTENT_KEY_SINCE_ID = "since_id";
+	public static final String INTENT_KEY_SINCE_IDS = "since_ids";
 	public static final String INTENT_KEY_MIN_ID = "min_id";
 	public static final String INTENT_KEY_STATUS_ID = "status_id";
 	public static final String INTENT_KEY_SCREEN_NAME = "screen_name";
@@ -347,8 +351,10 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_OAUTH_VERIFIER = "oauth_verifier";
 	public static final String INTENT_KEY_REQUEST_TOKEN = "request_token";
 	public static final String INTENT_KEY_REQUEST_TOKEN_SECRET = "request_token_secret";
-	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 	public static final String INTENT_KEY_OMIT_INTENT_EXTRA = "omit_intent_extra";
+	public static final String INTENT_KEY_COMMAND = "command";
+
+	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -494,4 +500,10 @@ public interface Constants extends TwitterConstants {
 	public static final String TASK_TAG_STORE_SENT_DIRECT_MESSAGES = "store_sent_direct_messages";
 	public static final String TASK_TAG_STORE_RECEIVED_DIRECT_MESSAGES = "store_received_direct_messages";
 	public static final String TASK_TAG_STORE_TRENDS = "store_trends";
+
+	public static final String SERVICE_COMMAND_REFRESH_ALL = "refresh_all";
+	public static final String SERVICE_COMMAND_GET_HOME_TIMELINE = "get_home_timeline";
+	public static final String SERVICE_COMMAND_GET_MENTIONS = "get_mentions";
+	public static final String SERVICE_COMMAND_GET_SENT_DIRECT_MESSAGES = "get_sent_direct_messages";
+	public static final String SERVICE_COMMAND_GET_RECEIVED_DIRECT_MESSAGES = "get_received_direct_messages";
 }

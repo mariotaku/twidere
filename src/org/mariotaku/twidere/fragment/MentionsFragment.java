@@ -60,7 +60,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 				if (isAdded() && !isDetached()) {
 					getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 				}
-			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				if (mService != null && mService.isMentionsRefreshing()) {
 					setRefreshing(false);
 				}
@@ -127,7 +127,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 		final IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
+		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 		if (getServiceInterface().isMentionsRefreshing()) {
 			setRefreshing(false);

@@ -64,8 +64,7 @@ public class Account implements CharSequence {
 			Collections.emptyList();
 		}
 		final ArrayList<Account> accounts = new ArrayList<Account>();
-		final String[] cols = new String[] { Accounts.SCREEN_NAME, Accounts.ACCOUNT_ID };
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols,
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS,
 				activated_only ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);
 		if (cur != null) {
 			final Indices indices = new Indices(cur);

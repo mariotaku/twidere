@@ -135,6 +135,7 @@
 	<string name="unfollow_successfully">Unfollow successfully.</string>
 	<string name="profile_update_successfully">Profile update successfully.</string>
 	<string name="profile_image_update_successfully">Profile image update successfully.</string>
+	<string name="profile_banner_image_update_successfully">Profile banner image update successfully.</string>
 	<string name="text_size">Text size</string>
 	<string name="text_size_summary">Text size of statuses.</string>
 	<string name="cannot_get_location">Can\'t get your location.</string>
@@ -351,6 +352,8 @@
 	<string name="unfavoriting">unfavoriting</string>
 	<string name="deleting">deleting</string>
 	<string name="updating_profile">updating profile</string>
+	<string name="updating_profile_image">updating profile image</string>
+	<string name="updating_profile_banner_image">updating profile banner image</string>
 	<string name="updating_details">updating details</string>
 	<string name="blocking">blocking</string>
 	<string name="unblocking">unblocking</string>

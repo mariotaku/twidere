@@ -536,6 +536,17 @@ public final class ServiceInterface implements Constants, ITwidereService {
 	}
 
 	@Override
+	public int updateProfileBannerImage(final long account_id, final Uri image_uri, final boolean delete_image) {
+		if (mService == null) return -1;
+		try {
+			return mService.updateProfileBannerImage(account_id, image_uri, delete_image);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
 	public int updateProfileImage(final long account_id, final Uri image_uri, final boolean delete_image) {
 		if (mService == null) return -1;
 		try {

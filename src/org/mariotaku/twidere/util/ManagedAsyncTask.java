@@ -54,22 +54,19 @@ public abstract class ManagedAsyncTask<Params, Progress, Result> extends AsyncTa
 	@Override
 	protected void onCancelled() {
 		super.onCancelled();
-		context.sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED).putExtra(INTENT_KEY_HAS_RUNNING_TASK,
-				manager.hasRunningTask()));
+		context.sendBroadcast(new Intent(BROADCAST_TASK_STATE_CHANGED));
 	}
 
 	@Override
 	protected void onPostExecute(final Result result) {
 		super.onPostExecute(result);
-		context.sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED).putExtra(INTENT_KEY_HAS_RUNNING_TASK,
-				manager.hasRunningTask()));
+		context.sendBroadcast(new Intent(BROADCAST_TASK_STATE_CHANGED));
 	}
 
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
-		context.sendBroadcast(new Intent(BROADCAST_REFRESHSTATE_CHANGED).putExtra(INTENT_KEY_HAS_RUNNING_TASK,
-				manager.hasRunningTask()));
+		context.sendBroadcast(new Intent(BROADCAST_TASK_STATE_CHANGED));
 	}
 
 }

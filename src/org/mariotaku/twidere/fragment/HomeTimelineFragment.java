@@ -60,7 +60,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 				if (isAdded() && !isDetached()) {
 					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 				}
-			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				if (mService.isHomeTimelineRefreshing()) {
 					setRefreshing(false);
 				}
@@ -127,7 +127,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 		final IntentFilter filter = new IntentFilter(BROADCAST_HOME_TIMELINE_REFRESHED);
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_REFRESHSTATE_CHANGED);
+		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 		if (mService.isHomeTimelineRefreshing()) {
 			setRefreshing(false);

@@ -114,7 +114,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 			} else if (BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED.equals(action)
 					|| BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED.equals(action)) {
 				getLoaderManager().restartLoader(0, mArguments, DirectMessagesConversationFragment.this);
-			} else if (BROADCAST_REFRESHSTATE_CHANGED.equals(action)) {
+			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				setProgressBarIndeterminateVisibility(mService.isReceivedDirectMessagesRefreshing()
 						|| mService.isSentDirectMessagesRefreshing());
 			}
@@ -371,7 +371,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	@Override
 	public void onStart() {
 		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_REFRESHSTATE_CHANGED);
+		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
 		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED);

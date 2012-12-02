@@ -2625,6 +2625,20 @@ public final class Utils implements Constants {
 		toast.show();
 	}
 
+	public static void showErrorToast(final Context context, final String action, final String desc,
+			final boolean long_message) {
+		if (context == null) return;
+		final String message;
+		if (desc != null) {
+			message = context.getString(R.string.error_message, desc);
+		} else {
+			message = context.getString(R.string.error_unknown_error);
+		}
+		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
+		final Toast toast = Toast.makeText(context, message, length);
+		toast.show();
+	}
+
 	public static void showErrorToast(final Context context, final String action, final Throwable t,
 			final boolean long_message) {
 		if (context == null) return;
