@@ -448,14 +448,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mListView.setSelection(0);
 		// UCD
 		if (mStatus != null && status != null && mStatus.status_id != status.status_id) {
-			ProfilingUtil.profiling(getActivity(), mAccountId, "End, " + mStatus.status_id);
+			ProfilingUtil.profile(getActivity(), mAccountId, "End, " + mStatus.status_id);
 		}
 		mStatusId = -1;
 		mAccountId = -1;
 		mStatus = status;
 		if (mStatus != null) {
 			// UCD
-			ProfilingUtil.profiling(getActivity(), mAccountId, "Start, " + mStatus.status_id);
+			ProfilingUtil.profile(getActivity(), mAccountId, "Start, " + mStatus.status_id);
 			mAccountId = mStatus.account_id;
 			mStatusId = mStatus.status_id;
 		}
@@ -635,7 +635,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			case R.id.load_images: {
 				showPreviewImages();
 				// UCD
-				ProfilingUtil.profiling(getActivity(), mAccountId, "Thumbnail click, " + mStatusId);
+				ProfilingUtil.profile(getActivity(), mAccountId, "Thumbnail click, " + mStatusId);
 				break;
 			}
 		}
@@ -674,7 +674,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public void onDestroyView() {
 		// UCD
 		if (mStatus != null) {
-			ProfilingUtil.profiling(getActivity(), mAccountId, "End, " + mStatus.status_id);
+			ProfilingUtil.profile(getActivity(), mAccountId, "End, " + mStatus.status_id);
 		}
 		mStatus = null;
 		mAccountId = -1;
@@ -691,7 +691,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final ImageSpec spec = mImagePreviewAdapter.getItem(position);
 		if (spec == null) return;
 		// UCD
-		ProfilingUtil.profiling(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec.image_link);
+		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec.image_link);
 		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
 		intent.setPackage(getActivity().getPackageName());
 		startActivity(intent);

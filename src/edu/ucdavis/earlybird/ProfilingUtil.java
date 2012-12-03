@@ -51,11 +51,11 @@ public class ProfilingUtil {
 			return false;
 	}
 
-	public static void profiling(final Context context, final long accountID, final String text) {
-		profiling(context, accountID + "_" + FILE_NAME_PROFILE, text);
+	public static void profile(final Context context, final long accountID, final String text) {
+		profile(context, accountID + "_" + FILE_NAME_PROFILE, text);
 	}
 
-	public static void profiling(final Context context, final String name, final String text) {
+	public static void profile(final Context context, final String name, final String text) {
 		if (context == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);

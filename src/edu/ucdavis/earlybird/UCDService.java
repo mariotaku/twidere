@@ -71,7 +71,7 @@ public class UCDService extends Service {
 			if (mLocationManager.isProviderEnabled(provider)) {
 				final Location location = mLocationManager.getLastKnownLocation(provider);
 				if (location != null) {
-					ProfilingUtil.profiling(UCDService.this, ProfilingUtil.FILE_NAME_LOCATION, location.getTime() + ","
+					ProfilingUtil.profile(UCDService.this, ProfilingUtil.FILE_NAME_LOCATION, location.getTime() + ","
 							+ location.getLatitude() + "," + location.getLongitude() + "," + location.getProvider());
 					ProfilingUtil.log(location.getTime() + "," + location.getLatitude() + "," + location.getLongitude()
 							+ "," + location.getProvider());

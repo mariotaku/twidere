@@ -438,6 +438,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 */
 	public final void setPullToRefreshEnabled(final boolean enable) {
 		mPullToRefreshEnabled = enable;
+		if (!enable) {
+			resetHeader();
+		}
 	}
 
 	public final void setRefreshing() {

@@ -34,6 +34,9 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This class wraps up completing some arbitrary long running work when loading
@@ -52,6 +55,7 @@ public abstract class ImageWorker {
 
 	protected final Context mContext;
 	protected final Handler mHandler;
+	protected final ExecutorService mExecutor = Executors.newFixedThreadPool(8);
 
 	protected ImageWorkerAdapter mImageWorkerAdapter;
 
@@ -302,6 +306,10 @@ public abstract class ImageWorker {
 
 		private Object data;
 
+		public BitmapPreloaderTask() {
+			super(mExecutor);
+		}
+		
 		@Override
 		protected Void doInBackground(final Object... params) {
 			data = params[0];
@@ -369,6 +377,7 @@ public abstract class ImageWorker {
 		private final WeakReference<ImageView> imageViewReference;
 
 		public BitmapWorkerTask(final ImageView imageView) {
+			super(mExecutor);
 			imageViewReference = new WeakReference<ImageView>(imageView);
 		}
 

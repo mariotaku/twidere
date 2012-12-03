@@ -216,9 +216,9 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		}
 		mProfileImageLoader = getApplication().getProfileImageLoader();
 		mAdapter = new ListActionAdapter(getActivity());
-		mAdapter.add(new ListTimelineAction());
-		mAdapter.add(new ListMembersAction());
-		mAdapter.add(new ListSubscribersAction());
+		mAdapter.add(new ListTimelineAction(1));
+		mAdapter.add(new ListMembersAction(2));
+		mAdapter.add(new ListSubscribersAction(3));
 		mProfileImageContainer.setOnClickListener(this);
 		mProfileImageContainer.setOnLongClickListener(this);
 		mNameContainer.setOnClickListener(this);
@@ -592,9 +592,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListMembersAction extends ListAction {
 
-		@Override
-		public long getId() {
-			return 2;
+		public ListMembersAction(int order) {
+			super(order);
 		}
 
 		@Override
@@ -617,9 +616,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListSubscribersAction extends ListAction {
 
-		@Override
-		public long getId() {
-			return 3;
+		public ListSubscribersAction(int order) {
+			super(order);
 		}
 
 		@Override
@@ -642,9 +640,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListTimelineAction extends ListAction {
 
-		@Override
-		public long getId() {
-			return 1;
+		public ListTimelineAction(int order) {
+			super(order);
 		}
 
 		@Override

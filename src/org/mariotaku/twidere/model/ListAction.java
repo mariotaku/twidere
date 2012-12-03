@@ -21,10 +21,18 @@ package org.mariotaku.twidere.model;
 
 public abstract class ListAction {
 
-	public abstract long getId();
+ 	private final int order;
+	
+	public ListAction(int order) {
+		this.order = order;
+	}
 
 	public abstract String getName();
 
+	public int getOrder() {
+		return order;
+	}
+	
 	public String getSummary() {
 		return null;
 	}

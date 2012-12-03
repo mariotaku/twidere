@@ -434,11 +434,20 @@
 
 		<service
 			android:name=".service.TwidereService"
-			android:label="@string/label_backend_service"
 			android:permission="org.mariotaku.twidere.ACCESS_SERVICE"
 			android:settingsActivity=".activity.SettingsActivity">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SERVICE"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</service>
+		<service
+			android:name=".service.BackendService"
+			android:label="@string/label_backend_service"
+			android:settingsActivity=".activity.SettingsActivity">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.SERVICE_COMNAND"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

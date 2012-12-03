@@ -51,76 +51,16 @@ public class ImageViewer extends View {
 
 	private boolean isWaitingForDoubleTap = false;
 
-	private static final int ZOOM_IN_1 = 1, ZOOM_OUT_1 = 2, DOUBLE_TAP_TIMEOUT = 3, ZOOM_IN_2 = 4, ZOOM_OUT_2 = 5;
+	private static final int DOUBLE_TAP_TIMEOUT = 3;
 
 	private final Handler mHandler = new Handler() {
 
 		@Override
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
-				case ZOOM_IN_1: {
-					mHandler.removeMessages(ZOOM_IN_1);
-					if (mZoomFactor < mMinZoomFactor) {
-						final long delay = (long) (mMinZoomFactor / mZoomFactor) / 4;
-						mZoomFactor *= 1.1f;
-						if (mZoomFactor > mMinZoomFactor) {
-							mZoomFactor = mMinZoomFactor;
-						}
-						mHandler.sendEmptyMessageDelayed(ZOOM_IN_1, delay > 0 ? delay : 1);
-					} else {
-						mZoomFactor = mMinZoomFactor;
-					}
-					invalidate();
-					break;
-				}
-				case ZOOM_OUT_1: {
-					mHandler.removeMessages(ZOOM_OUT_1);
-					if (mZoomFactor > 1.0f) {
-						final long delay = (long) mZoomFactor / 4;
-						mZoomFactor /= 1.1f;
-						if (mZoomFactor < 1.0f) {
-							mZoomFactor = 1.0f;
-						}
-						mHandler.sendEmptyMessageDelayed(ZOOM_OUT_1, delay > 0 ? delay : 1);
-					} else {
-						mZoomFactor = 1.0f;
-					}
-					invalidate();
-					break;
-				}
 				case DOUBLE_TAP_TIMEOUT: {
 					mHandler.removeMessages(DOUBLE_TAP_TIMEOUT);
 					isWaitingForDoubleTap = false;
-					break;
-				}
-				case ZOOM_IN_2: {
-					mHandler.removeMessages(ZOOM_IN_2);
-					if (mZoomFactor < 1.0f) {
-						final long delay = (long) mZoomFactor / 4;
-						mZoomFactor *= 1.2f;
-						if (mZoomFactor > 1.0f) {
-							mZoomFactor = 1.0f;
-						}
-						mHandler.sendEmptyMessageDelayed(ZOOM_IN_2, delay > 0 ? delay : 1);
-					} else {
-						mZoomFactor = 1.0f;
-					}
-					invalidate();
-					break;
-				}
-				case ZOOM_OUT_2: {
-					mHandler.removeMessages(ZOOM_OUT_2);
-					if (mZoomFactor > mMinZoomFactor) {
-						final long delay = (long) (mMinZoomFactor / mZoomFactor) / 4;
-						mZoomFactor /= 1.2f;
-						if (mZoomFactor < mMinZoomFactor) {
-							mZoomFactor = mMinZoomFactor;
-						}
-						mHandler.sendEmptyMessageDelayed(ZOOM_OUT_2, delay > 0 ? delay : 1);
-					} else {
-						mZoomFactor = mMinZoomFactor;
-					}
-					invalidate();
 					break;
 				}
 			}
@@ -234,9 +174,9 @@ public class ImageViewer extends View {
 					mHandler.sendEmptyMessageDelayed(DOUBLE_TAP_TIMEOUT, 300L);
 				} else {
 					if (mZoomFactor <= mMinZoomFactor) {
-						mHandler.sendEmptyMessage(ZOOM_IN_2);
+						post(new ZoomInBounce(this));
 					} else if (mZoomFactor <= 1.0f) {
-						mHandler.sendEmptyMessage(ZOOM_OUT_2);
+						post(new ZoomOutBounce(this));
 					}
 					isWaitingForDoubleTap = false;
 					mHandler.removeMessages(DOUBLE_TAP_TIMEOUT);
@@ -318,9 +258,9 @@ public class ImageViewer extends View {
 					viewer.mStartPinchDistance2 = -1;
 					viewer.mMotionControl = false;
 					if (viewer.mZoomFactor < viewer.mMinZoomFactor) {
-						viewer.mHandler.sendEmptyMessage(ZOOM_IN_1);
+						viewer.post(new ZoomInBounce(viewer));
 					} else if (viewer.mZoomFactor > 1.0f) {
-						viewer.mHandler.sendEmptyMessage(ZOOM_OUT_1);
+						viewer.post(new ZoomOutBounce(viewer));
 					}
 					break;
 				}
@@ -361,4 +301,56 @@ public class ImageViewer extends View {
 			return true;
 		}
 	}
+	
+	static class ZoomInBounce implements Runnable {
+
+		final ImageViewer viewer;
+		
+		ZoomInBounce(final ImageViewer viewer) {
+			this.viewer = viewer;
+		}
+		
+		@Override
+		public void run() {
+			if (viewer.mZoomFactor < 1.0f) {
+				final long delay = (long) viewer.mZoomFactor / 4;
+				viewer.mZoomFactor *= 1.2f;
+				if (viewer.mZoomFactor > 1.0f) {
+					viewer.mZoomFactor = 1.0f;
+				}
+				//viewer.postDelayed(this, delay > 0 ? delay : 1);
+				viewer.postDelayed(this, 16);
+			} else {
+				viewer.mZoomFactor = 1.0f;
+			}
+			viewer.invalidate();
+		}
+	}
+	
+	static class ZoomOutBounce implements Runnable {
+		
+		final ImageViewer viewer;
+
+		ZoomOutBounce(final ImageViewer viewer) {
+			this.viewer = viewer;
+		}
+		
+		@Override
+		public void run() {
+			if (viewer.mZoomFactor > viewer.mMinZoomFactor) {
+				final long delay = (long) (viewer.mMinZoomFactor / viewer.mZoomFactor) / 4;
+				viewer.mZoomFactor /= 1.2f;
+				if (viewer.mZoomFactor < viewer.mMinZoomFactor) {
+					viewer.mZoomFactor = viewer.mMinZoomFactor;
+				}
+				//viewer.postDelayed(this, delay > 0 ? delay : 1);
+				viewer.postDelayed(this, 16);
+			} else {
+				viewer.mZoomFactor = viewer.mMinZoomFactor;
+			}
+			viewer.invalidate();
+		}
+	}
+	
+	
 }

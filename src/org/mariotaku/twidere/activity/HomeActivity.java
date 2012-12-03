@@ -511,7 +511,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			restart();
 		}
 		// UCD
-		ProfilingUtil.profiling(this, ProfilingUtil.FILE_NAME_APP, "App onStart");
+		ProfilingUtil.profile(this, ProfilingUtil.FILE_NAME_APP, "App onStart");
 	}
 
 	@Override
@@ -521,7 +521,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTOP));
 
 		// UCD
-		ProfilingUtil.profiling(this, ProfilingUtil.FILE_NAME_APP, "App onStop");
+		ProfilingUtil.profile(this, ProfilingUtil.FILE_NAME_APP, "App onStop");
 		super.onStop();
 	}
 

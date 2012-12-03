@@ -61,8 +61,9 @@ public class AsyncTaskManager {
 		mTasks.clear();
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> boolean execute(final int hashCode, final T... params) {
-		final ManagedAsyncTask<T, ?, ?> task = findTask(hashCode);
+		final ManagedAsyncTask<T, ?, ?> task = (ManagedAsyncTask<T, ?, ?>) findTask(hashCode);
 		if (task != null) {
 			task.execute(params == null || params.length == 0 ? null : params);
 			return true;
@@ -103,10 +104,9 @@ public class AsyncTaskManager {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private <T> ManagedAsyncTask<T, ?, ?> findTask(final int hashCode) {
+	private <T> ManagedAsyncTask<?, ?, ?> findTask(final int hashCode) {
 		for (final ManagedAsyncTask<?, ?, ?> task : getTaskSpecList()) {
-			if (hashCode == task.hashCode()) return (ManagedAsyncTask<T, ?, ?>) task;
+			if (hashCode == task.hashCode()) return task;
 		}
 		return null;
 	}

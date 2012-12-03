@@ -46,7 +46,7 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 	public void onLinkClick(final String link, final int type) {
 
 		// UCD
-		ProfilingUtil.profiling(activity, account_id, "Click, " + link + ", " + type);
+		ProfilingUtil.profile(activity, account_id, "Click, " + link + ", " + type);
 
 		if (activity == null) return;
 		switch (type) {

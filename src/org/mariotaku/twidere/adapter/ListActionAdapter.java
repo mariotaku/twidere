@@ -45,7 +45,7 @@ public class ListActionAdapter extends ArrayAdapter<ListAction> {
 
 	@Override
 	public long getItemId(final int position) {
-		return getItem(position).getId();
+		return getItem(position).getOrder();
 	}
 
 	@Override

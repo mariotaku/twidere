@@ -16,7 +16,7 @@ public class UploadReceiver extends BroadcastReceiver {
 		final boolean isCharging = ProfilingUtil.isCharging(context.getApplicationContext());
 		if (WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION.equals(action)) {
 			final boolean wifi = intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false);
-			ProfilingUtil.profiling(context, ProfilingUtil.FILE_NAME_WIFI, wifi ? "connected" : "disconnected");
+			ProfilingUtil.profile(context, ProfilingUtil.FILE_NAME_WIFI, wifi ? "connected" : "disconnected");
 		}
 		if (isWifi && isCharging) {
 			new UploadTask(context).execute();

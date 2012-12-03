@@ -1,24 +1,34 @@
 package org.mariotaku.twidere.util;
 
+import java.util.concurrent.ExecutorService;
+
 import android.os.Handler;
 
 public abstract class AsyncTask<Param, Progress, Result> {
 
 	private final Thread mThread;
 	private final Handler mHandler;
+	private final ExecutorService mExecutor;
 
 	private boolean mCancelled;
 	private Param[] mParams;
 	private Status mStatus = Status.PENDING;
 
-	public AsyncTask() {
+	public AsyncTask(final ExecutorService executor) {
 		mThread = new InternalThread();
 		mHandler = new Handler();
+		mExecutor = executor;
+	}
+	
+	public AsyncTask() {
+		this(null);
 	}
 
 	public void cancel(final boolean mayInterruptIfRunning) {
 		mCancelled = true;
-		mThread.interrupt();
+		if (mExecutor == null) {
+			mThread.interrupt();
+		}
 		onCancelled();
 		mStatus = Status.FINISHED;
 	}
@@ -37,7 +47,11 @@ public abstract class AsyncTask<Param, Progress, Result> {
 		mStatus = Status.RUNNING;
 		onPreExecute();
 		mParams = params;
-		mThread.start();
+		if (mExecutor != null) {
+			mExecutor.execute(mThread);
+		}else {
+			mThread.start();
+		}
 
 		return this;
 	}

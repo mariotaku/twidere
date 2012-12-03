@@ -403,15 +403,15 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			final String where = Accounts.ACCOUNT_ID + " = " + user.user_id;
 			resolver.update(Accounts.CONTENT_URI, values, where, null);
 		}
-		mAdapter.add(new FavoritesAction());
-		mAdapter.add(new UserMentionsAction());
-		mAdapter.add(new UserListsAction());
+		mAdapter.add(new FavoritesAction(1));
+		mAdapter.add(new UserMentionsAction(2));
+		mAdapter.add(new UserListsAction(3));
 		if (user_is_me) {
-			mAdapter.add(new SavedSearchesAction());
+			mAdapter.add(new SavedSearchesAction(4));
 			if (user.is_protected) {
-				mAdapter.add(new IncomingFriendshipsAction());
+				mAdapter.add(new IncomingFriendshipsAction(5));
 			}
-			mAdapter.add(new UserBlocksAction());
+			mAdapter.add(new UserBlocksAction(6));
 		}
 		mAdapter.notifyDataSetChanged();
 		getFriendship();
@@ -1107,9 +1107,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class FavoritesAction extends ListAction {
 
-		@Override
-		public long getId() {
-			return 1;
+		public FavoritesAction(int order) {
+			super(order);
 		}
 
 		@Override
@@ -1167,9 +1166,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class IncomingFriendshipsAction extends ListAction {
 
-		@Override
-		public long getId() {
-			return 5;
+		public IncomingFriendshipsAction(int order) {
+			super(order);
 		}
 
 		@Override
@@ -1197,9 +1195,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class SavedSearchesAction extends ListAction {
 
-		@Override
-		public long getId() {
-			return 4;
+		public SavedSearchesAction(int order) {
+			super(order);
 		}
 
 		@Override
@@ -1217,9 +1214,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class UserBlocksAction extends ListAction {
 
-		@Override
-		public long getId() {
-			return 6;
+		public UserBlocksAction(int order) {
+			super(order);
 		}
 
 		@Override
@@ -1282,9 +1278,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class UserListsAction extends ListAction {
 
-		@Override
-		public long getId() {
-			return 3;
+		public UserListsAction(int order) {
+			super(order);
 		}
 
 		@Override
@@ -1302,9 +1297,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class UserMentionsAction extends ListAction {
 
-		@Override
-		public long getId() {
-			return 2;
+		public UserMentionsAction(int order) {
+			super(order);
 		}
 
 		@Override

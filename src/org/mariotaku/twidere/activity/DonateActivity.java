@@ -78,7 +78,7 @@ public class DonateActivity extends BaseDialogWhenLargeActivity implements OnCli
 		final NumberFormat format = NumberFormat.getInstance(getResources().getConfiguration().locale);
 		try {
 			final Number number = format.parse(parseString(s));
-			mDonateButton.setEnabled(count > 0 && number.doubleValue() > 0);
+			mDonateButton.setEnabled(s.length() > 0 && number.intValue() > 0);
 		} catch (ParseException e) {
 			mDonateButton.setEnabled(false);
 		}
