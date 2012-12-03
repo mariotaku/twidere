@@ -14,14 +14,14 @@ public abstract class AsyncTask<Param, Progress, Result> {
 	private Param[] mParams;
 	private Status mStatus = Status.PENDING;
 
+	public AsyncTask() {
+		this(null);
+	}
+
 	public AsyncTask(final ExecutorService executor) {
 		mThread = new InternalThread();
 		mHandler = new Handler();
 		mExecutor = executor;
-	}
-	
-	public AsyncTask() {
-		this(null);
 	}
 
 	public void cancel(final boolean mayInterruptIfRunning) {
@@ -49,7 +49,7 @@ public abstract class AsyncTask<Param, Progress, Result> {
 		mParams = params;
 		if (mExecutor != null) {
 			mExecutor.execute(mThread);
-		}else {
+		} else {
 			mThread.start();
 		}
 

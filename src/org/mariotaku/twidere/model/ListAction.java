@@ -21,9 +21,9 @@ package org.mariotaku.twidere.model;
 
 public abstract class ListAction {
 
- 	private final int order;
-	
-	public ListAction(int order) {
+	private final int order;
+
+	public ListAction(final int order) {
 		this.order = order;
 	}
 
@@ -32,7 +32,7 @@ public abstract class ListAction {
 	public int getOrder() {
 		return order;
 	}
-	
+
 	public String getSummary() {
 		return null;
 	}

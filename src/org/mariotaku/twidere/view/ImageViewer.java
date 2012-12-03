@@ -301,15 +301,15 @@ public class ImageViewer extends View {
 			return true;
 		}
 	}
-	
+
 	static class ZoomInBounce implements Runnable {
 
 		final ImageViewer viewer;
-		
+
 		ZoomInBounce(final ImageViewer viewer) {
 			this.viewer = viewer;
 		}
-		
+
 		@Override
 		public void run() {
 			if (viewer.mZoomFactor < 1.0f) {
@@ -318,7 +318,7 @@ public class ImageViewer extends View {
 				if (viewer.mZoomFactor > 1.0f) {
 					viewer.mZoomFactor = 1.0f;
 				}
-				//viewer.postDelayed(this, delay > 0 ? delay : 1);
+				// viewer.postDelayed(this, delay > 0 ? delay : 1);
 				viewer.postDelayed(this, 16);
 			} else {
 				viewer.mZoomFactor = 1.0f;
@@ -326,15 +326,15 @@ public class ImageViewer extends View {
 			viewer.invalidate();
 		}
 	}
-	
+
 	static class ZoomOutBounce implements Runnable {
-		
+
 		final ImageViewer viewer;
 
 		ZoomOutBounce(final ImageViewer viewer) {
 			this.viewer = viewer;
 		}
-		
+
 		@Override
 		public void run() {
 			if (viewer.mZoomFactor > viewer.mMinZoomFactor) {
@@ -343,7 +343,7 @@ public class ImageViewer extends View {
 				if (viewer.mZoomFactor < viewer.mMinZoomFactor) {
 					viewer.mZoomFactor = viewer.mMinZoomFactor;
 				}
-				//viewer.postDelayed(this, delay > 0 ? delay : 1);
+				// viewer.postDelayed(this, delay > 0 ? delay : 1);
 				viewer.postDelayed(this, 16);
 			} else {
 				viewer.mZoomFactor = viewer.mMinZoomFactor;
@@ -351,6 +351,5 @@ public class ImageViewer extends View {
 			viewer.invalidate();
 		}
 	}
-	
-	
+
 }

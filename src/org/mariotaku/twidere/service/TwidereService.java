@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.ITwidereService;
 import org.mariotaku.twidere.R;
@@ -125,7 +126,6 @@ public class TwidereService extends Service implements Constants {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
-			final boolean stop_auto_refresh_when_battery_low = mPreferences.getBoolean(PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true);
 			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				if (!mAsyncTaskManager.hasRunningTask() && mShouldShutdown) {
 					stopSelf();
@@ -135,34 +135,37 @@ public class TwidereService extends Service implements Constants {
 				if (extras != null && extras.containsKey(INTENT_KEY_NOTIFICATION_ID)) {
 					clearNotification(extras.getInt(INTENT_KEY_NOTIFICATION_ID));
 				}
-			} else if (BROADCAST_RESCHEDULE_HOME_TIMELINE_REFRESHING.equals(action)) {
-				rescheduleHomeTimelineRefreshing();
-			} else if (BROADCAST_RESCHEDULE_MENTIONS_REFRESHING.equals(action)) {
-				rescheduleMentionsRefreshing();
-			} else if (BROADCAST_RESCHEDULE_DIRECT_MESSAGES_REFRESHING.equals(action)) {
-				rescheduleDirectMessagesRefreshing();
-			} else if (hasActiveConnection(context) && (isBatteryOkay(context) || !stop_auto_refresh_when_battery_low)) {
+			} else if (hasActiveConnection(context)
+					&& (isBatteryOkay(context) || !mPreferences.getBoolean(
+							PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true))) {
 				if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false) && !isHomeTimelineRefreshing()) {
-						final long[] activated_ids = getActivatedAccountIds(context);
-						final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
-						getHomeTimeline(activated_ids, null, since_ids);
+					final long[] activated_ids = getActivatedAccountIds(context);
+					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
+						if (!isHomeTimelineRefreshing()) {
+							getHomeTimeline(activated_ids, null, since_ids);
+						}
 					}
 				} else if (BROADCAST_REFRESH_MENTIONS.equals(action)) {
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false) &&!isMentionsRefreshing()) {
-						final long[] activated_ids = getActivatedAccountIds(context);
-						final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
-						getMentions(activated_ids, null, since_ids);
+					final long[] activated_ids = getActivatedAccountIds(context);
+					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
+						if (!isMentionsRefreshing()) {
+							getMentions(activated_ids, null, since_ids);
+						}
 					}
 				} else if (BROADCAST_REFRESH_DIRECT_MESSAGES.equals(action)) {
-				   if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false) && !isReceivedDirectMessagesRefreshing()) {
-						final long[] activated_ids = getActivatedAccountIds(context);
-						final long[] since_ids = getNewestMessageIdsFromDatabase(context, DirectMessages.Inbox.CONTENT_URI);
-						getReceivedDirectMessages(activated_ids, null, since_ids);
+					final long[] activated_ids = getActivatedAccountIds(context);
+					final long[] since_ids = getNewestMessageIdsFromDatabase(context, DirectMessages.Inbox.CONTENT_URI);
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
+						if (!isReceivedDirectMessagesRefreshing()) {
+							getReceivedDirectMessages(activated_ids, null, since_ids);
+						}
 					}
 				}
 			}
 		}
+
 	};
 
 	public int addUserListMember(final long account_id, final int list_id, final long user_id, final String screen_name) {
@@ -251,14 +254,9 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public int getHomeTimeline(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		final Intent command = new Intent(INTENT_ACTION_SERVICE_COMMAND);
-		command.setClass(this, ApplicationBackendService.class);
-		command.putExtra(INTENT_KEY_COMMAND, SERVICE_COMMAND_GET_HOME_TIMELINE);
-		command.putExtra(INTENT_KEY_ACCOUNT_IDS, account_ids);
-		command.putExtra(INTENT_KEY_SINCE_IDS, since_ids);
-		command.putExtra(INTENT_KEY_MAX_IDS, max_ids);
-		startService(command);
-		return 0;
+		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
+		final GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids, since_ids);
+		return mGetHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public int getLocalTrends(final long account_id, final int woeid) {
@@ -268,14 +266,9 @@ public class TwidereService extends Service implements Constants {
 	}
 
 	public int getSentDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		final Intent command = new Intent(INTENT_ACTION_SERVICE_COMMAND);
-		command.setClass(this, ApplicationBackendService.class);
-		command.putExtra(INTENT_KEY_COMMAND, SERVICE_COMMAND_GET_SENT_DIRECT_MESSAGES);
-		command.putExtra(INTENT_KEY_ACCOUNT_IDS, account_ids);
-		command.putExtra(INTENT_KEY_SINCE_IDS, since_ids);
-		command.putExtra(INTENT_KEY_MAX_IDS, max_ids);
-		startService(command);
-		return 0;
+		mAsyncTaskManager.cancel(mGetSentDirectMessagesTaskId);
+		final GetSentDirectMessagesTask task = new GetSentDirectMessagesTask(account_ids, max_ids, since_ids);
+		return mGetSentDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public boolean hasActivatedTask() {
@@ -330,9 +323,6 @@ public class TwidereService extends Service implements Constants {
 		filter.addAction(BROADCAST_REFRESH_HOME_TIMELINE);
 		filter.addAction(BROADCAST_REFRESH_MENTIONS);
 		filter.addAction(BROADCAST_REFRESH_DIRECT_MESSAGES);
-		filter.addAction(BROADCAST_RESCHEDULE_HOME_TIMELINE_REFRESHING);
-		filter.addAction(BROADCAST_RESCHEDULE_MENTIONS_REFRESHING);
-		filter.addAction(BROADCAST_RESCHEDULE_DIRECT_MESSAGES_REFRESHING);
 		registerReceiver(mStateReceiver, filter);
 
 		startAutoRefresh();
@@ -490,26 +480,16 @@ public class TwidereService extends Service implements Constants {
 		return builder.build();
 	}
 
-	int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		final Intent command = new Intent(INTENT_ACTION_SERVICE_COMMAND);
-		command.setClass(this, ApplicationBackendService.class);
-		command.putExtra(INTENT_KEY_COMMAND, SERVICE_COMMAND_GET_MENTIONS);
-		command.putExtra(INTENT_KEY_ACCOUNT_IDS, account_ids);
-		command.putExtra(INTENT_KEY_SINCE_IDS, since_ids);
-		command.putExtra(INTENT_KEY_MAX_IDS, max_ids);
-		startService(command);
-		return 0;
+	private int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+		mAsyncTaskManager.cancel(mGetMentionsTaskId);
+		final GetMentionsTask task = new GetMentionsTask(account_ids, max_ids, since_ids);
+		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		final Intent command = new Intent(INTENT_ACTION_SERVICE_COMMAND);
-		command.setClass(this, ApplicationBackendService.class);
-		command.putExtra(INTENT_KEY_COMMAND, SERVICE_COMMAND_GET_RECEIVED_DIRECT_MESSAGES);
-		command.putExtra(INTENT_KEY_ACCOUNT_IDS, account_ids);
-		command.putExtra(INTENT_KEY_SINCE_IDS, since_ids);
-		command.putExtra(INTENT_KEY_MAX_IDS, max_ids);
-		startService(command);
-		return 0;
+	private int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+		mAsyncTaskManager.cancel(mGetReceivedDirectMessagesTaskId);
+		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_ids, max_ids, since_ids);
+		return mGetReceivedDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	private void showErrorToast(final int action_res, final Exception e, final boolean long_message) {
@@ -1755,39 +1735,66 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
-	void rescheduleHomeTimelineRefreshing() {
-		mAlarmManager.cancel(mPendingRefreshHomeTimelineIntent);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
-			if (update_interval > 0) {
-				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-						update_interval, mPendingRefreshHomeTimelineIntent);
-			}
+	class GetHomeTimelineTask extends GetStatusesTask {
+
+		public GetHomeTimelineTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+			super(account_ids, max_ids, since_ids, TASK_TAG_GET_HOME_TIMELINE);
 		}
-	}
-	
-	void rescheduleMentionsRefreshing() {
-		mAlarmManager.cancel(mPendingRefreshMentionsIntent);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
-			if (update_interval > 0) {
-				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-										   update_interval, mPendingRefreshMentionsIntent);
-			}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof GetHomeTimelineTask)) return false;
+			final GetHomeTimelineTask other = (GetHomeTimelineTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			return true;
 		}
-	}
-	
-	void rescheduleDirectMessagesRefreshing() {
-		mAlarmManager.cancel(mPendingRefreshDirectMessagesIntent);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
-			if (update_interval > 0) {
-				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-										   update_interval, mPendingRefreshDirectMessagesIntent);
-			}
+
+		@Override
+		public ResponseList<twitter4j.Status> getStatuses(final Twitter twitter, final Paging paging)
+				throws TwitterException {
+			return twitter.getHomeTimeline(paging);
 		}
+
+		@Override
+		public Twitter getTwitter(final long account_id) {
+			return getTwitterInstance(getOuterType(), account_id, true);
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final List<StatusesListResponse<twitter4j.Status>> responses) {
+			super.onPostExecute(responses);
+			mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, shouldSetMinId(), !isMaxIdsValid()), true);
+			mGetHomeTimelineTaskId = -1;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			mAlarmManager.cancel(mPendingRefreshHomeTimelineIntent);
+			if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
+				if (update_interval > 0) {
+					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+							update_interval, mPendingRefreshHomeTimelineIntent);
+				}
+			}
+			super.onPreExecute();
+		}
+
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
 	}
-	
 
 	class GetLocalTrendsTask extends GetTrendsTask {
 
@@ -1840,6 +1847,67 @@ public class TwidereService extends Service implements Constants {
 
 	}
 
+	class GetMentionsTask extends GetStatusesTask {
+
+		public GetMentionsTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+			super(account_ids, max_ids, since_ids, TASK_TAG_GET_MENTIONS);
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (!(obj instanceof GetMentionsTask)) return false;
+			final GetMentionsTask other = (GetMentionsTask) obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			return true;
+		}
+
+		@Override
+		public ResponseList<twitter4j.Status> getStatuses(final Twitter twitter, final Paging paging)
+				throws TwitterException {
+			return twitter.getMentions(paging);
+		}
+
+		@Override
+		public Twitter getTwitter(final long account_id) {
+			return getTwitterInstance(getOuterType(), account_id, true);
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final List<StatusesListResponse<twitter4j.Status>> responses) {
+			super.onPostExecute(responses);
+			mAsyncTaskManager.add(new StoreMentionsTask(responses, shouldSetMinId(), !isMaxIdsValid()), true);
+			mGetMentionsTaskId = -1;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			mAlarmManager.cancel(mPendingRefreshMentionsIntent);
+			if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
+				if (update_interval > 0) {
+					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+							update_interval, mPendingRefreshMentionsIntent);
+				}
+			}
+			super.onPreExecute();
+		}
+
+		private TwidereService getOuterType() {
+			return TwidereService.this;
+		}
+
+	}
+
 	class GetReceivedDirectMessagesTask extends GetDirectMessagesTask {
 
 		public GetReceivedDirectMessagesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
@@ -1879,7 +1947,14 @@ public class TwidereService extends Service implements Constants {
 
 		@Override
 		protected void onPreExecute() {
-			rescheduleDirectMessagesRefreshing();
+			mAlarmManager.cancel(mPendingRefreshDirectMessagesIntent);
+			if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+				final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
+				if (update_interval > 0) {
+					mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+							update_interval, mPendingRefreshDirectMessagesIntent);
+				}
+			}
 			super.onPreExecute();
 		}
 
@@ -2276,8 +2351,7 @@ public class TwidereService extends Service implements Constants {
 				final ContentValues values = new ContentValues();
 				values.put(Statuses.MY_RETWEET_ID, result.data.getId());
 				for (final Uri uri : STATUSES_URIS) {
-					final String where = Statuses.STATUS_ID + " = " + status_id + " OR " + Statuses.RETWEET_ID + " = " + status_id;
-					mResolver.update(uri, values, where, null);
+					mResolver.update(uri, values, Statuses.STATUS_ID + " = " + status_id, null);
 				}
 				final Intent intent = new Intent(BROADCAST_RETWEET_CHANGED);
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);

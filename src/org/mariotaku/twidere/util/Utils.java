@@ -143,6 +143,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.content.pm.PackageInfo;
@@ -177,7 +178,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
-import android.content.IntentFilter;
 
 public final class Utils implements Constants {
 
@@ -1624,13 +1624,13 @@ public final class Utils implements Constants {
 		return false;
 	}
 
-	public static boolean isBatteryOkay(final Context context) {		
+	public static boolean isBatteryOkay(final Context context) {
 		if (context == null) return false;
 		final Context app = context.getApplicationContext();
 		final IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_OKAY);
 		return app.registerReceiver(null, filter) != null;
 	}
-	
+
 	public static boolean isFiltered(final SQLiteDatabase database, final String screen_name, final String source,
 			final String text_plain) {
 		if (database == null) return false;
@@ -2620,6 +2620,18 @@ public final class Utils implements Constants {
 		sUserColors.put(user_id, color);
 	}
 
+	public static void showErrorToast(final Context context, final int action, final String desc,
+			final boolean long_message) {
+		if (context == null) return;
+		showErrorToast(context, context.getString(action), desc, long_message);
+	}
+
+	public static void showErrorToast(final Context context, final int action, final Throwable t,
+			final boolean long_message) {
+		if (context == null) return;
+		showErrorToast(context, context.getString(action), t, long_message);
+	}
+
 	public static void showErrorToast(final Context context, final String message, final boolean long_message) {
 		if (context == null) return;
 		final String text;
@@ -2631,13 +2643,6 @@ public final class Utils implements Constants {
 		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
 		final Toast toast = Toast.makeText(context, text, length);
 		toast.show();
-	}
-	
-
-	public static void showErrorToast(final Context context, final int action, final String desc,
-			final boolean long_message) {
-		if (context == null) return;
-		showErrorToast(context, context.getString(action), desc, long_message);
 	}
 
 	public static void showErrorToast(final Context context, final String action, final String desc,
@@ -2654,12 +2659,6 @@ public final class Utils implements Constants {
 		toast.show();
 	}
 
-	public static void showErrorToast(final Context context, final int action, final Throwable t,
-			final boolean long_message) {
-		if (context == null) return;
-		showErrorToast(context, context.getString(action), t, long_message);
-	}
-	
 	public static void showErrorToast(final Context context, final String action, final Throwable t,
 			final boolean long_message) {
 		if (context == null) return;

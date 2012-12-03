@@ -18,6 +18,8 @@ package org.mariotaku.twidere.util.imageloader;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.util.AsyncTask;
@@ -34,9 +36,6 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * This class wraps up completing some arbitrary long running work when loading
@@ -309,7 +308,7 @@ public abstract class ImageWorker {
 		public BitmapPreloaderTask() {
 			super(mExecutor);
 		}
-		
+
 		@Override
 		protected Void doInBackground(final Object... params) {
 			data = params[0];

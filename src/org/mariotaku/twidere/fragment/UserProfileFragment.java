@@ -1107,7 +1107,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class FavoritesAction extends ListAction {
 
-		public FavoritesAction(int order) {
+		public FavoritesAction(final int order) {
 			super(order);
 		}
 
@@ -1166,7 +1166,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class IncomingFriendshipsAction extends ListAction {
 
-		public IncomingFriendshipsAction(int order) {
+		public IncomingFriendshipsAction(final int order) {
 			super(order);
 		}
 
@@ -1195,7 +1195,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class SavedSearchesAction extends ListAction {
 
-		public SavedSearchesAction(int order) {
+		public SavedSearchesAction(final int order) {
 			super(order);
 		}
 
@@ -1214,7 +1214,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class UserBlocksAction extends ListAction {
 
-		public UserBlocksAction(int order) {
+		public UserBlocksAction(final int order) {
 			super(order);
 		}
 
@@ -1278,7 +1278,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class UserListsAction extends ListAction {
 
-		public UserListsAction(int order) {
+		public UserListsAction(final int order) {
 			super(order);
 		}
 
@@ -1297,7 +1297,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	final class UserMentionsAction extends ListAction {
 
-		public UserMentionsAction(int order) {
+		public UserMentionsAction(final int order) {
 			super(order);
 		}
 

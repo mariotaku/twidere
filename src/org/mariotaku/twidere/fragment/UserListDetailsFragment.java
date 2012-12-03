@@ -592,7 +592,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListMembersAction extends ListAction {
 
-		public ListMembersAction(int order) {
+		public ListMembersAction(final int order) {
 			super(order);
 		}
 
@@ -616,7 +616,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListSubscribersAction extends ListAction {
 
-		public ListSubscribersAction(int order) {
+		public ListSubscribersAction(final int order) {
 			super(order);
 		}
 
@@ -640,7 +640,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	class ListTimelineAction extends ListAction {
 
-		public ListTimelineAction(int order) {
+		public ListTimelineAction(final int order) {
 			super(order);
 		}
 
