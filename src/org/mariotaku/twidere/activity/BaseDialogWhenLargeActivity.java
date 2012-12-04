@@ -24,8 +24,12 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 			super.setContentView(layoutResID);
 			return;
 		}
+
 		final LayoutInflater inflater = getLayoutInflater();
-		setContentView(inflater.inflate(layoutResID, null));
+		final ViewGroup root = (ViewGroup) inflater.inflate(R.layout.dialogwhenlarge, null);
+		final ViewGroup content = (ViewGroup) root.findViewById(R.id.activity_content);
+		mActivityContent = inflater.inflate(layoutResID, content, true);
+		super.setContentView(root);
 	}
 
 	@Override

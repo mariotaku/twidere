@@ -65,6 +65,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.os.Handler;
+import android.os.Binder;
+import android.content.pm.PackageManager;
+import android.widget.Toast;
+import java.util.Arrays;
 
 public final class TweetStoreProvider extends ContentProvider implements Constants {
 
@@ -91,6 +96,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	private SharedPreferences mPreferences;
 	private LazyImageLoader mProfileImageLoader;
+	
+	private final Handler mHandler = new Handler();
 
 	@Override
 	public int bulkInsert(final Uri uri, final ContentValues[] values) {
@@ -222,6 +229,10 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	@Override
 	public Cursor query(final Uri uri, final String[] projection, final String selection, final String[] selectionArgs,
 			final String sortOrder) {
+		final String pname = getCallingPackageName(getContext());
+		if (!"org.mariotaku.twidere".equals(pname)) {
+			throw new SecurityException();
+		}
 		final String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
 		if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table)) {
@@ -524,5 +535,13 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				break;
 			}
 		}
+	}
+	
+	private static String getCallingPackageName(Context context) {
+		final int uid = Binder.getCallingUid();
+		final PackageManager pm = context.getPackageManager();
+		final String[] pkgs = pm.getPackagesForUid(uid);
+		if (pkgs != null && pkgs.length > 0) return pkgs[0];
+		return null;
 	}
 }

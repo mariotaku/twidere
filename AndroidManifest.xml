@@ -450,8 +450,7 @@
 			android:name=".provider.TweetStoreProvider"
 			android:authorities="org.mariotaku.twidere.provider.TweetStore"
 			android:label="@string/label_tweetstore_provider"
-			android:readPermission="org.mariotaku.twidere.READ_DATABASES"
-			android:writePermission="org.mariotaku.twidere.WRITE_DATABASES"/>
+			android:exported="true"/>
 		<provider
 			android:name=".provider.RecentSearchProvider"
 			android:authorities="org.mariotaku.twidere.provider.SearchRecentSuggestions"/>

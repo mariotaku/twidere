@@ -45,6 +45,7 @@ public interface Constants extends TwitterConstants {
 	public static final String USER_COLOR_PREFERENCES_NAME = "user_colors";
 	public static final String HOST_MAPPING_PREFERENCES_NAME = "host_mapping";
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
+	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 31;
@@ -512,4 +513,13 @@ public interface Constants extends TwitterConstants {
 	public static final String SERVICE_COMMAND_GET_MENTIONS = "get_mentions";
 	public static final String SERVICE_COMMAND_GET_SENT_DIRECT_MESSAGES = "get_sent_direct_messages";
 	public static final String SERVICE_COMMAND_GET_RECEIVED_DIRECT_MESSAGES = "get_received_direct_messages";
+
+	public static final int PERMISSION_LEVEL_INVALID = -2;
+	public static final int PERMISSION_LEVEL_DENIED = -1;
+	public static final int PERMISSION_LEVEL_NONE = 0;
+	public static final int PERMISSION_LEVEL_REFRESH = 1;
+	public static final int PERMISSION_LEVEL_READ = 2;
+	public static final int PERMISSION_LEVEL_WRITE = 3;
+	public static final int PERMISSION_LEVEL_DIRECT_MESSAGES = 4;
+	public static final int PERMISSION_LEVEL_ACCOUNTS = 5;
 }
