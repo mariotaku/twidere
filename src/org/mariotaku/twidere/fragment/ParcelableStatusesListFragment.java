@@ -189,7 +189,9 @@ public abstract class ParcelableStatusesListFragment extends
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		outState.putParcelableArrayList(INTENT_KEY_DATA, new ArrayList<ParcelableStatus>(mData));
+		if (mData != null) {
+			outState.putParcelableArrayList(INTENT_KEY_DATA, new ArrayList<ParcelableStatus>(mData));
+		}
 		super.onSaveInstanceState(outState);
 	}
 
