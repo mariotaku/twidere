@@ -25,7 +25,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.provider.TweetStore.CachedValues;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.ContentResolver;
@@ -45,10 +45,10 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	private final ContentResolver mResolver;
 	private final LazyImageLoader mProfileImageLoader;
 	private final SharedPreferences mPreferences;
-	private static final String[] FROM = new String[] { CachedUsers.NAME };
-	private static final int[] TO = new int[] { android.R.id.text1 };
+	private static final String[] FROM = new String[0];
+	private static final int[] TO = new int[0];
 
-	private int mProfileImageUrlIdx, mScreenNameIdx;
+	private int mProfileImageUrlIdx, mNameIdx, mScreenNameIdx;
 
 	private boolean mCursorClosed = false;
 
@@ -69,19 +69,31 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	@Override
 	public void bindView(final View view, final Context context, final Cursor cursor) {
 		if (mCursorClosed) return;
-		final TextView screen_name_view = (TextView) view.findViewById(android.R.id.text2);
-		screen_name_view.setText("@" + cursor.getString(mScreenNameIdx));
-		final ImageView profile_image_view = (ImageView) view.findViewById(android.R.id.icon);
-		profile_image_view.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-		if (mDisplayProfileImage && mProfileImageLoader != null) {
-			final String profile_image_url_string = cursor.getString(mProfileImageUrlIdx);
-			mProfileImageLoader.displayImage(cursor.getString(mProfileImageUrlIdx), profile_image_view);
-			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string),
-						profile_image_view);
+		final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+		final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
+		if (mScreenNameIdx != -1) {
+			text1.setText(cursor.getString(mNameIdx));
+			text2.setText("@" + cursor.getString(mScreenNameIdx));
+		} else {
+			text1.setText("#" + cursor.getString(mNameIdx));
+			text2.setText(R.string.hashtag);
+		}
+		icon.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+		if (mProfileImageUrlIdx != -1) {
+			if (mDisplayProfileImage && mProfileImageLoader != null) {
+				final String profile_image_url_string = cursor.getString(mProfileImageUrlIdx);
+				mProfileImageLoader.displayImage(cursor.getString(mProfileImageUrlIdx), icon);
+				if (mDisplayHiResProfileImage) {
+					mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string), icon);
+				} else {
+					mProfileImageLoader.displayImage(profile_image_url_string, icon);
+				}
 			} else {
-				mProfileImageLoader.displayImage(profile_image_url_string, profile_image_view);
+				icon.setImageResource(R.drawable.ic_profile_image_default);
 			}
+		} else {
+			//TODO show hashtag icon
 		}
 		super.bindView(view, context, cursor);
 	}
@@ -90,8 +102,9 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	public void changeCursor(final Cursor cursor) {
 		if (mCursorClosed) return;
 		if (cursor != null) {
-			mProfileImageUrlIdx = cursor.getColumnIndexOrThrow(Statuses.PROFILE_IMAGE_URL);
-			mScreenNameIdx = cursor.getColumnIndexOrThrow(CachedUsers.SCREEN_NAME);
+			mNameIdx = cursor.getColumnIndex(CachedValues.NAME);
+			mScreenNameIdx = cursor.getColumnIndex(CachedUsers.SCREEN_NAME);
+			mProfileImageUrlIdx = cursor.getColumnIndex(CachedUsers.PROFILE_IMAGE_URL);
 		}
 		mCursor = cursor;
 		super.changeCursor(mCursor);
@@ -108,7 +121,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	@Override
 	public CharSequence convertToString(final Cursor cursor) {
 		if (mCursorClosed) return null;
-		return cursor.getString(mScreenNameIdx);
+		return cursor.getString(mScreenNameIdx != -1 ? mScreenNameIdx : mNameIdx);
 	}
 
 	public boolean isCursorClosed() {

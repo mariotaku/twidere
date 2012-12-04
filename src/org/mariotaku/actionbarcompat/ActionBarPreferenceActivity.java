@@ -11,7 +11,7 @@ import android.view.Window;
 
 public class ActionBarPreferenceActivity extends PreferenceActivity {
 
-	ActionBarCompat mActionBarCompat = ActionBarCompat.getInstance(this);
+	protected ActionBarCompat mActionBarCompat = ActionBarCompat.getInstance(this);
 	private boolean mActionBarInitialized = false;
 
 	@Override
@@ -42,12 +42,6 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 		}
 	}
 
-	/**
-	 * Base action bar-aware implementation for
-	 * {@link Activity#onCreateOptionsMenu(android.view.Menu)}.
-	 * 
-	 * Note: marking menu items as invisible/visible is not currently supported.
-	 */
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		boolean retValue = super.onCreateOptionsMenu(menu);
@@ -59,10 +53,13 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 
 	@Override
 	public void onPostCreate(final Bundle savedInstanceState) {
+		if (!mActionBarCompat.isAvailable()) {
+			mActionBarCompat = new ActionBarCompatBase(this);
+		}
+		super.onPostCreate(savedInstanceState);
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
 		}
-		super.onPostCreate(savedInstanceState);
 	}
 
 	@Override
@@ -99,6 +96,9 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	@Override
 	public void setContentView(final int layoutResID) {
 		super.setContentView(layoutResID);
+		if (!mActionBarCompat.isAvailable()) {
+			mActionBarCompat = new ActionBarCompatBase(this);
+		}
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
 		}
@@ -107,6 +107,9 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	@Override
 	public void setContentView(final View view) {
 		super.setContentView(view);
+		if (!mActionBarCompat.isAvailable()) {
+			mActionBarCompat = new ActionBarCompatBase(this);
+		}
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
 		}
@@ -115,6 +118,9 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	@Override
 	public void setContentView(final View view, final LayoutParams params) {
 		super.setContentView(view, params);
+		if (!mActionBarCompat.isAvailable()) {
+			mActionBarCompat = new ActionBarCompatBase(this);
+		}
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
 		}

@@ -145,9 +145,6 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		}
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
-			if (mActionBarInitialized) {
-				mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).initViews();
-			}
 		}
 	}
 
@@ -159,9 +156,6 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		}
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
-			if (mActionBarInitialized) {
-				mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).initViews();
-			}
 		}
 	}
 
@@ -173,9 +167,6 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		}
 		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
-			if (mActionBarInitialized) {
-				mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).initViews();
-			}
 		}
 	}
 

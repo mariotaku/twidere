@@ -113,15 +113,6 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 				startActivity(intent);
 			}
 			return true;
-		} else if (KEY_ABOUT.equals(key)) {
-			if (isDualPaneMode()) {
-				res_id = R.xml.about;
-			} else {
-				final Intent intent = new Intent(INTENT_ACTION_ABOUT);
-				intent.setPackage(getPackageName());
-				startActivity(intent);
-				return true;
-			}
 		} else if (KEY_EXTENSIONS.equals(key)) {
 			if (isDualPaneMode()) {
 				showFragment(new ExtensionsListFragment());
@@ -150,6 +141,8 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			res_id = R.xml.settings_refresh_and_notifications;
 		} else if (KEY_SETTINGS_OTHER.equals(key)) {
 			res_id = R.xml.settings_other;
+		} else if (KEY_ABOUT.equals(key)) {
+			res_id = R.xml.about;
 		} else {
 			res_id = -1;
 		}

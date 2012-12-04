@@ -106,16 +106,28 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 			}
 		}
 	}
-
+	
 	@Override
 	public void setTheme() {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
 		mIsDarkTheme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
 		mIsSolidColorBackground = preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
-		setTheme(is_dark_theme ? R.style.Theme_Twidere : R.style.Theme_Twidere_Light);
-		if (mIsSolidColorBackground) {
+		setTheme(is_dark_theme ? getDarkThemeRes() : getLightThemeRes());
+		if (mIsSolidColorBackground && shouldSetBackground()) {
 			getWindow().setBackgroundDrawableResource(is_dark_theme ? android.R.color.black : android.R.color.white);
 		}
+	}
+
+	protected int getDarkThemeRes() {
+		return R.style.Theme_Twidere;
+	}
+
+	protected int getLightThemeRes() {
+		return R.style.Theme_Twidere_Light;
+	}
+
+	protected boolean shouldSetBackground() {
+		return true;
 	}
 }

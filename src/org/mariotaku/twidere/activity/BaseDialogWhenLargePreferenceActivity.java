@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 
-public class BaseDialogWhenLargeActivity extends BaseActivity {
+public class BaseDialogWhenLargePreferenceActivity extends BasePreferenceActivity {
 
 	private View mActivityContent;
 
@@ -24,6 +24,7 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 			super.setContentView(layoutResID);
 			return;
 		}
+
 		final LayoutInflater inflater = getLayoutInflater();
 		final ViewGroup root = (ViewGroup) inflater.inflate(R.layout.dialogwhenlarge, null);
 		final ViewGroup content = (ViewGroup) root.findViewById(R.id.activity_content);

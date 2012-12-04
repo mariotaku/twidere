@@ -27,7 +27,7 @@ import android.provider.BaseColumns;
 
 public final class TweetStore implements Constants {
 
-	public static final String AUTHORITY = "org.mariotaku.twidere.provider.TweetStore";
+	public static final String AUTHORITY = "twidere";
 
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI,
 			CachedStatuses.CONTENT_URI };
@@ -141,6 +141,17 @@ public final class TweetStore implements Constants {
 
 	}
 
+	public static interface CachedHashtags extends CachedValues {
+
+		public static final String[] COLUMNS = new String[] { _ID, NAME };
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT };
+
+		public static final String CONTENT_PATH = "cached_hashtags";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
+	}
+
 	public static interface CachedStatuses extends Statuses {
 		public static final String CONTENT_PATH = "cached_statuses";
 
@@ -148,13 +159,12 @@ public final class TweetStore implements Constants {
 				CONTENT_PATH);
 	}
 
-	public static interface CachedTrends extends BaseColumns {
+	public static interface CachedTrends extends CachedValues {
 
-		public static final String NAME = "name";
 		public static final String TIMESTAMP = "timestamp";
 
 		public static final String[] COLUMNS = new String[] { _ID, NAME, TIMESTAMP };
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT };
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT, TYPE_INT };
 
 		public static interface Local extends CachedTrends {
 			public static final String CONTENT_PATH = "local_trends";
@@ -166,7 +176,7 @@ public final class TweetStore implements Constants {
 
 	}
 
-	public static interface CachedUsers extends BaseColumns {
+	public static interface CachedUsers extends CachedValues {
 
 		public static final String CONTENT_PATH = "cached_users";
 
@@ -178,12 +188,6 @@ public final class TweetStore implements Constants {
 		 * Type: INTEGER (long)
 		 */
 		public static final String USER_ID = "user_id";
-
-		/**
-		 * User name of the status.<br>
-		 * Type: TEXT
-		 */
-		public static final String NAME = "name";
 
 		/**
 		 * User's screen name of the status.<br>
@@ -202,6 +206,11 @@ public final class TweetStore implements Constants {
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT_UNIQUE, TYPE_TEXT, TYPE_TEXT,
 				TYPE_TEXT };
 
+	}
+	
+	public static interface CachedValues extends BaseColumns {
+
+		public static final String NAME = "name";
 	}
 
 	public static interface DirectMessages extends BaseColumns {

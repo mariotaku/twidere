@@ -283,7 +283,7 @@ final class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		}
 	}
 
-	boolean initViews() {
+	private boolean initViews() {
 		mActionBarView = mActivity.getWindow().findViewById(R.id.actionbar);
 		mActionModeContainer = (ViewGroup) mActivity.getWindow().findViewById(R.id.action_mode_container);
 		if (mActionBarView == null) return false;

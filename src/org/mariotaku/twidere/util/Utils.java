@@ -178,6 +178,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
+import android.os.BatteryManager;
 
 public final class Utils implements Constants {
 
@@ -1627,8 +1628,12 @@ public final class Utils implements Constants {
 	public static boolean isBatteryOkay(final Context context) {
 		if (context == null) return false;
 		final Context app = context.getApplicationContext();
-		final IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_OKAY);
-		return app.registerReceiver(null, filter) != null;
+		final IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+		final Intent intent = app.registerReceiver(null, filter);
+		if (intent == null) return false;
+		final float level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+		final float scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+		return level / scale > 0.15f;
 	}
 
 	public static boolean isFiltered(final SQLiteDatabase database, final String screen_name, final String source,

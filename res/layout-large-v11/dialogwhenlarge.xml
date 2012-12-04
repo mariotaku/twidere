@@ -2,8 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:minHeight="@dimen/dialogwhenlarge_min_height"
-	android:minWidth="@dimen/dialogwhenlarge_min_width"
 	android:orientation="vertical">
 
 	<FrameLayout
@@ -18,6 +16,8 @@
 		android:id="@+id/activity_content"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
+		android:minHeight="@dimen/dialogwhenlarge_min_height"
+		android:minWidth="@dimen/dialogwhenlarge_min_width"
 		android:background="@drawable/actionbar_shadow"/>
 
 </LinearLayout>

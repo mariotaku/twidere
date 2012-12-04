@@ -380,5 +380,6 @@
 	<string name="load_from_here">Load from here</string>
 	<string name="amount_usd">Amount (USD)</string>
 	<string name="donate">Donate</string>
+	<string name="hashtag">Hashtag</string>
 
 </resources>

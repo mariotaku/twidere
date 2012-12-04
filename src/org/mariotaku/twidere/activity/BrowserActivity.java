@@ -31,7 +31,7 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-public class BrowserActivity extends BaseActivity {
+public class BrowserActivity extends BaseDialogWhenLargeActivity {
 
 	private Uri mUri = Uri.parse("about:blank");
 
@@ -39,7 +39,7 @@ public class BrowserActivity extends BaseActivity {
 	public void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		setContentView(new FrameLayout(this));
+		setContentView(R.layout.base);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mUri = getIntent().getData();
 		if (mUri == null) {
@@ -52,7 +52,7 @@ public class BrowserActivity extends BaseActivity {
 		final Bundle bundle = new Bundle();
 		bundle.putString(INTENT_KEY_URI, mUri.toString());
 		fragment.setArguments(bundle);
-		ft.replace(android.R.id.content, fragment);
+		ft.replace(R.id.main, fragment);
 		ft.commit();
 	}
 

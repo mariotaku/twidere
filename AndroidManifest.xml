@@ -158,7 +158,8 @@
 		<activity
 			android:name=".activity.BrowserActivity"
 			android:exported="false"
-			android:label="@string/browser">
+			android:label="@string/browser"
+			android:theme="@style/Theme.Blank.DialogWhenLarge">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.VIEW_WEBPAGE"/>
@@ -168,17 +169,6 @@
 				<data android:scheme="file"/>
 				<data android:scheme="http"/>
 				<data android:scheme="https"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.AboutActivity"
-			android:exported="false"
-			android:label="@string/about">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<action android:name="org.mariotaku.twidere.ABOUT"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
 		<activity
@@ -340,7 +330,8 @@
 			android:label="@string/view_map"/>
 		<activity
 			android:name=".activity.SettingsDetailsActivity"
-			android:label="@string/settings"/>
+			android:label="@string/settings"
+			android:theme="@style/Theme.Blank"/>
 		<activity
 			android:name=".activity.InternalSettingsActivity"
 			android:label="@string/settings"/>
@@ -448,7 +439,7 @@
 
 		<provider
 			android:name=".provider.TweetStoreProvider"
-			android:authorities="org.mariotaku.twidere.provider.TweetStore"
+			android:authorities="twidere"
 			android:label="@string/label_tweetstore_provider"
 			android:exported="true"/>
 		<provider
