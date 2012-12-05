@@ -1920,10 +1920,21 @@ public class TwitterWrapper implements Constants {
 			if (response != null) {
 
 				final List<Trends> messages = response.list;
+				final ArrayList<String> hashtags = new ArrayList<String>();
+				final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
 				if (messages != null && messages.size() > 0) {
 					final ContentValues[] values_array = makeTrendsContentValues(messages);
+					for (final ContentValues values : values_array) {
+						final String hashtag = values.getAsString(CachedTrends.NAME).replaceFirst("#", "");
+						hashtags.add(hashtag);
+						final ContentValues hashtag_value = new ContentValues();
+						hashtag_value.put(CachedHashtags.NAME, hashtag);
+						hashtag_values.add(hashtag_value);
+					}
 					mResolver.delete(uri, null, null);
 					mResolver.bulkInsert(uri, values_array);
+					mResolver.delete(CachedHashtags.CONTENT_URI, CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")", hashtags.toArray(new String[hashtags.size()]));
+					mResolver.bulkInsert(CachedHashtags.CONTENT_URI, hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 					bundle.putBoolean(INTENT_KEY_SUCCEED, true);
 				}
 			}
