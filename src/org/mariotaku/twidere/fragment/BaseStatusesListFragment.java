@@ -38,7 +38,7 @@ import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.content.BroadcastReceiver;
@@ -72,7 +72,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	private static final long TICKER_DURATION = 5000L;
 
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 	private TwidereApplication mApplication;
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
@@ -133,7 +133,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mApplication = getApplication();
 		mAsyncTaskManager = getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mService = getServiceInterface();
+		mTwitterWrapper = getTwitterWrapper();
 		mListView = getListView();
 		mAdapter = getListAdapter();
 		setListAdapter(null);
@@ -259,11 +259,11 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			case R.id.direct_retweet:
 			case MENU_RETWEET: {
 				if (isMyRetweet(status)) {
-					cancelRetweet(mService, status);
+					cancelRetweet(mTwitterWrapper, status);
 				} else {
 					final long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
 							: mSelectedStatus.status_id;
-					mService.retweetStatus(status.account_id, id_to_retweet);
+					mTwitterWrapper.retweetStatus(status.account_id, id_to_retweet);
 				}
 				break;
 			}
@@ -298,14 +298,14 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 			case MENU_FAVORITE: {
 				if (mSelectedStatus.is_favorite) {
-					mService.destroyFavorite(status.account_id, status.status_id);
+					mTwitterWrapper.destroyFavorite(status.account_id, status.status_id);
 				} else {
-					mService.createFavorite(status.account_id, status.status_id);
+					mTwitterWrapper.createFavorite(status.account_id, status.status_id);
 				}
 				break;
 			}
 			case MENU_DELETE: {
-				mService.destroyStatus(status.account_id, status.status_id);
+				mTwitterWrapper.destroyStatus(status.account_id, status.status_id);
 				break;
 			}
 			case MENU_EXTENSIONS: {

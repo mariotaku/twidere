@@ -60,7 +60,7 @@ import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
@@ -137,7 +137,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private boolean mShouldScroll;
 
 	private SharedPreferences mPreferences;
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 	private LazyImageLoader mProfileImageLoader;
 
 	private ImagesAdapter mImagePreviewAdapter;
@@ -343,11 +343,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				}
 				case MENU_RETWEET: {
 					if (isMyRetweet(mStatus)) {
-						cancelRetweet(mService, mStatus);
+						cancelRetweet(mTwitterWrapper, mStatus);
 					} else {
 						final long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
 								: mStatus.status_id;
-						mService.retweetStatus(mStatus.account_id, id_to_retweet);
+						mTwitterWrapper.retweetStatus(mStatus.account_id, id_to_retweet);
 					}
 					break;
 				}
@@ -381,14 +381,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				}
 				case MENU_FAVORITE: {
 					if (mStatus.is_favorite) {
-						mService.destroyFavorite(mAccountId, mStatusId);
+						mTwitterWrapper.destroyFavorite(mAccountId, mStatusId);
 					} else {
-						mService.createFavorite(mAccountId, mStatusId);
+						mTwitterWrapper.createFavorite(mAccountId, mStatusId);
 					}
 					break;
 				}
 				case MENU_DELETE: {
-					mService.destroyStatus(mAccountId, mStatusId);
+					mTwitterWrapper.destroyStatus(mAccountId, mStatusId);
 					break;
 				}
 				case MENU_EXTENSIONS: {
@@ -559,7 +559,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final TwidereApplication application = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProfileImageLoader = application.getProfileImageLoader();
-		mService = getServiceInterface();
+		mTwitterWrapper = getTwitterWrapper();
 		setRetainInstance(true);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		if (mLoadMoreAutomatically) {
@@ -613,7 +613,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				break;
 			}
 			case R.id.follow: {
-				mService.createFriendship(mAccountId, mStatus.user_id);
+				mTwitterWrapper.createFriendship(mAccountId, mStatus.user_id);
 				break;
 			}
 			case R.id.in_reply_to: {

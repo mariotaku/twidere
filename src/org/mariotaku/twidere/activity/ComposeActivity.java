@@ -43,7 +43,7 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorView;
 
 import android.app.Activity;
@@ -103,7 +103,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private static final String INTENT_KEY_CONTENT_MODIFIED = "content_modified";
 	private static final String INTENT_KEY_IS_NAVIGATE_UP = "is_navigate_up";
 
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 	private LocationManager mLocationManager;
 	private SharedPreferences mPreferences;
 	private ParcelableLocation mRecentLocation;
@@ -288,7 +288,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	public void onCreate(final Bundle savedInstanceState) {
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mService = getTwidereApplication().getServiceInterface();
+		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mResolver = getContentResolver();
 		super.onCreate(savedInstanceState);
 		final long[] account_ids = getAccountIds(this);
@@ -749,7 +749,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (isEmpty(text) || isFinishing()) return;
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
-		mService.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
+		mTwitterWrapper.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
 				mInReplyToStatusId, mIsPhotoAttached && !mIsImageAttached);
 		setResult(Activity.RESULT_OK);
 		finish();

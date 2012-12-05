@@ -33,7 +33,7 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -55,7 +55,7 @@ import com.twitter.Extractor;
 public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback {
 
 	private TwidereApplication mApplication;
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 
 	private ActionMode mActionMode;
 
@@ -147,7 +147,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				final long account_id = getFirstSelectAccountId(selected_items);
 				final long[] user_ids = getSelectedUserIds(selected_items);
 				if (account_id > 0 && user_ids != null) {
-					mService.createMultiBlock(account_id, user_ids);
+					mTwitterWrapper.createMultiBlock(account_id, user_ids);
 				}
 				mode.finish();
 				break;
@@ -156,7 +156,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				final long account_id = getFirstSelectAccountId(selected_items);
 				final long[] user_ids = getSelectedUserIds(selected_items);
 				if (account_id > 0 && user_ids != null) {
-					mService.reportMultiSpam(account_id, user_ids);
+					mTwitterWrapper.reportMultiSpam(account_id, user_ids);
 				}
 				mode.finish();
 				break;
@@ -169,7 +169,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		mApplication = getTwidereApplication();
-		mService = mApplication.getServiceInterface();
+		mTwitterWrapper = mApplication.getTwitterWrapper();
 		super.onCreate(savedInstanceState);
 	}
 

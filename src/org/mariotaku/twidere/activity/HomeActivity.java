@@ -41,7 +41,7 @@ import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.SetHomeButtonEnabledAccessor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
@@ -76,7 +76,7 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 public class HomeActivity extends MultiSelectActivity implements OnClickListener, OnPageChangeListener {
 
 	private SharedPreferences mPreferences;
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 	private TwidereApplication mApplication;
 	private NotificationManager mNotificationManager;
 
@@ -162,7 +162,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		mApplication = getTwidereApplication();
-		mService = mApplication.getServiceInterface();
+		mTwitterWrapper = mApplication.getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		super.onCreate(savedInstanceState);
@@ -185,20 +185,20 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (bundle != null) {
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null && !refresh_on_start && savedInstanceState == null) {
-				mService.refreshAll();
+				mTwitterWrapper.refreshAll();
 			}
 			initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			switch (initial_tab) {
 				case TAB_POSITION_HOME: {
-					mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
+					mTwitterWrapper.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
 					break;
 				}
 				case TAB_POSITION_MENTIONS: {
-					mService.clearNotification(NOTIFICATION_ID_MENTIONS);
+					mTwitterWrapper.clearNotification(NOTIFICATION_ID_MENTIONS);
 					break;
 				}
 				case TAB_POSITION_MESSAGES: {
-					mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+					mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 					break;
 				}
 			}
@@ -241,7 +241,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 		}
 		if (refresh_on_start && savedInstanceState == null) {
-			mService.refreshAll();
+			mTwitterWrapper.refreshAll();
 		}
 		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
 			final FragmentManager fm = getSupportFragmentManager();
@@ -322,15 +322,15 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		final TabSpec tab = mAdapter.getTab(position);
 		switch (tab.position) {
 			case TAB_POSITION_HOME: {
-				mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
+				mTwitterWrapper.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
 				break;
 			}
 			case TAB_POSITION_MENTIONS: {
-				mService.clearNotification(NOTIFICATION_ID_MENTIONS);
+				mTwitterWrapper.clearNotification(NOTIFICATION_ID_MENTIONS);
 				break;
 			}
 			case TAB_POSITION_MESSAGES: {
-				mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+				mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 				break;
 			}
 		}
@@ -397,7 +397,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	@Override
 	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
 		mProgressBarIndeterminateVisible = visible;
-		mProgress.setVisibility(visible || mService.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
+		mProgress.setVisibility(visible || mTwitterWrapper.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
 	}
 
 	@Override
@@ -465,23 +465,23 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null) {
 				// TODO should I refresh inbox too?
-				mService.refreshAll();
+				mTwitterWrapper.refreshAll();
 			}
 			final int initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			if (initial_tab != -1 && mViewPager != null) {
 				switch (initial_tab) {
 					case TAB_POSITION_HOME: {
 						if (mShowHomeTab) {
-							mService.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
+							mTwitterWrapper.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
 						}
 						break;
 					}
 					case TAB_POSITION_MENTIONS: {
-						mService.clearNotification(NOTIFICATION_ID_MENTIONS);
+						mTwitterWrapper.clearNotification(NOTIFICATION_ID_MENTIONS);
 						break;
 					}
 					case TAB_POSITION_MESSAGES: {
-						mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+						mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 						break;
 					}
 				}

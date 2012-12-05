@@ -397,12 +397,12 @@ public final class Utils implements Constants {
 		return true;
 	}
 
-	public static int cancelRetweet(final ServiceInterface service, final ParcelableStatus status) {
-		if (service == null || status == null) return -1;
+	public static int cancelRetweet(final TwitterWrapper wrapper, final ParcelableStatus status) {
+		if (wrapper == null || status == null) return -1;
 		if (status.my_retweet_id > 0)
-			return service.destroyStatus(status.account_id, status.my_retweet_id);
+			return wrapper.destroyStatus(status.account_id, status.my_retweet_id);
 		else if (status.retweeted_by_id == status.account_id)
-			return service.destroyStatus(status.account_id, status.retweet_id);
+			return wrapper.destroyStatus(status.account_id, status.retweet_id);
 		return -1;
 	}
 

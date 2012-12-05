@@ -35,18 +35,18 @@ import android.os.RemoteException;
 
 public final class TweetShortenerInterface implements Constants, ITweetShortener {
 
-	private ITweetShortener mService;
+	private ITweetShortener mShortener;
 
 	private final ServiceConnection mConntecion = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(final ComponentName service, final IBinder obj) {
-			mService = ITweetShortener.Stub.asInterface(obj);
+			mShortener = ITweetShortener.Stub.asInterface(obj);
 		}
 
 		@Override
 		public void onServiceDisconnected(final ComponentName service) {
-			mService = null;
+			mShortener = null;
 		}
 	};
 
@@ -60,14 +60,14 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 	@Override
 	public IBinder asBinder() {
 		// Useless here
-		return mService.asBinder();
+		return mShortener.asBinder();
 	}
 
 	@Override
 	public String shorten(final String text, final String screen_name, final long in_reply_to_status_id) {
-		if (mService == null) return null;
+		if (mShortener == null) return null;
 		try {
-			return mService.shorten(text, screen_name, in_reply_to_status_id);
+			return mShortener.shorten(text, screen_name, in_reply_to_status_id);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -75,7 +75,7 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 	}
 
 	public void waitForService() {
-		while (mService == null) {
+		while (mShortener == null) {
 			try {
 				Thread.sleep(100L);
 			} catch (final InterruptedException e) {

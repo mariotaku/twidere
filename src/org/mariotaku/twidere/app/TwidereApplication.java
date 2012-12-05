@@ -28,7 +28,6 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
-import org.mariotaku.twidere.util.ServiceInterface;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
 import org.mariotaku.twidere.util.imageloader.ImageLoaderUtils;
 
@@ -39,6 +38,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import edu.ucdavis.earlybird.UCDService;
+import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.TwitterWrapper;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
@@ -46,7 +46,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
-	private ServiceInterface mServiceInterface;
 	private TwitterWrapper mTwitterWrapper;
 
 	private boolean mMultiSelectActive = false;
@@ -96,14 +95,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mSelectedUserIds;
 	}
 
-	public ServiceInterface getServiceInterface() {
-		if (mServiceInterface != null && mServiceInterface.test()) {
-			mServiceInterface.cancelShutdown();
-			return mServiceInterface;
-		}
-		return mServiceInterface = ServiceInterface.getInstance(this);
-	}
-	
 	public TwitterWrapper getTwitterWrapper() {
 		return mTwitterWrapper;
 	}
@@ -121,7 +112,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		super.onCreate();
-		mServiceInterface = ServiceInterface.getInstance(this);
 		mTwitterWrapper = TwitterWrapper.getInstance(this);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
 			startService(new Intent(this, UCDService.class));
@@ -141,11 +131,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
-		if (mServiceInterface != null
-				&& (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key))) {
-			mServiceInterface.stopAutoRefresh();
+		if (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key)) {
+			final Intent intent = new Intent(this, RefreshService.class);
+			stopService(intent);
 			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-				mServiceInterface.startAutoRefresh();
+				startService(intent);
 			}
 		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_CONNECTION_TIMEOUT.equals(key)) {
 			reloadConnectivitySettings();

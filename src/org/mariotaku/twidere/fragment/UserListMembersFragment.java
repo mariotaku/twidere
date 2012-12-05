@@ -30,7 +30,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.UsersAdapter;
 import org.mariotaku.twidere.loader.UserListMembersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -49,7 +49,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	private ParcelableUser mSelectedUser;
 
 	private PopupMenu mPopupMenu;
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -90,7 +90,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 		if (savedInstanceState != null) {
 			mCursor = savedInstanceState.getLong(INTENT_KEY_PAGE, -1);
 		}
-		mService = getApplication().getServiceInterface();
+		mTwitterWrapper = getApplication().getTwitterWrapper();
 		super.onActivityCreated(savedInstanceState);
 	}
 
@@ -135,7 +135,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 		if (mSelectedUser == null) return false;
 		switch (item.getItemId()) {
 			case MENU_DELETE: {
-				mService.deleteUserListMember(getAccountId(), mUserListId, mSelectedUser.user_id);
+				mTwitterWrapper.deleteUserListMember(getAccountId(), mUserListId, mSelectedUser.user_id);
 				break;
 			}
 			case MENU_VIEW_PROFILE: {

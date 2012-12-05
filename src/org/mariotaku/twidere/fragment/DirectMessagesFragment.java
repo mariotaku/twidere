@@ -29,7 +29,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -56,11 +56,11 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 public class DirectMessagesFragment extends PullToRefreshListFragment implements LoaderCallbacks<Cursor>,
 		OnScrollListener, OnTouchListener {
-	private ServiceInterface mService;
-
+	private TwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 	private Handler mHandler;
 	private Runnable mTicker;
+	
 	private ListView mListView;
 
 	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mNotReachedBottomBefore = true;
@@ -87,7 +87,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
 				onRefreshComplete();
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				if (mService.isReceivedDirectMessagesRefreshing() || mService.isSentDirectMessagesRefreshing()) {
+				if (mTwitterWrapper.isReceivedDirectMessagesRefreshing() || mTwitterWrapper.isSentDirectMessagesRefreshing()) {
 					setRefreshing(false);
 				} else {
 					onRefreshComplete();
@@ -101,10 +101,10 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mService = getServiceInterface();
+		mTwitterWrapper = getTwitterWrapper();
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
-		mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+		mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 		final LazyImageLoader imageloader = getApplication().getProfileImageLoader();
 		mAdapter = new DirectMessagesEntryAdapter(getActivity(), imageloader);
 
@@ -169,21 +169,21 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 
 	@Override
 	public void onPullDownToRefresh() {
-		if (mService == null) return;
+		if (mTwitterWrapper == null) return;
 		final long[] account_ids = getActivatedAccountIds(getActivity());
 		final long[] inbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
-		mService.getReceivedDirectMessagesWithSinceIds(account_ids, null, inbox_since_ids);
-		mService.getSentDirectMessagesWithSinceIds(account_ids, null, null);
+		mTwitterWrapper.getReceivedDirectMessages(account_ids, null, inbox_since_ids);
+		mTwitterWrapper.getSentDirectMessages(account_ids, null, null);
 	}
 
 	@Override
 	public void onPullUpToRefresh() {
-		if (mService == null) return;
+		if (mTwitterWrapper == null) return;
 		final long[] account_ids = getActivatedAccountIds(getActivity());
 		final long[] inbox_max_ids = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
 		final long[] outbox_max_ids = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Outbox.CONTENT_URI);
-		mService.getReceivedDirectMessagesWithSinceIds(account_ids, inbox_max_ids, null);
-		mService.getSentDirectMessagesWithSinceIds(account_ids, outbox_max_ids, null);
+		mTwitterWrapper.getReceivedDirectMessages(account_ids, inbox_max_ids, null);
+		mTwitterWrapper.getSentDirectMessages(account_ids, outbox_max_ids, null);
 	}
 
 	@Override
@@ -257,7 +257,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		if (mService.isReceivedDirectMessagesRefreshing() || mService.isSentDirectMessagesRefreshing()) {
+		if (mTwitterWrapper.isReceivedDirectMessagesRefreshing() || mTwitterWrapper.isSentDirectMessagesRefreshing()) {
 			setRefreshing(false);
 		} else {
 			onRefreshComplete();
@@ -275,7 +275,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	public boolean onTouch(final View view, final MotionEvent ev) {
 		switch (ev.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
-				mService.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+				mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 				break;
 			}
 		}

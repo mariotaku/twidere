@@ -48,7 +48,6 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-		application.getServiceInterface();
 	}
 
 	public ParcelableUserList findItem(final long id) {

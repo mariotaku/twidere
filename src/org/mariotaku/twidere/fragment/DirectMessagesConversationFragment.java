@@ -36,7 +36,7 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -81,7 +81,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		Panes.Right, OnItemSelectedListener, OnEditorActionListener {
 
 	private final Validator mValidator = new Validator();
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 
 	// private ListView mListView;
@@ -115,8 +115,8 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 					|| BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED.equals(action)) {
 				getLoaderManager().restartLoader(0, mArguments, DirectMessagesConversationFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				setProgressBarIndeterminateVisibility(mService.isReceivedDirectMessagesRefreshing()
-						|| mService.isSentDirectMessagesRefreshing());
+				setProgressBarIndeterminateVisibility(mTwitterWrapper.isReceivedDirectMessagesRefreshing()
+						|| mTwitterWrapper.isSentDirectMessagesRefreshing());
 			}
 		}
 	};
@@ -156,7 +156,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mService = getServiceInterface();
+		mTwitterWrapper = getTwitterWrapper();
 
 		final LazyImageLoader imageloader = mApplication.getProfileImageLoader();
 		mAdapter = new DirectMessagesConversationAdapter(getActivity(), imageloader);
@@ -338,7 +338,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 					break;
 				}
 				case MENU_DELETE: {
-					mService.destroyDirectMessage(account_id, message_id);
+					mTwitterWrapper.destroyDirectMessage(account_id, message_id);
 					break;
 				}
 				case MENU_VIEW_PROFILE: {
@@ -418,7 +418,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 			final long account_id = mArguments.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 			final long conversation_id = mArguments.getLong(INTENT_KEY_CONVERSATION_ID, -1);
 			final String screen_name = mArguments.getString(INTENT_KEY_SCREEN_NAME);
-			mService.sendDirectMessage(account_id, screen_name, conversation_id, message);
+			mTwitterWrapper.sendDirectMessage(account_id, screen_name, conversation_id, message);
 			text.clear();
 		}
 	}

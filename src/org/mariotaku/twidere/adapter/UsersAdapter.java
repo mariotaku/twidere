@@ -64,7 +64,6 @@ public class UsersAdapter extends BaseAdapter implements BaseAdapterInterface {
 		mInflater = LayoutInflater.from(context);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
-		application.getServiceInterface();
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		mSelectedUserIds = application.getSelectedUserIds();
 	}

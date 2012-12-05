@@ -26,7 +26,7 @@ import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,7 +46,7 @@ import android.widget.ListView;
 public class TrendsFragment extends PullToRefreshListFragment implements LoaderCallbacks<Cursor>, Panes.Left {
 
 	private TwidereApplication mApplication;
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 
 	private TrendsAdapter mTrendsAdapter;
@@ -67,7 +67,7 @@ public class TrendsFragment extends PullToRefreshListFragment implements LoaderC
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
-		mService = getServiceInterface();
+		mTwitterWrapper = getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
@@ -106,7 +106,7 @@ public class TrendsFragment extends PullToRefreshListFragment implements LoaderC
 
 	@Override
 	public void onPullDownToRefresh() {
-		mService.getLocalTrends(mAccountId, mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
+		mTwitterWrapper.getLocalTrends(mAccountId, mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class TrendsFragment extends PullToRefreshListFragment implements LoaderC
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_TRENDS_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
-		if (mService.isLocalTrendsRefreshing()) {
+		if (mTwitterWrapper.isLocalTrendsRefreshing()) {
 			setRefreshing(false);
 		}
 	}

@@ -23,7 +23,7 @@ import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.InvalidateProgressBarRunnable;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -77,8 +77,8 @@ public class BaseListFragment extends ListFragment implements Constants {
 		return null;
 	}
 
-	public ServiceInterface getServiceInterface() {
-		return getApplication() != null ? getApplication().getServiceInterface() : null;
+	public TwitterWrapper getTwitterWrapper() {
+		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
 	}
 
 	public SharedPreferences getSharedPreferences(final String name, final int mode) {

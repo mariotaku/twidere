@@ -24,7 +24,7 @@ import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.DraftItem;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -52,7 +52,7 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
 	private ContentResolver mResolver;
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 
 	private DraftsAdapter mAdapter;
@@ -80,7 +80,7 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mResolver = getContentResolver();
-		mService = getTwidereApplication().getServiceInterface();
+		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTextSize = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		setContentView(R.layout.base_list);
@@ -195,7 +195,7 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 	public void onStart() {
 		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
-		mService.clearNotification(NOTIFICATION_ID_DRAFTS);
+		mTwitterWrapper.clearNotification(NOTIFICATION_ID_DRAFTS);
 		super.onStart();
 	}
 
@@ -230,7 +230,7 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 		if (draft == null) return;
 		final Uri uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
 		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
-		mService.updateStatus(draft.account_ids, draft.text, null, uri, draft.in_reply_to_status_id,
+		mTwitterWrapper.updateStatus(draft.account_ids, draft.text, null, uri, draft.in_reply_to_status_id,
 				draft.is_photo_attached && !draft.is_image_attached);
 	}
 

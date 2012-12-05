@@ -68,7 +68,7 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
@@ -174,7 +174,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private long mUserId;
 	private String mScreenName;
 
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 
 	private PopupMenu mPopupMenu;
 
@@ -449,7 +449,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
-		mService = getApplication().getServiceInterface();
+		mTwitterWrapper = getApplication().getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
 		setRetainInstance(true);
@@ -495,7 +495,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					final String path = mImageUri.getPath();
 					final File file = path != null ? new File(path) : null;
 					if (file != null && file.exists()) {
-						mService.updateProfileImage(mUser.user_id, mImageUri, true);
+						mTwitterWrapper.updateProfileImage(mUser.user_id, mImageUri, true);
 					}
 				}
 				break;
@@ -506,7 +506,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					final String image_path = getImagePathFromUri(getActivity(), uri);
 					final File file = image_path != null ? new File(image_path) : null;
 					if (file != null && file.exists()) {
-						mService.updateProfileImage(mUser.user_id, Uri.fromFile(file), false);
+						mTwitterWrapper.updateProfileImage(mUser.user_id, Uri.fromFile(file), false);
 					}
 				}
 				break;
@@ -539,7 +539,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 								case R.id.unfollow: {
 									mFollowProgress.setVisibility(View.VISIBLE);
 									mFollowButton.setVisibility(View.GONE);
-									mService.destroyFriendship(mAccountId, mUser.user_id);
+									mTwitterWrapper.destroyFriendship(mAccountId, mUser.user_id);
 									return true;
 								}
 							}
@@ -550,7 +550,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				} else {
 					mFollowProgress.setVisibility(View.VISIBLE);
 					mFollowButton.setVisibility(View.GONE);
-					mService.createFriendship(mAccountId, mUser.user_id);
+					mTwitterWrapper.createFriendship(mAccountId, mUser.user_id);
 				}
 				break;
 			}
@@ -775,7 +775,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
-		if (mUser == null || mService == null) return false;
+		if (mUser == null || mTwitterWrapper == null) return false;
 		switch (item.getItemId()) {
 			case MENU_TAKE_PHOTO: {
 				takePhoto();
@@ -786,18 +786,18 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case MENU_BLOCK: {
-				if (mService == null || mFriendship == null) {
+				if (mTwitterWrapper == null || mFriendship == null) {
 					break;
 				}
 				if (mFriendship.isSourceBlockingTarget()) {
-					mService.destroyBlock(mAccountId, mUser.user_id);
+					mTwitterWrapper.destroyBlock(mAccountId, mUser.user_id);
 				} else {
-					mService.createBlock(mAccountId, mUser.user_id);
+					mTwitterWrapper.createBlock(mAccountId, mUser.user_id);
 				}
 				break;
 			}
 			case MENU_REPORT_SPAM: {
-				mService.reportSpam(mAccountId, mUser.user_id);
+				mTwitterWrapper.reportSpam(mAccountId, mUser.user_id);
 				break;
 			}
 			case MENU_MUTE_USER: {
@@ -929,7 +929,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private int mType;
 		private String mTitle;
 		private long mAccountId;
-		private ServiceInterface mService;
+		private TwitterWrapper mTwitterWrapper;
 
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
@@ -938,19 +938,19 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					mText = mEditText.getText().toString();
 					switch (mType) {
 						case TYPE_NAME: {
-							mService.updateProfile(mAccountId, mText, null, null, null);
+							mTwitterWrapper.updateProfile(mAccountId, mText, null, null, null);
 							break;
 						}
 						case TYPE_URL: {
-							mService.updateProfile(mAccountId, null, mText, null, null);
+							mTwitterWrapper.updateProfile(mAccountId, null, mText, null, null);
 							break;
 						}
 						case TYPE_LOCATION: {
-							mService.updateProfile(mAccountId, null, null, mText, null);
+							mTwitterWrapper.updateProfile(mAccountId, null, null, mText, null);
 							break;
 						}
 						case TYPE_DESCRIPTION: {
-							mService.updateProfile(mAccountId, null, null, null, mText);
+							mTwitterWrapper.updateProfile(mAccountId, null, null, null, mText);
 							break;
 						}
 					}
@@ -962,7 +962,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			mService = getApplication().getServiceInterface();
+			mTwitterWrapper = getApplication().getTwitterWrapper();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
 			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 			mText = bundle != null ? bundle.getString(INTENT_KEY_TEXT) : null;

@@ -36,18 +36,18 @@ import android.os.RemoteException;
 
 public final class ImageUploaderInterface implements Constants, IImageUploader {
 
-	private IImageUploader mService;
+	private IImageUploader mUploader;
 
 	private final ServiceConnection mConntecion = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(final ComponentName service, final IBinder obj) {
-			mService = IImageUploader.Stub.asInterface(obj);
+			mUploader = IImageUploader.Stub.asInterface(obj);
 		}
 
 		@Override
 		public void onServiceDisconnected(final ComponentName service) {
-			mService = null;
+			mUploader = null;
 		}
 	};
 
@@ -61,14 +61,14 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 	@Override
 	public IBinder asBinder() {
 		// Useless here
-		return mService.asBinder();
+		return mUploader.asBinder();
 	}
 
 	@Override
 	public Uri upload(final Uri file_uri, final String message) {
-		if (mService == null) return null;
+		if (mUploader == null) return null;
 		try {
-			return mService.upload(file_uri, message);
+			return mUploader.upload(file_uri, message);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -76,7 +76,7 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 	}
 
 	public void waitForService() {
-		while (mService == null) {
+		while (mUploader == null) {
 			try {
 				Thread.sleep(100L);
 			} catch (final InterruptedException e) {

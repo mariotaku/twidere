@@ -42,7 +42,7 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
@@ -87,7 +87,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		LoaderCallbacks<UserListDetailsFragment.Response<UserList>>, Panes.Right {
 
 	private LazyImageLoader mProfileImageLoader;
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 
 	private ImageView mProfileImageView;
 	private TextView mListNameView, mUserNameView, mDescriptionView, mErrorMessageView;
@@ -201,7 +201,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
-		mService = getApplication().getServiceInterface();
+		mTwitterWrapper = getApplication().getTwitterWrapper();
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
@@ -243,9 +243,9 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				if (mAccountId != mUserId) {
 					mFollowMoreButton.setVisibility(View.GONE);
 					if (mUserList.isFollowing()) {
-						mService.destroyUserListSubscription(mAccountId, mUserList.getId());
+						mTwitterWrapper.destroyUserListSubscription(mAccountId, mUserList.getId());
 					} else {
-						mService.createUserListSubscription(mAccountId, mUserList.getId());
+						mTwitterWrapper.createUserListSubscription(mAccountId, mUserList.getId());
 					}
 				} else {
 					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
@@ -394,7 +394,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			}
 			case MENU_DELETE: {
 				if (mUserId != mAccountId) return false;
-				mService.destroyUserList(mAccountId, mUserListId);
+				mTwitterWrapper.destroyUserList(mAccountId, mUserListId);
 				break;
 			}
 			case MENU_EXTENSIONS: {
@@ -434,7 +434,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		private AutoCompleteTextView mEditText;
 		private String mText;
 		private long mAccountId;
-		private ServiceInterface mService;
+		private TwitterWrapper mTwitterWrapper;
 		private int mListId;
 		private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
 
@@ -445,7 +445,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				case DialogInterface.BUTTON_POSITIVE: {
 					mText = parseString(mEditText.getText());
 					if (mText == null || mText.length() <= 0) return;
-					mService.addUserListMember(mAccountId, mListId, -1, mText);
+					mTwitterWrapper.addUserListMember(mAccountId, mListId, -1, mText);
 					break;
 				}
 			}
@@ -454,7 +454,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			mService = getApplication().getServiceInterface();
+			mTwitterWrapper = getApplication().getTwitterWrapper();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
 			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 			mListId = bundle != null ? bundle.getInt(INTENT_KEY_LIST_ID, -1) : -1;
@@ -496,7 +496,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		private long mAccountId;
 		private int mListId;
 		private boolean mIsPublic;
-		private ServiceInterface mService;
+		private TwitterWrapper mTwitterWrapper;
 
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
@@ -507,7 +507,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 					mDescription = parseString(mEditDescription.getText());
 					mIsPublic = mPublicCheckBox.isChecked();
 					if (mName == null || mName.length() <= 0) return;
-					mService.updateUserListDetails(mAccountId, mListId, mIsPublic, mName, mDescription);
+					mTwitterWrapper.updateUserListDetails(mAccountId, mListId, mIsPublic, mName, mDescription);
 					break;
 				}
 			}
@@ -516,7 +516,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			mService = getApplication().getServiceInterface();
+			mTwitterWrapper = getApplication().getTwitterWrapper();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
 			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 			mListId = bundle != null ? bundle.getInt(INTENT_KEY_LIST_ID, -1) : -1;

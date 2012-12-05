@@ -21,7 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.util.ServiceInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -41,7 +41,7 @@ import android.widget.ListView;
 public class MentionsFragment extends CursorStatusesListFragment implements OnTouchListener {
 
 	private SharedPreferences mPreferences;
-	private ServiceInterface mService;
+	private TwitterWrapper mTwitterWrapper;
 
 	private ListView mListView;
 	private CursorStatusesAdapter mAdapter;
@@ -61,7 +61,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 					getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 				}
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				if (mService != null && mService.isMentionsRefreshing()) {
+				if (mTwitterWrapper != null && mTwitterWrapper.isMentionsRefreshing()) {
 					setRefreshing(false);
 				}
 			}
@@ -75,13 +75,13 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 
 	@Override
 	public int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		return mService.getMentionsWithSinceIds(account_ids, max_ids, since_ids);
+		return mTwitterWrapper.getMentions(account_ids, max_ids, since_ids);
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mService = getServiceInterface();
+		mTwitterWrapper = getTwitterWrapper();
 		super.onActivityCreated(savedInstanceState);
 		mListView = getListView();
 		mListView.setOnTouchListener(this);
@@ -129,7 +129,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		if (getServiceInterface().isMentionsRefreshing()) {
+		if (getTwitterWrapper().isMentionsRefreshing()) {
 			setRefreshing(false);
 		} else {
 			onRefreshComplete();
@@ -147,7 +147,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	public boolean onTouch(final View view, final MotionEvent ev) {
 		switch (ev.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
-				mService.clearNotification(NOTIFICATION_ID_MENTIONS);
+				mTwitterWrapper.clearNotification(NOTIFICATION_ID_MENTIONS);
 				break;
 			}
 		}

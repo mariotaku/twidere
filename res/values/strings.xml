@@ -43,7 +43,7 @@
 	<string name="username">Username</string>
 	<string name="password">Password</string>
 	<string name="label_tweetstore_provider">Twidere database provider</string>
-	<string name="label_backend_service">Application backend service</string>
+	<string name="label_refresh_service">Refresh service</string>
 	<string name="label_permission_group_access_twidere">Access Twidere application</string>
 	<string name="label_permission_read_databases">Read Twidere databases</string>
 	<string name="label_permission_write_databases">Write Twidere databases</string>
