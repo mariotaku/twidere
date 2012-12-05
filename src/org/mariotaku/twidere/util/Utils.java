@@ -1630,9 +1630,10 @@ public final class Utils implements Constants {
 		final IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 		final Intent intent = app.registerReceiver(null, filter);
 		if (intent == null) return false;
+		final boolean plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) > 0;
 		final float level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 		final float scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
-		return level / scale > 0.15f;
+		return plugged || level / scale > 0.15f;
 	}
 
 	public static boolean isFiltered(final SQLiteDatabase database, final String screen_name, final String source,

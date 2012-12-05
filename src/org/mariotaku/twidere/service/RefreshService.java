@@ -202,7 +202,7 @@ public class RefreshService extends Service implements Constants {
 			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-										   update_interval, mPendingRefreshHomeTimelineIntent);
+						update_interval, mPendingRefreshHomeTimelineIntent);
 			}
 		}
 	}
@@ -213,7 +213,7 @@ public class RefreshService extends Service implements Constants {
 			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-										   update_interval, mPendingRefreshMentionsIntent);
+						update_interval, mPendingRefreshMentionsIntent);
 			}
 		}
 	}
@@ -224,7 +224,7 @@ public class RefreshService extends Service implements Constants {
 			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-										   update_interval, mPendingRefreshDirectMessagesIntent);
+						update_interval, mPendingRefreshDirectMessagesIntent);
 			}
 		}
 	}

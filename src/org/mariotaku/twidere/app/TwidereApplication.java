@@ -116,6 +116,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
 			startService(new Intent(this, UCDService.class));
 		}
+		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+			startService(new Intent(this, RefreshService.class));
+		}
 	}
 
 	@Override
