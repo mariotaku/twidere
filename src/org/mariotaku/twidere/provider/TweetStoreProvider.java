@@ -24,27 +24,32 @@ import static org.mariotaku.twidere.util.Utils.clearAccountName;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesCount;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTableId;
-import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
+import static org.mariotaku.twidere.util.Utils.getTableNameById;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.Arrays;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversation;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.DatabaseHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.PermissionManager;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -56,28 +61,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Process;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.os.Handler;
-import android.os.Binder;
-import android.content.pm.PackageManager;
-import android.widget.Toast;
-import java.util.Arrays;
 
 public final class TweetStoreProvider extends ContentProvider implements Constants {
 
 	private SQLiteDatabase mDatabase;
+	private PermissionManager mPermissionManager;
+	private NotificationManager mNotificationManager;
+	private SharedPreferences mPreferences;
+	private LazyImageLoader mProfileImageLoader;
+	private PackageManager mPackageManager;
+	private TwitterWrapper mTwitterWrapper;
 
 	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
 
 	private boolean mNotificationIsAudible;
+	
+	private Context mContext;
 
 	private final BroadcastReceiver mHomeActivityStateReceiver = new BroadcastReceiver() {
 		@Override
@@ -91,28 +103,29 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		}
 
 	};
-
-	private NotificationManager mNotificationManager;
-
-	private SharedPreferences mPreferences;
-	private LazyImageLoader mProfileImageLoader;
 	
 	@Override
 	public int bulkInsert(final Uri uri, final ContentValues[] values) {
-		final String table = getTableNameForContentUri(uri);
 		final int table_id = getTableId(uri);
+		final String table = getTableNameById(table_id);
+		checkWritePermission(table_id, table);
+		switch (table_id) {
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+			case TABLE_ID_DIRECT_MESSAGES:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+				return 0;
+		}
 		int result = 0;
 		final int notification_count;
 		if (table != null && values != null) {
-			final Context context = getContext();
 			final int old_count;
 			switch (table_id) {
-				case URI_STATUSES: {
-					old_count = getAllStatusesCount(context, Statuses.CONTENT_URI);
+				case TABLE_ID_STATUSES: {
+					old_count = getAllStatusesCount(mContext, Statuses.CONTENT_URI);
 					break;
 				}
-				case URI_MENTIONS: {
-					old_count = getAllStatusesCount(context, Mentions.CONTENT_URI);
+				case TABLE_ID_MENTIONS: {
+					old_count = getAllStatusesCount(mContext, Mentions.CONTENT_URI);
 					break;
 				}
 				default:
@@ -127,17 +140,17 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			mDatabase.endTransaction();
 			if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 				switch (table_id) {
-					case URI_STATUSES: {
-						mNewStatusesCount += notification_count = getAllStatusesCount(context, Statuses.CONTENT_URI)
+					case TABLE_ID_STATUSES: {
+						mNewStatusesCount += notification_count = getAllStatusesCount(mContext, Statuses.CONTENT_URI)
 								- old_count;
 						break;
 					}
-					case URI_MENTIONS: {
-						mNewMentionsCount += notification_count = getAllStatusesCount(context, Mentions.CONTENT_URI)
+					case TABLE_ID_MENTIONS: {
+						mNewMentionsCount += notification_count = getAllStatusesCount(mContext, Mentions.CONTENT_URI)
 								- old_count;
 						break;
 					}
-					case URI_DIRECT_MESSAGES_INBOX: {
+					case TABLE_ID_DIRECT_MESSAGES_INBOX: {
 						mNewMessagesCount += notification_count = result;
 						break;
 					}
@@ -159,11 +172,19 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	@Override
 	public int delete(final Uri uri, final String selection, final String[] selectionArgs) {
-		final String table = getTableNameForContentUri(uri);
-		if (getTableId(uri) == URI_NOTIFICATIONS) {
+		final int table_id = getTableId(uri);
+		final String table = getTableNameById(table_id);
+		checkWritePermission(table_id, table);
+		if (table_id == VIRTUAL_TABLE_ID_NOTIFICATIONS) {
 			final List<String> segments = uri.getPathSegments();
 			if (segments.size() != 2) return 0;
 			clearNotification(parseInt(segments.get(1)));
+		}
+		switch (table_id) {
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+			case TABLE_ID_DIRECT_MESSAGES:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+				return 0;
 		}
 		if (table == null) return 0;
 		final int result = mDatabase.delete(table, selection, selectionArgs);
@@ -180,25 +201,28 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	@Override
 	public Uri insert(final Uri uri, final ContentValues values) {
-		final String table = getTableNameForContentUri(uri);
+		final int table_id = getTableId(uri);
+		final String table = getTableNameById(table_id);
+		checkWritePermission(table_id, table);
+		switch (table_id) {
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+			case TABLE_ID_DIRECT_MESSAGES:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+				return null;
+		}
 		if (table == null) return null;
-		if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table))
-			return null;
-		else if (TABLE_DIRECT_MESSAGES.equals(table))
-			return null;
-		else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) return null;
 		final long row_id = mDatabase.insert(table, null, values);
 		if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 			switch (getTableId(uri)) {
-				case URI_STATUSES: {
+				case TABLE_ID_STATUSES: {
 					mNewStatusesCount++;
 					break;
 				}
-				case URI_MENTIONS: {
+				case TABLE_ID_MENTIONS: {
 					mNewMentionsCount++;
 					break;
 				}
-				case URI_DIRECT_MESSAGES_INBOX: {
+				case TABLE_ID_DIRECT_MESSAGES_INBOX: {
 					mNewMessagesCount++;
 					break;
 				}
@@ -212,57 +236,67 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	@Override
 	public boolean onCreate() {
-		final Context context = getContext();
-		mDatabase = new DatabaseHelper(context, DATABASES_NAME, DATABASES_VERSION).getWritableDatabase();
-		mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mProfileImageLoader = TwidereApplication.getInstance(context).getProfileImageLoader();
+		mContext = getContext();
+		final TwidereApplication app = TwidereApplication.getInstance(mContext);
+		mDatabase = new DatabaseHelper(mContext, DATABASES_NAME, DATABASES_VERSION).getWritableDatabase();
+		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mProfileImageLoader = app.getProfileImageLoader();
+		mPermissionManager = new PermissionManager(mContext);
+		mPackageManager = mContext.getPackageManager();
+		mTwitterWrapper = app.getTwitterWrapper();
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTART);
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);
-		context.registerReceiver(mHomeActivityStateReceiver, filter);
+		mContext.registerReceiver(mHomeActivityStateReceiver, filter);
 		return mDatabase != null;
 	}
 
 	@Override
 	public Cursor query(final Uri uri, final String[] projection, final String selection, final String[] selectionArgs,
 			final String sortOrder) {
-		final String pname = getCallingPackageName(getContext());
-		if (!"org.mariotaku.twidere".equals(pname)) {
-			throw new SecurityException();
+		final int table_id = getTableId(uri);
+		final String table = getTableNameById(table_id);
+		checkReadPermission(table_id, table, projection);
+		switch (table_id) {
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
+				final List<String> segments = uri.getPathSegments();
+				if (segments.size() != 3) return null;
+				final String query = Conversation.QueryBuilder.buildByConversationId(projection,
+						Long.parseLong(segments.get(1)), Long.parseLong(segments.get(2)), selection, sortOrder);
+				return mDatabase.rawQuery(query, selectionArgs);
+			}
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME: {
+				final List<String> segments = uri.getPathSegments();
+				if (segments.size() != 3) return null;
+				final String query = Conversation.QueryBuilder.buildByScreenName(projection,
+						Long.parseLong(segments.get(1)), segments.get(2), selection, sortOrder);
+				return mDatabase.rawQuery(query, selectionArgs);
+			}
+			case TABLE_ID_DIRECT_MESSAGES: {
+				final String query = DirectMessages.QueryBuilder.build(projection, selection, sortOrder);
+				return mDatabase.rawQuery(query, selectionArgs);
+			}
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
+				return mDatabase.rawQuery(ConversationsEntry.QueryBuilder.build(selection), null);
+			}
 		}
-		final String table = getTableNameForContentUri(uri);
 		if (table == null) return null;
-		if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table)) {
-			final List<String> segments = uri.getPathSegments();
-			if (segments.size() != 3) return null;
-			final String query = Conversation.QueryBuilder.buildByConversationId(projection,
-					Long.parseLong(segments.get(1)), Long.parseLong(segments.get(2)), selection, sortOrder);
-			return mDatabase.rawQuery(query, selectionArgs);
-		} else if (TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME.equals(table)) {
-			final List<String> segments = uri.getPathSegments();
-			if (segments.size() != 3) return null;
-			final String query = Conversation.QueryBuilder.buildByScreenName(projection,
-					Long.parseLong(segments.get(1)), segments.get(2), selection, sortOrder);
-			return mDatabase.rawQuery(query, selectionArgs);
-		} else if (TABLE_DIRECT_MESSAGES.equals(table)) {
-			final String query = DirectMessages.QueryBuilder.build(projection, selection, sortOrder);
-			return mDatabase.rawQuery(query, selectionArgs);
-		} else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table))
-			return mDatabase.rawQuery(ConversationsEntry.QueryBuilder.build(selection), null);
 		return mDatabase.query(table, projection, selection, selectionArgs, null, null, sortOrder);
 	}
 
 	@Override
 	public int update(final Uri uri, final ContentValues values, final String selection, final String[] selectionArgs) {
-		final String table = getTableNameForContentUri(uri);
+		final int table_id = getTableId(uri);
+		final String table = getTableNameById(table_id);
 		int result = 0;
 		if (table != null) {
-			if (TABLE_DIRECT_MESSAGES_CONVERSATION.equals(table))
-				return 0;
-			else if (TABLE_DIRECT_MESSAGES.equals(table))
-				return 0;
-			else if (TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY.equals(table)) return 0;
+			switch (table_id) {
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+				case TABLE_ID_DIRECT_MESSAGES:
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+					return 0;
+			}
 			result = mDatabase.update(table, values, selection, selectionArgs);
 		}
 		if (result > 0) {
@@ -312,7 +346,86 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		builder.setDefaults(defaults);
 		return builder.build();
 	}
+	
+	private boolean checkPermission(final int level) {
+		return mPermissionManager.checkPermission(Binder.getCallingUid(), level);
+	}
 
+	private void checkReadPermission(final int id, final String table, final String[] projection) {
+		switch (id) {
+			case TABLE_ID_ACCOUNTS: {
+				// Reading some infomation like user_id, screen_name etc is okay, but reading columns like password requires higher permission level.
+				if (ArrayUtils.contains(projection, Accounts.BASIC_AUTH_PASSWORD, Accounts.OAUTH_TOKEN, Accounts.TOKEN_SECRET)
+						&& !checkPermission(PERMISSION_LEVEL_ACCOUNTS))
+					throw new SecurityException("Access column " + ArrayUtils.toString(projection, ',', true) + " in database accounts requires level PERMISSION_LEVEL_ACCOUNTS");
+				if (!checkPermission(PERMISSION_LEVEL_READ))
+					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_READ");
+				break;
+			}
+			case TABLE_ID_DIRECT_MESSAGES:
+			case TABLE_ID_DIRECT_MESSAGES_INBOX:
+			case TABLE_ID_DIRECT_MESSAGES_OUTBOX:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
+				if (!checkPermission(PERMISSION_LEVEL_DIRECT_MESSAGES))
+					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
+				break;
+			}
+			case TABLE_ID_STATUSES:
+			case TABLE_ID_MENTIONS:
+			case TABLE_ID_TABS:
+			case TABLE_ID_DRAFTS:
+			case TABLE_ID_CACHED_USERS:
+			case TABLE_ID_FILTERED_USERS:
+			case TABLE_ID_FILTERED_KEYWORDS:
+			case TABLE_ID_FILTERED_SOURCES:			
+			case TABLE_ID_TRENDS_LOCAL:
+			case TABLE_ID_CACHED_STATUSES:
+			case TABLE_ID_CACHED_HASHTAGS: {
+				if (!checkPermission(PERMISSION_LEVEL_READ))
+					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_READ");
+				break;
+			}
+		}
+	}
+
+	private void checkWritePermission(final int id, final String table) {
+		switch (id) {
+			case TABLE_ID_ACCOUNTS: {
+				// Writing to accounts database is not allowed for third-party applications.
+				if (mPackageManager.checkSignatures(Process.myUid(), Binder.getCallingUid()) != PackageManager.SIGNATURE_MATCH)
+					throw new SecurityException("Writing to accounts database is not allowed for third-party applications");
+				break;
+			}
+			case TABLE_ID_DIRECT_MESSAGES:
+			case TABLE_ID_DIRECT_MESSAGES_INBOX:
+			case TABLE_ID_DIRECT_MESSAGES_OUTBOX:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
+				if (!checkPermission(PERMISSION_LEVEL_DIRECT_MESSAGES))
+					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
+				break;
+			}
+			case TABLE_ID_STATUSES:
+			case TABLE_ID_MENTIONS:
+			case TABLE_ID_TABS:
+			case TABLE_ID_DRAFTS:
+			case TABLE_ID_CACHED_USERS:
+			case TABLE_ID_FILTERED_USERS:
+			case TABLE_ID_FILTERED_KEYWORDS:
+			case TABLE_ID_FILTERED_SOURCES:			
+			case TABLE_ID_TRENDS_LOCAL:
+			case TABLE_ID_CACHED_STATUSES:
+			case TABLE_ID_CACHED_HASHTAGS: {
+				if (!checkPermission(PERMISSION_LEVEL_WRITE))
+					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_WRITE");
+				break;
+			}
+		}
+	}
+	
 	private void clearNotification(final int id) {
 		switch (id) {
 			case NOTIFICATION_ID_HOME_TIMELINE: {
@@ -336,34 +449,34 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		if ("false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) return;
 		final Context context = getContext();
 		switch (getTableId(uri)) {
-			case URI_ACCOUNTS: {
+			case TABLE_ID_ACCOUNTS: {
 				clearAccountColor();
 				clearAccountName();
 				context.sendBroadcast(new Intent(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED));
 				break;
 			}
-			case URI_DRAFTS: {
+			case TABLE_ID_DRAFTS: {
 				context.sendBroadcast(new Intent(BROADCAST_DRAFTS_DATABASE_UPDATED));
 				break;
 			}
-			case URI_STATUSES:
-			case URI_MENTIONS:
-			case URI_DIRECT_MESSAGES_INBOX:
-			case URI_DIRECT_MESSAGES_OUTBOX: {
+			case TABLE_ID_STATUSES:
+			case TABLE_ID_MENTIONS:
+			case TABLE_ID_DIRECT_MESSAGES_INBOX:
+			case TABLE_ID_DIRECT_MESSAGES_OUTBOX: {
 				notifyForUpdatedUri(context, uri);
 				break;
 			}
-			case URI_TRENDS_LOCAL: {
+			case TABLE_ID_TRENDS_LOCAL: {
 				context.sendBroadcast(new Intent(BROADCAST_TRENDS_UPDATED));
 				break;
 			}
-			case URI_TABS: {
+			case TABLE_ID_TABS: {
 				context.sendBroadcast(new Intent(BROADCAST_TABS_UPDATED));
 				break;
 			}
-			case URI_FILTERED_USERS:
-			case URI_FILTERED_KEYWORDS:
-			case URI_FILTERED_SOURCES: {
+			case TABLE_ID_FILTERED_USERS:
+			case TABLE_ID_FILTERED_KEYWORDS:
+			case TABLE_ID_FILTERED_SOURCES: {
 				context.sendBroadcast(new Intent(BROADCAST_FILTERS_UPDATED));
 				break;
 			}
@@ -383,7 +496,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
 		final boolean display_hires_profile_image = res.getBoolean(R.bool.hires_profile_image);
 		switch (getTableId(uri)) {
-			case URI_STATUSES: {
+			case TABLE_ID_STATUSES: {
 				if (!mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false)) return;
 				final String message = res.getQuantityString(R.plurals.Ntweets, mNewStatusesCount, mNewStatusesCount);
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
@@ -402,7 +515,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE, notification);
 				break;
 			}
-			case URI_MENTIONS: {
+			case TABLE_ID_MENTIONS: {
 				if (!mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) return;
 				if (mNewMentionsCount > 1) {
 					builder.setNumber(mNewMentionsCount);
@@ -462,16 +575,15 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 								: profile_image_url_string);
 				final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
-				builder.setLargeIcon(Bitmap.createScaledBitmap(
-						profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
-								.decodeFile(profile_image_file.getPath()) : BitmapFactory.decodeResource(res,
-								R.drawable.ic_profile_image_default), w, h, true));
+				final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory.decodeFile(profile_image_file.getPath()) : null;
+				final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default);
+				builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image : profile_image_fallback, w, h, true));
 				final Notification notification = buildNotification(builder, title, title, message,
 						R.drawable.ic_stat_mention, null, content_intent, delete_intent);
 				mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, notification);
 				break;
 			}
-			case URI_DIRECT_MESSAGES_INBOX: {
+			case TABLE_ID_DIRECT_MESSAGES_INBOX: {
 				if (!mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)) return;
 				if (mNewMessagesCount > 1) {
 					builder.setNumber(mNewMessagesCount);
@@ -501,10 +613,9 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 								: profile_image_url_string);
 				final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
-				builder.setLargeIcon(Bitmap.createScaledBitmap(
-						profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
-								.decodeFile(profile_image_file.getPath()) : BitmapFactory.decodeResource(res,
-								R.drawable.ic_profile_image_default), w, h, true));
+				final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory.decodeFile(profile_image_file.getPath()) : null;
+				final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default);
+				builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image : profile_image_fallback, w, h, true));
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
@@ -534,12 +645,5 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			}
 		}
 	}
-	
-	private static String getCallingPackageName(Context context) {
-		final int uid = Binder.getCallingUid();
-		final PackageManager pm = context.getPackageManager();
-		final String[] pkgs = pm.getPackagesForUid(uid);
-		if (pkgs != null && pkgs.length > 0) return pkgs[0];
-		return null;
-	}
+
 }

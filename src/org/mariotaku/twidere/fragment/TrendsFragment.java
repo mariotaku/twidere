@@ -20,7 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
-import static org.mariotaku.twidere.util.Utils.getTableNameForContentUri;
+import static org.mariotaku.twidere.util.Utils.getTableNameByUri;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -80,7 +80,7 @@ public class TrendsFragment extends PullToRefreshListFragment implements LoaderC
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final Uri uri = CachedTrends.Local.CONTENT_URI;
-		final String table = getTableNameForContentUri(uri);
+		final String table = getTableNameByUri(uri);
 		final String where = table != null ? CachedTrends.TIMESTAMP + " = " + "(SELECT " + CachedTrends.TIMESTAMP
 				+ " FROM " + table + " ORDER BY " + CachedTrends.TIMESTAMP + " DESC LIMIT 1)" : null;
 		return new CursorLoader(getActivity(), uri, CachedTrends.COLUMNS, where, null, null);

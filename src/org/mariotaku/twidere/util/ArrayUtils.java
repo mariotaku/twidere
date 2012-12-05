@@ -21,27 +21,32 @@ package org.mariotaku.twidere.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 public final class ArrayUtils {
 
 	private ArrayUtils() {
-		throw new IllegalArgumentException("You are trying to create an instance for this utility class!");
+		throw new AssertionError("You are trying to create an instance for this utility class!");
 	}
 
 	public static boolean contains(final long[] array, final long value) {
+		if (array == null) return false;
 		for (final long item : array) {
 			if (item == value) return true;
 		}
 		return false;
 	}
 
-	public static boolean contains(final Object[] array, final Object value) {
+	public static boolean contains(final Object[] array, final Object... values) {
+		if (array == null || values == null) return false;
 		for (final Object item : array) {
-			if (item == null || value == null) {
-				if (item == value) return true;
-				continue;
+			for (final Object value : values) {
+				if (item == null || value == null) {
+					if (item == value) return true;
+					continue;
+				}
+				if (item.equals(value)) return true;
 			}
-			if (item.equals(value)) return true;
 		}
 		return false;
 	}

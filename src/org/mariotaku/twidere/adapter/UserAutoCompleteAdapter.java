@@ -147,13 +147,13 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 			final CharSequence text = mEditText.getText();
 			token = text.charAt(mEditText.getSelectionEnd() - constraint.length() - 1);
 		}
-		if (isAtSign(token) == isAtSign(mToken)) {
+		if (isAtSymbol(token) == isAtSymbol(mToken)) {
 			final FilterQueryProvider filter = getFilterQueryProvider();
 			if (filter != null) return filter.runQuery(constraint);
 		}
 		mToken = token;
 		final CharSequence constraint_escaped = constraint != null ? constraint.toString().replaceAll("_", "^_") : null;
-		if (isAtSign(token)) {
+		if (isAtSymbol(token)) {
 			final StringBuilder where = new StringBuilder();
 			where.append(CachedUsers.SCREEN_NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'");
 			where.append(" OR ");
@@ -168,7 +168,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	}
 	
 
-	private static boolean isAtSign(final char character) {
+	private static boolean isAtSymbol(final char character) {
 		switch (character) {
 			case '\uff20':
 			case '@':

@@ -189,30 +189,30 @@ public final class Utils implements Constants {
 	public static final HashMap<String, Integer> CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
 
 	static {
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, URI_STATUSES);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, URI_ACCOUNTS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, URI_MENTIONS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DRAFTS, URI_DRAFTS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_USERS, URI_CACHED_USERS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, URI_FILTERED_USERS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_KEYWORDS, URI_FILTERED_KEYWORDS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, URI_FILTERED_SOURCES);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES, URI_DIRECT_MESSAGES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, TABLE_ID_STATUSES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, TABLE_ID_ACCOUNTS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_MENTIONS, TABLE_ID_MENTIONS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DRAFTS, TABLE_ID_DRAFTS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_USERS, TABLE_ID_CACHED_USERS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, TABLE_ID_FILTERED_USERS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_KEYWORDS, TABLE_ID_FILTERED_KEYWORDS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, TABLE_ID_FILTERED_SOURCES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES, TABLE_ID_DIRECT_MESSAGES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_INBOX,
-				URI_DIRECT_MESSAGES_INBOX);
+				TABLE_ID_DIRECT_MESSAGES_INBOX);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_OUTBOX,
-				URI_DIRECT_MESSAGES_OUTBOX);
+				TABLE_ID_DIRECT_MESSAGES_OUTBOX);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATION + "/#/#",
-				URI_DIRECT_MESSAGES_CONVERSATION);
+				TABLE_ID_DIRECT_MESSAGES_CONVERSATION);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME
-				+ "/#/*", URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME);
+				+ "/#/*", TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY,
-				URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, URI_TRENDS_LOCAL);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TABS, URI_TABS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#", URI_NOTIFICATIONS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_STATUSES, URI_CACHED_STATUSES);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_HASHTAGS, URI_CACHED_HASHTAGS);
+				TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, TABLE_ID_TRENDS_LOCAL);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TABS, TABLE_ID_TABS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#", VIRTUAL_TABLE_ID_NOTIFICATIONS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_STATUSES, TABLE_ID_CACHED_STATUSES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_HASHTAGS, TABLE_ID_CACHED_HASHTAGS);
 
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER, null, LINK_ID_USER);
@@ -428,7 +428,7 @@ public final class Utils implements Constants {
 				if (CachedStatuses.CONTENT_URI.equals(uri)) {
 					continue;
 				}
-				final String table = getTableNameForContentUri(uri);
+				final String table = getTableNameByUri(uri);
 				final StringBuilder where = new StringBuilder();
 				where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 				where.append(" AND ");
@@ -440,7 +440,7 @@ public final class Utils implements Constants {
 				resolver.delete(uri, where.toString(), null);
 			}
 			for (final Uri uri : DIRECT_MESSAGES_URIS) {
-				final String table = getTableNameForContentUri(uri);
+				final String table = getTableNameByUri(uri);
 				final StringBuilder where = new StringBuilder();
 				where.append(DirectMessages.ACCOUNT_ID + " = " + account_id);
 				where.append(" AND ");
@@ -454,7 +454,7 @@ public final class Utils implements Constants {
 		}
 		// Clean cached values.
 		for (final Uri uri : CACHE_URIS) {
-			final String table = getTableNameForContentUri(uri);
+			final String table = getTableNameByUri(uri);
 			final StringBuilder where = new StringBuilder();
 			where.append(Statuses._ID + " NOT IN (");
 			where.append(" SELECT " + BaseColumns._ID + " FROM " + table);
@@ -827,7 +827,7 @@ public final class Utils implements Constants {
 		if (context == null) return 0;
 		final ContentResolver resolver = context.getContentResolver();
 		final Cursor cur = resolver.query(uri, new String[] { Statuses.STATUS_ID },
-				buildStatusFilterWhereClause(getTableNameForContentUri(uri), null), null, null);
+				buildStatusFilterWhereClause(getTableNameByUri(uri), null), null, null);
 		if (cur == null) return 0;
 		try {
 			return cur.getCount();
@@ -840,7 +840,7 @@ public final class Utils implements Constants {
 		if (context == null) return new long[0];
 		final ContentResolver resolver = context.getContentResolver();
 		final Cursor cur = resolver.query(uri, new String[] { Statuses.STATUS_ID },
-				buildStatusFilterWhereClause(getTableNameForContentUri(uri), null), null, null);
+				buildStatusFilterWhereClause(getTableNameByUri(uri), null), null, null);
 		if (cur == null) return new long[0];
 		final long[] ids = new long[cur.getCount()];
 		cur.moveToFirst();
@@ -1384,49 +1384,45 @@ public final class Utils implements Constants {
 		if (uri == null) return -1;
 		return CONTENT_PROVIDER_URI_MATCHER.match(uri);
 	}
-
-	public static String getTableNameForContentUri(final Uri uri) {
-		if (uri == null) return null;
-		switch (getTableId(uri)) {
-			case URI_ACCOUNTS:
+	
+	public static String getTableNameById(final int id) {
+		switch (id) {
+			case TABLE_ID_ACCOUNTS:
 				return TABLE_ACCOUNTS;
-			case URI_STATUSES:
+			case TABLE_ID_STATUSES:
 				return TABLE_STATUSES;
-			case URI_MENTIONS:
+			case TABLE_ID_MENTIONS:
 				return TABLE_MENTIONS;
-			case URI_DRAFTS:
+			case TABLE_ID_DRAFTS:
 				return TABLE_DRAFTS;
-			case URI_CACHED_USERS:
+			case TABLE_ID_CACHED_USERS:
 				return TABLE_CACHED_USERS;
-			case URI_FILTERED_USERS:
+			case TABLE_ID_FILTERED_USERS:
 				return TABLE_FILTERED_USERS;
-			case URI_FILTERED_KEYWORDS:
+			case TABLE_ID_FILTERED_KEYWORDS:
 				return TABLE_FILTERED_KEYWORDS;
-			case URI_FILTERED_SOURCES:
+			case TABLE_ID_FILTERED_SOURCES:
 				return TABLE_FILTERED_SOURCES;
-			case URI_DIRECT_MESSAGES:
-				return TABLE_DIRECT_MESSAGES;
-			case URI_DIRECT_MESSAGES_INBOX:
+			case TABLE_ID_DIRECT_MESSAGES_INBOX:
 				return TABLE_DIRECT_MESSAGES_INBOX;
-			case URI_DIRECT_MESSAGES_OUTBOX:
+			case TABLE_ID_DIRECT_MESSAGES_OUTBOX:
 				return TABLE_DIRECT_MESSAGES_OUTBOX;
-			case URI_DIRECT_MESSAGES_CONVERSATION:
-				return TABLE_DIRECT_MESSAGES_CONVERSATION;
-			case URI_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
-				return TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME;
-			case URI_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
-				return TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY;
-			case URI_TRENDS_LOCAL:
+			case TABLE_ID_TRENDS_LOCAL:
 				return TABLE_TRENDS_LOCAL;
-			case URI_TABS:
+			case TABLE_ID_TABS:
 				return TABLE_TABS;
-			case URI_CACHED_STATUSES:
+			case TABLE_ID_CACHED_STATUSES:
 				return TABLE_CACHED_STATUSES;
-			case URI_CACHED_HASHTAGS:
+			case TABLE_ID_CACHED_HASHTAGS:
 				return TABLE_CACHED_HASHTAGS;
 			default:
 				return null;
 		}
+	}
+
+	public static String getTableNameByUri(final Uri uri) {
+		if (uri == null) return null;
+		return getTableNameById(getTableId(uri));
 	}
 
 	public static List<TabSpec> getTabs(final Context context) {
@@ -1898,19 +1894,19 @@ public final class Utils implements Constants {
 	public static void notifyForUpdatedUri(final Context context, final Uri uri) {
 		if (context == null) return;
 		switch (getTableId(uri)) {
-			case URI_STATUSES: {
+			case TABLE_ID_STATUSES: {
 				context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED));
 				break;
 			}
-			case URI_MENTIONS: {
+			case TABLE_ID_MENTIONS: {
 				context.sendBroadcast(new Intent(BROADCAST_MENTIONS_DATABASE_UPDATED));
 				break;
 			}
-			case URI_DIRECT_MESSAGES_INBOX: {
+			case TABLE_ID_DIRECT_MESSAGES_INBOX: {
 				context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED));
 				break;
 			}
-			case URI_DIRECT_MESSAGES_OUTBOX: {
+			case TABLE_ID_DIRECT_MESSAGES_OUTBOX: {
 				context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED));
 				break;
 			}
