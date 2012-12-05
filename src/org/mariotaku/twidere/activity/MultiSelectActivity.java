@@ -132,7 +132,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 						continue;
 					}
 				}
-				resolver.delete(uri, Filters.Users.TEXT + " IN (" + ListUtils.toStringForSQL(names_list) + ")", null);
+				resolver.delete(uri, Filters.Users.TEXT + " IN (" + ListUtils.toStringForSQL(names_list.size()) + ")", names_list.toArray(new String[names_list.size()]));
 				for (final String screen_name : names_list) {
 					final ContentValues values = new ContentValues();
 					values.put(Filters.TEXT, screen_name);

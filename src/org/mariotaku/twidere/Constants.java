@@ -20,6 +20,7 @@
 package org.mariotaku.twidere;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -48,7 +49,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 31;
+	public static final int DATABASES_VERSION = 32;
 
 	// Following 4 consants are not included in source code.
 	public static final String TWITTER_CONSUMER_KEY = PrivateConstants.TWITTER_CONSUMER_KEY;
@@ -429,6 +430,7 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_STATUSES = Statuses.CONTENT_PATH;
 	public static final String TABLE_MENTIONS = Mentions.CONTENT_PATH;
 	public static final String TABLE_DRAFTS = Drafts.CONTENT_PATH;
+	public static final String TABLE_CACHED_HASHTAGS = CachedHashtags.CONTENT_PATH;
 	public static final String TABLE_CACHED_USERS = CachedUsers.CONTENT_PATH;
 	public static final String TABLE_CACHED_STATUSES = CachedStatuses.CONTENT_PATH;
 	public static final String TABLE_FILTERED_USERS = Filters.Users.CONTENT_PATH;
@@ -462,6 +464,7 @@ public interface Constants extends TwitterConstants {
 	public static final int URI_TABS = 18;
 	public static final int URI_NOTIFICATIONS = 19;
 	public static final int URI_CACHED_STATUSES = 20;
+	public static final int URI_CACHED_HASHTAGS = 21;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;

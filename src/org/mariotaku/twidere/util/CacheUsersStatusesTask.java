@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -32,6 +33,7 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import com.twitter.Extractor;
 
 public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 
@@ -55,6 +57,10 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 	protected Void doInBackground(final Void... args) {
 		final List<ContentValues> cached_users_list = new ArrayList<ContentValues>();
 		final List<Long> user_ids = new ArrayList<Long>(), status_ids = new ArrayList<Long>();
+		final Extractor extractor = new Extractor();
+		final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
+		final ArrayList<String> hashtags = new ArrayList<String>();
+		
 		for (final ContentValues values : all_statuses) {
 			if (values == null) {
 				continue;
@@ -65,6 +71,13 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 				user_ids.add(user_id);
 				cached_users_list.add(makeCachedUserContentValues(values));
 			}
+			extractor.extractHashtags(values.getAsString(Statuses.TEXT_PLAIN));
+			
+		}
+		for (final String hashtag : hashtags) {
+			final ContentValues hashtag_value = new ContentValues();
+			hashtag_value.put(CachedHashtags.NAME, hashtag);
+			hashtag_values.add(hashtag_value);
 		}
 		resolver.delete(CachedUsers.CONTENT_URI,
 				CachedUsers.USER_ID + " IN (" + ListUtils.toString(user_ids, ',', true) + " )", null);
@@ -73,6 +86,8 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 		resolver.delete(CachedStatuses.CONTENT_URI,
 				CachedStatuses.STATUS_ID + " IN (" + ListUtils.toString(status_ids, ',', true) + " )", null);
 		resolver.bulkInsert(CachedStatuses.CONTENT_URI, all_statuses.toArray(new ContentValues[all_statuses.size()]));
+		resolver.delete(CachedHashtags.CONTENT_URI, CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")", hashtags.toArray(new String[hashtags.size()]));
+		resolver.bulkInsert(CachedHashtags.CONTENT_URI, hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 		return null;
 	}
 

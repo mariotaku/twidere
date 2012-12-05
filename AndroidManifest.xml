@@ -425,8 +425,8 @@
 
 		<service
 			android:name=".service.TwidereService"
-			android:permission="org.mariotaku.twidere.ACCESS_SERVICE"
-			android:settingsActivity=".activity.SettingsActivity">
+			android:settingsActivity=".activity.SettingsActivity"
+			android:exported="false">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SERVICE"/>
 

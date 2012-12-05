@@ -101,6 +101,7 @@ import android.widget.Toast;
 import com.twitter.Validator;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 public class TwidereService extends Service implements Constants {
 
@@ -111,6 +112,7 @@ public class TwidereService extends Service implements Constants {
 	private NotificationManager mNotificationManager;
 	private AlarmManager mAlarmManager;
 	private ContentResolver mResolver;
+	private TwitterWrapper mTwitterWrapper;
 
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 	private int mGetReceivedDirectMessagesTaskId, mGetSentDirectMessagesTaskId;
@@ -310,7 +312,9 @@ public class TwidereService extends Service implements Constants {
 		super.onCreate();
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-		mAsyncTaskManager = ((TwidereApplication) getApplication()).getAsyncTaskManager();
+		final TwidereApplication app = TwidereApplication.getInstance(this);
+		mAsyncTaskManager = app.getAsyncTaskManager();
+		mTwitterWrapper = app.getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mResolver = getContentResolver();
 		mPendingRefreshHomeTimelineIntent = PendingIntent.getBroadcast(this, 0, new Intent(
@@ -324,7 +328,6 @@ public class TwidereService extends Service implements Constants {
 		filter.addAction(BROADCAST_REFRESH_MENTIONS);
 		filter.addAction(BROADCAST_REFRESH_DIRECT_MESSAGES);
 		registerReceiver(mStateReceiver, filter);
-
 		startAutoRefresh();
 	}
 
@@ -434,16 +437,14 @@ public class TwidereService extends Service implements Constants {
 
 	public int updateStatus(final long[] account_ids, final String content, final ParcelableLocation location,
 			final Uri image_uri, final long in_reply_to, final boolean delete_image) {
-		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to,
+		return mTwitterWrapper.updateStatus(account_ids, content, location, image_uri, in_reply_to,
 				delete_image);
-		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int updateUserListDetails(final long account_id, final int list_id, final boolean is_public,
 			final String name, final String description) {
-		final UpdateUserListDetailsTask task = new UpdateUserListDetailsTask(account_id, list_id, is_public, name,
+		return mTwitterWrapper.updateUserListDetails(account_id, list_id, is_public, name,
 				description);
-		return mAsyncTaskManager.add(task, true);
 	}
 
 	private Notification buildNotification(final String title, final String message, final int icon,

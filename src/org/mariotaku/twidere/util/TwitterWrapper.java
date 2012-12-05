@@ -48,6 +48,7 @@ import org.mariotaku.twidere.model.ListResponse;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore;
+import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -83,9 +84,12 @@ import android.widget.Toast;
 import com.twitter.Validator;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
+import com.twitter.Extractor;
 
 public class TwitterWrapper implements Constants {
 
+ 	private static TwitterWrapper sInstance;
+ 
 	private final Context context;
 	private final AsyncTaskManager mAsyncTaskManager;
 	private final SharedPreferences mPreferences;
@@ -197,6 +201,18 @@ public class TwitterWrapper implements Constants {
 		mAsyncTaskManager.cancel(mGetLocalTrendsTaskId);
 		final GetLocalTrendsTask task = new GetLocalTrendsTask(account_id, woeid);
 		return mGetLocalTrendsTaskId = mAsyncTaskManager.add(task, true);
+	}
+
+	public int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+		mAsyncTaskManager.cancel(mGetMentionsTaskId);
+		final GetMentionsTask task = new GetMentionsTask(account_ids, max_ids, since_ids);
+		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
+	}
+
+	public int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+		mAsyncTaskManager.cancel(mGetReceivedDirectMessagesTaskId);
+		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_ids, max_ids, since_ids);
+		return mGetReceivedDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
 	public int getSentDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
@@ -334,22 +350,15 @@ public class TwitterWrapper implements Constants {
 		return builder.build();
 	}
 
-	private int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		mAsyncTaskManager.cancel(mGetMentionsTaskId);
-		final GetMentionsTask task = new GetMentionsTask(account_ids, max_ids, since_ids);
-		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
-	}
-
-	private int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		mAsyncTaskManager.cancel(mGetReceivedDirectMessagesTaskId);
-		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_ids, max_ids, since_ids);
-		return mGetReceivedDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
-	}
-
 	private void showErrorToast(final int action_res, final Exception e, final boolean long_message) {
 		Utils.showErrorToast(context, context.getString(action_res), e, long_message);
 	}
 
+	public static TwitterWrapper getInstance(final Context context) {
+		if (sInstance != null) return sInstance;
+		return sInstance = new TwitterWrapper(context);
+	}
+	
 	class AddUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
 
 		private final long account_id, user_id;
@@ -2089,6 +2098,17 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected List<SingleResponse<twitter4j.Status>> doInBackground(final Void... params) {
 
+			final Extractor extractor = new Extractor();
+			final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
+			final List<String> hashtags = extractor.extractHashtags(content);
+			for (final String hashtag : hashtags) {
+				final ContentValues values = new ContentValues();
+				values.put(CachedHashtags.NAME, hashtag);
+				hashtag_values.add(values);
+			}
+			mResolver.delete(CachedHashtags.CONTENT_URI, CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")", hashtags.toArray(new String[hashtags.size()]));
+			mResolver.bulkInsert(CachedHashtags.CONTENT_URI, hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
+			
 			final List<SingleResponse<twitter4j.Status>> result = new ArrayList<SingleResponse<twitter4j.Status>>();
 
 			if (account_ids.length == 0) return result;

@@ -97,8 +97,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	private SharedPreferences mPreferences;
 	private LazyImageLoader mProfileImageLoader;
 	
-	private final Handler mHandler = new Handler();
-
 	@Override
 	public int bulkInsert(final Uri uri, final ContentValues[] values) {
 		final String table = getTableNameForContentUri(uri);

@@ -44,7 +44,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 
 	public StatusComposeEditText(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		mAdapter = new UserAutoCompleteAdapter(context);
+		mAdapter = new UserAutoCompleteAdapter(this);
 		setTokenizer(new ScreenNameTokenizer());
 		setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		// Workaround to force auto complete and IME suggestions work.
@@ -55,7 +55,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		if (mAdapter == null || mAdapter.isCursorClosed()) {
-			mAdapter = new UserAutoCompleteAdapter(getContext());
+			mAdapter = new UserAutoCompleteAdapter(this);
 		}
 		setAdapter(mAdapter);
 	}
@@ -100,7 +100,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 				start++;
 			}
 
-			if (start < cursor && text.charAt(start) == '@') {
+			if (start < cursor && isToken(text.charAt(start))) {
 				start++;
 			} else {
 				start = cursor;
@@ -113,7 +113,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 		public CharSequence terminateToken(final CharSequence text) {
 			int i = text.length();
 
-			while (i > 0 && text.charAt(i - 1) == '@') {
+			while (i > 0 && isToken(text.charAt(i - 1))) {
 				i--;
 			}
 
@@ -127,6 +127,17 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 				} else
 					return text + " ";
 			}
+		}
+		
+		private static boolean isToken(final char character) {
+			switch (character) {
+				case '\uff20':
+				case '@':
+				case '\uff03':
+				case '#':
+					return true;			
+			}
+			return false;	
 		}
 	}
 }

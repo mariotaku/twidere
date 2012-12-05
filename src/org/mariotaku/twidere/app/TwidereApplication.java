@@ -39,6 +39,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import edu.ucdavis.earlybird.UCDService;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
@@ -46,6 +47,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
 	private ServiceInterface mServiceInterface;
+	private TwitterWrapper mTwitterWrapper;
 
 	private boolean mMultiSelectActive = false;
 
@@ -101,6 +103,10 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		}
 		return mServiceInterface = ServiceInterface.getInstance(this);
 	}
+	
+	public TwitterWrapper getTwitterWrapper() {
+		return mTwitterWrapper;
+	}
 
 	public boolean isDebugBuild() {
 		return DEBUG;
@@ -116,6 +122,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		super.onCreate();
 		mServiceInterface = ServiceInterface.getInstance(this);
+		mTwitterWrapper = TwitterWrapper.getInstance(this);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
 			startService(new Intent(this, UCDService.class));
 		}

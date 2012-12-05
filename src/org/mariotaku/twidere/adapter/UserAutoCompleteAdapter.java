@@ -24,9 +24,11 @@ import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.CachedValues;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.view.StatusComposeEditText;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -40,22 +42,33 @@ import android.widget.TextView;
 
 public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Constants {
 
-	private Cursor mCursor;
-
+	private static final String[] FROM = new String[0];
+	private static final int[] TO = new int[0];
+	
 	private final ContentResolver mResolver;
 	private final LazyImageLoader mProfileImageLoader;
 	private final SharedPreferences mPreferences;
-	private static final String[] FROM = new String[0];
-	private static final int[] TO = new int[0];
-
-	private int mProfileImageUrlIdx, mNameIdx, mScreenNameIdx;
-
-	private boolean mCursorClosed = false;
+	
+	private final StatusComposeEditText mEditText;
 
 	private final boolean mDisplayProfileImage, mDisplayHiResProfileImage;
+	
+	private Cursor mCursor;
+	private int mProfileImageUrlIdx, mNameIdx, mScreenNameIdx;
+	private char mToken = '@';
+
+	public UserAutoCompleteAdapter(final StatusComposeEditText view) {
+		this(view.getContext(), view);
+	}
+	
 
 	public UserAutoCompleteAdapter(final Context context) {
+		this(context, null);
+	}
+	
+	public UserAutoCompleteAdapter(final Context context, final StatusComposeEditText view) {
 		super(context, R.layout.user_autocomplete_list_item, null, FROM, TO, 0);
+		mEditText = view;
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = context.getContentResolver();
 		final Context app_context = context.getApplicationContext();
@@ -68,7 +81,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 
 	@Override
 	public void bindView(final View view, final Context context, final Cursor cursor) {
-		if (mCursorClosed) return;
+		if (isCursorClosed()) return;
 		final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 		final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
@@ -100,7 +113,6 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 
 	@Override
 	public void changeCursor(final Cursor cursor) {
-		if (mCursorClosed) return;
 		if (cursor != null) {
 			mNameIdx = cursor.getColumnIndex(CachedValues.NAME);
 			mScreenNameIdx = cursor.getColumnIndex(CachedUsers.SCREEN_NAME);
@@ -111,35 +123,58 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 	}
 
 	public void closeCursor() {
-		if (mCursor != null && !mCursor.isClosed()) {
+		if (mCursor == null) return;
+		if (!mCursor.isClosed()) {
 			mCursor.close();
 		}
 		mCursor = null;
-		mCursorClosed = true;
 	}
 
 	@Override
 	public CharSequence convertToString(final Cursor cursor) {
-		if (mCursorClosed) return null;
+		if (isCursorClosed()) return null;
 		return cursor.getString(mScreenNameIdx != -1 ? mScreenNameIdx : mNameIdx);
 	}
 
 	public boolean isCursorClosed() {
-		return mCursorClosed;
+		return mCursor == null || mCursor.isClosed();
 	}
 
 	@Override
-	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
-		if (mCursorClosed) return null;
-		final FilterQueryProvider filter = getFilterQueryProvider();
-		if (filter != null) return filter.runQuery(constraint);
-		final StringBuilder where = new StringBuilder();
-		constraint = constraint != null ? constraint.toString().replaceAll("_", "^_") : null;
-		where.append(CachedUsers.SCREEN_NAME + " LIKE '" + constraint + "%' ESCAPE '^'");
-		where.append(" OR ");
-		where.append(CachedUsers.NAME + " LIKE '" + constraint + "%' ESCAPE '^'");
-		return mResolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, constraint != null ? where.toString()
-				: null, null, null);
+	public Cursor runQueryOnBackgroundThread(final CharSequence constraint) {
+		char token = mToken;
+		if (mEditText != null && constraint != null) {
+			final CharSequence text = mEditText.getText();
+			token = text.charAt(mEditText.getSelectionEnd() - constraint.length() - 1);
+		}
+		if (isAtSign(token) == isAtSign(mToken)) {
+			final FilterQueryProvider filter = getFilterQueryProvider();
+			if (filter != null) return filter.runQuery(constraint);
+		}
+		mToken = token;
+		final CharSequence constraint_escaped = constraint != null ? constraint.toString().replaceAll("_", "^_") : null;
+		if (isAtSign(token)) {
+			final StringBuilder where = new StringBuilder();
+			where.append(CachedUsers.SCREEN_NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'");
+			where.append(" OR ");
+			where.append(CachedUsers.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'");
+			return mResolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, constraint_escaped != null ? where.toString()
+					: null, null, null);
+		} else {
+			final String where = CachedHashtags.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'";
+			return mResolver.query(CachedHashtags.CONTENT_URI, CachedHashtags.COLUMNS, constraint_escaped != null ? where : null,
+					null, null);
+		}
+	}
+	
+
+	private static boolean isAtSign(final char character) {
+		switch (character) {
+			case '\uff20':
+			case '@':
+				return true;			
+		}
+		return false;	
 	}
 
 }
