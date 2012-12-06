@@ -21,6 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
+import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredLinksFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredKeywordsFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredSourcesFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
@@ -56,6 +57,7 @@ public class FiltersListFragment extends BaseFragment implements Panes.Right {
 				mAdapter.addTab(FilteredUsersFragment.class, null, getString(R.string.users), null, 0);
 				mAdapter.addTab(FilteredKeywordsFragment.class, null, getString(R.string.keywords), null, 1);
 				mAdapter.addTab(FilteredSourcesFragment.class, null, getString(R.string.sources), null, 2);
+				mAdapter.addTab(FilteredLinksFragment.class, null, getString(R.string.links), null, 3);
 				mViewPager.setAdapter(mAdapter);
 				mIndicator.setViewPager(mViewPager);
 				mIndicator.setDisplayLabel(true);

@@ -486,6 +486,13 @@ public final class TweetStore implements Constants {
 					CONTENT_PATH);
 		}
 
+		public static interface Links extends Filters {
+
+			public static final String CONTENT_PATH = "filtered_links";
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+					CONTENT_PATH);
+		}
+
 		public static interface Sources extends Filters {
 
 			public static final String CONTENT_PATH = "filtered_sources";

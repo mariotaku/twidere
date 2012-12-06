@@ -197,6 +197,7 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_USERS, TABLE_ID_FILTERED_USERS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_KEYWORDS, TABLE_ID_FILTERED_KEYWORDS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_SOURCES, TABLE_ID_FILTERED_SOURCES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_FILTERED_LINKS, TABLE_ID_FILTERED_LINKS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES, TABLE_ID_DIRECT_MESSAGES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DIRECT_MESSAGES_INBOX,
 				TABLE_ID_DIRECT_MESSAGES_INBOX);
@@ -382,8 +383,16 @@ public final class Utils implements Constants {
 				+ Filters.Keywords.TEXT + "||'%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
+		builder.append(" UNION ");
+		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
+				+ TABLE_FILTERED_LINKS);
+		builder.append(" WHERE " + table + "." + Statuses.TEXT + " LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS + "."
+				+ Filters.Links.TEXT + "||'%\">%'");
+		builder.append(" OR " + table + "." + Statuses.TEXT + " LIKE '%>%'||" + TABLE_FILTERED_LINKS + "."
+				+ Filters.Links.TEXT + "||'%</a>%'");
+		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
+		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" )");
-
 		return builder.toString();
 	}
 
@@ -1403,6 +1412,8 @@ public final class Utils implements Constants {
 				return TABLE_FILTERED_KEYWORDS;
 			case TABLE_ID_FILTERED_SOURCES:
 				return TABLE_FILTERED_SOURCES;
+			case TABLE_ID_FILTERED_LINKS:
+				return TABLE_FILTERED_LINKS;
 			case TABLE_ID_DIRECT_MESSAGES_INBOX:
 				return TABLE_DIRECT_MESSAGES_INBOX;
 			case TABLE_ID_DIRECT_MESSAGES_OUTBOX:

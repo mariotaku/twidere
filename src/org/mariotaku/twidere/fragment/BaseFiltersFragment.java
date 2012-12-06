@@ -187,6 +187,20 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 	}
 
+	public static final class FilteredLinksFragment extends BaseFiltersFragment {
+
+		@Override
+		public String[] getContentColumns() {
+			return Filters.Links.COLUMNS;
+		}
+
+		@Override
+		public Uri getContentUri() {
+			return Filters.Links.CONTENT_URI;
+		}
+
+	}
+	
 	public static final class FilteredKeywordsFragment extends BaseFiltersFragment {
 
 		@Override

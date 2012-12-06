@@ -381,5 +381,6 @@
 	<string name="amount_usd">Amount (USD)</string>
 	<string name="donate">Donate</string>
 	<string name="hashtag">Hashtag</string>
+	<string name="links">Links</string>
 
 </resources>

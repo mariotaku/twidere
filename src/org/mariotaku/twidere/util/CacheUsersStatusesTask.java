@@ -71,8 +71,7 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 				user_ids.add(user_id);
 				cached_users_list.add(makeCachedUserContentValues(values));
 			}
-			extractor.extractHashtags(values.getAsString(Statuses.TEXT_PLAIN));
-			
+			hashtags.addAll(extractor.extractHashtags(values.getAsString(Statuses.TEXT_PLAIN)));
 		}
 		for (final String hashtag : hashtags) {
 			final ContentValues hashtag_value = new ContentValues();

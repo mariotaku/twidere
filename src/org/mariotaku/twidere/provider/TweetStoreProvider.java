@@ -379,7 +379,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_CACHED_USERS:
 			case TABLE_ID_FILTERED_USERS:
 			case TABLE_ID_FILTERED_KEYWORDS:
-			case TABLE_ID_FILTERED_SOURCES:			
+			case TABLE_ID_FILTERED_SOURCES:
+			case TABLE_ID_FILTERED_LINKS:
 			case TABLE_ID_TRENDS_LOCAL:
 			case TABLE_ID_CACHED_STATUSES:
 			case TABLE_ID_CACHED_HASHTAGS: {
@@ -415,7 +416,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_CACHED_USERS:
 			case TABLE_ID_FILTERED_USERS:
 			case TABLE_ID_FILTERED_KEYWORDS:
-			case TABLE_ID_FILTERED_SOURCES:			
+			case TABLE_ID_FILTERED_SOURCES:
+			case TABLE_ID_FILTERED_LINKS:	
 			case TABLE_ID_TRENDS_LOCAL:
 			case TABLE_ID_CACHED_STATUSES:
 			case TABLE_ID_CACHED_HASHTAGS: {
@@ -474,6 +476,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				context.sendBroadcast(new Intent(BROADCAST_TABS_UPDATED));
 				break;
 			}
+			case TABLE_ID_FILTERED_LINKS:
 			case TABLE_ID_FILTERED_USERS:
 			case TABLE_ID_FILTERED_KEYWORDS:
 			case TABLE_ID_FILTERED_SOURCES: {

@@ -49,9 +49,9 @@ public interface Constants extends TwitterConstants {
 	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 32;
+	public static final int DATABASES_VERSION = 33;
 
-	// Following 4 consants are not included in source code.
+	// The following 4 constants are not included in source code, you'd better use your own.
 	public static final String TWITTER_CONSUMER_KEY = PrivateConstants.TWITTER_CONSUMER_KEY;
 	public static final String TWITTER_CONSUMER_SECRET = PrivateConstants.TWITTER_CONSUMER_SECRET;
 	public static final String GOOGLE_MAPS_API_KEY_RELEASE = PrivateConstants.GOOGLE_MAPS_API_KEY_RELEASE;
@@ -436,6 +436,7 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_FILTERED_USERS = Filters.Users.CONTENT_PATH;
 	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.CONTENT_PATH;
 	public static final String TABLE_FILTERED_SOURCES = Filters.Sources.CONTENT_PATH;
+	public static final String TABLE_FILTERED_LINKS = Filters.Links.CONTENT_PATH;
 	public static final String TABLE_DIRECT_MESSAGES = DirectMessages.CONTENT_PATH;
 	public static final String TABLE_DIRECT_MESSAGES_INBOX = DirectMessages.Inbox.CONTENT_PATH;
 	public static final String TABLE_DIRECT_MESSAGES_OUTBOX = DirectMessages.Outbox.CONTENT_PATH;
@@ -458,6 +459,7 @@ public interface Constants extends TwitterConstants {
 	public static final int TABLE_ID_FILTERED_USERS = 21;
 	public static final int TABLE_ID_FILTERED_KEYWORDS = 22;
 	public static final int TABLE_ID_FILTERED_SOURCES = 23;
+	public static final int TABLE_ID_FILTERED_LINKS = 24;
 	public static final int TABLE_ID_TRENDS_LOCAL = 31;	
 	public static final int TABLE_ID_DRAFTS = 41;
 	public static final int TABLE_ID_TABS = 42;	
