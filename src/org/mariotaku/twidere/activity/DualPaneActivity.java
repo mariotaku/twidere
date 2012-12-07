@@ -57,7 +57,13 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 	public final boolean isDualPaneMode() {
 		return findViewById(PANE_LEFT) instanceof ViewGroup && findViewById(PANE_RIGHT) instanceof ViewGroup;
 	}
-
+	
+	public final boolean isRightPaneUsed() {
+		final FragmentManager fm = getSupportFragmentManager();
+		final Fragment right_pane_fragment = fm.findFragmentById(PANE_RIGHT);
+		return right_pane_fragment != null && right_pane_fragment.isAdded();
+	}
+	
 	@Override
 	public void onBackStackChanged() {
 		if (isDualPaneMode()) {

@@ -113,7 +113,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 				if (isDualPaneMode()) {
 					final int count = fm.getBackStackEntryCount();
 					if (count == 0) {
-						NavUtils.navigateUpFromSameTask(this);
+						//NavUtils.navigateUpFromSameTask(this);
+						onBackPressed();
 					} else if (!FragmentManagerTrojan.isStateSaved(fm)) {
 						for (int i = 0; i < count; i++) {
 							fm.popBackStackImmediate();
@@ -121,7 +122,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						setSupportProgressBarIndeterminateVisibility(false);
 					}
 				} else {
-					NavUtils.navigateUpFromSameTask(this);
+					//NavUtils.navigateUpFromSameTask(this);
+					onBackPressed();
 				}
 				break;
 			}

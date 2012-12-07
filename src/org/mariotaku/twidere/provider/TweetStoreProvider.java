@@ -649,4 +649,11 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		}
 	}
 
+	void handleCommandCall() {
+		try {
+			// something blah blah blah
+		} catch (final RuntimeException e) {
+			throw new IllegalArgumentException("This method cannot be called from non-UI thread");
+		}
+	}
 }

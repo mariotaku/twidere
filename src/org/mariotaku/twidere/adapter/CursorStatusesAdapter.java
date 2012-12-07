@@ -361,5 +361,17 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		}
 		return super.swapCursor(cursor);
 	}
+	
+	static class TimeSpec {
+		
+		long time;
+		TimeSpec(long time) {
+			this.time = time;
+		}
+		
+		public String toString() {
+			return getRelativeTimeSpanString(time).toString();
+		}
+	}
 
 }

@@ -208,7 +208,6 @@ public interface Constants extends TwitterConstants {
 
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 
-	public static final String INTENT_ACTION_SERVICE = INTENT_PACKAGE_PREFIX + "SERVICE";
 	public static final String INTENT_ACTION_HOME = INTENT_PACKAGE_PREFIX + "HOME";
 	public static final String INTENT_ACTION_COMPOSE = INTENT_PACKAGE_PREFIX + "COMPOSE";
 	public static final String INTENT_ACTION_SETTINGS = INTENT_PACKAGE_PREFIX + "SETTINGS";

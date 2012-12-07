@@ -21,6 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.ActivityHostFragment;
 import org.mariotaku.twidere.util.OnBackPressedAccessor;
 
 import android.app.Activity;
@@ -35,8 +36,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.os.Handler;
 
-public class InternalSettingsDetailsActivity extends PreferenceActivity implements Constants {
+public class InternalSettingsDetailsActivity extends PreferenceActivity implements Constants, ActivityHostFragment.FragmentCallback {
+
+ 	private ActivityHostFragment mCallbackFragment;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -67,6 +71,26 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 		return super.onKeyUp(keyCode, event);
 	}
 
+	@Override
+	public void ontTitleChanged(final CharSequence title, final int color) {
+		super.onTitleChanged(title, color);
+		if (mCallbackFragment == null) return;
+		final Activity activity = mCallbackFragment.getActivity();
+		if (activity instanceof SettingsDetailsActivity) {
+			activity.setTitle(title);
+		}
+	}
+
+	@Override
+	public void setCallbackFragment(final ActivityHostFragment fragment) {
+		mCallbackFragment = fragment;
+		if (mCallbackFragment == null) return;
+		final Activity activity = mCallbackFragment.getActivity();
+		if (activity instanceof SettingsDetailsActivity) {
+			activity.setTitle(getTitle());
+		}
+	}
+	
 	@Override
 	public void setContentView(final int layoutRes) {
 		setContentView(null);

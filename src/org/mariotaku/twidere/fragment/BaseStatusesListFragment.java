@@ -141,6 +141,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		setListAdapter(mAdapter);
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemLongClickListener(this);
+		mListView.setFastScrollEnabled(true);
 		setMode(Mode.BOTH);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);

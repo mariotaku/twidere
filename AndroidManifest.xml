@@ -308,7 +308,7 @@
 		<activity
 			android:name=".activity.SettingsDetailsActivity"
 			android:label="@string/settings"
-			android:theme="@style/Theme.Blank"/>
+			android:theme="@style/Theme.Blank.DialogWhenLarge"/>
 		<activity
 			android:name=".activity.InternalSettingsActivity"
 			android:label="@string/settings"/>

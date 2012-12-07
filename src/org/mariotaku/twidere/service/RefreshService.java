@@ -162,7 +162,7 @@ public class RefreshService extends Service implements Constants {
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
 			// Auto refresh enabled, so I will try to start service after it was
 			// stopped.
-			startService(new Intent(INTENT_ACTION_SERVICE));
+			startService(new Intent(this, getClass()));
 		}
 		super.onDestroy();
 	}

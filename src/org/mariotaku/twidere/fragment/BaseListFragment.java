@@ -96,6 +96,12 @@ public class BaseListFragment extends ListFragment implements Constants {
 	public boolean isActivityFirstCreated() {
 		return mActivityFirstCreated;
 	}
+	
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		//getView().setClickable(true);
+	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {

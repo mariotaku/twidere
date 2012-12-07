@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
+import android.os.Build;
 
 @SuppressLint("Registered")
 public class ActionBarFragmentActivity extends FragmentActivity {
@@ -31,11 +32,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	}
 
 	public ActionBar getSupportActionBar() {
-		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
-			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
-		}
 		return mActionBarCompat.getActionBar();
-
 	}
 
 	public void invalidateSupportOptionsMenu() {
@@ -64,6 +61,13 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		}
 		super.onBackPressed();
 	}
+	
+	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		initActionBar();
+		checkActionBar();
+	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -73,12 +77,6 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 	}
 
-	/**
-	 * Base action bar-aware implementation for
-	 * {@link Activity#onCreateOptionsMenu(android.view.Menu)}.
-	 * 
-	 * Note: marking menu items as invisible/visible is not currently supported.
-	 */
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
@@ -92,14 +90,6 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 			retValue = true;
 		}
 		return retValue;
-	}
-
-	@Override
-	public void onPostCreate(final Bundle savedInstanceState) {
-		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
-			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
-		}
-		super.onPostCreate(savedInstanceState);
 	}
 
 	@Override
@@ -137,39 +127,6 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		}
 	}
 
-	@Override
-	public void setContentView(final int layoutResID) {
-		super.setContentView(layoutResID);
-		if (!mActionBarCompat.isAvailable()) {
-			mActionBarCompat = new ActionBarCompatBase(this);
-		}
-		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
-			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
-		}
-	}
-
-	@Override
-	public void setContentView(final View view) {
-		super.setContentView(view);
-		if (!mActionBarCompat.isAvailable()) {
-			mActionBarCompat = new ActionBarCompatBase(this);
-		}
-		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
-			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
-		}
-	}
-
-	@Override
-	public void setContentView(final View view, final LayoutParams params) {
-		super.setContentView(view, params);
-		if (!mActionBarCompat.isAvailable()) {
-			mActionBarCompat = new ActionBarCompatBase(this);
-		}
-		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
-			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
-		}
-	}
-
 	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			((ActionBarCompatBase) mActionBarCompat).setProgressBarIndeterminateVisibility(visible);
@@ -179,10 +136,23 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	}
 
 	public final ActionMode startActionMode(final ActionMode.Callback callback) {
-		if (mActionBarCompat instanceof ActionBarCompatBase)
-			return mActionModeCompat = new ActionModeCompat((ActionBarCompatBase) mActionBarCompat, callback);
-		else
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 			return new ActionModeNative(this, callback);
+		else
+			return mActionModeCompat = new ActionModeCompat((ActionBarCompatBase) mActionBarCompat, callback);
+	}
+	
+	private void checkActionBar() {
+		if (!mActionBarCompat.isAvailable()) {
+			mActionBarCompat = new ActionBarCompatBase(this);
+			initActionBar();
+		}
 	}
 
+	private void initActionBar() {
+		if (mActionBarCompat instanceof ActionBarCompatBase && !mActionBarInitialized) {
+			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
+		}
+	}
+	
 }
