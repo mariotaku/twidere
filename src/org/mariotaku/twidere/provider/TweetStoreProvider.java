@@ -49,7 +49,6 @@ import org.mariotaku.twidere.util.DatabaseHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.PermissionManager;
-import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -83,7 +82,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	private SharedPreferences mPreferences;
 	private LazyImageLoader mProfileImageLoader;
 	private PackageManager mPackageManager;
-	private TwitterWrapper mTwitterWrapper;
 
 	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
 
@@ -244,7 +242,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		mProfileImageLoader = app.getProfileImageLoader();
 		mPermissionManager = new PermissionManager(mContext);
 		mPackageManager = mContext.getPackageManager();
-		mTwitterWrapper = app.getTwitterWrapper();
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTART);
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);

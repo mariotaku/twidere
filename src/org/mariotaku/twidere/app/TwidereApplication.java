@@ -18,6 +18,8 @@
  */
 
 package org.mariotaku.twidere.app;
+ 
+import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 
 import java.util.ArrayList;
 
@@ -40,6 +42,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import edu.ucdavis.earlybird.UCDService;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.TwitterWrapper;
+import android.net.ConnectivityManager;
+import org.mariotaku.twidere.util.Utils;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
@@ -137,7 +141,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		if (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key)) {
 			final Intent intent = new Intent(this, RefreshService.class);
 			stopService(intent);
-			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false) && hasActiveConnection(this)) {
 				startService(intent);
 			}
 		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_CONNECTION_TIMEOUT.equals(key)) {

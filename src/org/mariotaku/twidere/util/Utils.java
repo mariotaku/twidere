@@ -179,6 +179,7 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
 import android.os.BatteryManager;
+import android.content.pm.ResolveInfo;
 
 public final class Utils implements Constants {
 
@@ -2607,6 +2608,12 @@ public final class Utils implements Constants {
 				icon.clearColorFilter();
 				favorite.setTitle(R.string.favorite);
 			}
+		}
+		final MenuItem extensions = menu.findItem(MENU_EXTENSIONS);
+		if (extensions != null) {
+			final PackageManager pm = context.getPackageManager();
+			final List<ResolveInfo> activities = pm.queryIntentActivities(new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS), 0);
+			extensions.setVisible(activities.size() > 0);
 		}
 	}
 
