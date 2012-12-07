@@ -36,11 +36,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.os.Handler;
 
-public class InternalSettingsDetailsActivity extends PreferenceActivity implements Constants, ActivityHostFragment.FragmentCallback {
+public class InternalSettingsDetailsActivity extends PreferenceActivity implements Constants,
+		ActivityHostFragment.FragmentCallback<InternalSettingsDetailsActivity> {
 
- 	private ActivityHostFragment mCallbackFragment;
+	private ActivityHostFragment<InternalSettingsDetailsActivity> mCallbackFragment;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -72,7 +72,7 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 	}
 
 	@Override
-	public void ontTitleChanged(final CharSequence title, final int color) {
+	public void onTitleChanged(final CharSequence title, final int color) {
 		super.onTitleChanged(title, color);
 		if (mCallbackFragment == null) return;
 		final Activity activity = mCallbackFragment.getActivity();
@@ -82,7 +82,7 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 	}
 
 	@Override
-	public void setCallbackFragment(final ActivityHostFragment fragment) {
+	public void setCallbackFragment(final ActivityHostFragment<InternalSettingsDetailsActivity> fragment) {
 		mCallbackFragment = fragment;
 		if (mCallbackFragment == null) return;
 		final Activity activity = mCallbackFragment.getActivity();
@@ -90,7 +90,7 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 			activity.setTitle(getTitle());
 		}
 	}
-	
+
 	@Override
 	public void setContentView(final int layoutRes) {
 		setContentView(null);

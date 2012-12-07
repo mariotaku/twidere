@@ -572,7 +572,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 					mUnsavedTweetDialogFragment.setArguments(args);
 					mUnsavedTweetDialogFragment.show(getSupportFragmentManager(), "unsaved_tweet");
 				} else {
-					//NavUtils.navigateUpFromSameTask(this);
+					// NavUtils.navigateUpFromSameTask(this);
 					onBackPressed();
 				}
 				break;
@@ -866,7 +866,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			super.onActivityCreated(savedInstanceState);
 			final Bundle args = getArguments();
 			if (args != null) {
-				//mIsNavigateUp = args.getBoolean(INTENT_KEY_IS_NAVIGATE_UP);
+				// mIsNavigateUp = args.getBoolean(INTENT_KEY_IS_NAVIGATE_UP);
 			}
 		}
 

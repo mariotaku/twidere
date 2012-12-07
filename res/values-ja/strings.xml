@@ -194,10 +194,10 @@
   <string name="type_to_compose">メッセージを入力</string>
   <string name="Ntweets_quantity_one">新しいツイートが一件あります。</string>
   <string name="Ntweets_quantity_other">新しいツイートが <xliff:g id="items">%d</xliff:g>+ 件あります。</string>
-  <string name="Nmentions_quantity_one">自分宛ツイートがあります。</string>
-  <string name="Nmentions_quantity_other">自分宛ツイートが <xliff:g id="items">%d</xliff:g>+ 件あります。</string>
-  <string name="Ndirect_messages_quantity_one">新着DMが一件あります。</string>
-  <string name="Ndirect_messages_quantity_other">新着DMが <xliff:g id="items"> %d </xliff:g>+ 件あります。</string>
+  
+  
+  
+  
   <string name="item_1_minute">1分</string>
   <string name="item_5_minutes">5分</string>
   <string name="item_10_minutes">10分</string>

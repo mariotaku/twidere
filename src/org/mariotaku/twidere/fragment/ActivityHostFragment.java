@@ -70,7 +70,7 @@ public abstract class ActivityHostFragment<A extends Activity> extends LocalActi
 			try {
 				mAttachedActivity = (A) context;
 				if (context instanceof FragmentCallback) {
-					((FragmentCallback) context).setCallbackFragment(this);
+					((FragmentCallback<A>) context).setCallbackFragment(this);
 				}
 			} catch (final ClassCastException e) {
 				// This should't happen.
@@ -119,9 +119,9 @@ public abstract class ActivityHostFragment<A extends Activity> extends LocalActi
 
 	protected abstract Class<A> getActivityClass();
 
-	public static interface FragmentCallback {
+	public static interface FragmentCallback<A extends Activity> {
 
-		void setCallbackFragment(ActivityHostFragment fragment);
+		void setCallbackFragment(ActivityHostFragment<A> fragment);
 
 	}
 }

@@ -186,8 +186,8 @@
 	<string name="list_subscribers">구독자 목록</string>
 	<string name="type_to_compose">작성 유형</string>
 	<string name="Ntweets_quantity_one">새로운 트윗이 있습니다.</string>
-	<string name="Nmentions_quantity_one">어떤 이의 멘션이 있습니다.</string>
-	<string name="Ndirect_messages_quantity_one">새로운 다이렉트 메시지가 있습니다.</string>
+	
+	
 	<string name="item_1_minute">1분</string>
 	<string name="item_5_minutes">5분</string>
 	<string name="item_10_minutes">10분</string>

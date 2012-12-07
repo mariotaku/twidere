@@ -148,6 +148,7 @@ import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -164,6 +165,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -178,8 +180,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
-import android.os.BatteryManager;
-import android.content.pm.ResolveInfo;
 
 public final class Utils implements Constants {
 
@@ -212,7 +212,8 @@ public final class Utils implements Constants {
 				TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, TABLE_ID_TRENDS_LOCAL);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TABS, TABLE_ID_TABS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#", VIRTUAL_TABLE_ID_NOTIFICATIONS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#",
+				VIRTUAL_TABLE_ID_NOTIFICATIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_STATUSES, TABLE_ID_CACHED_STATUSES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_HASHTAGS, TABLE_ID_CACHED_HASHTAGS);
 
@@ -385,8 +386,7 @@ public final class Utils implements Constants {
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
-		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
-				+ TABLE_FILTERED_LINKS);
+		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", " + TABLE_FILTERED_LINKS);
 		builder.append(" WHERE " + table + "." + Statuses.TEXT + " LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS + "."
 				+ Filters.Links.TEXT + "||'%\">%'");
 		builder.append(" OR " + table + "." + Statuses.TEXT + " LIKE '%>%'||" + TABLE_FILTERED_LINKS + "."
@@ -602,6 +602,7 @@ public final class Utils implements Constants {
 		return builder.build();
 	}
 
+	@SuppressWarnings("deprecation")
 	public static String formatSameDayTime(final Context context, final long timestamp) {
 		if (context == null) return null;
 		if (DateUtils.isToday(timestamp))
@@ -620,6 +621,7 @@ public final class Utils implements Constants {
 		return builder.build();
 	}
 
+	@SuppressWarnings("deprecation")
 	public static String formatTimeStampString(final Context context, final long timestamp) {
 		if (context == null) return null;
 		final Time then = new Time();
@@ -646,6 +648,7 @@ public final class Utils implements Constants {
 		return formatTimeStampString(context, Date.parse(date_time));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static String formatToLongTimeString(final Context context, final long timestamp) {
 		if (context == null) return null;
 		final Time then = new Time();
@@ -1394,7 +1397,7 @@ public final class Utils implements Constants {
 		if (uri == null) return -1;
 		return CONTENT_PROVIDER_URI_MATCHER.match(uri);
 	}
-	
+
 	public static String getTableNameById(final int id) {
 		switch (id) {
 			case TABLE_ID_ACCOUNTS:
@@ -2612,7 +2615,8 @@ public final class Utils implements Constants {
 		final MenuItem extensions = menu.findItem(MENU_EXTENSIONS);
 		if (extensions != null) {
 			final PackageManager pm = context.getPackageManager();
-			final List<ResolveInfo> activities = pm.queryIntentActivities(new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS), 0);
+			final List<ResolveInfo> activities = pm.queryIntentActivities(new Intent(
+					INTENT_ACTION_EXTENSION_OPEN_STATUS), 0);
 			extensions.setVisible(activities.size() > 0);
 		}
 	}
@@ -2682,6 +2686,7 @@ public final class Utils implements Constants {
 		toast.show();
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void showErrorToast(final Context context, final String action, final Throwable t,
 			final boolean long_message) {
 		if (context == null) return;

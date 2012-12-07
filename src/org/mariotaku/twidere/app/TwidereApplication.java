@@ -18,7 +18,7 @@
  */
 
 package org.mariotaku.twidere.app;
- 
+
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 
 import java.util.ArrayList;
@@ -27,10 +27,12 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.imageloader.ImageLoaderUtils;
 
 import twitter4j.http.HostAddressResolver;
@@ -40,10 +42,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import edu.ucdavis.earlybird.UCDService;
-import org.mariotaku.twidere.service.RefreshService;
-import org.mariotaku.twidere.util.TwitterWrapper;
-import android.net.ConnectivityManager;
-import org.mariotaku.twidere.util.Utils;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 

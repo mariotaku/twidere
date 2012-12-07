@@ -34,16 +34,16 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
-import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
 import twitter4j.Twitter;
@@ -436,7 +436,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		private long mAccountId;
 		private TwitterWrapper mTwitterWrapper;
 		private int mListId;
-		private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
+		private AutoCompleteAdapter mUserAutoCompleteAdapter;
 
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
@@ -467,7 +467,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			if (mText != null) {
 				mEditText.setText(mText);
 			}
-			mUserAutoCompleteAdapter = new UserAutoCompleteAdapter(getActivity());
+			mUserAutoCompleteAdapter = new AutoCompleteAdapter(getActivity());
 			mEditText.setAdapter(mUserAutoCompleteAdapter);
 			mEditText.setThreshold(1);
 			mEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) });

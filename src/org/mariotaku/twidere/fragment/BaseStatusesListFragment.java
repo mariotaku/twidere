@@ -38,8 +38,8 @@ import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
+import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

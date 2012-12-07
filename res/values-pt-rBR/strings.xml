@@ -210,10 +210,10 @@
   <string name="lists_following_user">Listas seguindo este usuário</string>
   <string name="Ntweets_quantity_one">Você tem um novo tweet.</string>
   <string name="Ntweets_quantity_other">Você tem <xliff:g id="items">%d</xliff:g> novos tweets.</string>
-  <string name="Nmentions_quantity_one">Alguém mencionou você.</string>
-  <string name="Nmentions_quantity_other">Você tem <xliff:g id="items">%d</xliff:g> menções.</string>
-  <string name="Ndirect_messages_quantity_one">Você tem uma nova mensagem direta.</string>
-  <string name="Ndirect_messages_quantity_other">Você tem <xliff:g id="items">%d</xliff:g> mensagens diretas.</string>
+  
+  
+  
+  
   <string name="item_1_minute">1 minuto</string>
   <string name="item_3_minutes">3 minutos</string>
   <string name="item_5_minutes">5 minutos</string>

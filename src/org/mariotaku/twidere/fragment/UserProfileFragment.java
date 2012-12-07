@@ -68,9 +68,9 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
 import twitter4j.Relationship;

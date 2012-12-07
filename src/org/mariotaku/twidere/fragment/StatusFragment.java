@@ -60,9 +60,9 @@ import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
 

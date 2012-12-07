@@ -41,8 +41,8 @@ import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.SetHomeButtonEnabledAccessor;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
 

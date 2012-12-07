@@ -199,10 +199,10 @@
   <string name="list_subscribers">Список подписчиков</string>
   <string name="Ntweets_quantity_one">У вас есть новый твит.</string>
   <string name="Ntweets_quantity_other">У вас <xliff:g id="items">%d</xliff:g> новых твитов</string>
-  <string name="Nmentions_quantity_one">Кто-то упомянул вас.</string>
-  <string name="Nmentions_quantity_other">У вас <xliff:g id="items">%d</xliff:g> упоминаний</string>
-  <string name="Ndirect_messages_quantity_one">У вас новое личное сообщение.</string>
-  <string name="Ndirect_messages_quantity_other">У вас <xliff:g id="items">%d</xliff:g> новых личных сообщений</string>
+  
+  
+  
+  
   <string name="item_1_minute">1 минута</string>
   <string name="item_5_minutes">5 минут</string>
   <string name="item_10_minutes">10 минут</string>

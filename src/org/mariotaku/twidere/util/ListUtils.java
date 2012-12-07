@@ -51,10 +51,10 @@ public class ListUtils {
 	public static String toStringForSQL(final int size) {
 		final StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < size; i++) {
-				if (i > 0) {
-					builder.append(',');
-				}
-				builder.append('?');
+			if (i > 0) {
+				builder.append(',');
+			}
+			builder.append('?');
 		}
 		return builder.toString();
 	}

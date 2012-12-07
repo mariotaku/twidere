@@ -33,6 +33,7 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+
 import com.twitter.Extractor;
 
 public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
@@ -60,7 +61,7 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 		final Extractor extractor = new Extractor();
 		final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
 		final ArrayList<String> hashtags = new ArrayList<String>();
-		
+
 		for (final ContentValues values : all_statuses) {
 			if (values == null) {
 				continue;
@@ -85,8 +86,11 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 		resolver.delete(CachedStatuses.CONTENT_URI,
 				CachedStatuses.STATUS_ID + " IN (" + ListUtils.toString(status_ids, ',', true) + " )", null);
 		resolver.bulkInsert(CachedStatuses.CONTENT_URI, all_statuses.toArray(new ContentValues[all_statuses.size()]));
-		resolver.delete(CachedHashtags.CONTENT_URI, CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")", hashtags.toArray(new String[hashtags.size()]));
-		resolver.bulkInsert(CachedHashtags.CONTENT_URI, hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
+		resolver.delete(CachedHashtags.CONTENT_URI,
+				CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")",
+				hashtags.toArray(new String[hashtags.size()]));
+		resolver.bulkInsert(CachedHashtags.CONTENT_URI,
+				hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 		return null;
 	}
 

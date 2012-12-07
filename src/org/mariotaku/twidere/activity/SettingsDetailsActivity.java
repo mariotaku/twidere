@@ -20,12 +20,11 @@
 package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.FiltersListFragment;
+import org.mariotaku.twidere.fragment.SettingsDetailsFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
-import org.mariotaku.twidere.fragment.SettingsDetailsFragment;
 
 public class SettingsDetailsActivity extends BaseDialogWhenLargeActivity {
 

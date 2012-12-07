@@ -386,6 +386,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 				cursor.copyStringToBuffer(columnIndex, buffer);
 			}
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public void deactivate() {
 				cursor.deactivate();

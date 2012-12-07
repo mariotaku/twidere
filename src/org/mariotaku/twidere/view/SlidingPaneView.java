@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.util.ExtendedViewGroupInterface.TouchInterceptor;
 
 import android.content.Context;
@@ -21,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
-import org.mariotaku.twidere.activity.DualPaneActivity;
 
 public class SlidingPaneView extends ViewGroup {
 
@@ -831,11 +831,11 @@ public class SlidingPaneView extends ViewGroup {
 
 		@Override
 		public boolean onInterceptTouchEvent(final ViewGroup view, final MotionEvent event) {
-			mShouldDisableScroll = !(isTouchEventHandled(view, event) 
-					|| (mContext instanceof DualPaneActivity && ((DualPaneActivity)mContext).isRightPaneUsed()));
+			mShouldDisableScroll = !(isTouchEventHandled(view, event) || mContext instanceof DualPaneActivity
+					&& ((DualPaneActivity) mContext).isRightPaneUsed());
 			switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN: {
-					//mFirstDownHandled = isTouchEventHandled(view, event);
+					// mFirstDownHandled = isTouchEventHandled(view, event);
 					mFirstDownHandled = !mShouldDisableScroll;
 					mTempDeltaX = 0;
 					mTotalMoveX = 0;
@@ -900,11 +900,10 @@ public class SlidingPaneView extends ViewGroup {
 		private final int mScaledTouchSlop;
 		private final SlidingPaneView mParent;
 		private final Context mContext;
-		
+
 		private float mTempDeltaX, mTotalMoveX;
 
 		private boolean mIsScrolling, mShouldDisableScroll;
-
 
 		ShadowTouchListener(final SlidingPaneView parent) {
 			mParent = parent;
@@ -921,8 +920,8 @@ public class SlidingPaneView extends ViewGroup {
 					mTotalMoveX = 0;
 					mIsScrolling = false;
 					final View layout = mParent.getRightPaneLayout();
-					mShouldDisableScroll = !(isTouchEventHandled(layout, event) 
-							|| (mContext instanceof DualPaneActivity && ((DualPaneActivity)mContext).isRightPaneUsed()));
+					mShouldDisableScroll = !(isTouchEventHandled(layout, event) || mContext instanceof DualPaneActivity
+							&& ((DualPaneActivity) mContext).isRightPaneUsed());
 					if (!mShouldDisableScroll) {
 						mController.reset();
 					}

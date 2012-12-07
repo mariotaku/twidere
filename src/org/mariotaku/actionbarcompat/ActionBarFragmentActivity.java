@@ -1,16 +1,13 @@
 package org.mariotaku.actionbarcompat;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
-import android.os.Build;
 
 @SuppressLint("Registered")
 public class ActionBarFragmentActivity extends FragmentActivity {
@@ -61,7 +58,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		}
 		super.onBackPressed();
 	}
-	
+
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
@@ -141,7 +138,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		else
 			return mActionModeCompat = new ActionModeCompat((ActionBarCompatBase) mActionBarCompat, callback);
 	}
-	
+
 	private void checkActionBar() {
 		if (!mActionBarCompat.isAvailable()) {
 			mActionBarCompat = new ActionBarCompatBase(this);
@@ -154,5 +151,5 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 			mActionBarInitialized = ((ActionBarCompatBase) mActionBarCompat).setCustomTitleView();
 		}
 	}
-	
+
 }

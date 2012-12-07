@@ -1,22 +1,19 @@
 package org.mariotaku.actionbarcompat;
 
-import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
-import android.os.Build;
 
 public class ActionBarPreferenceActivity extends PreferenceActivity {
 
 	protected ActionBarCompat mActionBarCompat = ActionBarCompat.getInstance(this);
 	private boolean mActionBarInitialized = false;
-	
+
 	private ActionModeCompat mActionModeCompat;
-	
+
 	@Override
 	public MenuInflater getMenuInflater() {
 		return mActionBarCompat.getMenuInflater(super.getMenuInflater());
@@ -33,16 +30,18 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 			((ActionBarCompatBase) mActionBarCompat).invalidateOptionsMenu();
 		}
 	}
-	
-	@Override
-	public void onBackPressed() {
-		if (mActionBarCompat instanceof ActionBarCompatBase) {
-			if (((ActionBarCompatBase) mActionBarCompat).isActionModeShowing() && mActionModeCompat != null) {
-				mActionModeCompat.finish();
-			}
-		}
-		super.onBackPressed();
-	}
+
+	// @Override
+	// public void onBackPressed() {
+	// if (mActionBarCompat instanceof ActionBarCompatBase) {
+	// if (((ActionBarCompatBase) mActionBarCompat).isActionModeShowing() &&
+	// mActionModeCompat != null) {
+	// mActionModeCompat.finish();
+	// return;
+	// }
+	// }
+	// super.onBackPressed();
+	// }
 
 	@Override
 	public void onContentChanged() {
@@ -58,7 +57,7 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 		}
 		super.onCreate(savedInstanceState);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		boolean retValue = super.onCreateOptionsMenu(menu);

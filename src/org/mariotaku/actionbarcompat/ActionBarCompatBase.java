@@ -243,6 +243,28 @@ final class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 		mActionMenuView.removeAllViews();
 	}
 
+	private boolean initViews() {
+		mActionBarView = mActivity.getWindow().findViewById(R.id.actionbar);
+		mActionModeContainer = (ViewGroup) mActivity.getWindow().findViewById(R.id.action_mode_container);
+		if (mActionBarView == null) return false;
+		mTitleContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_title_view);
+		mTitleView = (TextView) mTitleContainer.findViewById(R.id.actionbar_title);
+		mSubtitleView = (TextView) mTitleContainer.findViewById(R.id.actionbar_subtitle);
+		mHomeView = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_home);
+		mIconView = (ImageView) mHomeView.findViewById(R.id.actionbar_icon);
+		mHomeAsUpIndicator = mHomeView.findViewById(R.id.actionbar_home_as_up_indicator);
+		mActionMenuView = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_menu_buttons);
+		mCustomViewContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_custom_view_container);
+
+		setTitle(mActivity.getTitle());
+
+		// Add Home button
+		setHomeButton();
+
+		createActionBarMenu();
+		return true;
+	}
+
 	private void setHomeButton() {
 		// Add Home button
 		final MenuItem homeItem = MenuItemImpl.createItem(mActivity, android.R.id.home);
@@ -281,28 +303,6 @@ final class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 				realItem.setVisible(false);
 			}
 		}
-	}
-
-	private boolean initViews() {
-		mActionBarView = mActivity.getWindow().findViewById(R.id.actionbar);
-		mActionModeContainer = (ViewGroup) mActivity.getWindow().findViewById(R.id.action_mode_container);
-		if (mActionBarView == null) return false;
-		mTitleContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_title_view);
-		mTitleView = (TextView) mTitleContainer.findViewById(R.id.actionbar_title);
-		mSubtitleView = (TextView) mTitleContainer.findViewById(R.id.actionbar_subtitle);
-		mHomeView = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_home);
-		mIconView = (ImageView) mHomeView.findViewById(R.id.actionbar_icon);
-		mHomeAsUpIndicator = mHomeView.findViewById(R.id.actionbar_home_as_up_indicator);
-		mActionMenuView = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_menu_buttons);
-		mCustomViewContainer = (ViewGroup) mActionBarView.findViewById(R.id.actionbar_custom_view_container);
-
-		setTitle(mActivity.getTitle());
-
-		// Add Home button
-		setHomeButton();
-
-		createActionBarMenu();
-		return true;
 	}
 
 	void invalidateOptionsMenu() {

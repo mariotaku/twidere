@@ -60,7 +60,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	private SharedPreferences mPreferences;
 	private Handler mHandler;
 	private Runnable mTicker;
-	
+
 	private ListView mListView;
 
 	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mNotReachedBottomBefore = true;
@@ -87,7 +87,8 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
 				onRefreshComplete();
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				if (mTwitterWrapper.isReceivedDirectMessagesRefreshing() || mTwitterWrapper.isSentDirectMessagesRefreshing()) {
+				if (mTwitterWrapper.isReceivedDirectMessagesRefreshing()
+						|| mTwitterWrapper.isSentDirectMessagesRefreshing()) {
 					setRefreshing(false);
 				} else {
 					onRefreshComplete();

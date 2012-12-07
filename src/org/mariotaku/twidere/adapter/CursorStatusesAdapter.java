@@ -361,14 +361,16 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		}
 		return super.swapCursor(cursor);
 	}
-	
+
 	static class TimeSpec {
-		
+
 		long time;
-		TimeSpec(long time) {
+
+		TimeSpec(final long time) {
 			this.time = time;
 		}
-		
+
+		@Override
 		public String toString() {
 			return getRelativeTimeSpanString(time).toString();
 		}

@@ -211,10 +211,10 @@
 	<string name="lists_following_user">Daftar following pengguna ini</string>
 	<string name="Ntweets_quantity_one">Anda mendapatkan tweet baru.</string>
 	<string name="Ntweets_quantity_other">Anda mendapatkan <xliff:g id="items">%d</xliff:g> tweet baru.</string>
-	<string name="Nmentions_quantity_one">Seseorang me-mention anda.</string>
-	<string name="Nmentions_quantity_other">Anda mendapatkan <xliff:g id="items">%d</xliff:g> mention.</string>
-	<string name="Ndirect_messages_quantity_one">Anda mendapatkan pesan langung baru.</string>
-	<string name="Ndirect_messages_quantity_other">Anda mendapatkan <xliff:g id="items">%d</xliff:g> pesan langsung baru.</string>
+	
+	
+	
+	
 	<string name="item_1_minute">1 menit</string>
 	<string name="item_3_minutes">3 menit</string>
 	<string name="item_5_minutes">5 menit</string>

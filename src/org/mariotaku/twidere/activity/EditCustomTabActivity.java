@@ -34,7 +34,7 @@ import java.util.Set;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
+import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.util.ArrayUtils;
 
@@ -342,7 +342,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			final View view = LayoutInflater.from(getContext()).inflate(R.layout.auto_complete_textview_default_style,
 					null);
 			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
-			mEditText.setAdapter(shouldCompleteUserName() ? new UserAutoCompleteAdapter(getContext()) : null);
+			mEditText.setAdapter(shouldCompleteUserName() ? new AutoCompleteAdapter(getContext()) : null);
 			mEditText.setText(getTextToSet());
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 			builder.setTitle(getTitle());

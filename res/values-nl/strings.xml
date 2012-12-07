@@ -175,8 +175,8 @@
   <string name="list_subscribers">Lijst-abonnees</string>
   <string name="type_to_compose">Typ om op te stellen</string>
   <string name="Ntweets_quantity_one">U hebt een nieuwe tweet.</string>
-  <string name="Nmentions_quantity_one">Iemand vermeldde u.</string>
-  <string name="Ndirect_messages_quantity_one">U heeft een nieuw direct bericht.</string>
+  
+  
   <string name="item_1_minute">1 minuut</string>
   <string name="item_5_minutes">5 minuten</string>
   <string name="item_10_minutes">10 minuten</string>

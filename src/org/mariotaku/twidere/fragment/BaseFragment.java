@@ -56,10 +56,6 @@ public class BaseFragment extends Fragment implements Constants {
 		return null;
 	}
 
-	public TwitterWrapper getTwitterWrapper() {
-		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
-	}
-
 	public SharedPreferences getSharedPreferences(final String name, final int mode) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSharedPreferences(name, mode);
@@ -70,6 +66,10 @@ public class BaseFragment extends Fragment implements Constants {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSystemService(name);
 		return null;
+	}
+
+	public TwitterWrapper getTwitterWrapper() {
+		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
 	}
 
 	public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {

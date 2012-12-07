@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
 import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
+import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,7 +37,6 @@ import java.io.OutputStream;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
-import org.mariotaku.twidere.view.ImageViewer;
 
 import twitter4j.TwitterException;
 import twitter4j.http.HttpClientWrapper;
@@ -60,7 +60,7 @@ import android.widget.ImageButton;
 public class ImageViewerActivity extends FragmentActivity implements Constants, OnClickListener,
 		LoaderCallbacks<ImageViewerActivity.ImageLoader.Result> {
 
-	private ImageViewer mImageView;
+	private ImageViewTouch mImageView;
 	private View mProgress;
 	private ImageButton mRefreshStopSaveButton;
 	private boolean mImageLoaded;
@@ -122,7 +122,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		mImageView = (ImageViewer) findViewById(R.id.image_viewer);
+		mImageView = (ImageViewTouch) findViewById(R.id.image_viewer);
 		mRefreshStopSaveButton = (ImageButton) findViewById(R.id.refresh_stop_save);
 		mProgress = findViewById(R.id.progress);
 	}
@@ -143,12 +143,12 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	@Override
 	public void onLoadFinished(final Loader<ImageLoader.Result> loader, final ImageLoader.Result data) {
 		if (data != null && data.bitmap != null) {
-			mImageView.setBitmap(data.bitmap);
+			mImageView.setImageBitmap(data.bitmap);
 			mImageFile = data.file;
 			mImageLoaded = true;
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_save);
 		} else {
-			mImageView.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.broken_image));
+			mImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.broken_image));
 			mImageFile = null;
 			mImageLoaded = false;
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
@@ -169,7 +169,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mImageView.recycle();
 		stopLoading();
 	}
 
@@ -187,7 +186,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			finish();
 			return;
 		}
-		mImageView.setBitmap(null);
+		mImageView.setImageBitmap(null);
 		final Bundle args = new Bundle();
 		args.putParcelable(INTENT_KEY_URI, uri);
 		if (init) {
@@ -227,7 +226,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		getSupportLoaderManager().destroyLoader(0);
 		if (!mImageLoaded) {
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
-			mImageView.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.refresh_image));
+			mImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.refresh_image));
 			mProgress.setVisibility(View.GONE);
 		}
 	}

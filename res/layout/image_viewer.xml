@@ -8,7 +8,7 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"/>
 
-	<org.mariotaku.twidere.view.ImageViewer
+	<it.sephiroth.android.library.imagezoom.ImageViewTouch
 		android:id="@+id/image_viewer"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"/>

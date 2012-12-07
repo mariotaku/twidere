@@ -8,8 +8,7 @@
 	<FrameLayout
 		android:id="@+id/profile_name_banner_container"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignParentTop="true">
+		android:layout_height="wrap_content">
 
 		<org.mariotaku.twidere.view.ColorLabelRelativeLayout
 			android:id="@+id/profile_name_container"

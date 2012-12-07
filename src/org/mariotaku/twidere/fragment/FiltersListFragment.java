@@ -21,8 +21,8 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
-import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredLinksFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredKeywordsFragment;
+import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredLinksFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredSourcesFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
 import org.mariotaku.twidere.model.Panes;

@@ -53,7 +53,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -113,7 +112,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 				if (isDualPaneMode()) {
 					final int count = fm.getBackStackEntryCount();
 					if (count == 0) {
-						//NavUtils.navigateUpFromSameTask(this);
+						// NavUtils.navigateUpFromSameTask(this);
 						onBackPressed();
 					} else if (!FragmentManagerTrojan.isStateSaved(fm)) {
 						for (int i = 0; i < count; i++) {
@@ -122,7 +121,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						setSupportProgressBarIndeterminateVisibility(false);
 					}
 				} else {
-					//NavUtils.navigateUpFromSameTask(this);
+					// NavUtils.navigateUpFromSameTask(this);
 					onBackPressed();
 				}
 				break;

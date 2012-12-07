@@ -183,8 +183,8 @@
   <string name="list_subscribers">Feliratkozók listázása</string>
   <string name="type_to_compose">Gépeljen új létrehozásához</string>
   <string name="Ntweets_quantity_one">Önnek egy új tweetje érkezett.</string>
-  <string name="Nmentions_quantity_one">Valaki emlegette önt.</string>
-  <string name="Ndirect_messages_quantity_one">Önnek egy új közvetlen üzenete van.</string>
+  
+  
   <string name="item_1_minute">1 perc</string>
   <string name="item_5_minutes">5 perc</string>
   <string name="item_10_minutes">10 perc</string>

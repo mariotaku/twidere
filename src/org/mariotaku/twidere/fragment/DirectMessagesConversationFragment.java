@@ -27,8 +27,8 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
-import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.DirectMessageConversationViewHolder;
@@ -100,7 +100,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	private Account mSelectedAccount;
 
 	private DirectMessagesConversationAdapter mAdapter;
-	private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
+	private AutoCompleteAdapter mUserAutoCompleteAdapter;
 	private AccountsAdapter mAccountsAdapter;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -186,7 +186,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		mAccountSelector.setAdapter(mAccountsAdapter);
 		mAccountSelector.setOnItemSelectedListener(this);
 
-		mUserAutoCompleteAdapter = new UserAutoCompleteAdapter(getActivity());
+		mUserAutoCompleteAdapter = new AutoCompleteAdapter(getActivity());
 
 		mEditScreenName.addTextChangedListener(mScreenNameTextWatcher);
 		mEditScreenName.setAdapter(mUserAutoCompleteAdapter);

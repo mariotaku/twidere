@@ -5,7 +5,6 @@
 	<item android:drawable="@drawable/textfield_disabled_holo_dark" android:state_enabled="false" android:state_window_focused="false"/>
 	<item android:drawable="@drawable/textfield_activated_holo" android:state_enabled="true" android:state_focused="true"/>
 	<item android:drawable="@drawable/textfield_focused_holo" android:state_enabled="true"/>
-	<item android:drawable="@drawable/textfield_default_holo_dark" android:state_enabled="true"/>
 	<item android:drawable="@drawable/textfield_disabled_focused_holo_dark" android:state_focused="true"/>
 	<item android:drawable="@drawable/textfield_disabled_holo_dark"/>
 

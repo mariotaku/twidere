@@ -2,12 +2,14 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.R;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 
+@SuppressLint("Registered")
 public class BaseDialogWhenLargeActivity extends BaseActivity {
 
 	private View mActivityContent;

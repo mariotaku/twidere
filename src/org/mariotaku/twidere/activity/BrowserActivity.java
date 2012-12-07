@@ -28,7 +28,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 public class BrowserActivity extends BaseDialogWhenLargeActivity {

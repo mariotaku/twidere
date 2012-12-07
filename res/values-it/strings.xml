@@ -209,10 +209,10 @@
   <string name="users_lists">Liste utente</string>
   <string name="Ntweets_quantity_one">Hai un nuovo tweet.</string>
   <string name="Ntweets_quantity_other">Hai <xliff:g id="items">%d</xliff:g> nuovi tweets.</string>
-  <string name="Nmentions_quantity_one">Qualcuno ti ha menzionato.</string>
-  <string name="Nmentions_quantity_other">Hai <xliff:g id="items">%d</xliff:g> menzioni.</string>
-  <string name="Ndirect_messages_quantity_one">Hai un nuovo messaggio diretto.</string>
-  <string name="Ndirect_messages_quantity_other">Hai <xliff:g id="items">%d</xliff:g> messaggi diretti.</string>
+  
+  
+  
+  
   <string name="item_1_minute">1 minuto</string>
   <string name="item_3_minutes">3 minuti</string>
   <string name="item_5_minutes">5 minuti</string>

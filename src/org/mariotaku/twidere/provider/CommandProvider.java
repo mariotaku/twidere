@@ -18,6 +18,25 @@ public class CommandProvider extends ContentProvider {
 	private PackageManager mPackageManager;
 	private TwitterWrapper mTwitterWrapper;
 
+	@Override
+	public int delete(final Uri uri, final String where, final String[] whereArgs) {
+		// TODO: Implement this method
+		return 0;
+	}
+
+	@Override
+	public String getType(final Uri uri) {
+		// TODO: Implement this method
+		return null;
+	}
+
+	@Override
+	public Uri insert(final Uri uri, final ContentValues values) {
+		// TODO: Implement this method
+		return null;
+	}
+
+	@Override
 	public boolean onCreate() {
 		mContext = getContext();
 		final TwidereApplication app = TwidereApplication.getInstance(mContext);
@@ -27,29 +46,17 @@ public class CommandProvider extends ContentProvider {
 		return true;
 	}
 
-	public Cursor query(Uri uri, String[] projection, String where, String[] whereArgs, String sortOrder) {
+	@Override
+	public Cursor query(final Uri uri, final String[] projection, final String where, final String[] whereArgs,
+			final String sortOrder) {
 		// TODO: Implement this method
 		return null;
 	}
 
-	public String getType(Uri uri) {
-		// TODO: Implement this method
-		return null;
-	}
-
-	public Uri insert(Uri uri, ContentValues values) {
-		// TODO: Implement this method
-		return null;
-	}
-
-	public int delete(Uri uri, String where, String[] whereArgs) {
+	@Override
+	public int update(final Uri uri, final ContentValues values, final String where, final String[] whereArgs) {
 		// TODO: Implement this method
 		return 0;
 	}
 
-	public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
-		// TODO: Implement this method
-		return 0;
-	}
-	
 }

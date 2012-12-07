@@ -19,28 +19,14 @@
 
 package org.mariotaku.twidere.service;
 
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
-import static org.mariotaku.twidere.util.Utils.appendQueryParameters;
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
-import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
-import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
-import static org.mariotaku.twidere.util.Utils.getStatusIdsInDatabase;
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 import static org.mariotaku.twidere.util.Utils.isBatteryOkay;
-import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
-import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
-import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
 import static org.mariotaku.twidere.util.Utils.parseInt;
-import static org.mariotaku.twidere.util.Utils.parseString;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -49,7 +35,6 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -62,8 +47,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
-import android.support.v4.app.NotificationCompat;
 
 public class RefreshService extends Service implements Constants {
 
@@ -183,17 +166,28 @@ public class RefreshService extends Service implements Constants {
 	private int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		return mTwitterWrapper.getReceivedDirectMessages(account_ids, max_ids, since_ids);
 	}
-	
+
 	private boolean isHomeTimelineRefreshing() {
 		return mTwitterWrapper.isHomeTimelineRefreshing();
 	}
-	
+
 	private boolean isMentionsRefreshing() {
 		return mTwitterWrapper.isMentionsRefreshing();
 	}
-	
+
 	private boolean isReceivedDirectMessagesRefreshing() {
 		return mTwitterWrapper.isReceivedDirectMessagesRefreshing();
+	}
+
+	private void rescheduleDirectMessagesRefreshing() {
+		mAlarmManager.cancel(mPendingRefreshDirectMessagesIntent);
+		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
+			if (update_interval > 0) {
+				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+						update_interval, mPendingRefreshDirectMessagesIntent);
+			}
+		}
 	}
 
 	private void rescheduleHomeTimelineRefreshing() {
@@ -218,28 +212,17 @@ public class RefreshService extends Service implements Constants {
 		}
 	}
 
-	private void rescheduleDirectMessagesRefreshing() {
-		mAlarmManager.cancel(mPendingRefreshDirectMessagesIntent);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
-			if (update_interval > 0) {
-				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-						update_interval, mPendingRefreshDirectMessagesIntent);
-			}
-		}
-	}
-
 	private boolean startAutoRefresh() {
 		stopAutoRefresh();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
 			final long update_interval = parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")) * 60 * 1000;
 			if (update_interval <= 0) return false;
 			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-									   update_interval, mPendingRefreshHomeTimelineIntent);
+					update_interval, mPendingRefreshHomeTimelineIntent);
 			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-									   update_interval, mPendingRefreshMentionsIntent);
+					update_interval, mPendingRefreshMentionsIntent);
 			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
-									   update_interval, mPendingRefreshDirectMessagesIntent);
+					update_interval, mPendingRefreshDirectMessagesIntent);
 			return true;
 		}
 		return false;

@@ -99,34 +99,7 @@
 		android:singleLine="false"
 		android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-	<FrameLayout
-		android:id="@+id/images_preview"
-		android:layout_width="match_parent"
-		android:layout_height="144dp">
-
-		<Gallery
-			android:id="@+id/preview_gallery"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
-
-		<FrameLayout
-			android:id="@+id/load_images"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:background="@drawable/item_background_holo_light">
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:drawableLeft="@drawable/ic_menu_gallery"
-				android:gravity="center"
-				android:layerType="software"
-				android:text="@string/load_images"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textStyle="bold"/>
-		</FrameLayout>
-	</FrameLayout>
+	<include layout="@layout/images_preview"/>
 
 	<TextView
 		android:id="@+id/retweet_view"

@@ -51,7 +51,8 @@ public interface Constants extends TwitterConstants {
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 33;
 
-	// The following 4 constants are not included in source code, you'd better use your own.
+	// The following 4 constants are not included in source code, you'd better
+	// use your own.
 	public static final String TWITTER_CONSUMER_KEY = PrivateConstants.TWITTER_CONSUMER_KEY;
 	public static final String TWITTER_CONSUMER_SECRET = PrivateConstants.TWITTER_CONSUMER_SECRET;
 	public static final String GOOGLE_MAPS_API_KEY_RELEASE = PrivateConstants.GOOGLE_MAPS_API_KEY_RELEASE;
@@ -459,9 +460,9 @@ public interface Constants extends TwitterConstants {
 	public static final int TABLE_ID_FILTERED_KEYWORDS = 22;
 	public static final int TABLE_ID_FILTERED_SOURCES = 23;
 	public static final int TABLE_ID_FILTERED_LINKS = 24;
-	public static final int TABLE_ID_TRENDS_LOCAL = 31;	
+	public static final int TABLE_ID_TRENDS_LOCAL = 31;
 	public static final int TABLE_ID_DRAFTS = 41;
-	public static final int TABLE_ID_TABS = 42;	
+	public static final int TABLE_ID_TABS = 42;
 	public static final int TABLE_ID_CACHED_USERS = 51;
 	public static final int TABLE_ID_CACHED_STATUSES = 52;
 	public static final int TABLE_ID_CACHED_HASHTAGS = 53;

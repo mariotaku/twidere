@@ -211,10 +211,10 @@
   <string name="lists_following_user">關注這個用戶的列表</string>
   <string name="Ntweets_quantity_one">你有一條新推文。</string>
   <string name="Ntweets_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 條新推文。</string>
-  <string name="Nmentions_quantity_one">有人提及了你。</string>
-  <string name="Nmentions_quantity_other">有 <xliff:g id="items">%d</xliff:g> 條推文提到了你。</string>
-  <string name="Ndirect_messages_quantity_one">你有一條新私信。</string>
-  <string name="Ndirect_messages_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 條新私信。</string>
+  
+  
+  
+  
   <string name="item_1_minute">1分鐘</string>
   <string name="item_3_minutes">3分鐘</string>
   <string name="item_5_minutes">5分鐘</string>

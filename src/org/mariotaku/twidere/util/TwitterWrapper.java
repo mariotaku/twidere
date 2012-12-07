@@ -81,15 +81,15 @@ import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
+import com.twitter.Extractor;
 import com.twitter.Validator;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
-import com.twitter.Extractor;
 
 public class TwitterWrapper implements Constants {
 
- 	private static TwitterWrapper sInstance;
- 
+	private static TwitterWrapper sInstance;
+
 	private final Context context;
 	private final AsyncTaskManager mAsyncTaskManager;
 	private final SharedPreferences mPreferences;
@@ -358,7 +358,7 @@ public class TwitterWrapper implements Constants {
 		if (sInstance != null) return sInstance;
 		return sInstance = new TwitterWrapper(context);
 	}
-	
+
 	class AddUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
 
 		private final long account_id, user_id;
@@ -1933,8 +1933,11 @@ public class TwitterWrapper implements Constants {
 					}
 					mResolver.delete(uri, null, null);
 					mResolver.bulkInsert(uri, values_array);
-					mResolver.delete(CachedHashtags.CONTENT_URI, CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")", hashtags.toArray(new String[hashtags.size()]));
-					mResolver.bulkInsert(CachedHashtags.CONTENT_URI, hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
+					mResolver.delete(CachedHashtags.CONTENT_URI,
+							CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")",
+							hashtags.toArray(new String[hashtags.size()]));
+					mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
+							hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 					bundle.putBoolean(INTENT_KEY_SUCCEED, true);
 				}
 			}
@@ -2117,9 +2120,12 @@ public class TwitterWrapper implements Constants {
 				values.put(CachedHashtags.NAME, hashtag);
 				hashtag_values.add(values);
 			}
-			mResolver.delete(CachedHashtags.CONTENT_URI, CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")", hashtags.toArray(new String[hashtags.size()]));
-			mResolver.bulkInsert(CachedHashtags.CONTENT_URI, hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
-			
+			mResolver.delete(CachedHashtags.CONTENT_URI,
+					CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")",
+					hashtags.toArray(new String[hashtags.size()]));
+			mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
+					hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
+
 			final List<SingleResponse<twitter4j.Status>> result = new ArrayList<SingleResponse<twitter4j.Status>>();
 
 			if (account_ids.length == 0) return result;

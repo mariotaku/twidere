@@ -175,8 +175,8 @@
   <string name="list_subscribers">ग्राहकों सूचीबद्ध करें</string>
   <string name="type_to_compose">रचना करने के लिये टाइप करे</string>
   <string name="Ntweets_quantity_one">आप के लिए एक नया ट्वीट है|.</string>
-  <string name="Nmentions_quantity_one">किसी ने आपका ज़िक्र किया|.</string>
-  <string name="Ndirect_messages_quantity_one">आप के लिए नया सीधा संदेश है।.</string>
+  
+  
   <string name="item_1_minute">1 मिनट</string>
   <string name="item_5_minutes">5 मिनट</string>
   <string name="item_10_minutes">10 मिनट</string>

@@ -31,7 +31,8 @@ public final class TweetStore implements Constants {
 
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI,
 			CachedStatuses.CONTENT_URI };
-	public static final Uri[] CACHE_URIS = new Uri[] { CachedUsers.CONTENT_URI, CachedStatuses.CONTENT_URI, CachedHashtags.CONTENT_URI };
+	public static final Uri[] CACHE_URIS = new Uri[] { CachedUsers.CONTENT_URI, CachedStatuses.CONTENT_URI,
+			CachedHashtags.CONTENT_URI };
 	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
 			DirectMessages.Outbox.CONTENT_URI };
 
@@ -207,7 +208,7 @@ public final class TweetStore implements Constants {
 				TYPE_TEXT };
 
 	}
-	
+
 	public static interface CachedValues extends BaseColumns {
 
 		public static final String NAME = "name";

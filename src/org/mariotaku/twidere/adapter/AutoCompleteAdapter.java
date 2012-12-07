@@ -40,33 +40,28 @@ import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Constants {
+public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constants {
 
 	private static final String[] FROM = new String[0];
 	private static final int[] TO = new int[0];
-	
+
 	private final ContentResolver mResolver;
 	private final LazyImageLoader mProfileImageLoader;
 	private final SharedPreferences mPreferences;
-	
+
 	private final StatusComposeEditText mEditText;
 
 	private final boolean mDisplayProfileImage, mDisplayHiResProfileImage;
-	
+
 	private Cursor mCursor;
 	private int mProfileImageUrlIdx, mNameIdx, mScreenNameIdx;
 	private char mToken = '@';
 
-	public UserAutoCompleteAdapter(final StatusComposeEditText view) {
-		this(view.getContext(), view);
-	}
-	
-
-	public UserAutoCompleteAdapter(final Context context) {
+	public AutoCompleteAdapter(final Context context) {
 		this(context, null);
 	}
-	
-	public UserAutoCompleteAdapter(final Context context, final StatusComposeEditText view) {
+
+	public AutoCompleteAdapter(final Context context, final StatusComposeEditText view) {
 		super(context, R.layout.user_autocomplete_list_item, null, FROM, TO, 0);
 		mEditText = view;
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -77,6 +72,10 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 		mDisplayProfileImage = mPreferences != null ? mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE,
 				true) : true;
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
+	}
+
+	public AutoCompleteAdapter(final StatusComposeEditText view) {
+		this(view.getContext(), view);
 	}
 
 	@Override
@@ -106,7 +105,7 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 				icon.setImageResource(R.drawable.ic_profile_image_default);
 			}
 		} else {
-			//TODO show hashtag icon
+			icon.setImageResource(R.drawable.ic_menu_hashtag);
 		}
 		super.bindView(view, context, cursor);
 	}
@@ -158,23 +157,22 @@ public class UserAutoCompleteAdapter extends SimpleCursorAdapter implements Cons
 			where.append(CachedUsers.SCREEN_NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'");
 			where.append(" OR ");
 			where.append(CachedUsers.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'");
-			return mResolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, constraint_escaped != null ? where.toString()
-					: null, null, null);
+			return mResolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS,
+					constraint_escaped != null ? where.toString() : null, null, null);
 		} else {
 			final String where = CachedHashtags.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'";
-			return mResolver.query(CachedHashtags.CONTENT_URI, CachedHashtags.COLUMNS, constraint_escaped != null ? where : null,
-					null, null);
+			return mResolver.query(CachedHashtags.CONTENT_URI, CachedHashtags.COLUMNS,
+					constraint_escaped != null ? where : null, null, null);
 		}
 	}
-	
 
 	private static boolean isAtSymbol(final char character) {
 		switch (character) {
 			case '\uff20':
 			case '@':
-				return true;			
+				return true;
 		}
-		return false;	
+		return false;
 	}
 
 }

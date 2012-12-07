@@ -181,10 +181,10 @@
   <string name="type_to_compose">Tapez pour composer</string>
   <string name="Ntweets_quantity_one">Vous avez un nouveau tweet.</string>
   <string name="Ntweets_quantity_other">Vous avez <xliff:g id="items">%d</xliff:g> nouveaux tweets.</string>
-  <string name="Nmentions_quantity_one">Quelqu\'un vous a mentionné.</string>
-  <string name="Nmentions_quantity_other">Vous avez <xliff:g id="items">%d</xliff:g> mentions.</string>
-  <string name="Ndirect_messages_quantity_one">Vous avez un nouveau message direct.</string>
-  <string name="Ndirect_messages_quantity_other">Vous avez <xliff:g id="items">%d</xliff:g> messages privés.</string>
+  
+  
+  
+  
   <string name="item_1_minute">1 minute</string>
   <string name="item_5_minutes">5 minutes</string>
   <string name="item_10_minutes">10 minutes</string>

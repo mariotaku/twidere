@@ -31,7 +31,6 @@ import static org.mariotaku.twidere.util.Utils.parseInt;
 
 import java.io.File;
 import java.util.Calendar;
-import java.util.Arrays;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
@@ -69,8 +68,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Process;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 
@@ -86,7 +83,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
 
 	private boolean mNotificationIsAudible;
-	
+
 	private Context mContext;
 
 	private final BroadcastReceiver mHomeActivityStateReceiver = new BroadcastReceiver() {
@@ -101,7 +98,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		}
 
 	};
-	
+
 	@Override
 	public int bulkInsert(final Uri uri, final ContentValues[] values) {
 		final int table_id = getTableId(uri);
@@ -343,18 +340,21 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		builder.setDefaults(defaults);
 		return builder.build();
 	}
-	
+
 	private boolean checkPermission(final int level) {
-		return mPermissionManager.checkPermission(Binder.getCallingUid(), level);
+		return mPermissionManager.checkCallingPermission(level);
 	}
 
 	private void checkReadPermission(final int id, final String table, final String[] projection) {
 		switch (id) {
 			case TABLE_ID_ACCOUNTS: {
-				// Reading some infomation like user_id, screen_name etc is okay, but reading columns like password requires higher permission level.
-				if (ArrayUtils.contains(projection, Accounts.BASIC_AUTH_PASSWORD, Accounts.OAUTH_TOKEN, Accounts.TOKEN_SECRET)
-						&& !checkPermission(PERMISSION_LEVEL_ACCOUNTS))
-					throw new SecurityException("Access column " + ArrayUtils.toString(projection, ',', true) + " in database accounts requires level PERMISSION_LEVEL_ACCOUNTS");
+				// Reading some infomation like user_id, screen_name etc is
+				// okay, but reading columns like password requires higher
+				// permission level.
+				if (ArrayUtils.contains(projection, Accounts.BASIC_AUTH_PASSWORD, Accounts.OAUTH_TOKEN,
+						Accounts.TOKEN_SECRET) && !checkPermission(PERMISSION_LEVEL_ACCOUNTS))
+					throw new SecurityException("Access column " + ArrayUtils.toString(projection, ',', true)
+							+ " in database accounts requires level PERMISSION_LEVEL_ACCOUNTS");
 				if (!checkPermission(PERMISSION_LEVEL_READ))
 					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_READ");
 				break;
@@ -366,7 +366,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
 				if (!checkPermission(PERMISSION_LEVEL_DIRECT_MESSAGES))
-					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
+					throw new SecurityException("Access database " + table
+							+ " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
 				break;
 			}
 			case TABLE_ID_STATUSES:
@@ -391,9 +392,11 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	private void checkWritePermission(final int id, final String table) {
 		switch (id) {
 			case TABLE_ID_ACCOUNTS: {
-				// Writing to accounts database is not allowed for third-party applications.
-				if (mPackageManager.checkSignatures(Process.myUid(), Binder.getCallingUid()) != PackageManager.SIGNATURE_MATCH)
-					throw new SecurityException("Writing to accounts database is not allowed for third-party applications");
+				// Writing to accounts database is not allowed for third-party
+				// applications.
+				if (!mPermissionManager.isSameSignature(Binder.getCallingUid()))
+					throw new SecurityException(
+							"Writing to accounts database is not allowed for third-party applications");
 				break;
 			}
 			case TABLE_ID_DIRECT_MESSAGES:
@@ -403,7 +406,8 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
 				if (!checkPermission(PERMISSION_LEVEL_DIRECT_MESSAGES))
-					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
+					throw new SecurityException("Access database " + table
+							+ " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
 				break;
 			}
 			case TABLE_ID_STATUSES:
@@ -414,7 +418,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_FILTERED_USERS:
 			case TABLE_ID_FILTERED_KEYWORDS:
 			case TABLE_ID_FILTERED_SOURCES:
-			case TABLE_ID_FILTERED_LINKS:	
+			case TABLE_ID_FILTERED_LINKS:
 			case TABLE_ID_TRENDS_LOCAL:
 			case TABLE_ID_CACHED_STATUSES:
 			case TABLE_ID_CACHED_HASHTAGS: {
@@ -424,7 +428,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			}
 		}
 	}
-	
+
 	private void clearNotification(final int id) {
 		switch (id) {
 			case NOTIFICATION_ID_HOME_TIMELINE: {
@@ -575,9 +579,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 								: profile_image_url_string);
 				final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
-				final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory.decodeFile(profile_image_file.getPath()) : null;
-				final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default);
-				builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image : profile_image_fallback, w, h, true));
+				final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
+						.decodeFile(profile_image_file.getPath()) : null;
+				final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res,
+						R.drawable.ic_profile_image_default);
+				builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image
+						: profile_image_fallback, w, h, true));
 				final Notification notification = buildNotification(builder, title, title, message,
 						R.drawable.ic_stat_mention, null, content_intent, delete_intent);
 				mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, notification);
@@ -613,9 +620,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 								: profile_image_url_string);
 				final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
-				final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory.decodeFile(profile_image_file.getPath()) : null;
-				final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default);
-				builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image : profile_image_fallback, w, h, true));
+				final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
+						.decodeFile(profile_image_file.getPath()) : null;
+				final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res,
+						R.drawable.ic_profile_image_default);
+				builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image
+						: profile_image_fallback, w, h, true));
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);

@@ -8,9 +8,9 @@
 		android:orientation="horizontal">
 
 		<FrameLayout
-			android:layout_width="@dimen/pane_spacing_left"
+			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="0">
+			android:layout_weight="@integer/pane_left_content_weight">
 
 			<include layout="@layout/home_pane_left_content"/>
 
@@ -19,14 +19,13 @@
 				android:layout_height="match_parent"
 				android:layout_gravity="right"
 				android:background="@drawable/shadow_holo"/>
-
 		</FrameLayout>
 
 		<FrameLayout
 			android:id="@+id/fragment_container_right"
-			android:layout_width="match_parent"
+			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="1"/>
+			android:layout_weight="@integer/pane_right_content_weight"/>
 	</LinearLayout>
 
 	<ImageButton

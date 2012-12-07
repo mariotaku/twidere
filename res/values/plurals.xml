@@ -6,14 +6,6 @@
 		<item quantity="one">@string/Ntweets_quantity_one</item>
 		<item quantity="other">@string/Ntweets_quantity_other</item>
 	</plurals>
-	<plurals name="Nmentions">
-		<item quantity="one">@string/Nmentions_quantity_one</item>
-		<item quantity="other">@string/Nmentions_quantity_other</item>
-	</plurals>
-	<plurals name="Ndirect_messages">
-		<item quantity="one">@string/Ndirect_messages_quantity_one</item>
-		<item quantity="other">@string/Ndirect_messages_quantity_other</item>
-	</plurals>
 	<plurals name="Nitems_selected">
 		<item quantity="one">@string/Nitems_selected_quantity_one</item>
 		<item quantity="other">@string/Nitems_selected_quantity_other</item>

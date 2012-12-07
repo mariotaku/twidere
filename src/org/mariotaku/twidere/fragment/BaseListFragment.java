@@ -77,10 +77,6 @@ public class BaseListFragment extends ListFragment implements Constants {
 		return null;
 	}
 
-	public TwitterWrapper getTwitterWrapper() {
-		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
-	}
-
 	public SharedPreferences getSharedPreferences(final String name, final int mode) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSharedPreferences(name, mode);
@@ -93,14 +89,18 @@ public class BaseListFragment extends ListFragment implements Constants {
 		return null;
 	}
 
+	public TwitterWrapper getTwitterWrapper() {
+		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
+	}
+
 	public boolean isActivityFirstCreated() {
 		return mActivityFirstCreated;
 	}
-	
+
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		//getView().setClickable(true);
+		// getView().setClickable(true);
 	}
 
 	@Override

@@ -20,7 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.UserAutoCompleteAdapter;
+import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 
 import android.app.AlertDialog;
@@ -148,7 +148,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 		private AutoCompleteTextView mEditText;
 
-		private UserAutoCompleteAdapter mUserAutoCompleteAdapter;
+		private AutoCompleteAdapter mUserAutoCompleteAdapter;
 
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
@@ -175,7 +175,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
 			final Bundle args = getArguments();
 			if (args != null && args.getBoolean(INTENT_KEY_AUTO_COMPLETE)) {
-				mUserAutoCompleteAdapter = new UserAutoCompleteAdapter(getActivity());
+				mUserAutoCompleteAdapter = new AutoCompleteAdapter(getActivity());
 				mEditText.setAdapter(mUserAutoCompleteAdapter);
 				mEditText.setThreshold(1);
 			}
@@ -183,6 +183,20 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, this);
 			return builder.create();
+		}
+
+	}
+
+	public static final class FilteredKeywordsFragment extends BaseFiltersFragment {
+
+		@Override
+		public String[] getContentColumns() {
+			return Filters.Keywords.COLUMNS;
+		}
+
+		@Override
+		public Uri getContentUri() {
+			return Filters.Keywords.CONTENT_URI;
 		}
 
 	}
@@ -197,20 +211,6 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 		@Override
 		public Uri getContentUri() {
 			return Filters.Links.CONTENT_URI;
-		}
-
-	}
-	
-	public static final class FilteredKeywordsFragment extends BaseFiltersFragment {
-
-		@Override
-		public String[] getContentColumns() {
-			return Filters.Keywords.COLUMNS;
-		}
-
-		@Override
-		public Uri getContentUri() {
-			return Filters.Keywords.CONTENT_URI;
 		}
 
 	}

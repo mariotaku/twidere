@@ -21,7 +21,6 @@ package org.mariotaku.twidere.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Arrays;
 
 public final class ArrayUtils {
 
