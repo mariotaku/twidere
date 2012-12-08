@@ -6,9 +6,10 @@ import android.os.Handler;
 
 public abstract class AsyncTask<Param, Progress, Result> {
 
-	private final Thread mThread;
+	private Thread mThread;
 	private final Handler mHandler;
 	private final ExecutorService mExecutor;
+	private final Runnable mRunnable;
 
 	private boolean mCancelled;
 	private Param[] mParams;
@@ -19,14 +20,14 @@ public abstract class AsyncTask<Param, Progress, Result> {
 	}
 
 	public AsyncTask(final ExecutorService executor) {
-		mThread = new InternalThread();
 		mHandler = new Handler();
 		mExecutor = executor;
+		mRunnable = new BackgroundRunnable();
 	}
 
 	public void cancel(final boolean mayInterruptIfRunning) {
 		mCancelled = true;
-		if (mExecutor == null) {
+		if (mExecutor == null && mThread != null) {
 			mThread.interrupt();
 		}
 		onCancelled();
@@ -48,8 +49,9 @@ public abstract class AsyncTask<Param, Progress, Result> {
 		onPreExecute();
 		mParams = params;
 		if (mExecutor != null) {
-			mExecutor.execute(mThread);
+			mExecutor.execute(mRunnable);
 		} else {
+			mThread = new InternalThread();
 			mThread.start();
 		}
 
@@ -87,6 +89,14 @@ public abstract class AsyncTask<Param, Progress, Result> {
 	}
 
 	private final class InternalThread extends Thread {
+
+		@Override
+		public void run() {
+			mRunnable.run();
+		}
+	}
+	
+	private final class BackgroundRunnable implements Runnable {
 
 		@Override
 		public void run() {

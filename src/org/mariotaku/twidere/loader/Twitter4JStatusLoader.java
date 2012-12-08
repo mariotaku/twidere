@@ -33,16 +33,19 @@ import twitter4j.TwitterException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import org.mariotaku.twidere.R;
 
 public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
 	private final long mMaxId, mSinceId;
+	private final boolean large_profile_image;
 
 	public Twitter4JStatusLoader(final Context context, final long account_id, final long max_id, final long since_id,
 			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
 		super(context, account_id, data, class_name, is_home_tab);
 		mMaxId = max_id;
 		mSinceId = since_id;
+		large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	public abstract List<Status> getStatuses(Paging paging) throws TwitterException;
@@ -80,7 +83,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 				final long id = status.getId();
 				deleteStatus(id);
 				data.add(new ParcelableStatus(status, account_id, min_status_id > 0 && min_status_id == id
-						&& insert_gap));
+						&& insert_gap, large_profile_image));
 			}
 		}
 		try {

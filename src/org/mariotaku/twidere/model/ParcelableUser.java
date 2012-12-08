@@ -77,11 +77,11 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		favorites_count = in.readInt();
 	}
 
-	public ParcelableUser(final User user, final long account_id) {
-		this(user, account_id, 0);
+	public ParcelableUser(final User user, final long account_id, boolean large_profile_image) {
+		this(user, account_id, 0, large_profile_image);
 	}
 
-	public ParcelableUser(final User user, final long account_id, final long position) {
+	public ParcelableUser(final User user, final long account_id, final long position, boolean large_profile_image) {
 		this.position = position;
 		this.account_id = account_id;
 		user_id = user.getId();

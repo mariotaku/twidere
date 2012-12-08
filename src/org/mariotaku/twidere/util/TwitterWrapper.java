@@ -97,6 +97,8 @@ public class TwitterWrapper implements Constants {
 	private final ContentResolver mResolver;
 	private final Resources mResources;
 
+	private final boolean large_profile_image;
+	
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 	private int mGetReceivedDirectMessagesTaskId, mGetSentDirectMessagesTaskId;
 	private int mGetLocalTrendsTaskId;
@@ -108,6 +110,7 @@ public class TwitterWrapper implements Constants {
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = context.getContentResolver();
 		mResources = context.getResources();
+		large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	public int addUserListMember(final long account_id, final int list_id, final long user_id, final String screen_name) {
@@ -1602,7 +1605,7 @@ public class TwitterWrapper implements Constants {
 			super.onPostExecute(result);
 			if (result == null) return;
 			if (result.data != null && result.data.getId() > 0) {
-				final ContentValues values = makeDirectMessageContentValues(result.data, account_id, true);
+				final ContentValues values = makeDirectMessageContentValues(result.data, account_id, true, large_profile_image);
 				mResolver.insert(DirectMessages.Outbox.CONTENT_URI, values);
 				Toast.makeText(context, R.string.send_successfully, Toast.LENGTH_SHORT).show();
 			} else {
@@ -1655,7 +1658,7 @@ public class TwitterWrapper implements Constants {
 							continue;
 						}
 						message_ids.add(message.getId());
-						values_list.add(makeDirectMessageContentValues(message, account_id, isOutgoing()));
+						values_list.add(makeDirectMessageContentValues(message, account_id, isOutgoing(), large_profile_image));
 					}
 
 					// Delete all rows conflicting before new data inserted.
@@ -1837,7 +1840,7 @@ public class TwitterWrapper implements Constants {
 						if (retweet_id > 0) {
 							retweet_ids.add(retweet_id);
 						}
-						values_list.add(makeStatusContentValues(status, account_id));
+						values_list.add(makeStatusContentValues(status, account_id, large_profile_image));
 					}
 
 				}

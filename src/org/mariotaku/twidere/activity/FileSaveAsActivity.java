@@ -62,7 +62,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class FileSaveAsActivity extends BaseActivity implements Constants, OnItemClickListener,
+public class FileSaveAsActivity extends BaseDialogWhenLargeActivity implements OnItemClickListener,
 		LoaderCallbacks<List<File>>, DialogInterface.OnClickListener, TextWatcher {
 
 	private File mCurrentDirectory, mSourceFile;

@@ -121,7 +121,8 @@
 		<activity
 			android:name=".activity.EditAPIActivity"
 			android:label="@string/edit_api"
-			android:theme="@style/Theme.Twidere.Light.Dialog"/>
+			android:theme="@style/Theme.Twidere.Light.Dialog"
+			android:windowSoftInputMode="adjustResize"/>
 		<activity
 			android:name=".activity.SelectAccountActivity"
 			android:label="@string/select_account"
@@ -276,7 +277,9 @@
 			android:hardwareAccelerated="true"
 			android:label="@string/view_image"
 			android:launchMode="singleTop"
-			android:theme="@style/Theme.Twidere.Viewer">
+			android:theme="@style/Theme.Twidere.Viewer"
+			android:process=":image_viewer"
+			android:largeHeap="true">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>
 
@@ -309,7 +312,8 @@
 		<activity
 			android:name=".activity.SettingsDetailsActivity"
 			android:label="@string/settings"
-			android:theme="@style/Theme.Blank.DialogWhenLarge"/>
+			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:windowSoftInputMode="adjustResize"/>
 		<activity
 			android:name=".activity.InternalSettingsActivity"
 			android:label="@string/settings"/>
@@ -323,7 +327,9 @@
 		<activity
 			android:name=".activity.FileSaveAsActivity"
 			android:exported="false"
-			android:label="@string/save_as">
+			android:label="@string/save_as"
+			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SAVE_FILE"/>
 
@@ -333,7 +339,9 @@
 		<activity
 			android:name=".activity.FilePickerActivity"
 			android:exported="false"
-			android:label="@string/pick_file">
+			android:label="@string/pick_file"
+			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.PICK_FILE"/>
 
@@ -355,7 +363,8 @@
 			android:name=".activity.CustomTabsActivity"
 			android:exported="false"
 			android:label="@string/custom_tabs"
-			android:theme="@style/Theme.Blank.DialogWhenLarge">
+			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.CUSTOM_TABS"/>
 

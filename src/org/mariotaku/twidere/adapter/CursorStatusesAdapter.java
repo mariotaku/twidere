@@ -26,7 +26,6 @@ import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
@@ -66,7 +65,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 	private final Context mContext;
 	private StatusCursorIndices mIndices;
 	private final ArrayList<Long> mSelectedStatusIds;
-	private final boolean mDisplayHiResProfileImage;
 	private int mNameDisplayOption;
 
 	public CursorStatusesAdapter(final Context context) {
@@ -76,7 +74,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
-		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	@Override
@@ -190,13 +187,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			}
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				final String profile_image_url_string = cursor.getString(mIndices.profile_image_url);
-				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string),
-							holder.profile_image);
-				} else {
-					mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
-				}
+				final String profile_image_url = cursor.getString(mIndices.profile_image_url);
+				mProfileImageLoader.displayImage(profile_image_url, holder.profile_image);
 				holder.profile_image.setTag(position);
 			}
 			final boolean has_preview = mDisplayImagePreview && has_media && preview.matched_url != null;

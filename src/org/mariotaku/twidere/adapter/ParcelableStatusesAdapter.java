@@ -25,7 +25,6 @@ import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -66,7 +65,6 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	private final Context mContext;
 	private final LayoutInflater mInflater;
 	private final ArrayList<Long> mSelectedStatusIds;
-	private final boolean mDisplayHiResProfileImage;
 	private final NoDuplicatesArrayList<ParcelableStatus> mData = new NoDuplicatesArrayList<ParcelableStatus>();
 	private int mNameDisplayOption;
 
@@ -78,7 +76,6 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
-		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	public void add(final ParcelableStatus status) {
@@ -236,12 +233,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			}
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(status.profile_image_url_string),
-							holder.profile_image);
-				} else {
-					mProfileImageLoader.displayImage(status.profile_image_url_string, holder.profile_image);
-				}
+				mProfileImageLoader.displayImage(status.profile_image_url_string, holder.profile_image);
 				holder.profile_image.setTag(position);
 			}
 			final boolean has_preview = mDisplayImagePreview && status.has_media

@@ -84,7 +84,7 @@ public class ParcelableDirectMessage implements Parcelable {
 				.getString(indices.recipient_profile_image_url) : null;
 	}
 
-	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_outgoing) {
+	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_outgoing, boolean large_profile_image) {
 		this.account_id = account_id;
 		is_out_going = is_outgoing;
 		final User sender = message.getSender(), recipient = message.getRecipient();

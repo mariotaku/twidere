@@ -66,11 +66,11 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		user_profile_image_url_string = in.readString();
 	}
 
-	public ParcelableUserList(final UserList user, final long account_id) {
-		this(user, account_id, 0);
+	public ParcelableUserList(final UserList user, final long account_id, boolean large_profile_image) {
+		this(user, account_id, 0, large_profile_image);
 	}
 
-	public ParcelableUserList(final UserList list, final long account_id, final long position) {
+	public ParcelableUserList(final UserList list, final long account_id, final long position, boolean large_profile_image) {
 		final User user = list.getUser();
 		this.position = position;
 		this.account_id = account_id;

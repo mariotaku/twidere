@@ -35,22 +35,26 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import com.twitter.Extractor;
+import org.mariotaku.twidere.R;
 
 public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 
 	private final ArrayList<ContentValues> all_statuses;
 	private final ContentResolver resolver;
+	private final boolean large_profile_image;
 
 	public CacheUsersStatusesTask(final Context context, final ArrayList<ContentValues> all_statuses) {
 		resolver = context.getContentResolver();
 		this.all_statuses = all_statuses;
+		large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	public CacheUsersStatusesTask(final Context context, final List<twitter4j.Status> statuses, final long account_id) {
 		resolver = context.getContentResolver();
 		all_statuses = new ArrayList<ContentValues>();
+		large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		for (final twitter4j.Status status : statuses) {
-			all_statuses.add(makeStatusContentValues(status, account_id));
+			all_statuses.add(makeStatusContentValues(status, account_id, large_profile_image));
 		}
 	}
 

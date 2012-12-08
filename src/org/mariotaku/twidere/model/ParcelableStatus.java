@@ -21,6 +21,7 @@ package org.mariotaku.twidere.model;
 
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.parseString;
 
@@ -159,7 +160,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		my_retweet_id = in.readLong();
 	}
 
-	public ParcelableStatus(Status status, final long account_id, final boolean is_gap) {
+	public ParcelableStatus(Status status, final long account_id, final boolean is_gap, final boolean large_profile_image) {
 
 		this.is_gap = is_gap;
 		this.account_id = account_id;
@@ -178,7 +179,8 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		user_id = user != null ? user.getId() : -1;
 		name = user != null ? user.getName() : null;
 		screen_name = user != null ? user.getScreenName() : null;
-		profile_image_url_string = user != null ? parseString(user.getProfileImageUrlHttps()) : null;
+		final String profile_image_url_orig = user != null ? parseString(user.getProfileImageUrlHttps()) : null;
+		profile_image_url_string = large_profile_image ? getBiggerTwitterProfileImage(profile_image_url_orig) : profile_image_url_orig;
 		is_protected = user != null ? user.isProtected() : false;
 		is_verified = user != null ? user.isVerified() : false;
 		final MediaEntity[] medias = status.getMediaEntities();

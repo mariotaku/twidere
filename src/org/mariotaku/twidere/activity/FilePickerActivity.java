@@ -52,7 +52,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FilePickerActivity extends BaseActivity implements Constants, OnItemClickListener,
+public class FilePickerActivity extends BaseDialogWhenLargeActivity implements OnItemClickListener,
 		LoaderCallbacks<List<File>> {
 
 	private File mCurrentDirectory;

@@ -105,6 +105,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		final Status[] target_statuses = item.getTargetStatuses();
 		final int sources_length = sources != null ? sources.length : 0;
 		final Action action = item.getAction();
+		final boolean large_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 		if (sources_length > 0) {
 			final Status[] target_objects = item.getTargetObjectStatuses();
 			switch (action.getActionId()) {
@@ -114,7 +115,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					} else {
 						if (target_statuses != null && target_statuses.length > 0) {
 							final Status status = target_statuses[0];
-							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
+							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, large_profile_image));
 						}
 					}
 					break;
@@ -130,14 +131,14 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 				case Action.ACTION_MENTION: {
 					if (target_objects != null && target_objects.length > 0) {
 						final Status status = target_objects[0];
-						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
+						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, large_profile_image));
 					}
 					break;
 				}
 				case Action.ACTION_REPLY: {
 					if (target_statuses != null && target_statuses.length > 0) {
 						final Status status = target_statuses[0];
-						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
+						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, large_profile_image));
 					}
 					break;
 				}
@@ -147,7 +148,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					} else {
 						if (target_objects != null && target_objects.length > 0) {
 							final Status status = target_objects[0];
-							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false));
+							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, large_profile_image));
 						}
 					}
 					break;
