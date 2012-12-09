@@ -3,7 +3,9 @@
 
 	<dimen name="profile_image_size">56dp</dimen>
 	<dimen name="activity_profile_image_size">32dp</dimen>
-	<dimen name="preview_image_size">120dp</dimen>
+	<dimen name="image_preview_height">140dp</dimen>
+	<dimen name="image_preview_size">@dimen/image_preview_preferred_width</dimen>
+	<dimen name="image_preview_preferred_width">320dp</dimen>
 	<dimen name="preference_horizontal_margin">15dp</dimen>
 	<!-- The width of the big icons in notifications. -->
 	<dimen name="notification_large_icon_width">64dp</dimen>

@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
 import java.util.List;
 
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
@@ -34,9 +35,9 @@ import android.support.v4.content.AsyncTaskLoader;
 
 public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsData> {
 
-	private final Twitter mTwitter;
-
-	private final long mAccountId;
+	protected final Twitter mTwitter;
+	protected final long mAccountId;
+	protected final boolean mHiResProfileImage;
 	private final long mUserId;
 	private final String mScreenName;
 
@@ -46,6 +47,7 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 		mAccountId = account_id;
 		mUserId = user_id;
 		mScreenName = screen_name;
+		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	public Twitter getTwitter() {
@@ -68,10 +70,11 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 			final int user_lists_size = user_lists.size(), user_list_memberships_size = user_list_memberships.size();
 			final UserListsData data = new UserListsData();
 			for (int i = 0; i < user_lists_size; i++) {
-				data.lists.add(new ParcelableUserList(user_lists.get(i), mAccountId, i));
+				data.lists.add(new ParcelableUserList(user_lists.get(i), mAccountId, i, mHiResProfileImage));
 			}
 			for (int i = 0; i < user_list_memberships_size; i++) {
-				data.memberships.add(new ParcelableUserList(user_list_memberships.get(i), mAccountId, i));
+				data.memberships.add(new ParcelableUserList(user_list_memberships.get(i), mAccountId, i,
+						mHiResProfileImage));
 			}
 			return data;
 		} catch (final TwitterException e) {

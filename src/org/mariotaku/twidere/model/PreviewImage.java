@@ -30,7 +30,7 @@ public class PreviewImage {
 	}
 
 	public PreviewImage(final ImageSpec spec, final String orig_url) {
-		this(spec != null && spec.thumbnail_link != null, spec.thumbnail_link, orig_url);
+		this(spec != null && spec.preview_image_link != null, spec.preview_image_link, orig_url);
 	}
 
 	@Override

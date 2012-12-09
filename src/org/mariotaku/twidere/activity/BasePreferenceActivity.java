@@ -86,7 +86,7 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 		boolean show_anim = false;
 		try {
 			final float transition_animation = Settings.System.getFloat(getContentResolver(),
-					Settings.System.TRANSITION_ANIMATION_SCALE);
+					Settings.Global.TRANSITION_ANIMATION_SCALE);
 			show_anim = transition_animation > 0.0;
 		} catch (final SettingNotFoundException e) {
 			e.printStackTrace();

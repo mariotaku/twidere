@@ -36,7 +36,7 @@ import android.content.SharedPreferences;
 
 public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 
-	private final long mMaxId, mAccountId;
+	private final long mMaxId;
 	private IDs mIDs;
 	private final SharedPreferences mPreferences;
 	private final int mLoadItemLimit;
@@ -44,7 +44,6 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 	public IDsUsersLoader(final Context context, final long account_id, final long max_id,
 			final List<ParcelableUser> users_list) {
 		super(context, account_id, users_list);
-		mAccountId = account_id;
 		mMaxId = max_id;
 		mPreferences = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int prefs_load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
@@ -85,7 +84,7 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();
 		for (final User user : users) {
 			final int position = ArrayUtils.indexOf(mIDs.getIDs(), user.getId());
-			result.add(new ParcelableUser(user, mAccountId, position));
+			result.add(new ParcelableUser(user, mAccountId, position, mHiResProfileImage));
 		}
 		return result;
 	}

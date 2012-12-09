@@ -98,7 +98,7 @@ public class TwitterWrapper implements Constants {
 	private final Resources mResources;
 
 	private final boolean large_profile_image;
-	
+
 	private int mGetHomeTimelineTaskId, mGetMentionsTaskId;
 	private int mGetReceivedDirectMessagesTaskId, mGetSentDirectMessagesTaskId;
 	private int mGetLocalTrendsTaskId;
@@ -1605,7 +1605,8 @@ public class TwitterWrapper implements Constants {
 			super.onPostExecute(result);
 			if (result == null) return;
 			if (result.data != null && result.data.getId() > 0) {
-				final ContentValues values = makeDirectMessageContentValues(result.data, account_id, true, large_profile_image);
+				final ContentValues values = makeDirectMessageContentValues(result.data, account_id, true,
+						large_profile_image);
 				mResolver.insert(DirectMessages.Outbox.CONTENT_URI, values);
 				Toast.makeText(context, R.string.send_successfully, Toast.LENGTH_SHORT).show();
 			} else {
@@ -1658,7 +1659,8 @@ public class TwitterWrapper implements Constants {
 							continue;
 						}
 						message_ids.add(message.getId());
-						values_list.add(makeDirectMessageContentValues(message, account_id, isOutgoing(), large_profile_image));
+						values_list.add(makeDirectMessageContentValues(message, account_id, isOutgoing(),
+								large_profile_image));
 					}
 
 					// Delete all rows conflicting before new data inserted.

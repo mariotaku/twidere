@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.model;
 
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.Serializable;
@@ -66,11 +67,12 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		user_profile_image_url_string = in.readString();
 	}
 
-	public ParcelableUserList(final UserList user, final long account_id, boolean large_profile_image) {
+	public ParcelableUserList(final UserList user, final long account_id, final boolean large_profile_image) {
 		this(user, account_id, 0, large_profile_image);
 	}
 
-	public ParcelableUserList(final UserList list, final long account_id, final long position, boolean large_profile_image) {
+	public ParcelableUserList(final UserList list, final long account_id, final long position,
+			final boolean large_profile_image) {
 		final User user = list.getUser();
 		this.position = position;
 		this.account_id = account_id;
@@ -82,7 +84,9 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		user_id = user.getId();
 		user_name = user.getName();
 		user_screen_name = user.getScreenName();
-		user_profile_image_url_string = parseString(user.getProfileImageUrlHttps());
+		final String user_profile_image_url_orig = user != null ? parseString(user.getProfileImageUrlHttps()) : null;
+		user_profile_image_url_string = large_profile_image ? getBiggerTwitterProfileImage(user_profile_image_url_orig)
+				: user_profile_image_url_orig;
 	}
 
 	@Override

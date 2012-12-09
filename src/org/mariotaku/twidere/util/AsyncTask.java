@@ -88,20 +88,20 @@ public abstract class AsyncTask<Param, Progress, Result> {
 		RUNNING, PENDING, FINISHED
 	}
 
-	private final class InternalThread extends Thread {
-
-		@Override
-		public void run() {
-			mRunnable.run();
-		}
-	}
-	
 	private final class BackgroundRunnable implements Runnable {
 
 		@Override
 		public void run() {
 			final Result result = doInBackground(mParams);
 			mHandler.post(new OnPostExecuteRunnable(result));
+		}
+	}
+
+	private final class InternalThread extends Thread {
+
+		@Override
+		public void run() {
+			mRunnable.run();
 		}
 	}
 

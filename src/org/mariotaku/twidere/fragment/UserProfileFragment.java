@@ -27,7 +27,6 @@ import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
@@ -47,7 +46,7 @@ import static org.mariotaku.twidere.util.Utils.openUserLists;
 import static org.mariotaku.twidere.util.Utils.openUserMentions;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
-import static org.mariotaku.twidere.util.Utils.setUserColor;
+import static org.mariotaku.twidere.util.Utils.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,6 +56,7 @@ import java.io.InputStream;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.SetColorActivity;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -66,12 +66,14 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.ExtendedViewInterface.OnSizeChangedListener;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
+import org.mariotaku.twidere.view.ExtendedFrameLayout;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -133,7 +135,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right {
+		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right,
+		OnSizeChangedListener {
 
 	private static final int TYPE_NAME = 1;
 	private static final int TYPE_URL = 2;
@@ -151,7 +154,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowingYouIndicator, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
-			mTweetsContainer, mFollowersContainer, mFriendsContainer, mFollowContainer, mProfileNameBannerContainer;
+			mTweetsContainer, mFollowersContainer, mFriendsContainer, mFollowContainer;
+	private ExtendedFrameLayout mProfileNameBannerContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
 	private ColorLabelRelativeLayout mProfileNameContainer;
@@ -304,6 +308,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	};
 
+	private static final String INTENT_KEY_WIDTH = "width";
+
 	private final LoaderCallbacks<Bitmap> mBannerImageCallback = new LoaderCallbacks<Bitmap>() {
 
 		@Override
@@ -312,14 +318,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			lp.height = LayoutParams.WRAP_CONTENT;
 			mProfileNameBannerContainer.setBackgroundDrawable(null);
 			mProfileNameBannerContainer.setLayoutParams(lp);
-			final int screen_width = getResources().getDisplayMetrics().widthPixels;
-			final String type;
-			if (screen_width > 320) {
-				type = "web";
-			} else {
-				type = "mobile";
-			}
-			return new BannerImageLoader(getActivity(), mUser, type, screen_width < 320);
+			final int def_width = getResources().getDisplayMetrics().widthPixels;
+			final int screen_width = args.getInt(INTENT_KEY_WIDTH, def_width);
+			return new BannerImageLoader(getActivity(), mUser, screen_width);
 		}
 
 		@Override
@@ -331,8 +332,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (data == null) return;
 			final Drawable d = new BitmapDrawable(getResources(), data);
 			final LayoutParams lp = mProfileNameBannerContainer.getLayoutParams();
-			final float ratio = (float) data.getHeight() / (float) data.getWidth();
-			lp.height = (int) (mProfileNameContainer.getWidth() * ratio);
+			lp.height = mProfileNameContainer.getWidth() / 2;
 			mProfileNameBannerContainer.setLayoutParams(lp);
 			mProfileNameBannerContainer.setBackgroundDrawable(d);
 		}
@@ -344,6 +344,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mUser = null;
 		mUserId = -1;
 		mAccountId = -1;
+		mProfileNameBannerContainer.setOnSizeChangedListener(null);
 		mAdapter.clear();
 		if (user == null || user.user_id <= 0 || getActivity() == null) return;
 		final LoaderManager lm = getLoaderManager();
@@ -381,16 +382,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mTweetCount.setText(String.valueOf(user.statuses_count));
 		mFollowersCount.setText(String.valueOf(user.followers_count));
 		mFriendsCount.setText(String.valueOf(user.friends_count));
-		// final boolean display_profile_image =
-		// preferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		// mProfileImageView.setVisibility(display_profile_image ? View.VISIBLE
-		// : View.GONE);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
-			final String profile_image_url_string = user.profile_image_url_string;
-			final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
-			mProfileImageLoader.displayImage(
-					hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-							: profile_image_url_string, mProfileImageView);
+			mProfileImageLoader.displayImage(user.profile_image_url_string, mProfileImageView);
+		} else {
+			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}
 		if (isMyAccount(getActivity(), user.user_id)) {
 			final ContentResolver resolver = getContentResolver();
@@ -415,7 +410,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 		mAdapter.notifyDataSetChanged();
 		getFriendship();
-		getBannerImage();
+		mProfileNameBannerContainer.setOnSizeChangedListener(this);
 	}
 
 	public void getUserInfo(final long account_id, final long user_id, final String screen_name,
@@ -615,6 +610,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				mPopupMenu.show();
 				break;
 			}
+			case R.id.name_container: {
+				if (mUser == null || mAccountId != mUserId) return;
+				startActivity(new Intent(getActivity(), EditUserProfileActivity.class));
+				break;
+			}
 		}
 
 	}
@@ -647,7 +647,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
 		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
 		mFollowingYouIndicator = (TextView) mHeaderView.findViewById(R.id.following_you_indicator);
-		mProfileNameBannerContainer = mHeaderView.findViewById(R.id.profile_name_banner_container);
+		mProfileNameBannerContainer = (ExtendedFrameLayout) mHeaderView
+				.findViewById(R.id.profile_name_banner_container);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);
 		((FrameLayout) container_view.findViewById(R.id.list_container)).addView(mListContainer);
@@ -865,6 +866,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
+	public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
+		getBannerImage(w);
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_FRIENDSHIP_CHANGED);
@@ -880,12 +886,15 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		super.onStop();
 	}
 
-	private void getBannerImage() {
+	private void getBannerImage(final int w) {
+		final Bundle args = new Bundle();
+		args.putInt(INTENT_KEY_WIDTH, w);
 		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_BANNER);
 		if (mBannerImageLoaderInitialized) {
-			lm.restartLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
+			lm.restartLoader(LOADER_ID_BANNER, args, mBannerImageCallback);
 		} else {
-			lm.initLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
+			lm.initLoader(LOADER_ID_BANNER, args, mBannerImageCallback);
 			mBannerImageLoaderInitialized = true;
 		}
 	}
@@ -911,14 +920,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	private void takePhoto() {
-		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
 					.getExternalCacheDir(getActivity()) : new File(getExternalStorageDirectory().getPath()
 					+ "/Android/data/" + getActivity().getPackageName() + "/cache/");
 			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
 			mImageUri = Uri.fromFile(file);
-			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
+			final Intent intent = createTakePhotoIntent(mImageUri);
 			startActivityForResult(intent, REQUEST_TAKE_PHOTO);
 		}
 	}
@@ -1018,35 +1026,32 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private static final String CACHE_DIR = "cached_images";
 
 		private final ParcelableUser user;
-		private final String type;
 		private final Context context;
 		private final HostAddressResolver resolver;
-		private final boolean scale_down;
+		private final int width;
 		private final int connection_timeout;
 
-		public BannerImageLoader(final Context context, final ParcelableUser user, final String type,
-				final boolean scale_down) {
+		public BannerImageLoader(final Context context, final ParcelableUser user, final int width) {
 			super(context);
 			this.context = context;
 			this.user = user;
-			this.type = type;
+			this.width = width;
 			resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
 			connection_timeout = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
 					PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-			this.scale_down = scale_down;
 		}
 
 		@Override
 		public Bitmap loadInBackground() {
 			if (user == null || user.profile_banner_url_string == null) return null;
 			try {
-				final String url = user.profile_banner_url_string + "/" + type;
+				final String url = user.profile_banner_url_string + "/" + getBestBannerType(width);
 				final File cache_dir = getImageCacheDir();
 				final File cache_file = cache_dir != null && cache_dir.isDirectory() ? new File(cache_dir,
 						getURLFilename(url)) : null;
 				if (cache_file != null && cache_file.isFile()) {
 					final BitmapFactory.Options o = new BitmapFactory.Options();
-					o.inSampleSize = scale_down ? 2 : 1;
+					// o.inSampleSize = scale_down ? 2 : 1;
 					final Bitmap cache_bitmap = BitmapFactory.decodeFile(cache_file.getPath(), o);
 					if (cache_bitmap != null) return createAlphaGradientBanner(cache_bitmap);
 				}
@@ -1057,7 +1062,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					final InputStream is = client.get(url, null).asStream();
 					copyStream(is, fos);
 					final BitmapFactory.Options o = new BitmapFactory.Options();
-					o.inSampleSize = scale_down ? 2 : 1;
+					// o.inSampleSize = scale_down ? 2 : 1;
 					final Bitmap bitmap = BitmapFactory.decodeFile(cache_file.getPath(), o);
 					return createAlphaGradientBanner(bitmap);
 				} else {
@@ -1102,6 +1107,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			canvas.drawBitmap(orig, 0, 0, null);
 			canvas.drawRect(0, 0, width, height, paint);
 			return bitmap;
+		}
+
+		private static String getBestBannerType(final int width) {
+			if (width <= 320)
+				return "mobile";
+			else if (width <= 520)
+				return "web";
+			else if (width <= 626)
+				return "ipad";
+			else if (width <= 640)
+				return "mobile_retina";
+			else if (width <= 1040)
+				return "web_retina";
+			else
+				return "ipad_retina";
 		}
 	}
 
@@ -1238,12 +1258,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private final Bundle extras;
 		private final long account_id, user_id;
 		private final String screen_name;
+		private final boolean hires_profile_image;
 
 		private UserInfoLoader(final Context context, final long account_id, final long user_id,
 				final String screen_name, final Bundle extras, final boolean omit_intent_extra) {
 			super(context);
 			twitter = getTwitterInstance(context, account_id, true);
 			this.omit_intent_extra = omit_intent_extra;
+			hires_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 			this.extras = extras;
 			this.account_id = account_id;
 			this.user_id = user_id;
@@ -1259,10 +1281,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (twitter == null) return new Response<ParcelableUser>(null, null);
 			try {
 				if (user_id != -1)
-					return new Response<ParcelableUser>(new ParcelableUser(twitter.showUser(user_id), account_id), null);
+					return new Response<ParcelableUser>(new ParcelableUser(twitter.showUser(user_id), account_id,
+							hires_profile_image), null);
 				else if (screen_name != null)
-					return new Response<ParcelableUser>(new ParcelableUser(twitter.showUser(screen_name), account_id),
-							null);
+					return new Response<ParcelableUser>(new ParcelableUser(twitter.showUser(screen_name), account_id,
+							hires_profile_image), null);
 			} catch (final TwitterException e) {
 				return new Response<ParcelableUser>(null, e);
 			}

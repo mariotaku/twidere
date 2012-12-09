@@ -80,6 +80,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		mHolder.text.setText("Twidere is an open source twitter client for Android.");
 		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_has_media, 0);
 		mHolder.reply_retweet_status.setVisibility(View.GONE);
+		mHolder.setShowAsGap(false);
 		setName();
 		setImagePreview();
 		setProfileImage();
@@ -95,7 +96,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setImagePreview() {
 		if (mHolder == null) return;
-		mHolder.image_preview
+		mHolder.image_preview_frame
 				.setVisibility(mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false) ? View.VISIBLE
 						: View.GONE);
 	}

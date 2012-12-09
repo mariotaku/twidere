@@ -160,7 +160,8 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		my_retweet_id = in.readLong();
 	}
 
-	public ParcelableStatus(Status status, final long account_id, final boolean is_gap, final boolean large_profile_image) {
+	public ParcelableStatus(Status status, final long account_id, final boolean is_gap,
+			final boolean large_profile_image) {
 
 		this.is_gap = is_gap;
 		this.account_id = account_id;
@@ -180,7 +181,8 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		name = user != null ? user.getName() : null;
 		screen_name = user != null ? user.getScreenName() : null;
 		final String profile_image_url_orig = user != null ? parseString(user.getProfileImageUrlHttps()) : null;
-		profile_image_url_string = large_profile_image ? getBiggerTwitterProfileImage(profile_image_url_orig) : profile_image_url_orig;
+		profile_image_url_string = large_profile_image ? getBiggerTwitterProfileImage(profile_image_url_orig)
+				: profile_image_url_orig;
 		is_protected = user != null ? user.isProtected() : false;
 		is_verified = user != null ? user.isVerified() : false;
 		final MediaEntity[] medias = status.getMediaEntities();

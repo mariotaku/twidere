@@ -261,7 +261,7 @@ public class TwidereLinkify {
 						if (spec == null || start < 0 || end > string.length() || start > end) {
 							continue;
 						}
-						final String url = spec.image_link;
+						final String url = spec.full_image_link;
 						string.removeSpan(span);
 						applyLink(url, start, end, string, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION);
 					}

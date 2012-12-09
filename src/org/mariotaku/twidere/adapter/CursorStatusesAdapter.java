@@ -192,10 +192,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 				holder.profile_image.setTag(position);
 			}
 			final boolean has_preview = mDisplayImagePreview && has_media && preview.matched_url != null;
-			holder.image_preview.setVisibility(has_preview ? View.VISIBLE : View.GONE);
+			holder.image_preview_frame.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
 				mPreviewImageLoader.displayImage(preview.matched_url, holder.image_preview);
-				holder.image_preview.setTag(position);
+				holder.image_preview_frame.setTag(position);
 			}
 		}
 
@@ -236,7 +236,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 			final StatusViewHolder holder = new StatusViewHolder(view);
 			view.setTag(holder);
 			holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
-			holder.image_preview.setOnClickListener(mMultiSelectEnabled ? null : this);
+			holder.image_preview_frame.setOnClickListener(mMultiSelectEnabled ? null : this);
 			// holder.image_preview.setClickable(!mMultiSelectEnabled);
 			// holder.profile_image.setClickable(!mMultiSelectEnabled);
 		}
@@ -250,10 +250,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements Status
 		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
 		if (status == null) return;
 		switch (view.getId()) {
-			case R.id.image_preview: {
+			case R.id.image_preview_frame: {
 				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string);
 				if (spec != null) {
-					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
+					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.full_image_link));
 					intent.setPackage(mContext.getPackageName());
 					mContext.startActivity(intent);
 				}

@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 
@@ -33,97 +32,38 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.UserViewHolder;
 import org.mariotaku.twidere.util.BaseAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
-public class UsersAdapter extends BaseAdapter implements BaseAdapterInterface {
+public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
 
 	private final LazyImageLoader mProfileImageLoader;
-
-	private final LayoutInflater mInflater;
-
-	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
-
-	private final NoDuplicatesArrayList<ParcelableUser> mData = new NoDuplicatesArrayList<ParcelableUser>();
-
-	private final boolean mDisplayHiResProfileImage;
-
-	private float mTextSize;
-	private final ArrayList<Long> mSelectedUserIds;
-
 	private final Context mContext;
+
+	private final ArrayList<Long> mSelectedUserIds;
+	
+	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
+	private float mTextSize;
 	private int mNameDisplayOption;
 
 	public UsersAdapter(final Context context) {
+		super(context, R.layout.user_list_item);
 		mContext = context;
-		mInflater = LayoutInflater.from(context);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
-		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		mSelectedUserIds = application.getSelectedUserIds();
-	}
-
-	public void add(final ParcelableUser status) {
-		if (status == null) return;
-		mData.add(status);
-		notifyDataSetChanged();
-	}
-
-	public void clear() {
-		mData.clear();
-		notifyDataSetChanged();
-	}
-
-	public ParcelableUser findItem(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) return getItem(i);
-		}
-		return null;
-	}
-
-	public ParcelableUser findItemByUserId(final long user_id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			final ParcelableUser item = getItem(i);
-			if (item.user_id == user_id) return item;
-		}
-		return null;
-	}
-
-	public int findItemPositionByUserId(final long user_id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			final ParcelableUser item = getItem(i);
-			if (item.user_id == user_id) return i;
-		}
-		return -1;
-	}
-
-	@Override
-	public int getCount() {
-		return mData.size();
-	}
-
-	@Override
-	public ParcelableUser getItem(final int position) {
-		return mData.get(position);
 	}
 
 	@Override
 	public long getItemId(final int position) {
-		// TODO: Implement this method
 		return getItem(position) != null ? getItem(position).user_id : -1;
 	}
 
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
-		final View view = convertView != null ? convertView : mInflater.inflate(R.layout.user_list_item, null);
+		final View view = super.getView(position, convertView, parent);
 		final Object tag = view.getTag();
 		UserViewHolder holder = null;
 		if (tag instanceof UserViewHolder) {
@@ -174,12 +114,7 @@ public class UsersAdapter extends BaseAdapter implements BaseAdapterInterface {
 		holder.description.setText(user.description);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
-			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(user.profile_image_url_string),
-						holder.profile_image);
-			} else {
 				mProfileImageLoader.displayImage(user.profile_image_url_string, holder.profile_image);
-			}
 		}
 
 		return view;
@@ -195,7 +130,7 @@ public class UsersAdapter extends BaseAdapter implements BaseAdapterInterface {
 		}
 		if (data == null) return;
 		for (final ParcelableUser user : data) {
-			if (clear_old || findItemByUserId(user.user_id) == null) {
+			if (clear_old || findItem(user.user_id) == null) {
 				add(user);
 			}
 		}

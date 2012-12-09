@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -35,7 +36,6 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import com.twitter.Extractor;
-import org.mariotaku.twidere.R;
 
 public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 

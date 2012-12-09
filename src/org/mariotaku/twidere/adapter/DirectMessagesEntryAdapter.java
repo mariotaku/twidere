@@ -29,7 +29,6 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_TEXT;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 
 import java.text.DateFormat;
@@ -52,14 +51,12 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mFastProcessingEnabled;
 	private final LazyImageLoader mProfileImageLoader;
 	private float mTextSize;
-	private final boolean mDisplayHiResProfileImage;
 
 	private int mNameDisplayOption;
 
 	public DirectMessagesEntryAdapter(final Context context, final LazyImageLoader loader) {
 		super(context, R.layout.direct_messages_entry_item, null, new String[0], new int[0], 0);
 		mProfileImageLoader = loader;
-		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	@Override
@@ -119,12 +116,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements B
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
-			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string),
-						holder.profile_image);
-			} else {
-				mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
-			}
+			mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
 		}
 
 		super.bindView(view, context, cursor);

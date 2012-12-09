@@ -887,7 +887,6 @@ public final class Utils implements Constants {
 		return new File(context.getCacheDir(), cache_dir_name);
 	}
 
-	@Deprecated
 	public static String getBiggerTwitterProfileImage(final String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
@@ -1055,39 +1054,39 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getImglyImage(final String id) {
 		if (isEmpty(id)) return null;
-		final String thumbnail_size = "https://img.ly/show/thumb/" + id;
-		final String full_size = "https://img.ly/show/full/" + id;
-		return new ImageSpec(thumbnail_size, full_size);
+		final String preview = "https://img.ly/show/medium/" + id;
+		final String full = "https://img.ly/show/full/" + id;
+		return new ImageSpec(preview, full);
 
 	}
 
 	public static ImageSpec getImgurImage(final String id) {
 		if (isEmpty(id)) return null;
-		final String thumbnail_size = "http://i.imgur.com/" + id + "s.jpg";
-		final String full_size = "http://i.imgur.com/" + id + ".jpg";
-		return new ImageSpec(thumbnail_size, full_size);
+		final String preview = "http://i.imgur.com/" + id + "l.jpg";
+		final String full = "http://i.imgur.com/" + id + ".jpg";
+		return new ImageSpec(preview, full);
 	}
 
 	public static ImageSpec getInstagramImage(final String id) {
 		if (isEmpty(id)) return null;
-		final String thumbnail_size = "https://instagr.am/p/" + id + "/media/?size=t";
-		final String full_size = "https://instagr.am/p/" + id + "/media/?size=l";
-		return new ImageSpec(thumbnail_size, full_size);
+		final String preview = "https://instagr.am/p/" + id + "/media/?size=l";
+		final String full = "https://instagr.am/p/" + id + "/media/?size=l";
+		return new ImageSpec(preview, full);
 	}
 
 	public static ImageSpec getLockerzAndPlixiImage(final String url) {
 		if (isEmpty(url)) return null;
-		final String thumbnail_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
-		final String full_size = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
-		return new ImageSpec(thumbnail_size, full_size);
+		final String preview = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=small";
+		final String full = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
+		return new ImageSpec(preview, full);
 
 	}
 
 	public static ImageSpec getMobyPictureImage(final String id) {
 		if (isEmpty(id)) return null;
-		final String thumbnail_size = "https://moby.to/" + id + ":thumb";
-		final String full_size = "https://moby.to/" + id + ":full";
-		return new ImageSpec(thumbnail_size, full_size);
+		final String preview = "https://moby.to/" + id + ":thumb";
+		final String full = "https://moby.to/" + id + ":full";
+		return new ImageSpec(preview, full);
 	}
 
 	public static long[] getNewestMessageIdsFromDatabase(final Context context, final Uri uri) {
@@ -1202,9 +1201,9 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getPhotozouImage(final String id) {
 		if (isEmpty(id)) return null;
-		final String thumbnail_size = "http://photozou.jp/p/thumb/" + id;
-		final String full_size = "http://photozou.jp/p/img/" + id;
-		return new ImageSpec(thumbnail_size, full_size);
+		final String preview = "http://photozou.jp/p/thumb/" + id;
+		final String full = "http://photozou.jp/p/img/" + id;
+		return new ImageSpec(preview, full);
 	}
 
 	public static PreviewImage getPreviewImage(final String html, final boolean include_preview) {
@@ -1317,9 +1316,9 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getSinaWeiboImage(final String url) {
 		if (isEmpty(url)) return null;
-		final String thumbnail_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/thumbnail/");
-		final String full_size = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/large/");
-		return new ImageSpec(thumbnail_size, full_size);
+		//final String preview = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/thumbnail/");
+		final String full = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/large/");
+		return new ImageSpec(full, full);
 	}
 
 	public static int getStatusBackground(final boolean is_mention, final boolean is_favorite, final boolean is_retweet) {
@@ -1483,21 +1482,21 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getTwitgooImage(final String id) {
 		if (isEmpty(id)) return null;
-		final String thumbnail_size = "https://twitgoo.com/show/thumb/" + id;
-		final String full_size = "https://twitgoo.com/show/img/" + id;
-		return new ImageSpec(thumbnail_size, full_size);
+		final String preview = "https://twitgoo.com/show/thumb/" + id;
+		final String full = "https://twitgoo.com/show/img/" + id;
+		return new ImageSpec(preview, full);
 	}
 
 	public static ImageSpec getTwitpicImage(final String id) {
 		if (isEmpty(id)) return null;
-		final String thumbnail_size = "https://twitpic.com/show/thumb/" + id;
-		final String full_size = "https://twitpic.com/show/large/" + id;
-		return new ImageSpec(thumbnail_size, full_size);
+		//final String preview = "https://twitpic.com/show/thumb/" + id;
+		final String full = "https://twitpic.com/show/large/" + id;
+		return new ImageSpec(full, full);
 	}
 
 	public static ImageSpec getTwitterImage(final String url) {
 		if (isEmpty(url)) return null;
-		return new ImageSpec(url + ":thumb", url);
+		return new ImageSpec(url + ":small", url + ":large");
 	}
 
 	public static Twitter getTwitterInstance(final Context context, final long account_id,
@@ -1627,9 +1626,9 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getYfrogImage(final String id) {
 		if (isEmpty(id)) return null;
-		final String thumbnail_size = "https://yfrog.com/" + id + ":small";
-		final String full_size = "https://yfrog.com/" + id + ":medium";
-		return new ImageSpec(thumbnail_size, full_size);
+		final String preview = "https://yfrog.com/" + id + ":iphone";
+		final String full = "https://yfrog.com/" + id + ":medium";
+		return new ImageSpec(preview, full);
 
 	}
 
@@ -1776,7 +1775,7 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues makeCachedUserContentValues(final User user, boolean large_preview_image) {
+	public static ContentValues makeCachedUserContentValues(final User user, final boolean large_preview_image) {
 		if (user == null || user.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		values.put(CachedUsers.USER_ID, user.getId());
@@ -1787,7 +1786,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues makeDirectMessageContentValues(final DirectMessage message, final long account_id,
-			final boolean is_outgoing, boolean large_profile_image) {
+			final boolean is_outgoing, final boolean large_profile_image) {
 		if (message == null || message.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		final User sender = message.getSender(), recipient = message.getRecipient();
@@ -1806,12 +1805,16 @@ public final class Utils implements Constants {
 		values.put(DirectMessages.SENDER_SCREEN_NAME, sender.getScreenName());
 		values.put(DirectMessages.RECIPIENT_NAME, recipient.getName());
 		values.put(DirectMessages.RECIPIENT_SCREEN_NAME, recipient.getScreenName());
-		values.put(DirectMessages.SENDER_PROFILE_IMAGE_URL, large_profile_image ? getBiggerTwitterProfileImage(sender_profile_image_url) : sender_profile_image_url);
-		values.put(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL, large_profile_image ? getBiggerTwitterProfileImage(recipient_profile_image_url) : recipient_profile_image_url);
+		values.put(DirectMessages.SENDER_PROFILE_IMAGE_URL,
+				large_profile_image ? getBiggerTwitterProfileImage(sender_profile_image_url) : sender_profile_image_url);
+		values.put(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL,
+				large_profile_image ? getBiggerTwitterProfileImage(recipient_profile_image_url)
+						: recipient_profile_image_url);
 		return values;
 	}
 
-	public static ContentValues makeStatusContentValues(Status status, final long account_id, final boolean large_profile_image) {
+	public static ContentValues makeStatusContentValues(Status status, final long account_id,
+			final boolean large_profile_image) {
 		if (status == null || status.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		values.put(Statuses.ACCOUNT_ID, account_id);
@@ -1836,7 +1839,8 @@ public final class Utils implements Constants {
 			values.put(Statuses.SCREEN_NAME, screen_name);
 			values.put(Statuses.IS_PROTECTED, user.isProtected() ? 1 : 0);
 			values.put(Statuses.IS_VERIFIED, user.isVerified() ? 1 : 0);
-			values.put(Statuses.PROFILE_IMAGE_URL, large_profile_image ? getBiggerTwitterProfileImage(profile_image_url) : profile_image_url);
+			values.put(Statuses.PROFILE_IMAGE_URL,
+					large_profile_image ? getBiggerTwitterProfileImage(profile_image_url) : profile_image_url);
 		}
 		if (status.getCreatedAt() != null) {
 			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
@@ -2178,6 +2182,25 @@ public final class Utils implements Constants {
 
 	}
 
+	public static Intent createTakePhotoIntent(Uri uri) {
+		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		return intent;
+	}
+
+	public static Intent createTakePhotoIntent(Uri uri, int outputX, int outputY) {
+		final Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setType("image/*");
+		intent.putExtra("outputX", outputX);
+		intent.putExtra("outputY", outputY);
+		intent.putExtra("aspectX", 1);
+		intent.putExtra("aspectY", 1);
+		intent.putExtra("scale", true);
+		intent.putExtra("return-data", true);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		return intent;
+	}
+
 	public static void openUserListDetails(final Activity activity, final long account_id, final int list_id,
 			final long user_id, final String screen_name, final String list_name) {
 		if (activity == null) return;
@@ -2191,7 +2214,7 @@ public final class Utils implements Constants {
 			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			args.putString(INTENT_KEY_LIST_NAME, list_name);
 			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+			dual_pane_activity.showFragment(fragment, true);
 		} else {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);

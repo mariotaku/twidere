@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.CacheUsersStatusesTask;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
@@ -33,19 +34,18 @@ import twitter4j.TwitterException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import org.mariotaku.twidere.R;
 
 public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
 	private final long mMaxId, mSinceId;
-	private final boolean large_profile_image;
+	private final boolean mHiResProfileImage;
 
 	public Twitter4JStatusLoader(final Context context, final long account_id, final long max_id, final long since_id,
 			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
 		super(context, account_id, data, class_name, is_home_tab);
 		mMaxId = max_id;
 		mSinceId = since_id;
-		large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
+		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	public abstract List<Status> getStatuses(Paging paging) throws TwitterException;
@@ -53,7 +53,6 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 	@Override
 	public SynchronizedStateSavedList<ParcelableStatus, Long> loadInBackground() {
 		final SynchronizedStateSavedList<ParcelableStatus, Long> data = getData();
-		final long account_id = getAccountId();
 		List<Status> statuses = null;
 		final Context context = getContext();
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -77,13 +76,13 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			final Status min_status = statuses.size() > 0 ? Collections.min(statuses) : null;
 			final long min_status_id = min_status != null ? min_status.getId() : -1;
 			if (context instanceof Activity) {
-				((Activity) context).runOnUiThread(CacheUsersStatusesTask.getRunnable(context, statuses, account_id));
+				((Activity) context).runOnUiThread(CacheUsersStatusesTask.getRunnable(context, statuses, mAccountId));
 			}
 			for (final Status status : statuses) {
 				final long id = status.getId();
 				deleteStatus(id);
-				data.add(new ParcelableStatus(status, account_id, min_status_id > 0 && min_status_id == id
-						&& insert_gap, large_profile_image));
+				data.add(new ParcelableStatus(status, mAccountId, min_status_id > 0 && min_status_id == id
+						&& insert_gap, mHiResProfileImage));
 			}
 		}
 		try {

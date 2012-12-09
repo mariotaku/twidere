@@ -30,7 +30,7 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
 	private int mCurrentValue;
 	private String mUnitsLeft = "";
 	private String mUnitsRight = "";
-	
+
 	private SeekBar mSeekBar;
 	private TextView mStatusText;
 

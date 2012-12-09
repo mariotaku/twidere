@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import java.util.Collections;
 import java.util.List;
 
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
@@ -37,9 +38,11 @@ import android.support.v4.content.AsyncTaskLoader;
 
 public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<ParcelableUserList>> {
 
-	final NoDuplicatesArrayList<ParcelableUserList> mData = new NoDuplicatesArrayList<ParcelableUserList>();
-	final Twitter mTwitter;
-	private final long mAccountId, mCursor;
+	protected final NoDuplicatesArrayList<ParcelableUserList> mData = new NoDuplicatesArrayList<ParcelableUserList>();
+	protected final Twitter mTwitter;
+	protected final boolean mHiResProfileImage;
+	protected final long mAccountId;
+	private final long mCursor;
 
 	private long mNextCursor, mPrevCursor;
 
@@ -52,6 +55,7 @@ public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<Parcelabl
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mCursor = cursor;
 		mAccountId = account_id;
+		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	public long getCursor() {
@@ -86,11 +90,12 @@ public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<Parcelabl
 				mNextCursor = ((CursorSupport) list_loaded).getNextCursor();
 				mPrevCursor = ((CursorSupport) list_loaded).getPreviousCursor();
 				for (int i = 0; i < list_size; i++) {
-					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, (mCursor + 1) * 20 + i));
+					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, (mCursor + 1) * 20 + i,
+							mHiResProfileImage));
 				}
 			} else {
 				for (int i = 0; i < list_size; i++) {
-					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, i));
+					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, i, mHiResProfileImage));
 				}
 			}
 		}

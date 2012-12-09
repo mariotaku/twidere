@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -51,7 +49,7 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 
 	private final StatusComposeEditText mEditText;
 
-	private final boolean mDisplayProfileImage, mDisplayHiResProfileImage;
+	private final boolean mDisplayProfileImage;
 
 	private Cursor mCursor;
 	private int mProfileImageUrlIdx, mNameIdx, mScreenNameIdx;
@@ -71,7 +69,6 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 				.getProfileImageLoader() : null;
 		mDisplayProfileImage = mPreferences != null ? mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE,
 				true) : true;
-		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	public AutoCompleteAdapter(final StatusComposeEditText view) {
@@ -95,12 +92,7 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 		if (mProfileImageUrlIdx != -1) {
 			if (mDisplayProfileImage && mProfileImageLoader != null) {
 				final String profile_image_url_string = cursor.getString(mProfileImageUrlIdx);
-				mProfileImageLoader.displayImage(cursor.getString(mProfileImageUrlIdx), icon);
-				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string), icon);
-				} else {
-					mProfileImageLoader.displayImage(profile_image_url_string, icon);
-				}
+				mProfileImageLoader.displayImage(profile_image_url_string, icon);
 			} else {
 				icon.setImageResource(R.drawable.ic_profile_image_default);
 			}

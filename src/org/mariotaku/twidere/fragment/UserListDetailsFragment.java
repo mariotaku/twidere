@@ -100,14 +100,15 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	private ListActionAdapter mAdapter;
 
-	private long mAccountId, mUserId;
 	private final DialogFragment mAddMemberDialogFragment = new AddMemberDialogFragment(),
 			mEditUserListDialogFragment = new EditUserListDialogFragment();
+	private PopupMenu mPopupMenu;
+
+	private long mAccountId, mUserId;
 	private UserList mUserList = null;
 	private int mUserListId;
 	private String mUserName, mUserScreenName, mListName;
-
-	private PopupMenu mPopupMenu;
+	private boolean mHiResProfileImage;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -214,6 +215,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			list_name = args.getString(INTENT_KEY_LIST_NAME);
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
+		mHiResProfileImage = getResources().getBoolean(R.bool.hires_profile_image);
 		mProfileImageLoader = getApplication().getProfileImageLoader();
 		mAdapter = new ListActionAdapter(getActivity());
 		mAdapter.add(new ListTimelineAction(1));
@@ -261,7 +263,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			}
 			case R.id.profile_image_container: {
 				if (mAccountId > 0 && (mUserId > 0 || mUserScreenName != null)) {
-					openUserProfile(getActivity(), new ParcelableUser(mUserList.getUser(), mAccountId));
+					openUserProfile(getActivity(), new ParcelableUser(mUserList.getUser(), mAccountId,
+							mHiResProfileImage));
 				}
 				break;
 			}
@@ -400,7 +403,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			case MENU_EXTENSIONS: {
 				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
 				final Bundle extras = new Bundle();
-				extras.putParcelable(INTENT_KEY_USER_LIST, new ParcelableUserList(mUserList, mAccountId));
+				extras.putParcelable(INTENT_KEY_USER_LIST, new ParcelableUserList(mUserList, mAccountId,
+						mHiResProfileImage));
 				intent.putExtras(extras);
 				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
 				break;

@@ -67,7 +67,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			((ActionBarCompatBase) mActionBarCompat).requestCustomTitleView();
 		}
@@ -103,7 +103,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	}
 
 	@Override
-	public void onTitleChanged(final CharSequence title, final int color) {
+	protected void onTitleChanged(final CharSequence title, final int color) {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			getSupportActionBar().setTitle(title);
 		}

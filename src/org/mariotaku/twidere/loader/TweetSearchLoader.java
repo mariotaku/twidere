@@ -32,7 +32,6 @@ import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.Status;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.os.Bundle;
@@ -49,14 +48,13 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 
 	@Override
 	public List<Status> getStatuses(final Paging paging) throws TwitterException {
-		final Twitter twitter = getTwitter();
-		if (twitter == null) return null;
+		if (mTwitter == null) return null;
 		final Query query = new Query(mQuery);
 		query.setRpp(paging.getCount());
 		if (paging.getMaxId() > 0) {
 			query.setMaxId(paging.getMaxId());
 		}
-		return Arrays.asList(twitter.search(query).getStatuses());
+		return Arrays.asList(mTwitter.search(query).getStatuses());
 	}
 
 	@Override
@@ -64,7 +62,7 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
 				final String path = SerializationUtil.getSerializationFilePath(getContext(), getClassName(),
-						getAccountId(), mQuery);
+						mAccountId, mQuery);
 				final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = SerializationUtil.read(path);
 				setLastViewedId(statuses.getState());
 				final SynchronizedStateSavedList<ParcelableStatus, Long> data = getData();

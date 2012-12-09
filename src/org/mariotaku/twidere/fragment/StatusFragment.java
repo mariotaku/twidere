@@ -691,8 +691,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final ImageSpec spec = mImagePreviewAdapter.getItem(position);
 		if (spec == null) return;
 		// UCD
-		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec.image_link);
-		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
+		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec.full_image_link);
+		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.full_image_link));
 		intent.setPackage(getActivity().getPackageName());
 		startActivity(intent);
 	}
@@ -1033,7 +1033,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.images_preview_item, null);
 			final ImageView image = (ImageView) view.findViewById(R.id.image);
 			final ImageSpec spec = getItem(position);
-			mImageLoader.displayImage(spec != null ? spec.thumbnail_link : null, image);
+			mImageLoader.displayImage(spec != null ? spec.preview_image_link : null, image);
 			return view;
 		}
 

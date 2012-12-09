@@ -80,7 +80,7 @@ public class UserListSubscribersLoader extends ParcelableUsersLoader {
 		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();
 		final int size = users.size();
 		for (int i = 0; i < size; i++) {
-			result.add(new ParcelableUser(users.get(i), mAccountId, (mCursor + 1) * 20 + i));
+			result.add(new ParcelableUser(users.get(i), mAccountId, (mCursor + 1) * 20 + i, mHiResProfileImage));
 		}
 		return result;
 	}

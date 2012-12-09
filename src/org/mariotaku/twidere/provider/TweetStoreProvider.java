@@ -59,9 +59,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -78,7 +78,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	private NotificationManager mNotificationManager;
 	private SharedPreferences mPreferences;
 	private LazyImageLoader mProfileImageLoader;
-	private PackageManager mPackageManager;
 
 	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
 
@@ -101,92 +100,100 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	@Override
 	public int bulkInsert(final Uri uri, final ContentValues[] values) {
-		final int table_id = getTableId(uri);
-		final String table = getTableNameById(table_id);
-		checkWritePermission(table_id, table);
-		switch (table_id) {
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
-			case TABLE_ID_DIRECT_MESSAGES:
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
-				return 0;
-		}
-		int result = 0;
-		final int notification_count;
-		if (table != null && values != null) {
-			final int old_count;
+		try {
+			final int table_id = getTableId(uri);
+			final String table = getTableNameById(table_id);
+			checkWritePermission(table_id, table);
 			switch (table_id) {
-				case TABLE_ID_STATUSES: {
-					old_count = getAllStatusesCount(mContext, Statuses.CONTENT_URI);
-					break;
-				}
-				case TABLE_ID_MENTIONS: {
-					old_count = getAllStatusesCount(mContext, Mentions.CONTENT_URI);
-					break;
-				}
-				default:
-					old_count = 0;
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+				case TABLE_ID_DIRECT_MESSAGES:
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+					return 0;
 			}
-			mDatabase.beginTransaction();
-			for (final ContentValues contentValues : values) {
-				mDatabase.insert(table, null, contentValues);
-				result++;
-			}
-			mDatabase.setTransactionSuccessful();
-			mDatabase.endTransaction();
-			if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
+			int result = 0;
+			final int notification_count;
+			if (table != null && values != null) {
+				final int old_count;
 				switch (table_id) {
 					case TABLE_ID_STATUSES: {
-						mNewStatusesCount += notification_count = getAllStatusesCount(mContext, Statuses.CONTENT_URI)
-								- old_count;
+						old_count = getAllStatusesCount(mContext, Statuses.CONTENT_URI);
 						break;
 					}
 					case TABLE_ID_MENTIONS: {
-						mNewMentionsCount += notification_count = getAllStatusesCount(mContext, Mentions.CONTENT_URI)
-								- old_count;
-						break;
-					}
-					case TABLE_ID_DIRECT_MESSAGES_INBOX: {
-						mNewMessagesCount += notification_count = result;
+						old_count = getAllStatusesCount(mContext, Mentions.CONTENT_URI);
 						break;
 					}
 					default:
-						notification_count = 0;
+						old_count = 0;
+				}
+				mDatabase.beginTransaction();
+				for (final ContentValues contentValues : values) {
+					mDatabase.insert(table, null, contentValues);
+					result++;
+				}
+				mDatabase.setTransactionSuccessful();
+				mDatabase.endTransaction();
+				if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
+					switch (table_id) {
+						case TABLE_ID_STATUSES: {
+							mNewStatusesCount += notification_count = getAllStatusesCount(mContext,
+									Statuses.CONTENT_URI) - old_count;
+							break;
+						}
+						case TABLE_ID_MENTIONS: {
+							mNewMentionsCount += notification_count = getAllStatusesCount(mContext,
+									Mentions.CONTENT_URI) - old_count;
+							break;
+						}
+						case TABLE_ID_DIRECT_MESSAGES_INBOX: {
+							mNewMessagesCount += notification_count = result;
+							break;
+						}
+						default:
+							notification_count = 0;
+					}
+				} else {
+					notification_count = 0;
 				}
 			} else {
 				notification_count = 0;
 			}
-		} else {
-			notification_count = 0;
+			if (result > 0) {
+				onDatabaseUpdated(uri);
+			}
+			onNewItemsInserted(uri, notification_count, values);
+			return result;
+		} catch (SQLException e) {
+			throw new IllegalStateException(e);
 		}
-		if (result > 0) {
-			onDatabaseUpdated(uri);
-		}
-		onNewItemsInserted(uri, notification_count, values);
-		return result;
 	};
 
 	@Override
 	public int delete(final Uri uri, final String selection, final String[] selectionArgs) {
-		final int table_id = getTableId(uri);
-		final String table = getTableNameById(table_id);
-		checkWritePermission(table_id, table);
-		if (table_id == VIRTUAL_TABLE_ID_NOTIFICATIONS) {
-			final List<String> segments = uri.getPathSegments();
-			if (segments.size() != 2) return 0;
-			clearNotification(parseInt(segments.get(1)));
+		try {
+			final int table_id = getTableId(uri);
+			final String table = getTableNameById(table_id);
+			checkWritePermission(table_id, table);
+			if (table_id == VIRTUAL_TABLE_ID_NOTIFICATIONS) {
+				final List<String> segments = uri.getPathSegments();
+				if (segments.size() != 2) return 0;
+				clearNotification(parseInt(segments.get(1)));
+			}
+			switch (table_id) {
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+				case TABLE_ID_DIRECT_MESSAGES:
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+					return 0;
+			}
+			if (table == null) return 0;
+			final int result = mDatabase.delete(table, selection, selectionArgs);
+			if (result > 0) {
+				onDatabaseUpdated(uri);
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new IllegalStateException(e);
 		}
-		switch (table_id) {
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
-			case TABLE_ID_DIRECT_MESSAGES:
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
-				return 0;
-		}
-		if (table == null) return 0;
-		final int result = mDatabase.delete(table, selection, selectionArgs);
-		if (result > 0) {
-			onDatabaseUpdated(uri);
-		}
-		return result;
 	}
 
 	@Override
@@ -196,37 +203,41 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	@Override
 	public Uri insert(final Uri uri, final ContentValues values) {
-		final int table_id = getTableId(uri);
-		final String table = getTableNameById(table_id);
-		checkWritePermission(table_id, table);
-		switch (table_id) {
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
-			case TABLE_ID_DIRECT_MESSAGES:
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
-				return null;
-		}
-		if (table == null) return null;
-		final long row_id = mDatabase.insert(table, null, values);
-		if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
-			switch (getTableId(uri)) {
-				case TABLE_ID_STATUSES: {
-					mNewStatusesCount++;
-					break;
-				}
-				case TABLE_ID_MENTIONS: {
-					mNewMentionsCount++;
-					break;
-				}
-				case TABLE_ID_DIRECT_MESSAGES_INBOX: {
-					mNewMessagesCount++;
-					break;
-				}
-				default:
+		try {
+			final int table_id = getTableId(uri);
+			final String table = getTableNameById(table_id);
+			checkWritePermission(table_id, table);
+			switch (table_id) {
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+				case TABLE_ID_DIRECT_MESSAGES:
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+					return null;
 			}
+			if (table == null) return null;
+			final long row_id = mDatabase.insert(table, null, values);
+			if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
+				switch (getTableId(uri)) {
+					case TABLE_ID_STATUSES: {
+						mNewStatusesCount++;
+						break;
+					}
+					case TABLE_ID_MENTIONS: {
+						mNewMentionsCount++;
+						break;
+					}
+					case TABLE_ID_DIRECT_MESSAGES_INBOX: {
+						mNewMessagesCount++;
+						break;
+					}
+					default:
+				}
+			}
+			onDatabaseUpdated(uri);
+			onNewItemsInserted(uri, 1, values);
+			return Uri.withAppendedPath(uri, String.valueOf(row_id));
+		} catch (SQLException e) {
+			throw new IllegalStateException(e);
 		}
-		onDatabaseUpdated(uri);
-		onNewItemsInserted(uri, 1, values);
-		return Uri.withAppendedPath(uri, String.valueOf(row_id));
 	}
 
 	@Override
@@ -238,7 +249,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProfileImageLoader = app.getProfileImageLoader();
 		mPermissionManager = new PermissionManager(mContext);
-		mPackageManager = mContext.getPackageManager();
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTART);
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);
@@ -249,54 +259,62 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	@Override
 	public Cursor query(final Uri uri, final String[] projection, final String selection, final String[] selectionArgs,
 			final String sortOrder) {
-		final int table_id = getTableId(uri);
-		final String table = getTableNameById(table_id);
-		checkReadPermission(table_id, table, projection);
-		switch (table_id) {
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
-				final List<String> segments = uri.getPathSegments();
-				if (segments.size() != 3) return null;
-				final String query = Conversation.QueryBuilder.buildByConversationId(projection,
-						Long.parseLong(segments.get(1)), Long.parseLong(segments.get(2)), selection, sortOrder);
-				return mDatabase.rawQuery(query, selectionArgs);
+		try {
+			final int table_id = getTableId(uri);
+			final String table = getTableNameById(table_id);
+			checkReadPermission(table_id, table, projection);
+			switch (table_id) {
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
+					final List<String> segments = uri.getPathSegments();
+					if (segments.size() != 3) return null;
+					final String query = Conversation.QueryBuilder.buildByConversationId(projection,
+							Long.parseLong(segments.get(1)), Long.parseLong(segments.get(2)), selection, sortOrder);
+					return mDatabase.rawQuery(query, selectionArgs);
+				}
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME: {
+					final List<String> segments = uri.getPathSegments();
+					if (segments.size() != 3) return null;
+					final String query = Conversation.QueryBuilder.buildByScreenName(projection,
+							Long.parseLong(segments.get(1)), segments.get(2), selection, sortOrder);
+					return mDatabase.rawQuery(query, selectionArgs);
+				}
+				case TABLE_ID_DIRECT_MESSAGES: {
+					final String query = DirectMessages.QueryBuilder.build(projection, selection, sortOrder);
+					return mDatabase.rawQuery(query, selectionArgs);
+				}
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
+					return mDatabase.rawQuery(ConversationsEntry.QueryBuilder.build(selection), null);
+				}
 			}
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME: {
-				final List<String> segments = uri.getPathSegments();
-				if (segments.size() != 3) return null;
-				final String query = Conversation.QueryBuilder.buildByScreenName(projection,
-						Long.parseLong(segments.get(1)), segments.get(2), selection, sortOrder);
-				return mDatabase.rawQuery(query, selectionArgs);
-			}
-			case TABLE_ID_DIRECT_MESSAGES: {
-				final String query = DirectMessages.QueryBuilder.build(projection, selection, sortOrder);
-				return mDatabase.rawQuery(query, selectionArgs);
-			}
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
-				return mDatabase.rawQuery(ConversationsEntry.QueryBuilder.build(selection), null);
-			}
+			if (table == null) return null;
+			return mDatabase.query(table, projection, selection, selectionArgs, null, null, sortOrder);
+		} catch (SQLException e) {
+			throw new IllegalStateException(e);
 		}
-		if (table == null) return null;
-		return mDatabase.query(table, projection, selection, selectionArgs, null, null, sortOrder);
 	}
 
 	@Override
 	public int update(final Uri uri, final ContentValues values, final String selection, final String[] selectionArgs) {
-		final int table_id = getTableId(uri);
-		final String table = getTableNameById(table_id);
-		int result = 0;
-		if (table != null) {
-			switch (table_id) {
-				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
-				case TABLE_ID_DIRECT_MESSAGES:
-				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
-					return 0;
+		try {
+			final int table_id = getTableId(uri);
+			final String table = getTableNameById(table_id);
+			int result = 0;
+			if (table != null) {
+				switch (table_id) {
+					case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+					case TABLE_ID_DIRECT_MESSAGES:
+					case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+						return 0;
+				}
+				result = mDatabase.update(table, values, selection, selectionArgs);
 			}
-			result = mDatabase.update(table, values, selection, selectionArgs);
+			if (result > 0) {
+				onDatabaseUpdated(uri);
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new IllegalStateException(e);
 		}
-		if (result > 0) {
-			onDatabaseUpdated(uri);
-		}
-		return result;
 	}
 
 	private Notification buildNotification(final NotificationCompat.Builder builder, final String ticker,

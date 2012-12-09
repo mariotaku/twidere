@@ -81,26 +81,30 @@
 		android:layerType="software"
 		android:textColor="?android:attr/textColorSecondary"/>
 
-	<ImageView
-		android:id="@+id/image_preview"
-		android:layout_width="@dimen/preview_image_size"
-		android:layout_height="@dimen/preview_image_size"
+	<FrameLayout
+		android:id="@+id/image_preview_frame"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/image_preview_height"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/text"
 		android:layout_marginRight="16dp"
 		android:layout_marginTop="3dp"
 		android:layout_toLeftOf="@+id/profile_image"
-		android:background="@drawable/image_preview_background"
-		android:drawablePadding="3dp"
-		android:scaleType="fitCenter"
-		android:visibility="gone"/>
+		android:background="@drawable/image_preview_background">
+
+		<org.mariotaku.twidere.view.StatusListPreviewImageView
+			android:id="@+id/image_preview"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:radius="4dp"/>
+	</FrameLayout>
 
 	<TextView
 		android:id="@+id/reply_retweet_status"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/image_preview"
+		android:layout_below="@+id/image_preview_frame"
 		android:layout_toLeftOf="@+id/profile_image"
 		android:drawablePadding="3dp"
 		android:layerType="software"

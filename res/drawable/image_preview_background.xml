@@ -17,10 +17,10 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<item android:drawable="@drawable/gallery_selected_pressed" android:state_pressed="true" android:state_selected="true"/>
-	<item android:drawable="@drawable/gallery_selected_focused" android:state_focused="true" android:state_selected="true"/>
-	<item android:drawable="@drawable/gallery_selected_default" android:state_selected="true"/>
-	<item android:drawable="@drawable/gallery_selected_pressed" android:state_pressed="true" android:state_selected="false"/>
-	<item android:drawable="@drawable/gallery_selected_default"/>
+	<item android:drawable="@drawable/image_preview_background_pressed" android:state_pressed="true" android:state_selected="true"/>
+	<item android:drawable="@drawable/image_preview_background_focused" android:state_focused="true" android:state_selected="true"/>
+	<item android:drawable="@drawable/image_preview_background_normal" android:state_selected="true"/>
+	<item android:drawable="@drawable/image_preview_background_pressed" android:state_pressed="true" android:state_selected="false"/>
+	<item android:drawable="@drawable/image_preview_background_normal"/>
 
 </selector>

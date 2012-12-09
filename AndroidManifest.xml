@@ -36,6 +36,7 @@
 	<application
 		android:name=".app.TwidereApplication"
 		android:allowBackup="true"
+		android:backupAgent="org.mariotaku.twidere.backup.TwidereBackupAgentHelper"
 		android:hardwareAccelerated="false"
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/app_name"
@@ -43,6 +44,10 @@
 		<uses-library
 			android:name="com.google.android.maps"
 			android:required="false"/>
+
+		<meta-data
+			android:name="com.google.android.backup.api_key"
+			android:value="AEdPqrEAAAAIKbKATV1AGbLB4kem3w8QaPVJSPVVumbMHxkfwA"/>
 
 		<activity
 			android:name=".activity.HomeActivity"
@@ -277,9 +282,8 @@
 			android:hardwareAccelerated="true"
 			android:label="@string/view_image"
 			android:launchMode="singleTop"
-			android:theme="@style/Theme.Twidere.Viewer"
 			android:process=":image_viewer"
-			android:largeHeap="true">
+			android:theme="@style/Theme.Twidere.Viewer">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>
 
@@ -371,6 +375,12 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".activity.EditUserProfileActivity"
+			android:exported="false"
+			android:label="@string/edit_profile"
+			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:windowSoftInputMode="adjustResize"/>
 		<activity
 			android:name=".activity.EditCustomTabActivity"
 			android:exported="false"

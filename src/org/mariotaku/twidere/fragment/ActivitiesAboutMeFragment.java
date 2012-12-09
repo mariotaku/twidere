@@ -105,24 +105,25 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		final Status[] target_statuses = item.getTargetStatuses();
 		final int sources_length = sources != null ? sources.length : 0;
 		final Action action = item.getAction();
-		final boolean large_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
+		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 		if (sources_length > 0) {
 			final Status[] target_objects = item.getTargetObjectStatuses();
 			switch (action.getActionId()) {
 				case Action.ACTION_FAVORITE: {
 					if (sources_length == 1) {
-						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId));
+						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId, hires_profile_image));
 					} else {
 						if (target_statuses != null && target_statuses.length > 0) {
 							final Status status = target_statuses[0];
-							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, large_profile_image));
+							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false,
+									hires_profile_image));
 						}
 					}
 					break;
 				}
 				case Action.ACTION_FOLLOW: {
 					if (sources_length == 1) {
-						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId));
+						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId, hires_profile_image));
 					} else {
 						openUserFollowers(getActivity(), mAccountId, mAccountId, null);
 					}
@@ -131,24 +132,25 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 				case Action.ACTION_MENTION: {
 					if (target_objects != null && target_objects.length > 0) {
 						final Status status = target_objects[0];
-						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, large_profile_image));
+						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, hires_profile_image));
 					}
 					break;
 				}
 				case Action.ACTION_REPLY: {
 					if (target_statuses != null && target_statuses.length > 0) {
 						final Status status = target_statuses[0];
-						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, large_profile_image));
+						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, hires_profile_image));
 					}
 					break;
 				}
 				case Action.ACTION_RETWEET: {
 					if (sources_length == 1) {
-						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId));
+						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId, hires_profile_image));
 					} else {
 						if (target_objects != null && target_objects.length > 0) {
 							final Status status = target_objects[0];
-							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, large_profile_image));
+							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false,
+									hires_profile_image));
 						}
 					}
 					break;

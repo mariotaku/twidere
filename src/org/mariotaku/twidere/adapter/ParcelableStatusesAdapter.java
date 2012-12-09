@@ -32,8 +32,6 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
@@ -42,7 +40,6 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.app.Activity;
@@ -50,52 +47,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
-public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAdapterInterface, OnClickListener {
+public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
 			mMultiSelectEnabled, mMentionsHighlightDisabled;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
-	private final LayoutInflater mInflater;
 	private final ArrayList<Long> mSelectedStatusIds;
-	private final NoDuplicatesArrayList<ParcelableStatus> mData = new NoDuplicatesArrayList<ParcelableStatus>();
 	private int mNameDisplayOption;
 
 	public ParcelableStatusesAdapter(final Context context) {
-		super();
+		super(context, R.layout.status_list_item);
 		mContext = context;
-		mInflater = LayoutInflater.from(context);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
-	}
-
-	public void add(final ParcelableStatus status) {
-		if (status == null) return;
-		mData.add(status);
-		notifyDataSetChanged();
-	}
-
-	public void clear() {
-		mData.clear();
-		notifyDataSetChanged();
-	}
-
-	public ParcelableStatus findItemByStatusId(final long status_id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			final ParcelableStatus status = getItem(i);
-			if (status.status_id == status_id) return status;
-		}
-		return null;
 	}
 
 	public long findItemIdByPosition(final int position) {
@@ -112,18 +84,9 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	}
 
 	@Override
-	public int getCount() {
-		return mData.size();
-	}
-
-	@Override
-	public ParcelableStatus getItem(final int position) {
-		return mData.get(position);
-	}
-
-	@Override
 	public long getItemId(final int position) {
-		return mData.get(position).status_id;
+		final ParcelableStatus item = getItem(position);
+		return item != null ? item.status_id : -1;
 	}
 
 	@Override
@@ -133,7 +96,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
-		final View view = convertView != null ? convertView : mInflater.inflate(R.layout.status_list_item, null);
+		final View view = super.getView(position, convertView, parent);
 		final Object tag = view.getTag();
 		final StatusViewHolder holder;
 
@@ -143,7 +106,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			holder = new StatusViewHolder(view);
 			view.setTag(holder);
 			holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
-			holder.image_preview.setOnClickListener(mMultiSelectEnabled ? null : this);
+			holder.image_preview_frame.setOnClickListener(mMultiSelectEnabled ? null : this);
 			// holder.image_preview.setClickable(!mMultiSelectEnabled);
 			// holder.profile_image.setClickable(!mMultiSelectEnabled);
 		}
@@ -238,10 +201,10 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			}
 			final boolean has_preview = mDisplayImagePreview && status.has_media
 					&& status.image_preview_url_string != null;
-			holder.image_preview.setVisibility(has_preview ? View.VISIBLE : View.GONE);
+			holder.image_preview_frame.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
 				mPreviewImageLoader.displayImage(status.image_preview_url_string, holder.image_preview);
-				holder.image_preview.setTag(position);
+				holder.image_preview_frame.setTag(position);
 			}
 		}
 
@@ -255,10 +218,10 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
 		if (status == null) return;
 		switch (view.getId()) {
-			case R.id.image_preview: {
+			case R.id.image_preview_frame: {
 				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string);
 				if (spec != null) {
-					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.image_link));
+					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.full_image_link));
 					intent.setPackage(mContext.getPackageName());
 					mContext.startActivity(intent);
 				}
@@ -276,7 +239,7 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 	public void setData(final List<ParcelableStatus> data) {
 		clear();
 		if (data == null) return;
-		mData.addAll(data);
+		addAll(data);
 		notifyDataSetChanged();
 	}
 
@@ -354,9 +317,5 @@ public class ParcelableStatusesAdapter extends BaseAdapter implements StatusesAd
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
-	}
-
-	public void sort(final Comparator<? super ParcelableStatus> comparator) {
-		Collections.sort(mData, comparator);
 	}
 }

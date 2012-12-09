@@ -31,7 +31,6 @@ import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.os.Bundle;
@@ -52,11 +51,10 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 
 	@Override
 	public ResponseList<Status> getStatuses(final Paging paging) throws TwitterException {
-		final Twitter twitter = getTwitter();
-		if (twitter == null) return null;
+		if (mTwitter == null) return null;
 		if (mUserId != -1)
-			return twitter.getFavorites(mUserId, paging);
-		else if (mUserScreenName != null) return twitter.getFavorites(mUserScreenName, paging);
+			return mTwitter.getFavorites(mUserId, paging);
+		else if (mUserScreenName != null) return mTwitter.getFavorites(mUserScreenName, paging);
 		return null;
 	}
 
@@ -69,7 +67,7 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
 				final String path = SerializationUtil.getSerializationFilePath(getContext(), getClassName(),
-						getAccountId(), mUserId, mUserScreenName);
+						mAccountId, mUserId, mUserScreenName);
 				final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = SerializationUtil.read(path);
 				setLastViewedId(statuses.getState());
 				final SynchronizedStateSavedList<ParcelableStatus, Long> data = getData();

@@ -36,8 +36,8 @@ import android.support.v4.content.AsyncTaskLoader;
 public abstract class ParcelableStatusesLoader extends
 		AsyncTaskLoader<SynchronizedStateSavedList<ParcelableStatus, Long>> implements Constants {
 
-	private final Twitter mTwitter;
-	private final long mAccountId;
+	protected final Twitter mTwitter;
+	protected final long mAccountId;
 	private final String mClassName;
 	private final SynchronizedStateSavedList<ParcelableStatus, Long> mData = new SynchronizedStateSavedList<ParcelableStatus, Long>();
 	private final boolean mFirstLoad, mIsHomeTab;
@@ -83,20 +83,12 @@ public abstract class ParcelableStatusesLoader extends
 		return false;
 	}
 
-	protected long getAccountId() {
-		return mAccountId;
-	}
-
 	protected String getClassName() {
 		return mClassName;
 	}
 
 	protected SynchronizedStateSavedList<ParcelableStatus, Long> getData() {
 		return mData;
-	}
-
-	protected Twitter getTwitter() {
-		return mTwitter;
 	}
 
 	protected boolean isFirstLoad() {

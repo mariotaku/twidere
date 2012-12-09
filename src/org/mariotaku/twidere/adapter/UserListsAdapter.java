@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-
 import java.util.List;
 
 import org.mariotaku.twidere.R;
@@ -33,38 +31,18 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
 public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements BaseAdapterInterface {
 
 	private final LazyImageLoader mProfileImageLoader;
 
 	private boolean mDisplayProfileImage;
-	private final boolean mDisplayHiResProfileImage;
 	private float mTextSize;
 
 	public UserListsAdapter(final Context context) {
-		super(context, R.layout.user_list_list_item, R.id.description);
+		super(context, R.layout.user_list_list_item);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
-		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-	}
-
-	public ParcelableUserList findItem(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) return getItem(i);
-		}
-		return null;
-	}
-
-	public ParcelableUserList findItemByUserId(final int list_id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			final ParcelableUserList item = getItem(i);
-			if (item.list_id == list_id) return item;
-		}
-		return null;
 	}
 
 	@Override
@@ -82,14 +60,10 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		holder.setTextSize(mTextSize);
 		holder.name.setText("@" + user_list.user_screen_name + "/" + user_list.name);
 		holder.owner.setText(user_list.user_name);
+		holder.description.setText(user_list.description);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
-			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(user_list.user_profile_image_url_string),
-						holder.profile_image);
-			} else {
 				mProfileImageLoader.displayImage(user_list.user_profile_image_url_string, holder.profile_image);
-			}
 		}
 		return view;
 	}
@@ -104,7 +78,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		}
 		if (data == null) return;
 		for (final ParcelableUserList user : data) {
-			if (clear_old || findItemByUserId(user.list_id) == null) {
+			if (clear_old || findItem(user.list_id) == null) {
 				add(user);
 			}
 		}

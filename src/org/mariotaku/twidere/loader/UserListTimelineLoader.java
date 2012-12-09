@@ -32,7 +32,6 @@ import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.UserList;
 import android.content.Context;
@@ -58,13 +57,12 @@ public class UserListTimelineLoader extends Twitter4JStatusLoader {
 
 	@Override
 	public ResponseList<Status> getStatuses(final Paging paging) throws TwitterException {
-		final Twitter twitter = getTwitter();
-		if (twitter == null) return null;
+		if (mTwitter == null) return null;
 		if (mListId > 0)
-			return twitter.getUserListStatuses(mListId, paging);
+			return mTwitter.getUserListStatuses(mListId, paging);
 		else {
-			final UserList list = findUserList(twitter, mUserId, mScreenName, mListName);
-			if (list != null && list.getId() > 0) return twitter.getUserListStatuses(list.getId(), paging);
+			final UserList list = findUserList(mTwitter, mUserId, mScreenName, mListName);
+			if (list != null && list.getId() > 0) return mTwitter.getUserListStatuses(list.getId(), paging);
 		}
 		return null;
 	}
@@ -73,8 +71,8 @@ public class UserListTimelineLoader extends Twitter4JStatusLoader {
 	public SynchronizedStateSavedList<ParcelableStatus, Long> loadInBackground() {
 		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
 			try {
-				final String path = SerializationUtil.getSerializationFilePath(mContext, getClassName(),
-						getAccountId(), mListId, mUserId, mScreenName, mListName);
+				final String path = SerializationUtil.getSerializationFilePath(mContext, getClassName(), mAccountId,
+						mListId, mUserId, mScreenName, mListName);
 				final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = SerializationUtil.read(path);
 				setLastViewedId(statuses.getState());
 				final SynchronizedStateSavedList<ParcelableStatus, Long> data = getData();

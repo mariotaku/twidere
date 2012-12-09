@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUser;
 
 import twitter4j.Twitter;
@@ -34,15 +35,17 @@ import android.support.v4.content.AsyncTaskLoader;
 
 public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<ParcelableUser>> implements Constants {
 
-	private final Twitter mTwitter;
+	protected final Twitter mTwitter;
+	protected final long mAccountId;
+	protected final boolean mHiResProfileImage;
 	private final List<ParcelableUser> mUsersList;
-	private final long mAccountId;
 
 	public ParcelableUsersLoader(final Context context, final long account_id, final List<ParcelableUser> users_list) {
 		super(context);
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mUsersList = users_list;
 		mAccountId = account_id;
+		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	public long getAccountId() {
