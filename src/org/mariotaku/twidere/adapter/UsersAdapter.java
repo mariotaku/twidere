@@ -30,7 +30,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.UserViewHolder;
-import org.mariotaku.twidere.util.BaseAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.Context;
@@ -43,7 +42,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 	private final Context mContext;
 
 	private final ArrayList<Long> mSelectedUserIds;
-	
+
 	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
 	private float mTextSize;
 	private int mNameDisplayOption;
@@ -114,7 +113,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAd
 		holder.description.setText(user.description);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
-				mProfileImageLoader.displayImage(user.profile_image_url_string, holder.profile_image);
+			mProfileImageLoader.displayImage(user.profile_image_url_string, holder.profile_image);
 		}
 
 		return view;

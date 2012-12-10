@@ -19,7 +19,6 @@
 
 package org.mariotaku.twidere.view;
 
-import org.mariotaku.twidere.util.ExtendedViewInterface;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -89,7 +89,7 @@
 		android:layout_below="@+id/text"
 		android:layout_marginTop="8dp"
 		android:layout_toLeftOf="@+id/profile_image"
-		android:background="@drawable/image_preview_background">
+		android:background="?imagePreviewBackground">
 
 		<org.mariotaku.twidere.view.ImagePreviewView
 			android:id="@+id/image_preview"

@@ -67,14 +67,6 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	}
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		if (mActionBarCompat instanceof ActionBarCompatBase) {
-			((ActionBarCompatBase) mActionBarCompat).requestCustomTitleView();
-		}
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			if (((ActionBarCompatBase) mActionBarCompat).isActionModeShowing()) return false;
@@ -100,14 +92,6 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 			((ActionBarCompatBase) mActionBarCompat).hideInRealMenu(menu);
 		}
 		return true;
-	}
-
-	@Override
-	protected void onTitleChanged(final CharSequence title, final int color) {
-		if (mActionBarCompat instanceof ActionBarCompatBase) {
-			getSupportActionBar().setTitle(title);
-		}
-		super.onTitleChanged(title, color);
 	}
 
 	public void requestSupportWindowFeature(final int featureId) {
@@ -137,6 +121,22 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 			return new ActionModeNative(this, callback);
 		else
 			return mActionModeCompat = new ActionModeCompat((ActionBarCompatBase) mActionBarCompat, callback);
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		if (mActionBarCompat instanceof ActionBarCompatBase) {
+			((ActionBarCompatBase) mActionBarCompat).requestCustomTitleView();
+		}
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	protected void onTitleChanged(final CharSequence title, final int color) {
+		if (mActionBarCompat instanceof ActionBarCompatBase) {
+			getSupportActionBar().setTitle(title);
+		}
+		super.onTitleChanged(title, color);
 	}
 
 	private void checkActionBar() {

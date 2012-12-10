@@ -163,7 +163,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			}
 			onNewItemsInserted(uri, notification_count, values);
 			return result;
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
 		}
 	};
@@ -191,7 +191,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				onDatabaseUpdated(uri);
 			}
 			return result;
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
 		}
 	}
@@ -235,7 +235,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			onDatabaseUpdated(uri);
 			onNewItemsInserted(uri, 1, values);
 			return Uri.withAppendedPath(uri, String.valueOf(row_id));
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
 		}
 	}
@@ -288,7 +288,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			}
 			if (table == null) return null;
 			return mDatabase.query(table, projection, selection, selectionArgs, null, null, sortOrder);
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
 		}
 	}
@@ -312,7 +312,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				onDatabaseUpdated(uri);
 			}
 			return result;
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
 		}
 	}

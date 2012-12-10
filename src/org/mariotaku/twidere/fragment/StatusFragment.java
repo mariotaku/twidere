@@ -47,7 +47,6 @@ import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.SetColorActivity;
-import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
 import org.mariotaku.twidere.model.ImageSpec;
@@ -65,6 +64,8 @@ import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
+import org.mariotaku.twidere.view.StatusImagePreviewLayout;
+import org.mariotaku.twidere.view.StatusImagePreviewLayout.OnImageClickListener;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -82,8 +83,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
@@ -92,17 +91,12 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -113,40 +107,29 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
-import org.mariotaku.twidere.view.StatusImagePreviewLayout;
-import org.mariotaku.twidere.view.StatusImagePreviewLayout.OnImageClickListener;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
-	OnImageClickListener {
-
-	public void onImageClick(ImageSpec spec) {
-		if (spec == null) return;
-		// UCD
-		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec.full_image_link);
-		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.full_image_link));
-		intent.setPackage(getActivity().getPackageName());
-		startActivity(intent);
-	}
-	
+		OnImageClickListener {
 
 	private static final int LOADER_ID_STATUS = 1;
+
 	private static final int LOADER_ID_FOLLOW = 2;
 	private static final int LOADER_ID_LOCATION = 3;
 	private static final int LOADER_ID_CONVERSATION = 4;
-
 	private long mAccountId, mStatusId;
+
 	private boolean mLoadMoreAutomatically;
 	private boolean mFollowInfoDisplayed, mLocationInfoDisplayed;
-	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized, mConversationLoaderInitialized;;
-	private boolean mFollowInfoLoaderInitialized;
+	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized, mConversationLoaderInitialized;
+	private boolean mFollowInfoLoaderInitialized;;
 	private boolean mShouldScroll;
-
 	private SharedPreferences mPreferences;
+
 	private TwitterWrapper mTwitterWrapper;
 	private LazyImageLoader mProfileImageLoader;
-
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView,
 			mRetweetedStatusView;
+
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
 	private View mMainContent, mFollowIndicator, mImagePreviewContainer;
@@ -158,7 +141,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private View mLoadImagesIndicator;
 	private ExtendedFrameLayout mStatusContainer;
 	private ListView mListView;
-
 	private ParcelableStatus mStatus;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -681,6 +663,17 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		lm.destroyLoader(LOADER_ID_LOCATION);
 		lm.destroyLoader(LOADER_ID_FOLLOW);
 		super.onDestroyView();
+	}
+
+	@Override
+	public void onImageClick(final ImageSpec spec) {
+		if (spec == null) return;
+		// UCD
+		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", "
+				+ spec.full_image_link);
+		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.full_image_link));
+		intent.setPackage(getActivity().getPackageName());
+		startActivity(intent);
 	}
 
 	@Override

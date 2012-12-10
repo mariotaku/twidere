@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.util;
+package org.mariotaku.twidere.view;
 
 import android.view.MotionEvent;
 import android.view.ViewGroup;

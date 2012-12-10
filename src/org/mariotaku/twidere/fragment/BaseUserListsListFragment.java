@@ -49,6 +49,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+
 abstract class BaseUserListsListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUserList>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
 		Panes.Left, OnMenuItemClickListener {

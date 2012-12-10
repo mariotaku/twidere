@@ -27,7 +27,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.DirectMessageConversationViewHolder;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
-import org.mariotaku.twidere.util.DirectMessagesAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;

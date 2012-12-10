@@ -5,6 +5,7 @@
 		<attr name="switchStyle" format="reference"/>
 		<attr name="editTextStyle" format="reference"/>
 		<attr name="preferenceTitleStyle" format="reference"/>
+		<attr name="imagePreviewBackground" format="reference"/>
 	</declare-styleable>
 	<declare-styleable name="ViewPagerIndicator">
 		<attr name="tabStyle" format="reference"/>

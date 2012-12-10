@@ -40,7 +40,6 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.app.Activity;
 import android.content.Context;
@@ -51,7 +50,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface, OnClickListener {
+public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements StatusesAdapterInterface,
+		OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
 			mMultiSelectEnabled, mMentionsHighlightDisabled;

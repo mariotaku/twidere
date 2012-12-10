@@ -1,17 +1,16 @@
 package org.mariotaku.twidere.view;
 
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
+
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
-import android.graphics.drawable.NinePatchDrawable;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
 
 public class ImagePreviewView extends RoundCorneredImageView {
 
@@ -41,13 +40,13 @@ public class ImagePreviewView extends RoundCorneredImageView {
 		int translatey = 0;
 		final Bitmap bitmap = getBitmap(drawable);
 		if (bitmap != null) {
-			setBackgroundDrawable(new AlphaPatternDrawable((int)(mDensity * 16)));
+			setBackgroundDrawable(new AlphaPatternDrawable((int) (mDensity * 16)));
 			final int bw = bitmap.getWidth();
 			final int bh = bitmap.getHeight();
 			final float ratio = bh / bw;
 			if (frameWidth * ratio > frameHeight) {
-			final int stepw = limit(bw / 32, 1, bw);
-			final int steph = limit(bh / 96, 1, bh);
+				final int stepw = limit(bw / 32, 1, bw);
+				final int steph = limit(bh / 96, 1, bh);
 				for (int x = 0, y = 0; x < bw && y < bh / 2; x += stepw, y += steph) {
 					if (!isBorder(bitmap.getPixel(x, y))) {
 						translatey = y;
@@ -84,6 +83,25 @@ public class ImagePreviewView extends RoundCorneredImageView {
 		return super.setFrame(frameLeft, frameTop, frameRight, frameBottom);
 	}
 
+	private static boolean inRange(final int value, final int min, final int max, final int threshold) {
+		return Math.abs(value - max) <= threshold || Math.abs(value - min) <= threshold;
+	}
+
+	private static boolean isBorder(final int color) {
+		final int alpha = color >> 24 & 0xFF;
+		final int red = color >> 16 & 0xFF;
+		final int green = color >> 8 & 0xFF;
+		final int blue = color & 0xFF;
+		return inRange(alpha, 0x00, 0xFF, 8) && inRange(red, 0x00, 0xFF, 8) && inRange(green, 0x00, 0xFF, 8)
+				&& inRange(blue, 0x00, 0xFF, 8);
+	}
+
+	private static int limit(final int value, final int min, final int max) {
+		if (value < min) return min;
+		if (value > max) return max;
+		return value;
+	}
+
 	static Bitmap getBitmap(final Drawable drawable) {
 		if (drawable instanceof NinePatchDrawable) return null;
 		if (drawable instanceof BitmapDrawable)
@@ -96,24 +114,5 @@ public class ImagePreviewView extends RoundCorneredImageView {
 			}
 		}
 		return null;
-	}
-
-	private static boolean inRange(final int value, final int min, final int max, final int threshold) {
-		return Math.abs(value - max) <= threshold || Math.abs(value - min) <= threshold;
-	}
-
-	private static int limit(final int value, final int min, final int max) {
-		if (value < min) return min;
-		if (value > max) return max;
-		return value;
-	}
-
-	private static boolean isBorder(final int color) {
-		final int alpha = color >> 24 & 0xFF;
-		final int red = color >> 16 & 0xFF;
-		final int green = color >> 8 & 0xFF;
-		final int blue = color & 0xFF;
-		return inRange(alpha, 0x00, 0xFF, 8) && inRange(red, 0x00, 0xFF, 8) && inRange(green, 0x00, 0xFF, 8)
-				&& inRange(blue, 0x00, 0xFF, 8);
 	}
 }

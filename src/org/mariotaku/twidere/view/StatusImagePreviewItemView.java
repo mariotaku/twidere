@@ -1,50 +1,57 @@
 package org.mariotaku.twidere.view;
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.graphics.Bitmap;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
 
-public class StatusImagePreviewItemView extends ImagePreviewView {
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.util.AttributeSet;
+
+public class StatusImagePreviewItemView extends RoundCorneredImageView {
+
+	private final float mDensity;
 
 	public StatusImagePreviewItemView(final Context context) {
-		super(context);
-		//setScaleType(ScaleType.CENTER_CROP);
+		this(context, null);
 	}
 
 	public StatusImagePreviewItemView(final Context context, final AttributeSet attrs) {
-		super(context, attrs);
-		//setScaleType(ScaleType.CENTER_CROP);
+		this(context, attrs, 0);
 	}
 
 	public StatusImagePreviewItemView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		//setScaleType(ScaleType.CENTER_CROP);
+		mDensity = getResources().getDisplayMetrics().density;
 	}
-
-	@Override
-	public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
-		super.onSizeChanged(w, h, oldw, oldh);
-//		post(new Runnable() {
-//				public void run() {
-//					final Bitmap b = getBitmap(getDrawable());
-//					if (b == null) return;
-//					final float ratio = b.getHeight() / b.getWidth();
-//					setMinimumHeight((int) (w * ratio));
-//				}
-//			}
-//		);
-	}
-	
 
 	@Override
 	protected boolean setFrame(final int frameLeft, final int frameTop, final int frameRight, final int frameBottom) {
 		final boolean ret = super.setFrame(frameLeft, frameTop, frameRight, frameBottom);
 
-		final Bitmap b = getBitmap(getDrawable());
-		if (b == null) return ret;
-		final float ratio = b.getHeight() / b.getWidth();
-		setMinimumHeight((int) ((frameRight - frameLeft) * ratio));
+		final Bitmap bitmap = ImagePreviewView.getBitmap(getDrawable());
+		if (bitmap != null) {
+			setBackgroundDrawable(new AlphaPatternDrawable((int) (mDensity * 16)));
+		} else {
+			setBackgroundResource(R.drawable.image_preview_fallback_large);
+		}
 		return ret;
+	}
+
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		final Drawable d = getDrawable();
+
+		if (d != null) {
+			// ceil not round - avoid thin vertical gaps along the left/right
+			// edges
+			int width = MeasureSpec.getSize(widthMeasureSpec);
+			int height = (int) Math
+					.ceil((float) width * (float) d.getIntrinsicHeight() / (float) d.getIntrinsicWidth());
+			setMeasuredDimension(width, height);
+		} else {
+			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		}
 	}
 
 }

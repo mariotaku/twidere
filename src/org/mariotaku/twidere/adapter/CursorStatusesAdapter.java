@@ -43,7 +43,6 @@ import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.StatusesAdapterInterface;
 
 import android.app.Activity;
 import android.content.Context;

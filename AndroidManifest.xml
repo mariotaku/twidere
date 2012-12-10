@@ -384,7 +384,7 @@
 				<action android:name="android.intent.action.MAIN"/>
 
 				<category android:name="android.intent.category.LAUNCHER"/>
-			</intent-filter>		
+			</intent-filter>
 		</activity>
 		<activity
 			android:name=".activity.EditCustomTabActivity"
@@ -438,6 +438,10 @@
 			android:authorities="twidere"
 			android:exported="true"
 			android:label="@string/label_tweetstore_provider"/>
+		<provider
+			android:name=".provider.CommandProvider"
+			android:authorities="twidere_command"
+			android:exported="true"/>
 		<provider
 			android:name=".provider.RecentSearchProvider"
 			android:authorities="org.mariotaku.twidere.provider.SearchRecentSuggestions"/>

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.util;
+package org.mariotaku.twidere.adapter;
 
 import org.mariotaku.twidere.Constants;
 

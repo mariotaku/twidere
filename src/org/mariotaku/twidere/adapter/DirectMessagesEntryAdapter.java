@@ -36,7 +36,6 @@ import java.text.DateFormat;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.DirectMessageEntryViewHolder;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
-import org.mariotaku.twidere.util.BaseAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.Context;

@@ -18,19 +18,9 @@ public class ArrayAdapter<T> extends BaseAdapter {
 
 	private final ArrayList<T> mData = new ArrayList<T>();
 
-	public ArrayAdapter(final Context context, int layoutRes) {
+	public ArrayAdapter(final Context context, final int layoutRes) {
 		mInflater = LayoutInflater.from(context);
 		mLayoutRes = layoutRes;
-	}
-
-	@Override
-	public final int getCount() {
-		return mData.size();
-	}
-
-	@Override
-	public final T getItem(int position) {
-		return mData.get(position);
 	}
 
 	public final void add(final T item) {
@@ -39,18 +29,13 @@ public class ArrayAdapter<T> extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public final void clear() {
-		mData.clear();
-		notifyDataSetChanged();
-	}
-
-	public final void addAll(Collection<? extends T> collection) {
+	public final void addAll(final Collection<? extends T> collection) {
 		mData.addAll(collection);
 		notifyDataSetChanged();
 	}
 
-	public final void sort(Comparator<? super T> comparator) {
-		Collections.sort(mData, comparator);
+	public final void clear() {
+		mData.clear();
 		notifyDataSetChanged();
 	}
 
@@ -71,13 +56,28 @@ public class ArrayAdapter<T> extends BaseAdapter {
 	}
 
 	@Override
-	public long getItemId(int position) {
+	public final int getCount() {
+		return mData.size();
+	}
+
+	@Override
+	public final T getItem(final int position) {
+		return mData.get(position);
+	}
+
+	@Override
+	public long getItemId(final int position) {
 		return position;
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		return convertView != null ? convertView : mInflater.inflate(mLayoutRes, null);
+	}
+
+	public final void sort(final Comparator<? super T> comparator) {
+		Collections.sort(mData, comparator);
+		notifyDataSetChanged();
 	}
 
 }

@@ -20,12 +20,12 @@
 package org.mariotaku.twidere.model;
 
 public class ImageSpec {
-	
+
 	public final String preview_image_link, full_image_link;
 
 	public ImageSpec(final String thumbnail_link, final String image_link) {
-		this.preview_image_link = thumbnail_link;
-		this.full_image_link = image_link;
+		preview_image_link = thumbnail_link;
+		full_image_link = image_link;
 	}
 
 	@Override

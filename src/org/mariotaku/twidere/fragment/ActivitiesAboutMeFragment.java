@@ -33,13 +33,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.BaseAdapterInterface;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
 import org.mariotaku.twidere.loader.Twitter4JActivitiesLoader;
 import org.mariotaku.twidere.model.ActivityViewHolder;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.BaseAdapterInterface;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import twitter4j.Activity.Action;

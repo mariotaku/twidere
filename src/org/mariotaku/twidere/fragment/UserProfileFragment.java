@@ -24,8 +24,11 @@ import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.copyStream;
+import static org.mariotaku.twidere.util.Utils.createAlphaGradientBanner;
+import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getBestBannerType;
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
@@ -46,7 +49,7 @@ import static org.mariotaku.twidere.util.Utils.openUserLists;
 import static org.mariotaku.twidere.util.Utils.openUserMentions;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
-import static org.mariotaku.twidere.util.Utils.*;
+import static org.mariotaku.twidere.util.Utils.setUserColor;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -66,14 +69,14 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.util.ExtendedViewInterface.OnSizeChangedListener;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
-import org.mariotaku.twidere.view.ExtendedFrameLayout;
+import org.mariotaku.twidere.view.ExtendedViewInterface.OnSizeChangedListener;
+import org.mariotaku.twidere.view.ProfileNameBannerContainer;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -93,11 +96,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -118,7 +118,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -152,7 +151,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowingYouIndicator, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
 			mTweetsContainer, mFollowersContainer, mFriendsContainer, mFollowContainer;
-	private ExtendedFrameLayout mProfileNameBannerContainer;
+	private ProfileNameBannerContainer mProfileNameBannerContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
 	private ColorLabelRelativeLayout mProfileNameContainer;
@@ -311,10 +310,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
-			final LayoutParams lp = mProfileNameBannerContainer.getLayoutParams();
-			lp.height = LayoutParams.WRAP_CONTENT;
 			mProfileNameBannerContainer.setBackgroundDrawable(null);
-			mProfileNameBannerContainer.setLayoutParams(lp);
 			final int def_width = getResources().getDisplayMetrics().widthPixels;
 			final int screen_width = args.getInt(INTENT_KEY_WIDTH, def_width);
 			return new BannerImageLoader(getActivity(), mUser, screen_width);
@@ -328,9 +324,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public void onLoadFinished(final Loader<Bitmap> loader, final Bitmap data) {
 			if (data == null) return;
 			final Drawable d = new BitmapDrawable(getResources(), data);
-			final LayoutParams lp = mProfileNameBannerContainer.getLayoutParams();
-			lp.height = mProfileNameContainer.getWidth() / 2;
-			mProfileNameBannerContainer.setLayoutParams(lp);
 			mProfileNameBannerContainer.setBackgroundDrawable(d);
 		}
 
@@ -644,7 +637,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
 		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
 		mFollowingYouIndicator = (TextView) mHeaderView.findViewById(R.id.following_you_indicator);
-		mProfileNameBannerContainer = (ExtendedFrameLayout) mHeaderView
+		mProfileNameBannerContainer = (ProfileNameBannerContainer) mHeaderView
 				.findViewById(R.id.profile_name_banner_container);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);

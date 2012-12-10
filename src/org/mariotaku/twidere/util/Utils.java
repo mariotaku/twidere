@@ -159,8 +159,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
@@ -510,12 +510,31 @@ public final class Utils implements Constants {
 		final Canvas canvas = new Canvas(bitmap);
 		final Paint paint = new Paint();
 		final LinearGradient shader = new LinearGradient(width / 2, 0, width / 2, height, 0xffffffff, 0x00ffffff,
-														 Shader.TileMode.CLAMP);
+				Shader.TileMode.CLAMP);
 		paint.setShader(shader);
 		paint.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
 		canvas.drawBitmap(orig, 0, 0, null);
 		canvas.drawRect(0, 0, width, height, paint);
 		return bitmap;
+	}
+
+	public static Intent createTakePhotoIntent(final Uri uri) {
+		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		return intent;
+	}
+
+	public static Intent createTakePhotoIntent(final Uri uri, final int outputX, final int outputY) {
+		final Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setType("image/*");
+		intent.putExtra("outputX", outputX);
+		intent.putExtra("outputY", outputY);
+		intent.putExtra("aspectX", 1);
+		intent.putExtra("aspectY", 1);
+		intent.putExtra("scale", true);
+		intent.putExtra("return-data", true);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		return intent;
 	}
 
 	public static boolean equals(final Object object1, final Object object2) {
@@ -886,6 +905,21 @@ public final class Utils implements Constants {
 		return ids;
 	}
 
+	public static String getBestBannerType(final int width) {
+		if (width <= 320)
+			return "mobile";
+		else if (width <= 520)
+			return "web";
+		else if (width <= 626)
+			return "ipad";
+		else if (width <= 640)
+			return "mobile_retina";
+		else if (width <= 1040)
+			return "web_retina";
+		else
+			return "ipad_retina";
+	}
+
 	public static File getBestCacheDir(final Context context, final String cache_dir_name) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			final File ext_cache_dir = GetExternalCacheDirAccessor.getExternalCacheDir(context);
@@ -905,21 +939,6 @@ public final class Utils implements Constants {
 		return new File(context.getCacheDir(), cache_dir_name);
 	}
 
-	public static String getBestBannerType(final int width) {
-		if (width <= 320)
-			return "mobile";
-		else if (width <= 520)
-			return "web";
-		else if (width <= 626)
-			return "ipad";
-		else if (width <= 640)
-			return "mobile_retina";
-		else if (width <= 1040)
-			return "web_retina";
-		else
-			return "ipad_retina";
-	}
-	
 	public static String getBiggerTwitterProfileImage(final String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
@@ -1349,7 +1368,8 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getSinaWeiboImage(final String url) {
 		if (isEmpty(url)) return null;
-		//final String preview = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/thumbnail/");
+		// final String preview = url.replaceAll("\\/" +
+		// SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/thumbnail/");
 		final String full = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/large/");
 		return new ImageSpec(full, full);
 	}
@@ -1522,7 +1542,7 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getTwitpicImage(final String id) {
 		if (isEmpty(id)) return null;
-		//final String preview = "https://twitpic.com/show/thumb/" + id;
+		// final String preview = "https://twitpic.com/show/thumb/" + id;
 		final String full = "https://twitpic.com/show/large/" + id;
 		return new ImageSpec(full, full);
 	}
@@ -2213,25 +2233,6 @@ public final class Utils implements Constants {
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
 
-	}
-
-	public static Intent createTakePhotoIntent(Uri uri) {
-		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-		return intent;
-	}
-
-	public static Intent createTakePhotoIntent(Uri uri, int outputX, int outputY) {
-		final Intent intent = new Intent("com.android.camera.action.CROP");
-		intent.setType("image/*");
-		intent.putExtra("outputX", outputX);
-		intent.putExtra("outputY", outputY);
-		intent.putExtra("aspectX", 1);
-		intent.putExtra("aspectY", 1);
-		intent.putExtra("scale", true);
-		intent.putExtra("return-data", true);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-		return intent;
 	}
 
 	public static void openUserListDetails(final Activity activity, final long account_id, final int list_id,
