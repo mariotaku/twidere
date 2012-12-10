@@ -22,7 +22,7 @@
 	android:descendantFocusability="blocksDescendants"
 	android:gravity="center_vertical"
 	android:minHeight="?android:attr/listPreferredItemHeight"
-	android:padding="6dp">
+	android:padding="8dp">
 
 	<org.mariotaku.twidere.view.RoundCorneredImageView
 		android:id="@android:id/icon"

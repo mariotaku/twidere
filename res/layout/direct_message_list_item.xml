@@ -3,7 +3,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:descendantFocusability="blocksDescendants"
-	android:padding="6dp">
+	android:padding="8dp">
 
 	<org.mariotaku.twidere.view.RoundCorneredImageView
 		android:id="@+id/profile_image_left"
@@ -29,8 +29,8 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginLeft="6dp"
-		android:layout_marginRight="6dp"
+		android:layout_marginLeft="8dp"
+		android:layout_marginRight="8dp"
 		android:layout_toLeftOf="@+id/profile_image_right"
 		android:layout_toRightOf="@+id/profile_image_left">
 
@@ -57,8 +57,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layerType="software"
-				android:paddingLeft="3dp"
-				android:paddingRight="3dp"
+				android:paddingLeft="4dp"
+				android:paddingRight="4dp"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>

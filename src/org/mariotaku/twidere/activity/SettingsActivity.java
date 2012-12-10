@@ -151,7 +151,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			if (isDualPaneMode()) {
 				final Fragment fragment = new SettingsDetailsFragment();
 				fragment.setArguments(args);
-				showFragment(fragment, true);
+				showFragment(fragment);
 			} else {
 				final Intent intent = new Intent(this, SettingsDetailsActivity.class);
 				intent.putExtras(args);
@@ -177,7 +177,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	}
 
 	void showFragment(final Fragment fragment) {
-		showFragment(fragment, true);
+		showFragment(fragment, false);
 	}
 
 }

@@ -3,7 +3,7 @@
 	android:id="@+id/user_content"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:padding="6dp">
+	android:padding="8dp">
 
 	<org.mariotaku.twidere.view.RoundCorneredImageView
 		android:id="@+id/profile_image"
@@ -18,7 +18,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginLeft="3dp"
+		android:layout_marginLeft="4dp"
 		android:layout_toLeftOf="@+id/time"
 		android:layout_toRightOf="@+id/profile_image">
 
@@ -44,8 +44,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layerType="software"
-				android:paddingLeft="3dp"
-				android:paddingRight="3dp"
+				android:paddingLeft="4dp"
+				android:paddingRight="4dp"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>

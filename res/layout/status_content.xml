@@ -101,7 +101,7 @@
 		android:singleLine="false"
 		android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-	<include layout="@layout/images_preview"/>
+	<include layout="@layout/image_preview"/>
 
 	<TextView
 		android:id="@+id/retweet_view"

@@ -377,10 +377,15 @@
 		</activity>
 		<activity
 			android:name=".activity.EditUserProfileActivity"
-			android:exported="false"
 			android:label="@string/edit_profile"
 			android:theme="@style/Theme.Blank.DialogWhenLarge"
-			android:windowSoftInputMode="adjustResize"/>
+			android:windowSoftInputMode="adjustResize">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+
+				<category android:name="android.intent.category.LAUNCHER"/>
+			</intent-filter>		
+		</activity>
 		<activity
 			android:name=".activity.EditCustomTabActivity"
 			android:exported="false"

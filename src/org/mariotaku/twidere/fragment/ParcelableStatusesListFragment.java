@@ -41,7 +41,7 @@ public abstract class ParcelableStatusesListFragment extends
 
 	protected SharedPreferences mPreferences;
 
-	private ParcelableStatusesAdapter mAdapter;
+	protected ParcelableStatusesAdapter mAdapter;
 	private ListView mListView;
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {

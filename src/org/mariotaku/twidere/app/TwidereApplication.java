@@ -74,7 +74,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		final int preview_image_size = getResources().getDimensionPixelSize(R.dimen.image_preview_preferred_width);
 		final int max_mem_size = ImageLoaderUtils.getMemoryClass(this) * 1024 * 1024 / 12;
 		return mPreviewImageLoader = new LazyImageLoader(this, DIR_NAME_CACHED_THUMBNAILS,
-				R.drawable.image_preview_fallback_large, preview_image_size, preview_image_size, max_mem_size);
+				0, preview_image_size, preview_image_size, max_mem_size);
 	}
 
 	public LazyImageLoader getProfileImageLoader() {

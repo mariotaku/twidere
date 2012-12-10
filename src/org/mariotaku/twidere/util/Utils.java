@@ -157,9 +157,12 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
+import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -498,6 +501,21 @@ public final class Utils implements Constants {
 			os.write(bytes, 0, count);
 			count = is.read(bytes, 0, buffer_size);
 		}
+	}
+
+	public static Bitmap createAlphaGradientBanner(final Bitmap orig) {
+		if (orig == null) return null;
+		final int width = orig.getWidth(), height = orig.getHeight();
+		final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		final Canvas canvas = new Canvas(bitmap);
+		final Paint paint = new Paint();
+		final LinearGradient shader = new LinearGradient(width / 2, 0, width / 2, height, 0xffffffff, 0x00ffffff,
+														 Shader.TileMode.CLAMP);
+		paint.setShader(shader);
+		paint.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
+		canvas.drawBitmap(orig, 0, 0, null);
+		canvas.drawRect(0, 0, width, height, paint);
+		return bitmap;
 	}
 
 	public static boolean equals(final Object object1, final Object object2) {
@@ -887,6 +905,21 @@ public final class Utils implements Constants {
 		return new File(context.getCacheDir(), cache_dir_name);
 	}
 
+	public static String getBestBannerType(final int width) {
+		if (width <= 320)
+			return "mobile";
+		else if (width <= 520)
+			return "web";
+		else if (width <= 626)
+			return "ipad";
+		else if (width <= 640)
+			return "mobile_retina";
+		else if (width <= 1040)
+			return "web_retina";
+		else
+			return "ipad_retina";
+	}
+	
 	public static String getBiggerTwitterProfileImage(final String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())

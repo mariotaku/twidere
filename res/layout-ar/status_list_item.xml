@@ -2,7 +2,7 @@
 <org.mariotaku.twidere.view.ColorLabelRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:padding="6dp">
+	android:padding="8dp">
 
 	<org.mariotaku.twidere.view.RoundCorneredImageView
 		android:id="@+id/profile_image"
@@ -17,7 +17,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginRight="3dp"
+		android:layout_marginRight="4dp"
 		android:layout_toLeftOf="@+id/profile_image"
 		android:layout_toRightOf="@+id/time"
 		android:gravity="center_vertical|right"
@@ -35,8 +35,8 @@
 				android:layout_height="wrap_content"
 				android:gravity="right"
 				android:layerType="software"
-				android:paddingLeft="3dp"
-				android:paddingRight="3dp"
+				android:paddingLeft="4dp"
+				android:paddingRight="4dp"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
@@ -75,8 +75,8 @@
 		android:layout_alignBottom="@+id/name_frame"
 		android:layout_alignParentLeft="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginLeft="6dp"
-		android:drawablePadding="3dp"
+		android:layout_marginLeft="8dp"
+		android:drawablePadding="4dp"
 		android:gravity="center_vertical|left"
 		android:layerType="software"
 		android:textColor="?android:attr/textColorSecondary"/>
@@ -87,12 +87,11 @@
 		android:layout_height="@dimen/image_preview_height"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/text"
-		android:layout_marginRight="16dp"
-		android:layout_marginTop="3dp"
+		android:layout_marginTop="8dp"
 		android:layout_toLeftOf="@+id/profile_image"
 		android:background="@drawable/image_preview_background">
 
-		<org.mariotaku.twidere.view.StatusListPreviewImageView
+		<org.mariotaku.twidere.view.ImagePreviewView
 			android:id="@+id/image_preview"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
@@ -106,10 +105,10 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/image_preview_frame"
 		android:layout_toLeftOf="@+id/profile_image"
-		android:drawablePadding="3dp"
+		android:drawablePadding="4dp"
 		android:layerType="software"
-		android:paddingLeft="6dp"
-		android:paddingTop="3dp"
+		android:paddingLeft="8dp"
+		android:paddingTop="4dp"
 		android:textColor="?android:attr/textColorSecondary"/>
 
 	<TextView

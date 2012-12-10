@@ -1,143 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical">
-
-	<org.mariotaku.twidere.view.ExtendedFrameLayout
-		android:id="@+id/profile_name_banner_container"
+	android:layout_height="match_parent">
+	
+	<LinearLayout 
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
 
-		<RelativeLayout
-			android:id="@+id/profile_name_container"
+		<org.mariotaku.twidere.view.ExtendedFrameLayout
+			android:id="@+id/profile_name_banner_container"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="bottom"
-			android:gravity="center_vertical"
-			android:orientation="horizontal">
+			android:layout_height="wrap_content">
 
-			<FrameLayout
-				android:id="@+id/profile_image_container"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentTop="true"
-				android:background="@drawable/item_background_holo_light">
-
-				<org.mariotaku.twidere.view.RoundCorneredImageView
-					android:id="@+id/profile_image"
-					android:layout_width="@dimen/profile_image_size"
-					android:layout_height="@dimen/profile_image_size"
-					android:layout_gravity="center"
-					android:layout_margin="8dp"
-					android:radius="4dp"
-					android:scaleType="fitCenter"
-					android:src="@drawable/ic_profile_image_default"/>
-			</FrameLayout>
-
-			<FrameLayout
-				android:id="@+id/name_container"
+			<RelativeLayout
+				android:id="@+id/profile_name_container"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_alignBottom="@+id/profile_image_container"
-				android:layout_alignTop="@+id/profile_image_container"
-				android:layout_alignWithParentIfMissing="true"
-				android:layout_toRightOf="@+id/profile_image_container"
-				android:background="@drawable/item_background_holo_light"
+				android:layout_gravity="bottom"
 				android:gravity="center_vertical"
-				android:orientation="vertical"
-				android:paddingLeft="8dp"
-				android:paddingRight="8dp">
+				android:orientation="horizontal">
 
-				<EditText
-					android:id="@+id/name"
+				<FrameLayout
+					android:id="@+id/profile_image_container"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentTop="true"
+					android:background="@drawable/item_background_holo_light">
+
+					<org.mariotaku.twidere.view.RoundCorneredImageView
+						android:id="@+id/profile_image"
+						android:layout_width="@dimen/profile_image_size"
+						android:layout_height="@dimen/profile_image_size"
+						android:layout_gravity="center"
+						android:layout_margin="8dp"
+						android:radius="4dp"
+						android:scaleType="fitCenter"
+						android:src="@drawable/ic_profile_image_default"/>
+				</FrameLayout>
+
+				<LinearLayout
+					android:id="@+id/name_container"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:layout_gravity="center"
-					android:inputType="textPersonName"
-					android:layerType="software"
-					android:singleLine="true"
-					android:textAppearance="?android:attr/textAppearanceMedium"/>
-			</FrameLayout>
-		</RelativeLayout>
-	</org.mariotaku.twidere.view.ExtendedFrameLayout>
+					android:layout_alignBottom="@+id/profile_image_container"
+					android:layout_alignTop="@+id/profile_image_container"
+					android:layout_alignWithParentIfMissing="true"
+					android:layout_toRightOf="@+id/profile_image_container"
+					android:gravity="center_vertical"
+					android:orientation="vertical"
+					android:paddingLeft="8dp"
+					android:paddingRight="8dp">
+					
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layerType="software"
+						android:text="@string/name"
+						android:textAppearance="?android:attr/textAppearanceMedium"/>
+									
+					<EditText
+						android:id="@+id/name"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center"
+						android:inputType="textPersonName"
+						android:layerType="software"
+						android:singleLine="true"
+						android:textAppearance="?android:attr/textAppearanceMedium"/>
+				</LinearLayout>
+			</RelativeLayout>
+		</org.mariotaku.twidere.view.ExtendedFrameLayout>
 
-	<LinearLayout
-		android:id="@+id/description_container"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		android:padding="4dp">
-
-		<TextView
+		<LinearLayout
+			android:id="@+id/description_container"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layerType="software"
-			android:text="@string/description"
-			android:textAppearance="?android:attr/textAppearanceMedium"/>
+			android:orientation="vertical"
+			android:padding="4dp">
 
-		<EditText
-			android:id="@+id/description"
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layerType="software"
+				android:text="@string/description"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<EditText
+				android:id="@+id/description"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:inputType="textMultiLine"
+				android:layerType="software"
+				android:minLines="4"
+				android:singleLine="false"
+				android:gravity="top"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="?android:attr/textColorSecondary"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/location_container"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:inputType="text"
-			android:layerType="software"
-			android:minLines="4"
-			android:singleLine="false"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorSecondary"/>
+			android:orientation="vertical"
+			android:padding="4dp">
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layerType="software"
+				android:singleLine="true"
+				android:text="@string/location"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<EditText
+				android:id="@+id/location"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:inputType="textPostalAddress"
+				android:layerType="software"
+				android:singleLine="true"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="?android:attr/textColorSecondary"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/url_container"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="4dp">
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layerType="software"
+				android:singleLine="true"
+				android:text="@string/url"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<EditText
+				android:id="@+id/url"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:inputType="textUri"
+				android:layerType="software"
+				android:singleLine="true"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="?android:attr/textColorSecondary"/>
+		</LinearLayout>
+
 	</LinearLayout>
 
-	<LinearLayout
-		android:id="@+id/location_container"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		android:padding="4dp">
-
-		<TextView
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layerType="software"
-			android:singleLine="true"
-			android:text="@string/location"
-			android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-		<EditText
-			android:id="@+id/location"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:inputType="textPostalAddress"
-			android:layerType="software"
-			android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorSecondary"/>
-	</LinearLayout>
-
-	<LinearLayout
-		android:id="@+id/url_container"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		android:padding="4dp">
-
-		<TextView
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layerType="software"
-			android:singleLine="true"
-			android:text="@string/url"
-			android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-		<EditText
-			android:id="@+id/url"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:inputType="textUri"
-			android:layerType="software"
-			android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorSecondary"/>
-	</LinearLayout>
-
-</LinearLayout>
+</ScrollView>

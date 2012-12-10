@@ -95,12 +95,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -1094,35 +1091,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
 		}
 
-		public static Bitmap createAlphaGradientBanner(final Bitmap orig) {
-			if (orig == null) return null;
-			final int width = orig.getWidth(), height = orig.getHeight();
-			final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-			final Canvas canvas = new Canvas(bitmap);
-			final Paint paint = new Paint();
-			final LinearGradient shader = new LinearGradient(width / 2, 0, width / 2, height, 0xffffffff, 0x00ffffff,
-					Shader.TileMode.CLAMP);
-			paint.setShader(shader);
-			paint.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
-			canvas.drawBitmap(orig, 0, 0, null);
-			canvas.drawRect(0, 0, width, height, paint);
-			return bitmap;
-		}
-
-		private static String getBestBannerType(final int width) {
-			if (width <= 320)
-				return "mobile";
-			else if (width <= 520)
-				return "web";
-			else if (width <= 626)
-				return "ipad";
-			else if (width <= 640)
-				return "mobile_retina";
-			else if (width <= 1040)
-				return "web_retina";
-			else
-				return "ipad_retina";
-		}
 	}
 
 	final class FavoritesAction extends ListAction {

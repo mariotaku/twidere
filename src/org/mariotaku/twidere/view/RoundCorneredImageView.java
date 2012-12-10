@@ -34,13 +34,16 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+import org.mariotaku.twidere.util.ExtendedViewInterface;
 
-public class RoundCorneredImageView extends ImageView {
+public class RoundCorneredImageView extends ImageView implements ExtendedViewInterface {
 
-	private final float mRadius;
 	private final Path mPath = new Path();
 	private Bitmap mRounder;
 	private Paint mPaint;
+	private float mRadius;
+
+	private OnSizeChangedListener mOnSizeChangedListener;
 
 	public RoundCorneredImageView(final Context context) {
 		this(context, null);
@@ -94,6 +97,15 @@ public class RoundCorneredImageView extends ImageView {
 			}
 		}
 		super.onSizeChanged(w, h, oldw, oldh);
+		if (mOnSizeChangedListener != null) {
+			mOnSizeChangedListener.onSizeChanged(this, w, h, oldw, oldh);
+		}
+	}
+	
+	public void setRadius(final float radius) {
+		mRadius = radius;
+		createPath(getWidth(), getHeight());
+		invalidate();
 	}
 
 	private void createPath(final int w, final int h) {
@@ -101,6 +113,11 @@ public class RoundCorneredImageView extends ImageView {
 		mPath.addRoundRect(new RectF(0, 0, w, h), mRadius, mRadius, Path.Direction.CW);
 	}
 
+	@Override
+	public final void setOnSizeChangedListener(final OnSizeChangedListener listener) {
+		mOnSizeChangedListener = listener;
+	}
+	
 	static class SetLayerTypeAccessor {
 
 		@TargetApi(Build.VERSION_CODES.HONEYCOMB)

@@ -3,7 +3,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:descendantFocusability="blocksDescendants"
-	android:padding="6dp">
+	android:padding="8dp">
 
 	<org.mariotaku.twidere.view.RoundCorneredImageView
 		android:id="@+id/profile_image"
@@ -19,7 +19,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignTop="@+id/profile_image"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginRight="6dp"
+		android:layout_marginRight="8dp"
 		android:layout_toLeftOf="@+id/profile_image"
 		android:layout_toRightOf="@+id/time">
 
@@ -35,7 +35,7 @@
 				android:layout_height="wrap_content"
 				android:gravity="right"
 				android:layerType="software"
-				android:paddingRight="3dp"
+				android:paddingRight="4dp"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
@@ -74,11 +74,11 @@
 		android:layout_alignBaseline="@+id/name_frame"
 		android:layout_alignParentLeft="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginLeft="6dp"
-		android:drawablePadding="3dp"
+		android:layout_marginLeft="8dp"
+		android:drawablePadding="4dp"
 		android:gravity="center_vertical|right"
 		android:layerType="software"
-		android:paddingTop="3dp"
+		android:paddingTop="4dp"
 		android:textColor="?android:attr/textColorSecondary"/>
 
 </org.mariotaku.twidere.view.ColorLabelRelativeLayout>

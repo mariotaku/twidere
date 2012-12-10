@@ -113,26 +113,31 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
+import org.mariotaku.twidere.view.StatusImagePreviewLayout;
+import org.mariotaku.twidere.view.StatusImagePreviewLayout.OnImageClickListener;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
-		OnItemClickListener, OnTouchListener {
+	OnImageClickListener {
+
+	public void onImageClick(ImageSpec spec) {
+		if (spec == null) return;
+		// UCD
+		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec.full_image_link);
+		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.full_image_link));
+		intent.setPackage(getActivity().getPackageName());
+		startActivity(intent);
+	}
+	
 
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
 	private static final int LOADER_ID_LOCATION = 3;
 	private static final int LOADER_ID_CONVERSATION = 4;
 
-	private static final long TICKER_DURATION = 5000L;
-
-	private final List<ImageSpec> mData = new ArrayList<ImageSpec>();
-	private Handler mHandler;
-	private Runnable mTicker;
-
 	private long mAccountId, mStatusId;
 	private boolean mLoadMoreAutomatically;
 	private boolean mFollowInfoDisplayed, mLocationInfoDisplayed;
 	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized, mConversationLoaderInitialized;;
-	private boolean mBusy, mTickerStopped;
 	private boolean mFollowInfoLoaderInitialized;
 	private boolean mShouldScroll;
 
@@ -140,18 +145,15 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private TwitterWrapper mTwitterWrapper;
 	private LazyImageLoader mProfileImageLoader;
 
-	private ImagesAdapter mImagePreviewAdapter;
-	private ParcelableStatusesAdapter mAdapter;
-
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView,
 			mRetweetedStatusView;
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
-	private View mMainContent, mFollowIndicator, mImagesPreviewContainer;
+	private View mMainContent, mFollowIndicator, mImagePreviewContainer;
 	private ColorLabelRelativeLayout mProfileView;
 	private MenuBar mMenuBar;
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
-	private Gallery mGallery;
+	private StatusImagePreviewLayout mImagePreviewView;
 	private View mStatusView;
 	private View mLoadImagesIndicator;
 	private ExtendedFrameLayout mStatusContainer;
@@ -513,9 +515,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}
 		final List<ImageSpec> images = getImagesInStatus(status.text_html);
-		mImagesPreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
+		mImagePreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		loadPreviewImages(images);
-		updatePreviewImages();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false)) {
 			showPreviewImages();
 		}
@@ -554,7 +555,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		setListShownNoAnimation(true);
 		mListView = getListView();
 		mListView.setStackFromBottom(true);
-		mAdapter = getListAdapter();
 		mAdapter.setGapDisallowed(true);
 		final TwidereApplication application = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -574,7 +574,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
 			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
 		}
-		mImagePreviewAdapter = new ImagesAdapter(getActivity());
 		mLoadImagesIndicator.setOnClickListener(this);
 		mInReplyToView.setOnClickListener(this);
 		mFollowButton.setOnClickListener(this);
@@ -583,9 +582,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mRetweetedStatusView.setOnClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(mMenuItemClickListener);
 		getStatus(false);
-		mGallery.setAdapter(mImagePreviewAdapter);
-		mGallery.setOnItemClickListener(this);
-		mGallery.setOnTouchListener(this);
+		mImagePreviewView.setOnImageClickListener(this);
 	}
 
 	@Override
@@ -652,7 +649,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mStatusContainer.addView(super.onCreateView(inflater, container, savedInstanceState));
 		mStatusContainer.setOnSizeChangedListener(mOnSizeChangedListener);
 		mStatusView = inflater.inflate(R.layout.status_content, null, false);
-		mImagesPreviewContainer = mStatusView.findViewById(R.id.images_preview);
+		mImagePreviewContainer = mStatusView.findViewById(R.id.image_preview);
 		mLocationView = (TextView) mStatusView.findViewById(R.id.location_view);
 		mRetweetedStatusView = (TextView) mStatusView.findViewById(R.id.retweet_view);
 		mNameView = (TextView) mStatusView.findViewById(R.id.name);
@@ -665,7 +662,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mFollowIndicator = mStatusView.findViewById(R.id.follow_indicator);
 		mFollowInfoProgress = (ProgressBar) mStatusView.findViewById(R.id.follow_info_progress);
 		mProfileView = (ColorLabelRelativeLayout) mStatusView.findViewById(R.id.profile);
-		mGallery = (Gallery) mStatusView.findViewById(R.id.preview_gallery);
+		mImagePreviewView = (StatusImagePreviewLayout) mStatusView.findViewById(R.id.preview_gallery);
 		mLoadImagesIndicator = mStatusView.findViewById(R.id.load_images);
 		return view;
 	}
@@ -684,17 +681,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		lm.destroyLoader(LOADER_ID_LOCATION);
 		lm.destroyLoader(LOADER_ID_FOLLOW);
 		super.onDestroyView();
-	}
-
-	@Override
-	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		final ImageSpec spec = mImagePreviewAdapter.getItem(position);
-		if (spec == null) return;
-		// UCD
-		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec.full_image_link);
-		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.full_image_link));
-		intent.setPackage(getActivity().getPackageName());
-		startActivity(intent);
 	}
 
 	@Override
@@ -726,55 +712,18 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mInReplyToView.setTextSize(text_size * 0.85f);
 		mLocationView.setTextSize(text_size * 0.85f);
 		mRetweetedStatusView.setTextSize(text_size * 0.85f);
-		mTickerStopped = false;
-		mHandler = new Handler();
-
-		mTicker = new Runnable() {
-
-			@Override
-			public void run() {
-				if (mTickerStopped) return;
-				if (mGallery != null && !mBusy) {
-					mImagePreviewAdapter.notifyDataSetChanged();
-				}
-				final long now = SystemClock.uptimeMillis();
-				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
-				mHandler.postAtTime(mTicker, next);
-			}
-		};
-		mTicker.run();
 	}
 
 	@Override
 	public void onStop() {
-		mTickerStopped = true;
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
 
-	@Override
-	public boolean onTouch(final View view, final MotionEvent event) {
-		switch (event.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				mBusy = true;
-				break;
-			case MotionEvent.ACTION_UP:
-			case MotionEvent.ACTION_CANCEL:
-				mBusy = false;
-				break;
-		}
-		return false;
-	}
-
 	private void clearPreviewImages() {
-		mData.clear();
-		updatePreviewImages();
-		if (mLoadImagesIndicator != null) {
-			mLoadImagesIndicator.setVisibility(View.VISIBLE);
-		}
-		if (mGallery != null) {
-			mGallery.setVisibility(View.GONE);
-		}
+		mImagePreviewView.clear();
+		mLoadImagesIndicator.setVisibility(View.VISIBLE);
+		mImagePreviewView.setVisibility(View.GONE);
 	}
 
 	private void getStatus(final boolean omit_intent_extra) {
@@ -791,8 +740,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	private boolean loadPreviewImages(final Collection<? extends ImageSpec> images) {
-		mData.clear();
-		return images != null && mData.addAll(images);
+		mImagePreviewView.clear();
+		return mImagePreviewView.addAll(images);
 	}
 
 	private void showConversation() {
@@ -832,16 +781,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	private void showPreviewImages() {
-		if (mImagePreviewAdapter == null) return;
-		updatePreviewImages();
 		mLoadImagesIndicator.setVisibility(View.GONE);
-		mGallery.setVisibility(View.VISIBLE);
-	}
-
-	private void updatePreviewImages() {
-		if (mImagePreviewAdapter == null) return;
-		mImagePreviewAdapter.clear();
-		mImagePreviewAdapter.addAll(mData);
+		mImagePreviewView.setVisibility(View.VISIBLE);
+		mImagePreviewView.show();
 	}
 
 	private void updatePullRefresh() {
@@ -1030,7 +972,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		@Override
 		public View getView(final int position, final View convertView, final ViewGroup parent) {
-			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.images_preview_item, null);
+			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.image_preview_item, null);
 			final ImageView image = (ImageView) view.findViewById(R.id.image);
 			final ImageSpec spec = getItem(position);
 			mImageLoader.displayImage(spec != null ? spec.preview_image_link : null, image);

@@ -9,22 +9,26 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
+import android.graphics.drawable.NinePatchDrawable;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
 
-public class StatusListPreviewImageView extends RoundCorneredImageView {
+public class ImagePreviewView extends RoundCorneredImageView {
 
-	public StatusListPreviewImageView(final Context context) {
-		super(context);
-		setScaleType(ScaleType.MATRIX);
+	private final float mDensity;
+
+	public ImagePreviewView(final Context context) {
+		this(context, null);
 	}
 
-	public StatusListPreviewImageView(final Context context, final AttributeSet attrs) {
-		super(context, attrs);
-		setScaleType(ScaleType.MATRIX);
+	public ImagePreviewView(final Context context, final AttributeSet attrs) {
+		this(context, attrs, 0);
 	}
 
-	public StatusListPreviewImageView(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ImagePreviewView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setScaleType(ScaleType.MATRIX);
+		mDensity = getResources().getDisplayMetrics().density;
 	}
 
 	@Override
@@ -35,18 +39,24 @@ public class StatusListPreviewImageView extends RoundCorneredImageView {
 		final Drawable drawable = getDrawable();
 
 		int translatey = 0;
-		final Bitmap bitmap = drawableToBitmap(drawable);
+		final Bitmap bitmap = getBitmap(drawable);
 		if (bitmap != null) {
+			setBackgroundDrawable(new AlphaPatternDrawable((int)(mDensity * 16)));
 			final int bw = bitmap.getWidth();
 			final int bh = bitmap.getHeight();
+			final float ratio = bh / bw;
+			if (frameWidth * ratio > frameHeight) {
 			final int stepw = limit(bw / 32, 1, bw);
 			final int steph = limit(bh / 96, 1, bh);
-			for (int x = 0, y = 0; x < bw && y < bh / 2; x += stepw, y += steph) {
-				if (!nearlyWhite(bitmap.getPixel(x, y))) {
-					translatey = y;
-					break;
+				for (int x = 0, y = 0; x < bw && y < bh / 2; x += stepw, y += steph) {
+					if (!isBorder(bitmap.getPixel(x, y))) {
+						translatey = y;
+						break;
+					}
 				}
 			}
+		} else {
+			setBackgroundResource(R.drawable.image_preview_fallback_large);
 		}
 
 		final float originalImageWidth = drawable.getIntrinsicWidth();
@@ -74,7 +84,8 @@ public class StatusListPreviewImageView extends RoundCorneredImageView {
 		return super.setFrame(frameLeft, frameTop, frameRight, frameBottom);
 	}
 
-	private static Bitmap drawableToBitmap(final Drawable drawable) {
+	static Bitmap getBitmap(final Drawable drawable) {
+		if (drawable instanceof NinePatchDrawable) return null;
 		if (drawable instanceof BitmapDrawable)
 			return ((BitmapDrawable) drawable).getBitmap();
 		else if (drawable instanceof TransitionDrawable) {
@@ -84,18 +95,11 @@ public class StatusListPreviewImageView extends RoundCorneredImageView {
 				if (layer instanceof BitmapDrawable) return ((BitmapDrawable) layer).getBitmap();
 			}
 		}
-		final int w = drawable.getIntrinsicWidth(), h = drawable.getIntrinsicHeight();
-		if (w <= 0 || h <= 0) return null;
-		final Bitmap bitmap = Bitmap.createBitmap(w, h, Config.ARGB_8888);
-		final Canvas canvas = new Canvas(bitmap);
-		drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-		drawable.draw(canvas);
-
-		return bitmap;
+		return null;
 	}
 
-	private static boolean inRange(final int value, final int target, final int threshold) {
-		return Math.abs(value - target) <= threshold;
+	private static boolean inRange(final int value, final int min, final int max, final int threshold) {
+		return Math.abs(value - max) <= threshold || Math.abs(value - min) <= threshold;
 	}
 
 	private static int limit(final int value, final int min, final int max) {
@@ -104,12 +108,12 @@ public class StatusListPreviewImageView extends RoundCorneredImageView {
 		return value;
 	}
 
-	private static boolean nearlyWhite(final int color) {
+	private static boolean isBorder(final int color) {
 		final int alpha = color >> 24 & 0xFF;
 		final int red = color >> 16 & 0xFF;
 		final int green = color >> 8 & 0xFF;
 		final int blue = color & 0xFF;
-		return (inRange(alpha, 0x00, 12) || inRange(alpha, 0xFF, 12)) && inRange(red, 0xFF, 12)
-				&& inRange(green, 0xFF, 12) && inRange(blue, 0xFF, 12);
+		return inRange(alpha, 0x00, 0xFF, 8) && inRange(red, 0x00, 0xFF, 8) && inRange(green, 0x00, 0xFF, 8)
+				&& inRange(blue, 0x00, 0xFF, 8);
 	}
 }

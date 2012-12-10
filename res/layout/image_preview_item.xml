@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.mariotaku.twidere.view.ExtendedFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layout_margin="18dp"
+	android:background="@drawable/image_preview_background">
+
+	<org.mariotaku.twidere.view.StatusImagePreviewItemView
+		android:id="@+id/image_preview_item"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:radius="4dp"/>
+</org.mariotaku.twidere.view.ExtendedFrameLayout>

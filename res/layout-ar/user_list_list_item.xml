@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:padding="6dp">
+	android:padding="8dp">
 
 	<org.mariotaku.twidere.view.RoundCorneredImageView
 		android:id="@+id/profile_image"
@@ -17,7 +17,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginRight="6dp"
+		android:layout_marginRight="8dp"
 		android:layout_toLeftOf="@+id/profile_image"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
@@ -32,7 +32,7 @@
 		android:layout_alignRight="@+id/name"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/name"
-		android:drawablePadding="3dp"
+		android:drawablePadding="4dp"
 		android:gravity="right"
 		android:textColor="?android:attr/textColorSecondary"/>
 
@@ -47,16 +47,5 @@
 		android:gravity="right"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
-
-	<TextView android:layerType="software"
-		android:id="@+id/list_gap_text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_centerInParent="true"
-		android:text="@string/tap_to_load_more"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="#606060"
-		android:textStyle="bold"
-		android:visibility="gone"/>
 
 </RelativeLayout>
