@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.model.ExtensionsViewHolder;
+import org.mariotaku.twidere.view.holder.ExtensionsViewHolder;
 
 import android.content.Context;
 import android.content.pm.PackageManager;

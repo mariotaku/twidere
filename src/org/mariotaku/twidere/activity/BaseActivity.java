@@ -25,7 +25,7 @@ import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
+import org.mariotaku.twidere.activity.iface.IThemedActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -38,7 +38,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 @SuppressLint("Registered")
-public class BaseActivity extends ActionBarFragmentActivity implements Constants, ActivityThemeChangeInterface {
+public class BaseActivity extends ActionBarFragmentActivity implements Constants, IThemedActivity {
 
 	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated;
 

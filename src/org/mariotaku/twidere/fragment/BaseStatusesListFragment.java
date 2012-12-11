@@ -31,11 +31,11 @@ import java.util.List;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.StatusesAdapterInterface;
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.StatusViewHolder;
+import org.mariotaku.twidere.view.holder.StatusViewHolder;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
@@ -82,7 +82,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	private ListView mListView;
 
-	private StatusesAdapterInterface mAdapter;
+	private IStatusesAdapter mAdapter;
 	protected PopupMenu mPopupMenu;
 
 	protected Data mData;
@@ -115,7 +115,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public abstract StatusesAdapterInterface getListAdapter();
+	public abstract IStatusesAdapter getListAdapter();
 
 	public ParcelableStatus getSelectedStatus() {
 		return mSelectedStatus;
@@ -301,7 +301,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				if (mSelectedStatus.is_favorite) {
 					mTwitterWrapper.destroyFavorite(status.account_id, status.status_id);
 				} else {
-					mTwitterWrapper.createFavorite(status.account_id, status.status_id);
+					mTwitterWrapper.createFavoriteAsync(status.account_id, status.status_id);
 				}
 				break;
 			}

@@ -17,12 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.adapter;
+package org.mariotaku.twidere.activity.iface;
 
-import org.mariotaku.twidere.model.ParcelableDirectMessage;
+import android.os.Bundle;
 
-public interface DirectMessagesAdapterInterface extends BaseAdapterInterface {
+public interface IThemedActivity {
 
-	public ParcelableDirectMessage findItem(long id);
+	public boolean isThemeChanged();
 
+	public void onCreate(Bundle savedInstanceState);
+
+	public void onResume();
+
+	public void setTheme();
 }

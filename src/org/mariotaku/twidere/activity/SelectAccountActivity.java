@@ -41,6 +41,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.content.SharedPreferences;
 
 public class SelectAccountActivity extends BaseDialogActivity implements LoaderCallbacks<Cursor>, OnItemClickListener,
 		OnClickListener {
@@ -48,6 +49,8 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 	private ListView mListView;
 	private AccountsAdapter mAdapter;
 	private final List<Long> mSelectedIds = new NoDuplicatesArrayList<Long>();
+
+	private SharedPreferences mPreferences;
 
 	@Override
 	public void onBackPressed() {
@@ -80,6 +83,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
 		setContentView(R.layout.select_account);
 		mListView = (ListView) findViewById(android.R.id.list);
@@ -144,6 +148,13 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 				cursor.moveToNext();
 			}
 		}
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mAdapter.setDisplayProfileImage(display_profile_image);
 	}
 
 	@Override

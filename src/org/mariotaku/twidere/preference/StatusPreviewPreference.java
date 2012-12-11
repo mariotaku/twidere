@@ -24,7 +24,7 @@ import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.model.StatusViewHolder;
+import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.content.Context;
 import android.content.SharedPreferences;

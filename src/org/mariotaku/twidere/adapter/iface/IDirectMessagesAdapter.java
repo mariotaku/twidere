@@ -17,21 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.model;
+package org.mariotaku.twidere.adapter.iface;
 
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
+import org.mariotaku.twidere.model.ParcelableDirectMessage;
 
-public final class ExtensionsViewHolder {
+public interface IDirectMessagesAdapter extends IBaseAdapter {
 
-	public final ImageView icon;
-	public final TextView text1, text2;
+	public ParcelableDirectMessage findItem(long id);
 
-	public ExtensionsViewHolder(final View view) {
-
-		icon = (ImageView) view.findViewById(android.R.id.icon);
-		text1 = (TextView) view.findViewById(android.R.id.text1);
-		text2 = (TextView) view.findViewById(android.R.id.text2);
-	}
 }

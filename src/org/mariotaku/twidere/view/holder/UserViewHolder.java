@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.model;
+package org.mariotaku.twidere.view.holder;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
@@ -27,21 +27,20 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class DirectMessageEntryViewHolder {
+public class UserViewHolder {
 
 	public final ImageView profile_image;
-	public final TextView name, screen_name, text, time;
+	public final TextView name, screen_name, description;
 	private final ColorLabelRelativeLayout content;
-	private float text_size;
 	private boolean account_color_enabled;
+	private float text_size;
 
-	public DirectMessageEntryViewHolder(final View view) {
+	public UserViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
-		text = (TextView) view.findViewById(R.id.text);
-		time = (TextView) view.findViewById(R.id.time);
+		description = (TextView) view.findViewById(R.id.description);
 	}
 
 	public void setAccountColor(final int color) {
@@ -55,17 +54,25 @@ public class DirectMessageEntryViewHolder {
 		}
 	}
 
+	public void setHighlightColor(final int color) {
+		content.drawBackground(color);
+	}
+
+	public void setSelected(final boolean selected) {
+		content.setBackgroundColor(selected ? 0x600099CC : Color.TRANSPARENT);
+	}
+
 	public void setTextSize(final float text_size) {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
-			text.setTextSize(text_size);
+			description.setTextSize(text_size);
 			name.setTextSize(text_size);
 			screen_name.setTextSize(text_size * 0.75f);
-			time.setTextSize(text_size * 0.65f);
 		}
 	}
 
 	public void setUserColor(final int color) {
 		content.drawLeft(color);
 	}
+
 }

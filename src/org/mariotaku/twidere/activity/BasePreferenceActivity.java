@@ -25,7 +25,7 @@ import org.mariotaku.actionbarcompat.ActionBarPreferenceActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
+import org.mariotaku.twidere.activity.iface.IThemedActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -36,7 +36,7 @@ import android.provider.Settings.SettingNotFoundException;
 import android.view.Window;
 import android.view.WindowManager;
 
-class BasePreferenceActivity extends ActionBarPreferenceActivity implements Constants, ActivityThemeChangeInterface {
+class BasePreferenceActivity extends ActionBarPreferenceActivity implements Constants, IThemedActivity {
 
 	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated;
 

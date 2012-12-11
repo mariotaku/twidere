@@ -2,7 +2,7 @@ package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.DualPaneActivity;
-import org.mariotaku.twidere.view.ExtendedViewGroupInterface.TouchInterceptor;
+import org.mariotaku.twidere.view.iface.IExtendedViewGroup.TouchInterceptor;
 
 import android.content.Context;
 import android.content.res.Resources;

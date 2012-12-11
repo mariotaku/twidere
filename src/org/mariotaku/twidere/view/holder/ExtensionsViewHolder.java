@@ -17,34 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.model;
-
-import org.mariotaku.twidere.R;
+package org.mariotaku.twidere.view.holder;
 
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class UserListViewHolder {
+public final class ExtensionsViewHolder {
 
-	public final ImageView profile_image;
-	public final TextView name, description, owner;
-	private float text_size;
+	public final ImageView icon;
+	public final TextView text1, text2;
 
-	public UserListViewHolder(final View view) {
-		profile_image = (ImageView) view.findViewById(R.id.profile_image);
-		name = (TextView) view.findViewById(R.id.name);
-		description = (TextView) view.findViewById(R.id.description);
-		owner = (TextView) view.findViewById(R.id.owner);
+	public ExtensionsViewHolder(final View view) {
+
+		icon = (ImageView) view.findViewById(android.R.id.icon);
+		text1 = (TextView) view.findViewById(android.R.id.text1);
+		text2 = (TextView) view.findViewById(android.R.id.text2);
 	}
-
-	public void setTextSize(final float text_size) {
-		if (this.text_size != text_size) {
-			this.text_size = text_size;
-			description.setTextSize(text_size);
-			name.setTextSize(text_size * 1.05f);
-			owner.setTextSize(text_size * 0.65f);
-		}
-	}
-
 }

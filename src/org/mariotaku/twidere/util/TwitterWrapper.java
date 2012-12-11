@@ -55,7 +55,7 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.view.TwitterCommands;
+import org.mariotaku.twidere.util.TwitterCommands;
 
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
@@ -123,12 +123,12 @@ public class TwitterWrapper implements Constants {
 		mResolver.delete(uri, null, null);
 	}
 
-	public int createBlock(final long account_id, final long user_id) {
+	public int createBlockAsync(final long account_id, final long user_id) {
 		final CreateBlockTask task = new CreateBlockTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int createFavorite(final long account_id, final long status_id) {
+	public int createFavoriteAsync(final long account_id, final long status_id) {
 		final CreateFavoriteTask task = new CreateFavoriteTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}

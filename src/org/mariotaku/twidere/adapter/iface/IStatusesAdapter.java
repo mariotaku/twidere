@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.adapter;
+package org.mariotaku.twidere.adapter.iface;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
 
-public interface StatusesAdapterInterface extends BaseAdapterInterface {
+public interface IStatusesAdapter extends IBaseAdapter {
 
 	public ParcelableStatus getStatus(int position);
 

@@ -19,13 +19,14 @@
 
 package org.mariotaku.twidere.view;
 
-
+import org.mariotaku.twidere.view.iface.IExtendedViewGroup;
+ 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
-public class ExtendedFrameLayout extends FrameLayout implements ExtendedViewGroupInterface {
+public class ExtendedFrameLayout extends FrameLayout implements IExtendedViewGroup {
 
 	private TouchInterceptor mTouchInterceptor;
 	private OnSizeChangedListener mOnSizeChangedListener;

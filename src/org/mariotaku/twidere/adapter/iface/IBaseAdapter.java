@@ -17,17 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.util;
+package org.mariotaku.twidere.adapter.iface;
 
-import android.os.Bundle;
+import org.mariotaku.twidere.Constants;
 
-public interface ActivityThemeChangeInterface {
+import android.widget.ListAdapter;
 
-	public boolean isThemeChanged();
+public interface IBaseAdapter extends Constants, ListAdapter {
 
-	public void onCreate(Bundle savedInstanceState);
+	public void notifyDataSetChanged();
 
-	public void onResume();
+	public void setDisplayProfileImage(boolean display);
 
-	public void setTheme();
+	public void setNameDisplayOption(String option);
+
+	public void setTextSize(float text_size);
+
 }

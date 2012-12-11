@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.view;
+package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 

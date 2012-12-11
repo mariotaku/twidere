@@ -75,7 +75,7 @@ import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
-import org.mariotaku.twidere.view.ExtendedViewInterface.OnSizeChangedListener;
+import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 import org.mariotaku.twidere.view.ProfileNameBannerContainer;
 
 import twitter4j.Relationship;
@@ -781,7 +781,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				if (mFriendship.isSourceBlockingTarget()) {
 					mTwitterWrapper.destroyBlock(mAccountId, mUser.user_id);
 				} else {
-					mTwitterWrapper.createBlock(mAccountId, mUser.user_id);
+					mTwitterWrapper.createBlockAsync(mAccountId, mUser.user_id);
 				}
 				break;
 			}

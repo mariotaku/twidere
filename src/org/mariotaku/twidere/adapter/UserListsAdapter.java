@@ -24,14 +24,15 @@ import java.util.List;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.model.UserListViewHolder;
+import org.mariotaku.twidere.view.holder.UserListViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 
-public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements BaseAdapterInterface {
+public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements IBaseAdapter {
 
 	private final LazyImageLoader mProfileImageLoader;
 

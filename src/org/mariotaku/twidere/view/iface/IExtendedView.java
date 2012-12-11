@@ -1,8 +1,8 @@
-package org.mariotaku.twidere.view;
+package org.mariotaku.twidere.view.iface;
 
 import android.view.View;
 
-public interface ExtendedViewInterface {
+public interface IExtendedView {
 
 	public void setOnSizeChangedListener(final OnSizeChangedListener listener);
 

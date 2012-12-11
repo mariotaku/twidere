@@ -41,7 +41,7 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
-import org.mariotaku.twidere.model.StatusViewHolder;
+import org.mariotaku.twidere.view.holder.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.app.Activity;
@@ -54,8 +54,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 
-public class CursorStatusesAdapter extends SimpleCursorAdapter implements StatusesAdapterInterface, OnClickListener {
+public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
 			mMultiSelectEnabled, mMentionsHighlightDisabled;

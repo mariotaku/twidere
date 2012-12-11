@@ -19,7 +19,8 @@
 
 package org.mariotaku.twidere.view;
 
-
+import org.mariotaku.twidere.view.iface.IExtendedView;
+ 
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -36,7 +37,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 
-public class RoundCorneredImageView extends ImageView implements ExtendedViewInterface {
+public class RoundCorneredImageView extends ImageView implements IExtendedView {
 
 	private final Path mPath = new Path();
 	private final RectF mRectF = new RectF();

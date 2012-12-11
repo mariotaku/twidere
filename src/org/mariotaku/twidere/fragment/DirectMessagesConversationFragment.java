@@ -31,7 +31,7 @@ import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
-import org.mariotaku.twidere.model.DirectMessageConversationViewHolder;
+import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -162,6 +162,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		mAdapter = new DirectMessagesConversationAdapter(getActivity(), imageloader);
 		setListAdapter(mAdapter);
 		final ListView list = getListView();
+		list.setFastScrollEnabled(true);
 		list.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		list.setStackFromBottom(true);
 		list.setOnItemClickListener(this);

@@ -1,9 +1,9 @@
-package org.mariotaku.twidere.view;
+package org.mariotaku.twidere.view.iface;
 
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 
-public interface ExtendedViewGroupInterface extends ExtendedViewInterface {
+public interface IExtendedViewGroup extends IExtendedView {
 
 	public void setTouchInterceptor(final TouchInterceptor listener);
 

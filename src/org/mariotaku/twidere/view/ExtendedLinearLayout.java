@@ -19,13 +19,14 @@
 
 package org.mariotaku.twidere.view;
 
+import org.mariotaku.twidere.view.iface.IExtendedViewGroup;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
-public class ExtendedLinearLayout extends LinearLayout implements ExtendedViewGroupInterface {
+public class ExtendedLinearLayout extends LinearLayout implements IExtendedViewGroup {
 
 	private TouchInterceptor mTouchInterceptor;
 	private OnSizeChangedListener mOnSizeChangedListener;

@@ -29,14 +29,15 @@ import java.util.List;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.model.UserViewHolder;
+import org.mariotaku.twidere.view.holder.UserViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 
-public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements BaseAdapterInterface {
+public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseAdapter {
 
 	private final LazyImageLoader mProfileImageLoader;
 	private final Context mContext;

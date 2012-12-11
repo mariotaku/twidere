@@ -34,7 +34,7 @@ import static org.mariotaku.twidere.util.Utils.getUserColor;
 import java.text.DateFormat;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.model.DirectMessageEntryViewHolder;
+import org.mariotaku.twidere.view.holder.DirectMessageEntryViewHolder;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
@@ -44,8 +44,9 @@ import android.graphics.Color;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 
-public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements BaseAdapterInterface {
+public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements IBaseAdapter {
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mFastProcessingEnabled;
 	private final LazyImageLoader mProfileImageLoader;

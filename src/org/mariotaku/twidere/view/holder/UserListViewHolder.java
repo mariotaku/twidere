@@ -17,38 +17,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.model;
+package org.mariotaku.twidere.view.holder;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class AccountViewHolder {
+public class UserListViewHolder {
 
 	public final ImageView profile_image;
-	public final TextView name, screen_name;
-	public final CheckBox checkbox;
-	private final ColorLabelRelativeLayout content;
-	private final View default_indicator;
+	public final TextView name, description, owner;
+	private float text_size;
 
-	public AccountViewHolder(final View view) {
-		content = (ColorLabelRelativeLayout) view;
-		name = (TextView) view.findViewById(android.R.id.text1);
-		screen_name = (TextView) view.findViewById(android.R.id.text2);
-		profile_image = (ImageView) view.findViewById(android.R.id.icon);
-		default_indicator = view.findViewById(R.id.default_indicator);
-		checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+	public UserListViewHolder(final View view) {
+		profile_image = (ImageView) view.findViewById(R.id.profile_image);
+		name = (TextView) view.findViewById(R.id.name);
+		description = (TextView) view.findViewById(R.id.description);
+		owner = (TextView) view.findViewById(R.id.owner);
 	}
 
-	public void setAccountColor(final int color) {
-		content.drawRight(color);
+	public void setTextSize(final float text_size) {
+		if (this.text_size != text_size) {
+			this.text_size = text_size;
+			description.setTextSize(text_size);
+			name.setTextSize(text_size * 1.05f);
+			owner.setTextSize(text_size * 0.65f);
+		}
 	}
 
-	public void setIsDefault(final boolean is_default) {
-		default_indicator.setVisibility(is_default ? View.VISIBLE : View.GONE);
-	}
 }

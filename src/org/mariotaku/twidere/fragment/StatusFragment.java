@@ -367,7 +367,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					if (mStatus.is_favorite) {
 						mTwitterWrapper.destroyFavorite(mAccountId, mStatusId);
 					} else {
-						mTwitterWrapper.createFavorite(mAccountId, mStatusId);
+						mTwitterWrapper.createFavoriteAsync(mAccountId, mStatusId);
 					}
 					break;
 				}

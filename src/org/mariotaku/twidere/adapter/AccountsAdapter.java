@@ -24,7 +24,7 @@ import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.AccountsFragment;
-import org.mariotaku.twidere.model.AccountViewHolder;
+import org.mariotaku.twidere.view.holder.AccountViewHolder;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
@@ -37,6 +37,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class AccountsAdapter extends SimpleCursorAdapter {
+
+	private boolean mDisplayProfileImage;
+
+	public void setDisplayProfileImage(boolean display) {
+		mDisplayProfileImage = display;
+		notifyDataSetChanged();
+	}
+
 
 	private final LazyImageLoader mProfileImageLoader;
 	private final SharedPreferences mPreferences;
@@ -68,12 +76,16 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 		holder.checkbox.setChecked(mCheckedItems.get(position));
 		holder.setAccountColor(color);
 		holder.setIsDefault(mDefaultAccountId != -1 && mDefaultAccountId == cursor.getLong(mAccountIdIdx));
+		if (mDisplayProfileImage) {
 		final String profile_image_url_string = cursor.getString(mProfileImageIdx);
 		if (mDisplayHiResProfileImage) {
 			mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string),
 					holder.profile_image);
 		} else {
 			mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
+		}
+		} else {
+			holder.profile_image.setImageResource(R.drawable.ic_profile_image_default);
 		}
 		super.bindView(view, context, cursor);
 	}

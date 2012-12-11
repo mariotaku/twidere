@@ -33,11 +33,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.BaseAdapterInterface;
+import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
 import org.mariotaku.twidere.loader.Twitter4JActivitiesLoader;
-import org.mariotaku.twidere.model.ActivityViewHolder;
+import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -195,7 +195,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
 
-	static class ActivitiesAdapter extends BaseAdapter implements BaseAdapterInterface {
+	static class ActivitiesAdapter extends BaseAdapter implements IBaseAdapter {
 
 		private boolean mDisplayProfileImage, mDisplayName, mShowAbsoluteTime;
 

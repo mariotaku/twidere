@@ -235,6 +235,13 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 		return super.onContextItemSelected(item);
 	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mAdapter.setDisplayProfileImage(display_profile_image);
+	}
 
 	@Override
 	public void onStart() {

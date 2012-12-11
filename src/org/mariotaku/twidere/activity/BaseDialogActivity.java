@@ -24,7 +24,7 @@ import static org.mariotaku.twidere.util.Utils.restartActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.util.ActivityThemeChangeInterface;
+import org.mariotaku.twidere.activity.iface.IThemedActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -38,7 +38,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 @SuppressLint("Registered")
-class BaseDialogActivity extends FragmentActivity implements Constants, ActivityThemeChangeInterface {
+class BaseDialogActivity extends FragmentActivity implements Constants, IThemedActivity {
 
 	private boolean mIsDarkTheme, mHardwareAccelerated;
 
