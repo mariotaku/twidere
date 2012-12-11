@@ -9,7 +9,9 @@
 		<item name="android:windowBackground">@drawable/viewer_background</item>
 		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
-		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>
+		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>>
+		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
+		<item name="itemBackground">@drawable/item_background_holo_dark</item>
 	</style>
 
 	<style name="Theme.Twidere" parent="Theme.Holo">
@@ -19,6 +21,7 @@
 		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
+		<item name="itemBackground">@drawable/item_background_holo_dark</item>
 
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/actionbar_bg_dark_holo</item>
@@ -38,6 +41,7 @@
 		<item name="editTextStyle">@style/Widget.Holo.Light.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Medium</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_light</item>
+		<item name="itemBackground">@drawable/item_background_holo_light</item>
 
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
@@ -57,6 +61,7 @@
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
+		<item name="itemBackground">@drawable/item_background_holo_dark</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Dialog" parent="Theme.Holo.Light.Dialog">
@@ -66,6 +71,7 @@
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Medium</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_light</item>
+		<item name="itemBackground">@drawable/item_background_holo_light</item>
 
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>

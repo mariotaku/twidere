@@ -36,12 +36,12 @@
 
 			<org.mariotaku.twidere.view.RoundCorneredImageView
 				android:id="@+id/image_thumbnail_preview"
-				android:layout_width="36dp"
-				android:layout_height="36dp"
+				android:layout_width="42dp"
+				android:layout_height="42dp"
 				android:layout_gravity="center_vertical|left"
 				android:alpha="0.5"
-				android:background="@drawable/item_background_holo_light"
-				android:radius="4dp"
+				android:background="?itemBackground"
+				android:radius="3dp"
 				android:scaleType="fitCenter"
 				android:visibility="gone"/>
 

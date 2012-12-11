@@ -1,8 +1,12 @@
 package org.mariotaku.twidere.view;
 
+import static org.mariotaku.twidere.util.Utils.createAlphaGradientBanner;
+
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import android.graphics.drawable.BitmapDrawable;
 
 public class ProfileNameBannerContainer extends ExtendedFrameLayout {
 
@@ -29,4 +33,7 @@ public class ProfileNameBannerContainer extends ExtendedFrameLayout {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 
+	public void setBanner(final Bitmap banner) {
+		setBackgroundDrawable(banner != null ? new BitmapDrawable(getResources(), banner) : null);
+	}
 }

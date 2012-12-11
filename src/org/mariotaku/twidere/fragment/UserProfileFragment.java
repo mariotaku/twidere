@@ -310,10 +310,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
-			mProfileNameBannerContainer.setBackgroundDrawable(null);
+			mProfileNameBannerContainer.setBanner(null);
 			final int def_width = getResources().getDisplayMetrics().widthPixels;
-			final int screen_width = args.getInt(INTENT_KEY_WIDTH, def_width);
-			return new BannerImageLoader(getActivity(), mUser, screen_width);
+			final int width = args.getInt(INTENT_KEY_WIDTH, def_width);
+			return new BannerImageLoader(getActivity(), mUser, width);
 		}
 
 		@Override
@@ -322,9 +322,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onLoadFinished(final Loader<Bitmap> loader, final Bitmap data) {
-			if (data == null) return;
-			final Drawable d = new BitmapDrawable(getResources(), data);
-			mProfileNameBannerContainer.setBackgroundDrawable(d);
+			mProfileNameBannerContainer.setBanner(data);
 		}
 
 	};
@@ -857,6 +855,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
+		mProfileNameBannerContainer.setBanner(null);
 		getBannerImage(w);
 	}
 

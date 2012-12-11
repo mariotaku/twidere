@@ -40,7 +40,7 @@
 				android:layout_height="36dp"
 				android:layout_gravity="center_vertical|left"
 				android:alpha="0.5"
-				android:background="@drawable/item_background_holo_light"
+				android:background="?itemBackground"
 				android:radius="4dp"
 				android:scaleType="fitCenter"
 				android:visibility="gone"/>

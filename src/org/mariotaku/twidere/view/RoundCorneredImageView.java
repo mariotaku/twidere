@@ -39,6 +39,7 @@ import android.widget.ImageView;
 public class RoundCorneredImageView extends ImageView implements ExtendedViewInterface {
 
 	private final Path mPath = new Path();
+	private final RectF mRectF = new RectF();
 	private Bitmap mRounder;
 	private Paint mPaint;
 	private float mRadius;
@@ -85,12 +86,13 @@ public class RoundCorneredImageView extends ImageView implements ExtendedViewInt
 	@Override
 	public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		if (w > 0 && h > 0) {
+			createRectF(w, h);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 				mRounder = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 				final Canvas canvas = new Canvas(mRounder);
 				mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 				mPaint.setColor(Color.BLACK);
-				canvas.drawRoundRect(new RectF(0, 0, w, h), mRadius, mRadius, mPaint);
+				canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
 				mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
 			} else {
 				createPath(w, h);
@@ -109,13 +111,21 @@ public class RoundCorneredImageView extends ImageView implements ExtendedViewInt
 
 	public void setRadius(final float radius) {
 		mRadius = radius;
-		createPath(getWidth(), getHeight());
+		final int w = getWidth(), h = getHeight();
+		createRectF(w, h);
+		createPath(w, h);
 		invalidate();
 	}
 
 	private void createPath(final int w, final int h) {
+		if (w <= 0 || h <= 0) return;
 		mPath.reset();
-		mPath.addRoundRect(new RectF(0, 0, w, h), mRadius, mRadius, Path.Direction.CW);
+		mPath.addRoundRect(mRectF, mRadius, mRadius, Path.Direction.CW);
+	}
+	
+	private void createRectF(final int w, final int h) {
+		if (w <= 0 || h <= 0) return;
+		mRectF.set(getPaddingLeft(), getPaddingTop(), w - getPaddingRight(), h - getPaddingBottom());
 	}
 
 	static class SetLayerTypeAccessor {

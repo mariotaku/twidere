@@ -8,7 +8,7 @@
 		android:id="@+id/profile"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@drawable/item_background_holo_light"
+		android:background="?itemBackground"
 		android:padding="6dp">
 
 		<org.mariotaku.twidere.view.RoundCorneredImageView
@@ -78,7 +78,7 @@
 		android:id="@+id/in_reply_to"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@drawable/item_background_holo_light"
+		android:background="?itemBackground"
 		android:drawableLeft="@drawable/ic_indicator_reply"
 		android:drawablePadding="4dp"
 		android:ellipsize="marquee"
@@ -105,7 +105,7 @@
 		android:id="@+id/retweet_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@drawable/item_background_holo_light"
+		android:background="?itemBackground"
 		android:drawableLeft="@drawable/ic_indicator_retweet"
 		android:drawablePadding="4dp"
 		android:ellipsize="marquee"
@@ -121,7 +121,7 @@
 		android:id="@+id/location_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@drawable/item_background_holo_light"
+		android:background="?itemBackground"
 		android:drawableLeft="@drawable/ic_indicator_has_location"
 		android:drawablePadding="4dp"
 		android:ellipsize="marquee"

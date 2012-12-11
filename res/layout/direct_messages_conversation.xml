@@ -70,7 +70,7 @@
 				android:layout_height="56dp"
 				android:layout_gravity="bottom"
 				android:layout_weight="0"
-				android:background="@drawable/item_background_holo_light"
+				android:background="?itemBackground"
 				android:src="@drawable/ic_menu_send"/>
 		</LinearLayout>
 	</RelativeLayout>

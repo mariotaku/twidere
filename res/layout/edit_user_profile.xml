@@ -13,20 +13,28 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 
+			<FrameLayout
+				android:id="@+id/profile_image_container"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:clickable="true"
+				android:background="?itemBackground"/>
+			
 			<RelativeLayout
 				android:id="@+id/profile_name_container"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_gravity="bottom"
-				android:gravity="center_vertical"
-				android:orientation="horizontal">
+				android:clickable="true"
+				android:gravity="center_vertical">
 
 				<FrameLayout
 					android:id="@+id/profile_image_container"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_alignParentTop="true"
-					android:background="@drawable/item_background_holo_light">
+					android:clickable="true"
+					android:background="?itemBackground">
 
 					<org.mariotaku.twidere.view.RoundCorneredImageView
 						android:id="@+id/profile_image"
@@ -66,6 +74,7 @@
 						android:layout_gravity="center"
 						android:inputType="textPersonName"
 						android:layerType="software"
+						android:maxLength="20"
 						android:singleLine="true"
 						android:textAppearance="?android:attr/textAppearanceMedium"/>
 				</LinearLayout>
@@ -93,10 +102,10 @@
 				android:gravity="top"
 				android:inputType="textMultiLine"
 				android:layerType="software"
+				android:maxLength="160"
 				android:minLines="4"
 				android:singleLine="false"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?android:attr/textColorSecondary"/>
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
 		</LinearLayout>
 
 		<LinearLayout
@@ -120,9 +129,9 @@
 				android:layout_height="wrap_content"
 				android:inputType="textPostalAddress"
 				android:layerType="software"
+				android:maxLength="30"
 				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?android:attr/textColorSecondary"/>
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
 		</LinearLayout>
 
 		<LinearLayout
@@ -146,9 +155,9 @@
 				android:layout_height="wrap_content"
 				android:inputType="textUri"
 				android:layerType="software"
+				android:maxLength="100"
 				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?android:attr/textColorSecondary"/>
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
 		</LinearLayout>
 	</LinearLayout>
 

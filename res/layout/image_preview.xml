@@ -13,7 +13,7 @@
 		android:id="@+id/load_images"
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/image_preview_height"
-		android:background="@drawable/item_background_holo_light">
+		android:background="?itemBackground">
 
 		<TextView
 			android:layout_width="wrap_content"

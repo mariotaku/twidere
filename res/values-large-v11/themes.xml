@@ -19,7 +19,7 @@
 
 	<style name="Theme.Twidere.Light.DialogWhenLarge" parent="Theme.Twidere.Light.Dialog"><item name="android:windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>
-<item name="android:windowBackground">@drawable/dialog_full_holo_light_darkactionbar</item>
+		<item name="android:windowBackground">@drawable/dialog_full_holo_light_darkactionbar</item>
 
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>

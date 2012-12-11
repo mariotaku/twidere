@@ -50,7 +50,9 @@ public class StatusImagePreviewItemView extends RoundCorneredImageView {
 					.ceil((float) width * (float) d.getIntrinsicHeight() / (float) d.getIntrinsicWidth());
 			setMeasuredDimension(width, height);
 		} else {
-			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+			int width = MeasureSpec.getSize(widthMeasureSpec);
+			setMeasuredDimension(width, width);
+			//super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		}
 	}
 
