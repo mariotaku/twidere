@@ -31,12 +31,12 @@ import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
-import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.TwitterWrapper;
+import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -235,7 +235,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		}
 		return super.onContextItemSelected(item);
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();

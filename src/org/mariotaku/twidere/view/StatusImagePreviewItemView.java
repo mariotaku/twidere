@@ -26,6 +26,23 @@ public class StatusImagePreviewItemView extends RoundCorneredImageView {
 	}
 
 	@Override
+	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+		final Drawable d = getDrawable();
+
+		if (d != null) {
+			// ceil not round - avoid thin vertical gaps along the left/right
+			// edges
+			final int width = MeasureSpec.getSize(widthMeasureSpec);
+			final int height = (int) Math.ceil((float) width * (float) d.getIntrinsicHeight() / d.getIntrinsicWidth());
+			setMeasuredDimension(width, height);
+		} else {
+			final int width = MeasureSpec.getSize(widthMeasureSpec);
+			setMeasuredDimension(width, width);
+			// super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		}
+	}
+
+	@Override
 	protected boolean setFrame(final int frameLeft, final int frameTop, final int frameRight, final int frameBottom) {
 		final boolean ret = super.setFrame(frameLeft, frameTop, frameRight, frameBottom);
 
@@ -36,24 +53,6 @@ public class StatusImagePreviewItemView extends RoundCorneredImageView {
 			setBackgroundResource(R.drawable.image_preview_fallback_large);
 		}
 		return ret;
-	}
-
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		final Drawable d = getDrawable();
-
-		if (d != null) {
-			// ceil not round - avoid thin vertical gaps along the left/right
-			// edges
-			int width = MeasureSpec.getSize(widthMeasureSpec);
-			int height = (int) Math
-					.ceil((float) width * (float) d.getIntrinsicHeight() / (float) d.getIntrinsicWidth());
-			setMeasuredDimension(width, height);
-		} else {
-			int width = MeasureSpec.getSize(widthMeasureSpec);
-			setMeasuredDimension(width, width);
-			//super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		}
 	}
 
 }

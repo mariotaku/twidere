@@ -37,10 +37,10 @@ import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
 import org.mariotaku.twidere.loader.Twitter4JActivitiesLoader;
-import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 
 import twitter4j.Activity.Action;
 import twitter4j.Status;

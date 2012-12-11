@@ -3,22 +3,20 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.createAlphaGradientBanner;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.ExtendedFrameLayout;
 import org.mariotaku.twidere.view.ProfileNameBannerContainer;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-import android.os.Handler;
-import android.text.TextWatcher;
-import android.text.Editable;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class EditUserProfileActivity extends BaseDialogWhenLargeActivity implements OnSizeChangedListener, TextWatcher {
 
@@ -26,7 +24,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	private EditText mEditName, mEditDescription, mEditLocation, mEditUrl;
 
 	private boolean mHasUnsavedChanges, mBackPressed;
-	
+
 	private final Handler mHandler = new Handler();
 
 	private final Runnable mBackPressTimeoutRunnable = new Runnable() {
@@ -35,27 +33,23 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		public void run() {
 			mBackPressed = false;
 		}
-		
+
 	};
-	
 
-	public void beforeTextChanged(CharSequence s, int length, int start, int end) {
-	}
-
-	public void onTextChanged(CharSequence s, int length, int start, int end) {
-		mHasUnsavedChanges = true;
-	}
-
-	public void afterTextChanged(Editable s) {
-	}
-	
-	
 	@Override
-	public void onBackPressed() {		
+	public void afterTextChanged(final Editable s) {
+	}
+
+	@Override
+	public void beforeTextChanged(final CharSequence s, final int length, final int start, final int end) {
+	}
+
+	@Override
+	public void onBackPressed() {
 		if (!backPressed()) return;
 		super.onBackPressed();
 	}
-	
+
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
@@ -77,13 +71,12 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		mEditLocation.addTextChangedListener(this);
 		mEditUrl.addTextChangedListener(this);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_edit_user_profile, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
@@ -101,11 +94,16 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	}
 
 	@Override
-	public void onSizeChanged(View view, int w, int h, int oldw, int oldh) {
+	public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
 		final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.profile_banner_sample);
 		mProfileNameBannerContainer.setBanner(createAlphaGradientBanner(bitmap));
 	}
-	
+
+	@Override
+	public void onTextChanged(final CharSequence s, final int length, final int start, final int end) {
+		mHasUnsavedChanges = true;
+	}
+
 	private boolean backPressed() {
 		if (!mHasUnsavedChanges) return true;
 		mHandler.removeCallbacks(mBackPressTimeoutRunnable);

@@ -24,8 +24,8 @@ import static org.mariotaku.twidere.util.Utils.restartActivity;
 import org.mariotaku.actionbarcompat.ActionBarPreferenceActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
+import org.mariotaku.twidere.app.TwidereApplication;
 
 import android.content.Context;
 import android.content.SharedPreferences;

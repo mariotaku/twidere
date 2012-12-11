@@ -16,8 +16,6 @@
 
 package org.mariotaku.twidere.graphic;
 
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -39,11 +37,6 @@ public class AlphaPatternDrawable extends Drawable {
 	private int numRectanglesHorizontal;
 	private int numRectanglesVertical;
 
-	/**
-	 * Bitmap in which the pattern will be cahched.
-	 */
-	private Bitmap mBitmap;
-
 	public AlphaPatternDrawable(final int rectangleSize) {
 
 		mRectangleSize = rectangleSize;
@@ -52,7 +45,28 @@ public class AlphaPatternDrawable extends Drawable {
 	@Override
 	public void draw(final Canvas canvas) {
 
-		canvas.drawBitmap(mBitmap, null, getBounds(), new Paint());
+		final Rect r = new Rect();
+		boolean verticalStartWhite = true;
+		for (int i = 0; i <= numRectanglesVertical; i++) {
+
+			boolean isWhite = verticalStartWhite;
+			for (int j = 0; j <= numRectanglesHorizontal; j++) {
+
+				r.top = i * mRectangleSize;
+				r.left = j * mRectangleSize;
+				r.bottom = r.top + mRectangleSize;
+				r.right = r.left + mRectangleSize;
+
+				final Paint paint = new Paint();
+				paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
+				canvas.drawRect(r, paint);
+
+				isWhite = !isWhite;
+			}
+
+			verticalStartWhite = !verticalStartWhite;
+
+		}
 	}
 
 	@Override
@@ -82,46 +96,9 @@ public class AlphaPatternDrawable extends Drawable {
 		numRectanglesHorizontal = (int) Math.ceil(width / mRectangleSize);
 		numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
 
-		generatePatternBitmap();
+		this.invalidateSelf();
 
 	}
 
-	/**
-	 * This will generate a bitmap with the pattern as big as the rectangle we
-	 * were allow to draw on. We do this to chache the bitmap so we don't need
-	 * to recreate it each time draw() is called since it takes a few
-	 * milliseconds.
-	 */
-	private void generatePatternBitmap() {
-
-		if (getBounds().width() <= 0 || getBounds().height() <= 0) return;
-
-		mBitmap = Bitmap.createBitmap(getBounds().width(), getBounds().height(), Config.ARGB_8888);
-		final Canvas canvas = new Canvas(mBitmap);
-
-		final Rect r = new Rect();
-		boolean verticalStartWhite = true;
-		for (int i = 0; i <= numRectanglesVertical; i++) {
-
-			boolean isWhite = verticalStartWhite;
-			for (int j = 0; j <= numRectanglesHorizontal; j++) {
-
-				r.top = i * mRectangleSize;
-				r.left = j * mRectangleSize;
-				r.bottom = r.top + mRectangleSize;
-				r.right = r.left + mRectangleSize;
-
-				final Paint paint = new Paint();
-				paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
-				canvas.drawRect(r, paint);
-
-				isWhite = !isWhite;
-			}
-
-			verticalStartWhite = !verticalStartWhite;
-
-		}
-
-	}
 
 }

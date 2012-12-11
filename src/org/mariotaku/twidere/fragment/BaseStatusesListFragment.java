@@ -35,11 +35,11 @@ import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.view.holder.StatusViewHolder;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.TwitterWrapper;
+import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

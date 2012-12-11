@@ -24,8 +24,8 @@ import static org.mariotaku.twidere.util.Utils.restartActivity;
 import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
+import org.mariotaku.twidere.app.TwidereApplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

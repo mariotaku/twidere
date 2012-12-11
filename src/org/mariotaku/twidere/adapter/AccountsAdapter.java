@@ -24,9 +24,9 @@ import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.AccountsFragment;
-import org.mariotaku.twidere.view.holder.AccountViewHolder;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.view.holder.AccountViewHolder;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -40,20 +40,14 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 
 	private boolean mDisplayProfileImage;
 
-	public void setDisplayProfileImage(boolean display) {
-		mDisplayProfileImage = display;
-		notifyDataSetChanged();
-	}
-
-
 	private final LazyImageLoader mProfileImageLoader;
+
 	private final SharedPreferences mPreferences;
 	private int mUserColorIdx, mProfileImageIdx, mScreenNameIdx;
 	private long mDefaultAccountId;
 	private final boolean mDisplayHiResProfileImage;
 	private int mAccountIdIdx;
 	private final boolean mMultiSelectEnabled;
-
 	private final SparseBooleanArray mCheckedItems = new SparseBooleanArray();
 
 	public AccountsAdapter(final Context context, final boolean multi_select) {
@@ -77,13 +71,13 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 		holder.setAccountColor(color);
 		holder.setIsDefault(mDefaultAccountId != -1 && mDefaultAccountId == cursor.getLong(mAccountIdIdx));
 		if (mDisplayProfileImage) {
-		final String profile_image_url_string = cursor.getString(mProfileImageIdx);
-		if (mDisplayHiResProfileImage) {
-			mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string),
-					holder.profile_image);
-		} else {
-			mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
-		}
+			final String profile_image_url_string = cursor.getString(mProfileImageIdx);
+			if (mDisplayHiResProfileImage) {
+				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string),
+						holder.profile_image);
+			} else {
+				mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
+			}
 		} else {
 			holder.profile_image.setImageResource(R.drawable.ic_profile_image_default);
 		}
@@ -111,6 +105,11 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 	public void notifyDataSetChanged() {
 		mDefaultAccountId = mPreferences.getLong(AccountsFragment.PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
 		super.notifyDataSetChanged();
+	}
+
+	public void setDisplayProfileImage(final boolean display) {
+		mDisplayProfileImage = display;
+		notifyDataSetChanged();
 	}
 
 	public void setItemChecked(final int position, final boolean checked) {

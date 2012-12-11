@@ -75,8 +75,8 @@ import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
-import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 import org.mariotaku.twidere.view.ProfileNameBannerContainer;
+import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -98,7 +98,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;

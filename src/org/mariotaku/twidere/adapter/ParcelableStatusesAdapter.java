@@ -35,11 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.view.holder.StatusViewHolder;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.app.Activity;
 import android.content.Context;
@@ -49,7 +50,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements IStatusesAdapter,
 		OnClickListener {

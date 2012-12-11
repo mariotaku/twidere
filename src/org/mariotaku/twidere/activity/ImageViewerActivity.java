@@ -34,6 +34,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
@@ -53,6 +58,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -303,16 +309,21 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private Bitmap decodeFile(final File f) {
 			if (f == null) return null;
+			final float max_texture_size = getMaximumTextureSize();
 			final BitmapFactory.Options o = new BitmapFactory.Options();
-			o.inSampleSize = 1;
+			o.inJustDecodeBounds = true;
+			BitmapFactory.decodeFile(f.getPath(), o);
+			if (o.outHeight <= 0) return null;
+			final BitmapFactory.Options o1 = new BitmapFactory.Options();
+			o1.inSampleSize = (o.outHeight > max_texture_size) ? (int) Math.round(o.outHeight / max_texture_size) : 1;
 			Bitmap bitmap = null;
 			while (bitmap == null) {
 				try {
 					final BitmapFactory.Options o2 = new BitmapFactory.Options();
-					o2.inSampleSize = o.inSampleSize;
+					o2.inSampleSize = o1.inSampleSize;
 					bitmap = BitmapDecodeHelper.decode(f.getPath(), o2);
 				} catch (final OutOfMemoryError e) {
-					o.inSampleSize++;
+					o1.inSampleSize++;
 					continue;
 				}
 				if (bitmap == null) {
@@ -321,6 +332,48 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				return bitmap;
 			}
 			return null;
+		}
+
+		public static int getMaximumTextureSize() {
+			EGL10 egl = (EGL10) EGLContext.getEGL();
+			EGLDisplay display = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+
+			// Initialise
+			int[] version = new int[2];
+			egl.eglInitialize(display, version);
+
+			// Query total number of configurations
+			int[] totalConfigurations = new int[1];
+			egl.eglGetConfigs(display, null, 0, totalConfigurations);
+
+			// Query actual list configurations
+			EGLConfig[] configurationsList = new EGLConfig[totalConfigurations[0]];
+			egl.eglGetConfigs(display, configurationsList, totalConfigurations[0], totalConfigurations);
+
+			int[] textureSize = new int[1];
+			int maximumTextureSize = 0;
+
+			// Iterate through all the configurations to located the maximum
+			// texture size
+			for (int i = 0; i < totalConfigurations[0]; i++) {
+				// Only need to check for width since opengl textures are always
+				// squared
+				egl.eglGetConfigAttrib(display, configurationsList[i], EGL10.EGL_MAX_PBUFFER_WIDTH, textureSize);
+
+				// Keep track of the maximum texture size
+				if (maximumTextureSize < textureSize[0]) {
+					maximumTextureSize = textureSize[0];
+				}
+
+				Log.i("GLHelper", Integer.toString(textureSize[0]));
+			}
+
+			// Release
+			egl.eglTerminate(display);
+			Log.i("GLHelper", "Maximum GL texture size: " + Integer.toString(maximumTextureSize));
+
+			return maximumTextureSize;
+
 		}
 
 		private String getURLFilename(final String url) {

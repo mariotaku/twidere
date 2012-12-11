@@ -20,17 +20,13 @@
 package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.view.iface.IExtendedView;
- 
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -41,8 +37,6 @@ public class RoundCorneredImageView extends ImageView implements IExtendedView {
 
 	private final Path mPath = new Path();
 	private final RectF mRectF = new RectF();
-	private Bitmap mRounder;
-	private Paint mPaint;
 	private float mRadius;
 
 	private OnSizeChangedListener mOnSizeChangedListener;
@@ -66,43 +60,27 @@ public class RoundCorneredImageView extends ImageView implements IExtendedView {
 	}
 
 	@Override
-	public void onDraw(final Canvas canvas) {
-		// Workaround for pre-ICS devices, without anti-alias.
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			try {
-				canvas.clipPath(mPath);
-			} catch (final UnsupportedOperationException e) {
-				// This shouldn't happen, but in order to keep app running, I
-				// simply ignore this Exception.
-			}
-		}
-		super.onDraw(canvas);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			if (mRounder != null && mPaint != null) {
-				canvas.drawBitmap(mRounder, 0, 0, mPaint);
-			}
-		}
-	}
-
-	@Override
 	public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		if (w > 0 && h > 0) {
 			createRectF(w, h);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-				mRounder = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-				final Canvas canvas = new Canvas(mRounder);
-				mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-				mPaint.setColor(Color.BLACK);
-				canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
-				mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-			} else {
-				createPath(w, h);
-			}
+			createPath(w, h);
 		}
 		super.onSizeChanged(w, h, oldw, oldh);
 		if (mOnSizeChangedListener != null) {
 			mOnSizeChangedListener.onSizeChanged(this, w, h, oldw, oldh);
 		}
+	}
+
+	@Override
+	protected void onDraw(final Canvas canvas) {
+		// Workaround for pre-ICS devices, without anti-alias.
+		try {
+			canvas.clipPath(mPath);
+		} catch (final UnsupportedOperationException e) {
+			// This shouldn't happen, but in order to keep app running, I
+			// simply ignore this Exception.
+		}
+		super.onDraw(canvas);
 	}
 
 	@Override
@@ -123,7 +101,7 @@ public class RoundCorneredImageView extends ImageView implements IExtendedView {
 		mPath.reset();
 		mPath.addRoundRect(mRectF, mRadius, mRadius, Path.Direction.CW);
 	}
-	
+
 	private void createRectF(final int w, final int h) {
 		if (w <= 0 || h <= 0) return;
 		mRectF.set(getPaddingLeft(), getPaddingTop(), w - getPaddingRight(), h - getPaddingBottom());

@@ -29,6 +29,7 @@ import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -41,7 +42,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.content.SharedPreferences;
 
 public class SelectAccountActivity extends BaseDialogActivity implements LoaderCallbacks<Cursor>, OnItemClickListener,
 		OnClickListener {
@@ -149,7 +149,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 			}
 		}
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
