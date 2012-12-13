@@ -27,16 +27,16 @@ public class StatusImagePreviewItemView extends RoundCorneredImageView {
 
 	@Override
 	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+		final int width = MeasureSpec.getSize(widthMeasureSpec);
 		final Drawable d = getDrawable();
 
 		if (d != null) {
 			// ceil not round - avoid thin vertical gaps along the left/right
 			// edges
-			final int width = MeasureSpec.getSize(widthMeasureSpec);
 			final int height = (int) Math.ceil((float) width * (float) d.getIntrinsicHeight() / d.getIntrinsicWidth());
 			setMeasuredDimension(width, height);
+			setMaxHeight(width * 3);
 		} else {
-			final int width = MeasureSpec.getSize(widthMeasureSpec);
 			setMeasuredDimension(width, width);
 			// super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		}

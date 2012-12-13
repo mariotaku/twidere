@@ -309,13 +309,14 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 		private Bitmap decodeFile(final File f) {
 			if (f == null) return null;
-			final float max_texture_size = getMaximumTextureSize();
+			final int max_texture_size = getMaximumTextureSize();
 			final BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
 			BitmapFactory.decodeFile(f.getPath(), o);
 			if (o.outHeight <= 0) return null;
 			final BitmapFactory.Options o1 = new BitmapFactory.Options();
-			o1.inSampleSize = (o.outHeight > max_texture_size) ? (int) Math.round(o.outHeight / max_texture_size) : 1;
+			final double size = Math.max(o.outWidth, o.outHeight);
+			o1.inSampleSize = (size > max_texture_size) ? (int) Math.round(size / max_texture_size) + 1: 1;
 			Bitmap bitmap = null;
 			while (bitmap == null) {
 				try {
@@ -365,15 +366,11 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 					maximumTextureSize = textureSize[0];
 				}
 
-				Log.i("GLHelper", Integer.toString(textureSize[0]));
 			}
 
 			// Release
 			egl.eglTerminate(display);
-			Log.i("GLHelper", "Maximum GL texture size: " + Integer.toString(maximumTextureSize));
-
 			return maximumTextureSize;
-
 		}
 
 		private String getURLFilename(final String url) {

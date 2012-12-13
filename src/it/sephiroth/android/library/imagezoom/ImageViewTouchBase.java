@@ -22,7 +22,7 @@ import android.widget.ImageView;
  */
 public class ImageViewTouchBase extends ImageView implements IDisposable {
 
-	public static final String LOG_TAG = "image";;
+	public static final String LOG_TAG = "image";
 
 	protected Easing mEasing = new Cubic();
 
