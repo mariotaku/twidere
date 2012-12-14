@@ -40,7 +40,8 @@ public class ImagePreviewView extends RoundCorneredImageView {
 		int translatey = 0;
 		final Bitmap bitmap = getBitmap(drawable);
 		if (bitmap != null) {
-			setBackgroundDrawable(new AlphaPatternDrawable((int) (mDensity * 16)));
+			setBackgroundDrawable(null);
+			//setBackgroundDrawable(new AlphaPatternDrawable((int) (mDensity * 16)));
 			final int bw = bitmap.getWidth();
 			final int bh = bitmap.getHeight();
 			final float ratio = bh / bw;
