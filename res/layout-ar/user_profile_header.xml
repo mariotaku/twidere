@@ -24,7 +24,8 @@
 				android:layout_height="wrap_content"
 				android:layout_alignParentRight="true"
 				android:layout_alignParentTop="true"
-				android:background="?itemBackground">
+				android:background="?itemBackground"
+				android:clickable="true">
 
 				<org.mariotaku.twidere.view.RoundCorneredImageView
 					android:id="@+id/profile_image"
@@ -46,6 +47,7 @@
 				android:layout_toLeftOf="@+id/profile_image_container"
 				android:layout_toRightOf="@+id/follow_container"
 				android:background="?itemBackground"
+				android:clickable="true"
 				android:gravity="center_vertical|right"
 				android:orientation="vertical"
 				android:paddingLeft="8dp"
@@ -117,6 +119,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="?itemBackground"
+		android:clickable="true"
 		android:orientation="vertical"
 		android:padding="4dp">
 
@@ -143,6 +146,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="?itemBackground"
+		android:clickable="true"
 		android:orientation="vertical"
 		android:padding="4dp">
 
@@ -171,6 +175,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="?itemBackground"
+		android:clickable="true"
 		android:orientation="vertical"
 		android:padding="4dp">
 
@@ -277,6 +282,7 @@
 			android:layout_height="match_parent"
 			android:layout_weight="1"
 			android:background="?itemBackground"
+			android:clickable="true"
 			android:gravity="center"
 			android:orientation="vertical"
 			android:padding="4dp">
@@ -312,6 +318,7 @@
 			android:layout_height="match_parent"
 			android:layout_weight="1"
 			android:background="?itemBackground"
+			android:clickable="true"
 			android:gravity="center"
 			android:orientation="vertical"
 			android:padding="4dp">
@@ -347,6 +354,7 @@
 			android:layout_height="match_parent"
 			android:layout_weight="1"
 			android:background="?itemBackground"
+			android:clickable="true"
 			android:gravity="center"
 			android:orientation="vertical"
 			android:padding="4dp">

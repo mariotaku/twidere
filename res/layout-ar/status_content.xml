@@ -97,7 +97,8 @@
 		android:gravity="right"
 		android:layerType="software"
 		android:singleLine="false"
-		android:textAppearance="?android:attr/textAppearanceMedium"/>
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textIsSelectable="true"/>
 
 	<include layout="@layout/image_preview"/>
 

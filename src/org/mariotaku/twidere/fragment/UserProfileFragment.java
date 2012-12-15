@@ -129,14 +129,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right,
-		OnSizeChangedListener {
-
-	private static final int TYPE_NAME = 1;
-	private static final int TYPE_URL = 2;
-	private static final int TYPE_LOCATION = 3;
-	private static final int TYPE_DESCRIPTION = 4;
+public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnItemClickListener,
+		OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right, OnSizeChangedListener {
 
 	private static final int LOADER_ID_USER = 1;
 	private static final int LOADER_ID_FRIENDSHIP = 2;
@@ -154,14 +148,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
 	private ColorLabelRelativeLayout mProfileNameContainer;
-	private ListActionAdapter mAdapter;
-
 	private ListView mListView;
 	private View mHeaderView;
+	
+	private ListActionAdapter mAdapter;
+
 	private long mAccountId;
-	private Relationship mFriendship;
-	private final DialogFragment mDialogFragment = new EditTextDialogFragment();
 	private Uri mImageUri;
+	private Relationship mFriendship;
 	private ParcelableUser mUser = null;
 
 	private View mListContainer, mErrorRetryContainer;
@@ -351,7 +345,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenNameView.setText("@" + user.screen_name);
 		final String description = user.description;
 		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(description) ? View.VISIBLE : View.GONE);
-		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final TwidereLinkify linkify = new TwidereLinkify(mDescriptionView);
 		linkify.setOnLinkClickListener(this);
@@ -359,10 +352,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mDescriptionView.setMovementMethod(null);
 		final String location = user.location;
 		mLocationContainer.setVisibility(user_is_me || !isEmpty(location) ? View.VISIBLE : View.GONE);
-		mLocationContainer.setOnLongClickListener(this);
 		mLocationView.setText(location);
 		mURLContainer.setVisibility(user_is_me || !isEmpty(user.url_string) ? View.VISIBLE : View.GONE);
-		mURLContainer.setOnLongClickListener(this);
 		mURLView.setText(user.url_string);
 		mURLView.setMovementMethod(null);
 		mCreatedAtView.setText(formatToLongTimeString(getActivity(), user.created_at));
@@ -449,9 +440,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mProfileImageLoader = getApplication().getProfileImageLoader();
 		mAdapter = new ListActionAdapter(getActivity());
 		mProfileImageContainer.setOnClickListener(this);
-		mProfileImageContainer.setOnLongClickListener(this);
 		mNameContainer.setOnClickListener(this);
-		mNameContainer.setOnLongClickListener(this);
 		mFollowButton.setOnClickListener(this);
 		mTweetsContainer.setOnClickListener(this);
 		mFollowersContainer.setOnClickListener(this);
@@ -707,61 +696,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public boolean onLongClick(final View view) {
-		if (mUser == null || mAccountId != mUserId) return false;
-		switch (view.getId()) {
-			case R.id.profile_image_container: {
-				mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-				mPopupMenu.inflate(R.menu.action_profile_image);
-				mPopupMenu.setOnMenuItemClickListener(this);
-				mPopupMenu.show();
-				return true;
-			}
-			case R.id.name_container: {
-				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mUser.user_id);
-				args.putString(INTENT_KEY_TEXT, mUser.name);
-				args.putString(INTENT_KEY_TITLE, getString(R.string.name));
-				args.putInt(INTENT_KEY_TYPE, TYPE_NAME);
-				mDialogFragment.setArguments(args);
-				mDialogFragment.show(getFragmentManager(), "edit_name");
-				return true;
-			}
-			case R.id.description_container: {
-				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mUser.user_id);
-				args.putString(INTENT_KEY_TEXT, mUser.description);
-				args.putString(INTENT_KEY_TITLE, getString(R.string.description));
-				args.putInt(INTENT_KEY_TYPE, TYPE_DESCRIPTION);
-				mDialogFragment.setArguments(args);
-				mDialogFragment.show(getFragmentManager(), "edit_description");
-				return true;
-			}
-			case R.id.location_container: {
-				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mUser.user_id);
-				args.putString(INTENT_KEY_TEXT, mUser.location);
-				args.putString(INTENT_KEY_TITLE, getString(R.string.location));
-				args.putInt(INTENT_KEY_TYPE, TYPE_LOCATION);
-				mDialogFragment.setArguments(args);
-				mDialogFragment.show(getFragmentManager(), "edit_location");
-				return true;
-			}
-			case R.id.url_container: {
-				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mUser.user_id);
-				args.putString(INTENT_KEY_TEXT, mUser.url_string);
-				args.putString(INTENT_KEY_TITLE, getString(R.string.url));
-				args.putInt(INTENT_KEY_TYPE, TYPE_URL);
-				mDialogFragment.setArguments(args);
-				mDialogFragment.show(getFragmentManager(), "edit_url");
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
 		if (mUser == null || mTwitterWrapper == null) return false;
 		switch (item.getItemId()) {
@@ -917,96 +851,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			final Intent intent = createTakePhotoIntent(mImageUri);
 			startActivityForResult(intent, REQUEST_TAKE_PHOTO);
 		}
-	}
-
-	public static class EditTextDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
-		private EditText mEditText;
-		private String mText;
-		private int mType;
-		private String mTitle;
-		private long mAccountId;
-		private TwitterWrapper mTwitterWrapper;
-
-		@Override
-		public void onClick(final DialogInterface dialog, final int which) {
-			switch (which) {
-				case DialogInterface.BUTTON_POSITIVE: {
-					mText = mEditText.getText().toString();
-					switch (mType) {
-						case TYPE_NAME: {
-							mTwitterWrapper.updateProfile(mAccountId, mText, null, null, null);
-							break;
-						}
-						case TYPE_URL: {
-							mTwitterWrapper.updateProfile(mAccountId, null, mText, null, null);
-							break;
-						}
-						case TYPE_LOCATION: {
-							mTwitterWrapper.updateProfile(mAccountId, null, null, mText, null);
-							break;
-						}
-						case TYPE_DESCRIPTION: {
-							mTwitterWrapper.updateProfile(mAccountId, null, null, null, mText);
-							break;
-						}
-					}
-					break;
-				}
-			}
-
-		}
-
-		@Override
-		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			mTwitterWrapper = getApplication().getTwitterWrapper();
-			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-			mText = bundle != null ? bundle.getString(INTENT_KEY_TEXT) : null;
-			mType = bundle != null ? bundle.getInt(INTENT_KEY_TYPE, -1) : -1;
-			mTitle = bundle != null ? bundle.getString(INTENT_KEY_TITLE) : null;
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.edittext_default_style, null);
-			builder.setView(view);
-			mEditText = (EditText) view.findViewById(R.id.edit_text);
-			if (mText != null) {
-				mEditText.setText(mText);
-			}
-			int limit = 140;
-			switch (mType) {
-				case TYPE_NAME: {
-					limit = 20;
-					break;
-				}
-				case TYPE_URL: {
-					limit = 100;
-					break;
-				}
-				case TYPE_LOCATION: {
-					limit = 30;
-					break;
-				}
-				case TYPE_DESCRIPTION: {
-					limit = 160;
-					break;
-				}
-			}
-			mEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(limit) });
-			builder.setTitle(mTitle);
-			builder.setView(view);
-			builder.setPositiveButton(android.R.string.ok, this);
-			builder.setNegativeButton(android.R.string.cancel, this);
-			return builder.create();
-		}
-
-		@Override
-		public void onSaveInstanceState(final Bundle outState) {
-			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-			outState.putString(INTENT_KEY_TEXT, mText);
-			outState.putInt(INTENT_KEY_TYPE, mType);
-			outState.putString(INTENT_KEY_TITLE, mTitle);
-			super.onSaveInstanceState(outState);
-		}
-
 	}
 
 	static class BannerImageLoader extends AsyncTaskLoader<Bitmap> {

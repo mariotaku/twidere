@@ -99,7 +99,8 @@
 		android:layout_margin="8dp"
 		android:layerType="software"
 		android:singleLine="false"
-		android:textAppearance="?android:attr/textAppearanceMedium"/>
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textIsSelectable="true"/>
 
 	<include layout="@layout/image_preview"/>
 
