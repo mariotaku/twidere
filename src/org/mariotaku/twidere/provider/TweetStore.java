@@ -190,6 +190,28 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String USER_ID = "user_id";
 
+		public static final String CREATED_AT = "created_at";
+
+		public static final String IS_PROTECTED = "is_protected";
+
+		public static final String IS_VERIFIED = "is_verified";
+
+		public static final String DESCRIPTION = "description";
+
+		public static final String LOCATION = "location";
+
+		public static final String URL = "url";
+
+		public static final String PROFILE_BANNER_URL = "profile_banner_url";
+
+		public static final String FOLLOWERS_COUNT = "followers_count";
+
+		public static final String FRIENDS_COUNT = "friends_count";
+
+		public static final String STATUSES_COUNT = "statuses_count";
+
+		public static final String FAVORITES_COUNT = "favorites_count";
+
 		/**
 		 * User's screen name of the status.<br>
 		 * Type: TEXT
@@ -202,10 +224,13 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
-		public static final String[] COLUMNS = new String[] { _ID, USER_ID, NAME, SCREEN_NAME, PROFILE_IMAGE_URL };
+		public static final String[] COLUMNS = new String[] { _ID, USER_ID, CREATED_AT, NAME, SCREEN_NAME, DESCRIPTION,
+				LOCATION, URL, PROFILE_IMAGE_URL, PROFILE_BANNER_URL, IS_PROTECTED, IS_VERIFIED, FOLLOWERS_COUNT,
+				FRIENDS_COUNT, STATUSES_COUNT, FAVORITES_COUNT };
 
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT_UNIQUE, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT };
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT,
+				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_INT,
+				TYPE_INT, TYPE_INT, TYPE_INT };
 
 	}
 

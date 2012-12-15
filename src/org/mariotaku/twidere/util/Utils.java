@@ -1053,9 +1053,9 @@ public final class Utils implements Constants {
 	public static String getImagePathFromUri(final Context context, final Uri uri) {
 		if (context == null || uri == null) return null;
 
-		final String media_uri_start = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString();
+		final String media_uri_start = parseString(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-		if (uri.toString().startsWith(media_uri_start)) {
+		if (parseString(uri).startsWith(media_uri_start)) {
 
 			final String[] proj = { MediaStore.Images.Media.DATA };
 			final Cursor cur = context.getContentResolver().query(uri, proj, null, null, null);
@@ -1818,23 +1818,27 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues makeCachedUserContentValues(final ContentValues status_values) {
-		if (status_values == null) return null;
-		final ContentValues values = new ContentValues();
-		values.put(CachedUsers.USER_ID, status_values.getAsLong(Statuses.USER_ID));
-		values.put(CachedUsers.NAME, status_values.getAsString(Statuses.NAME));
-		values.put(CachedUsers.SCREEN_NAME, status_values.getAsString(Statuses.SCREEN_NAME));
-		values.put(CachedUsers.PROFILE_IMAGE_URL, status_values.getAsString(Statuses.PROFILE_IMAGE_URL));
-		return values;
-	}
-
-	public static ContentValues makeCachedUserContentValues(final User user, final boolean large_preview_image) {
+	// TODO
+	public static ContentValues makeCachedUserContentValues(final User user, final boolean large_profile_image) {
 		if (user == null || user.getId() <= 0) return null;
+		final String profile_image_url = parseString(user.getProfileImageUrlHttps());
 		final ContentValues values = new ContentValues();
 		values.put(CachedUsers.USER_ID, user.getId());
 		values.put(CachedUsers.NAME, user.getName());
 		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
-		values.put(CachedUsers.PROFILE_IMAGE_URL, user.getProfileImageUrlHttps().toString());
+		values.put(CachedUsers.PROFILE_IMAGE_URL, large_profile_image ? getBiggerTwitterProfileImage(profile_image_url)
+				: profile_image_url);
+		values.put(CachedUsers.CREATED_AT, user.getCreatedAt().getTime());
+		values.put(CachedUsers.IS_PROTECTED, user.isProtected() ? 1 : 0);
+		values.put(CachedUsers.IS_VERIFIED, user.isVerified() ? 1 : 0);
+		values.put(CachedUsers.FAVORITES_COUNT, user.getFavouritesCount());
+		values.put(CachedUsers.FOLLOWERS_COUNT, user.getFollowersCount());
+		values.put(CachedUsers.FRIENDS_COUNT, user.getFriendsCount());
+		values.put(CachedUsers.STATUSES_COUNT, user.getStatusesCount());
+		values.put(CachedUsers.LOCATION, user.getLocation());
+		values.put(CachedUsers.DESCRIPTION, user.getDescription());
+		values.put(CachedUsers.URL, parseString(user.getURL()));
+		values.put(CachedUsers.PROFILE_BANNER_URL, user.getProfileBannerImageUrl());
 		return values;
 	}
 
@@ -1866,6 +1870,7 @@ public final class Utils implements Constants {
 		return values;
 	}
 
+	// TODO
 	public static ContentValues makeStatusContentValues(Status status, final long account_id,
 			final boolean large_profile_image) {
 		if (status == null || status.getId() <= 0) return null;
@@ -1885,7 +1890,7 @@ public final class Utils implements Constants {
 		final User user = status.getUser();
 		if (user != null) {
 			final long user_id = user.getId();
-			final String profile_image_url = user.getProfileImageUrlHttps().toString();
+			final String profile_image_url = parseString(user.getProfileImageUrlHttps());
 			final String name = user.getName(), screen_name = user.getScreenName();
 			values.put(Statuses.USER_ID, user_id);
 			values.put(Statuses.NAME, name);
@@ -2697,7 +2702,7 @@ public final class Utils implements Constants {
 		if (context == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final SharedPreferences.Editor editor = prefs.edit();
-		editor.putInt(Long.toString(user_id), color);
+		editor.putInt(parseString(user_id), color);
 		editor.commit();
 		sUserColors.put(user_id, color);
 	}

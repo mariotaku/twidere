@@ -96,9 +96,8 @@ public class AlphaPatternDrawable extends Drawable {
 		numRectanglesHorizontal = (int) Math.ceil(width / mRectangleSize);
 		numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
 
-		this.invalidateSelf();
+		invalidateSelf();
 
 	}
-
 
 }

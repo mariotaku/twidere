@@ -29,6 +29,7 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 
 import twitter4j.User;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -52,10 +53,33 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 
 	public final boolean is_protected, is_verified, is_follow_request_sent;
 
-	public final String description, name, screen_name, location, profile_image_url_string, profile_banner_url_string,
-			url_string;
+	public final String description, name, screen_name, location, profile_image_url, profile_banner_url, url;
 
 	public final int followers_count, friends_count, statuses_count, favorites_count;
+
+	public final boolean is_cache;
+
+	public ParcelableUser(final Cursor cursor, final long account_id) {
+		this.account_id = account_id;
+		position = -1;
+		is_follow_request_sent = false;
+		user_id = cursor.getLong(cursor.getColumnIndex(CachedUsers.USER_ID));
+		name = cursor.getString(cursor.getColumnIndex(CachedUsers.NAME));
+		screen_name = cursor.getString(cursor.getColumnIndex(CachedUsers.SCREEN_NAME));
+		profile_image_url = cursor.getString(cursor.getColumnIndex(CachedUsers.PROFILE_IMAGE_URL));
+		created_at = cursor.getLong(cursor.getColumnIndex(CachedUsers.CREATED_AT));
+		is_protected = cursor.getInt(cursor.getColumnIndex(CachedUsers.IS_PROTECTED)) == 1;
+		is_verified = cursor.getInt(cursor.getColumnIndex(CachedUsers.IS_VERIFIED)) == 1;
+		favorites_count = cursor.getInt(cursor.getColumnIndex(CachedUsers.FAVORITES_COUNT));
+		followers_count = cursor.getInt(cursor.getColumnIndex(CachedUsers.FOLLOWERS_COUNT));
+		friends_count = cursor.getInt(cursor.getColumnIndex(CachedUsers.FRIENDS_COUNT));
+		statuses_count = cursor.getInt(cursor.getColumnIndex(CachedUsers.STATUSES_COUNT));
+		location = cursor.getString(cursor.getColumnIndex(CachedUsers.LOCATION));
+		description = cursor.getString(cursor.getColumnIndex(CachedUsers.DESCRIPTION));
+		url = cursor.getString(cursor.getColumnIndex(CachedUsers.URL));
+		profile_banner_url = cursor.getString(cursor.getColumnIndex(CachedUsers.PROFILE_BANNER_URL));
+		is_cache = true;
+	}
 
 	public ParcelableUser(final Parcel in) {
 		position = in.readLong();
@@ -68,14 +92,15 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		screen_name = in.readString();
 		description = in.readString();
 		location = in.readString();
-		profile_image_url_string = in.readString();
-		profile_banner_url_string = in.readString();
-		url_string = in.readString();
+		profile_image_url = in.readString();
+		profile_banner_url = in.readString();
+		url = in.readString();
 		is_follow_request_sent = in.readInt() == 1;
 		followers_count = in.readInt();
 		friends_count = in.readInt();
 		statuses_count = in.readInt();
 		favorites_count = in.readInt();
+		is_cache = in.readInt() == 1;
 	}
 
 	public ParcelableUser(final User user, final long account_id, final boolean large_profile_image) {
@@ -94,15 +119,16 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		screen_name = user.getScreenName();
 		description = user.getDescription();
 		location = user.getLocation();
-		profile_image_url_string = large_profile_image ? getBiggerTwitterProfileImage(profile_image_url_orig)
+		profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(profile_image_url_orig)
 				: profile_image_url_orig;
-		profile_banner_url_string = user.getProfileBannerImageUrl();
-		url_string = parseString(user.getURL());
+		profile_banner_url = user.getProfileBannerImageUrl();
+		url = parseString(user.getURL());
 		is_follow_request_sent = user.isFollowRequestSent();
 		followers_count = user.getFollowersCount();
 		friends_count = user.getFriendsCount();
 		statuses_count = user.getStatusesCount();
 		favorites_count = user.getFavouritesCount();
+		is_cache = false;
 	}
 
 	@Override
@@ -144,9 +170,9 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 				+ ", position=" + position + ", is_protected=" + is_protected + ", is_verified=" + is_verified
 				+ ", is_follow_request_sent=" + is_follow_request_sent + ", description=" + description + ", name="
 				+ name + ", screen_name=" + screen_name + ", location=" + location + ", profile_image_url_string="
-				+ profile_image_url_string + ", profile_banner_url_string=" + profile_banner_url_string
-				+ ", url_string=" + url_string + ", followers_count=" + followers_count + ", friends_count="
-				+ friends_count + ", statuses_count=" + statuses_count + ", favorites_count=" + favorites_count + "}";
+				+ profile_image_url + ", profile_banner_url_string=" + profile_banner_url + ", url_string=" + url
+				+ ", followers_count=" + followers_count + ", friends_count=" + friends_count + ", statuses_count="
+				+ statuses_count + ", favorites_count=" + favorites_count + "}";
 	}
 
 	@Override
@@ -161,9 +187,9 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		out.writeString(screen_name);
 		out.writeString(description);
 		out.writeString(location);
-		out.writeString(profile_image_url_string);
-		out.writeString(profile_banner_url_string);
-		out.writeString(url_string);
+		out.writeString(profile_image_url);
+		out.writeString(profile_banner_url);
+		out.writeString(url);
 		out.writeInt(is_follow_request_sent ? 1 : 0);
 		out.writeInt(followers_count);
 		out.writeInt(friends_count);
@@ -181,7 +207,18 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		values.put(CachedUsers.USER_ID, user.user_id);
 		values.put(CachedUsers.NAME, user.name);
 		values.put(CachedUsers.SCREEN_NAME, user.screen_name);
-		values.put(CachedUsers.PROFILE_IMAGE_URL, user.profile_banner_url_string);
+		values.put(CachedUsers.PROFILE_IMAGE_URL, user.profile_image_url);
+		values.put(CachedUsers.CREATED_AT, user.created_at);
+		values.put(CachedUsers.IS_PROTECTED, user.is_protected ? 1 : 0);
+		values.put(CachedUsers.IS_VERIFIED, user.is_verified ? 1 : 0);
+		values.put(CachedUsers.FAVORITES_COUNT, user.favorites_count);
+		values.put(CachedUsers.FOLLOWERS_COUNT, user.followers_count);
+		values.put(CachedUsers.FRIENDS_COUNT, user.friends_count);
+		values.put(CachedUsers.STATUSES_COUNT, user.statuses_count);
+		values.put(CachedUsers.LOCATION, user.location);
+		values.put(CachedUsers.DESCRIPTION, user.description);
+		values.put(CachedUsers.URL, user.url);
+		values.put(CachedUsers.PROFILE_BANNER_URL, user.profile_banner_url);
 		return values;
 	}
 }

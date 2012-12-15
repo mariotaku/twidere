@@ -72,18 +72,6 @@ public class RoundCorneredImageView extends ImageView implements IExtendedView {
 	}
 
 	@Override
-	protected void onDraw(final Canvas canvas) {
-		// Workaround for pre-ICS devices, without anti-alias.
-		try {
-			canvas.clipPath(mPath);
-		} catch (final UnsupportedOperationException e) {
-			// This shouldn't happen, but in order to keep app running, I
-			// simply ignore this Exception.
-		}
-		super.onDraw(canvas);
-	}
-
-	@Override
 	public final void setOnSizeChangedListener(final OnSizeChangedListener listener) {
 		mOnSizeChangedListener = listener;
 	}
@@ -94,6 +82,18 @@ public class RoundCorneredImageView extends ImageView implements IExtendedView {
 		createRectF(w, h);
 		createPath(w, h);
 		invalidate();
+	}
+
+	@Override
+	protected void onDraw(final Canvas canvas) {
+		// Workaround for pre-ICS devices, without anti-alias.
+		try {
+			canvas.clipPath(mPath);
+		} catch (final UnsupportedOperationException e) {
+			// This shouldn't happen, but in order to keep app running, I
+			// simply ignore this Exception.
+		}
+		super.onDraw(canvas);
 	}
 
 	private void createPath(final int w, final int h) {

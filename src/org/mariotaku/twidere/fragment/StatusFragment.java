@@ -112,24 +112,25 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		OnImageClickListener {
 
 	private static final int LOADER_ID_STATUS = 1;
-
 	private static final int LOADER_ID_FOLLOW = 2;
 	private static final int LOADER_ID_LOCATION = 3;
 	private static final int LOADER_ID_CONVERSATION = 4;
+
 	private long mAccountId, mStatusId;
+	private ParcelableStatus mStatus;
 
 	private boolean mLoadMoreAutomatically;
 	private boolean mFollowInfoDisplayed, mLocationInfoDisplayed;
 	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized, mConversationLoaderInitialized;
 	private boolean mFollowInfoLoaderInitialized;;
 	private boolean mShouldScroll;
-	private SharedPreferences mPreferences;
 
+	private SharedPreferences mPreferences;
 	private TwitterWrapper mTwitterWrapper;
 	private LazyImageLoader mProfileImageLoader;
+
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView,
 			mRetweetedStatusView;
-
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
 	private View mMainContent, mFollowIndicator, mImagePreviewContainer;
@@ -141,7 +142,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private View mLoadImagesIndicator;
 	private ExtendedFrameLayout mStatusContainer;
 	private ListView mListView;
-	private ParcelableStatus mStatus;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 

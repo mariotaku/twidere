@@ -1,7 +1,6 @@
 package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,8 +13,6 @@ import android.util.AttributeSet;
 
 public class ImagePreviewView extends RoundCorneredImageView {
 
-	private final float mDensity;
-
 	public ImagePreviewView(final Context context) {
 		this(context, null);
 	}
@@ -27,7 +24,6 @@ public class ImagePreviewView extends RoundCorneredImageView {
 	public ImagePreviewView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setScaleType(ScaleType.MATRIX);
-		mDensity = getResources().getDisplayMetrics().density;
 	}
 
 	@Override
@@ -41,7 +37,8 @@ public class ImagePreviewView extends RoundCorneredImageView {
 		final Bitmap bitmap = getBitmap(drawable);
 		if (bitmap != null) {
 			setBackgroundDrawable(null);
-			//setBackgroundDrawable(new AlphaPatternDrawable((int) (mDensity * 16)));
+			// setBackgroundDrawable(new AlphaPatternDrawable((int) (mDensity *
+			// 16)));
 			final int bw = bitmap.getWidth();
 			final int bh = bitmap.getHeight();
 			final float ratio = bh / bw;

@@ -42,6 +42,8 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 
 	private static final String[] FROM = new String[0];
 	private static final int[] TO = new int[0];
+	private static final String[] CACHED_USERS_COLUMNS = new String[] { CachedUsers._ID, CachedUsers.NAME,
+			CachedUsers.SCREEN_NAME, CachedUsers.PROFILE_IMAGE_URL };
 
 	private final ContentResolver mResolver;
 	private final LazyImageLoader mProfileImageLoader;
@@ -149,7 +151,7 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 			where.append(CachedUsers.SCREEN_NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'");
 			where.append(" OR ");
 			where.append(CachedUsers.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'");
-			return mResolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS,
+			return mResolver.query(CachedUsers.CONTENT_URI, CACHED_USERS_COLUMNS,
 					constraint_escaped != null ? where.toString() : null, null, null);
 		} else {
 			final String where = CachedHashtags.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'";

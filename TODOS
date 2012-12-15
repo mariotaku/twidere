@@ -3,4 +3,4 @@
 2012-12-14
 	* option to enable/disable full image preview.
 2012-12-15
-	* full user caching (store in cached_users tab)
+	[FINISHED] full user caching (store in cached_users table)

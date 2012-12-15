@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.model;
 
+import static android.text.TextUtils.isEmpty;
+
 public class PreviewImage {
 	public final boolean has_image;
 	public final String matched_url, orig_url;
@@ -30,7 +32,7 @@ public class PreviewImage {
 	}
 
 	public PreviewImage(final ImageSpec spec, final String orig_url) {
-		this(spec != null && spec.preview_image_link != null, spec.preview_image_link, orig_url);
+		this(spec != null && !isEmpty(spec.preview_image_link), spec.preview_image_link, orig_url);
 	}
 
 	@Override

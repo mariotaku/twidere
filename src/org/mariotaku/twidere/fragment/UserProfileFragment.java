@@ -38,6 +38,7 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
+import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
 import static org.mariotaku.twidere.util.Utils.openSavedSearches;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
@@ -81,19 +82,18 @@ import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.User;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientWrapper;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -104,24 +104,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -150,7 +146,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private ColorLabelRelativeLayout mProfileNameContainer;
 	private ListView mListView;
 	private View mHeaderView;
-	
+
 	private ListActionAdapter mAdapter;
 
 	private long mAccountId;
@@ -206,11 +202,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mErrorRetryContainer.setVisibility(View.GONE);
 			mErrorMessageView.setText(null);
 			mErrorMessageView.setVisibility(View.GONE);
-			setListShown(false);
+			setListShown(mUser != null
+					&& (mUserId == mUser.user_id || mScreenName != null && mScreenName.equals(mUser.screen_name)));
 			setProgressBarIndeterminateVisibility(true);
 			final boolean omit_intent_extra = args != null ? args.getBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, true) : true;
 			return new UserInfoLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(),
-					omit_intent_extra);
+					omit_intent_extra, mUser);
 		}
 
 		@Override
@@ -225,6 +222,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				setListShown(true);
 				displayUser(data.value);
 				mErrorRetryContainer.setVisibility(View.GONE);
+				if (data.value.is_cache) {
+					getLoaderManager().restartLoader(LOADER_ID_USER, null, this);
+				}
 			} else {
 				if (data.exception != null) {
 					mErrorMessageView.setText(data.exception.getMessage());
@@ -353,23 +353,23 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		final String location = user.location;
 		mLocationContainer.setVisibility(user_is_me || !isEmpty(location) ? View.VISIBLE : View.GONE);
 		mLocationView.setText(location);
-		mURLContainer.setVisibility(user_is_me || !isEmpty(user.url_string) ? View.VISIBLE : View.GONE);
-		mURLView.setText(user.url_string);
+		mURLContainer.setVisibility(user_is_me || !isEmpty(user.url) ? View.VISIBLE : View.GONE);
+		mURLView.setText(user.url);
 		mURLView.setMovementMethod(null);
 		mCreatedAtView.setText(formatToLongTimeString(getActivity(), user.created_at));
 		mTweetCount.setText(String.valueOf(user.statuses_count));
 		mFollowersCount.setText(String.valueOf(user.followers_count));
 		mFriendsCount.setText(String.valueOf(user.friends_count));
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
-			mProfileImageLoader.displayImage(user.profile_image_url_string, mProfileImageView);
+			mProfileImageLoader.displayImage(user.profile_image_url, mProfileImageView);
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}
 		if (isMyAccount(getActivity(), user.user_id)) {
 			final ContentResolver resolver = getContentResolver();
 			final ContentValues values = new ContentValues();
-			if (user.profile_image_url_string != null) {
-				values.put(Accounts.PROFILE_IMAGE_URL, user.profile_image_url_string);
+			if (user.profile_image_url != null) {
+				values.put(Accounts.PROFILE_IMAGE_URL, user.profile_image_url);
 			}
 			values.put(Accounts.NAME, user.name);
 			values.put(Accounts.SCREEN_NAME, user.screen_name);
@@ -412,7 +412,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		} else {
 			lm.restartLoader(LOADER_ID_USER, args, mUserInfoLoaderCallbacks);
 		}
-
 		if (account_id == -1 || user_id == -1 && screen_name == null) {
 			mListContainer.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
@@ -530,7 +529,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case R.id.profile_image_container: {
-				final Uri uri = Uri.parse(getOriginalTwitterProfileImage(mUser.profile_image_url_string));
+				final Uri uri = Uri.parse(getOriginalTwitterProfileImage(mUser.profile_image_url));
 				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, uri);
 				intent.setPackage(getActivity().getPackageName());
 				startActivity(intent);
@@ -875,9 +874,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public Bitmap loadInBackground() {
-			if (user == null || user.profile_banner_url_string == null) return null;
+			if (user == null || user.profile_banner_url == null) return null;
 			try {
-				final String url = user.profile_banner_url_string + "/" + getBestBannerType(width);
+				final String url = user.profile_banner_url + "/" + getBestBannerType(width);
 				final File cache_dir = getImageCacheDir();
 				final File cache_file = cache_dir != null && cache_dir.isDirectory() ? new File(cache_dir,
 						getURLFilename(url)) : null;
@@ -978,6 +977,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		private Response<Relationship> getFriendship() {
 			if (account_id == user_id) return new Response<Relationship>(null, null);
 			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			if (twitter == null) return new Response<Relationship>(null, null);
 			try {
 				final Relationship result = twitter.showFriendship(account_id, user_id);
 				return new Response<Relationship>(result, null);
@@ -1010,8 +1010,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public final T value;
 		public final Exception exception;
 
-		public Response(final T value1, final Exception exception) {
-			this.value = value1;
+		public Response(final T value, final Exception exception) {
+			this.value = value;
 			this.exception = exception;
 		}
 	}
@@ -1057,18 +1057,22 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	static final class UserInfoLoader extends AsyncTaskLoader<Response<ParcelableUser>> {
 
 		private final Twitter twitter;
-		private final boolean omit_intent_extra;
+		private final ContentResolver resolver;
+		private final boolean omit_intent_extra, hires_profile_image;
 		private final Bundle extras;
 		private final long account_id, user_id;
 		private final String screen_name;
-		private final boolean hires_profile_image;
+		private final ParcelableUser user;
 
 		private UserInfoLoader(final Context context, final long account_id, final long user_id,
-				final String screen_name, final Bundle extras, final boolean omit_intent_extra) {
+				final String screen_name, final Bundle extras, final boolean omit_intent_extra,
+				final ParcelableUser user) {
 			super(context);
+			resolver = context.getContentResolver();
 			twitter = getTwitterInstance(context, account_id, true);
-			this.omit_intent_extra = omit_intent_extra;
 			hires_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
+			this.omit_intent_extra = omit_intent_extra;
+			this.user = user;
 			this.extras = extras;
 			this.account_id = account_id;
 			this.user_id = user_id;
@@ -1079,20 +1083,43 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public Response<ParcelableUser> loadInBackground() {
 			if (!omit_intent_extra && extras != null) {
 				final ParcelableUser user = extras.getParcelable(INTENT_KEY_USER);
-				if (user != null) return new Response<ParcelableUser>(user, null);
+				if (user != null) {
+					final ContentValues values = ParcelableUser.makeCachedUserContentValues(user);
+					resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + " = " + user.user_id, null);
+					resolver.insert(CachedUsers.CONTENT_URI, values);
+					return new Response<ParcelableUser>(user, null);
+				}
 			}
 			if (twitter == null) return new Response<ParcelableUser>(null, null);
+			if (user == null || !user.is_cache) {
+				final String where = CachedUsers.USER_ID + " = " + user_id + " OR " + CachedUsers.SCREEN_NAME + " = '"
+						+ screen_name + "'";
+				final Cursor cur = resolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, where, null, null);
+				final int count = cur.getCount();
+				try {
+					if (count > 0) {
+						cur.moveToFirst();
+						return new Response<ParcelableUser>(new ParcelableUser(cur, account_id), null);
+					}
+				} finally {
+					cur.close();
+				}
+			}
 			try {
-				if (user_id != -1)
-					return new Response<ParcelableUser>(new ParcelableUser(twitter.showUser(user_id), account_id,
-							hires_profile_image), null);
-				else if (screen_name != null)
-					return new Response<ParcelableUser>(new ParcelableUser(twitter.showUser(screen_name), account_id,
-							hires_profile_image), null);
+				final User user;
+				if (user_id != -1) {
+					user = twitter.showUser(user_id);
+				} else if (screen_name != null) {
+					user = twitter.showUser(screen_name);
+				} else
+					return new Response<ParcelableUser>(null, null);
+				final ContentValues values = makeCachedUserContentValues(user, hires_profile_image);
+				resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + " = " + user.getId(), null);
+				resolver.insert(CachedUsers.CONTENT_URI, values);
+				return new Response<ParcelableUser>(new ParcelableUser(user, account_id, hires_profile_image), null);
 			} catch (final TwitterException e) {
 				return new Response<ParcelableUser>(null, e);
 			}
-			return new Response<ParcelableUser>(null, null);
 		}
 
 		@Override

@@ -58,7 +58,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -316,7 +315,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			if (o.outHeight <= 0) return null;
 			final BitmapFactory.Options o1 = new BitmapFactory.Options();
 			final double size = Math.max(o.outWidth, o.outHeight);
-			o1.inSampleSize = (size > max_texture_size) ? (int) Math.round(size / max_texture_size) + 1: 1;
+			o1.inSampleSize = size > max_texture_size ? (int) Math.round(size / max_texture_size) + 1 : 1;
 			Bitmap bitmap = null;
 			while (bitmap == null) {
 				try {
@@ -335,23 +334,36 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			return null;
 		}
 
+		private String getURLFilename(final String url) {
+			if (url == null) return null;
+			return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
+		}
+
+		private void init() {
+			/* Find the dir to save cached images. */
+			mCacheDir = getBestCacheDir(mContext, CACHE_DIR_NAME);
+			if (mCacheDir != null && !mCacheDir.exists()) {
+				mCacheDir.mkdirs();
+			}
+		}
+
 		public static int getMaximumTextureSize() {
-			EGL10 egl = (EGL10) EGLContext.getEGL();
-			EGLDisplay display = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+			final EGL10 egl = (EGL10) EGLContext.getEGL();
+			final EGLDisplay display = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
 
 			// Initialise
-			int[] version = new int[2];
+			final int[] version = new int[2];
 			egl.eglInitialize(display, version);
 
 			// Query total number of configurations
-			int[] totalConfigurations = new int[1];
+			final int[] totalConfigurations = new int[1];
 			egl.eglGetConfigs(display, null, 0, totalConfigurations);
 
 			// Query actual list configurations
-			EGLConfig[] configurationsList = new EGLConfig[totalConfigurations[0]];
+			final EGLConfig[] configurationsList = new EGLConfig[totalConfigurations[0]];
 			egl.eglGetConfigs(display, configurationsList, totalConfigurations[0], totalConfigurations);
 
-			int[] textureSize = new int[1];
+			final int[] textureSize = new int[1];
 			int maximumTextureSize = 0;
 
 			// Iterate through all the configurations to located the maximum
@@ -371,19 +383,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			// Release
 			egl.eglTerminate(display);
 			return maximumTextureSize;
-		}
-
-		private String getURLFilename(final String url) {
-			if (url == null) return null;
-			return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
-		}
-
-		private void init() {
-			/* Find the dir to save cached images. */
-			mCacheDir = getBestCacheDir(mContext, CACHE_DIR_NAME);
-			if (mCacheDir != null && !mCacheDir.exists()) {
-				mCacheDir.mkdirs();
-			}
 		}
 
 		public static class Result {

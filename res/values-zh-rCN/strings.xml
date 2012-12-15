@@ -212,10 +212,6 @@
 	<string name="lists_following_user">关注这个用户的列表</string>
 	<string name="Ntweets_quantity_one">你有一条新推文</string>
 	<string name="Ntweets_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 条新推文</string>
-	
-	
-	
-	
 	<string name="item_1_minute">1分钟</string>
 	<string name="item_3_minutes">3分钟</string>
 	<string name="item_5_minutes">5分钟</string>
@@ -229,7 +225,7 @@
 	<string name="solid_color_background">纯色背景</string>
 	<string name="solid_color_background_summary">如果你的设备是AMOLED屏幕的话，启用这个会有所帮助</string>
 	<string name="following_you">正在关注你</string>
-	<string name="user_list">用户列表</string>
+	<string name="user_list">列表</string>
 	<string name="trends_location">本地趋势的位置</string>
 	<string name="trends_location_summary">设定位置，以显示本地趋势</string>
 	<string name="trends">话题</string>
@@ -241,12 +237,12 @@
 	<string name="add_member">添加成员</string>
 	<string name="add_successfully">添加成功</string>
 	<string name="create_successfully">创建成功</string>
-	<string name="new_user_list">新用户列表</string>
+	<string name="new_user_list">新列表</string>
 	<string name="is_public">公开</string>
 	<string name="send_direct_message">发送私信</string>
 	<string name="extensions">扩展</string>
 	<string name="open_with_extensions">使用扩展打开</string>
-	<string name="view_user_list">查看用户列表</string>
+	<string name="view_user_list">查看列表</string>
 	<string name="uninstall">卸载</string>
 	<string name="users_retweeted_this">转推了这条推文的用户</string>
 	<string name="saved_searches">已保存的搜索</string>
@@ -263,7 +259,7 @@
 	<string name="invalid_settings">发现无效设定</string>
 	<string name="icon">图标</string>
 	<string name="pick_file">选取文件</string>
-	<string name="user_timeline">用户时间线</string>
+	<string name="user_timeline">时间线</string>
 	<string name="notification_ringtone">铃声</string>
 	<string name="notification_light_color">灯光颜色</string>
 	<string name="share_format">分享格式</string>
@@ -375,5 +371,10 @@
 	<string name="pull_to_load_conversation_release_label">释放加载对话…</string>
 	<string name="text_copied">文本已复制到剪贴板</string>
 	<string name="load_from_here">从这里加载</string>
+	<string name="amount_usd">总额（美元）</string>
+	<string name="donate">捐助</string>
+	<string name="hashtag">话题标签</string>
+	<string name="links">链接</string>
+	<string name="edit_profile">编辑个人资料</string>
 
 </resources>

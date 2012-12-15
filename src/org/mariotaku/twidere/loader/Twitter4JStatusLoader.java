@@ -27,6 +27,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.CacheUsersStatusesTask;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
+import org.mariotaku.twidere.util.TwitterWrapper.StatusListResponse;
 
 import twitter4j.Paging;
 import twitter4j.Status;
@@ -76,7 +77,8 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			final Status min_status = statuses.size() > 0 ? Collections.min(statuses) : null;
 			final long min_status_id = min_status != null ? min_status.getId() : -1;
 			if (context instanceof Activity) {
-				((Activity) context).runOnUiThread(CacheUsersStatusesTask.getRunnable(context, statuses, mAccountId));
+				((Activity) context).runOnUiThread(CacheUsersStatusesTask.getRunnable(context, new StatusListResponse(
+						mAccountId, statuses)));
 			}
 			for (final Status status : statuses) {
 				final long id = status.getId();

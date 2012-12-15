@@ -59,6 +59,7 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
+import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Trends;
 import twitter4j.Twitter;
@@ -89,7 +90,7 @@ public class TwitterWrapper implements Constants {
 
 	private static TwitterWrapper sInstance;
 
-	private final Context context;
+	private final Context mContext;
 	private final AsyncTaskManager mAsyncTaskManager;
 	private final SharedPreferences mPreferences;
 	private final NotificationManager mNotificationManager;
@@ -103,7 +104,7 @@ public class TwitterWrapper implements Constants {
 	private int mGetLocalTrendsTaskId;
 
 	public TwitterWrapper(final Context context) {
-		this.context = context;
+		mContext = context;
 		mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		mAsyncTaskManager = TwidereApplication.getInstance(context).getAsyncTaskManager();
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -253,17 +254,17 @@ public class TwitterWrapper implements Constants {
 	}
 
 	public int refreshAll() {
-		final long[] account_ids = getActivatedAccountIds(context);
+		final long[] account_ids = getActivatedAccountIds(mContext);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
-			final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
+			final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Mentions.CONTENT_URI);
 			getMentions(account_ids, null, since_ids);
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
-			final long[] since_ids = getNewestMessageIdsFromDatabase(context, DirectMessages.Inbox.CONTENT_URI);
+			final long[] since_ids = getNewestMessageIdsFromDatabase(mContext, DirectMessages.Inbox.CONTENT_URI);
 			getReceivedDirectMessages(account_ids, null, since_ids);
 			getSentDirectMessages(account_ids, null, null);
 		}
-		final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
+		final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Statuses.CONTENT_URI);
 		return getHomeTimeline(account_ids, null, since_ids);
 	}
 
@@ -290,7 +291,8 @@ public class TwitterWrapper implements Constants {
 
 	public int updateProfile(final long account_id, final String name, final String url, final String location,
 			final String description) {
-		final UpdateProfileTask task = new UpdateProfileTask(account_id, name, url, location, description);
+		final UpdateProfileTask task = new UpdateProfileTask(mContext, mAsyncTaskManager, account_id, name, url,
+				location, description);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -320,7 +322,7 @@ public class TwitterWrapper implements Constants {
 
 	private Notification buildNotification(final String title, final String message, final int icon,
 			final Intent content_intent, final Intent delete_intent) {
-		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+		final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
 		builder.setTicker(message);
 		builder.setContentTitle(title);
 		builder.setContentText(message);
@@ -328,11 +330,11 @@ public class TwitterWrapper implements Constants {
 		builder.setWhen(System.currentTimeMillis());
 		builder.setSmallIcon(icon);
 		if (delete_intent != null) {
-			builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0, delete_intent,
+			builder.setDeleteIntent(PendingIntent.getBroadcast(mContext, 0, delete_intent,
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
 		if (content_intent != null) {
-			builder.setContentIntent(PendingIntent.getActivity(context, 0, content_intent,
+			builder.setContentIntent(PendingIntent.getActivity(mContext, 0, content_intent,
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
 		int defaults = 0;
@@ -353,12 +355,88 @@ public class TwitterWrapper implements Constants {
 	}
 
 	private void showErrorToast(final int action_res, final Exception e, final boolean long_message) {
-		Utils.showErrorToast(context, context.getString(action_res), e, long_message);
+		Utils.showErrorToast(mContext, mContext.getString(action_res), e, long_message);
 	}
 
 	public static TwitterWrapper getInstance(final Context context) {
 		if (sInstance != null) return sInstance;
 		return sInstance = new TwitterWrapper(context);
+	}
+
+	public static final class StatusListResponse extends TwitterListResponse<Status> {
+
+		public StatusListResponse(final long account_id, final List<Status> list) {
+			super(account_id, -1, -1, -1, list, null);
+		}
+
+		public StatusListResponse(final long account_id, final long max_id, final long since_id,
+				final int load_item_limit, final List<Status> list, final Exception exception) {
+			super(account_id, max_id, since_id, load_item_limit, list, exception);
+		}
+
+	}
+
+	public static class TwitterListResponse<Data> extends ListResponse<Data> {
+
+		public final long max_id, since_id;
+		public final int load_item_limit;
+
+		public TwitterListResponse(final long account_id, final long max_id, final long since_id,
+				final int load_item_limit, final List<Data> list, final Exception exception) {
+			super(account_id, list, exception);
+			this.max_id = max_id;
+			this.since_id = since_id;
+			this.load_item_limit = load_item_limit;
+		}
+
+	}
+
+	public static class UpdateProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+
+		private final long account_id;
+		private final String name, url, location, description;
+		private final Context context;
+
+		public UpdateProfileTask(final Context context, final AsyncTaskManager manager, final long account_id,
+				final String name, final String url, final String location, final String description) {
+			super(context, manager);
+			this.context = context;
+			this.account_id = account_id;
+			this.name = name;
+			this.url = url;
+			this.location = location;
+			this.description = description;
+		}
+
+		@Override
+		protected SingleResponse<User> doInBackground(final Void... params) {
+
+			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			if (twitter != null) {
+				try {
+					final User user = twitter.updateProfile(name, url, location, description);
+					return new SingleResponse<User>(account_id, user, null);
+				} catch (final TwitterException e) {
+					return new SingleResponse<User>(account_id, null, e);
+				}
+			}
+			return new SingleResponse<User>(account_id, null, null);
+		}
+
+		@Override
+		protected void onPostExecute(final SingleResponse<User> result) {
+			if (result != null && result.data != null) {
+				Toast.makeText(context, R.string.profile_update_successfully, Toast.LENGTH_SHORT).show();
+			} else {
+				Utils.showErrorToast(context, context.getString(R.string.updating_profile), result.exception, true);
+			}
+			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
+			intent.putExtra(INTENT_KEY_USER_ID, account_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			context.sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
 	}
 
 	class AddUserListMemberTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
@@ -369,7 +447,7 @@ public class TwitterWrapper implements Constants {
 
 		public AddUserListMemberTask(final long account_id, final int list_id, final long user_id,
 				final String screen_name) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
 			this.user_id = user_id;
@@ -379,7 +457,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					if (user_id > 0) {
@@ -403,7 +481,7 @@ public class TwitterWrapper implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(context, R.string.add_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.add_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.adding_member, result.exception, true);
 			}
@@ -411,7 +489,7 @@ public class TwitterWrapper implements Constants {
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -422,7 +500,7 @@ public class TwitterWrapper implements Constants {
 		private final long account_id, user_id;
 
 		public CreateBlockTask(final long account_id, final long user_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
 		}
@@ -430,7 +508,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<User> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.createBlock(user_id);
@@ -455,14 +533,14 @@ public class TwitterWrapper implements Constants {
 				// list.
 				final String where = CachedUsers.USER_ID + " = " + user_id;
 				mResolver.delete(CachedUsers.CONTENT_URI, where, null);
-				Toast.makeText(context, R.string.user_blocked, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.user_blocked, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.blocking, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -473,7 +551,7 @@ public class TwitterWrapper implements Constants {
 		private final long account_id, status_id;
 
 		public CreateFavoriteTask(final long account_id, final long status_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
@@ -483,7 +561,7 @@ public class TwitterWrapper implements Constants {
 
 			if (account_id < 0) return new SingleResponse<twitter4j.Status>(account_id, null, null);
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final twitter4j.Status status = twitter.createFavorite(status_id);
@@ -516,8 +594,8 @@ public class TwitterWrapper implements Constants {
 				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_FAVORITED, true);
-				context.sendBroadcast(intent);
-				Toast.makeText(context, R.string.favorite_successfully, Toast.LENGTH_SHORT).show();
+				mContext.sendBroadcast(intent);
+				Toast.makeText(mContext, R.string.favorite_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.favoriting, result.exception, true);
 			}
@@ -532,7 +610,7 @@ public class TwitterWrapper implements Constants {
 		private final long user_id;
 
 		public CreateFriendshipTask(final long account_id, final long user_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
 		}
@@ -540,7 +618,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<User> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.createFriendship(user_id);
@@ -555,14 +633,14 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
-				Toast.makeText(context, R.string.follow_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.follow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.following, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -574,7 +652,7 @@ public class TwitterWrapper implements Constants {
 		private final long[] user_ids;
 
 		public CreateMultiBlockTask(final long account_id, final long[] user_ids) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_ids = user_ids;
 		}
@@ -583,7 +661,7 @@ public class TwitterWrapper implements Constants {
 		protected ListResponse<Long> doInBackground(final Void... params) {
 
 			final List<Long> blocked_users = new ArrayList<Long>();
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				for (final long user_id : user_ids) {
 					try {
@@ -613,14 +691,14 @@ public class TwitterWrapper implements Constants {
 				// list.
 				final String where = CachedUsers.USER_ID + " IN (" + user_ids + ")";
 				mResolver.delete(CachedUsers.CONTENT_URI, where, null);
-				Toast.makeText(context, R.string.users_blocked, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.users_blocked, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.blocking, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_ids);
 			intent.putExtra(INTENT_KEY_SUCCEED, result.list != null);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -632,7 +710,7 @@ public class TwitterWrapper implements Constants {
 		private final int list_id;
 
 		public CreateUserListSubscriptionTask(final long account_id, final int list_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
 		}
@@ -640,7 +718,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final UserList list = twitter.createUserListSubscription(list_id);
@@ -656,14 +734,14 @@ public class TwitterWrapper implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(context, R.string.follow_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.follow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.following, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -677,7 +755,7 @@ public class TwitterWrapper implements Constants {
 
 		public CreateUserListTask(final long account_id, final String list_name, final boolean is_public,
 				final String description) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_name = list_name;
 			this.description = description;
@@ -687,7 +765,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					if (list_name != null) {
@@ -705,13 +783,13 @@ public class TwitterWrapper implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(context, R.string.create_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.create_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.creating_list, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_CREATED);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -723,7 +801,7 @@ public class TwitterWrapper implements Constants {
 		private final int list_id;
 
 		public DeleteUserListMemberTask(final long account_id, final int list_id, final long user_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
 			this.user_id = user_id;
@@ -732,7 +810,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final UserList list = twitter.deleteUserListMember(list_id, user_id);
@@ -748,7 +826,7 @@ public class TwitterWrapper implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(context, R.string.delete_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.deleting, result.exception, true);
 			}
@@ -756,7 +834,7 @@ public class TwitterWrapper implements Constants {
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -768,7 +846,7 @@ public class TwitterWrapper implements Constants {
 		private final long user_id;
 
 		public DestroyBlockTask(final long account_id, final long user_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
 		}
@@ -776,7 +854,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<User> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.destroyBlock(user_id);
@@ -791,14 +869,14 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
-				Toast.makeText(context, R.string.user_unblocked, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.user_unblocked, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.unblocking, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -811,8 +889,8 @@ public class TwitterWrapper implements Constants {
 		private final long account_id;
 
 		public DestroyDirectMessageTask(final long account_id, final long message_id) {
-			super(context, mAsyncTaskManager);
-			twitter = getTwitterInstance(context, account_id, false);
+			super(mContext, mAsyncTaskManager);
+			twitter = getTwitterInstance(mContext, account_id, false);
 			this.account_id = account_id;
 			this.message_id = message_id;
 		}
@@ -832,7 +910,7 @@ public class TwitterWrapper implements Constants {
 			super.onPostExecute(result);
 			if (result == null) return;
 			if (result.data != null && result.data.getId() > 0) {
-				Toast.makeText(context, R.string.delete_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 				final String where = DirectMessages.MESSAGE_ID + " = " + message_id;
 				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
 				mResolver.delete(DirectMessages.Outbox.CONTENT_URI, where, null);
@@ -850,7 +928,7 @@ public class TwitterWrapper implements Constants {
 		private final long status_id;
 
 		public DestroyFavoriteTask(final long account_id, final long status_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
@@ -862,7 +940,7 @@ public class TwitterWrapper implements Constants {
 				new SingleResponse<twitter4j.Status>(account_id, null, null);
 			}
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final twitter4j.Status status = twitter.destroyFavorite(status_id);
@@ -896,8 +974,8 @@ public class TwitterWrapper implements Constants {
 				intent.putExtra(INTENT_KEY_USER_ID, account_id);
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_FAVORITED, false);
-				context.sendBroadcast(intent);
-				Toast.makeText(context, R.string.unfavorite_successfully, Toast.LENGTH_SHORT).show();
+				mContext.sendBroadcast(intent);
+				Toast.makeText(mContext, R.string.unfavorite_successfully, Toast.LENGTH_SHORT).show();
 
 			} else {
 				showErrorToast(R.string.unfavoriting, result.exception, true);
@@ -913,7 +991,7 @@ public class TwitterWrapper implements Constants {
 		private final long user_id;
 
 		public DestroyFriendshipTask(final long account_id, final long user_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
 		}
@@ -921,7 +999,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<User> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.destroyFriendship(user_id);
@@ -936,14 +1014,14 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
-				Toast.makeText(context, R.string.unfollow_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.unfollow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.unfollowing, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -956,7 +1034,7 @@ public class TwitterWrapper implements Constants {
 		private final long status_id;
 
 		public DestroyStatusTask(final long account_id, final long status_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
@@ -964,7 +1042,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final twitter4j.Status status = twitter.destroyStatus(status_id);
@@ -989,11 +1067,11 @@ public class TwitterWrapper implements Constants {
 				}
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
-				Toast.makeText(context, R.string.delete_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.deleting, result.exception, true);
 			}
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -1005,7 +1083,7 @@ public class TwitterWrapper implements Constants {
 		private final int list_id;
 
 		public DestroyUserListSubscriptionTask(final long account_id, final int list_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
 		}
@@ -1013,7 +1091,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final UserList list = twitter.destroyUserListSubscription(list_id);
@@ -1029,14 +1107,14 @@ public class TwitterWrapper implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(context, R.string.unfollow_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.unfollow_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.unfollowing, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -1048,7 +1126,7 @@ public class TwitterWrapper implements Constants {
 		private final int list_id;
 
 		public DestroyUserListTask(final long account_id, final int list_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
 		}
@@ -1056,7 +1134,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					if (list_id > 0) {
@@ -1074,27 +1152,26 @@ public class TwitterWrapper implements Constants {
 		protected void onPostExecute(final SingleResponse<UserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
 			if (succeed) {
-				Toast.makeText(context, R.string.delete_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.delete_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.deleting, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DELETED);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
 	}
 
-	abstract class GetDirectMessagesTask extends
-			ManagedAsyncTask<Void, Void, List<StatusesListResponse<DirectMessage>>> {
+	abstract class GetDirectMessagesTask extends ManagedAsyncTask<Void, Void, List<TwitterListResponse<DirectMessage>>> {
 
 		private final long[] account_ids, max_ids, since_ids;
 
 		public GetDirectMessagesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids,
 				final String tag) {
-			super(context, mAsyncTaskManager, tag);
+			super(mContext, mAsyncTaskManager, tag);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
 			this.since_ids = since_ids;
@@ -1104,9 +1181,9 @@ public class TwitterWrapper implements Constants {
 				throws TwitterException;
 
 		@Override
-		protected List<StatusesListResponse<DirectMessage>> doInBackground(final Void... params) {
+		protected List<TwitterListResponse<DirectMessage>> doInBackground(final Void... params) {
 
-			final List<StatusesListResponse<DirectMessage>> result = new ArrayList<StatusesListResponse<DirectMessage>>();
+			final List<TwitterListResponse<DirectMessage>> result = new ArrayList<TwitterListResponse<DirectMessage>>();
 
 			if (account_ids == null) return result;
 
@@ -1114,7 +1191,7 @@ public class TwitterWrapper implements Constants {
 			final int load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
 					PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 			for (final long account_id : account_ids) {
-				final Twitter twitter = getTwitterInstance(context, account_id, true);
+				final Twitter twitter = getTwitterInstance(mContext, account_id, true);
 				if (twitter != null) {
 					try {
 						final Paging paging = new Paging();
@@ -1131,11 +1208,11 @@ public class TwitterWrapper implements Constants {
 						final ResponseList<DirectMessage> statuses = getDirectMessages(twitter, paging);
 
 						if (statuses != null) {
-							result.add(new StatusesListResponse<DirectMessage>(account_id, max_id, since_id,
+							result.add(new TwitterListResponse<DirectMessage>(account_id, max_id, since_id,
 									load_item_limit, statuses, null));
 						}
 					} catch (final TwitterException e) {
-						result.add(new StatusesListResponse<DirectMessage>(account_id, -1, -1, load_item_limit, null, e));
+						result.add(new TwitterListResponse<DirectMessage>(account_id, -1, -1, load_item_limit, null, e));
 					}
 				}
 				idx++;
@@ -1145,9 +1222,9 @@ public class TwitterWrapper implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(final List<StatusesListResponse<DirectMessage>> result) {
+		protected void onPostExecute(final List<TwitterListResponse<DirectMessage>> result) {
 			super.onPostExecute(result);
-			for (final StatusesListResponse<DirectMessage> response : result) {
+			for (final TwitterListResponse<DirectMessage> response : result) {
 				if (response.list == null) {
 					showErrorToast(R.string.refreshing_direct_messages, response.exception, true);
 				}
@@ -1178,11 +1255,11 @@ public class TwitterWrapper implements Constants {
 
 		@Override
 		public Twitter getTwitter(final long account_id) {
-			return getTwitterInstance(context, account_id, true);
+			return getTwitterInstance(mContext, account_id, true);
 		}
 
 		@Override
-		protected void onPostExecute(final List<StatusesListResponse<twitter4j.Status>> responses) {
+		protected void onPostExecute(final List<StatusListResponse> responses) {
 			super.onPostExecute(responses);
 			mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, shouldSetMinId(), !isMaxIdsValid()), true);
 			mGetHomeTimelineTaskId = -1;
@@ -1191,7 +1268,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected void onPreExecute() {
 			final Intent intent = new Intent(BROADCAST_RESCHEDULE_HOME_TIMELINE_REFRESHING);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPreExecute();
 		}
 
@@ -1238,11 +1315,11 @@ public class TwitterWrapper implements Constants {
 
 		@Override
 		public Twitter getTwitter(final long account_id) {
-			return getTwitterInstance(context, account_id, true);
+			return getTwitterInstance(mContext, account_id, true);
 		}
 
 		@Override
-		protected void onPostExecute(final List<StatusesListResponse<twitter4j.Status>> responses) {
+		protected void onPostExecute(final List<StatusListResponse> responses) {
 			super.onPostExecute(responses);
 			mAsyncTaskManager.add(new StoreMentionsTask(responses, shouldSetMinId(), !isMaxIdsValid()), true);
 			mGetMentionsTaskId = -1;
@@ -1252,7 +1329,7 @@ public class TwitterWrapper implements Constants {
 		protected void onPreExecute() {
 
 			final Intent intent = new Intent(BROADCAST_RESCHEDULE_MENTIONS_REFRESHING);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPreExecute();
 		}
 
@@ -1271,7 +1348,7 @@ public class TwitterWrapper implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(final List<StatusesListResponse<DirectMessage>> responses) {
+		protected void onPostExecute(final List<TwitterListResponse<DirectMessage>> responses) {
 			super.onPostExecute(responses);
 			mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses, !isMaxIdsValid()), true);
 			mGetReceivedDirectMessagesTaskId = -1;
@@ -1280,7 +1357,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected void onPreExecute() {
 			final Intent intent = new Intent(BROADCAST_RESCHEDULE_DIRECT_MESSAGES_REFRESHING);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPreExecute();
 		}
 
@@ -1299,7 +1376,7 @@ public class TwitterWrapper implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(final List<StatusesListResponse<DirectMessage>> responses) {
+		protected void onPostExecute(final List<TwitterListResponse<DirectMessage>> responses) {
 			super.onPostExecute(responses);
 			mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses, !isMaxIdsValid()), true);
 			mGetSentDirectMessagesTaskId = -1;
@@ -1307,12 +1384,12 @@ public class TwitterWrapper implements Constants {
 
 	}
 
-	abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<StatusesListResponse<twitter4j.Status>>> {
+	abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<StatusListResponse>> {
 
 		private final long[] account_ids, max_ids, since_ids;
 
 		public GetStatusesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids, final String tag) {
-			super(context, mAsyncTaskManager, tag);
+			super(mContext, mAsyncTaskManager, tag);
 			this.account_ids = account_ids;
 			this.max_ids = max_ids;
 			this.since_ids = since_ids;
@@ -1324,9 +1401,9 @@ public class TwitterWrapper implements Constants {
 		public abstract Twitter getTwitter(long account_id);
 
 		@Override
-		protected List<StatusesListResponse<twitter4j.Status>> doInBackground(final Void... params) {
+		protected List<StatusListResponse> doInBackground(final Void... params) {
 
-			final List<StatusesListResponse<twitter4j.Status>> result = new ArrayList<StatusesListResponse<twitter4j.Status>>();
+			final List<StatusListResponse> result = new ArrayList<StatusListResponse>();
 
 			if (account_ids == null) return result;
 
@@ -1350,12 +1427,11 @@ public class TwitterWrapper implements Constants {
 						}
 						final ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
 						if (statuses != null) {
-							result.add(new StatusesListResponse<twitter4j.Status>(account_id, max_id, since_id,
-									load_item_limit, statuses, null));
+							result.add(new StatusListResponse(account_id, max_id, since_id, load_item_limit, statuses,
+									null));
 						}
 					} catch (final TwitterException e) {
-						result.add(new StatusesListResponse<twitter4j.Status>(account_id, -1, -1, load_item_limit,
-								null, e));
+						result.add(new StatusListResponse(account_id, -1, -1, load_item_limit, null, e));
 					}
 				}
 				idx++;
@@ -1364,9 +1440,9 @@ public class TwitterWrapper implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(final List<StatusesListResponse<twitter4j.Status>> result) {
+		protected void onPostExecute(final List<StatusListResponse> result) {
 			super.onPostExecute(result);
-			for (final StatusesListResponse<twitter4j.Status> response : result) {
+			for (final StatusListResponse response : result) {
 				if (response.list == null) {
 					showErrorToast(R.string.refreshing_timelines, response.exception, true);
 				}
@@ -1392,7 +1468,7 @@ public class TwitterWrapper implements Constants {
 		private final long account_id;
 
 		public GetTrendsTask(final long account_id) {
-			super(context, mAsyncTaskManager, TASK_TAG_GET_TRENDS);
+			super(mContext, mAsyncTaskManager, TASK_TAG_GET_TRENDS);
 			this.account_id = account_id;
 		}
 
@@ -1400,7 +1476,7 @@ public class TwitterWrapper implements Constants {
 
 		@Override
 		protected ListResponse<Trends> doInBackground(final Void... params) {
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					return new ListResponse<Trends>(account_id, getTrends(twitter), null);
@@ -1419,7 +1495,7 @@ public class TwitterWrapper implements Constants {
 		private final long[] user_ids;
 
 		public ReportMultiSpamTask(final long account_id, final long[] user_ids) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_ids = user_ids;
 		}
@@ -1428,7 +1504,7 @@ public class TwitterWrapper implements Constants {
 		protected ListResponse<Long> doInBackground(final Void... params) {
 
 			final List<Long> reported_users = new ArrayList<Long>();
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				for (final long user_id : user_ids) {
 					try {
@@ -1454,13 +1530,13 @@ public class TwitterWrapper implements Constants {
 							+ " IN (" + user_id_where + ")";
 					mResolver.delete(uri, where, null);
 				}
-				Toast.makeText(context, R.string.reported_users_for_spam, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.reported_users_for_spam, Toast.LENGTH_SHORT).show();
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_IDS, user_ids);
 			intent.putExtra(INTENT_KEY_ACCOUNT_ID, account_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -1472,7 +1548,7 @@ public class TwitterWrapper implements Constants {
 		private final long user_id;
 
 		public ReportSpamTask(final long account_id, final long user_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
 		}
@@ -1480,7 +1556,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<User> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final User user = twitter.reportSpam(user_id);
@@ -1500,14 +1576,14 @@ public class TwitterWrapper implements Constants {
 							+ user_id;
 					mResolver.delete(uri, where, null);
 				}
-				Toast.makeText(context, R.string.reported_user_for_spam, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.reported_user_for_spam, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.reporting_for_spam, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(INTENT_KEY_USER_ID, user_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -1520,7 +1596,7 @@ public class TwitterWrapper implements Constants {
 		private final long status_id;
 
 		public RetweetStatusTask(final long account_id, final long status_id) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.status_id = status_id;
 		}
@@ -1530,7 +1606,7 @@ public class TwitterWrapper implements Constants {
 
 			if (account_id < 0) return new SingleResponse<twitter4j.Status>(account_id, null, null);
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final twitter4j.Status status = twitter.retweetStatus(status_id);
@@ -1548,14 +1624,16 @@ public class TwitterWrapper implements Constants {
 			if (result.data != null && result.data.getId() > 0) {
 				final ContentValues values = new ContentValues();
 				values.put(Statuses.MY_RETWEET_ID, result.data.getId());
+				final String where = Statuses.STATUS_ID + " = " + status_id + " OR " + Statuses.RETWEET_ID + " = "
+						+ status_id;
 				for (final Uri uri : STATUSES_URIS) {
-					mResolver.update(uri, values, Statuses.STATUS_ID + " = " + status_id, null);
+					mResolver.update(uri, values, where, null);
 				}
 				final Intent intent = new Intent(BROADCAST_RETWEET_CHANGED);
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_RETWEETED, true);
-				context.sendBroadcast(intent);
-				Toast.makeText(context, R.string.retweet_successfully, Toast.LENGTH_SHORT).show();
+				mContext.sendBroadcast(intent);
+				Toast.makeText(mContext, R.string.retweet_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.retweeting, result.exception, true);
 			}
@@ -1575,8 +1653,8 @@ public class TwitterWrapper implements Constants {
 
 		public SendDirectMessageTask(final long account_id, final String screen_name, final long user_id,
 				final String message) {
-			super(context, mAsyncTaskManager);
-			twitter = getTwitterInstance(context, account_id, true);
+			super(mContext, mAsyncTaskManager);
+			twitter = getTwitterInstance(mContext, account_id, true);
 			this.account_id = account_id;
 			this.user_id = user_id;
 			this.screen_name = screen_name;
@@ -1607,7 +1685,7 @@ public class TwitterWrapper implements Constants {
 				final ContentValues values = makeDirectMessageContentValues(result.data, account_id, true,
 						large_profile_image);
 				mResolver.insert(DirectMessages.Outbox.CONTENT_URI, values);
-				Toast.makeText(context, R.string.send_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.send_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.sending_direct_message, result.exception, true);
 			}
@@ -1615,29 +1693,14 @@ public class TwitterWrapper implements Constants {
 
 	}
 
-	static final class StatusesListResponse<Data> extends ListResponse<Data> {
-
-		public final long max_id, since_id;
-		public final int load_item_limit;
-
-		public StatusesListResponse(final long account_id, final long max_id, final long since_id,
-				final int load_item_limit, final List<Data> list, final Exception exception) {
-			super(account_id, list, exception);
-			this.max_id = max_id;
-			this.since_id = since_id;
-			this.load_item_limit = load_item_limit;
-		}
-
-	}
-
 	abstract class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
-		private final List<StatusesListResponse<DirectMessage>> responses;
+		private final List<TwitterListResponse<DirectMessage>> responses;
 		private final Uri uri;
 
-		public StoreDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result, final Uri uri,
+		public StoreDirectMessagesTask(final List<TwitterListResponse<DirectMessage>> result, final Uri uri,
 				final boolean notify, final String tag) {
-			super(context, mAsyncTaskManager, tag);
+			super(mContext, mAsyncTaskManager, tag);
 			responses = result;
 			this.uri = uri.buildUpon().appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify)).build();
 		}
@@ -1692,8 +1755,8 @@ public class TwitterWrapper implements Constants {
 
 	class StoreHomeTimelineTask extends StoreStatusesTask {
 
-		public StoreHomeTimelineTask(final List<StatusesListResponse<twitter4j.Status>> result,
-				final boolean should_set_min_id, final boolean notify) {
+		public StoreHomeTimelineTask(final List<StatusListResponse> result, final boolean should_set_min_id,
+				final boolean notify) {
 			super(result, Statuses.CONTENT_URI, should_set_min_id, notify, TASK_TAG_STORE_HOME_TIMELINE);
 		}
 
@@ -1709,7 +1772,7 @@ public class TwitterWrapper implements Constants {
 				extras.putLong(INTENT_KEY_MIN_ID, min_id);
 				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, min_id).commit();
 			}
-			context.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtras(extras));
+			mContext.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtras(extras));
 			super.onPostExecute(response);
 		}
 
@@ -1725,8 +1788,8 @@ public class TwitterWrapper implements Constants {
 
 	class StoreMentionsTask extends StoreStatusesTask {
 
-		public StoreMentionsTask(final List<StatusesListResponse<twitter4j.Status>> result,
-				final boolean should_set_min_id, final boolean notify) {
+		public StoreMentionsTask(final List<StatusListResponse> result, final boolean should_set_min_id,
+				final boolean notify) {
 			super(result, Mentions.CONTENT_URI, should_set_min_id, notify, TASK_TAG_STORE_MENTIONS);
 		}
 
@@ -1742,7 +1805,7 @@ public class TwitterWrapper implements Constants {
 				extras.putLong(INTENT_KEY_MIN_ID, min_id);
 				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, min_id).commit();
 			}
-			context.sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtras(extras));
+			mContext.sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtras(extras));
 			super.onPostExecute(response);
 		}
 
@@ -1750,7 +1813,7 @@ public class TwitterWrapper implements Constants {
 
 	class StoreReceivedDirectMessagesTask extends StoreDirectMessagesTask {
 
-		public StoreReceivedDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result,
+		public StoreReceivedDirectMessagesTask(final List<TwitterListResponse<DirectMessage>> result,
 				final boolean notify) {
 			super(result, DirectMessages.Inbox.CONTENT_URI, notify, TASK_TAG_STORE_RECEIVED_DIRECT_MESSAGES);
 		}
@@ -1759,8 +1822,8 @@ public class TwitterWrapper implements Constants {
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
-			context.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
-					succeed));
+			mContext.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED).putExtra(
+					INTENT_KEY_SUCCEED, succeed));
 			super.onPostExecute(response);
 		}
 
@@ -1773,7 +1836,7 @@ public class TwitterWrapper implements Constants {
 
 	class StoreSentDirectMessagesTask extends StoreDirectMessagesTask {
 
-		public StoreSentDirectMessagesTask(final List<StatusesListResponse<DirectMessage>> result, final boolean notify) {
+		public StoreSentDirectMessagesTask(final List<TwitterListResponse<DirectMessage>> result, final boolean notify) {
 			super(result, DirectMessages.Outbox.CONTENT_URI, notify, TASK_TAG_STORE_SENT_DIRECT_MESSAGES);
 		}
 
@@ -1781,7 +1844,7 @@ public class TwitterWrapper implements Constants {
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			final boolean succeed = response != null && response.data != null
 					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
-			context.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
+			mContext.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
 					succeed));
 			super.onPostExecute(response);
 		}
@@ -1795,14 +1858,14 @@ public class TwitterWrapper implements Constants {
 
 	abstract class StoreStatusesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
-		private final List<StatusesListResponse<twitter4j.Status>> responses;
+		private final List<StatusListResponse> responses;
 		private final Uri uri;
 		private final boolean should_set_min_id;
 		private final ArrayList<ContentValues> all_statuses = new ArrayList<ContentValues>();
 
-		public StoreStatusesTask(final List<StatusesListResponse<twitter4j.Status>> result, final Uri uri,
-				final boolean should_set_min_id, final boolean notify, final String tag) {
-			super(context, mAsyncTaskManager, tag);
+		public StoreStatusesTask(final List<StatusListResponse> result, final Uri uri, final boolean should_set_min_id,
+				final boolean notify, final String tag) {
+			super(mContext, mAsyncTaskManager, tag);
 			responses = result;
 			this.should_set_min_id = should_set_min_id;
 			this.uri = uri.buildUpon().appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify)).build();
@@ -1817,13 +1880,13 @@ public class TwitterWrapper implements Constants {
 			boolean succeed = false;
 
 			final ArrayList<Long> newly_inserted_ids = new ArrayList<Long>();
-			for (final StatusesListResponse<twitter4j.Status> response : responses) {
+			for (final StatusListResponse response : responses) {
 				final long account_id = response.account_id;
 				final List<twitter4j.Status> statuses = response.list;
 				if (statuses == null || statuses.size() <= 0) {
 					continue;
 				}
-				final ArrayList<Long> ids_in_db = getStatusIdsInDatabase(context, uri, account_id);
+				final ArrayList<Long> ids_in_db = getStatusIdsInDatabase(mContext, uri, account_id);
 				final boolean no_items_before = ids_in_db.size() <= 0;
 				final List<ContentValues> values_list = new ArrayList<ContentValues>();
 				final List<Long> status_ids = new ArrayList<Long>(), retweet_ids = new ArrayList<Long>();
@@ -1865,7 +1928,7 @@ public class TwitterWrapper implements Constants {
 				final int rows_deleted = mResolver.delete(delete_uri, delete_where.toString(), null);
 				// UCD
 				final String UCD_new_status_ids = ListUtils.toString(account_newly_inserted, ',', true);
-				ProfilingUtil.profile(context, account_id, "Download tweets, " + UCD_new_status_ids);
+				ProfilingUtil.profile(mContext, account_id, "Download tweets, " + UCD_new_status_ids);
 				all_statuses.addAll(values_list);
 				// Insert previously fetched items.
 				final Uri insert_query = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NEW_ITEMS_COUNT,
@@ -1892,7 +1955,7 @@ public class TwitterWrapper implements Constants {
 			}
 			final Bundle bundle = new Bundle();
 			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
-			getAllStatusesIds(context, uri);
+			getAllStatusesIds(mContext, uri);
 			if (should_set_min_id && newly_inserted_ids.size() > 0) {
 				bundle.putLong(INTENT_KEY_MIN_ID, Collections.min(newly_inserted_ids));
 			}
@@ -1900,9 +1963,10 @@ public class TwitterWrapper implements Constants {
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			super.onPostExecute(response);
-			new CacheUsersStatusesTask(context, all_statuses).execute();
+		protected void onPreExecute() {
+			super.onPreExecute();
+			final StatusListResponse[] array = new StatusListResponse[responses.size()];
+			new CacheUsersStatusesTask(mContext, responses.toArray(array)).execute();
 		}
 
 	}
@@ -1913,7 +1977,7 @@ public class TwitterWrapper implements Constants {
 		private final Uri uri;
 
 		public StoreTrendsTask(final ListResponse<Trends> result, final Uri uri) {
-			super(context, mAsyncTaskManager, TASK_TAG_STORE_TRENDS);
+			super(mContext, mAsyncTaskManager, TASK_TAG_STORE_TRENDS);
 			response = result;
 			this.uri = uri;
 		}
@@ -1953,7 +2017,7 @@ public class TwitterWrapper implements Constants {
 			if (response != null && response.data != null && response.data.getBoolean(INTENT_KEY_SUCCEED)) {
 				final Intent intent = new Intent(BROADCAST_TRENDS_UPDATED);
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
-				context.sendBroadcast(intent);
+				mContext.sendBroadcast(intent);
 			}
 			super.onPostExecute(response);
 
@@ -1968,7 +2032,7 @@ public class TwitterWrapper implements Constants {
 		private final boolean delete_image;
 
 		public UpdateProfileBannerImageTask(final long account_id, final Uri image_uri, final boolean delete_image) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.image_uri = image_uri;
 			this.delete_image = delete_image;
@@ -1976,17 +2040,17 @@ public class TwitterWrapper implements Constants {
 
 		@Override
 		protected SingleResponse<Integer> doInBackground(final Void... params) {
-			return TwitterCommands.updateProfileBannerImage(context, account_id, image_uri, delete_image);
+			return TwitterCommands.updateProfileBannerImage(mContext, account_id, image_uri, delete_image);
 		}
 
 		@Override
 		protected void onPostExecute(final SingleResponse<Integer> result) {
 			if (result != null && result.data != null) {
 				if (result.data >= 200 && result.data <= 202) {
-					Toast.makeText(context, R.string.profile_banner_image_update_successfully, Toast.LENGTH_SHORT)
+					Toast.makeText(mContext, R.string.profile_banner_image_update_successfully, Toast.LENGTH_SHORT)
 							.show();
 				} else {
-					Utils.showErrorToast(context, context.getString(R.string.updating_profile_banner_image), "Code "
+					Utils.showErrorToast(mContext, mContext.getString(R.string.updating_profile_banner_image), "Code "
 							+ result.data, true);
 				}
 			} else {
@@ -1995,7 +2059,7 @@ public class TwitterWrapper implements Constants {
 			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -2008,7 +2072,7 @@ public class TwitterWrapper implements Constants {
 		private final boolean delete_image;
 
 		public UpdateProfileImageTask(final long account_id, final Uri image_uri, final boolean delete_image) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.image_uri = image_uri;
 			this.delete_image = delete_image;
@@ -2016,66 +2080,20 @@ public class TwitterWrapper implements Constants {
 
 		@Override
 		protected SingleResponse<User> doInBackground(final Void... params) {
-			return TwitterCommands.updateProfileImage(context, account_id, image_uri, delete_image);
+			return TwitterCommands.updateProfileImage(mContext, account_id, image_uri, delete_image);
 		}
 
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
-				Toast.makeText(context, R.string.profile_image_update_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.profile_image_update_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(R.string.updating_profile_image, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
-			context.sendBroadcast(intent);
-			super.onPostExecute(result);
-		}
-
-	}
-
-	class UpdateProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
-
-		private final long account_id;
-		private final String name, url, location, description;
-
-		public UpdateProfileTask(final long account_id, final String name, final String url, final String location,
-				final String description) {
-			super(context, mAsyncTaskManager);
-			this.account_id = account_id;
-			this.name = name;
-			this.url = url;
-			this.location = location;
-			this.description = description;
-		}
-
-		@Override
-		protected SingleResponse<User> doInBackground(final Void... params) {
-
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
-			if (twitter != null) {
-				try {
-					final User user = twitter.updateProfile(name, url, location, description);
-					return new SingleResponse<User>(account_id, user, null);
-				} catch (final TwitterException e) {
-					return new SingleResponse<User>(account_id, null, e);
-				}
-			}
-			return new SingleResponse<User>(account_id, null, null);
-		}
-
-		@Override
-		protected void onPostExecute(final SingleResponse<User> result) {
-			if (result != null && result.data != null) {
-				Toast.makeText(context, R.string.profile_update_successfully, Toast.LENGTH_SHORT).show();
-			} else {
-				showErrorToast(R.string.updating_profile, result.exception, true);
-			}
-			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
-			intent.putExtra(INTENT_KEY_USER_ID, account_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
@@ -2097,11 +2115,11 @@ public class TwitterWrapper implements Constants {
 
 		public UpdateStatusTask(final long[] account_ids, final String content, final ParcelableLocation location,
 				final Uri image_uri, final long in_reply_to, final boolean delete_image) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
 			final String shortener_component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
 			use_uploader = !isEmpty(uploader_component);
-			final TwidereApplication app = TwidereApplication.getInstance(context);
+			final TwidereApplication app = TwidereApplication.getInstance(mContext);
 			uploader = use_uploader ? ImageUploaderInterface.getInstance(app, uploader_component) : null;
 			use_shortener = !isEmpty(shortener_component);
 			shortener = use_shortener ? TweetShortenerInterface.getInstance(app, shortener_component) : null;
@@ -2138,7 +2156,7 @@ public class TwitterWrapper implements Constants {
 				if (use_uploader && uploader == null) throw new ImageUploaderNotFoundException();
 				if (use_shortener && shortener == null) throw new TweetShortenerNotFoundException();
 
-				final String image_path = getImagePathFromUri(context, image_uri);
+				final String image_path = getImagePathFromUri(mContext, image_uri);
 				final File image_file = image_path != null ? new File(image_path) : null;
 				if (uploader != null) {
 					uploader.waitForService();
@@ -2149,11 +2167,11 @@ public class TwitterWrapper implements Constants {
 					throw new ImageUploadException();
 
 				final String unshortened_content = use_uploader && upload_result_uri != null ? getImageUploadStatus(
-						context, upload_result_uri.toString(), content) : content;
+						mContext, upload_result_uri.toString(), content) : content;
 
 				final boolean should_shorten = unshortened_content != null && unshortened_content.length() > 0
 						&& !validator.isValidTweet(unshortened_content);
-				final String screen_name = getAccountScreenName(context, account_ids[0]);
+				final String screen_name = getAccountScreenName(mContext, account_ids[0]);
 				if (shortener != null) {
 					shortener.waitForService();
 				}
@@ -2179,7 +2197,7 @@ public class TwitterWrapper implements Constants {
 				for (final long account_id : account_ids) {
 					// A very stupid workaround here, in order to send tweets
 					// contains asterisk symbol.
-					final Twitter twitter = getTwitterInstance(context, account_id, false, !status.getStatus()
+					final Twitter twitter = getTwitterInstance(mContext, account_id, false, !status.getStatus()
 							.contains("*"));
 					if (twitter != null) {
 						try {
@@ -2221,9 +2239,9 @@ public class TwitterWrapper implements Constants {
 				}
 			}
 			if (succeed) {
-				Toast.makeText(context, R.string.send_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.send_successfully, Toast.LENGTH_SHORT).show();
 				if (image_uri != null && delete_image) {
-					final String path = getImagePathFromUri(context, image_uri);
+					final String path = getImagePathFromUri(mContext, image_uri);
 					if (path != null) {
 						new File(path).delete();
 					}
@@ -2234,7 +2252,7 @@ public class TwitterWrapper implements Constants {
 				if (exception instanceof TwitterException && ((TwitterException) exception).getErrorMessages() != null
 						&& ((TwitterException) exception).getErrorMessages().length > 0
 						&& ((TwitterException) exception).getErrorMessages()[0].getCode() == 187) {
-					Utils.showErrorToast(context, context.getString(R.string.status_is_duplicate), false);
+					Utils.showErrorToast(mContext, mContext.getString(R.string.status_is_duplicate), false);
 				} else {
 					saveDrafts(failed_account_ids);
 					showErrorToast(R.string.sending_status, exception, true);
@@ -2257,8 +2275,8 @@ public class TwitterWrapper implements Constants {
 				values.put(Drafts.IMAGE_URI, parseString(image_uri));
 			}
 			mResolver.insert(Drafts.CONTENT_URI, values);
-			final String title = context.getString(R.string.tweet_not_sent);
-			final String message = context.getString(R.string.tweet_not_sent_summary);
+			final String title = mContext.getString(R.string.tweet_not_sent);
+			final String message = mContext.getString(R.string.tweet_not_sent_summary);
 			final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
 			final Notification notification = buildNotification(title, message, R.drawable.ic_stat_tweet, intent, null);
 			mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
@@ -2308,7 +2326,7 @@ public class TwitterWrapper implements Constants {
 			private static final long serialVersionUID = -1267218921727097910L;
 
 			public UpdateStatusException(final int message) {
-				super(context.getString(message));
+				super(mContext.getString(message));
 			}
 		}
 	}
@@ -2324,7 +2342,7 @@ public class TwitterWrapper implements Constants {
 
 		public UpdateUserListDetailsTask(final long account_id, final int list_id, final boolean is_public,
 				final String name, final String description) {
-			super(context, mAsyncTaskManager);
+			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.name = name;
 			this.list_id = list_id;
@@ -2335,7 +2353,7 @@ public class TwitterWrapper implements Constants {
 		@Override
 		protected SingleResponse<UserList> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final UserList user = twitter.updateUserList(list_id, name, is_public, description);
@@ -2352,12 +2370,12 @@ public class TwitterWrapper implements Constants {
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DETAILS_UPDATED);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
 			if (result != null && result.data != null && result.data.getId() > 0) {
-				Toast.makeText(context, R.string.profile_update_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, R.string.profile_update_successfully, Toast.LENGTH_SHORT).show();
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
 			} else {
 				showErrorToast(R.string.updating_details, result.exception, true);
 			}
-			context.sendBroadcast(intent);
+			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
