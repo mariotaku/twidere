@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<include layout="@layout/gl_root_group"/>
+
+	<org.mariotaku.twidere.view.HoloProgressBar
+		android:id="@+id/progress"
+		style="?android:attr/progressBarStyleLarge"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"/>
+
+	<RelativeLayout
+		android:id="@+id/control_buttons"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<ImageButton
+			android:id="@+id/close"
+			android:layout_width="64dp"
+			android:layout_height="48dp"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:background="@drawable/btn_viewer_topleft"
+			android:contentDescription="@android:string/cancel"
+			android:onClick="onClick"
+			android:src="@drawable/ic_menu_close_clear_cancel"/>
+
+		<ImageButton
+			android:id="@+id/refresh_stop_save"
+			android:layout_width="64dp"
+			android:layout_height="48dp"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentTop="true"
+			android:background="@drawable/btn_viewer_topright"
+			android:contentDescription="@string/refresh"
+			android:onClick="onClick"
+			android:src="@drawable/ic_menu_refresh"/>
+
+		<ImageButton
+			android:id="@+id/share"
+			android:layout_width="64dp"
+			android:layout_height="48dp"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"
+			android:background="@drawable/btn_viewer_bottomleft"
+			android:contentDescription="@string/share"
+			android:onClick="onClick"
+			android:src="@drawable/ic_menu_share"/>
+
+		<ImageButton
+			android:id="@+id/open_in_browser"
+			android:layout_width="64dp"
+			android:layout_height="48dp"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentRight="true"
+			android:background="@drawable/btn_viewer_bottomright"
+			android:contentDescription="@string/open_in_browser"
+			android:onClick="onClick"
+			android:src="@drawable/ic_menu_browser"/>
+	</RelativeLayout>
+
+</merge>

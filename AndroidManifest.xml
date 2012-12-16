@@ -295,6 +295,26 @@
 			</intent-filter>
 		</activity>
 		<activity
+			android:name="org.mariotaku.gallery3d.app.GalleryActivity"
+			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:exported="false"
+			android:hardwareAccelerated="true"
+			android:label="@string/app_name"
+			android:launchMode="singleTop"
+			android:process=":image_viewer"
+			android:theme="@style/Theme.Twidere.Viewer">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+				<category android:name="android.intent.category.BROWSABLE"/>
+
+				<data android:scheme="http"/>
+				<data android:scheme="https"/>
+				<data android:scheme="file"/>
+			</intent-filter>
+		</activity>
+		<activity
 			android:name=".activity.MapViewerActivity"
 			android:exported="false"
 			android:label="@string/view_map"
