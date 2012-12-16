@@ -49,7 +49,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public final class GalleryActivity extends FragmentActivity implements Constants, OnCancelListener, GalleryContext {
@@ -60,22 +59,6 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 	private GLRootView mGLRootView;
 	private View mProgress;
 	private View mControlButtons;
-	
-	public void showProgress() {
-		mProgress.setVisibility(View.VISIBLE);
-	}
-	
-	public void hideProgress() {
-		mProgress.setVisibility(View.GONE);
-	}
-	
-	public void showControls() {
-		mControlButtons.setVisibility(View.VISIBLE);
-	}
-	
-	public void hideControls() {
-		mControlButtons.setVisibility(View.GONE);
-	}
 
 	private StateManager mStateManager;
 
@@ -95,6 +78,7 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 			}
 		}
 	};
+
 	private final IntentFilter mMountFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
 
 	@Override
@@ -131,6 +115,14 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 		return mTransitionStore;
 	}
 
+	public void hideControls() {
+		mControlButtons.setVisibility(View.GONE);
+	}
+
+	public void hideProgress() {
+		mProgress.setVisibility(View.GONE);
+	}
+
 	@Override
 	public void onBackPressed() {
 		// send the back event to the top sub-state
@@ -159,6 +151,14 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 	}
 
 	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
+		mProgress = findViewById(R.id.progress);
+		mControlButtons = findViewById(R.id.control_buttons);
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		return getStateManager().createOptionsMenu(menu);
@@ -178,14 +178,15 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 	@Override
 	public void setContentView(final int resId) {
 		super.setContentView(resId);
-		
+
 	}
-	
-	public void onContentChanged() {
-		super.onContentChanged();
-		mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
-		mProgress = findViewById(R.id.progress);
-		mControlButtons = findViewById(R.id.control_buttons);
+
+	public void showControls() {
+		mControlButtons.setVisibility(View.VISIBLE);
+	}
+
+	public void showProgress() {
+		mProgress.setVisibility(View.VISIBLE);
 	}
 
 	protected void disableToggleStatusBar() {
@@ -362,9 +363,10 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 		final Uri uri = intent.getData();
 		final String contentType = getContentType(intent);
 		if (contentType == null) {
-//			Toast.makeText(this, R.string.no_such_item, Toast.LENGTH_LONG).show();
-//			finish();
-//			return;
+			// Toast.makeText(this, R.string.no_such_item,
+			// Toast.LENGTH_LONG).show();
+			// finish();
+			// return;
 		}
 		if (uri == null) {
 			Toast.makeText(this, R.string.no_such_item, Toast.LENGTH_LONG).show();

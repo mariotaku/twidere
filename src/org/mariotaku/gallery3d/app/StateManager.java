@@ -41,7 +41,7 @@ public class StateManager {
 
 	private final GalleryActivity mActivity;
 	private final Stack<StateEntry> mStack = new Stack<StateEntry>();
-	private ActivityState.ResultEntry mResult;
+	private PhotoPage.ResultEntry mResult;
 
 	public StateManager(final GalleryActivity activity) {
 		mActivity = activity;
@@ -66,7 +66,7 @@ public class StateManager {
 		return mStack.size();
 	}
 
-	public ActivityState getTopState() {
+	public PhotoPage getTopState() {
 		Utils.assertTrue(!mStack.isEmpty());
 		return mStack.peek().activityState;
 	}
@@ -114,13 +114,12 @@ public class StateManager {
 		final Parcelable list[] = inState.getParcelableArray(KEY_MAIN);
 		for (final Parcelable parcelable : list) {
 			final Bundle bundle = (Bundle) parcelable;
-			final Class<? extends ActivityState> klass = (Class<? extends ActivityState>) bundle
-					.getSerializable(KEY_CLASS);
+			final Class<? extends PhotoPage> klass = (Class<? extends PhotoPage>) bundle.getSerializable(KEY_CLASS);
 
 			final Bundle data = bundle.getBundle(KEY_DATA);
 			final Bundle state = bundle.getBundle(KEY_STATE);
 
-			ActivityState activityState;
+			PhotoPage activityState;
 			try {
 				Log.v(TAG, "restoreFromState " + klass);
 				activityState = klass.newInstance();
@@ -159,16 +158,16 @@ public class StateManager {
 		outState.putParcelableArray(KEY_MAIN, list);
 	}
 
-	public void startState(final Class<? extends ActivityState> klass, final Bundle data) {
+	public void startState(final Class<? extends PhotoPage> klass, final Bundle data) {
 		Log.v(TAG, "startState " + klass);
-		ActivityState state = null;
+		PhotoPage state = null;
 		try {
 			state = klass.newInstance();
 		} catch (final Exception e) {
 			throw new AssertionError(e);
 		}
 		if (!mStack.isEmpty()) {
-			final ActivityState top = getTopState();
+			final PhotoPage top = getTopState();
 			top.transitionOnNextPause(top.getClass(), klass, StateTransitionAnimation.Transition.Incoming);
 			if (mIsResumed) {
 				top.onPause();
@@ -183,11 +182,11 @@ public class StateManager {
 		}
 	}
 
-	void finishState(final ActivityState state) {
+	void finishState(final PhotoPage state) {
 		finishState(state, true);
 	}
 
-	void finishState(final ActivityState state, final boolean fireOnPause) {
+	void finishState(final PhotoPage state, final boolean fireOnPause) {
 		// The finish() request could be rejected (only happens under Monkey),
 		// If it is rejected, we won't close the last page.
 		if (mStack.size() == 1) {
@@ -216,7 +215,7 @@ public class StateManager {
 		// Remove the top state.
 		mStack.pop();
 		state.mIsFinishing = true;
-		final ActivityState top = !mStack.isEmpty() ? mStack.peek().activityState : null;
+		final PhotoPage top = !mStack.isEmpty() ? mStack.peek().activityState : null;
 		if (mIsResumed && fireOnPause) {
 			if (top != null) {
 				state.transitionOnNextPause(state.getClass(), top.getClass(),
@@ -234,9 +233,9 @@ public class StateManager {
 
 	private static class StateEntry {
 		public Bundle data;
-		public ActivityState activityState;
+		public PhotoPage activityState;
 
-		public StateEntry(final Bundle data, final ActivityState state) {
+		public StateEntry(final Bundle data, final PhotoPage state) {
 			this.data = data;
 			activityState = state;
 		}

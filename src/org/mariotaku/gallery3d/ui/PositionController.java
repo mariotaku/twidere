@@ -85,15 +85,6 @@ class PositionController {
 	// set to false again).
 	private boolean mExtraScalingRange = false;
 
-	// Film Mode v.s. Page Mode: in film mode we show smaller pictures.
-	private boolean mFilmMode = false;
-
-	// These are the limits for width / height of the picture in film mode.
-	private static final float FILM_MODE_PORTRAIT_HEIGHT = 0.48f;
-	private static final float FILM_MODE_PORTRAIT_WIDTH = 0.7f;
-	private static final float FILM_MODE_LANDSCAPE_HEIGHT = 0.7f;
-	private static final float FILM_MODE_LANDSCAPE_WIDTH = 0.7f;
-
 	// In addition to the focused box (index == 0). We also keep information
 	// about this many boxes on each side.
 	private static final int BOX_MAX = PhotoView.SCREEN_NAIL_MAX;
@@ -101,10 +92,6 @@ class PositionController {
 
 	private static final int IMAGE_GAP = GalleryUtils.dpToPixel(16);
 	private static final int HORIZONTAL_SLACK = GalleryUtils.dpToPixel(12);
-
-	// These are constants for the delete gesture.
-	private static final int DEFAULT_DELETE_ANIMATION_DURATION = 200; // ms
-	private static final int MAX_DELETE_ANIMATION_DURATION = 400; // ms
 
 	private final Listener mListener;
 	private volatile Rect mOpenAnimationRect;
@@ -243,55 +230,6 @@ class PositionController {
 	public void endScale() {
 		mInScale = false;
 		snapAndRedraw();
-	}
-
-	public boolean flingFilmX(final int velocityX) {
-		if (velocityX == 0) return false;
-
-		final Box b = mBoxes.get(0);
-		final Platform p = mPlatform;
-
-		// If we are already at the edge, don't start the fling.
-		final int defaultX = p.mDefaultX;
-		if (!mHasPrev && p.mCurrentX >= defaultX || !mHasNext && p.mCurrentX <= defaultX) return false;
-
-		mFilmScroller.fling(p.mCurrentX, 0, velocityX, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
-		final int targetX = mFilmScroller.getFinalX();
-		return startAnimation(targetX, b.mCurrentY, b.mCurrentScale, ANIM_KIND_FLING_X);
-	}
-
-	// Moves the specified box out of screen. If velocityY is 0, a default
-	// velocity is used. Returns the time for the duration, or -1 if we cannot
-	// not do the animation.
-	public int flingFilmY(final int boxIndex, final int velocityY) {
-		final Box b = mBoxes.get(boxIndex);
-
-		// Calculate targetY
-		final int h = heightOf(b);
-		int targetY;
-		final int FUZZY = 3; // TODO: figure out why this is needed.
-		if (velocityY < 0 || velocityY == 0 && b.mCurrentY <= 0) {
-			targetY = -mViewH / 2 - (h + 1) / 2 - FUZZY;
-		} else {
-			targetY = (mViewH + 1) / 2 + h / 2 + FUZZY;
-		}
-
-		// Calculate duration
-		int duration;
-		if (velocityY != 0) {
-			duration = (int) (Math.abs(targetY - b.mCurrentY) * 1000f / Math.abs(velocityY));
-			duration = Math.min(MAX_DELETE_ANIMATION_DURATION, duration);
-		} else {
-			duration = DEFAULT_DELETE_ANIMATION_DURATION;
-		}
-
-		// Start animation
-		ANIM_TIME[ANIM_KIND_DELETE] = duration;
-		if (b.doAnimation(targetY, b.mCurrentScale, ANIM_KIND_DELETE)) {
-			redraw();
-			return duration;
-		}
-		return -1;
 	}
 
 	public boolean flingPage(int velocityX, int velocityY) {
@@ -632,7 +570,6 @@ class PositionController {
 		focusX -= mViewW / 2;
 		focusY -= mViewH / 2;
 		final Box b = mBoxes.get(0);
-		final Platform p = mPlatform;
 
 		// We want to keep the focus point (on the bitmap) the same as when we
 		// begin the scale gesture, that is,
@@ -640,8 +577,8 @@ class PositionController {
 		// (focusX' - currentX') / scale' = (focusX - currentX) / scale
 		//
 		s = b.clampScale(s * getTargetScale(b));
-		final int x = mFilmMode ? p.mCurrentX : (int) (focusX - s * mFocusX + 0.5f);
-		final int y = mFilmMode ? b.mCurrentY : (int) (focusY - s * mFocusY + 0.5f);
+		final int x = (int) (focusX - s * mFocusX + 0.5f);
+		final int y = (int) (focusY - s * mFocusY + 0.5f);
 		startAnimation(x, y, s, ANIM_KIND_SCALE);
 		if (s < b.mScaleMin) return -1;
 		if (s > b.mScaleMax) return 1;
@@ -747,9 +684,6 @@ class PositionController {
 	}
 
 	public void setFilmMode(final boolean enabled) {
-		if (enabled == mFilmMode) return;
-		mFilmMode = enabled;
-
 		mPlatform.updateDefaultXY();
 		updateScaleAndGapLimit();
 		stopAnimation();
@@ -884,9 +818,6 @@ class PositionController {
 
 	public void stopScrolling() {
 		if (mPlatform.mAnimationStartTime == NO_ANIMATION) return;
-		if (mFilmMode) {
-			mFilmScroller.forceFinished(true);
-		}
 		mPlatform.mFromX = mPlatform.mToX = mPlatform.mCurrentX;
 	}
 
@@ -1066,39 +997,27 @@ class PositionController {
 	// Returns the default gap size according the the size of the boxes around
 	// the gap and the current mode.
 	private int getDefaultGapSize(final int i) {
-		if (mFilmMode) return IMAGE_GAP;
 		final Box a = mBoxes.get(i);
 		final Box b = mBoxes.get(i + 1);
 		return IMAGE_GAP + Math.max(gapToSide(a), gapToSide(b));
 	}
 
 	private float getMaximalScale(final Box b) {
-		if (mFilmMode) return getMinimalScale(b);
 		if (mConstrained && !mConstrainedFrame.isEmpty()) return getMinimalScale(b);
 		return SCALE_LIMIT;
 	}
 
 	private float getMinimalScale(final Box b) {
-		float wFactor = 1.0f;
-		float hFactor = 1.0f;
+		final float wFactor = 1.0f;
+		final float hFactor = 1.0f;
 		int viewW, viewH;
 
-		if (!mFilmMode && mConstrained && !mConstrainedFrame.isEmpty() && b == mBoxes.get(0)) {
+		if (mConstrained && !mConstrainedFrame.isEmpty() && b == mBoxes.get(0)) {
 			viewW = mConstrainedFrame.width();
 			viewH = mConstrainedFrame.height();
 		} else {
 			viewW = mViewW;
 			viewH = mViewH;
-		}
-
-		if (mFilmMode) {
-			if (mViewH > mViewW) { // portrait
-				wFactor = FILM_MODE_PORTRAIT_WIDTH;
-				hFactor = FILM_MODE_PORTRAIT_HEIGHT;
-			} else { // landscape
-				wFactor = FILM_MODE_LANDSCAPE_WIDTH;
-				hFactor = FILM_MODE_LANDSCAPE_HEIGHT;
-			}
 		}
 
 		final float s = Math.min(wFactor * viewW / b.mImageW, hFactor * viewH / b.mImageH);
@@ -1235,19 +1154,8 @@ class PositionController {
 		b.mImageW = width;
 		b.mImageH = height;
 
-		// If this is the first time we receive an image size or we are in
-		// fullscreen,
-		// we change the scale directly. Otherwise adjust the scales by a ratio,
-		// and snapback will animate the scale into the min/max bounds if
-		// necessary.
-		if (wasViewSize && !isViewSize || !mFilmMode) {
-			b.mCurrentScale = getMinimalScale(b);
-			b.mAnimationStartTime = NO_ANIMATION;
-		} else {
-			b.mCurrentScale *= ratio;
-			b.mFromScale *= ratio;
-			b.mToScale *= ratio;
-		}
+		b.mCurrentScale = getMinimalScale(b);
+		b.mAnimationStartTime = NO_ANIMATION;
 
 		if (i == 0) {
 			mFocusX /= ratio;
@@ -1474,19 +1382,15 @@ class PositionController {
 				final float scaleMin = mExtraScalingRange ? mScaleMin * SCALE_MIN_EXTRA : mScaleMin;
 				final float scaleMax = mExtraScalingRange ? mScaleMax * SCALE_MAX_EXTRA : mScaleMax;
 				scale = Utils.clamp(mCurrentScale, scaleMin, scaleMax);
-				if (mFilmMode) {
-					y = 0;
-				} else {
-					calculateStableBound(scale, HORIZONTAL_SLACK);
-					// If the picture is zoomed-in, we want to keep the focus
-					// point stay in the same position on screen. See the
-					// comment in Platform.startSnapback for details.
-					if (!viewTallerThanScaledImage(scale)) {
-						final float scaleDiff = mCurrentScale - scale;
-						y += (int) (mFocusY * scaleDiff + 0.5f);
-					}
-					y = Utils.clamp(y, mBoundTop, mBoundBottom);
+				calculateStableBound(scale, HORIZONTAL_SLACK);
+				// If the picture is zoomed-in, we want to keep the focus
+				// point stay in the same position on screen. See the
+				// comment in Platform.startSnapback for details.
+				if (!viewTallerThanScaledImage(scale)) {
+					final float scaleDiff = mCurrentScale - scale;
+					y += (int) (mFocusY * scaleDiff + 0.5f);
 				}
+				y = Utils.clamp(y, mBoundTop, mBoundBottom);
 			} else {
 				y = 0;
 				scale = mScaleMin;
@@ -1568,7 +1472,7 @@ class PositionController {
 
 		@Override
 		public boolean startSnapback() {
-			final float target = mFilmMode ? 1f : 0f;
+			final float target = 0f;
 			if (target == mToRatio) return false;
 			return doAnimation(target, ANIM_KIND_SNAPBACK);
 		}
@@ -1663,25 +1567,21 @@ class PositionController {
 			final float scale = Utils.clamp(b.mCurrentScale, scaleMin, scaleMax);
 			int x = mCurrentX;
 			final int y = mDefaultY;
-			if (mFilmMode) {
-				x = mDefaultX;
-			} else {
-				calculateStableBound(scale, HORIZONTAL_SLACK);
-				// If the picture is zoomed-in, we want to keep the focus point
-				// stay in the same position on screen, so we need to adjust
-				// target mCurrentX (which is the center of the focused
-				// box). The position of the focus point on screen (relative the
-				// the center of the view) is:
-				//
-				// mCurrentX + scale * mFocusX = mCurrentX' + scale' * mFocusX
-				// => mCurrentX' = mCurrentX + (scale - scale') * mFocusX
-				//
-				if (!viewWiderThanScaledImage(scale)) {
-					final float scaleDiff = b.mCurrentScale - scale;
-					x += (int) (mFocusX * scaleDiff + 0.5f);
-				}
-				x = Utils.clamp(x, mBoundLeft, mBoundRight);
+			calculateStableBound(scale, HORIZONTAL_SLACK);
+			// If the picture is zoomed-in, we want to keep the focus point
+			// stay in the same position on screen, so we need to adjust
+			// target mCurrentX (which is the center of the focused
+			// box). The position of the focus point on screen (relative the
+			// the center of the view) is:
+			//
+			// mCurrentX + scale * mFocusX = mCurrentX' + scale' * mFocusX
+			// => mCurrentX' = mCurrentX + (scale - scale') * mFocusX
+			//
+			if (!viewWiderThanScaledImage(scale)) {
+				final float scaleDiff = b.mCurrentScale - scale;
+				x += (int) (mFocusX * scaleDiff + 0.5f);
 			}
+			x = Utils.clamp(x, mBoundLeft, mBoundRight);
 			if (mCurrentX != x || mCurrentY != y) return doAnimation(x, y, ANIM_KIND_SNAPBACK);
 			return false;
 		}
@@ -1696,7 +1596,7 @@ class PositionController {
 			// we are not centered.
 			if (mConstrained && !mConstrainedFrame.isEmpty()) {
 				mDefaultX = mConstrainedFrame.centerX() - mViewW / 2;
-				mDefaultY = mFilmMode ? 0 : mConstrainedFrame.centerY() - mViewH / 2;
+				mDefaultY = mConstrainedFrame.centerY() - mViewH / 2;
 			} else {
 				mDefaultX = 0;
 				mDefaultY = 0;

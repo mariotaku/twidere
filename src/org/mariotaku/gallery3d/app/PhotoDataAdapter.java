@@ -272,7 +272,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 		return mTileProvider.getTile(level, x, y, tileSize, borderSize, pool);
 	}
 
-
 	@Override
 	public boolean isEmpty() {
 		return mSize == 0;

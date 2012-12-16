@@ -28,8 +28,6 @@ import android.view.View;
 public class ApiHelper {
 	public static final boolean USE_888_PIXEL_FORMAT = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
-	public static final boolean ENABLE_PHOTO_EDITOR = Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
-
 	public static final boolean HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE = hasField(View.class,
 			"SYSTEM_UI_FLAG_LAYOUT_STABLE");
 
@@ -41,8 +39,6 @@ public class ApiHelper {
 	public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
 	public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_FACTORY = Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
-
-	public static final boolean HAS_SET_BEAM_PUSH_URIS = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
 	public static final boolean HAS_SET_DEFALT_BUFFER_SIZE = hasMethod("android.graphics.SurfaceTexture",
 			"setDefaultBufferSize", int.class, int.class);

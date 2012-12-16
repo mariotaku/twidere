@@ -51,7 +51,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import edu.ucdavis.earlybird.UCDService;
 
-public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener, IGalleryApplication {
+public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener,
+		IGalleryApplication {
 
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
@@ -67,14 +68,68 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	private HostAddressResolver mResolver;
 
+	private static final String DOWNLOAD_FOLDER = "download";
+
+	private static final long DOWNLOAD_CAPACITY = 64 * 1024 * 1024; // 64M
+
+	private ImageCacheService mImageCacheService;
+
+	private final Object mLock = new Object();
+
+	private DataManager mDataManager;
+
+	private ThreadPool mThreadPool;
+
+	private DownloadCache mDownloadCache;
+
+	@Override
+	public Context getAndroidContext() {
+		return this;
+	}
+
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager != null) return mAsyncTaskManager;
 		return mAsyncTaskManager = AsyncTaskManager.getInstance();
 	}
 
+	@Override
+	public synchronized DataManager getDataManager() {
+		if (mDataManager == null) {
+			mDataManager = new DataManager(this);
+			mDataManager.initializeSourceMap();
+		}
+		return mDataManager;
+	}
+
+	@Override
+	public synchronized DownloadCache getDownloadCache() {
+		if (mDownloadCache == null) {
+			final File cacheDir = new File(getExternalCacheDir(), DOWNLOAD_FOLDER);
+
+			if (!cacheDir.isDirectory()) {
+				cacheDir.mkdirs();
+			}
+
+			if (!cacheDir.isDirectory()) throw new RuntimeException("fail to create: " + cacheDir.getAbsolutePath());
+			mDownloadCache = new DownloadCache(this, cacheDir, DOWNLOAD_CAPACITY);
+		}
+		return mDownloadCache;
+	}
+
 	public HostAddressResolver getHostAddressResolver() {
 		if (mResolver != null) return mResolver;
 		return mResolver = new TwidereHostAddressResolver(this);
+	}
+
+	@Override
+	public ImageCacheService getImageCacheService() {
+		// This method may block on file I/O so a dedicated lock is needed here.
+		synchronized (mLock) {
+			if (mImageCacheService == null) {
+				mImageCacheService = new ImageCacheService(getAndroidContext());
+			}
+			return mImageCacheService;
+		}
 	}
 
 	public LazyImageLoader getPreviewImageLoader() {
@@ -103,6 +158,14 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public ArrayList<Long> getSelectedUserIds() {
 		return mSelectedUserIds;
+	}
+
+	@Override
+	public synchronized ThreadPool getThreadPool() {
+		if (mThreadPool == null) {
+			mThreadPool = new ThreadPool();
+		}
+		return mThreadPool;
 	}
 
 	public TwitterWrapper getTwitterWrapper() {
@@ -188,6 +251,15 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		sendBroadcast(intent);
 	}
 
+	private void initializeAsyncTask() {
+		// AsyncTask class needs to be loaded in UI thread.
+		// So we load it here to comply the rule.
+		try {
+			Class.forName(AsyncTask.class.getName());
+		} catch (final ClassNotFoundException e) {
+		}
+	}
+
 	public static TwidereApplication getInstance(final Context context) {
 		return context != null ? (TwidereApplication) context.getApplicationContext() : null;
 	}
@@ -233,72 +305,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			return ret;
 		}
 
-	}
-
-	private static final String DOWNLOAD_FOLDER = "download";
-	private static final long DOWNLOAD_CAPACITY = 64 * 1024 * 1024; // 64M
-
-	private ImageCacheService mImageCacheService;
-	private final Object mLock = new Object();
-	private DataManager mDataManager;
-	private ThreadPool mThreadPool;
-	private DownloadCache mDownloadCache;
-
-	@Override
-	public Context getAndroidContext() {
-		return this;
-	}
-
-	@Override
-	public synchronized DataManager getDataManager() {
-		if (mDataManager == null) {
-			mDataManager = new DataManager(this);
-			mDataManager.initializeSourceMap();
-		}
-		return mDataManager;
-	}
-
-	@Override
-	public synchronized DownloadCache getDownloadCache() {
-		if (mDownloadCache == null) {
-			final File cacheDir = new File(getExternalCacheDir(), DOWNLOAD_FOLDER);
-
-			if (!cacheDir.isDirectory()) {
-				cacheDir.mkdirs();
-			}
-
-			if (!cacheDir.isDirectory()) throw new RuntimeException("fail to create: " + cacheDir.getAbsolutePath());
-			mDownloadCache = new DownloadCache(this, cacheDir, DOWNLOAD_CAPACITY);
-		}
-		return mDownloadCache;
-	}
-
-	@Override
-	public ImageCacheService getImageCacheService() {
-		// This method may block on file I/O so a dedicated lock is needed here.
-		synchronized (mLock) {
-			if (mImageCacheService == null) {
-				mImageCacheService = new ImageCacheService(getAndroidContext());
-			}
-			return mImageCacheService;
-		}
-	}
-
-	@Override
-	public synchronized ThreadPool getThreadPool() {
-		if (mThreadPool == null) {
-			mThreadPool = new ThreadPool();
-		}
-		return mThreadPool;
-	}
-
-	private void initializeAsyncTask() {
-		// AsyncTask class needs to be loaded in UI thread.
-		// So we load it here to comply the rule.
-		try {
-			Class.forName(AsyncTask.class.getName());
-		} catch (final ClassNotFoundException e) {
-		}
 	}
 
 }

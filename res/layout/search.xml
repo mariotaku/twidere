@@ -10,7 +10,10 @@
 			android:id="@+id/pager_tab"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="top"/>
+			android:layout_gravity="top"
+			android:textAppearance="?android:textAppearanceMedium"
+			android:textColor="?android:textColorPrimary"
+			android:textSize="14sp"/>
 	</org.mariotaku.twidere.view.ExtendedViewPager>
 
 </merge>

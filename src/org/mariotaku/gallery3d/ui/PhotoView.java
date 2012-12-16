@@ -21,7 +21,6 @@ import org.mariotaku.gallery3d.common.ApiHelper;
 import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.data.MediaItem;
 import org.mariotaku.gallery3d.data.MediaObject;
-import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.RangeArray;
 import org.mariotaku.twidere.R;
 
@@ -42,21 +41,6 @@ public class PhotoView extends GLView {
 	public static final int INVALID_SIZE = -1;
 	public static final long INVALID_DATA_VERSION = MediaObject.INVALID_DATA_VERSION;
 
-	// The rules about orientation locking:
-	//
-	// (1) We need to lock the orientation if we are in page mode camera
-	// preview, so there is no (unwanted) rotation animation when the user
-	// rotates the device.
-	//
-	// (2) We need to unlock the orientation if we want to show the action bar
-	// because the action bar follows the system orientation.
-	//
-	// The rules about action bar:
-	//
-	// (1) If we are in film mode, we don't show action bar.
-	//
-	// (2) If we go from camera to gallery with capture animation, we show
-	// action bar.
 	private static final int MSG_CANCEL_EXTRA_SCALING = 2;
 
 	private static final int MSG_SWITCH_FOCUS = 3;
@@ -119,9 +103,6 @@ public class PhotoView extends GLView {
 	// gesture in film mode. The value Integer.MAX_VALUE means no box was
 	// touched.
 	private int mTouchBoxIndex = Integer.MAX_VALUE;
-	// Whether the box indicated by mTouchBoxIndex is deletable. Only meaningful
-	// if mTouchBoxIndex is not Integer.MAX_VALUE.
-	private boolean mTouchBoxDeletable;
 	// This is the index of the last deleted item. This is only used as a hint
 	// to hide the undo button when we are too far away from the deleted
 	// item. The value Integer.MAX_VALUE means there is no such hint.
@@ -355,15 +336,6 @@ public class PhotoView extends GLView {
 			mDisplayRotation = displayRotation;
 			mCompensation = compensation;
 
-			// We need to change the size and rotation of the Camera ScreenNail,
-			// but we don't want it to animate because the size doen't actually
-			// change in the eye of the user.
-			for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
-				final Picture p = mPictures.get(i);
-				// if (p.isCamera()) {
-				// p.forceSize();
-				// }
-			}
 		}
 
 		updateCameraRect();
@@ -1002,7 +974,7 @@ public class PhotoView extends GLView {
 
 		private boolean flingImages(final float velocityX, final float velocityY) {
 			final int vx = (int) (velocityX + 0.5f);
-			int vy = (int) (velocityY + 0.5f);
+			final int vy = (int) (velocityY + 0.5f);
 			return mPositionController.flingPage(vx, vy);
 		}
 
@@ -1258,14 +1230,9 @@ public class PhotoView extends GLView {
 
 			// Draw the play video icon and the message.
 			canvas.translate((int) (cx + 0.5f), (int) (cy + 0.5f));
-			final int s = (int) (scale * Math.min(r.width(), r.height()) + 0.5f);
 			if (mLoadingState == Model.LOADING_FAIL) {
 				drawLoadingFailMessage(canvas);
 			}
-
-			// Draw a debug indicator showing which picture has focus (index ==
-			// 0).
-			// canvas.fillRect(-10, -10, 20, 20, 0x80FF00FF);
 
 			canvas.restore();
 		}

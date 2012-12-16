@@ -18,13 +18,13 @@ package org.mariotaku.gallery3d.util;
 
 import java.util.Arrays;
 
-import org.mariotaku.twidere.R;
 import org.mariotaku.gallery3d.common.ApiHelper;
 import org.mariotaku.gallery3d.data.DataManager;
 import org.mariotaku.gallery3d.data.MediaItem;
 import org.mariotaku.gallery3d.ui.TiledScreenNail;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
+import org.mariotaku.twidere.R;
 
 import android.annotation.TargetApi;
 import android.content.Context;
