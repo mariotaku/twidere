@@ -98,7 +98,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 	private EditText mEditUsername, mEditPassword;
 	private Button mSignInButton, mSignUpButton, mBrowserSignInButton;
-	private LinearLayout mSigninSignup, mUsernamePassword;
+	private LinearLayout mSigninSignupContainer, mUsernamePasswordContainer;
 	private ImageButton mSetColorButton;
 
 	private TwidereApplication mApplication;
@@ -138,14 +138,13 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 						mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
 						mOAuthBaseURL = bundle.getString(Accounts.OAUTH_BASE_URL);
 						mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
-
 						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
-						final boolean hide_username_password = mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
-						findViewById(R.id.username_password).setVisibility(
-								hide_username_password ? View.GONE : View.VISIBLE);
-						((LinearLayout) findViewById(R.id.sign_in_sign_up))
-								.setOrientation(hide_username_password ? LinearLayout.VERTICAL
-										: LinearLayout.HORIZONTAL);
+						final boolean is_twip_o_mode = mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
+						final boolean is_oauth = mAuthType == Accounts.AUTH_TYPE_OAUTH;
+						mBrowserSignInButton.setVisibility(is_oauth ? View.VISIBLE : View.GONE);
+						mUsernamePasswordContainer.setVisibility(is_twip_o_mode ? View.GONE : View.VISIBLE);
+						mSigninSignupContainer.setOrientation(is_twip_o_mode ? LinearLayout.VERTICAL
+								: LinearLayout.HORIZONTAL);
 					}
 				}
 				setSignInButton();
@@ -227,8 +226,8 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		mSignInButton = (Button) findViewById(R.id.sign_in);
 		mSignUpButton = (Button) findViewById(R.id.sign_up);
 		mBrowserSignInButton = (Button) findViewById(R.id.browser_sign_in);
-		mSigninSignup = (LinearLayout) findViewById(R.id.sign_in_sign_up);
-		mUsernamePassword = (LinearLayout) findViewById(R.id.username_password);
+		mSigninSignupContainer = (LinearLayout) findViewById(R.id.sign_in_sign_up);
+		mUsernamePasswordContainer = (LinearLayout) findViewById(R.id.username_password);
 		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
 	}
 
@@ -272,8 +271,9 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		if (bundle.containsKey(Accounts.USER_COLOR)) {
 			mUserColor = bundle.getInt(Accounts.USER_COLOR, Color.TRANSPARENT);
 		}
-		mUsernamePassword.setVisibility(mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE ? View.GONE : View.VISIBLE);
-		mSigninSignup.setOrientation(mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE ? LinearLayout.VERTICAL
+		mUsernamePasswordContainer
+				.setVisibility(mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE ? View.GONE : View.VISIBLE);
+		mSigninSignupContainer.setOrientation(mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE ? LinearLayout.VERTICAL
 				: LinearLayout.HORIZONTAL);
 
 		mEditUsername.setText(mUsername);

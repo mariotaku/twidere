@@ -21,8 +21,15 @@ package org.mariotaku.twidere.app;
 
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import org.mariotaku.gallery3d.app.IGalleryApplication;
+import org.mariotaku.gallery3d.data.DataManager;
+import org.mariotaku.gallery3d.data.DownloadCache;
+import org.mariotaku.gallery3d.data.ImageCacheService;
+import org.mariotaku.gallery3d.util.GalleryUtils;
+import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -41,9 +48,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.AsyncTask;
 import edu.ucdavis.earlybird.UCDService;
 
-public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
+public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener, IGalleryApplication {
 
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
@@ -114,6 +122,8 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		super.onCreate();
+		initializeAsyncTask();
+		GalleryUtils.initialize(this);
 		mTwitterWrapper = TwitterWrapper.getInstance(this);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
 			startService(new Intent(this, UCDService.class));
@@ -223,6 +233,72 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			return ret;
 		}
 
+	}
+
+	private static final String DOWNLOAD_FOLDER = "download";
+	private static final long DOWNLOAD_CAPACITY = 64 * 1024 * 1024; // 64M
+
+	private ImageCacheService mImageCacheService;
+	private final Object mLock = new Object();
+	private DataManager mDataManager;
+	private ThreadPool mThreadPool;
+	private DownloadCache mDownloadCache;
+
+	@Override
+	public Context getAndroidContext() {
+		return this;
+	}
+
+	@Override
+	public synchronized DataManager getDataManager() {
+		if (mDataManager == null) {
+			mDataManager = new DataManager(this);
+			mDataManager.initializeSourceMap();
+		}
+		return mDataManager;
+	}
+
+	@Override
+	public synchronized DownloadCache getDownloadCache() {
+		if (mDownloadCache == null) {
+			final File cacheDir = new File(getExternalCacheDir(), DOWNLOAD_FOLDER);
+
+			if (!cacheDir.isDirectory()) {
+				cacheDir.mkdirs();
+			}
+
+			if (!cacheDir.isDirectory()) throw new RuntimeException("fail to create: " + cacheDir.getAbsolutePath());
+			mDownloadCache = new DownloadCache(this, cacheDir, DOWNLOAD_CAPACITY);
+		}
+		return mDownloadCache;
+	}
+
+	@Override
+	public ImageCacheService getImageCacheService() {
+		// This method may block on file I/O so a dedicated lock is needed here.
+		synchronized (mLock) {
+			if (mImageCacheService == null) {
+				mImageCacheService = new ImageCacheService(getAndroidContext());
+			}
+			return mImageCacheService;
+		}
+	}
+
+	@Override
+	public synchronized ThreadPool getThreadPool() {
+		if (mThreadPool == null) {
+			mThreadPool = new ThreadPool();
+		}
+		return mThreadPool;
+	}
+
+	private void initializeAsyncTask() {
+		// AsyncTask class needs to be loaded in UI thread.
+		// So we load it here to comply the rule.
+		try {
+			Class.forName(AsyncTask.class.getName());
+		} catch (final ClassNotFoundException e) {
+		}
 	}
 
 }

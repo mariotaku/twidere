@@ -390,7 +390,9 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (activated_ids != null && activated_ids.length > 0
 				&& !ArrayUtils.contains(activated_ids, default_account_id)) {
 			mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
-			mIndicator.setPagingEnabled(true);
+			if (mIndicator != null) {
+				mIndicator.setPagingEnabled(true);
+			}
 		}
 	}
 
