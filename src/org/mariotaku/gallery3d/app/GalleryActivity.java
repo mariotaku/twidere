@@ -51,10 +51,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-public final class GalleryActivity extends FragmentActivity implements Constants, OnCancelListener, GalleryContext {
+public final class GalleryActivity extends FragmentActivity implements Constants, View.OnClickListener, GalleryContext {
 
+	public void onClick(View v) {
+		// TODO: Implement this method
+	}
+	
 	private static final String TAG = "Gallery";
-	private Dialog mVersionCheckDialog;
 
 	private GLRootView mGLRootView;
 	private View mProgress;
@@ -66,7 +69,7 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 
 	private final TransitionStore mTransitionStore = new TransitionStore();
 
-	private boolean mDisableToggleStatusBar;
+	//private boolean mDisableToggleStatusBar;
 
 	private AlertDialog mAlertDialog = null;
 
@@ -136,18 +139,10 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 	}
 
 	@Override
-	public void onCancel(final DialogInterface dialog) {
-		if (dialog == mVersionCheckDialog) {
-			mVersionCheckDialog = null;
-		}
-	}
-
-	@Override
 	public void onConfigurationChanged(final Configuration config) {
 		super.onConfigurationChanged(config);
 		mStateManager.onConfigurationChange(config);
 		invalidateOptionsMenu();
-		toggleStatusBarByOrientation();
 	}
 
 	@Override
@@ -158,43 +153,12 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 		mControlButtons = findViewById(R.id.control_buttons);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		return getStateManager().createOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		final GLRoot root = getGLRoot();
-		root.lockRenderThread();
-		try {
-			return getStateManager().itemSelected(item);
-		} finally {
-			root.unlockRenderThread();
-		}
-	}
-
-	@Override
-	public void setContentView(final int resId) {
-		super.setContentView(resId);
-
-	}
-
 	public void showControls() {
 		mControlButtons.setVisibility(View.VISIBLE);
 	}
 
 	public void showProgress() {
 		mProgress.setVisibility(View.VISIBLE);
-	}
-
-	protected void disableToggleStatusBar() {
-		mDisableToggleStatusBar = true;
-	}
-
-	protected boolean isFullscreen() {
-		return (getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0;
 	}
 
 	@Override
@@ -211,10 +175,6 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mOrientationManager = new OrientationManager(this);
-		toggleStatusBarByOrientation();
-		// getWindow().setBackgroundDrawable(null);
-		requestWindowFeature(Window.FEATURE_ACTION_BAR);
-		requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
 		setContentView(R.layout.image_viewer_gl);
 
@@ -248,13 +208,8 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 		} finally {
 			mGLRootView.unlockRenderThread();
 		}
-		clearBitmapPool(MediaItem.getMicroThumbPool());
 		clearBitmapPool(MediaItem.getThumbPool());
 
-		MediaItem.getBytesBufferPool().clear();
-		if (mVersionCheckDialog != null) {
-			mVersionCheckDialog.dismiss();
-		}
 	}
 
 	@Override
@@ -270,9 +225,6 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 		}
 		mGLRootView.onResume();
 		mOrientationManager.resume();
-		if (mVersionCheckDialog != null) {
-			mVersionCheckDialog.show();
-		}
 	}
 
 	@Override
@@ -302,14 +254,12 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 					dialog.cancel();
 				}
 			};
-			final AlertDialog.Builder builder = new AlertDialog.Builder(this)
-					.setTitle(R.string.no_external_storage_title).setMessage(R.string.no_external_storage)
-					.setNegativeButton(android.R.string.cancel, onClick).setOnCancelListener(onCancel);
-			if (ApiHelper.HAS_SET_ICON_ATTRIBUTE) {
-				setAlertDialogIconAttribute(builder);
-			} else {
-				builder.setIcon(android.R.drawable.ic_dialog_alert);
-			}
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.no_external_storage_title);
+			builder.setMessage(R.string.no_external_storage);
+			builder.setNegativeButton(android.R.string.cancel, onClick);
+			builder.setOnCancelListener(onCancel);
+			builder.setIcon(android.R.drawable.ic_dialog_alert);
 			mAlertDialog = builder.show();
 			registerReceiver(mMountReceiver, mMountFilter);
 		}
@@ -396,26 +346,10 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 		}
 	}
 
-	// Shows status bar in portrait view, hide in landscape view
-	private void toggleStatusBarByOrientation() {
-		if (mDisableToggleStatusBar) return;
-
-		final Window win = getWindow();
-		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-			win.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		} else {
-			win.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		}
-	}
-
 	private static void clearBitmapPool(final BitmapPool pool) {
 		if (pool != null) {
 			pool.clear();
 		}
 	}
 
-	@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
-	private static void setAlertDialogIconAttribute(final AlertDialog.Builder builder) {
-		builder.setIconAttribute(android.R.attr.alertDialogIcon);
-	}
 }

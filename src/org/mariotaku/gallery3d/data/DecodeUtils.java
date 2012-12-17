@@ -225,27 +225,10 @@ public class DecodeUtils {
 		final int w = options.outWidth;
 		final int h = options.outHeight;
 
-		if (type == MediaItem.TYPE_MICROTHUMBNAIL) {
-			// We center-crop the original image as it's micro thumbnail. In
-			// this case,
-			// we want to make sure the shorter side >= "targetSize".
-			final float scale = (float) targetSize / Math.min(w, h);
-			options.inSampleSize = BitmapUtils.computeSampleSizeLarger(scale);
-
-			// For an extremely wide image, e.g. 300x30000, we may got OOM when
-			// decoding
-			// it for TYPE_MICROTHUMBNAIL. So we add a max number of pixels
-			// limit here.
-			final int MAX_PIXEL_COUNT = 640000; // 400 x 1600
-			if (w / options.inSampleSize * (h / options.inSampleSize) > MAX_PIXEL_COUNT) {
-				options.inSampleSize = BitmapUtils.computeSampleSize(FloatMath.sqrt((float) MAX_PIXEL_COUNT / (w * h)));
-			}
-		} else {
-			// For screen nail, we only want to keep the longer side >=
-			// targetSize.
-			final float scale = (float) targetSize / Math.max(w, h);
-			options.inSampleSize = BitmapUtils.computeSampleSizeLarger(scale);
-		}
+		// For screen nail, we only want to keep the longer side >=
+		// targetSize.
+		final float scale = (float) targetSize / Math.max(w, h);
+		options.inSampleSize = BitmapUtils.computeSampleSizeLarger(scale);
 
 		options.inJustDecodeBounds = false;
 		setOptionsMutable(options);
@@ -255,12 +238,10 @@ public class DecodeUtils {
 
 		// We need to resize down if the decoder does not support inSampleSize
 		// (For example, GIF images)
-		final float scale = (float) targetSize
-				/ (type == MediaItem.TYPE_MICROTHUMBNAIL ? Math.min(result.getWidth(), result.getHeight()) : Math.max(
-						result.getWidth(), result.getHeight()));
+		final float gif_scale = (float) targetSize / Math.max(result.getWidth(), result.getHeight());
 
-		if (scale <= 0.5) {
-			result = BitmapUtils.resizeBitmapByScale(result, scale, true);
+		if (gif_scale <= 0.5) {
+			result = BitmapUtils.resizeBitmapByScale(result, gif_scale, true);
 		}
 		return ensureGLCompatibleBitmap(result);
 	}

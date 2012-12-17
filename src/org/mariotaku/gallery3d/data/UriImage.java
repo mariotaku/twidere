@@ -245,11 +245,7 @@ public class UriImage extends MediaItem {
 
 			if (jc.isCancelled() || bitmap == null) return null;
 
-			if (mType == MediaItem.TYPE_MICROTHUMBNAIL) {
-				bitmap = BitmapUtils.resizeAndCropCenter(bitmap, targetSize, true);
-			} else {
-				bitmap = BitmapUtils.resizeDownBySideLength(bitmap, targetSize, true);
-			}
+			bitmap = BitmapUtils.resizeDownBySideLength(bitmap, targetSize, true);
 			return bitmap;
 		}
 	}

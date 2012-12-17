@@ -437,7 +437,7 @@ public class SlidingPaneView extends ViewGroup {
 					final float xc = scrolledXFloat - child.getLeft();
 					final float yc = scrolledYFloat - child.getTop();
 					ev.setLocation(xc, yc);
-					if (child.dispatchTouchEvent(ev)) return true;
+					if (isTouchEventHandled(child, ev)) return true;
 				}
 			}
 		}
@@ -919,11 +919,12 @@ public class SlidingPaneView extends ViewGroup {
 					mTempDeltaX = 0;
 					mTotalMoveX = 0;
 					mIsScrolling = false;
-					final View layout = mParent.getRightPaneLayout();
-					mShouldDisableScroll = !(isTouchEventHandled(layout, event) || mContext instanceof DualPaneActivity
-							&& ((DualPaneActivity) mContext).isRightPaneUsed());
+					//final View layout = mParent.getRightPaneLayout();
+					mShouldDisableScroll = !(mContext instanceof DualPaneActivity && ((DualPaneActivity) mContext).isRightPaneUsed());
 					if (!mShouldDisableScroll) {
 						mController.reset();
+					} else {
+						return false;
 					}
 					break;
 				}
@@ -950,6 +951,10 @@ public class SlidingPaneView extends ViewGroup {
 					mTempDeltaX = 0;
 					mTotalMoveX = 0;
 					mIsScrolling = false;
+					if (mShouldDisableScroll) {
+						mShouldDisableScroll = false;
+						return false;
+					}
 					mShouldDisableScroll = false;
 					break;
 				}

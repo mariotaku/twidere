@@ -71,19 +71,6 @@ public class StateManager {
 		return mStack.peek().activityState;
 	}
 
-	public boolean itemSelected(final MenuItem item) {
-		if (!mStack.isEmpty()) {
-			if (getTopState().onItemSelected(item)) return true;
-			if (item.getItemId() == android.R.id.home) {
-				if (mStack.size() > 1) {
-					getTopState().onBackPressed();
-				}
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public void notifyActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		getTopState().onStateResult(requestCode, resultCode, data);
 	}

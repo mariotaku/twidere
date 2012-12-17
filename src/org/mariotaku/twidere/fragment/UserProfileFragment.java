@@ -387,7 +387,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mAdapter.add(new UserBlocksAction(6));
 		}
 		mAdapter.notifyDataSetChanged();
-		getFriendship();
+		if (!user.is_cache) {			
+			getFriendship();
+		}
 		mProfileNameBannerContainer.setOnSizeChangedListener(this);
 	}
 

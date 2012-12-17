@@ -102,12 +102,8 @@ public class ApiHelper {
 
 	public static final boolean HAS_SURFACE_TEXTURE_RECORDING = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
-	public static final boolean HAS_ACTION_BAR = Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
-
 	// Ex: View.setTranslationX.
 	public static final boolean HAS_VIEW_TRANSFORM_PROPERTIES = Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
-
-	public static final boolean HAS_CAMERA_HDR = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1;
 
 	public static final boolean HAS_OPTIONS_IN_MUTABLE = Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
@@ -116,16 +112,6 @@ public class ApiHelper {
 	public static final boolean HAS_VIEW_PROPERTY_ANIMATOR = Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB_MR1;
 
 	public static final boolean HAS_POST_ON_ANIMATION = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
-
-	public static int getIntFieldIfExists(final Class<?> klass, final String fieldName, final Class<?> obj,
-			final int defaultVal) {
-		try {
-			final Field f = klass.getDeclaredField(fieldName);
-			return f.getInt(obj);
-		} catch (final Exception e) {
-			return defaultVal;
-		}
-	}
 
 	private static boolean hasField(final Class<?> klass, final String fieldName) {
 		try {

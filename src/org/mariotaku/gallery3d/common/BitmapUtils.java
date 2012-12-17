@@ -96,54 +96,6 @@ public class BitmapUtils {
 		return initialSize <= 8 ? Utils.prevPowerOf2(initialSize) : initialSize / 8 * 8;
 	}
 
-	public static Bitmap createVideoThumbnail(final String filePath) {
-		// MediaMetadataRetriever is available on API Level 8
-		// but is hidden until API Level 10
-		Class<?> clazz = null;
-		Object instance = null;
-		try {
-			clazz = Class.forName("android.media.MediaMetadataRetriever");
-			instance = clazz.newInstance();
-
-			final Method method = clazz.getMethod("setDataSource", String.class);
-			method.invoke(instance, filePath);
-
-			// The method name changes between API Level 9 and 10.
-			if (Build.VERSION.SDK_INT <= 9)
-				return (Bitmap) clazz.getMethod("captureFrame").invoke(instance);
-			else {
-				final byte[] data = (byte[]) clazz.getMethod("getEmbeddedPicture").invoke(instance);
-				if (data != null) {
-					final Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-					if (bitmap != null) return bitmap;
-				}
-				return (Bitmap) clazz.getMethod("getFrameAtTime").invoke(instance);
-			}
-		} catch (final IllegalArgumentException ex) {
-			// Assume this is a corrupt video file
-		} catch (final RuntimeException ex) {
-			// Assume this is a corrupt video file.
-		} catch (final InstantiationException e) {
-			Log.e(TAG, "createVideoThumbnail", e);
-		} catch (final InvocationTargetException e) {
-			Log.e(TAG, "createVideoThumbnail", e);
-		} catch (final ClassNotFoundException e) {
-			Log.e(TAG, "createVideoThumbnail", e);
-		} catch (final NoSuchMethodException e) {
-			Log.e(TAG, "createVideoThumbnail", e);
-		} catch (final IllegalAccessException e) {
-			Log.e(TAG, "createVideoThumbnail", e);
-		} finally {
-			try {
-				if (instance != null) {
-					clazz.getMethod("release").invoke(instance);
-				}
-			} catch (final Exception ignored) {
-			}
-		}
-		return null;
-	}
-
 	public static boolean isRotationSupported(String mimeType) {
 		if (mimeType == null) return false;
 		mimeType = mimeType.toLowerCase();
