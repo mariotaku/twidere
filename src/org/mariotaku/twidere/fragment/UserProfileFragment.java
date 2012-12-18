@@ -225,7 +225,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				if (data.value.is_cache) {
 					getLoaderManager().restartLoader(LOADER_ID_USER, null, this);
 				}
-			} else {
+			} else if (mUser != null && mUser.is_cache && (mUserId == mUser.user_id || mScreenName != null && mScreenName.equals(mUser.screen_name))) {
+				setListShown(true);
+			} else  {
 				if (data.exception != null) {
 					mErrorMessageView.setText(data.exception.getMessage());
 					mErrorMessageView.setVisibility(View.VISIBLE);
@@ -246,9 +248,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mFollowingYouIndicator.setVisibility(View.GONE);
 			mFollowContainer.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
 			mFollowButton.setVisibility(View.GONE);
-			mFollowProgress.setVisibility(View.VISIBLE);
+			mFollowProgress.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
 			mMoreOptionsButton.setVisibility(View.GONE);
-			mMoreOptionsProgress.setVisibility(View.VISIBLE);
+			mMoreOptionsProgress.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
 			return new FriendshipLoader(getActivity(), mAccountId, mUserId);
 		}
 

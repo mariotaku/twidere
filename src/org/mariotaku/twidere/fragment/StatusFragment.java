@@ -107,6 +107,9 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
+import org.mariotaku.twidere.util.*;
+import org.mariotaku.twidere.adapter.*;
+import android.os.Handler;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
 		OnImageClickListener {
@@ -114,14 +117,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
 	private static final int LOADER_ID_LOCATION = 3;
-	private static final int LOADER_ID_CONVERSATION = 4;
 
 	private long mAccountId, mStatusId;
 	private ParcelableStatus mStatus;
 
 	private boolean mLoadMoreAutomatically;
 	private boolean mFollowInfoDisplayed, mLocationInfoDisplayed;
-	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized, mConversationLoaderInitialized;
+	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized;
 	private boolean mFollowInfoLoaderInitialized;;
 	private boolean mShouldScroll;
 
@@ -143,6 +145,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private ExtendedFrameLayout mStatusContainer;
 	private ListView mListView;
 
+	private LoadConversationTask mConversationTask;
+	
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -167,7 +171,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 	};
 
-	private final LoaderCallbacks<Response<ParcelableStatus>> mConversationLoaderCallbacks = new LoaderCallbacks<Response<ParcelableStatus>>() {
+	private final LoaderCallbacks<Response<ParcelableStatus>> mConversationLoaderCallbacks2 = new LoaderCallbacks<Response<ParcelableStatus>>() {
 
 		@Override
 		public Loader<Response<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
@@ -203,7 +207,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					mListView.setSelection(0 + mListView.getHeaderViewsCount());
 				}
 				if (data.value.in_reply_to_status_id > 0) {
-					getLoaderManager().restartLoader(LOADER_ID_CONVERSATION, null, this);
+					//getLoaderManager().restartLoader(LOADER_ID_CONVERSATION, null, this);
 				} else {
 					setProgressBarIndeterminateVisibility(false);
 				}
@@ -426,20 +430,20 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public void displayStatus(final ParcelableStatus status) {
 		onRefreshComplete();
 		updatePullRefresh();
-		if (status == null || !status.equals(mStatus)) {
+		final boolean status_changed = mStatus != null && status != null && !status.equals(mStatus);		
+		if (status_changed) {
 			mAdapter.clear();
-		}
-		mListView.setSelection(0);
-		// UCD
-		if (mStatus != null && status != null && mStatus.status_id != status.status_id) {
-			ProfilingUtil.profile(getActivity(), mAccountId, "End, " + mStatus.status_id);
+			// UCD
+			ProfilingUtil.profile(getActivity(), mStatus.account_id, "End, " + mStatus.status_id);
+		} else {
+			mListView.setSelection(0);
 		}
 		mStatusId = -1;
 		mAccountId = -1;
 		mStatus = status;
 		if (mStatus != null) {
 			// UCD
-			ProfilingUtil.profile(getActivity(), mAccountId, "Start, " + mStatus.status_id);
+			ProfilingUtil.profile(getActivity(), mStatus.account_id, "Start, " + mStatus.status_id);
 			mAccountId = mStatus.account_id;
 			mStatusId = mStatus.status_id;
 		}
@@ -662,6 +666,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		lm.destroyLoader(LOADER_ID_STATUS);
 		lm.destroyLoader(LOADER_ID_LOCATION);
 		lm.destroyLoader(LOADER_ID_FOLLOW);
+		if (mConversationTask != null) {
+			mConversationTask.cancel(true);
+		}
 		super.onDestroyView();
 	}
 
@@ -738,15 +745,18 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	private void showConversation() {
-		final LoaderManager lm = getLoaderManager();
-		lm.destroyLoader(LOADER_ID_CONVERSATION);
-		if (mStatus == null || mStatus.in_reply_to_status_id <= 0) return;
-		if (!mConversationLoaderInitialized) {
-			lm.initLoader(LOADER_ID_CONVERSATION, null, mConversationLoaderCallbacks);
-			mConversationLoaderInitialized = true;
+		if (mConversationTask != null && mConversationTask.getStatus() == AsyncTask.Status.RUNNING) return;
+		final int count = mAdapter.getCount();
+		final ParcelableStatus status;
+		if (count == 0) {
+			mShouldScroll = !mLoadMoreAutomatically;
+			status = mStatus;
 		} else {
-			lm.restartLoader(LOADER_ID_CONVERSATION, null, mConversationLoaderCallbacks);
+			status = mAdapter.getItem(0);
 		}
+		if (status == null || status.in_reply_to_status_id <= 0) return;
+		mConversationTask = new LoadConversationTask(this);
+		mConversationTask.execute(status);
 	}
 
 	private void showFollowInfo(final boolean force) {
@@ -797,6 +807,75 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	@Override
 	void setListHeaderFooters(final ListView list) {
 		list.addFooterView(mStatusView);
+	}
+	
+	public static class LoadConversationTask extends AsyncTask<ParcelableStatus, Void, Response<Boolean>> {
+
+		final Handler handler;
+		final Context context;
+		final StatusFragment fragment;
+		
+		LoadConversationTask(StatusFragment fragment) {
+			this.context = fragment.getActivity();
+			this.fragment = fragment;
+			this.handler = new Handler();
+		}
+		
+		@Override
+		protected Response<Boolean> doInBackground(ParcelableStatus... params) {
+			if (params == null || params.length != 1) return new Response<Boolean>(false, null);
+			try {
+				final long account_id = params[0].account_id;
+				ParcelableStatus status = params[0];
+				while (status != null && status.in_reply_to_status_id > 0 && !isCancelled()) {
+					status = findStatus(context, account_id, status.in_reply_to_status_id);
+					if (status == null) break;
+					handler.post(new AddStatusRunnable(status));
+				}
+			} catch (TwitterException e) {
+				return new Response<Boolean>(false, e);
+			}
+			return new Response<Boolean>(true, null);
+		}
+		
+		@Override
+		protected void onCancelled() {
+			fragment.setProgressBarIndeterminateVisibility(false);
+			fragment.updatePullRefresh();
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			fragment.setProgressBarIndeterminateVisibility(true);
+			fragment.updatePullRefresh();
+		}
+
+		@Override
+		protected void onPostExecute(final Response<Boolean> data) {
+			fragment.setProgressBarIndeterminateVisibility(false);
+			fragment.updatePullRefresh();
+			if (data == null || data.value == null || !data.value) {
+				showErrorToast(context, context.getString(R.string.getting_status), data.exception, true);
+			}
+		}
+		
+		class AddStatusRunnable implements Runnable {
+						
+			final ParcelableStatus status;
+			
+			AddStatusRunnable(ParcelableStatus status) {
+				this.status = status;
+			}
+
+			@Override
+			public void run() {
+				fragment.mAdapter.add(status);
+				fragment.mAdapter.sort(ParcelableStatus.REVERSE_ID_COMPARATOR);
+				if (!fragment.mLoadMoreAutomatically && fragment.mShouldScroll) {
+					fragment.mListView.setSelection(0 + fragment.mListView.getHeaderViewsCount());
+				}
+			}
+		}
 	}
 
 	public static class LocationInfoLoader extends AsyncTaskLoader<String> {
