@@ -58,10 +58,11 @@ public class DataManager {
 
 	private final HashMap<Uri, NotifyBroker> mNotifierMap = new HashMap<Uri, NotifyBroker>();
 
-	private final HashMap<String, MediaSource> mSourceMap = new LinkedHashMap<String, MediaSource>();
+	private final UriSource source;
 
 	public DataManager(final IGalleryApplication application) {
 		mApplication = application;
+		source = new UriSource(application);
 		mDefaultMainHandler = new Handler(application.getMainLooper());
 	}
 
@@ -71,10 +72,8 @@ public class DataManager {
 
 	public Path findPathByUri(final Uri uri, final String type) {
 		if (uri == null) return null;
-		for (final MediaSource source : mSourceMap.values()) {
-			final Path path = source.findPathByUri(uri, type);
-			if (path != null) return path;
-		}
+		final Path path = source.findPathByUri(uri, type);
+		if (path != null) return path;
 		return null;
 	}
 
@@ -82,22 +81,10 @@ public class DataManager {
 		return getMediaObject(path).getContentUri();
 	}
 
-	public Path getDefaultSetOf(final Path item) {
-		if (item == null) return null;
-		final MediaSource source = mSourceMap.get(item.getPrefix());
-		return source == null ? null : source.getDefaultSetOf(item);
-	}
-
 	public MediaObject getMediaObject(final Path path) {
 		synchronized (LOCK) {
 			final MediaObject obj = path.getObject();
 			if (obj != null) return obj;
-
-			final MediaSource source = mSourceMap.get(path.getPrefix());
-			if (source == null) {
-				Log.w(TAG, "cannot find media source for path: " + path);
-				return null;
-			}
 
 			try {
 				final MediaObject object = source.createMediaObject(path);
@@ -128,40 +115,17 @@ public class DataManager {
 	// Returns number of bytes used by cached pictures if all pending
 	// downloads and removals are completed.
 	public long getTotalTargetCacheSize() {
-		long sum = 0;
-		for (final MediaSource source : mSourceMap.values()) {
-			sum += source.getTotalTargetCacheSize();
-		}
-		return sum;
+		return source.getTotalTargetCacheSize();
 	}
 
 	// Returns number of bytes used by cached pictures currently downloaded.
 	public long getTotalUsedCacheSize() {
-		long sum = 0;
-		for (final MediaSource source : mSourceMap.values()) {
-			sum += source.getTotalUsedCacheSize();
-		}
-		return sum;
-	}
-
-	public synchronized void initializeSourceMap() {
-		if (!mSourceMap.isEmpty()) return;
-
-		// the order matters, the UriSource must come last
-		addSource(new UriSource(mApplication));
-
-		if (mActiveCount > 0) {
-			for (final MediaSource source : mSourceMap.values()) {
-				source.resume();
-			}
-		}
+		return source.getTotalUsedCacheSize();
 	}
 
 	public void pause() {
 		if (--mActiveCount == 0) {
-			for (final MediaSource source : mSourceMap.values()) {
-				source.pause();
-			}
+			source.pause();
 		}
 	}
 
@@ -191,20 +155,12 @@ public class DataManager {
 
 	public void resume() {
 		if (++mActiveCount == 1) {
-			for (final MediaSource source : mSourceMap.values()) {
-				source.resume();
-			}
+			source.resume();
 		}
 	}
 
 	public void rotate(final Path path, final int degrees) {
 		getMediaObject(path).rotate(degrees);
-	}
-
-	// open for debug
-	void addSource(final MediaSource source) {
-		if (source == null) return;
-		mSourceMap.put(source.getPrefix(), source);
 	}
 
 	private static class NotifyBroker extends ContentObserver {

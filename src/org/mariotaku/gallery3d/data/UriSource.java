@@ -27,8 +27,6 @@ import android.net.Uri;
 import android.webkit.MimeTypeMap;
 
 class UriSource extends MediaSource {
-	@SuppressWarnings("unused")
-	private static final String TAG = "UriSource";
 	private static final String IMAGE_TYPE_PREFIX = "image/";
 	private static final String IMAGE_TYPE_ANY = "image/*";
 	private static final String CHARSET_UTF_8 = "utf-8";
