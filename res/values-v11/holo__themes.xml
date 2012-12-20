@@ -25,6 +25,8 @@
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.CompoundButton.CheckBox</item>
 		<item name="android:editTextStyle">@style/Widget.Holo.EditText</item>
+		<item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+		<item name="android:fastScrollTrackDrawable">@drawable/fastscroll_track_holo_dark</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.ListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
@@ -64,6 +66,8 @@
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.Light.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
 		<item name="android:editTextStyle">@style/Widget.Holo.Light.EditText</item>
+		<item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+		<item name="android:fastScrollTrackDrawable">@drawable/fastscroll_track_holo_light</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.Light.ListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
@@ -103,6 +107,8 @@
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.Light.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
 		<item name="android:editTextStyle">@style/Widget.Holo.Light.EditText</item>
+		<item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+		<item name="android:fastScrollTrackDrawable">@drawable/fastscroll_track_holo_light</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.Light.ListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
@@ -139,6 +145,8 @@
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.CompoundButton.CheckBox</item>
 		<item name="android:editTextStyle">@style/Widget.Holo.EditText</item>
+		<item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+		<item name="android:fastScrollTrackDrawable">@drawable/fastscroll_track_holo_dark</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.ListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
@@ -175,6 +183,8 @@
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.Light.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
 		<item name="android:editTextStyle">@style/Widget.Holo.Light.EditText</item>
+		<item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+		<item name="android:fastScrollTrackDrawable">@drawable/fastscroll_track_holo_light</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.Light.GridView</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.Light.ListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.Light.ProgressBar</item>

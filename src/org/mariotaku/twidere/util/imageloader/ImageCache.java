@@ -21,7 +21,6 @@ import java.io.File;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 
 /**
@@ -46,6 +45,7 @@ public class ImageCache {
 
 	private DiskLruCache mDiskCache;
 	private LruCache<String, Bitmap> mMemoryCache;
+	private ImageCacheParams mCacheParams;
 
 	/**
 	 * Creating a new ImageCache object using the specified parameters.
@@ -96,6 +96,18 @@ public class ImageCache {
 		if (mMemoryCache == null) return;
 		mMemoryCache.evictAll();
 	}
+	
+	public void disableMemoryCache() {
+		clearMemoryCache();
+		mMemoryCache = null;
+	}
+	
+	public void enableMemoryCache() {		
+		// Set up memory cache
+		if (mCacheParams.memoryCacheEnabled) {
+			mMemoryCache = new MemoryCache(mCacheParams.memCacheSize);
+		}
+	}
 
 	/**
 	 * Get from disk cache.
@@ -133,6 +145,7 @@ public class ImageCache {
 	 * @param cacheParams The cache parameters to initialize the cache
 	 */
 	private void init(final Context context, final ImageCacheParams cacheParams) {
+		mCacheParams = cacheParams;
 		final File diskCacheDir = DiskLruCache.getDiskCacheDir(context, cacheParams.uniqueName);
 
 		// Set up disk cache

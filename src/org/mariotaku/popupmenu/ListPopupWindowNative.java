@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import org.mariotaku.twidere.R;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ListPopupWindowNative extends android.widget.ListPopupWindow implements ListPopupWindow {
@@ -17,7 +18,7 @@ public class ListPopupWindowNative extends android.widget.ListPopupWindow implem
 	 * @param context Context used for contained views.
 	 */
 	public ListPopupWindowNative(final Context context) {
-		super(context);
+		this(context, null);
 	}
 
 	/**
@@ -30,7 +31,7 @@ public class ListPopupWindowNative extends android.widget.ListPopupWindow implem
 	 *            popup.
 	 */
 	public ListPopupWindowNative(final Context context, final AttributeSet attrs) {
-		super(context, attrs);
+		this(context, attrs, android.R.attr.listPopupWindowStyle);
 	}
 
 	/**

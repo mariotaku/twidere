@@ -542,6 +542,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				if (mNewMentionsCount > 1) {
 					builder.setNumber(mNewMentionsCount);
 				}
+				//builder.setStyle(new NotificationCompat.InboxStyle());
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
 				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);

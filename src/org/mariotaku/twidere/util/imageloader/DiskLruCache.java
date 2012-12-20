@@ -107,7 +107,8 @@ public class DiskLruCache {
 
 		// Now check if there's an actual file that exists based on the key
 		final String existingFile = createFilePath(mCacheDir, key);
-		if (new File(existingFile).exists()) {
+		final File file = new File(existingFile);
+		if (file.exists() && file.length() > 0) {
 			// File found, add it to the HashMap for future use
 			put(key, existingFile);
 			return true;
