@@ -9,9 +9,9 @@
 		<item name="android:windowBackground">@drawable/viewer_background</item>
 		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
+		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
-		<item name="itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
 	</style>
 
@@ -22,7 +22,6 @@
 		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
-		<item name="itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
 
 		<!-- for programmatic instantiation -->
@@ -32,8 +31,10 @@
 		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>
 		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
 		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
+		<item name="android:actionButtonStyle">@style/Widget.ActionBarItem</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
+		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="Theme.Holo.Light.DarkActionBar">
@@ -43,7 +44,6 @@
 		<item name="editTextStyle">@style/Widget.Holo.Light.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Medium</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_light</item>
-		<item name="itemBackground">@drawable/item_background_holo_light</item>
 		<item name="messagesBackground">#20808080</item>
 
 		<!-- for programmatic instantiation -->
@@ -53,8 +53,10 @@
 		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem.Light.DarkActionBar</item>
 		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_light</item>
 		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
+		<item name="android:actionButtonStyle">@style/Widget.ActionBarItem.Light.DarkActionBar</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
+		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
 	</style>
 
 	<style name="Theme.Twidere.Dialog" parent="Theme.Holo.Dialog">
@@ -62,10 +64,20 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>
-		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
-		<item name="itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
+			
+		<!-- for programmatic instantiation -->
+		<item name="actionBarBackground">@drawable/actionbar_bg_dark_holo</item>
+		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
+		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
+		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>
+		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
+		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
+		<item name="android:actionButtonStyle">@style/Widget.ActionBarItem</item>
+		<item name="android:windowBackground">@drawable/background_holo_dark</item>
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
+		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Dialog" parent="Theme.Holo.Light.Dialog">
@@ -73,9 +85,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Medium</item>
-		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_light</item>
-		<item name="itemBackground">@drawable/item_background_holo_light</item>
 		<item name="messagesBackground">#20808080</item>
 
 		<!-- for programmatic instantiation -->
@@ -85,6 +95,10 @@
 		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem.Light.DarkActionBar</item>
 		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_light</item>
 		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
+		<item name="android:actionButtonStyle">@style/Widget.ActionBarItem.Light.DarkActionBar</item>
+		<item name="android:windowBackground">@drawable/background_holo_light</item>
+		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
+		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 	</style>
 
 </resources>

@@ -35,6 +35,7 @@
 
 		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_holo</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
+		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
 		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
 		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_darkactionbar_holo</item>

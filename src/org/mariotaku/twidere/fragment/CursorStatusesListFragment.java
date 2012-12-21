@@ -40,6 +40,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import org.mariotaku.twidere.util.AsyncTask;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
 
@@ -114,12 +115,42 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onPullDownToRefresh() {
-		getStatuses(getActivatedAccountIds(getActivity()), null, getNewestStatusIds());
+		new AsyncTask<Void, Void, long[][]>() {
+
+			@Override
+			protected long[][] doInBackground(final Void... params) {
+				final long[][] result = new long[3][];
+				result[0] = getActivatedAccountIds(getActivity());
+				result[2] = getNewestStatusIds();
+				return result;
+			}
+			
+			@Override
+			protected void onPostExecute(final long[][] result) {
+				getStatuses(result[0], result[1], result[2]);
+			}
+			
+		}.execute();
 	}
 
 	@Override
 	public void onPullUpToRefresh() {
-		getStatuses(getActivatedAccountIds(getActivity()), getOldestStatusIds(), null);
+		new AsyncTask<Void, Void, long[][]>() {
+
+			@Override
+			protected long[][] doInBackground(final Void... params) {
+				final long[][] result = new long[3][];
+				result[0] = getActivatedAccountIds(getActivity());
+				result[1] = getOldestStatusIds();
+				return result;
+			}
+
+			@Override
+			protected void onPostExecute(final long[][] result) {
+				getStatuses(result[0], result[1], result[2]);
+			}
+
+		}.execute();
 	}
 
 	@Override

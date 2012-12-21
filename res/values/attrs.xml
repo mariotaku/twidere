@@ -6,7 +6,6 @@
 		<attr name="editTextStyle" format="reference"/>
 		<attr name="preferenceTitleStyle" format="reference"/>
 		<attr name="imagePreviewBackground" format="reference"/>
-		<attr name="itemBackground" format="reference|color"/>
 		<attr name="messagesBackground" format="reference|color"/>
 	</declare-styleable>
 	<declare-styleable name="ViewPagerIndicator">

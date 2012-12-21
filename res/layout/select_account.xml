@@ -20,7 +20,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
-		android:background="?itemBackground"
+		android:background="?android:attr/itemBackground"
 		android:gravity="center"
 		android:minHeight="48dp"
 		android:onClick="onClick"

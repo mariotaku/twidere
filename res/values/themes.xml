@@ -12,7 +12,7 @@
 		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
-		<item name="itemBackground">@drawable/item_background_holo_dark</item>
+		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
 
@@ -33,7 +33,7 @@
 		<item name="editTextStyle">@style/Widget.Holo.Light.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_light</item>
-		<item name="itemBackground">@drawable/item_background_holo_light</item>
+		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
 		<item name="messagesBackground">#20808080</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
@@ -54,7 +54,7 @@
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
-		<item name="itemBackground">@drawable/item_background_holo_dark</item>
+		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
 
 		<!-- Text styles -->
@@ -100,7 +100,7 @@
 		<item name="tabBackground">@null</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
-		<item name="itemBackground">@drawable/item_background_holo_dark</item>
+		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
 
 		<!-- Button styles -->
@@ -119,7 +119,7 @@
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_light</item>
-		<item name="itemBackground">@drawable/item_background_holo_light</item>
+		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
 		<item name="messagesBackground">#20808080</item>
 
 		<!-- Button styles -->

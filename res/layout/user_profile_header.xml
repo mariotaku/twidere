@@ -23,7 +23,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentTop="true"
-				android:background="?itemBackground"
+				android:background="?android:attr/itemBackground"
 				android:clickable="true">
 
 				<org.mariotaku.twidere.view.RoundCorneredImageView
@@ -46,7 +46,7 @@
 				android:layout_alignWithParentIfMissing="true"
 				android:layout_toLeftOf="@+id/follow_container"
 				android:layout_toRightOf="@+id/profile_image_container"
-				android:background="?itemBackground"
+				android:background="?android:attr/itemBackground"
 				android:clickable="true"
 				android:gravity="center_vertical"
 				android:orientation="vertical"
@@ -121,7 +121,7 @@
 		android:id="@+id/description_container"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="?itemBackground"
+		android:background="?android:attr/itemBackground"
 		android:clickable="true"
 		android:orientation="vertical"
 		android:padding="4dp">
@@ -146,7 +146,7 @@
 		android:id="@+id/location_container"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="?itemBackground"
+		android:background="?android:attr/itemBackground"
 		android:clickable="true"
 		android:orientation="vertical"
 		android:padding="4dp">
@@ -173,7 +173,7 @@
 		android:id="@+id/url_container"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="?itemBackground"
+		android:background="?android:attr/itemBackground"
 		android:clickable="true"
 		android:orientation="vertical"
 		android:padding="4dp">
@@ -209,7 +209,7 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
 			android:layout_weight="1"
-			android:background="?itemBackground"
+			android:background="?android:attr/itemBackground"
 			android:clickable="true"
 			android:orientation="vertical"
 			android:padding="4dp">
@@ -276,7 +276,7 @@
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
-			android:background="?itemBackground"
+			android:background="?android:attr/itemBackground"
 			android:clickable="true"
 			android:gravity="center"
 			android:orientation="vertical"
@@ -312,7 +312,7 @@
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
-			android:background="?itemBackground"
+			android:background="?android:attr/itemBackground"
 			android:clickable="true"
 			android:gravity="center"
 			android:orientation="vertical"
@@ -348,7 +348,7 @@
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
-			android:background="?itemBackground"
+			android:background="?android:attr/itemBackground"
 			android:clickable="true"
 			android:gravity="center"
 			android:orientation="vertical"

@@ -51,10 +51,6 @@
 		<!-- layout_width/height must be set in code -->
 		<item name="android:background">@drawable/actionbar_item_background_holo_light</item>
 	</style>
-
-	<style name="Widget.ActionBarItem.Light.DarkActionBar" parent="Widget.ActionBarItem"/>
-
-	<style name="Widget.ActionBarHomeItem.Light.DarkActionBar" parent="Widget.ActionBarHomeItem"/>	
 	
 	<style name="Widget.ActionBarTitleBase" parent="android:Widget.TextView">
 		<item name="android:id">@id/actionbar_title</item>
@@ -89,5 +85,9 @@
 		<item name="android:background">@drawable/actionbar_item_background_holo_dark</item>
 		<item name="android:paddingRight">4dp</item>
 	</style>
+	
+	<style name="Widget.ActionBarItem.Light.DarkActionBar" parent="Widget.ActionBarItem"/>
+
+	<style name="Widget.ActionBarHomeItem.Light.DarkActionBar" parent="Widget.ActionBarHomeItem"/>
 
 </resources>

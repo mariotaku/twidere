@@ -18,7 +18,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:clickable="true"
-				android:background="?itemBackground"/>
+				android:background="?android:attr/itemBackground"/>
 			
 			<RelativeLayout
 				android:id="@+id/profile_name_container"
@@ -34,7 +34,7 @@
 					android:layout_height="wrap_content"
 					android:layout_alignParentTop="true"
 					android:clickable="true"
-					android:background="?itemBackground">
+					android:background="?android:attr/itemBackground">
 
 					<org.mariotaku.twidere.view.RoundCorneredImageView
 						android:id="@+id/profile_image"

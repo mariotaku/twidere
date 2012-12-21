@@ -53,6 +53,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import org.mariotaku.twidere.util.AsyncTask;
 
 public class DirectMessagesFragment extends PullToRefreshListFragment implements LoaderCallbacks<Cursor>,
 		OnScrollListener, OnTouchListener {
@@ -172,20 +173,46 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	@Override
 	public void onPullDownToRefresh() {
 		if (mTwitterWrapper == null) return;
-		final long[] account_ids = getActivatedAccountIds(getActivity());
-		final long[] inbox_since_ids = getNewestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
-		mTwitterWrapper.getReceivedDirectMessages(account_ids, null, inbox_since_ids);
-		mTwitterWrapper.getSentDirectMessages(account_ids, null, null);
+		new AsyncTask<Void, Void, long[][]>() {
+
+			@Override
+			protected long[][] doInBackground(final Void... params) {
+				final long[][] result = new long[2][];
+				result[0] = getActivatedAccountIds(getActivity());
+				result[1] = getNewestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
+				return result;
+			}
+
+			@Override
+			protected void onPostExecute(final long[][] result) {
+				mTwitterWrapper.getReceivedDirectMessages(result[0], null, result[1]);
+				mTwitterWrapper.getSentDirectMessages(result[0], null, null);
+			}
+
+		}.execute();
 	}
 
 	@Override
 	public void onPullUpToRefresh() {
 		if (mTwitterWrapper == null) return;
-		final long[] account_ids = getActivatedAccountIds(getActivity());
-		final long[] inbox_max_ids = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
-		final long[] outbox_max_ids = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Outbox.CONTENT_URI);
-		mTwitterWrapper.getReceivedDirectMessages(account_ids, inbox_max_ids, null);
-		mTwitterWrapper.getSentDirectMessages(account_ids, outbox_max_ids, null);
+		new AsyncTask<Void, Void, long[][]>() {
+
+			@Override
+			protected long[][] doInBackground(final Void... params) {
+				final long[][] result = new long[3][];
+				result[0] = getActivatedAccountIds(getActivity());
+				result[1] = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
+				result[2] = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Outbox.CONTENT_URI);
+				return result;
+			}
+
+			@Override
+			protected void onPostExecute(final long[][] result) {
+				mTwitterWrapper.getReceivedDirectMessages(result[0], result[1], null);
+				mTwitterWrapper.getSentDirectMessages(result[0], result[2], null);
+			}
+
+		}.execute();
 	}
 
 	@Override
