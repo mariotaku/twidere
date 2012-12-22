@@ -75,7 +75,6 @@
 		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
 		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
 		<item name="android:actionButtonStyle">@style/Widget.ActionBarItem</item>
-		<item name="android:windowBackground">@drawable/background_holo_dark</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 	</style>
@@ -96,7 +95,6 @@
 		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_light</item>
 		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyleSmall</item>
 		<item name="android:actionButtonStyle">@style/Widget.ActionBarItem.Light.DarkActionBar</item>
-		<item name="android:windowBackground">@drawable/background_holo_light</item>
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 	</style>
