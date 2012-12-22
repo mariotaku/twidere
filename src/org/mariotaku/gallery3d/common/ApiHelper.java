@@ -16,8 +16,6 @@
 
 package org.mariotaku.gallery3d.common;
 
-import java.lang.reflect.Field;
-
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.hardware.Camera;

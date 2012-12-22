@@ -321,11 +321,7 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		}
 		if (mRenderRequested) return;
 		mRenderRequested = true;
-		if (ApiHelper.HAS_POST_ON_ANIMATION) {
-			postOnAnimation(mRequestRenderOnAnimationFrame);
-		} else {
-			super.requestRender();
-		}
+		super.requestRender();
 	}
 
 	@Override

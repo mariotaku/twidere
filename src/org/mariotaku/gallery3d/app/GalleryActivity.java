@@ -16,7 +16,6 @@
 
 package org.mariotaku.gallery3d.app;
 
-import org.mariotaku.gallery3d.common.ApiHelper;
 import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.data.BitmapPool;
 import org.mariotaku.gallery3d.data.DataManager;
@@ -29,9 +28,7 @@ import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,34 +41,26 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 public final class GalleryActivity extends FragmentActivity implements Constants, View.OnClickListener, GalleryContext {
 
-	public void onClick(View v) {
-		// TODO: Implement this method
-	}
-	
 	private static final String TAG = "Gallery";
 
 	private GLRootView mGLRootView;
+
 	private View mProgress;
 	private View mControlButtons;
-
 	private StateManager mStateManager;
 
 	private OrientationManager mOrientationManager;
 
 	private final TransitionStore mTransitionStore = new TransitionStore();
 
-	//private boolean mDisableToggleStatusBar;
-
 	private AlertDialog mAlertDialog = null;
+
+	// private boolean mDisableToggleStatusBar;
 
 	private final BroadcastReceiver mMountReceiver = new BroadcastReceiver() {
 		@Override
@@ -136,6 +125,11 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 		} finally {
 			root.unlockRenderThread();
 		}
+	}
+
+	@Override
+	public void onClick(final View v) {
+		// TODO: Implement this method
 	}
 
 	@Override

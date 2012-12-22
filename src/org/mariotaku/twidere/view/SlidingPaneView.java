@@ -919,13 +919,13 @@ public class SlidingPaneView extends ViewGroup {
 					mTempDeltaX = 0;
 					mTotalMoveX = 0;
 					mIsScrolling = false;
-					//final View layout = mParent.getRightPaneLayout();
-					mShouldDisableScroll = !(mContext instanceof DualPaneActivity && ((DualPaneActivity) mContext).isRightPaneUsed());
+					// final View layout = mParent.getRightPaneLayout();
+					mShouldDisableScroll = !(mContext instanceof DualPaneActivity && ((DualPaneActivity) mContext)
+							.isRightPaneUsed());
 					if (!mShouldDisableScroll) {
 						mController.reset();
-					} else {
+					} else
 						return false;
-					}
 					break;
 				}
 				case MotionEvent.ACTION_MOVE: {

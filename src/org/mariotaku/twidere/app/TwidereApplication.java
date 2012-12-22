@@ -49,6 +49,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
+import android.os.Handler;
 import edu.ucdavis.earlybird.UCDService;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener,
@@ -81,6 +82,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private ThreadPool mThreadPool;
 
 	private DownloadCache mDownloadCache;
+	private Handler mHandler;
 
 	@Override
 	public Context getAndroidContext() {
@@ -182,6 +184,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	@Override
 	public void onCreate() {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		mHandler = new Handler();
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		super.onCreate();
 		initializeAsyncTask();
@@ -304,6 +307,10 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			return ret;
 		}
 
+	}
+	
+	public Handler getHandler() {
+		return mHandler;
 	}
 
 }

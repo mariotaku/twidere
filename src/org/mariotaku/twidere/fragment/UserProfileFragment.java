@@ -225,9 +225,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				if (data.value.is_cache) {
 					getLoaderManager().restartLoader(LOADER_ID_USER, null, this);
 				}
-			} else if (mUser != null && mUser.is_cache && (mUserId == mUser.user_id || mScreenName != null && mScreenName.equals(mUser.screen_name))) {
+			} else if (mUser != null && mUser.is_cache
+					&& (mUserId == mUser.user_id || mScreenName != null && mScreenName.equals(mUser.screen_name))) {
 				setListShown(true);
-			} else  {
+			} else {
 				if (data.exception != null) {
 					mErrorMessageView.setText(data.exception.getMessage());
 					mErrorMessageView.setVisibility(View.VISIBLE);
@@ -389,7 +390,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mAdapter.add(new UserBlocksAction(6));
 		}
 		mAdapter.notifyDataSetChanged();
-		if (!user.is_cache) {			
+		if (!user.is_cache) {
 			getFriendship();
 		}
 		mProfileNameBannerContainer.setOnSizeChangedListener(this);

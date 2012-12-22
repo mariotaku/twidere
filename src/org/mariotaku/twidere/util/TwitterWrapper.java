@@ -1656,7 +1656,7 @@ public class TwitterWrapper implements Constants {
 			super(mContext, mAsyncTaskManager);
 			// A very stupid workaround here, in order to send tweets
 			// contains asterisk symbol.
-			this.twitter = getTwitterInstance(mContext, account_id, false, !message.contains("*"));					
+			twitter = getTwitterInstance(mContext, account_id, false, !message.contains("*"));
 			this.account_id = account_id;
 			this.user_id = user_id;
 			this.screen_name = screen_name;

@@ -55,6 +55,7 @@ import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -83,6 +84,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
@@ -107,9 +109,6 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
-import org.mariotaku.twidere.util.*;
-import org.mariotaku.twidere.adapter.*;
-import android.os.Handler;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
 		OnImageClickListener {
@@ -146,7 +145,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private ListView mListView;
 
 	private LoadConversationTask mConversationTask;
-	
+
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -207,7 +206,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					mListView.setSelection(0 + mListView.getHeaderViewsCount());
 				}
 				if (data.value.in_reply_to_status_id > 0) {
-					//getLoaderManager().restartLoader(LOADER_ID_CONVERSATION, null, this);
+					// getLoaderManager().restartLoader(LOADER_ID_CONVERSATION,
+					// null, this);
 				} else {
 					setProgressBarIndeterminateVisibility(false);
 				}
@@ -430,7 +430,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public void displayStatus(final ParcelableStatus status) {
 		onRefreshComplete();
 		updatePullRefresh();
-		final boolean status_changed = mStatus != null && status != null && !status.equals(mStatus);		
+		final boolean status_changed = mStatus != null && status != null && !status.equals(mStatus);
 		if (status_changed) {
 			mAdapter.clear();
 			// UCD
@@ -808,45 +808,41 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	void setListHeaderFooters(final ListView list) {
 		list.addFooterView(mStatusView);
 	}
-	
+
 	public static class LoadConversationTask extends AsyncTask<ParcelableStatus, Void, Response<Boolean>> {
 
 		final Handler handler;
 		final Context context;
 		final StatusFragment fragment;
-		
-		LoadConversationTask(StatusFragment fragment) {
-			this.context = fragment.getActivity();
+
+		LoadConversationTask(final StatusFragment fragment) {
+			context = fragment.getActivity();
 			this.fragment = fragment;
-			this.handler = new Handler();
+			handler = new Handler();
 		}
-		
+
 		@Override
-		protected Response<Boolean> doInBackground(ParcelableStatus... params) {
+		protected Response<Boolean> doInBackground(final ParcelableStatus... params) {
 			if (params == null || params.length != 1) return new Response<Boolean>(false, null);
 			try {
 				final long account_id = params[0].account_id;
 				ParcelableStatus status = params[0];
 				while (status != null && status.in_reply_to_status_id > 0 && !isCancelled()) {
 					status = findStatus(context, account_id, status.in_reply_to_status_id);
-					if (status == null) break;
+					if (status == null) {
+						break;
+					}
 					handler.post(new AddStatusRunnable(status));
 				}
-			} catch (TwitterException e) {
+			} catch (final TwitterException e) {
 				return new Response<Boolean>(false, e);
 			}
 			return new Response<Boolean>(true, null);
 		}
-		
+
 		@Override
 		protected void onCancelled() {
 			fragment.setProgressBarIndeterminateVisibility(false);
-			fragment.updatePullRefresh();
-		}
-		
-		@Override
-		protected void onPreExecute() {
-			fragment.setProgressBarIndeterminateVisibility(true);
 			fragment.updatePullRefresh();
 		}
 
@@ -858,12 +854,18 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				showErrorToast(context, context.getString(R.string.getting_status), data.exception, true);
 			}
 		}
-		
+
+		@Override
+		protected void onPreExecute() {
+			fragment.setProgressBarIndeterminateVisibility(true);
+			fragment.updatePullRefresh();
+		}
+
 		class AddStatusRunnable implements Runnable {
-						
+
 			final ParcelableStatus status;
-			
-			AddStatusRunnable(ParcelableStatus status) {
+
+			AddStatusRunnable(final ParcelableStatus status) {
 				this.status = status;
 			}
 

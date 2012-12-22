@@ -29,6 +29,7 @@ import static org.mariotaku.twidere.util.Utils.getTableNameByUri;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.AsyncTask;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -40,7 +41,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import org.mariotaku.twidere.util.AsyncTask;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
 
@@ -124,12 +124,12 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 				result[2] = getNewestStatusIds();
 				return result;
 			}
-			
+
 			@Override
 			protected void onPostExecute(final long[][] result) {
 				getStatuses(result[0], result[1], result[2]);
 			}
-			
+
 		}.execute();
 	}
 

@@ -141,7 +141,6 @@ public class RefreshService extends Service implements Constants {
 	@Override
 	public void onDestroy() {
 		unregisterReceiver(mStateReceiver);
-		mNotificationManager.cancelAll();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
 			// Auto refresh enabled, so I will try to start service after it was
 			// stopped.

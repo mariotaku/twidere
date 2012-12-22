@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import org.mariotaku.twidere.R;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ListPopupWindowNative extends android.widget.ListPopupWindow implements ListPopupWindow {

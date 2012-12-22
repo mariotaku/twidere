@@ -33,7 +33,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.BitmapRegionDecoder;
 import android.os.Build;
-import android.util.FloatMath;
 import android.util.Log;
 
 public class DecodeUtils {

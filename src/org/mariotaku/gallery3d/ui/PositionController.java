@@ -25,7 +25,6 @@ import org.mariotaku.gallery3d.util.RangeIntArray;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.Log;
-import android.widget.Scroller;
 
 class PositionController {
 	private static final String TAG = "PositionController";
@@ -50,9 +49,6 @@ class PositionController {
 	private static final int ANIM_KIND_ZOOM = 4;
 	private static final int ANIM_KIND_OPENING = 5;
 	private static final int ANIM_KIND_FLING = 6;
-	private static final int ANIM_KIND_FLING_X = 7;
-	private static final int ANIM_KIND_DELETE = 8;
-	private static final int ANIM_KIND_CAPTURE = 9;
 
 	// Animation time in milliseconds. The order must match ANIM_KIND_* above.
 	//
@@ -113,8 +109,8 @@ class PositionController {
 	// This is used by the fling animation (page mode).
 	private final FlingScroller mPageScroller;
 
-	// This is used by the fling animation (film mode).
-	private final Scroller mFilmScroller;
+	// // This is used by the fling animation (film mode).
+	// private final Scroller mFilmScroller;
 
 	// The bound of the stable region that the focused box can stay, see the
 	// comments above calculateStableBound() for details.
@@ -187,7 +183,6 @@ class PositionController {
 	public PositionController(final Context context, final Listener listener) {
 		mListener = listener;
 		mPageScroller = new FlingScroller();
-		mFilmScroller = new Scroller(context, null, false);
 
 		// Initialize the areas.
 		initPlatform();
@@ -312,9 +307,6 @@ class PositionController {
 	}
 
 	public boolean hasDeletingBox() {
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
-			if (mBoxes.get(i).mAnimationKind == ANIM_KIND_DELETE) return true;
-		}
 		return false;
 	}
 
@@ -545,7 +537,6 @@ class PositionController {
 		mPlatform.mCurrentX += dx;
 		mPlatform.mFromX += dx;
 		mPlatform.mToX += dx;
-		mPlatform.mFlingOffset += dx;
 
 		if (mConstrained != constrained) {
 			mConstrained = constrained;
@@ -597,7 +588,6 @@ class PositionController {
 			switch (b.mAnimationKind) {
 				case ANIM_KIND_SCROLL:
 				case ANIM_KIND_FLING:
-				case ANIM_KIND_FLING_X:
 					break;
 				default:
 					return;
@@ -784,14 +774,7 @@ class PositionController {
 	// the focused box, the specified neighbor box, and the gap between the
 	// two. The specified offset should be 1 or -1.
 	public void startCaptureAnimationSlide(final int offset) {
-		final Box b = mBoxes.get(0);
-		final Box n = mBoxes.get(offset); // the neighbor box
-		final Gap g = mGaps.get(offset); // the gap between the two boxes
 
-		mPlatform.doAnimation(mPlatform.mDefaultX, mPlatform.mDefaultY, ANIM_KIND_CAPTURE);
-		b.doAnimation(0, b.mScaleMin, ANIM_KIND_CAPTURE);
-		n.doAnimation(0, n.mScaleMin, ANIM_KIND_CAPTURE);
-		g.doAnimation(g.mDefaultSize, ANIM_KIND_CAPTURE);
 		redraw();
 	}
 
@@ -894,7 +877,6 @@ class PositionController {
 		switch (b.mAnimationKind) {
 			case ANIM_KIND_SCROLL:
 			case ANIM_KIND_FLING:
-			case ANIM_KIND_FLING_X:
 				return true;
 		}
 		return false;
@@ -1319,9 +1301,6 @@ class PositionController {
 			switch (kind) {
 				case ANIM_KIND_SCROLL:
 				case ANIM_KIND_FLING:
-				case ANIM_KIND_FLING_X:
-				case ANIM_KIND_DELETE:
-				case ANIM_KIND_CAPTURE:
 					progress = 1 - f; // linear
 					break;
 				case ANIM_KIND_OPENING:
@@ -1411,7 +1390,7 @@ class PositionController {
 		private boolean doAnimation(final int targetY, float targetScale, final int kind) {
 			targetScale = clampScale(targetScale);
 
-			if (mCurrentY == targetY && mCurrentScale == targetScale && kind != ANIM_KIND_CAPTURE) return false;
+			if (mCurrentY == targetY && mCurrentScale == targetScale) return false;
 
 			// Now starts an animation for the box.
 			mAnimationKind = kind;
@@ -1452,12 +1431,7 @@ class PositionController {
 			} else {
 				mCurrentY = (int) (mFromY + progress * (mToY - mFromY));
 				mCurrentScale = mFromScale + progress * (mToScale - mFromScale);
-				if (mAnimationKind == ANIM_KIND_CAPTURE) {
-					final float f = CaptureAnimation.calculateScale(progress);
-					mCurrentScale *= f;
-					return false;
-				} else
-					return mCurrentY == mToY && mCurrentScale == mToScale;
+				return mCurrentY == mToY && mCurrentScale == mToScale;
 			}
 		}
 	}
@@ -1514,7 +1488,7 @@ class PositionController {
 
 		// Starts an animation for a gap.
 		public boolean doAnimation(final int targetSize, final int kind) {
-			if (mCurrentGap == targetSize && kind != ANIM_KIND_CAPTURE) return false;
+			if (mCurrentGap == targetSize) return false;
 			mAnimationKind = kind;
 			mFromGap = mCurrentGap;
 			mToGap = targetSize;
@@ -1537,12 +1511,7 @@ class PositionController {
 				return true;
 			} else {
 				mCurrentGap = (int) (mFromGap + progress * (mToGap - mFromGap));
-				if (mAnimationKind == ANIM_KIND_CAPTURE) {
-					final float f = CaptureAnimation.calculateScale(progress);
-					mCurrentGap = (int) (mCurrentGap * f);
-					return false;
-				} else
-					return mCurrentGap == mToGap;
+				return mCurrentGap == mToGap;
 			}
 		}
 	}
@@ -1553,7 +1522,6 @@ class PositionController {
 	private class Platform extends Animatable {
 		public int mCurrentX, mFromX, mToX, mDefaultX;
 		public int mCurrentY, mFromY, mToY, mDefaultY;
-		public int mFlingOffset;
 
 		@Override
 		public boolean startSnapback() {
@@ -1607,8 +1575,6 @@ class PositionController {
 		protected boolean interpolate(final float progress) {
 			if (mAnimationKind == ANIM_KIND_FLING)
 				return interpolateFlingPage(progress);
-			else if (mAnimationKind == ANIM_KIND_FLING_X)
-				return interpolateFlingFilm(progress);
 			else
 				return interpolateLinear(progress);
 		}
@@ -1623,33 +1589,8 @@ class PositionController {
 			mToY = targetY;
 			mAnimationStartTime = AnimationTime.startTime();
 			mAnimationDuration = ANIM_TIME[kind];
-			mFlingOffset = 0;
 			advanceAnimation();
 			return true;
-		}
-
-		private boolean interpolateFlingFilm(final float progress) {
-			mFilmScroller.computeScrollOffset();
-			mCurrentX = mFilmScroller.getCurrX() + mFlingOffset;
-
-			int dir = EdgeView.INVALID_DIRECTION;
-			if (mCurrentX < mDefaultX) {
-				if (!mHasNext) {
-					dir = EdgeView.RIGHT;
-				}
-			} else if (mCurrentX > mDefaultX) {
-				if (!mHasPrev) {
-					dir = EdgeView.LEFT;
-				}
-			}
-			if (dir != EdgeView.INVALID_DIRECTION) {
-				// TODO: restore this onAbsorb call
-				// int v = (int) (mFilmScroller.getCurrVelocity() + 0.5f);
-				// mListener.onAbsorb(v, dir);
-				mFilmScroller.forceFinished(true);
-				mCurrentX = mDefaultX;
-			}
-			return mFilmScroller.isFinished();
 		}
 
 		private boolean interpolateFlingPage(final float progress) {
@@ -1679,15 +1620,9 @@ class PositionController {
 				mCurrentY = mToY;
 				return true;
 			} else {
-				if (mAnimationKind == ANIM_KIND_CAPTURE) {
-					progress = CaptureAnimation.calculateSlide(progress);
-				}
 				mCurrentX = (int) (mFromX + progress * (mToX - mFromX));
 				mCurrentY = (int) (mFromY + progress * (mToY - mFromY));
-				if (mAnimationKind == ANIM_KIND_CAPTURE)
-					return false;
-				else
-					return mCurrentX == mToX && mCurrentY == mToY;
+				return mCurrentX == mToX && mCurrentY == mToY;
 			}
 		}
 	}

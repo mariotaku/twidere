@@ -16,11 +16,20 @@ public abstract class AsyncTask<Param, Progress, Result> {
 	private Status mStatus = Status.PENDING;
 
 	public AsyncTask() {
-		this(null);
+		this(new Handler(), null);
 	}
 
 	public AsyncTask(final ExecutorService executor) {
-		mHandler = new Handler();
+		this(new Handler(), executor);
+	}
+
+	public AsyncTask(final Handler handler) {
+		this(handler, null);
+	}
+
+	public AsyncTask(final Handler handler, final ExecutorService executor) {
+		if (handler == null) throw new NullPointerException();
+		mHandler = handler;
 		mExecutor = executor;
 		mRunnable = new BackgroundRunnable();
 	}

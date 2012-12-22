@@ -21,6 +21,7 @@ import java.io.File;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 
 /**
@@ -96,13 +97,13 @@ public class ImageCache {
 		if (mMemoryCache == null) return;
 		mMemoryCache.evictAll();
 	}
-	
+
 	public void disableMemoryCache() {
 		clearMemoryCache();
 		mMemoryCache = null;
 	}
-	
-	public void enableMemoryCache() {		
+
+	public void enableMemoryCache() {
 		// Set up memory cache
 		if (mCacheParams.memoryCacheEnabled) {
 			mMemoryCache = new MemoryCache(mCacheParams.memCacheSize);

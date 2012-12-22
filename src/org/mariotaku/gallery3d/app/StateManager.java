@@ -28,7 +28,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 
 public class StateManager {
 	private static final String TAG = "StateManager";

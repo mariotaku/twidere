@@ -17,7 +17,6 @@
 package org.mariotaku.gallery3d.data;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.WeakHashMap;
 
 import org.mariotaku.gallery3d.app.IGalleryApplication;

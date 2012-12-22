@@ -306,7 +306,7 @@ public abstract class ImageWorker {
 		private Object data;
 
 		public BitmapPreloaderTask() {
-			super(mExecutor);
+			super(mHandler, mExecutor);
 		}
 
 		@Override
@@ -376,7 +376,7 @@ public abstract class ImageWorker {
 		private final WeakReference<ImageView> imageViewReference;
 
 		public BitmapWorkerTask(final ImageView imageView) {
-			super(mExecutor);
+			super(mHandler, mExecutor);
 			imageViewReference = new WeakReference<ImageView>(imageView);
 		}
 
