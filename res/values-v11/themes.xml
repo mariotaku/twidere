@@ -11,7 +11,7 @@
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>
->		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
+		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
 	</style>
 
